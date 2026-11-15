@@ -82,6 +82,14 @@ async function submit(ui, name, args, success, feedback) {
   if (feedback) ui.float?.(feedback);
 }
 
+async function clearProduction(ui, action, kind, index, pageKey, page, label) {
+  if (!await ui.action(action, kind, index)) return;
+  ui.local.id = null;
+  ui.local[pageKey] = page;
+  ui.refresh();
+  ui.float?.('已清空' + label);
+}
+
 function dialogButtons(ui, label, action, disabled = false, style) {
   ui.buttons([
     { label: '取消', onClick: () => ui.close() },
@@ -250,7 +258,14 @@ function facilityCard(ui, kind, index, facility) {
         ? { batch: active, index } : undefined,
     });
     if (kind === 'L') body.buttons(actions, { style: 'production' });
-  }, { style: 'production' });
+  }, {
+    style: 'production',
+    cornerAction: item ? {
+      label: '清空' + facilityName,
+      onClick: () => clearProduction(ui, 'clearFacility', kind, index,
+        'facilityPage' + kind, Math.floor(index / facilityPageSize), facilityName),
+    } : undefined,
+  });
 }
 
 function sourceSummary(ui, kind, id, note) {
@@ -443,7 +458,10 @@ function stationDetails(ui, kind, index) {
           (sum, [material, amount]) => sum + unitPrice(dlg.w, material) * BigInt(amount), 0n,
         );
         const valueAdded = unitPrice(dlg.w, station.recipe) * BigInt(next.output) - materialValue;
-        dlg.row('加工增值', compact(valueAdded) + ' 金币');
+        dlg.row('直接机会增值', compact(valueAdded) + ' 金币');
+        if (valueAdded < 0n) {
+          dlg.text('当前成品售价低于材料直售价值；研发和任务仍可能需要此产物。', { muted: true });
+        }
         dlg.text('材料', { muted: true });
         const requirements = requirementRows(dlg, station.recipe, { withLinks: true });
         reserveButtons(dlg, requirements);
@@ -458,7 +476,7 @@ function stationDetails(ui, kind, index) {
   });
 }
 
-function stationCard(ui, kind, index, station, source) {
+function stationCard(ui, kind, index, station, source, page) {
   const active = station.batch;
   const id = active?.id ?? station.recipe;
   const item = catalog.items[id];
@@ -470,7 +488,10 @@ function stationCard(ui, kind, index, station, source) {
         copy.heading('空' + stationNames[kind], { style: 'production' });
         copy.badges([badge], { style: 'production' });
         copy.button('选择配方', () => chooseRecipe(ui, kind, index, source), { tone: 'gold', style: 'production' });
-      }, { ratio: 0.35, style: 'workshop', align: 'center', onClick: openDetails });
+      }, {
+        ratio: 0.35, style: 'workshop', align: 'center', onClick: openDetails,
+        workshopAnimation: { kind, index },
+      });
       stationProgress(body, active, kind, index);
       return;
     }
@@ -485,7 +506,10 @@ function stationCard(ui, kind, index, station, source) {
         { label: '当前库存', value: compact(quantity(ui.w, id)) },
         { label: active ? '本批产出' : '每批产出', value: compact(active?.amount ?? item.output) + ' 件' },
       ], { style: 'workshop' });
-    }, { ratio: 0.35, style: 'workshop', artAspect: 1.10, onClick: openDetails });
+    }, {
+      ratio: 0.35, style: 'workshop', artAspect: 1, onClick: openDetails,
+      workshopAnimation: { kind, index, id },
+    });
     stationProgress(body, active, kind, index);
     body.text('材料', { muted: true });
     const requirements = requirementRows(body, station.recipe, { style: 'workshop' });
@@ -493,7 +517,14 @@ function stationCard(ui, kind, index, station, source) {
     if (requirements.length) actions.push({ label: '查看来源', tone: 'gold', onClick: () => openSources(ui, requirements) });
     body.buttons(actions, { style: 'production' });
     reserveButtons(body, requirements);
-  }, { style: 'production' });
+  }, {
+    style: 'production',
+    cornerAction: item ? {
+      label: '清空' + stationNames[kind],
+      onClick: () => clearProduction(ui, 'clearStation', kind, index,
+        'stationPage' + kind, page, stationNames[kind]),
+    } : undefined,
+  });
 }
 
 export function renderWorkshop(ui) {
@@ -535,7 +566,7 @@ export function renderWorkshop(ui) {
   if (focusIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方');
   const page = focusIndex < 0 ? local[pageKey] : Math.floor(focusIndex / stationPageSize);
   const view = visibleItems(list, page, stationPageSize);
-  for (const { station, index } of view.entries) stationCard(ui, kind, index, station, source);
+  for (const { station, index } of view.entries) stationCard(ui, kind, index, station, source, view.page);
   if (!list.length) ui.text('没有符合筛选条件的工位。', { muted: true });
   paginate(ui, view, (page) => {
     local.id = null;

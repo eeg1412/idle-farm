@@ -3,7 +3,7 @@
     "stages": 1,
     "slaughter": false,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -50,7 +50,7 @@
     "stages": 1,
     "slaughter": false,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -97,7 +97,7 @@
     "stages": 1,
     "slaughter": false,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -144,7 +144,7 @@
     "stages": 1,
     "slaughter": false,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -191,7 +191,7 @@
     "stages": 1,
     "slaughter": false,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -238,7 +238,7 @@
     "stages": 3,
     "slaughter": true,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -271,7 +271,7 @@
       },
       {
         "x": 212,
-        "y": 275,
+        "y": 271,
         "radiusX": 24,
         "radiusY": 6,
         "kind": "grain"
@@ -292,7 +292,7 @@
       },
       {
         "x": 134.5,
-        "y": 271.5,
+        "y": 266.5,
         "radiusX": 54.5,
         "radiusY": 9
       }
@@ -311,7 +311,7 @@
     "stages": 3,
     "slaughter": true,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -384,7 +384,7 @@
     "stages": 3,
     "slaughter": true,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -457,7 +457,7 @@
     "stages": 3,
     "slaughter": true,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64
@@ -530,7 +530,7 @@
     "stages": 3,
     "slaughter": true,
     "feedTexture": {
-      "path": "./art/livestock/feed.webp",
+      "path": "./art/livestock/feed-v8.webp",
       "size": [
         128,
         64

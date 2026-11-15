@@ -15,9 +15,9 @@ description: 新增或改画《放置农场》的牲畜、养殖选择图及畜�
 
 以 `assets/livestock/layout.json` 的显式 `slaughter` 和阶段登记为视觉依据，生成 `src/content/livestock-visuals.json`。覆盖目录所有 `kind: L` 品项，不用 ID 前缀、序号范围或固定名单猜测肉用分类。每期四帧均为真实低头啄食／咀嚼动作，头颈变化画在原图中，躯干和站立脚点稳定，不能旋转、缩放整只动物假装进食。使用 `imagegen` 绘图技能调用内置 `image_gen` 生成新原画，由一个素材负责人独占共享原画与导出；脚本只裁切、归一网格、按固定脚位打包并导出。
 
-动物原画不含饲料、食槽和地面投影。每阶段显式 `feeding` 保留低头口部对应的地面饲料位置和 grain／hay／greens 来源类型。用户 2026-11-15 追加 9/10 后，每只动物改用同一张新生成的透明复合饲料图片与各自独立轻影，按相同站位变换保持近大远小；不新增手动喂养动作或经济消耗。图片原稿及生产登记见 `assets/livestock/feed-registration-v6.json`，运行最小接口为 `textures.feed` 与每 ID 的 `feedTexture`，运行／静态回退共用 `livestockFeedLayout`。保留 V5 全部真实进食帧与注册，不把旧 V4 重新用作进食动画。
+动物原画不含饲料、食槽和地面投影。每阶段显式 `feeding` 保留低头口部对应的地面饲料位置和 grain／hay／greens 来源类型。每只动物独立显示共用透明复合饲料图片与各自轻影，按相同站位变换保持近大远小；不新增手动喂养动作或经济消耗。用户再次否定 v6-r3 黄料堆后，当前 V8 由内置 image_gen 新画深蓝灰低沿托盘、米白谷粒／棕颗粒／绿色草料大分组，目的是与金黄地板拉开轮廓和明暗差；托盘仅为图片组成，不增加设施或喂养玩法。原稿、提示词与生产登记见 `assets/livestock/feed-registration-v8.json`。运行接口仍为 `textures.feed` 与每 ID 的 `feedTexture`，运行／静态回退共用 `livestockFeedLayout`，低头时也须露出可辨主体。保留 V5 80 帧、真实脚嘴登记与 V7 选择图，不用挪动物／脚点来迁就料盘。旧版内部静态通过已被用户新反馈重新打开，不能当用户接受。
 
-活牲畜选择图恢复普通抬头展示。用户明确否定 V4 复用后，当前全部 10 种必须逐 ID 输入其当前 V5 成熟动画 PNG 的第 0／3 帧，由内置 image_gen 新生成同一动物的中性抬头图；毛色、脸型、角耳、体型比例和像素细节均按实际当前帧，不用旧风格稿替代指定输入，也不旋转／缩放低头动物冒充新图。持久来源为 `assets/livestock/choice-registration-v7.json`，逐 ID 保留真实输入路径／哈希、新原稿、提示词与转换；V4 批仅在 `choice-v6-rejected/` 和旧登记保留历史。普通生产与 `--choices-only` 都消费 V7 新原稿，不能回退为 V4 或 V5 低头首帧。进食 80 帧及图集来源仍由 `feeding-registration-v5.json` 管理，饲料 v6-r3 与静态回退不随这轮选择图修订改动。
+活牲畜选择图恢复普通抬头展示。用户明确否定 V4 复用后，当前全部 10 种必须逐 ID 输入其当前 V5 成熟动画 PNG 的第 0／3 帧，由内置 image_gen 新生成同一动物的中性抬头图；毛色、脸型、角耳、体型比例和像素细节均按实际当前帧，不用旧风格稿替代指定输入，也不旋转／缩放低头动物冒充新图。持久来源为 `assets/livestock/choice-registration-v7.json`，逐 ID 保留真实输入路径／哈希、新原稿、提示词与转换；V4 批仅在 `choice-v6-rejected/` 和旧登记保留历史。普通生产与 `--choices-only` 都消费 V7 新原稿，不能回退为 V4 或 V5 低头首帧。进食 80 帧及图集来源仍由 `feeding-registration-v5.json` 管理；选择和饲料使用独立生产路径，饲料重设计不得覆盖已交 V7 选择图。
 
 生成交付后，将精确版本的源图、对应 PNG／WebP 与用途证据交 [farm-art-review](../farm-art-review/SKILL.md) 验收。证据不足记待复查；实证不合格交素材所有者用 `imagegen` 重画／修订，再审新版本。技术门禁通过不代表视觉通过。
 

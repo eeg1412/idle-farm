@@ -11,6 +11,7 @@ import {
 import {
   fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, minFishAnimationMs, mountFishAnimation,
 } from './fish-animation.js';
+import { mountWorkshopAnimation, workshopIconIds, workshopTextureSources } from './workshop-animation.js';
 import { renderResearch } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import {
@@ -252,6 +253,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const livestockBatches = new Map();
   const fishTextures = new Map();
   const fishBatches = new Map();
+  const workshopTextures = new Map();
+  const workshopMotionStates = new Map();
   const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
   const textures = new Map();
   const failedImages = new Set();
@@ -380,7 +383,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     livestockTextures.set(id, entry);
     Promise.all([
       loadImage(path('./art/livestock/barn.webp?game=1&v=1')),
-      loadImage(path(`./art/livestock/animals/${id}.webp?game=1&v=3`)),
+      loadImage(path(`./art/livestock/animals/${id}.webp?game=1&v=4`)),
       loadImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
       loadImage(path(feedTexture.path + '?game=1&v=1')),
     ]).then(([barn, atlas, product, feed]) => {
@@ -457,6 +460,31 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     for (const index of fishBatches.keys()) if (!present.has(index)) fishBatches.delete(index);
   }
 
+  function loadWorkshopTextures(id, kind) {
+    if (!data.items[id]) return;
+    const visibleKey = kind + ':' + id;
+    const sources = workshopTextureSources(kind);
+    const key = visibleKey + '|' + sources.map((source) => source.path).join('|');
+    const existing = workshopTextures.get(key);
+    if (existing) return existing.textures;
+    const entry = {};
+    workshopTextures.set(key, entry);
+    Promise.all([
+      ...workshopIconIds(id).map(async (iconId) => [iconId,
+        await loadImage(path('./wiki/icons/' + iconId + '.webp?game=1')),
+      ]),
+      ...sources.map(async (source) => [source.key,
+        await loadImage(path(source.path + '?game=1')),
+      ]),
+    ]).then((assets) => {
+      if (assets.some(([, texture]) => !texture)) return;
+      entry.textures = new Map(assets);
+      // A completed load only redraws a still-visible recipe. No display node is
+      // captured here, so leaving a page cannot resurrect its conveyor sprites.
+      if (visiblePlotIds.has('workshop:' + visibleKey)) requestRender();
+    });
+  }
+
   function unmountPlot(plot) {
     if (!plot.animation) return;
     plot.animation.destroy();
@@ -474,7 +502,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const directory = hero || scene ? './art/' : uiIconKeys.has(id) ? './ui-icons/' : './wiki/icons/';
     const livestockChoice = id.startsWith('livestock-') && data.items[id.slice(10)]?.kind === 'L';
     const livestockScene = id.startsWith('scene-') && data.items[id.slice(6)]?.kind === 'L';
-    const version = livestockChoice ? '&v=4' : livestockScene ? '&v=3' : '';
+    const version = livestockChoice ? '&v=4' : livestockScene ? '&v=4' : '';
     const url = path(directory + id + '.webp?game=1' + version);
     const texture = textures.get(url);
     if (!texture) {
@@ -961,27 +989,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += treeHeight;
       },
       heading(value, { aside, asideNoWrap = false, style, size = style === 'production' ? 27 : 22 } = {}) {
+        const clearance = options.headingClearance;
+        const headingWidth = clearance && cursor < clearance.bottom
+          ? Math.max(1, Math.min(width, clearance.right - x)) : width;
         if (aside == null) {
-          const t = textNode(parent, value, x, cursor + 2, width, { size: size * scale(), weight: '800' });
+          const t = textNode(parent, value, x, cursor + 2, headingWidth, { size: size * scale(), weight: '800' });
           cursor += t.height + 11;
           return;
         }
         if (asideNoWrap) {
           const preferredSize = (style === 'production' ? 18 : 16) * scale();
           const minimumSize = Math.min(preferredSize, 12 * scale());
-          const info = textNode(parent, aside, x, cursor, Math.max(1, width - 13),
+          const info = textNode(parent, aside, x, cursor, Math.max(1, headingWidth - 13),
             { size: preferredSize, weight: '800', wrap: false });
-          const maximumAsideWidth = Math.max(1, width * 0.56 - 13);
-          const beside = width > 160 && info.width * minimumSize / preferredSize <= maximumAsideWidth;
-          const available = beside ? maximumAsideWidth : Math.max(1, width - 13);
+          const maximumAsideWidth = Math.max(1, headingWidth * 0.56 - 13);
+          const beside = headingWidth > 160 && info.width * minimumSize / preferredSize <= maximumAsideWidth;
+          const available = beside ? maximumAsideWidth : Math.max(1, headingWidth - 13);
           if (info.width > available) {
             info.style.fontSize = preferredSize * available / info.width;
             info.style.lineHeight = Math.ceil(info.style.fontSize * 1.36);
           }
           const title = textNode(parent, value, x, cursor + 2,
-            beside ? Math.max(1, width - info.width - 25) : width,
+            beside ? Math.max(1, headingWidth - info.width - 25) : headingWidth,
             { size: size * scale(), weight: '800' });
-          info.position.set(x + width - info.width - 7,
+          info.position.set(x + headingWidth - info.width - 7,
             beside ? title.y + Math.max(0, (title.height - info.height) / 2) : title.y + title.height + 7);
           const badge = panel(parent, info.x - 6, info.y - 2, info.width + 13, info.height + 4,
             palette.pale, null, 13);
@@ -989,11 +1020,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           cursor = Math.max(title.y + title.height, info.y + info.height + 2) + 8;
           return;
         }
-        const room = scale() <= 1.45 && width > 160 ? Math.min(105, Math.floor(width * 0.39)) : 0;
-        const title = textNode(parent, value, x, cursor + 2, width - room,
+        const room = scale() <= 1.45 && headingWidth > 160 ? Math.min(105, Math.floor(headingWidth * 0.39)) : 0;
+        const title = textNode(parent, value, x, cursor + 2, headingWidth - room,
           { size: size * scale(), weight: '800' });
-        const info = textNode(parent, aside, room ? x + width - room : x,
-          room ? cursor + 5 : title.y + title.height, room ? room - 8 : width,
+        const info = textNode(parent, aside, room ? x + headingWidth - room : x,
+          room ? cursor + 5 : title.y + title.height, room ? room - 8 : headingWidth,
           { size: (style === 'production' ? 18 : 16) * scale(), align: room ? 'right' : 'left', weight: '800' });
         if (room) {
           const badge = panel(parent, info.x - 6, info.y - 2, info.width + 13, info.height + 4, palette.pale, null, 13);
@@ -1213,7 +1244,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
       },
       feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover,
-        plotAnimation, livestockAnimation, fishAnimation } = {}) {
+        plotAnimation, livestockAnimation, fishAnimation, workshopAnimation } = {}) {
         const top = cursor;
         const scene = sceneKeys.has(id);
         const stacked = width < 210 || scale() > 1.6;
@@ -1224,7 +1255,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const drawY = stacked ? top + artHeight + 8 : top;
         const copy = new Container();
         parent.addChild(copy);
-        const child = layoutUI(copy, drawX, drawY, width - (drawX - x), local, availableHeight);
+        const child = layoutUI(copy, drawX, drawY, width - (drawX - x), local, availableHeight,
+          0, undefined, { headingClearance: options.headingClearance });
         draw(child);
         const copyHeight = child.bottom - top - rowGap;
         const height = Math.max(artHeight, copyHeight);
@@ -1241,7 +1273,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const crop = cover || scene || heroKeys.has(id);
         const imageWidth = artWidth - inset * 2;
         const imageHeight = artHeight - inset * 2;
-        const animation = fishAnimation ?? livestockAnimation ?? plotAnimation;
+        const animation = workshopAnimation?.id ? workshopAnimation : fishAnimation ?? livestockAnimation ?? plotAnimation;
         if (animation && options.registerPlot) {
           const art = new Container();
           const fallback = new Container();
@@ -1251,7 +1283,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           art.addChild(fallback);
           drawImage(fallback, id, 0, 0, imageWidth, imageHeight, crop);
           options.registerPlot({ art, fallback, box: new Rectangle(0, 0, imageWidth, imageHeight),
-            type: fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
+            type: workshopAnimation?.id ? 'workshop' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
         } else {
           drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
@@ -1464,12 +1496,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         drawImage(parent, id, artX, top + 8, size, size);
         cursor += height + rowGap;
       },
-      card(draw, { padding = 10, gap = 9, style, onClick } = {}) {
+      card(draw, { padding = 10, gap = 9, style, onClick, cornerAction } = {}) {
         const layer = new Container();
         parent.addChild(layer);
+        const cornerSize = 30;
+        const cornerX = x + width - padding - cornerSize;
+        const cornerY = cursor + Math.max(1, padding - 3);
         const child = layoutUI(layer, x + padding, cursor + padding,
           width - padding * 2 - (onClick ? 24 : 0), local, availableHeight, 0, undefined,
-          { registerPlot: options.registerPlot });
+          { registerPlot: options.registerPlot, headingClearance: cornerAction
+            ? { right: cornerX - 6, bottom: cornerY + cornerSize } : undefined });
         draw(child);
         const h = child.bottom - cursor + Math.max(2, padding - 5);
         const focused = onClick && controls.length === focusIndex;
@@ -1483,6 +1519,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           directionIcon(layer, 'right', x + width - padding - 18, cursor + (h - 22) / 2, 18, 22,
             { color: palette.green });
           if (!waiting) hitAt(g, layer, x, cursor, width, h, onClick);
+        }
+        if (cornerAction) {
+          const hit = inkGraphics();
+          hit.label = cornerAction.label;
+          layer.addChild(hit);
+          if (!waiting && controls.length === focusIndex) {
+            hit.roundRect(cornerX, cornerY, cornerSize, cornerSize, 4)
+              .stroke({ color: palette.green, width: 1.5 });
+          }
+          drawPixelIcon(layer, { kind: 'close' }, cornerX + 5, cornerY + 5, 20, 20);
+          if (!waiting) hitAt(hit, layer, cornerX, cornerY, cornerSize, cornerSize, (event) => {
+              event?.stopPropagation();
+              cornerAction.onClick?.();
+            });
         }
         cursor += h + gap;
       },
@@ -1722,6 +1772,27 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           top >= pinnedTop && bottom <= pinnedTop + pinned.height;
         if (left >= right || top >= bottom || covered) {
           unmountPlot(plot);
+          continue;
+        }
+        if (plot.type === 'workshop') {
+          visiblePlotIds.add('workshop:' + plot.kind + ':' + plot.id);
+          const stationTextures = loadWorkshopTextures(plot.id, plot.kind);
+          if (!stationTextures || plot.animation) continue;
+          if (!animationFrame) {
+            const now = performance.now();
+            animationFrame = { clock: progressClock(now), now };
+          }
+          const motionKey = plot.kind + ':' + plot.index;
+          let motion = workshopMotionStates.get(motionKey);
+          if (!motion || motion.id !== plot.id) {
+            motion = { kind: plot.kind, index: plot.index, id: plot.id, clock: 0, started: false };
+            workshopMotionStates.set(motionKey, motion);
+          }
+          plot.animation = mountWorkshopAnimation(plot.art, stationTextures, plot.box, plot,
+            () => world?.stations[plot.kind]?.[plot.index], motion);
+          plot.animation.update(animationFrame);
+          plot.fallback.visible = false;
+          activePlots.add(plot);
           continue;
         }
         const { batch, index } = plot;
@@ -2305,6 +2376,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     shortPlotStarts.clear();
     livestockBatches.clear();
     fishBatches.clear();
+    workshopMotionStates.clear();
     for (const plot of activePlots) unmountPlot(plot);
     visiblePlotIds.clear();
     progressTiming = undefined;
@@ -2358,6 +2430,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         shortPlotStarts.clear();
         livestockBatches.clear();
         fishBatches.clear();
+        workshopMotionStates.clear();
       } else {
         for (const [index, timeline] of shortPlotStarts) {
           const nextBatch = nextWorld?.facilities.C[index]?.batch;
@@ -2368,6 +2441,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
       syncLivestockBatches(nextWorld);
       syncFishBatches(nextWorld);
+      for (const [key, phase] of workshopMotionStates) {
+        const station = nextWorld?.stations[phase.kind]?.[phase.index];
+        if ((station?.batch?.id ?? station?.recipe) !== phase.id) workshopMotionStates.delete(key);
+      }
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;

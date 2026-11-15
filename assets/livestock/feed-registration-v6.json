@@ -1,5 +1,6 @@
 {
   "version": 6,
+  "status": "Rejected again by the user as still not visible enough. Historical only; current redesigned feed is feed-registration-v8.json.",
   "presentationRevision": "v6-r3",
   "source": "raw/compound-feed-v6.png",
   "sourceSize": [1840, 854],

@@ -143,13 +143,46 @@
           "canvas": [
             -108,
             -192,
-            251,
+            258,
             218
           ],
           "mouth": [
             224,
             982
-          ]
+          ],
+          "scale": 0.6932270916334662,
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 781,
+              "width": 260,
+              "height": 218
+            },
+            {
+              "left": 260,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 515,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 770,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            }
+          ],
+          "samplingCanvas": [
+            251,
+            218
+          ],
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing."
         }
       ]
     },
@@ -309,24 +342,24 @@
           "anchors": [
             [
               123,
-              813
+              819
             ],
             [
               395,
-              813
+              819
             ],
             [
               660,
-              813
+              819
             ],
             [
               927,
-              813
+              819
             ]
           ],
           "canvas": [
             -123,
-            -202,
+            -208,
             277,
             220
           ],
@@ -359,7 +392,8 @@
               "width": 297,
               "height": 1254
             }
-          ]
+          ],
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source."
         }
       ]
     },

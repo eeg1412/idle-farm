@@ -36,7 +36,7 @@
 | 仓库／动画共用物品图 | `public/wiki/icons/<ID>.webp` | 原有 96×96 实际产出图；动画与仓库共用同 URL，不另画、另裁另一份动画产品 |
 | 独立牲畜选择图 | `assets/livestock/icons/<ID>.png`、`public/ui-icons/livestock-<ID>.webp` | 96×96 透明的活牲畜主体，完整保留角、耳、尾、脚；主体填充图标，不带棚舍 |
 | 独立普通选择来源 | `assets/livestock/choice-registration-v7.json`、`raw/choice-v7/<ID>.png`、`choice-prompts-v7.md` | 逐 ID 以当前 V5 adult/mature 的 0／3 PNG 输入内置 image_gen 新生成中性抬头图，保留真实输入／哈希、原稿与提示词；V4 复用批已被用户否定，只保留历史 |
-| 共用复合饲料图片 | `assets/livestock/raw/compound-feed-v6.png`、`assets/livestock/feed.png`、`public/art/livestock/feed.webp` | 内置 image_gen 新原稿保留，128×64 透明发布纹理，每只动物独立 Sprite 和轻影；原稿、转换及 bounds/anchor 登记见 `feed-registration-v6.json` |
+| 共用复合饲料图片 | `assets/livestock/raw/compound-feed-v8.png`、`assets/livestock/feed-v8.png`、`public/art/livestock/feed-v8.webp` | 内置 image_gen 新画深蓝灰低沿托盘与浅谷粒／棕颗粒／绿色草料分组，128×64 透明，每只独立 Sprite 和轻影；原稿、转换、bounds/anchor 见 `feed-registration-v8.json`，旧 v6-r3 黄堆被用户再次否定 |
 | 同 ID 静态设施回退 | `public/art/scene-<ID>.webp` | 320×320 完整设施场景；原图保留在 `assets/source/art/` 及其设施场景表 |
 | 共享固定棚舍 | `assets/livestock/raw/barn.png`、`assets/livestock/barn.png`、`public/art/livestock/barn.webp` | 发布图 320×320；可复用，仍需纳入资源检查 |
 
@@ -48,7 +48,7 @@
 
 选择图从新生成的成体普通抬头原画裁取，不从带棚舍的 320×320 场景缩小，也不从 V5 低头首帧或旧 V4 普通图裁取。用户否定 V4 复用后，全部 10 种已由各自当前 V5 adult/mature 第 0／3 PNG 输入内置 image_gen 新生成，`choice-registration-v7.json` 持久保留输入路径／哈希、原稿尺寸、真实窗口与提示词；`atlas.animalIcon` 同步这些字段及 `pose: 'head-up'`、`generatedWith`。被拒 V4 选择 PNG/WebP 归档 `choice-v6-rejected/`，不能再次激活。已有仓库图标默认复用，仅按任务卡的明确例外更新 canonical 来源；新 ID 应先交付 canonical 物品图标，再由畜牧导出登记复用，不从动物原稿的产品格生成另一份动画产品。单项覆盖使用 `assets/source/items/overrides.json` 的显式 ID 映射和 `overrides/<ID>.png`，由公共 `scripts/export-item-icons.py` 在常规图集导出后消费，不能只替换发布文件。用户授权的 L02 奶桶以既存 `assets/livestock/products/L02.png` 为转换来源，规范透明 96px PNG 持久保存在 `assets/source/items/overrides/L02.png`，映射为 `{"L02":"overrides/L02.png"}`；原 `assets/source/items/L01-IL05.png` 图集保留历史，其余库存 ID 不改。旧奶桶只作为此次 canonical 覆盖的来源，动画仍消费仓库同一文件。动物重绘时，同 ID 静态回退中的动物同步使用新进食原画，不能默认沿用旧动物；静态回退从固定棚舍、按 3／2／1 和透视布置的成熟 V5 动物与独立复合饲料图片及轻影合成 `assets/source/art/scene-<ID>.png` 和回退 WebP。此次仅重画选择图时，80 进食帧、饲料 v6-r3 与已交回退保持冻结。饲料不能烘焙入透明动物／选择图来源。这些来源与保留状态写入 `atlas.json`，实际审阅与交付状态查反馈清单。
 
-`npm run art:livestock` 是资源转换入口，使用 sharp 裁切、对齐、输出 WebP；它不能替代原画生成。新增来源、透明选择图和运行视觉登记必须进入同一可追溯导出路径。`assets/livestock/export-choices.mjs` 是普通生产和 `--choices-only` 共用的 V7 选择转换链；`--choices-only` 仅更新选择 PNG/WebP、身份对照和选择登记，不碰 80 帧、feed 或 fallback。选择／饲料同批更新时，`--choices-feed-only --refresh-scenes` 保留进食帧、PNG/WebP 图集和共享 barn，并生成选择、共用饲料、回退与静态用途证据；这些均是素材转换，不授权游戏检查或编译。
+`npm run art:livestock` 是资源转换入口，使用 sharp 裁切、对齐、输出 WebP；它不能替代原画生成。新增来源、透明选择图和运行视觉登记必须进入同一可追溯导出路径。`assets/livestock/export-choices.mjs` 是普通生产和 `--choices-only` 共用的 V7 选择转换链；`--choices-only` 仅更新选择 PNG/WebP、身份对照和选择登记，不碰 80 帧、feed 或 fallback。`--feed-only` 由 `assets/livestock/export-feed.mjs` 只更新最新饲料图片、10 同 ID 回退、feedTexture 与20阶段四帧130px证据，不碰 V7 选择／动物帧／产物；普通全量导出同样消费最新饲料登记。`render-feed-v8-evidence.mjs` 从实际发布回退与原稿制作正常底审图证据。这些均是素材转换，不授权游戏检查或编译。
 
 ## 落地、阴影与帧稳定性交接
 
@@ -67,8 +67,8 @@
 - 源登记 `feeding-registration-v5.json` 每物种含实际来源 key、grain／hay／greens 类型与逐期 anchors／canvas／mouth；mouth 是首帧原图绝对口部接地点。导出按同一解剖脚点和 stageScale 换算进食位置，不从每帧嘴部 bbox 追踪饲料。
 - `layout` 每期 `feeding` 为 `{x,y,radiusX,radiusY,kind}`，`feedingSource` 为 `{source,referenceFrame:0,sourceMouth,method,mouthBounds,sourceMouthBounds,mouthBoundsMethod}`。坐标为 320 场景注册 `(138,270)` 系；当前图片底部地面 anchor 比口部接地换算点低 3px 是实现选择，不是用户规定的统一偏移。
 - `livestock-visuals[ID].feeding` 长度等于 stages、顺序一致；manifest 每物种同时交付 feeding／feedingSources，以及 `animation: 'feeding'` 和真实源注册路径。原稿与动物图集不含 feed／食槽，不能把产品格当饲料纹理。
-- 用户追加 10 明确覆盖旧程序细粒方案：新原稿 `raw/compound-feed-v6.png` 由内置 image_gen 生成混合谷粒／颗粒堆；提示词与实际转换记录在 `choice-feed-prompts-v6.md`，原稿不改。`feed-registration-v6.json` 的纹理契约为 `feedTexture: {path:'./art/livestock/feed.webp',size:[128,64],bounds:{x:4,y:4,width:120,height:56},anchor:[64,60]}`，anchor 为纹理像素，表示堆体地面底中；PNG 和 WebP 透明，不带烘焙投影。
-- `src/content/livestock-visuals.json` 每 ID 新增同一 `feedTexture`；加载器提供 `textures.feed`，按可见性共享和卸载。运行每只动物分别创建 feed Sprite 和 feedShadow Graphics，`src/view/livestock-layout.js` 的 `livestockFeedLayout(feeding,feedTexture)` 供运行／回退共用，其 `x/y/width/height/scale/shadow` 是 320 动物源格坐标，再应用该动物注册平移、体型与景深。当前可见宽度由该共享 helper 的实际实现消费，按真实 130px 静态图审辨识度；kind 保留来源，不再切换三种程序细粒图形。阶段更新位置，idle 四帧不移动饲料。
+- 用户再次否定 v6-r3 综合饲料仍不明显后，当前 `raw/compound-feed-v8.png` 由内置 image_gen 新画完整深蓝灰低沿托盘、浅谷粒／棕颗粒／绿色草料分组，保持像素轮廓而非与地板相同的细黄点；托盘是图像呈现选择，不新增经济动作。提示词及实际转换见 `feed-prompts-v8.md`，原稿不改。`feed-registration-v8.json` 契约为 `feedTexture: {path:'./art/livestock/feed-v8.webp',size:[128,64],bounds:{x:4,y:4,width:120,height:56},anchor:[64,60]}`，anchor 为纹理像素底中。透明 PNG/WebP 不带地面烘焙影，盘体自身暗侧仍属盘体。旧源／旧静态通过仅保留历史，用户新反馈重新打开本项。
+- `src/content/livestock-visuals.json` 每 ID 使用同一 `feedTexture`；加载器提供 `textures.feed`，按可见性共享和卸载，并消费新 path 防止旧图缓存。运行每只动物分别创建 feed Sprite 和 feedShadow Graphics，`src/view/livestock-layout.js` 的 `livestockFeedLayout(feeding,feedTexture,baseAnimalScale)` 供运行／回退共用，其 `x/y/width/height/scale/shadow` 是 320 动物源格坐标，再应用该动物注册平移、体型与景深。当前基准场景下限52px宽，再乘站位depth保留近大远小；嘴前偏0.2可见宽、前下偏0.55可见高，盘与轻影同移。这是本轮实现选择，按真实130px全20阶段四帧审每只嘴前可见主体，不因尺寸或文件存在算通过；kind 保留来源，不再切换程序细粒。阶段更新位置，idle四帧不移动饲料，不改真实嘴／脚／mouthBounds。
 - 单只组层序为动物影、产品影、饲料轻影、饲料、动物、产品；各组从远到近绘制。当前 feed 与轻影独立保持，不乘 animalAlpha／productAlpha；动物和产品按既有生命周期淡变，不新增饲料消耗、喂养按钮或经营统计。静态回退复用同一 feeding 登记独立合成，实际画布效果仍须按授权验收。
 
 ### 低嘴局部登记与脚线门禁

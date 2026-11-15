@@ -1,4 +1,6 @@
 {
+  "version": "1.14",
+  "balanceVersion": "LT-2026-11-v2",
   "initial": [
     "C01",
     "I01"
@@ -173,7 +175,7 @@
       "name": "荞麦",
       "durationMs": 79000,
       "output": "3",
-      "price": "142",
+      "price": "180",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -195,7 +197,7 @@
       "name": "黄豆",
       "durationMs": 88000,
       "output": "3",
-      "price": "178",
+      "price": "223",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -206,7 +208,7 @@
       "name": "红小豆",
       "durationMs": 93000,
       "output": "3",
-      "price": "195",
+      "price": "235",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -228,7 +230,7 @@
       "name": "芋头",
       "durationMs": 102000,
       "output": "3",
-      "price": "228",
+      "price": "298",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -239,7 +241,7 @@
       "name": "莲藕",
       "durationMs": 106000,
       "output": "3",
-      "price": "248",
+      "price": "309",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -250,7 +252,7 @@
       "name": "砂梨",
       "durationMs": 111000,
       "output": "3",
-      "price": "273",
+      "price": "324",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -261,7 +263,7 @@
       "name": "白桃",
       "durationMs": 115000,
       "output": "3",
-      "price": "303",
+      "price": "336",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -272,7 +274,7 @@
       "name": "蜜柑",
       "durationMs": 120000,
       "output": "3",
-      "price": "332",
+      "price": "350",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -283,7 +285,7 @@
       "name": "甜柿",
       "durationMs": 126000,
       "output": "3",
-      "price": "360",
+      "price": "368",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -316,7 +318,7 @@
       "name": "无花果",
       "durationMs": 144000,
       "output": "3",
-      "price": "465",
+      "price": "589",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -338,7 +340,7 @@
       "name": "琥珀枇杷",
       "durationMs": 156000,
       "output": "3",
-      "price": "550",
+      "price": "704",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -415,7 +417,7 @@
       "name": "大葱",
       "durationMs": 198000,
       "output": "4",
-      "price": "915",
+      "price": "1083",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -426,7 +428,7 @@
       "name": "紫苏",
       "durationMs": 204000,
       "output": "4",
-      "price": "993",
+      "price": "1116",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -437,7 +439,7 @@
       "name": "翡翠山椒",
       "durationMs": 210000,
       "output": "4",
-      "price": "1091",
+      "price": "1149",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -459,7 +461,7 @@
       "name": "金冠菠萝",
       "durationMs": 228000,
       "output": "4",
-      "price": "1230",
+      "price": "1552",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -470,7 +472,7 @@
       "name": "蜜香蕉",
       "durationMs": 237000,
       "output": "4",
-      "price": "1315",
+      "price": "1613",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -481,7 +483,7 @@
       "name": "翡翠青柠",
       "durationMs": 246000,
       "output": "4",
-      "price": "1403",
+      "price": "1674",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -492,7 +494,7 @@
       "name": "雪瓤椰子",
       "durationMs": 255000,
       "output": "4",
-      "price": "1503",
+      "price": "1735",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -558,7 +560,7 @@
       "name": "棉花",
       "durationMs": 52000,
       "output": "2",
-      "price": "56",
+      "price": "54",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -569,7 +571,7 @@
       "name": "苎麻",
       "durationMs": 90000,
       "output": "3",
-      "price": "170",
+      "price": "228",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -580,7 +582,7 @@
       "name": "金盏花",
       "durationMs": 108000,
       "output": "3",
-      "price": "240",
+      "price": "315",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -591,7 +593,7 @@
       "name": "艾草",
       "durationMs": 136000,
       "output": "3",
-      "price": "400",
+      "price": "505",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -602,7 +604,7 @@
       "name": "酿酒葡萄",
       "durationMs": 155000,
       "output": "4",
-      "price": "520",
+      "price": "524",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -613,7 +615,7 @@
       "name": "酒花",
       "durationMs": 182000,
       "output": "4",
-      "price": "730",
+      "price": "810",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -624,7 +626,7 @@
       "name": "亚麻",
       "durationMs": 66000,
       "output": "2",
-      "price": "92",
+      "price": "158",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -635,7 +637,7 @@
       "name": "黄麻",
       "durationMs": 116000,
       "output": "3",
-      "price": "270",
+      "price": "339",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -646,7 +648,7 @@
       "name": "剑麻",
       "durationMs": 145000,
       "output": "3",
-      "price": "480",
+      "price": "603",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -657,7 +659,7 @@
       "name": "茜草",
       "durationMs": 169000,
       "output": "3",
-      "price": "620",
+      "price": "841",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -668,7 +670,7 @@
       "name": "蓝靛草",
       "durationMs": 196000,
       "output": "4",
-      "price": "840",
+      "price": "1072",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -679,7 +681,7 @@
       "name": "洋甘菊",
       "durationMs": 111000,
       "output": "3",
-      "price": "260",
+      "price": "324",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -690,7 +692,7 @@
       "name": "薄荷",
       "durationMs": 140000,
       "output": "3",
-      "price": "420",
+      "price": "573",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -701,7 +703,7 @@
       "name": "紫锥菊",
       "durationMs": 183000,
       "output": "4",
-      "price": "740",
+      "price": "852",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -712,7 +714,7 @@
       "name": "薰衣草",
       "durationMs": 213000,
       "output": "4",
-      "price": "1080",
+      "price": "1260",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -723,7 +725,7 @@
       "name": "黑麦",
       "durationMs": 94000,
       "output": "4",
-      "price": "240",
+      "price": "185",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -734,7 +736,7 @@
       "name": "酿酒梨",
       "durationMs": 132000,
       "output": "4",
-      "price": "440",
+      "price": "293",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -745,7 +747,7 @@
       "name": "桑葚",
       "durationMs": 164000,
       "output": "4",
-      "price": "640",
+      "price": "604",
       "inputs": {},
       "kind": "C",
       "sources": [
@@ -817,7 +819,7 @@
       "subject": "黑猪",
       "durationMs": 108000,
       "output": "3",
-      "price": "2780",
+      "price": "3464",
       "inputs": {},
       "kind": "L",
       "sources": [
@@ -853,7 +855,7 @@
       "subject": "番鸭",
       "durationMs": 232000,
       "output": "4",
-      "price": "13768",
+      "price": "17372",
       "inputs": {},
       "kind": "L",
       "sources": [
@@ -937,7 +939,7 @@
       "subject": "银鲑",
       "durationMs": 116000,
       "output": "3",
-      "price": "3257",
+      "price": "4058",
       "inputs": {},
       "kind": "F",
       "sources": [
@@ -973,7 +975,7 @@
       "subject": "大菱鲆",
       "durationMs": 244000,
       "output": "4",
-      "price": "15796",
+      "price": "19931",
       "inputs": {},
       "kind": "F",
       "sources": [
@@ -1036,7 +1038,7 @@
       "name": "玉米粉",
       "durationMs": 18000,
       "output": "1",
-      "price": "29",
+      "price": "35",
       "inputs": {
         "C04": "2"
       },
@@ -1049,7 +1051,7 @@
       "name": "苹果泥",
       "durationMs": 20000,
       "output": "1",
-      "price": "58",
+      "price": "72",
       "inputs": {
         "C05": "2",
         "I02": "1"
@@ -1063,7 +1065,7 @@
       "name": "蓝莓果酱",
       "durationMs": 23000,
       "output": "1",
-      "price": "68",
+      "price": "85",
       "inputs": {
         "C06": "2",
         "I02": "1"
@@ -1077,7 +1079,7 @@
       "name": "茶粉",
       "durationMs": 25000,
       "output": "1",
-      "price": "64",
+      "price": "85",
       "inputs": {
         "C07": "2"
       },
@@ -1090,7 +1092,7 @@
       "name": "桂花糖",
       "durationMs": 28000,
       "output": "1",
-      "price": "106",
+      "price": "120",
       "inputs": {
         "C08": "2",
         "I02": "1"
@@ -1104,7 +1106,7 @@
       "name": "可可酱",
       "durationMs": 30000,
       "output": "1",
-      "price": "130",
+      "price": "171",
       "inputs": {
         "C09": "2",
         "I02": "1"
@@ -1118,7 +1120,7 @@
       "name": "香草糖",
       "durationMs": 33000,
       "output": "1",
-      "price": "167",
+      "price": "207",
       "inputs": {
         "C10": "2",
         "I02": "1"
@@ -1132,7 +1134,7 @@
       "name": "樱桃馅",
       "durationMs": 36000,
       "output": "1",
-      "price": "210",
+      "price": "246",
       "inputs": {
         "C11": "2",
         "I02": "1"
@@ -1146,7 +1148,7 @@
       "name": "栗子泥",
       "durationMs": 39000,
       "output": "1",
-      "price": "271",
+      "price": "499",
       "inputs": {
         "C12": "2",
         "I02": "1"
@@ -1160,7 +1162,7 @@
       "name": "糯米粉",
       "durationMs": 42000,
       "output": "1",
-      "price": "280",
+      "price": "528",
       "inputs": {
         "C13": "2"
       },
@@ -1173,7 +1175,7 @@
       "name": "白米粒",
       "durationMs": 46000,
       "output": "1",
-      "price": "310",
+      "price": "581",
       "inputs": {
         "C14": "2"
       },
@@ -1186,7 +1188,7 @@
       "name": "焙炒麦粒",
       "durationMs": 49000,
       "output": "1",
-      "price": "342",
+      "price": "627",
       "inputs": {
         "C15": "2"
       },
@@ -1199,7 +1201,7 @@
       "name": "荞麦粉",
       "durationMs": 52000,
       "output": "1",
-      "price": "379",
+      "price": "754",
       "inputs": {
         "C16": "2"
       },
@@ -1212,7 +1214,7 @@
       "name": "小米粉",
       "durationMs": 55000,
       "output": "1",
-      "price": "424",
+      "price": "735",
       "inputs": {
         "C17": "2"
       },
@@ -1225,7 +1227,7 @@
       "name": "鲜豆浆",
       "durationMs": 58000,
       "output": "1",
-      "price": "475",
+      "price": "954",
       "inputs": {
         "C18": "2"
       },
@@ -1238,7 +1240,7 @@
       "name": "红豆沙",
       "durationMs": 61000,
       "output": "1",
-      "price": "543",
+      "price": "1021",
       "inputs": {
         "C19": "2",
         "I02": "1"
@@ -1252,7 +1254,7 @@
       "name": "红薯泥",
       "durationMs": 64000,
       "output": "1",
-      "price": "566",
+      "price": "984",
       "inputs": {
         "C20": "2"
       },
@@ -1265,7 +1267,7 @@
       "name": "芋泥",
       "durationMs": 67000,
       "output": "1",
-      "price": "608",
+      "price": "1182",
       "inputs": {
         "C21": "2"
       },
@@ -1278,7 +1280,7 @@
       "name": "莲藕粉",
       "durationMs": 71000,
       "output": "1",
-      "price": "662",
+      "price": "1239",
       "inputs": {
         "C22": "2"
       },
@@ -1291,7 +1293,7 @@
       "name": "蒸糯米",
       "durationMs": 74000,
       "output": "1",
-      "price": "420",
+      "price": "876",
       "inputs": {
         "C13": "3"
       },
@@ -1304,7 +1306,7 @@
       "name": "焙香米粒",
       "durationMs": 77000,
       "output": "1",
-      "price": "464",
+      "price": "931",
       "inputs": {
         "C14": "3"
       },
@@ -1317,7 +1319,7 @@
       "name": "大麦浆",
       "durationMs": 80000,
       "output": "1",
-      "price": "812",
+      "price": "1489",
       "inputs": {
         "C15": "2",
         "I15": "1"
@@ -1331,7 +1333,7 @@
       "name": "荞麦面团",
       "durationMs": 84000,
       "output": "1",
-      "price": "392",
+      "price": "1006",
       "inputs": {
         "C16": "2",
         "I01": "1"
@@ -1345,7 +1347,7 @@
       "name": "小米糖脆",
       "durationMs": 88000,
       "output": "1",
-      "price": "447",
+      "price": "1002",
       "inputs": {
         "C17": "2",
         "I02": "1"
@@ -1359,7 +1361,7 @@
       "name": "熟黄豆粉",
       "durationMs": 92000,
       "output": "1",
-      "price": "712",
+      "price": "1474",
       "inputs": {
         "C18": "3"
       },
@@ -1372,7 +1374,7 @@
       "name": "豆乳凝块",
       "durationMs": 96000,
       "output": "1",
-      "price": "1551",
+      "price": "2971",
       "inputs": {
         "C18": "1",
         "I18": "2"
@@ -1386,7 +1388,7 @@
       "name": "蜜煮红豆",
       "durationMs": 100000,
       "output": "1",
-      "price": "826",
+      "price": "1614",
       "inputs": {
         "C19": "3",
         "I02": "2"
@@ -1400,7 +1402,7 @@
       "name": "蜜渍红薯丁",
       "durationMs": 104000,
       "output": "1",
-      "price": "871",
+      "price": "1563",
       "inputs": {
         "C20": "3",
         "I02": "1"
@@ -1414,7 +1416,7 @@
       "name": "芋香米糊",
       "durationMs": 108000,
       "output": "1",
-      "price": "1176",
+      "price": "2238",
       "inputs": {
         "C21": "2",
         "C14": "1",
@@ -1429,7 +1431,7 @@
       "name": "蜜釉藕片",
       "durationMs": 112000,
       "output": "1",
-      "price": "1670",
+      "price": "2854",
       "inputs": {
         "C22": "2",
         "I22": "1",
@@ -1444,7 +1446,7 @@
       "name": "五谷熟米团",
       "durationMs": 116000,
       "output": "1",
-      "price": "1708",
+      "price": "3071",
       "inputs": {
         "I14": "1",
         "I23": "1",
@@ -1459,7 +1461,7 @@
       "name": "砂梨蓉",
       "durationMs": 120000,
       "output": "1",
-      "price": "728",
+      "price": "2120",
       "inputs": {
         "C23": "2"
       },
@@ -1472,7 +1474,7 @@
       "name": "蜜渍梨丁",
       "durationMs": 124000,
       "output": "1",
-      "price": "751",
+      "price": "2186",
       "inputs": {
         "C23": "2",
         "I02": "1"
@@ -1486,7 +1488,7 @@
       "name": "白桃泥",
       "durationMs": 128000,
       "output": "1",
-      "price": "808",
+      "price": "2242",
       "inputs": {
         "C24": "2"
       },
@@ -1499,7 +1501,7 @@
       "name": "白桃浓露",
       "durationMs": 132000,
       "output": "1",
-      "price": "1223",
+      "price": "3878",
       "inputs": {
         "I37": "1",
         "I02": "1"
@@ -1513,7 +1515,7 @@
       "name": "蜜柑果粒",
       "durationMs": 136000,
       "output": "1",
-      "price": "886",
+      "price": "2368",
       "inputs": {
         "C25": "2"
       },
@@ -1526,7 +1528,7 @@
       "name": "蜜柑晶冻底",
       "durationMs": 140000,
       "output": "1",
-      "price": "3048",
+      "price": "6981",
       "inputs": {
         "I39": "2",
         "I13": "1"
@@ -1540,7 +1542,7 @@
       "name": "软柿泥",
       "durationMs": 144000,
       "output": "1",
-      "price": "960",
+      "price": "2502",
       "inputs": {
         "C26": "2"
       },
@@ -1553,7 +1555,7 @@
       "name": "柿干",
       "durationMs": 148000,
       "output": "1",
-      "price": "1440",
+      "price": "2919",
       "inputs": {
         "C26": "3"
       },
@@ -1566,7 +1568,7 @@
       "name": "青梅浓浆",
       "durationMs": 152000,
       "output": "1",
-      "price": "1040",
+      "price": "2644",
       "inputs": {
         "C27": "2"
       },
@@ -1579,7 +1581,7 @@
       "name": "糖渍青梅",
       "durationMs": 156000,
       "output": "1",
-      "price": "1063",
+      "price": "2710",
       "inputs": {
         "C27": "2",
         "I02": "1"
@@ -1593,7 +1595,7 @@
       "name": "金柑蜜露果",
       "durationMs": 160000,
       "output": "1",
-      "price": "2786",
+      "price": "5469",
       "inputs": {
         "C28": "2",
         "I02": "1",
@@ -1608,7 +1610,7 @@
       "name": "金柑皮丝",
       "durationMs": 164000,
       "output": "1",
-      "price": "1692",
+      "price": "3280",
       "inputs": {
         "C28": "3"
       },
@@ -1621,7 +1623,7 @@
       "name": "无花果馅",
       "durationMs": 168000,
       "output": "1",
-      "price": "1263",
+      "price": "3913",
       "inputs": {
         "C29": "2",
         "I02": "1"
@@ -1635,7 +1637,7 @@
       "name": "无花果干",
       "durationMs": 172000,
       "output": "1",
-      "price": "1860",
+      "price": "4550",
       "inputs": {
         "C29": "3"
       },
@@ -1648,7 +1650,7 @@
       "name": "黄金香柚皮蓉",
       "durationMs": 176000,
       "output": "1",
-      "price": "1583",
+      "price": "3982",
       "inputs": {
         "C30": "2",
         "I08": "1"
@@ -1662,7 +1664,7 @@
       "name": "黄金香柚晶冻底",
       "durationMs": 180000,
       "output": "1",
-      "price": "7409",
+      "price": "13875",
       "inputs": {
         "I49": "1",
         "I40": "1"
@@ -1676,7 +1678,7 @@
       "name": "枇杷果浆",
       "durationMs": 187000,
       "output": "1",
-      "price": "1467",
+      "price": "4434",
       "inputs": {
         "C31": "2"
       },
@@ -1689,7 +1691,7 @@
       "name": "琥珀糖渍枇杷",
       "durationMs": 194000,
       "output": "1",
-      "price": "3832",
+      "price": "8998",
       "inputs": {
         "I51": "1",
         "C31": "2",
@@ -1704,7 +1706,7 @@
       "name": "花梨果酱",
       "durationMs": 202000,
       "output": "1",
-      "price": "1610",
+      "price": "4475",
       "inputs": {
         "C32": "2",
         "I02": "1"
@@ -1718,7 +1720,7 @@
       "name": "花梨金露",
       "durationMs": 209000,
       "output": "1",
-      "price": "2624",
+      "price": "7977",
       "inputs": {
         "I53": "1",
         "I08": "1"
@@ -1732,7 +1734,7 @@
       "name": "香柚青梅蜜馅",
       "durationMs": 216000,
       "output": "1",
-      "price": "4130",
+      "price": "10187",
       "inputs": {
         "I49": "1",
         "I44": "1"
@@ -1746,7 +1748,7 @@
       "name": "花梨枇杷双果冻底",
       "durationMs": 223000,
       "output": "1",
-      "price": "18308",
+      "price": "29894",
       "inputs": {
         "I54": "1",
         "I51": "1",
@@ -1761,7 +1763,7 @@
       "name": "炙烤茄片",
       "durationMs": 230000,
       "output": "1",
-      "price": "1659",
+      "price": "4965",
       "inputs": {
         "C33": "2"
       },
@@ -1774,7 +1776,7 @@
       "name": "炙茄细泥",
       "durationMs": 238000,
       "output": "1",
-      "price": "5188",
+      "price": "13798",
       "inputs": {
         "I57": "2",
         "I02": "1"
@@ -1788,7 +1790,7 @@
       "name": "番茄酱",
       "durationMs": 245000,
       "output": "1",
-      "price": "1800",
+      "price": "5314",
       "inputs": {
         "C34": "2"
       },
@@ -1801,7 +1803,7 @@
       "name": "慢焙番茄干",
       "durationMs": 252000,
       "output": "1",
-      "price": "4727",
+      "price": "10741",
       "inputs": {
         "C34": "2",
         "I59": "1"
@@ -1815,7 +1817,7 @@
       "name": "炙烤青椒",
       "durationMs": 259000,
       "output": "1",
-      "price": "1942",
+      "price": "5647",
       "inputs": {
         "C35": "2"
       },
@@ -1828,7 +1830,7 @@
       "name": "青椒丝",
       "durationMs": 266000,
       "output": "1",
-      "price": "2912",
+      "price": "6488",
       "inputs": {
         "C35": "3"
       },
@@ -1841,7 +1843,7 @@
       "name": "蒸磨南瓜蓉",
       "durationMs": 274000,
       "output": "1",
-      "price": "2616",
+      "price": "9555",
       "inputs": {
         "C36": "2",
         "I13": "1"
@@ -1855,7 +1857,7 @@
       "name": "南瓜粉",
       "durationMs": 281000,
       "output": "1",
-      "price": "3132",
+      "price": "10001",
       "inputs": {
         "C36": "3"
       },
@@ -1868,7 +1870,7 @@
       "name": "卷心菜丝",
       "durationMs": 288000,
       "output": "1",
-      "price": "2240",
+      "price": "9522",
       "inputs": {
         "C37": "2"
       },
@@ -1881,7 +1883,7 @@
       "name": "紫苏风味腌卷心菜",
       "durationMs": 295000,
       "output": "1",
-      "price": "8506",
+      "price": "28193",
       "inputs": {
         "I65": "2",
         "C39": "1"
@@ -1895,7 +1897,7 @@
       "name": "烤葱段",
       "durationMs": 302000,
       "output": "1",
-      "price": "2440",
+      "price": "10389",
       "inputs": {
         "C38": "2"
       },
@@ -1908,7 +1910,7 @@
       "name": "炙葱细泥",
       "durationMs": 310000,
       "output": "1",
-      "price": "8167",
+      "price": "29747",
       "inputs": {
         "I67": "2",
         "I13": "1"
@@ -1922,7 +1924,7 @@
       "name": "紫苏碎",
       "durationMs": 317000,
       "output": "1",
-      "price": "2648",
+      "price": "10864",
       "inputs": {
         "C39": "2"
       },
@@ -1935,7 +1937,7 @@
       "name": "紫苏琥珀糖露",
       "durationMs": 324000,
       "output": "1",
-      "price": "4249",
+      "price": "19703",
       "inputs": {
         "I69": "1",
         "I02": "1"
@@ -1949,7 +1951,7 @@
       "name": "山椒粉",
       "durationMs": 331000,
       "output": "1",
-      "price": "2919",
+      "price": "11311",
       "inputs": {
         "C40": "2"
       },
@@ -1962,7 +1964,7 @@
       "name": "山椒渍炙青椒",
       "durationMs": 338000,
       "output": "1",
-      "price": "10777",
+      "price": "31809",
       "inputs": {
         "I61": "2",
         "I71": "1"
@@ -1976,7 +1978,7 @@
       "name": "白芝麻油",
       "durationMs": 346000,
       "output": "1",
-      "price": "4802",
+      "price": "12997",
       "inputs": {
         "C41": "3"
       },
@@ -1989,7 +1991,7 @@
       "name": "白芝麻酱",
       "durationMs": 353000,
       "output": "1",
-      "price": "3208",
+      "price": "11996",
       "inputs": {
         "C41": "2"
       },
@@ -2002,7 +2004,7 @@
       "name": "炙茄番茄浓酱",
       "durationMs": 360000,
       "output": "1",
-      "price": "18678",
+      "price": "35677",
       "inputs": {
         "I58": "1",
         "I59": "1",
@@ -2017,7 +2019,7 @@
       "name": "葱香芝麻金油",
       "durationMs": 370000,
       "output": "1",
-      "price": "11567",
+      "price": "33461",
       "inputs": {
         "I67": "1",
         "I73": "1"
@@ -2031,7 +2033,7 @@
       "name": "紫苏双芝麻拌料",
       "durationMs": 379000,
       "output": "1",
-      "price": "17046",
+      "price": "46177",
       "inputs": {
         "I69": "1",
         "I73": "1",
@@ -2046,7 +2048,7 @@
       "name": "山椒南瓜细馅",
       "durationMs": 389000,
       "output": "1",
-      "price": "13807",
+      "price": "41459",
       "inputs": {
         "I63": "1",
         "I64": "1",
@@ -2061,7 +2063,7 @@
       "name": "菠萝汁",
       "durationMs": 398000,
       "output": "1",
-      "price": "3344",
+      "price": "13941",
       "inputs": {
         "C42": "2"
       },
@@ -2074,7 +2076,7 @@
       "name": "金冠蜜渍菠萝",
       "durationMs": 408000,
       "output": "1",
-      "price": "8850",
+      "price": "28172",
       "inputs": {
         "C42": "2",
         "I79": "1",
@@ -2089,7 +2091,7 @@
       "name": "香蕉泥",
       "durationMs": 418000,
       "output": "1",
-      "price": "3590",
+      "price": "20699",
       "inputs": {
         "C43": "2"
       },
@@ -2102,7 +2104,7 @@
       "name": "蜜蕉烤脆片",
       "durationMs": 427000,
       "output": "1",
-      "price": "9486",
+      "price": "41791",
       "inputs": {
         "C43": "2",
         "I81": "1",
@@ -2117,7 +2119,7 @@
       "name": "青柠汁",
       "durationMs": 437000,
       "output": "1",
-      "price": "3846",
+      "price": "21615",
       "inputs": {
         "C44": "2"
       },
@@ -2130,7 +2132,7 @@
       "name": "翡翠青柠皮丝",
       "durationMs": 446000,
       "output": "1",
-      "price": "10147",
+      "price": "43623",
       "inputs": {
         "C44": "2",
         "I83": "1",
@@ -2145,7 +2147,7 @@
       "name": "椰浆",
       "durationMs": 456000,
       "output": "1",
-      "price": "4137",
+      "price": "22531",
       "inputs": {
         "C45": "2"
       },
@@ -2158,7 +2160,7 @@
       "name": "雪香焙椰蓉",
       "durationMs": 466000,
       "output": "1",
-      "price": "10879",
+      "price": "45480",
       "inputs": {
         "C45": "2",
         "I85": "1"
@@ -2172,7 +2174,7 @@
       "name": "芒果泥",
       "durationMs": 475000,
       "output": "1",
-      "price": "4463",
+      "price": "23085",
       "inputs": {
         "C46": "2"
       },
@@ -2185,7 +2187,7 @@
       "name": "金煌蜜芒果",
       "durationMs": 485000,
       "output": "1",
-      "price": "11734",
+      "price": "46605",
       "inputs": {
         "C46": "2",
         "I87": "1",
@@ -2200,7 +2202,7 @@
       "name": "百香果浆",
       "durationMs": 494000,
       "output": "1",
-      "price": "4770",
+      "price": "24090",
       "inputs": {
         "C47": "2"
       },
@@ -2213,7 +2215,7 @@
       "name": "紫玉百香果露",
       "durationMs": 504000,
       "output": "1",
-      "price": "15280",
+      "price": "69265",
       "inputs": {
         "I89": "2",
         "I02": "1"
@@ -2227,7 +2229,7 @@
       "name": "火龙果汁",
       "durationMs": 514000,
       "output": "1",
-      "price": "5116",
+      "price": "25160",
       "inputs": {
         "C48": "2"
       },
@@ -2240,7 +2242,7 @@
       "name": "胭脂龙果晶冻坯",
       "durationMs": 523000,
       "output": "1",
-      "price": "16768",
+      "price": "72710",
       "inputs": {
         "I91": "2",
         "I13": "1"
@@ -2254,7 +2256,7 @@
       "name": "烘烤夏威夷果",
       "durationMs": 533000,
       "output": "1",
-      "price": "5471",
+      "price": "26194",
       "inputs": {
         "C49": "2"
       },
@@ -2267,7 +2269,7 @@
       "name": "金壳果仁酱",
       "durationMs": 542000,
       "output": "1",
-      "price": "25187",
+      "price": "88041",
       "inputs": {
         "I93": "2",
         "I73": "1"
@@ -2281,7 +2283,7 @@
       "name": "斑斓叶汁",
       "durationMs": 552000,
       "output": "1",
-      "price": "5866",
+      "price": "27254",
       "inputs": {
         "C50": "2"
       },
@@ -2294,7 +2296,7 @@
       "name": "翡翠斑斓糖露",
       "durationMs": 562000,
       "output": "1",
-      "price": "18786",
+      "price": "78017",
       "inputs": {
         "I95": "2",
         "I02": "1"
@@ -2308,7 +2310,7 @@
       "name": "青柠菠萝蜜酱",
       "durationMs": 571000,
       "output": "1",
-      "price": "35743",
+      "price": "109604",
       "inputs": {
         "I80": "1",
         "I84": "1",
@@ -2323,7 +2325,7 @@
       "name": "雪瓤浓椰乳",
       "durationMs": 581000,
       "output": "1",
-      "price": "30643",
+      "price": "114828",
       "inputs": {
         "I85": "2",
         "I86": "1"
@@ -2337,7 +2339,7 @@
       "name": "金煌芒果百香馅",
       "durationMs": 590000,
       "output": "1",
-      "price": "50362",
+      "price": "163617",
       "inputs": {
         "I88": "1",
         "I90": "1",
@@ -2352,7 +2354,7 @@
       "name": "翡翠斑斓椰乳馅",
       "durationMs": 600000,
       "output": "1",
-      "price": "96492",
+      "price": "263405",
       "inputs": {
         "I96": "1",
         "I98": "1",
@@ -2367,7 +2369,7 @@
       "name": "原棉纱",
       "durationMs": 46000,
       "output": "1",
-      "price": "225",
+      "price": "275",
       "inputs": {
         "C51": "3"
       },
@@ -2380,7 +2382,7 @@
       "name": "苎麻纤维",
       "durationMs": 101000,
       "output": "1",
-      "price": "710",
+      "price": "1568",
       "inputs": {
         "C52": "3"
       },
@@ -2393,7 +2395,7 @@
       "name": "干金盏花",
       "durationMs": 116000,
       "output": "1",
-      "price": "1010",
+      "price": "2368",
       "inputs": {
         "C53": "3"
       },
@@ -2406,7 +2408,7 @@
       "name": "艾绒",
       "durationMs": 170000,
       "output": "1",
-      "price": "1710",
+      "price": "3600",
       "inputs": {
         "C54": "3"
       },
@@ -2419,7 +2421,7 @@
       "name": "葡萄原汁",
       "durationMs": 181000,
       "output": "1",
-      "price": "2210",
+      "price": "4501",
       "inputs": {
         "C55": "3"
       },
@@ -2432,7 +2434,7 @@
       "name": "麦芽汁",
       "durationMs": 123000,
       "output": "1",
-      "price": "1660",
+      "price": "2805",
       "inputs": {
         "I25": "1",
         "C15": "3"
@@ -2446,7 +2448,7 @@
       "name": "酒花麦芽发酵液",
       "durationMs": 420000,
       "output": "1",
-      "price": "7560",
+      "price": "19476",
       "inputs": {
         "I106": "2",
         "C56": "3"
@@ -2460,7 +2462,7 @@
       "name": "葡萄发酵原液",
       "durationMs": 490000,
       "output": "1",
-      "price": "9300",
+      "price": "21465",
       "inputs": {
         "I105": "3",
         "I02": "2"
@@ -2474,7 +2476,7 @@
       "name": "棉麻混纺坯布",
       "durationMs": 380000,
       "output": "1",
-      "price": "3750",
+      "price": "7560",
       "inputs": {
         "I101": "4",
         "I102": "2"
@@ -2488,7 +2490,7 @@
       "name": "亚麻纤维",
       "durationMs": 74000,
       "output": "1",
-      "price": "360",
+      "price": "1035",
       "inputs": {
         "C57": "3"
       },
@@ -2501,7 +2503,7 @@
       "name": "黄麻纤维",
       "durationMs": 118000,
       "output": "1",
-      "price": "1070",
+      "price": "2464",
       "inputs": {
         "C58": "3"
       },
@@ -2514,7 +2516,7 @@
       "name": "剑麻纤维",
       "durationMs": 156000,
       "output": "1",
-      "price": "2080",
+      "price": "4333",
       "inputs": {
         "C59": "3"
       },
@@ -2527,7 +2529,7 @@
       "name": "茜红染料",
       "durationMs": 214000,
       "output": "1",
-      "price": "2950",
+      "price": "5986",
       "inputs": {
         "C60": "3"
       },
@@ -2540,7 +2542,7 @@
       "name": "靛蓝染料",
       "durationMs": 266000,
       "output": "1",
-      "price": "4080",
+      "price": "10459",
       "inputs": {
         "C61": "3"
       },
@@ -2553,7 +2555,7 @@
       "name": "亚麻坯布",
       "durationMs": 362000,
       "output": "1",
-      "price": "3720",
+      "price": "11477",
       "inputs": {
         "I110": "5",
         "I102": "2"
@@ -2567,7 +2569,7 @@
       "name": "黄麻剑麻绳",
       "durationMs": 414000,
       "output": "1",
-      "price": "8450",
+      "price": "20887",
       "inputs": {
         "I111": "4",
         "I112": "1"
@@ -2581,7 +2583,7 @@
       "name": "靛染亚麻布",
       "durationMs": 588000,
       "output": "1",
-      "price": "22200",
+      "price": "71360",
       "inputs": {
         "I115": "3",
         "I114": "2"
@@ -2595,7 +2597,7 @@
       "name": "干洋甘菊",
       "durationMs": 125000,
       "output": "1",
-      "price": "1100",
+      "price": "2505",
       "inputs": {
         "C62": "3"
       },
@@ -2608,7 +2610,7 @@
       "name": "干薄荷叶",
       "durationMs": 176000,
       "output": "1",
-      "price": "1750",
+      "price": "4567",
       "inputs": {
         "C63": "3"
       },
@@ -2621,7 +2623,7 @@
       "name": "干紫锥菊",
       "durationMs": 250000,
       "output": "1",
-      "price": "3100",
+      "price": "9364",
       "inputs": {
         "C64": "3"
       },
@@ -2634,7 +2636,7 @@
       "name": "干薰衣草",
       "durationMs": 340000,
       "output": "1",
-      "price": "4600",
+      "price": "13038",
       "inputs": {
         "C65": "3"
       },
@@ -2647,7 +2649,7 @@
       "name": "洋甘菊薄荷拼配茶",
       "durationMs": 380000,
       "output": "1",
-      "price": "7200",
+      "price": "20377",
       "inputs": {
         "I118": "2",
         "I119": "2",
@@ -2662,7 +2664,7 @@
       "name": "黑麦麦汁",
       "durationMs": 160000,
       "output": "1",
-      "price": "3350",
+      "price": "4760",
       "inputs": {
         "C66": "3",
         "I106": "1"
@@ -2676,7 +2678,7 @@
       "name": "梨原汁",
       "durationMs": 162000,
       "output": "1",
-      "price": "1850",
+      "price": "2866",
       "inputs": {
         "C67": "3"
       },
@@ -2689,7 +2691,7 @@
       "name": "桑葚原汁",
       "durationMs": 198000,
       "output": "1",
-      "price": "2680",
+      "price": "5016",
       "inputs": {
         "C68": "3"
       },
@@ -2702,7 +2704,7 @@
       "name": "梨发酵液",
       "durationMs": 480000,
       "output": "1",
-      "price": "10900",
+      "price": "20865",
       "inputs": {
         "I124": "3",
         "I105": "1"
@@ -2716,7 +2718,7 @@
       "name": "桑葚发酵原液",
       "durationMs": 580000,
       "output": "1",
-      "price": "20550",
+      "price": "40881",
       "inputs": {
         "I125": "2",
         "I108": "1"
@@ -2730,7 +2732,7 @@
       "name": "全蛋液",
       "durationMs": 18000,
       "output": "1",
-      "price": "469",
+      "price": "342",
       "inputs": {
         "L01": "2"
       },
@@ -2743,7 +2745,7 @@
       "name": "浓缩牛乳",
       "durationMs": 34000,
       "output": "1",
-      "price": "852",
+      "price": "628",
       "inputs": {
         "L02": "2"
       },
@@ -2756,7 +2758,7 @@
       "name": "熟鸭蛋黄",
       "durationMs": 55000,
       "output": "1",
-      "price": "1037",
+      "price": "810",
       "inputs": {
         "L03": "2"
       },
@@ -2769,7 +2771,7 @@
       "name": "山羊奶酪坯",
       "durationMs": 84000,
       "output": "1",
-      "price": "2380",
+      "price": "1883",
       "inputs": {
         "L04": "2"
       },
@@ -2782,7 +2784,7 @@
       "name": "鹅蛋羹底",
       "durationMs": 122000,
       "output": "1",
-      "price": "11145",
+      "price": "8548",
       "inputs": {
         "L05": "2",
         "IL02": "1"
@@ -2796,7 +2798,7 @@
       "name": "猪肉馅",
       "durationMs": 166000,
       "output": "1",
-      "price": "8562",
+      "price": "8722",
       "inputs": {
         "L06": "2",
         "IL01": "1"
@@ -2810,7 +2812,7 @@
       "name": "兔肉丝",
       "durationMs": 225000,
       "output": "1",
-      "price": "17875",
+      "price": "15347",
       "inputs": {
         "L07": "2"
       },
@@ -2823,7 +2825,7 @@
       "name": "羊肉浓汤底",
       "durationMs": 300000,
       "output": "1",
-      "price": "30999",
+      "price": "26684",
       "inputs": {
         "L08": "2"
       },
@@ -2836,7 +2838,7 @@
       "name": "鸭肉肉糜",
       "durationMs": 420000,
       "output": "1",
-      "price": "40574",
+      "price": "46990",
       "inputs": {
         "L09": "2",
         "IL03": "1"
@@ -2850,7 +2852,7 @@
       "name": "牛肉浓缩肉汁",
       "durationMs": 600000,
       "output": "1",
-      "price": "147573",
+      "price": "128877",
       "inputs": {
         "L10": "3",
         "IL01": "1"
@@ -2864,7 +2866,7 @@
       "name": "鲫鱼鱼糜",
       "durationMs": 20000,
       "output": "1",
-      "price": "597",
+      "price": "433",
       "inputs": {
         "F01": "2"
       },
@@ -2877,7 +2879,7 @@
       "name": "鲤鱼肉丁",
       "durationMs": 36000,
       "output": "1",
-      "price": "1037",
+      "price": "759",
       "inputs": {
         "F02": "2"
       },
@@ -2890,7 +2892,7 @@
       "name": "鲈鱼肉片",
       "durationMs": 56000,
       "output": "1",
-      "price": "1230",
+      "price": "947",
       "inputs": {
         "F03": "2"
       },
@@ -2903,7 +2905,7 @@
       "name": "虹鳟鱼糜",
       "durationMs": 88000,
       "output": "1",
-      "price": "2764",
+      "price": "2163",
       "inputs": {
         "F04": "2"
       },
@@ -2916,7 +2918,7 @@
       "name": "鳜鱼鱼汤底",
       "durationMs": 128000,
       "output": "1",
-      "price": "13086",
+      "price": "9907",
       "inputs": {
         "F05": "2",
         "IF02": "1"
@@ -2930,7 +2932,7 @@
       "name": "银鲑肉块",
       "durationMs": 174000,
       "output": "1",
-      "price": "9250",
+      "price": "9638",
       "inputs": {
         "F06": "2"
       },
@@ -2943,7 +2945,7 @@
       "name": "鳗鱼肉泥",
       "durationMs": 238000,
       "output": "1",
-      "price": "20616",
+      "price": "17437",
       "inputs": {
         "F07": "2"
       },
@@ -2956,7 +2958,7 @@
       "name": "真鲷鱼肉茸",
       "durationMs": 318000,
       "output": "1",
-      "price": "35287",
+      "price": "29995",
       "inputs": {
         "F08": "2"
       },
@@ -2969,7 +2971,7 @@
       "name": "大菱鲆鱼冻坯",
       "durationMs": 448000,
       "output": "1",
-      "price": "63443",
+      "price": "61968",
       "inputs": {
         "F09": "2",
         "IF05": "1"
@@ -2983,7 +2985,7 @@
       "name": "鲟鱼浓缩鱼汁",
       "durationMs": 600000,
       "output": "1",
-      "price": "125423",
+      "price": "110227",
       "inputs": {
         "F10": "2",
         "IF05": "1"
@@ -3041,7 +3043,7 @@
       "name": "玉米脆饼",
       "durationMs": 23000,
       "output": "1",
-      "price": "94",
+      "price": "105",
       "inputs": {
         "I04": "2",
         "I02": "1"
@@ -3056,7 +3058,7 @@
       "name": "苹果派",
       "durationMs": 26000,
       "output": "1",
-      "price": "98",
+      "price": "113",
       "inputs": {
         "I01": "2",
         "I05": "1"
@@ -3071,7 +3073,7 @@
       "name": "双莓曲奇",
       "durationMs": 29000,
       "output": "1",
-      "price": "148",
+      "price": "158",
       "inputs": {
         "I03": "1",
         "I06": "1"
@@ -3086,7 +3088,7 @@
       "name": "茶酥",
       "durationMs": 32000,
       "output": "1",
-      "price": "105",
+      "price": "130",
       "inputs": {
         "I07": "1",
         "I01": "2"
@@ -3101,7 +3103,7 @@
       "name": "桂花茶糕",
       "durationMs": 34000,
       "output": "1",
-      "price": "213",
+      "price": "232",
       "inputs": {
         "I08": "1",
         "I07": "1"
@@ -3116,7 +3118,7 @@
       "name": "可可蛋糕",
       "durationMs": 37000,
       "output": "1",
-      "price": "338",
+      "price": "381",
       "inputs": {
         "I09": "2",
         "I01": "1"
@@ -3131,7 +3133,7 @@
       "name": "香草巧克力",
       "durationMs": 40000,
       "output": "1",
-      "price": "534",
+      "price": "581",
       "inputs": {
         "I10": "1",
         "I09": "2"
@@ -3146,7 +3148,7 @@
       "name": "樱桃夹心酥",
       "durationMs": 44000,
       "output": "1",
-      "price": "538",
+      "price": "537",
       "inputs": {
         "I11": "2",
         "I01": "1"
@@ -3161,7 +3163,7 @@
       "name": "栗子桂花蛋糕",
       "durationMs": 47000,
       "output": "1",
-      "price": "810",
+      "price": "1155",
       "inputs": {
         "I12": "2",
         "I08": "1"
@@ -3176,7 +3178,7 @@
       "name": "白玉团子",
       "durationMs": 50000,
       "output": "1",
-      "price": "722",
+      "price": "1113",
       "inputs": {
         "I13": "2",
         "I02": "1"
@@ -3191,7 +3193,7 @@
       "name": "乡野饭团",
       "durationMs": 53000,
       "output": "1",
-      "price": "1203",
+      "price": "1831",
       "inputs": {
         "I14": "2",
         "I15": "1"
@@ -3206,7 +3208,7 @@
       "name": "焙麦茶",
       "durationMs": 57000,
       "output": "1",
-      "price": "877",
+      "price": "1316",
       "inputs": {
         "I15": "2",
         "I02": "1"
@@ -3221,7 +3223,7 @@
       "name": "荞麦薄脆",
       "durationMs": 60000,
       "output": "1",
-      "price": "969",
+      "price": "1585",
       "inputs": {
         "I16": "2",
         "I02": "1"
@@ -3236,7 +3238,7 @@
       "name": "小米蒸糕",
       "durationMs": 64000,
       "output": "1",
-      "price": "1073",
+      "price": "1544",
       "inputs": {
         "I17": "2",
         "I01": "1"
@@ -3251,7 +3253,7 @@
       "name": "红豆豆乳冻",
       "durationMs": 67000,
       "output": "1",
-      "price": "1867",
+      "price": "2996",
       "inputs": {
         "I18": "2",
         "I19": "1"
@@ -3266,7 +3268,7 @@
       "name": "红豆大福",
       "durationMs": 70000,
       "output": "1",
-      "price": "2058",
+      "price": "3168",
       "inputs": {
         "I13": "2",
         "I19": "2"
@@ -3281,7 +3283,7 @@
       "name": "烤薯软饼",
       "durationMs": 74000,
       "output": "1",
-      "price": "1428",
+      "price": "2052",
       "inputs": {
         "I20": "2",
         "I01": "1"
@@ -3296,7 +3298,7 @@
       "name": "芋香小馒头",
       "durationMs": 77000,
       "output": "1",
-      "price": "1545",
+      "price": "2461",
       "inputs": {
         "I21": "2",
         "I01": "2"
@@ -3311,7 +3313,7 @@
       "name": "桂香藕羹",
       "durationMs": 81000,
       "output": "1",
-      "price": "1788",
+      "price": "2679",
       "inputs": {
         "I22": "2",
         "I08": "1"
@@ -3326,7 +3328,7 @@
       "name": "糯米御萩",
       "durationMs": 83000,
       "output": "1",
-      "price": "1729",
+      "price": "2856",
       "inputs": {
         "I23": "2",
         "I19": "1"
@@ -3341,7 +3343,7 @@
       "name": "玄米茶",
       "durationMs": 87000,
       "output": "1",
-      "price": "1240",
+      "price": "2034",
       "inputs": {
         "I24": "2",
         "I07": "1"
@@ -3356,7 +3358,7 @@
       "name": "麦香豆乳饮",
       "durationMs": 90000,
       "output": "1",
-      "price": "2624",
+      "price": "4022",
       "inputs": {
         "I25": "2",
         "I18": "1"
@@ -3371,7 +3373,7 @@
       "name": "荞麦切面",
       "durationMs": 95000,
       "output": "1",
-      "price": "1944",
+      "price": "3867",
       "inputs": {
         "I26": "3",
         "I16": "1"
@@ -3386,7 +3388,7 @@
       "name": "小米焦糖棒",
       "durationMs": 100000,
       "output": "1",
-      "price": "1139",
+      "price": "2121",
       "inputs": {
         "I27": "2",
         "I02": "1"
@@ -3401,7 +3403,7 @@
       "name": "黄豆粉藕饼",
       "durationMs": 104000,
       "output": "1",
-      "price": "2608",
+      "price": "4291",
       "inputs": {
         "I28": "2",
         "I22": "1"
@@ -3416,7 +3418,7 @@
       "name": "豆乳小方",
       "durationMs": 109000,
       "output": "1",
-      "price": "4472",
+      "price": "7005",
       "inputs": {
         "I29": "2",
         "I18": "1"
@@ -3431,7 +3433,7 @@
       "name": "红豆汤年糕",
       "durationMs": 113000,
       "output": "1",
-      "price": "3115",
+      "price": "5093",
       "inputs": {
         "I30": "2",
         "I23": "2"
@@ -3446,7 +3448,7 @@
       "name": "蜜薯烤挞",
       "durationMs": 117000,
       "output": "1",
-      "price": "1135",
+      "price": "1811",
       "inputs": {
         "I31": "1",
         "I01": "2",
@@ -3462,7 +3464,7 @@
       "name": "芋香糯米布丁",
       "durationMs": 122000,
       "output": "1",
-      "price": "4584",
+      "price": "7402",
       "inputs": {
         "I32": "2",
         "I23": "2",
@@ -3478,7 +3480,7 @@
       "name": "藕蜜脆饼",
       "durationMs": 126000,
       "output": "1",
-      "price": "6163",
+      "price": "9037",
       "inputs": {
         "I33": "2",
         "I24": "2",
@@ -3494,7 +3496,7 @@
       "name": "五谷烤饭团",
       "durationMs": 131000,
       "output": "1",
-      "price": "7220",
+      "price": "10658",
       "inputs": {
         "I34": "3",
         "I15": "1",
@@ -3510,7 +3512,7 @@
       "name": "荞麦红豆双层铜锣烧",
       "durationMs": 135000,
       "output": "1",
-      "price": "2688",
+      "price": "4826",
       "inputs": {
         "I26": "2",
         "I19": "2",
@@ -3526,7 +3528,7 @@
       "name": "苹果红薯蒸饼",
       "durationMs": 139000,
       "output": "1",
-      "price": "2548",
+      "price": "3761",
       "inputs": {
         "I05": "1",
         "I20": "2",
@@ -3542,7 +3544,7 @@
       "name": "焙米蓝莓冻",
       "durationMs": 144000,
       "output": "1",
-      "price": "4628",
+      "price": "7303",
       "inputs": {
         "I24": "1",
         "I06": "2",
@@ -3558,7 +3560,7 @@
       "name": "可可黄豆夹心",
       "durationMs": 149000,
       "output": "1",
-      "price": "2118",
+      "price": "3569",
       "inputs": {
         "I09": "2",
         "I28": "2",
@@ -3574,7 +3576,7 @@
       "name": "桂花红豆粥",
       "durationMs": 153000,
       "output": "1",
-      "price": "2973",
+      "price": "4786",
       "inputs": {
         "I30": "2",
         "I14": "2",
@@ -3590,7 +3592,7 @@
       "name": "麦香桂花藕糕",
       "durationMs": 158000,
       "output": "1",
-      "price": "4215",
+      "price": "6476",
       "inputs": {
         "I22": "2",
         "I25": "2",
@@ -3606,7 +3608,7 @@
       "name": "芋香荞麦酥",
       "durationMs": 162000,
       "output": "1",
-      "price": "3390",
+      "price": "6142",
       "inputs": {
         "I21": "2",
         "I26": "2",
@@ -3622,7 +3624,7 @@
       "name": "蜜薯米脆伴手盒",
       "durationMs": 167000,
       "output": "1",
-      "price": "3367",
+      "price": "5730",
       "inputs": {
         "I31": "1",
         "I24": "2",
@@ -3638,7 +3640,7 @@
       "name": "红豆五谷御饭",
       "durationMs": 171000,
       "output": "1",
-      "price": "7014",
+      "price": "10700",
       "inputs": {
         "I30": "2",
         "I34": "2",
@@ -3654,7 +3656,7 @@
       "name": "栗子芋香双层羊羹",
       "durationMs": 176000,
       "output": "1",
-      "price": "4445",
+      "price": "7031",
       "inputs": {
         "I12": "2",
         "I32": "2",
@@ -3670,7 +3672,7 @@
       "name": "岭野蜜藕米饼",
       "durationMs": 180000,
       "output": "1",
-      "price": "8833",
+      "price": "12756",
       "inputs": {
         "I33": "2",
         "I34": "2",
@@ -3686,7 +3688,7 @@
       "name": "岭野丰收御膳盒",
       "durationMs": 184000,
       "output": "1",
-      "price": "7140",
+      "price": "11340",
       "inputs": {
         "I34": "1",
         "I30": "2",
@@ -3702,7 +3704,7 @@
       "name": "砂梨蒸糕",
       "durationMs": 189000,
       "output": "1",
-      "price": "1914",
+      "price": "4908",
       "inputs": {
         "I35": "2",
         "I04": "2",
@@ -3718,7 +3720,7 @@
       "name": "蜜梨小酥",
       "durationMs": 193000,
       "output": "1",
-      "price": "2112",
+      "price": "5192",
       "inputs": {
         "I36": "2",
         "I01": "2",
@@ -3734,7 +3736,7 @@
       "name": "砂梨白桃果羹",
       "durationMs": 198000,
       "output": "1",
-      "price": "3862",
+      "price": "9349",
       "inputs": {
         "I35": "2",
         "I37": "2",
@@ -3750,7 +3752,7 @@
       "name": "白桃软饼",
       "durationMs": 202000,
       "output": "1",
-      "price": "2067",
+      "price": "5142",
       "inputs": {
         "I37": "2",
         "I01": "2",
@@ -3766,7 +3768,7 @@
       "name": "白桃冰露",
       "durationMs": 209000,
       "output": "1",
-      "price": "5099",
+      "price": "12899",
       "inputs": {
         "I38": "2",
         "I37": "2",
@@ -3782,7 +3784,7 @@
       "name": "白桃茶软糖",
       "durationMs": 217000,
       "output": "1",
-      "price": "3568",
+      "price": "9121",
       "inputs": {
         "I38": "2",
         "I07": "2",
@@ -3798,7 +3800,7 @@
       "name": "蜜柑玉米团",
       "durationMs": 224000,
       "output": "1",
-      "price": "2309",
+      "price": "5511",
       "inputs": {
         "I39": "2",
         "I04": "2",
@@ -3814,7 +3816,7 @@
       "name": "蜜柑晶冻",
       "durationMs": 232000,
       "output": "1",
-      "price": "13667",
+      "price": "26409",
       "inputs": {
         "I40": "3",
         "I39": "2",
@@ -3830,7 +3832,7 @@
       "name": "蜜柑白桃双色晶冻",
       "durationMs": 239000,
       "output": "1",
-      "price": "12698",
+      "price": "26936",
       "inputs": {
         "I40": "2",
         "I38": "2",
@@ -3846,7 +3848,7 @@
       "name": "甜柿蒸糕",
       "durationMs": 246000,
       "output": "1",
-      "price": "2447",
+      "price": "5797",
       "inputs": {
         "I41": "2",
         "I01": "2",
@@ -3862,7 +3864,7 @@
       "name": "柿干茶糕",
       "durationMs": 254000,
       "output": "1",
-      "price": "3833",
+      "price": "6858",
       "inputs": {
         "I42": "2",
         "I07": "2",
@@ -3878,7 +3880,7 @@
       "name": "双柿茶香夹心饼",
       "durationMs": 261000,
       "output": "1",
-      "price": "6025",
+      "price": "11664",
       "inputs": {
         "I41": "2",
         "I42": "2",
@@ -3894,7 +3896,7 @@
       "name": "青梅酸甜糖",
       "durationMs": 268000,
       "output": "1",
-      "price": "3014",
+      "price": "6690",
       "inputs": {
         "I43": "2",
         "I02": "3",
@@ -3910,7 +3912,7 @@
       "name": "青梅蜜饯漆盒",
       "durationMs": 275000,
       "output": "1",
-      "price": "5300",
+      "price": "11587",
       "inputs": {
         "I44": "2",
         "I43": "2",
@@ -3926,7 +3928,7 @@
       "name": "青梅砂梨冰饮",
       "durationMs": 282000,
       "output": "1",
-      "price": "6298",
+      "price": "16569",
       "inputs": {
         "I43": "2",
         "I35": "2",
@@ -3942,7 +3944,7 @@
       "name": "金柑蜜饼",
       "durationMs": 290000,
       "output": "1",
-      "price": "11220",
+      "price": "20263",
       "inputs": {
         "I45": "2",
         "I46": "2",
@@ -3958,7 +3960,7 @@
       "name": "金柑茶巧克力",
       "durationMs": 297000,
       "output": "1",
-      "price": "4715",
+      "price": "9883",
       "inputs": {
         "I46": "2",
         "I07": "2",
@@ -3974,7 +3976,7 @@
       "name": "双柑琥珀晶冻",
       "durationMs": 305000,
       "output": "1",
-      "price": "20610",
+      "price": "39504",
       "inputs": {
         "I45": "2",
         "I40": "3",
@@ -3990,7 +3992,7 @@
       "name": "无花果蒸团",
       "durationMs": 312000,
       "output": "1",
-      "price": "5509",
+      "price": "15818",
       "inputs": {
         "I47": "3",
         "I04": "2",
@@ -4006,7 +4008,7 @@
       "name": "无花果茶饼",
       "durationMs": 319000,
       "output": "1",
-      "price": "7160",
+      "price": "16860",
       "inputs": {
         "I48": "3",
         "I07": "2",
@@ -4022,7 +4024,7 @@
       "name": "无花果柿干夹层茶糕",
       "durationMs": 326000,
       "output": "1",
-      "price": "12987",
+      "price": "29763",
       "inputs": {
         "I47": "3",
         "I48": "2",
@@ -4038,7 +4040,7 @@
       "name": "香柚薄酥",
       "durationMs": 333000,
       "output": "1",
-      "price": "5995",
+      "price": "15145",
       "inputs": {
         "I49": "3",
         "I01": "3",
@@ -4054,7 +4056,7 @@
       "name": "香柚桂花冻",
       "durationMs": 341000,
       "output": "1",
-      "price": "32007",
+      "price": "53057",
       "inputs": {
         "I50": "3",
         "I49": "2",
@@ -4070,7 +4072,7 @@
       "name": "香柚青梅双馅酥",
       "durationMs": 348000,
       "output": "1",
-      "price": "22103",
+      "price": "47239",
       "inputs": {
         "I55": "3",
         "I44": "2",
@@ -4086,7 +4088,7 @@
       "name": "枇杷凉羹",
       "durationMs": 355000,
       "output": "1",
-      "price": "7199",
+      "price": "19174",
       "inputs": {
         "I51": "3",
         "I22": "2",
@@ -4102,7 +4104,7 @@
       "name": "琥珀枇杷蜜果蛋糕",
       "durationMs": 363000,
       "output": "1",
-      "price": "18063",
+      "price": "39318",
       "inputs": {
         "I52": "3",
         "I51": "2",
@@ -4118,7 +4120,7 @@
       "name": "枇杷蜜柑果冻",
       "durationMs": 370000,
       "output": "1",
-      "price": "17313",
+      "price": "38049",
       "inputs": {
         "I51": "2",
         "I40": "3",
@@ -4134,7 +4136,7 @@
       "name": "花梨果酱塔",
       "durationMs": 377000,
       "output": "1",
-      "price": "4105",
+      "price": "12583",
       "inputs": {
         "I53": "2",
         "I01": "3",
@@ -4150,7 +4152,7 @@
       "name": "花梨冰露",
       "durationMs": 384000,
       "output": "1",
-      "price": "14130",
+      "price": "36756",
       "inputs": {
         "I54": "3",
         "I53": "2",
@@ -4166,7 +4168,7 @@
       "name": "花梨枇杷双色晶冻",
       "durationMs": 394000,
       "output": "1",
-      "price": "63808",
+      "price": "99958",
       "inputs": {
         "I56": "2",
         "I52": "3",
@@ -4182,7 +4184,7 @@
       "name": "香柚金柑蜜果礼糕",
       "durationMs": 405000,
       "output": "1",
-      "price": "18635",
+      "price": "35359",
       "inputs": {
         "I49": "2",
         "I45": "3",
@@ -4198,7 +4200,7 @@
       "name": "花梨白桃双果花挞",
       "durationMs": 415000,
       "output": "1",
-      "price": "10113",
+      "price": "27969",
       "inputs": {
         "I53": "2",
         "I37": "3",
@@ -4214,7 +4216,7 @@
       "name": "花梨枇杷琥珀果盅",
       "durationMs": 425000,
       "output": "1",
-      "price": "17533",
+      "price": "46395",
       "inputs": {
         "I51": "2",
         "I54": "3",
@@ -4230,7 +4232,7 @@
       "name": "四时果园晶冻礼盒",
       "durationMs": 435000,
       "output": "1",
-      "price": "89042",
+      "price": "136730",
       "inputs": {
         "I56": "2",
         "I55": "3",
@@ -4246,7 +4248,7 @@
       "name": "炙茄烤饼",
       "durationMs": 445000,
       "output": "1",
-      "price": "19229",
+      "price": "47386",
       "inputs": {
         "I57": "3",
         "I01": "3",
@@ -4262,7 +4264,7 @@
       "name": "茄泥馅饼",
       "durationMs": 455000,
       "output": "1",
-      "price": "23640",
+      "price": "56328",
       "inputs": {
         "I58": "3",
         "I57": "2",
@@ -4278,7 +4280,7 @@
       "name": "番茄薄脆",
       "durationMs": 465000,
       "output": "1",
-      "price": "18677",
+      "price": "42613",
       "inputs": {
         "I59": "3",
         "I60": "2",
@@ -4294,7 +4296,7 @@
       "name": "番茄干面包",
       "durationMs": 475000,
       "output": "1",
-      "price": "22264",
+      "price": "48074",
       "inputs": {
         "I60": "3",
         "I59": "2",
@@ -4310,7 +4312,7 @@
       "name": "炙椒玉米饼",
       "durationMs": 485000,
       "output": "1",
-      "price": "14672",
+      "price": "35324",
       "inputs": {
         "I61": "3",
         "I62": "2",
@@ -4326,7 +4328,7 @@
       "name": "双椒炙烤手卷",
       "durationMs": 495000,
       "output": "1",
-      "price": "56189",
+      "price": "131597",
       "inputs": {
         "I62": "3",
         "I72": "3",
@@ -4342,7 +4344,7 @@
       "name": "南瓜蒸糕",
       "durationMs": 506000,
       "output": "1",
-      "price": "9890",
+      "price": "34261",
       "inputs": {
         "I63": "3",
         "I01": "3",
@@ -4358,7 +4360,7 @@
       "name": "南瓜饼干",
       "durationMs": 515000,
       "output": "1",
-      "price": "11825",
+      "price": "35697",
       "inputs": {
         "I64": "3",
         "I01": "3",
@@ -4374,7 +4376,7 @@
       "name": "卷心菜煎饼",
       "durationMs": 526000,
       "output": "1",
-      "price": "5747",
+      "price": "24930",
       "inputs": {
         "I65": "2",
         "I01": "3",
@@ -4390,7 +4392,7 @@
       "name": "酸菜卷心菜双层夹饼",
       "durationMs": 536000,
       "output": "1",
-      "price": "29703",
+      "price": "90842",
       "inputs": {
         "I66": "2",
         "I65": "3",
@@ -4406,7 +4408,7 @@
       "name": "烤葱面卷",
       "durationMs": 545000,
       "output": "1",
-      "price": "36764",
+      "price": "118402",
       "inputs": {
         "I67": "2",
         "I68": "3",
@@ -4422,7 +4424,7 @@
       "name": "葱泥玉米脆片",
       "durationMs": 556000,
       "output": "1",
-      "price": "29677",
+      "price": "99288",
       "inputs": {
         "I68": "2",
         "I04": "3",
@@ -4438,7 +4440,7 @@
       "name": "紫苏葱香脆薄饼",
       "durationMs": 566000,
       "output": "1",
-      "price": "37284",
+      "price": "119674",
       "inputs": {
         "I69": "2",
         "I68": "3",
@@ -4454,7 +4456,7 @@
       "name": "紫苏甜冻",
       "durationMs": 576000,
       "output": "1",
-      "price": "22663",
+      "price": "89770",
       "inputs": {
         "I70": "3",
         "I04": "3",
@@ -4470,7 +4472,7 @@
       "name": "山椒薄脆饼",
       "durationMs": 586000,
       "output": "1",
-      "price": "25414",
+      "price": "70700",
       "inputs": {
         "I71": "2",
         "I04": "3",
@@ -4486,7 +4488,7 @@
       "name": "山椒双蔬陶盘",
       "durationMs": 596000,
       "output": "1",
-      "price": "55035",
+      "price": "148023",
       "inputs": {
         "I72": "3",
         "I57": "3",
@@ -4502,7 +4504,7 @@
       "name": "白芝麻油酥饼",
       "durationMs": 606000,
       "output": "1",
-      "price": "18154",
+      "price": "48414",
       "inputs": {
         "I73": "3",
         "I01": "3",
@@ -4518,7 +4520,7 @@
       "name": "白芝麻酱夹心饼",
       "durationMs": 616000,
       "output": "1",
-      "price": "12132",
+      "price": "45510",
       "inputs": {
         "I74": "3",
         "I01": "3",
@@ -4534,7 +4536,7 @@
       "name": "番茄炙茄烤蔬披萨",
       "durationMs": 627000,
       "output": "1",
-      "price": "87807",
+      "price": "148894",
       "inputs": {
         "I75": "3",
         "I60": "3",
@@ -4550,7 +4552,7 @@
       "name": "葱香面饼",
       "durationMs": 636000,
       "output": "1",
-      "price": "65669",
+      "price": "186709",
       "inputs": {
         "I76": "2",
         "I01": "2",
@@ -4567,7 +4569,7 @@
       "name": "紫苏芝麻双层烤卷",
       "durationMs": 648000,
       "output": "1",
-      "price": "58670",
+      "price": "155676",
       "inputs": {
         "I77": "2",
         "I01": "2",
@@ -4584,7 +4586,7 @@
       "name": "山椒南瓜夹心馅饼",
       "durationMs": 660000,
       "output": "1",
-      "price": "44425",
+      "price": "121789",
       "inputs": {
         "I78": "2",
         "I01": "2",
@@ -4601,7 +4603,7 @@
       "name": "番茄炙茄陶盅",
       "durationMs": 671000,
       "output": "1",
-      "price": "40108",
+      "price": "98230",
       "inputs": {
         "I59": "2",
         "I57": "2",
@@ -4618,7 +4620,7 @@
       "name": "紫苏腌卷心菜",
       "durationMs": 683000,
       "output": "1",
-      "price": "48290",
+      "price": "143142",
       "inputs": {
         "I66": "2",
         "I69": "2",
@@ -4635,7 +4637,7 @@
       "name": "葱椒卷心菜手工炒面",
       "durationMs": 695000,
       "output": "1",
-      "price": "39410",
+      "price": "107942",
       "inputs": {
         "I76": "2",
         "I65": "2",
@@ -4652,7 +4654,7 @@
       "name": "金瓜芝麻双层方糕",
       "durationMs": 707000,
       "output": "1",
-      "price": "26378",
+      "price": "87473",
       "inputs": {
         "I63": "2",
         "I74": "2",
@@ -4669,7 +4671,7 @@
       "name": "炙葱番茄手工宽面",
       "durationMs": 719000,
       "output": "1",
-      "price": "28352",
+      "price": "78189",
       "inputs": {
         "I59": "2",
         "I67": "2",
@@ -4686,7 +4688,7 @@
       "name": "山椒炙茄宽面",
       "durationMs": 730000,
       "output": "1",
-      "price": "30925",
+      "price": "88729",
       "inputs": {
         "I57": "2",
         "I71": "2",
@@ -4703,7 +4705,7 @@
       "name": "紫苏夹心玉米饼",
       "durationMs": 742000,
       "output": "1",
-      "price": "17394",
+      "price": "76278",
       "inputs": {
         "I70": "2",
         "I69": "2",
@@ -4720,7 +4722,7 @@
       "name": "芝麻可可夹层方酥",
       "durationMs": 754000,
       "output": "1",
-      "price": "26378",
+      "price": "78593",
       "inputs": {
         "I74": "2",
         "I09": "2",
@@ -4737,7 +4739,7 @@
       "name": "桂花紫苏茶冻",
       "durationMs": 766000,
       "output": "1",
-      "price": "20978",
+      "price": "87899",
       "inputs": {
         "I08": "2",
         "I70": "2",
@@ -4754,7 +4756,7 @@
       "name": "葱椒芝麻千层酥",
       "durationMs": 778000,
       "output": "1",
-      "price": "119820",
+      "price": "284834",
       "inputs": {
         "I76": "2",
         "I72": "2",
@@ -4771,7 +4773,7 @@
       "name": "山椒紫苏御烤蔬盅",
       "durationMs": 789000,
       "output": "1",
-      "price": "135945",
+      "price": "289986",
       "inputs": {
         "I75": "2",
         "I77": "2",
@@ -4788,7 +4790,7 @@
       "name": "双馅金瓜芝麻酥",
       "durationMs": 801000,
       "output": "1",
-      "price": "52385",
+      "price": "151803",
       "inputs": {
         "I78": "2",
         "I74": "2",
@@ -4805,7 +4807,7 @@
       "name": "山野香辛御膳盒",
       "durationMs": 813000,
       "output": "1",
-      "price": "153397",
+      "price": "313639",
       "inputs": {
         "I78": "2",
         "I77": "2",
@@ -4822,7 +4824,7 @@
       "name": "菠萝冰露",
       "durationMs": 825000,
       "output": "1",
-      "price": "41988",
+      "price": "129476",
       "inputs": {
         "I79": "2",
         "I02": "2",
@@ -4839,7 +4841,7 @@
       "name": "菠萝果肉挞",
       "durationMs": 837000,
       "output": "1",
-      "price": "35317",
+      "price": "115734",
       "inputs": {
         "I80": "2",
         "I01": "2",
@@ -4856,7 +4858,7 @@
       "name": "香蕉松饼",
       "durationMs": 848000,
       "output": "1",
-      "price": "9735",
+      "price": "59293",
       "inputs": {
         "I81": "2",
         "I01": "2",
@@ -4873,7 +4875,7 @@
       "name": "焦糖蜜蕉金脆片",
       "durationMs": 860000,
       "output": "1",
-      "price": "37329",
+      "price": "163210",
       "inputs": {
         "I82": "2",
         "I02": "2",
@@ -4890,7 +4892,7 @@
       "name": "青柠冰糕",
       "durationMs": 872000,
       "output": "1",
-      "price": "48759",
+      "price": "193351",
       "inputs": {
         "I83": "2",
         "I02": "2",
@@ -4907,7 +4909,7 @@
       "name": "青柠皮曲奇",
       "durationMs": 884000,
       "output": "1",
-      "price": "39879",
+      "price": "182250",
       "inputs": {
         "I84": "2",
         "I01": "2",
@@ -4924,7 +4926,7 @@
       "name": "椰奶寒天冻",
       "durationMs": 895000,
       "output": "1",
-      "price": "52232",
+      "price": "213582",
       "inputs": {
         "I85": "2",
         "I02": "2",
@@ -4941,7 +4943,7 @@
       "name": "椰蓉脆饼",
       "durationMs": 907000,
       "output": "1",
-      "price": "42800",
+      "price": "189494",
       "inputs": {
         "I86": "2",
         "I01": "2",
@@ -4958,7 +4960,7 @@
       "name": "金煌芒果双层冻糕",
       "durationMs": 919000,
       "output": "1",
-      "price": "96803",
+      "price": "374692",
       "inputs": {
         "I87": "2",
         "I88": "2",
@@ -4975,7 +4977,7 @@
       "name": "芒果酥派",
       "durationMs": 930000,
       "output": "1",
-      "price": "46723",
+      "price": "194759",
       "inputs": {
         "I88": "2",
         "I01": "2",
@@ -4992,7 +4994,7 @@
       "name": "百香果茶冻",
       "durationMs": 944000,
       "output": "1",
-      "price": "69449",
+      "price": "288326",
       "inputs": {
         "I89": "2",
         "I07": "2",
@@ -5009,7 +5011,7 @@
       "name": "紫玉百香果叠薄脆",
       "durationMs": 957000,
       "output": "1",
-      "price": "90699",
+      "price": "366836",
       "inputs": {
         "I90": "2",
         "I01": "2",
@@ -5026,7 +5028,7 @@
       "name": "火龙果冰沙",
       "durationMs": 971000,
       "output": "1",
-      "price": "90157",
+      "price": "366395",
       "inputs": {
         "I91": "2",
         "I02": "3",
@@ -5043,7 +5045,7 @@
       "name": "胭脂龙果椰奶晶冻",
       "durationMs": 984000,
       "output": "1",
-      "price": "117415",
+      "price": "458424",
       "inputs": {
         "I92": "2",
         "I85": "3",
@@ -5060,7 +5062,7 @@
       "name": "夏威夷果糖脆",
       "durationMs": 998000,
       "output": "1",
-      "price": "72545",
+      "price": "261838",
       "inputs": {
         "I93": "2",
         "I02": "3",
@@ -5077,7 +5079,7 @@
       "name": "金壳果仁夹心酥",
       "durationMs": 1011000,
       "output": "1",
-      "price": "101529",
+      "price": "328095",
       "inputs": {
         "I94": "2",
         "I01": "3",
@@ -5094,7 +5096,7 @@
       "name": "斑斓蒸糕",
       "durationMs": 1024000,
       "output": "1",
-      "price": "85214",
+      "price": "323492",
       "inputs": {
         "I95": "2",
         "I01": "3",
@@ -5111,7 +5113,7 @@
       "name": "斑斓椰香糯团",
       "durationMs": 1038000,
       "output": "1",
-      "price": "85527",
+      "price": "342302",
       "inputs": {
         "I96": "2",
         "I85": "3",
@@ -5128,7 +5130,7 @@
       "name": "翡翠青柠菠萝叠酥",
       "durationMs": 1052000,
       "output": "1",
-      "price": "160634",
+      "price": "470428",
       "inputs": {
         "I97": "2",
         "I01": "3",
@@ -5145,7 +5147,7 @@
       "name": "椰乳香蕉布丁",
       "durationMs": 1065000,
       "output": "1",
-      "price": "105648",
+      "price": "395645",
       "inputs": {
         "I98": "2",
         "I81": "3",
@@ -5162,7 +5164,7 @@
       "name": "金煌芒果百香双馅派",
       "durationMs": 1078000,
       "output": "1",
-      "price": "186682",
+      "price": "592660",
       "inputs": {
         "I99": "2",
         "I01": "3",
@@ -5179,7 +5181,7 @@
       "name": "翡翠斑斓椰乳铜锣烧",
       "durationMs": 1091000,
       "output": "1",
-      "price": "327229",
+      "price": "885489",
       "inputs": {
         "I100": "2",
         "I01": "3",
@@ -5196,7 +5198,7 @@
       "name": "菠萝椰蓉酥",
       "durationMs": 1105000,
       "output": "1",
-      "price": "75499",
+      "price": "292374",
       "inputs": {
         "I80": "2",
         "I86": "3",
@@ -5213,7 +5215,7 @@
       "name": "翡翠青柠金芒雪酪",
       "durationMs": 1119000,
       "output": "1",
-      "price": "108405",
+      "price": "441637",
       "inputs": {
         "I83": "2",
         "I87": "3",
@@ -5230,7 +5232,7 @@
       "name": "果仁香蕉能量棒",
       "durationMs": 1132000,
       "output": "1",
-      "price": "57758",
+      "price": "283459",
       "inputs": {
         "I82": "2",
         "I93": "3",
@@ -5247,7 +5249,7 @@
       "name": "南岛热带双果冰杯",
       "durationMs": 1145000,
       "output": "1",
-      "price": "100518",
+      "price": "432035",
       "inputs": {
         "I91": "2",
         "I89": "3",
@@ -5264,7 +5266,7 @@
       "name": "椰乳芒果冻",
       "durationMs": 1159000,
       "output": "1",
-      "price": "136188",
+      "price": "497673",
       "inputs": {
         "I98": "2",
         "I88": "3",
@@ -5281,7 +5283,7 @@
       "name": "翡翠斑斓果仁夹心饼",
       "durationMs": 1173000,
       "output": "1",
-      "price": "406167",
+      "price": "1086304",
       "inputs": {
         "I100": "2",
         "I94": "3",
@@ -5298,7 +5300,7 @@
       "name": "青柠可可夹心酥",
       "durationMs": 1186000,
       "output": "1",
-      "price": "52999",
+      "price": "258226",
       "inputs": {
         "I84": "3",
         "I09": "3",
@@ -5315,7 +5317,7 @@
       "name": "桂花菠萝琥珀凉糕",
       "durationMs": 1199000,
       "output": "1",
-      "price": "167659",
+      "price": "476366",
       "inputs": {
         "I97": "3",
         "I08": "3",
@@ -5332,7 +5334,7 @@
       "name": "胭脂龙果金芒双层冻",
       "durationMs": 1213000,
       "output": "1",
-      "price": "385834",
+      "price": "1192325",
       "inputs": {
         "I92": "3",
         "I99": "3",
@@ -5349,7 +5351,7 @@
       "name": "翡翠斑斓椰乳果仁礼糕",
       "durationMs": 1226000,
       "output": "1",
-      "price": "404397",
+      "price": "1014648",
       "inputs": {
         "I100": "3",
         "I93": "3",
@@ -5366,7 +5368,7 @@
       "name": "紫玉百香果椰乳舒芙蕾",
       "durationMs": 1240000,
       "output": "1",
-      "price": "361107",
+      "price": "1107950",
       "inputs": {
         "I99": "3",
         "I98": "3",
@@ -5383,7 +5385,7 @@
       "name": "栗子金壳果仁斑斓卷",
       "durationMs": 1253000,
       "output": "1",
-      "price": "457350",
+      "price": "1121335",
       "inputs": {
         "I12": "3",
         "I94": "3",
@@ -5400,7 +5402,7 @@
       "name": "南岛珍果千层",
       "durationMs": 1266000,
       "output": "1",
-      "price": "760065",
+      "price": "1955822",
       "inputs": {
         "I100": "3",
         "I99": "3",
@@ -5417,7 +5419,7 @@
       "name": "棉布巾盒",
       "durationMs": 150000,
       "output": "1",
-      "price": "1180",
+      "price": "1371",
       "inputs": {
         "I101": "4"
       },
@@ -5431,7 +5433,7 @@
       "name": "苎麻线团装",
       "durationMs": 260000,
       "output": "1",
-      "price": "2900",
+      "price": "5778",
       "inputs": {
         "I102": "3",
         "I101": "1"
@@ -5446,7 +5448,7 @@
       "name": "金盏花香包",
       "durationMs": 330000,
       "output": "1",
-      "price": "7200",
+      "price": "12354",
       "inputs": {
         "I103": "3",
         "I101": "4",
@@ -5462,7 +5464,7 @@
       "name": "艾草暖香包",
       "durationMs": 480000,
       "output": "1",
-      "price": "13800",
+      "price": "26040",
       "inputs": {
         "I104": "4",
         "I102": "4",
@@ -5478,7 +5480,7 @@
       "name": "棉麻手织桌旗礼盒",
       "durationMs": 1010000,
       "output": "1",
-      "price": "43000",
+      "price": "76293",
       "inputs": {
         "I109": "6",
         "I102": "6",
@@ -5494,7 +5496,7 @@
       "name": "苹果麦酿",
       "durationMs": 420000,
       "output": "1",
-      "price": "9800",
+      "price": "15546",
       "inputs": {
         "I05": "8",
         "I106": "3",
@@ -5511,7 +5513,7 @@
       "name": "酒花小麦啤酒",
       "durationMs": 840000,
       "output": "1",
-      "price": "35300",
+      "price": "73301",
       "inputs": {
         "I107": "3",
         "I106": "2",
@@ -5527,7 +5529,7 @@
       "name": "山梅麦酿礼瓶",
       "durationMs": 980000,
       "output": "1",
-      "price": "48400",
+      "price": "119721",
       "inputs": {
         "I107": "4",
         "I44": "5",
@@ -5544,7 +5546,7 @@
       "name": "庄园葡萄酒",
       "durationMs": 1300000,
       "output": "1",
-      "price": "96000",
+      "price": "187187",
       "inputs": {
         "I108": "5",
         "I105": "6",
@@ -5561,7 +5563,7 @@
       "name": "双酿珍藏礼盒",
       "durationMs": 1720000,
       "output": "1",
-      "price": "275000",
+      "price": "477494",
       "inputs": {
         "I108": "8",
         "I107": "8",
@@ -5579,7 +5581,7 @@
       "name": "亚麻缝纫线纸盒",
       "durationMs": 166000,
       "output": "1",
-      "price": "1770",
+      "price": "4440",
       "inputs": {
         "I110": "4"
       },
@@ -5593,7 +5595,7 @@
       "name": "黄麻收纳袋套装",
       "durationMs": 292000,
       "output": "1",
-      "price": "6100",
+      "price": "12823",
       "inputs": {
         "I111": "4",
         "I110": "2"
@@ -5608,7 +5610,7 @@
       "name": "剑麻园艺绑绳卷",
       "durationMs": 446000,
       "output": "1",
-      "price": "16200",
+      "price": "33775",
       "inputs": {
         "I116": "1",
         "I112": "2"
@@ -5623,7 +5625,7 @@
       "name": "亚麻餐巾盒",
       "durationMs": 574000,
       "output": "1",
-      "price": "22800",
+      "price": "56323",
       "inputs": {
         "I115": "4",
         "I110": "4"
@@ -5638,7 +5640,7 @@
       "name": "茜红亚麻围巾礼盒",
       "durationMs": 772000,
       "output": "1",
-      "price": "39800",
+      "price": "78834",
       "inputs": {
         "I115": "4",
         "I113": "3",
@@ -5654,7 +5656,7 @@
       "name": "靛蓝桌垫礼盒",
       "durationMs": 934000,
       "output": "1",
-      "price": "68800",
+      "price": "195021",
       "inputs": {
         "I117": "2",
         "I115": "2",
@@ -5670,7 +5672,7 @@
       "name": "靛蓝束口旅行袋套装",
       "durationMs": 1138000,
       "output": "1",
-      "price": "95800",
+      "price": "257112",
       "inputs": {
         "I117": "2",
         "I116": "3",
@@ -5686,7 +5688,7 @@
       "name": "茜靛拼布盖毯礼盒",
       "durationMs": 1436000,
       "output": "1",
-      "price": "154000",
+      "price": "451870",
       "inputs": {
         "I117": "4",
         "I115": "5",
@@ -5703,7 +5705,7 @@
       "name": "茜靛双色织锦珍藏礼箱",
       "durationMs": 1758000,
       "output": "1",
-      "price": "310000",
+      "price": "830926",
       "inputs": {
         "I117": "7",
         "I116": "4",
@@ -5721,7 +5723,7 @@
       "name": "洋甘菊花茶罐",
       "durationMs": 280000,
       "output": "1",
-      "price": "9200",
+      "price": "10865",
       "inputs": {
         "I118": "4",
         "I07": "4"
@@ -5736,7 +5738,7 @@
       "name": "薄荷硬糖铁盒",
       "durationMs": 350000,
       "output": "1",
-      "price": "15800",
+      "price": "19479",
       "inputs": {
         "I119": "4",
         "I02": "8"
@@ -5751,7 +5753,7 @@
       "name": "紫锥菊干花挂画盒",
       "durationMs": 610000,
       "output": "1",
-      "price": "45500",
+      "price": "62381",
       "inputs": {
         "I120": "4",
         "I109": "2",
@@ -5767,7 +5769,7 @@
       "name": "薰衣草枕袋礼盒",
       "durationMs": 790000,
       "output": "1",
-      "price": "69000",
+      "price": "103114",
       "inputs": {
         "I121": "5",
         "I109": "3",
@@ -5783,7 +5785,7 @@
       "name": "洋甘菊薄荷茶袋礼盒",
       "durationMs": 995000,
       "output": "1",
-      "price": "96500",
+      "price": "158604",
       "inputs": {
         "I122": "6",
         "I101": "4",
@@ -5799,7 +5801,7 @@
       "name": "四种香草标本盒",
       "durationMs": 1500000,
       "output": "1",
-      "price": "205000",
+      "price": "359527",
       "inputs": {
         "I118": "8",
         "I119": "8",
@@ -5817,7 +5819,7 @@
       "name": "黑麦琥珀啤酒瓶",
       "durationMs": 810000,
       "output": "1",
-      "price": "25400",
+      "price": "41423",
       "inputs": {
         "I123": "3",
         "I107": "1"
@@ -5832,7 +5834,7 @@
       "name": "干型梨酒瓶",
       "durationMs": 920000,
       "output": "1",
-      "price": "36700",
+      "price": "57520",
       "inputs": {
         "I126": "2",
         "I124": "2"
@@ -5847,7 +5849,7 @@
       "name": "桑葚起泡酒瓶",
       "durationMs": 1090000,
       "output": "1",
-      "price": "71900",
+      "price": "113001",
       "inputs": {
         "I127": "2",
         "I125": "2",
@@ -5863,7 +5865,7 @@
       "name": "黑麦深焙黑啤罐",
       "durationMs": 1260000,
       "output": "1",
-      "price": "87000",
+      "price": "149168",
       "inputs": {
         "I123": "5",
         "I107": "5",
@@ -5879,7 +5881,7 @@
       "name": "梨桑双酿礼盒",
       "durationMs": 1650000,
       "output": "1",
-      "price": "252000",
+      "price": "399773",
       "inputs": {
         "I126": "4",
         "I127": "4",
@@ -5897,7 +5899,7 @@
       "name": "鸡蛋乳羹封口杯",
       "durationMs": 60000,
       "output": "1",
-      "price": "2417",
+      "price": "1359",
       "inputs": {
         "IL01": "2",
         "IL02": "1"
@@ -5912,7 +5914,7 @@
       "name": "鸭黄牛乳冻杯",
       "durationMs": 75000,
       "output": "1",
-      "price": "3701",
+      "price": "2125",
       "inputs": {
         "IL02": "2",
         "IL03": "1"
@@ -5927,7 +5929,7 @@
       "name": "山羊乳蛋方盒",
       "durationMs": 90000,
       "output": "1",
-      "price": "4920",
+      "price": "2657",
       "inputs": {
         "IL01": "2",
         "IL04": "1"
@@ -5942,7 +5944,7 @@
       "name": "双蛋黄蒸羹杯",
       "durationMs": 105000,
       "output": "1",
-      "price": "17846",
+      "price": "10273",
       "inputs": {
         "IL03": "2",
         "IL05": "1"
@@ -5957,7 +5959,7 @@
       "name": "牛乳鹅蛋蒸羹盒",
       "durationMs": 120000,
       "output": "1",
-      "price": "32392",
+      "price": "18569",
       "inputs": {
         "IL02": "2",
         "IL05": "2"
@@ -5972,7 +5974,7 @@
       "name": "蛋衣猪肉卷袋",
       "durationMs": 150000,
       "output": "1",
-      "price": "35943",
+      "price": "27121",
       "inputs": {
         "IL01": "2",
         "IL06": "3"
@@ -5987,7 +5989,7 @@
       "name": "熟鸭黄猪肉酿盒",
       "durationMs": 180000,
       "output": "1",
-      "price": "37476",
+      "price": "28339",
       "inputs": {
         "IL03": "2",
         "IL06": "3"
@@ -6002,7 +6004,7 @@
       "name": "兔肉乳酪卷盒",
       "durationMs": 210000,
       "output": "1",
-      "price": "78820",
+      "price": "50452",
       "inputs": {
         "IL04": "2",
         "IL07": "3"
@@ -6017,7 +6019,7 @@
       "name": "山羊乳酪羊汤杯",
       "durationMs": 250000,
       "output": "1",
-      "price": "134273",
+      "price": "87441",
       "inputs": {
         "IL02": "2",
         "IL04": "2",
@@ -6033,7 +6035,7 @@
       "name": "鸭肉蛋蒸饼盒",
       "durationMs": 300000,
       "output": "1",
-      "price": "223166",
+      "price": "193104",
       "inputs": {
         "IL01": "2",
         "IL03": "2",
@@ -6049,7 +6051,7 @@
       "name": "双乳兔肉白酱包",
       "durationMs": 360000,
       "output": "1",
-      "price": "106402",
+      "price": "70974",
       "inputs": {
         "IL02": "3",
         "IL04": "2",
@@ -6065,7 +6067,7 @@
       "name": "羊汤鹅蛋蒸盅盒",
       "durationMs": 420000,
       "output": "1",
-      "price": "255647",
+      "price": "164340",
       "inputs": {
         "IL01": "2",
         "IL05": "3",
@@ -6081,7 +6083,7 @@
       "name": "鸭猪双肉乳酪派盒",
       "durationMs": 500000,
       "output": "1",
-      "price": "273027",
+      "price": "234962",
       "inputs": {
         "IL01": "2",
         "IL04": "2",
@@ -6098,7 +6100,7 @@
       "name": "兔肉蛋黄鲜羹杯",
       "durationMs": 600000,
       "output": "1",
-      "price": "172294",
+      "price": "115261",
       "inputs": {
         "IL02": "2",
         "IL03": "3",
@@ -6115,7 +6117,7 @@
       "name": "浓牛汁猪肉酿盒",
       "durationMs": 710000,
       "output": "1",
-      "price": "860787",
+      "price": "576932",
       "inputs": {
         "IL01": "3",
         "IL03": "3",
@@ -6132,7 +6134,7 @@
       "name": "鸭肉乳酪蒸糕礼盒",
       "durationMs": 850000,
       "output": "1",
-      "price": "400371",
+      "price": "339996",
       "inputs": {
         "IL01": "3",
         "IL04": "3",
@@ -6149,7 +6151,7 @@
       "name": "羊汤牛汁双浓礼盒",
       "durationMs": 1000000,
       "output": "1",
-      "price": "1460673",
+      "price": "975563",
       "inputs": {
         "IL02": "4",
         "IL04": "3",
@@ -6166,7 +6168,7 @@
       "name": "牛汁兔猪肉卷礼盒",
       "durationMs": 1160000,
       "output": "1",
-      "price": "1189319",
+      "price": "812769",
       "inputs": {
         "IL01": "3",
         "IL04": "4",
@@ -6184,7 +6186,7 @@
       "name": "鸭黄鹅羹双乳礼盒",
       "durationMs": 1320000,
       "output": "1",
-      "price": "836072",
+      "price": "144896",
       "inputs": {
         "IL01": "4",
         "IL02": "5",
@@ -6202,7 +6204,7 @@
       "name": "牧场浓汁五味肉馔礼盒",
       "durationMs": 1500000,
       "output": "1",
-      "price": "1910317",
+      "price": "1375758",
       "inputs": {
         "IL06": "6",
         "IL07": "5",
@@ -6220,7 +6222,7 @@
       "name": "鲫鲤双鱼蒸饼盒",
       "durationMs": 60000,
       "output": "1",
-      "price": "3012",
+      "price": "1672",
       "inputs": {
         "IF01": "2",
         "IF02": "1"
@@ -6235,7 +6237,7 @@
       "name": "鲤鲈双鱼丸袋",
       "durationMs": 78000,
       "output": "1",
-      "price": "4461",
+      "price": "2526",
       "inputs": {
         "IF02": "2",
         "IF03": "1"
@@ -6250,7 +6252,7 @@
       "name": "鲫鳟双鱼卷袋",
       "durationMs": 95000,
       "output": "1",
-      "price": "5344",
+      "price": "3124",
       "inputs": {
         "IF01": "2",
         "IF04": "1"
@@ -6265,7 +6267,7 @@
       "name": "鲈片鳜汤封口杯",
       "durationMs": 110000,
       "output": "1",
-      "price": "20988",
+      "price": "11911",
       "inputs": {
         "IF03": "2",
         "IF05": "1"
@@ -6280,7 +6282,7 @@
       "name": "鲤丁鳟茸鱼饼盒",
       "durationMs": 135000,
       "output": "1",
-      "price": "10263",
+      "price": "6088",
       "inputs": {
         "IF02": "2",
         "IF04": "2"
@@ -6295,7 +6297,7 @@
       "name": "银鲑鱼糜蒸饼盒",
       "durationMs": 160000,
       "output": "1",
-      "price": "39075",
+      "price": "30069",
       "inputs": {
         "IF01": "2",
         "IF06": "3"
@@ -6310,7 +6312,7 @@
       "name": "鳗香鲈鱼卷盒",
       "durationMs": 190000,
       "output": "1",
-      "price": "60645",
+      "price": "38299",
       "inputs": {
         "IF03": "3",
         "IF07": "2"
@@ -6325,7 +6327,7 @@
       "name": "鳟茸银鲑夹层盒",
       "durationMs": 225000,
       "output": "1",
-      "price": "48657",
+      "price": "36094",
       "inputs": {
         "IF04": "3",
         "IF06": "3"
@@ -6340,7 +6342,7 @@
       "name": "真鲷鲈片鲜汤杯",
       "durationMs": 265000,
       "output": "1",
-      "price": "181566",
+      "price": "114202",
       "inputs": {
         "IF03": "2",
         "IF05": "2",
@@ -6356,7 +6358,7 @@
       "name": "鳗汁鲤丁鱼丸盒",
       "durationMs": 310000,
       "output": "1",
-      "price": "89307",
+      "price": "58388",
       "inputs": {
         "IF01": "2",
         "IF02": "3",
@@ -6372,7 +6374,7 @@
       "name": "银鲑真鲷双色鱼饼盒",
       "durationMs": 370000,
       "output": "1",
-      "price": "235476",
+      "price": "157265",
       "inputs": {
         "IF04": "2",
         "IF06": "3",
@@ -6388,7 +6390,7 @@
       "name": "鳜汤鲆片晶冻杯",
       "durationMs": 435000,
       "output": "1",
-      "price": "484560",
+      "price": "346211",
       "inputs": {
         "IF03": "2",
         "IF05": "3",
@@ -6404,7 +6406,7 @@
       "name": "鳗鲑双馅鱼糕盒",
       "durationMs": 510000,
       "output": "1",
-      "price": "170352",
+      "price": "121309",
       "inputs": {
         "IF01": "2",
         "IF04": "2",
@@ -6421,7 +6423,7 @@
       "name": "鲟汁真鲷鱼羹杯",
       "durationMs": 610000,
       "output": "1",
-      "price": "802470",
+      "price": "521620",
       "inputs": {
         "IF03": "2",
         "IF05": "3",
@@ -6438,7 +6440,7 @@
       "name": "鲆冻银鲑双层盒",
       "durationMs": 720000,
       "output": "1",
-      "price": "546649",
+      "price": "397458",
       "inputs": {
         "IF04": "3",
         "IF06": "4",
@@ -6455,7 +6457,7 @@
       "name": "鳗鲤鲈三鱼卷礼盒",
       "durationMs": 860000,
       "output": "1",
-      "price": "168737",
+      "price": "112700",
       "inputs": {
         "IF01": "3",
         "IF02": "4",
@@ -6472,7 +6474,7 @@
       "name": "鲟汁鳜汤鱼冻礼盒",
       "durationMs": 1010000,
       "output": "1",
-      "price": "1773363",
+      "price": "1217247",
       "inputs": {
         "IF05": "3",
         "IF08": "4",
@@ -6489,7 +6491,7 @@
       "name": "鲟汁银鲑鳗香礼盒",
       "durationMs": 1170000,
       "output": "1",
-      "price": "1249945",
+      "price": "852801",
       "inputs": {
         "IF04": "3",
         "IF06": "5",
@@ -6507,7 +6509,7 @@
       "name": "真鲷银鲑三层晶冻礼盒",
       "durationMs": 1330000,
       "output": "1",
-      "price": "977468",
+      "price": "744850",
       "inputs": {
         "IF03": "4",
         "IF05": "4",
@@ -6525,7 +6527,7 @@
       "name": "深鲜五品浓汁鱼馔礼盒",
       "durationMs": 1500000,
       "output": "1",
-      "price": "1944075",
+      "price": "1374560",
       "inputs": {
         "IF06": "6",
         "IF07": "5",
@@ -6543,7 +6545,7 @@
       "name": "袋装牛乳蛋香饼",
       "durationMs": 150000,
       "output": "1",
-      "price": "4908",
+      "price": "2089",
       "inputs": {
         "I01": "2",
         "IL01": "2",
@@ -6560,7 +6562,7 @@
       "name": "玉米鲫鱼脆条袋",
       "durationMs": 165000,
       "output": "1",
-      "price": "4908",
+      "price": "1521",
       "inputs": {
         "I04": "2",
         "I01": "1",
@@ -6577,7 +6579,7 @@
       "name": "鲫鱼蛋羹封口杯",
       "durationMs": 180000,
       "output": "1",
-      "price": "23087",
+      "price": "4407",
       "inputs": {
         "IF01": "3",
         "IL01": "3",
@@ -6594,7 +6596,7 @@
       "name": "草莓乳心蒸糕盒",
       "durationMs": 205000,
       "output": "1",
-      "price": "23087",
+      "price": "3558",
       "inputs": {
         "I03": "3",
         "I13": "3",
@@ -6612,7 +6614,7 @@
       "name": "鲤鱼米脆手提盒",
       "durationMs": 230000,
       "output": "1",
-      "price": "42983",
+      "price": "5374",
       "inputs": {
         "IF02": "4",
         "I14": "3",
@@ -6630,7 +6632,7 @@
       "name": "鲈片山羊奶酪卷盒",
       "durationMs": 255000,
       "output": "1",
-      "price": "42983",
+      "price": "13629",
       "inputs": {
         "IF03": "4",
         "IL04": "3",
@@ -6648,7 +6650,7 @@
       "name": "栗香奶酪夹心酥盒",
       "durationMs": 285000,
       "output": "1",
-      "price": "86702",
+      "price": "12961",
       "inputs": {
         "I12": "4",
         "I01": "4",
@@ -6666,7 +6668,7 @@
       "name": "茶香虹鳟荞麦卷盒",
       "durationMs": 320000,
       "output": "1",
-      "price": "86702",
+      "price": "42254",
       "inputs": {
         "IF04": "5",
         "I26": "4",
@@ -6684,7 +6686,7 @@
       "name": "鳜鱼鹅蛋羹罐",
       "durationMs": 360000,
       "output": "1",
-      "price": "245483",
+      "price": "110872",
       "inputs": {
         "IF05": "6",
         "IL05": "5",
@@ -6702,7 +6704,7 @@
       "name": "猪肉南瓜馅饼套盒",
       "durationMs": 410000,
       "output": "1",
-      "price": "245483",
+      "price": "96229",
       "inputs": {
         "IL06": "6",
         "I63": "4",
@@ -6720,7 +6722,7 @@
       "name": "芝麻银鲑米团盒",
       "durationMs": 455000,
       "output": "1",
-      "price": "533016",
+      "price": "374525",
       "inputs": {
         "IF06": "6",
         "I34": "5",
@@ -6738,7 +6740,7 @@
       "name": "兔丝虹鳟鲜肉卷盒",
       "durationMs": 505000,
       "output": "1",
-      "price": "533016",
+      "price": "193501",
       "inputs": {
         "IL07": "6",
         "IF04": "6",
@@ -6756,7 +6758,7 @@
       "name": "青梅奶酪乳心礼袋",
       "durationMs": 560000,
       "output": "1",
-      "price": "882717",
+      "price": "43326",
       "inputs": {
         "I44": "6",
         "I13": "5",
@@ -6775,7 +6777,7 @@
       "name": "炙葱鳗泥糯团礼盒",
       "durationMs": 625000,
       "output": "1",
-      "price": "882717",
+      "price": "355886",
       "inputs": {
         "IF07": "6",
         "I23": "5",
@@ -6794,7 +6796,7 @@
       "name": "真鲷羊汤封口浓汤杯",
       "durationMs": 700000,
       "output": "1",
-      "price": "946866",
+      "price": "480428",
       "inputs": {
         "IF08": "7",
         "IL08": "6",
@@ -6813,7 +6815,7 @@
       "name": "紫苏鸭肉双层烧饼礼盒",
       "durationMs": 785000,
       "output": "1",
-      "price": "946866",
+      "price": "699362",
       "inputs": {
         "IL09": "6",
         "I01": "6",
@@ -6832,7 +6834,7 @@
       "name": "大菱鲆金柑鱼冻礼盒",
       "durationMs": 885000,
       "output": "1",
-      "price": "1950700",
+      "price": "786563",
       "inputs": {
         "IF09": "8",
         "I46": "7",
@@ -6851,7 +6853,7 @@
       "name": "鲟鱼牛汁双鲜浓汤礼罐",
       "durationMs": 1000000,
       "output": "1",
-      "price": "3649883",
+      "price": "2154324",
       "inputs": {
         "IF10": "8",
         "IL10": "7",
@@ -6870,7 +6872,7 @@
       "name": "金冠菠萝乳心千层礼盒",
       "durationMs": 1140000,
       "output": "1",
-      "price": "2138483",
+      "price": "312585",
       "inputs": {
         "I80": "8",
         "IL02": "7",
@@ -6889,7 +6891,7 @@
       "name": "青柠鲟汁双鱼米脆礼盒",
       "durationMs": 1280000,
       "output": "1",
-      "price": "2138483",
+      "price": "1498589",
       "inputs": {
         "IF10": "8",
         "IF08": "7",
@@ -6908,7 +6910,7 @@
       "name": "袋装鲫鱼乳蛋酥",
       "durationMs": 300000,
       "output": "1",
-      "price": "8445",
+      "price": "4054",
       "inputs": {
         "IF01": "4",
         "I01": "3",
@@ -6928,7 +6930,7 @@
       "name": "鲤鱼乳香米糕盒",
       "durationMs": 320000,
       "output": "1",
-      "price": "12834",
+      "price": "7089",
       "inputs": {
         "IF02": "4",
         "I14": "3",
@@ -6948,7 +6950,7 @@
       "name": "鲈片蛋香烤饼盒",
       "durationMs": 340000,
       "output": "1",
-      "price": "13656",
+      "price": "7331",
       "inputs": {
         "IF03": "4",
         "I01": "3",
@@ -6968,7 +6970,7 @@
       "name": "鲫鱼芝麻乳脆棒袋",
       "durationMs": 360000,
       "output": "1",
-      "price": "19030",
+      "price": "28107",
       "inputs": {
         "IF01": "4",
         "I04": "3",
@@ -6988,7 +6990,7 @@
       "name": "虹鳟鸭黄荞麦卷盒",
       "durationMs": 380000,
       "output": "1",
-      "price": "38150",
+      "price": "38972",
       "inputs": {
         "IF04": "3",
         "I26": "3",
@@ -7008,7 +7010,7 @@
       "name": "鳜鱼米乳羹杯",
       "durationMs": 400000,
       "output": "1",
-      "price": "98543",
+      "price": "48448",
       "inputs": {
         "IF05": "4",
         "I14": "4",
@@ -7028,7 +7030,7 @@
       "name": "鲤鱼奶酪葱香酥盒",
       "durationMs": 420000,
       "output": "1",
-      "price": "37508",
+      "price": "43535",
       "inputs": {
         "IF02": "4",
         "IL04": "4",
@@ -7048,7 +7050,7 @@
       "name": "鲈片山椒鹅蛋羹杯",
       "durationMs": 440000,
       "output": "1",
-      "price": "116202",
+      "price": "111917",
       "inputs": {
         "IF03": "4",
         "IL05": "4",
@@ -7068,7 +7070,7 @@
       "name": "银鲑鸭黄糯米卷盒",
       "durationMs": 460000,
       "output": "1",
-      "price": "95984",
+      "price": "85523",
       "inputs": {
         "IF06": "4",
         "IL03": "4",
@@ -7088,7 +7090,7 @@
       "name": "鲫鱼猪肉玉米酥盒",
       "durationMs": 480000,
       "output": "1",
-      "price": "62238",
+      "price": "38050",
       "inputs": {
         "IF01": "4",
         "IL06": "4",
@@ -7108,7 +7110,7 @@
       "name": "虹鳟奶酪番茄卷盒",
       "durationMs": 505000,
       "output": "1",
-      "price": "73562",
+      "price": "75429",
       "inputs": {
         "IF04": "5",
         "IL04": "4",
@@ -7129,7 +7131,7 @@
       "name": "鳜鲜猪肉藕羹封口罐",
       "durationMs": 530000,
       "output": "1",
-      "price": "264875",
+      "price": "205915",
       "inputs": {
         "IF05": "5",
         "IL06": "4",
@@ -7150,7 +7152,7 @@
       "name": "鲤鱼兔丝葱油荞麦盒",
       "durationMs": 555000,
       "output": "1",
-      "price": "199137",
+      "price": "199377",
       "inputs": {
         "IF02": "5",
         "IL07": "4",
@@ -7171,7 +7173,7 @@
       "name": "银鲑奶酪南瓜卷盒",
       "durationMs": 580000,
       "output": "1",
-      "price": "122977",
+      "price": "127010",
       "inputs": {
         "IF06": "4",
         "IL04": "4",
@@ -7192,7 +7194,7 @@
       "name": "鳗泥鹅蛋芝麻糯团盒",
       "durationMs": 605000,
       "output": "1",
-      "price": "273834",
+      "price": "236412",
       "inputs": {
         "IF07": "4",
         "IL05": "4",
@@ -7213,7 +7215,7 @@
       "name": "鲈鱼羊汤米乳封口杯",
       "durationMs": 630000,
       "output": "1",
-      "price": "342123",
+      "price": "179332",
       "inputs": {
         "IF03": "5",
         "IL08": "5",
@@ -7234,7 +7236,7 @@
       "name": "虹鳟鸭肉青椒包盒",
       "durationMs": 655000,
       "output": "1",
-      "price": "388072",
+      "price": "291149",
       "inputs": {
         "IF04": "5",
         "IL09": "5",
@@ -7255,7 +7257,7 @@
       "name": "鳜汤兔丝青梅酸羹罐",
       "durationMs": 680000,
       "output": "1",
-      "price": "363972",
+      "price": "261837",
       "inputs": {
         "IF05": "5",
         "IL07": "5",
@@ -7276,7 +7278,7 @@
       "name": "真鲷蛋黄紫苏米卷盒",
       "durationMs": 705000,
       "output": "1",
-      "price": "472199",
+      "price": "372673",
       "inputs": {
         "IF08": "5",
         "IL03": "5",
@@ -7297,7 +7299,7 @@
       "name": "银鲑牛汁炙茄馅饼盒",
       "durationMs": 730000,
       "output": "1",
-      "price": "1318775",
+      "price": "737098",
       "inputs": {
         "IF06": "5",
         "IL10": "5",
@@ -7318,7 +7320,7 @@
       "name": "鳗香猪肉玉米酥卷礼盒",
       "durationMs": 760000,
       "output": "1",
-      "price": "319310",
+      "price": "278453",
       "inputs": {
         "IF07": "5",
         "IL06": "5",
@@ -7340,7 +7342,7 @@
       "name": "真鲷奶酪香柚白玉卷盒",
       "durationMs": 790000,
       "output": "1",
-      "price": "418886",
+      "price": "261509",
       "inputs": {
         "IF08": "5",
         "IL04": "5",
@@ -7362,7 +7364,7 @@
       "name": "大菱鲆鹅蛋南瓜晶冻罐",
       "durationMs": 820000,
       "output": "1",
-      "price": "792814",
+      "price": "554045",
       "inputs": {
         "IF09": "5",
         "IL05": "5",
@@ -7384,7 +7386,7 @@
       "name": "虹鳟兔丝山椒面卷礼盒",
       "durationMs": 850000,
       "output": "1",
-      "price": "334386",
+      "price": "392906",
       "inputs": {
         "IF04": "5",
         "IL07": "5",
@@ -7406,7 +7408,7 @@
       "name": "鲤鱼牛汁米脆便当盒",
       "durationMs": 880000,
       "output": "1",
-      "price": "1298423",
+      "price": "758095",
       "inputs": {
         "IF02": "5",
         "IL10": "5",
@@ -7428,7 +7430,7 @@
       "name": "鲟汁鸭肉紫苏饭卷礼盒",
       "durationMs": 910000,
       "output": "1",
-      "price": "1650731",
+      "price": "1214570",
       "inputs": {
         "IF10": "5",
         "IL09": "5",
@@ -7450,7 +7452,7 @@
       "name": "真鲷羊汤双椒羹礼罐",
       "durationMs": 940000,
       "output": "1",
-      "price": "820380",
+      "price": "564380",
       "inputs": {
         "IF08": "5",
         "IL08": "5",
@@ -7472,7 +7474,7 @@
       "name": "大菱鲆牛乳芝麻冷切礼盒",
       "durationMs": 970000,
       "output": "1",
-      "price": "657324",
+      "price": "544034",
       "inputs": {
         "IF09": "5",
         "IL02": "5",
@@ -7494,7 +7496,7 @@
       "name": "银鲑奶酪金冠菠萝卷礼盒",
       "durationMs": 1000000,
       "output": "1",
-      "price": "586318",
+      "price": "411403",
       "inputs": {
         "IF06": "5",
         "IL04": "5",
@@ -7516,7 +7518,7 @@
       "name": "鲟汁兔丝金柑鱼冻礼盒",
       "durationMs": 1030000,
       "output": "1",
-      "price": "1836018",
+      "price": "1081402",
       "inputs": {
         "IF10": "5",
         "IL07": "5",
@@ -7538,7 +7540,7 @@
       "name": "真鲷鸭肉紫苏双层饼礼盒",
       "durationMs": 1065000,
       "output": "1",
-      "price": "999968",
+      "price": "885092",
       "inputs": {
         "IF08": "6",
         "IL09": "5",
@@ -7561,7 +7563,7 @@
       "name": "大菱鲆羊汤黄金香柚冻礼罐",
       "durationMs": 1100000,
       "output": "1",
-      "price": "1149676",
+      "price": "810992",
       "inputs": {
         "IF09": "6",
         "IL08": "5",
@@ -7584,7 +7586,7 @@
       "name": "鳗香牛汁米团双层礼盒",
       "durationMs": 1135000,
       "output": "1",
-      "price": "1591112",
+      "price": "992047",
       "inputs": {
         "IF07": "6",
         "IL10": "5",
@@ -7607,7 +7609,7 @@
       "name": "银鲑兔丝青柠芝麻卷礼盒",
       "durationMs": 1170000,
       "output": "1",
-      "price": "970989",
+      "price": "638317",
       "inputs": {
         "IF06": "6",
         "IL07": "5",
@@ -7630,7 +7632,7 @@
       "name": "鲟汁猪肉山椒南瓜酥礼盒",
       "durationMs": 1205000,
       "output": "1",
-      "price": "1692636",
+      "price": "1178902",
       "inputs": {
         "IF10": "6",
         "IL06": "5",
@@ -7653,7 +7655,7 @@
       "name": "真鲷鹅蛋炙茄番茄咸塔礼盒",
       "durationMs": 1240000,
       "output": "1",
-      "price": "1041553",
+      "price": "678850",
       "inputs": {
         "IF08": "7",
         "IL05": "5",
@@ -7676,7 +7678,7 @@
       "name": "双鱼鸭肉香柚酥皮礼盒",
       "durationMs": 1275000,
       "output": "1",
-      "price": "2198088",
+      "price": "1448601",
       "inputs": {
         "IF10": "7",
         "IL09": "5",
@@ -7699,7 +7701,7 @@
       "name": "大菱鲆牛汁紫苏鱼冻礼盒",
       "durationMs": 1310000,
       "output": "1",
-      "price": "2645424",
+      "price": "1819588",
       "inputs": {
         "IF09": "7",
         "IL10": "6",
@@ -7722,7 +7724,7 @@
       "name": "鳗泥奶酪芒果芝麻卷礼盒",
       "durationMs": 1345000,
       "output": "1",
-      "price": "1041553",
+      "price": "473933",
       "inputs": {
         "IF07": "7",
         "IL04": "6",
@@ -7745,7 +7747,7 @@
       "name": "鲟汤羊肉双椒封口御汤罐",
       "durationMs": 1380000,
       "output": "1",
-      "price": "2254758",
+      "price": "1412699",
       "inputs": {
         "IF10": "7",
         "IL08": "6",
@@ -7768,7 +7770,7 @@
       "name": "南岛金冠菠萝银鲑乳酥礼盒",
       "durationMs": 1420000,
       "output": "1",
-      "price": "4014872",
+      "price": "1047360",
       "inputs": {
         "IF06": "6",
         "IL02": "6",
@@ -7792,7 +7794,7 @@
       "name": "金煌芒果真鲷奶酪咸塔礼盒",
       "durationMs": 1460000,
       "output": "1",
-      "price": "4014872",
+      "price": "912103",
       "inputs": {
         "IF08": "6",
         "IL04": "6",
@@ -7816,7 +7818,7 @@
       "name": "雪椰虹鳟鹅蛋南瓜羹礼罐",
       "durationMs": 1500000,
       "output": "1",
-      "price": "4014872",
+      "price": "1262645",
       "inputs": {
         "IF04": "6",
         "IL05": "6",
@@ -7840,7 +7842,7 @@
       "name": "翡翠青柠鲟鱼兔丝米卷礼盒",
       "durationMs": 1540000,
       "output": "1",
-      "price": "4014872",
+      "price": "1385748",
       "inputs": {
         "IF10": "6",
         "IL07": "6",
@@ -7864,7 +7866,7 @@
       "name": "斑斓椰乳银鲑奶酪咸糕礼盒",
       "durationMs": 1580000,
       "output": "1",
-      "price": "4014872",
+      "price": "613882",
       "inputs": {
         "IF06": "6",
         "IL04": "6",
@@ -7888,7 +7890,7 @@
       "name": "青柠大菱鲆鸭肉冻切礼盒",
       "durationMs": 1620000,
       "output": "1",
-      "price": "2352332",
+      "price": "1497762",
       "inputs": {
         "IF09": "7",
         "IL09": "7",
@@ -7912,7 +7914,7 @@
       "name": "鲟汁牛肉五谷芝麻卷礼盒",
       "durationMs": 1665000,
       "output": "1",
-      "price": "3512192",
+      "price": "2199967",
       "inputs": {
         "IF10": "7",
         "IL10": "7",
@@ -7936,7 +7938,7 @@
       "name": "金冠菠萝真鲷猪肉咸派礼盒",
       "durationMs": 1710000,
       "output": "1",
-      "price": "2352332",
+      "price": "1544285",
       "inputs": {
         "IF08": "8",
         "IL06": "6",
@@ -7960,7 +7962,7 @@
       "name": "香柚双鱼羊汤御膳礼盒",
       "durationMs": 1755000,
       "output": "1",
-      "price": "2621232",
+      "price": "1597905",
       "inputs": {
         "IF10": "7",
         "IL08": "6",
@@ -7984,7 +7986,7 @@
       "name": "紫苏双鱼牛汁千层御膳礼盒",
       "durationMs": 1800000,
       "output": "1",
-      "price": "3897396",
+      "price": "2532887",
       "inputs": {
         "IF10": "7",
         "IL10": "7",

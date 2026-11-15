@@ -1,4 +1,13 @@
-"""Regenerate the original 1.14 tables and verify the full expansion catalogue."""
+"""Historical 1.14 table generator; retained only as source evidence.
+
+LT-2026-11-v2 uses the fixed balance-baseline-v114.json snapshot and
+scripts/long-term-balance.mjs. The historical code below would restore obsolete
+absolute-price floors and research costs, so direct execution is disabled.
+Use npm run content:generate to produce the current runtime catalogue.
+"""
+if __name__ == '__main__':
+    raise SystemExit('历史1.14生成器已停用，禁止重写现行式样。请使用 npm run content:generate。')
+
 import argparse
 import json
 import re

@@ -331,7 +331,8 @@ if (typeof livestockManifest.choiceRegistration !== 'string' ||
 const livestockChoices = JSON.parse(await readFile(locate(livestockManifest.choiceRegistration), 'utf8'));
 const compoundFeed = JSON.parse(await readFile(locate(livestockManifest.feedRegistration), 'utf8'));
 const compoundTexture = compoundFeed.texture;
-if (compoundTexture?.path !== './art/livestock/feed.webp' ||
+if (typeof compoundTexture?.path !== 'string' || !/^\.\/art\/livestock\/feed(?:-v\d+)?\.webp$/.test(compoundTexture.path) ||
+    typeof compoundFeed.png !== 'string' || !/^feed(?:-v\d+)?\.png$/.test(compoundFeed.png) ||
     JSON.stringify(compoundTexture.size) !== '[128,64]' ||
     !validRegion(compoundTexture.bounds, 128, 64) ||
     !Array.isArray(compoundTexture.anchor) || compoundTexture.anchor.length !== 2 ||
@@ -341,9 +342,10 @@ if (compoundTexture?.path !== './art/livestock/feed.webp' ||
 }
 const compoundFeedOriginal = await readFile(locate('assets/livestock/' + compoundFeed.source));
 await imageFile('assets/livestock/' + compoundFeed.source, ...compoundFeed.sourceSize, true);
-await imageFile('assets/livestock/feed.png', 128, 64, true);
-const compoundFeedPublished = await imageFile('public/art/livestock/feed.webp', 128, 64, true);
+await imageFile('assets/livestock/' + compoundFeed.png, 128, 64, true);
+const compoundFeedPublished = await imageFile('public/' + compoundTexture.path.slice(2), 128, 64, true);
 if (livestockManifest.feedTexture?.source !== compoundFeed.source ||
+    livestockManifest.feedTexture.png !== compoundFeed.png ||
     livestockManifest.feedTexture.sourceSha256 !== digest(compoundFeedOriginal) ||
     livestockManifest.feedTexture.sha256 !== digest(compoundFeedPublished)) {
   throw new Error('复合饲料原稿与发布图的来源登记过期。');
@@ -583,8 +585,16 @@ for (const id of livestock) {
       JSON.stringify(record.animalIcon.referenceFrames) !== JSON.stringify(headUp.referenceFrames) ||
       record.animalIcon.generatedWith !== 'built-in image_gen' ||
       record.animalIcon.promptFile !== livestockChoices.promptFile ||
-      headUp.referenceFrames.some((reference, index) => reference.path !==
-        `assets/livestock/animals/${id}/${expectedNames.at(-1)}-${[0, 3][index]}.png`)) {
+      headUp.referenceFrames.some((reference, index) => {
+        const frame = `${expectedNames.at(-1)}-${[0, 3][index]}.png`;
+        const originalPath = `assets/livestock/animals/${id}/${frame}`;
+        if (reference.path === originalPath) {
+          return reference.archiveOf !== undefined || reference.originalInputPath !== undefined;
+        }
+        return reference.path !== `assets/livestock/choice-input-archive/v7/${id}/${frame}` ||
+          reference.archiveOf !== originalPath || reference.originalInputPath !== originalPath ||
+          reference.inputHash !== reference.sha256;
+      })) {
     throw new Error(`畜牧普通选择图必须由同ID当前成熟动画0/3帧输入新生成，并保留实际提示词：${id}`);
   }
   await readFile(locate(livestockChoices.promptFile));

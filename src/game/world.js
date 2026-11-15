@@ -1,5 +1,6 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBonus, rate, unitPrice } from './advancement.js';
+import { newPrestigeLedger, prestigeLedgerOffer, recordProductionContribution, settlePrestigeLedger } from './prestige-ledger.js';
 
 export { catalog, unitPrice };
 
@@ -11,7 +12,6 @@ const facilityTypes = {
 const stationTypes = { I: { base: 75n, limit: 48 }, P: { base: 95n, limit: 32 } };
 const startingCoins = 60n;
 const facilityLimit = 40;
-const rewardThreshold = 1000n;
 
 const emptyFacility = () => ({ level: '1', recipe: null, batch: null });
 const emptyStation = (order) => ({ order, recipe: null, priority: false, batch: null });
@@ -36,8 +36,9 @@ function geometric(base, bought) {
 function facilityUpgradeTotal(world, type, level) {
   const k = level - 1n;
   const squares = k * (k + 1n) * (2n * k + 1n) / 6n;
-  const longTerm = k > 14n ? (k - 14n) ** 5n : 0n;
-  return discounted(world, type.factor * (30n * squares + 5000n * longTerm), type.upgrade);
+  const x = k > 14n ? k - 14n : 0n;
+  const longTerm = 5000n * x ** 7n / (x * x + 1024n);
+  return discounted(world, type.factor * (30n * squares + longTerm), type.upgrade);
 }
 
 function facilityOutput(world, kind, id, level) {
@@ -65,9 +66,10 @@ export function newWorld(now) {
     schemaVersion: 2, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
     researchPoints: 0n, productionValue: 0n, completedRuns: 0, firstCompletedRunAtMs: null,
+    ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n },
-    guideSkipped: false, settings: { textScale: 1, music: 70, sound: 75, pickerIconsOnly: false },
+    guideSkipped: false, taskRewards: [], settings: { textScale: 1, music: 70, sound: 75, pickerIconsOnly: false },
   };
   settleProduction(world);
   return world;
@@ -130,7 +132,10 @@ function deposit(world, batch) {
   const { id } = batch;
   const count = BigInt(batch.amount);
   world.inventory[id] = quantity(world, id) + count;
-  world.productionValue += count * unitPrice(world, id);
+  const value = count * unitPrice(world, id);
+  // Freeze any legacy contribution before this new completion enters the run total.
+  recordProductionContribution(world, value, appraisalMultiplierBasisPoints(world));
+  world.productionValue += value;
   world.stats.produced[id] = (world.stats.produced[id] ?? 0n) + count;
 }
 
@@ -289,6 +294,17 @@ export function assignFacility(world, kind, index, id) {
   return true;
 }
 
+export function clearFacility(world, kind, index) {
+  if (!Object.hasOwn(facilityTypes, kind) || !Number.isInteger(index)) return false;
+  const facility = world.facilities[kind][index];
+  if (!facility || (!facility.recipe && !facility.batch && !facility.planting)) return false;
+  facility.recipe = null;
+  facility.batch = null;
+  delete facility.planting;
+  settleProduction(world);
+  return true;
+}
+
 export function buyStation(world, kind) {
   const quote = stationOffer(world, kind);
   if (!quote?.affordable) return false;
@@ -309,6 +325,20 @@ export function arrangeStation(world, kind, index, id) {
     station.batch = null;
   }
   station.recipe = id;
+  settleProduction(world);
+  return true;
+}
+
+export function clearStation(world, kind, index) {
+  if (!Object.hasOwn(stationTypes, kind) || !Number.isInteger(index)) return false;
+  const station = world.stations[kind][index];
+  if (!station || (!station.recipe && !station.batch)) return false;
+  for (const [material, count] of Object.entries(station.batch?.inputs ?? {})) {
+    world.inventory[material] = quantity(world, material) + count;
+  }
+  station.recipe = null;
+  station.batch = null;
+  station.priority = false;
   settleProduction(world);
   return true;
 }
@@ -379,21 +409,22 @@ export function sell(world, id, percent, expectedQuote) {
 export function farmSaleOffer(world) {
   const productionValue = world.productionValue;
   const multiplierBasisPoints = appraisalMultiplierBasisPoints(world);
-  const base = BigInt((1n + productionValue / rewardThreshold).toString(2).length - 1);
   return {
     completedRuns: world.completedRuns, productionValue, multiplierBasisPoints,
     stationCount: world.stations.I.length + world.stations.P.length,
     plotCount: world.facilities.C.length, livestockCount: world.facilities.L.length,
     pondCount: world.facilities.F.length,
-    reward: base * BigInt(multiplierBasisPoints) / 10000n,
+    ...prestigeLedgerOffer(world),
   };
 }
 
 export function sellFarm(world, expectedOffer) {
   const actual = farmSaleOffer(world);
-  const check = ['completedRuns', 'multiplierBasisPoints', 'reward', 'stationCount', 'plotCount', 'livestockCount', 'pondCount'];
+  const check = ['completedRuns', 'productionValue', 'multiplierBasisPoints', 'reward',
+    'stationCount', 'plotCount', 'livestockCount', 'pondCount', 'prestigeLedgerVersion',
+    'lifetimeProductionValue', 'prestigeCredit', 'pendingLegacyResearchPoints', 'legacyResearchPointsSettled'];
   if (!expectedOffer || check.some((key) => actual[key] !== expectedOffer[key])) return false;
-  world.researchPoints += actual.reward;
+  settlePrestigeLedger(world);
   world.completedRuns += 1;
   world.firstCompletedRunAtMs ??= world.wallAnchorMs;
   world.coins = startingCoins;

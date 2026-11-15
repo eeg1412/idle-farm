@@ -1,0 +1,577 @@
+{
+  "version": 3,
+  "stage": {
+    "width": 320,
+    "height": 320
+  },
+  "background": {
+    "path": "./art/workshop/background-v1.webp",
+    "size": [
+      320,
+      320
+    ],
+    "logicalSize": [
+      320,
+      320
+    ]
+  },
+  "machines": {
+    "processing": {
+      "path": "./art/workshop/processing-machine-vertical-v3.webp",
+      "size": [
+        162,
+        432
+      ],
+      "logicalSize": [
+        48,
+        128
+      ],
+      "sourceRotationDegrees": 270,
+      "rotationSource": "user explicitly requested the overhead machine be placed vertically; in-plane rotation only",
+      "placement": {
+        "x": 188,
+        "y": 96,
+        "width": 48,
+        "height": 128
+      },
+      "input": [
+        214,
+        214.666667
+      ],
+      "inputCover": [
+        214,
+        184.296296
+      ],
+      "output": [
+        214,
+        105.40740699999998
+      ],
+      "outputCover": [
+        214,
+        132.444444
+      ],
+      "inputSide": "S",
+      "outputSide": "N",
+      "sourcePorts": {
+        "input": [
+          150,
+          484
+        ],
+        "inputCover": [
+          560,
+          484
+        ],
+        "output": [
+          1625,
+          484
+        ],
+        "outputCover": [
+          1260,
+          484
+        ]
+      },
+      "sourceHorizontalPlacement": {
+        "x": 148,
+        "y": 134,
+        "width": 128,
+        "height": 48
+      }
+    },
+    "refining": {
+      "path": "./art/workshop/refining-machine-vertical-v3.webp",
+      "size": [
+        188,
+        452
+      ],
+      "logicalSize": [
+        53.23893805309734,
+        128
+      ],
+      "sourceRotationDegrees": 270,
+      "rotationSource": "user explicitly requested the overhead machine be placed vertically; in-plane rotation only",
+      "placement": {
+        "x": 185.38053097345133,
+        "y": 96,
+        "width": 53.23893805309734,
+        "height": 128
+      },
+      "input": [
+        212.141592920354,
+        218.05309734513276
+      ],
+      "inputCover": [
+        212.141592920354,
+        184.070796460177
+      ],
+      "output": [
+        212.141592920354,
+        101.94690265486724
+      ],
+      "outputCover": [
+        212.141592920354,
+        132.38938053097345
+      ],
+      "inputSide": "S",
+      "outputSide": "N",
+      "sourcePorts": {
+        "input": [
+          140,
+          418
+        ],
+        "inputCover": [
+          620,
+          418
+        ],
+        "output": [
+          1780,
+          418
+        ],
+        "outputCover": [
+          1350,
+          418
+        ]
+      },
+      "sourceHorizontalPlacement": {
+        "x": 148,
+        "y": 133.23893805309734,
+        "width": 128,
+        "height": 53.23893805309734
+      }
+    }
+  },
+  "conveyor": {
+    "width": 16,
+    "assets": {
+      "straight": {
+        "path": "./art/workshop/belt-straight-v2.webp",
+        "size": [
+          128,
+          80
+        ],
+        "logicalSize": [
+          25.6,
+          16
+        ],
+        "center": [
+          64,
+          40
+        ],
+        "ports": {
+          "W": [
+            0,
+            40
+          ],
+          "E": [
+            128,
+            40
+          ]
+        },
+        "portWidth": 16,
+        "coreWidth": 8,
+        "flowRegions": [
+          {
+            "port": "W",
+            "polygon": [
+              0,
+              20,
+              128,
+              20,
+              128,
+              60,
+              0,
+              60
+            ]
+          }
+        ]
+      },
+      "vertical": {
+        "path": "./art/workshop/belt-vertical-v2.webp",
+        "size": [
+          102,
+          160
+        ],
+        "logicalSize": [
+          16,
+          25.098039215686274
+        ],
+        "center": [
+          51,
+          80
+        ],
+        "ports": {
+          "N": [
+            51,
+            0
+          ],
+          "S": [
+            51,
+            160
+          ]
+        },
+        "portWidth": 16,
+        "coreWidth": 8,
+        "flowRegions": [
+          {
+            "port": "N",
+            "polygon": [
+              26,
+              0,
+              76,
+              0,
+              76,
+              160,
+              26,
+              160
+            ]
+          }
+        ]
+      },
+      "corner": {
+        "path": "./art/workshop/belt-corner-v2.webp",
+        "size": [
+          128,
+          128
+        ],
+        "logicalSize": [
+          32,
+          32
+        ],
+        "center": [
+          64,
+          64
+        ],
+        "portWidth": 16,
+        "coreWidth": 10,
+        "ports": {
+          "W": [
+            0,
+            64
+          ],
+          "S": [
+            64,
+            128
+          ]
+        },
+        "flowRegions": [
+          {
+            "port": "W",
+            "polygon": [
+              0,
+              44,
+              44,
+              44,
+              44,
+              84,
+              0,
+              84
+            ]
+          },
+          {
+            "port": "S",
+            "polygon": [
+              44,
+              84,
+              84,
+              84,
+              84,
+              128,
+              44,
+              128
+            ]
+          },
+          {
+            "port": "center",
+            "polygon": [
+              44,
+              44,
+              84,
+              44,
+              84,
+              84,
+              44,
+              84
+            ]
+          }
+        ]
+      },
+      "junction": {
+        "path": "./art/workshop/belt-junction-v2.webp",
+        "size": [
+          128,
+          128
+        ],
+        "logicalSize": [
+          32,
+          32
+        ],
+        "center": [
+          64,
+          64
+        ],
+        "portWidth": 16,
+        "coreWidth": 10,
+        "ports": {
+          "N": [
+            64,
+            0
+          ],
+          "S": [
+            64,
+            128
+          ],
+          "W": [
+            0,
+            64
+          ]
+        },
+        "flowRegions": [
+          {
+            "port": "W",
+            "polygon": [
+              0,
+              44,
+              44,
+              44,
+              44,
+              84,
+              0,
+              84
+            ]
+          },
+          {
+            "port": "N",
+            "polygon": [
+              44,
+              0,
+              84,
+              0,
+              84,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "port": "S",
+            "polygon": [
+              44,
+              84,
+              84,
+              84,
+              84,
+              128,
+              44,
+              128
+            ]
+          },
+          {
+            "port": "center",
+            "polygon": [
+              44,
+              44,
+              84,
+              44,
+              84,
+              84,
+              44,
+              84
+            ]
+          }
+        ]
+      },
+      "cross": {
+        "path": "./art/workshop/belt-cross-v2.webp",
+        "size": [
+          128,
+          128
+        ],
+        "logicalSize": [
+          32,
+          32
+        ],
+        "center": [
+          64,
+          64
+        ],
+        "portWidth": 16,
+        "coreWidth": 10,
+        "ports": {
+          "N": [
+            64,
+            0
+          ],
+          "E": [
+            128,
+            64
+          ],
+          "S": [
+            64,
+            128
+          ],
+          "W": [
+            0,
+            64
+          ]
+        },
+        "flowRegions": [
+          {
+            "port": "W",
+            "polygon": [
+              0,
+              44,
+              44,
+              44,
+              44,
+              84,
+              0,
+              84
+            ]
+          },
+          {
+            "port": "E",
+            "polygon": [
+              84,
+              44,
+              128,
+              44,
+              128,
+              84,
+              84,
+              84
+            ]
+          },
+          {
+            "port": "N",
+            "polygon": [
+              44,
+              0,
+              84,
+              0,
+              84,
+              44,
+              44,
+              44
+            ]
+          },
+          {
+            "port": "S",
+            "polygon": [
+              44,
+              84,
+              84,
+              84,
+              84,
+              128,
+              44,
+              128
+            ]
+          },
+          {
+            "port": "center",
+            "polygon": [
+              44,
+              44,
+              84,
+              44,
+              84,
+              84,
+              44,
+              84
+            ]
+          }
+        ]
+      },
+      "port": {
+        "path": "./art/workshop/belt-port-v2.webp",
+        "size": [
+          140,
+          117
+        ],
+        "logicalSize": [
+          19.145299145299145,
+          16
+        ],
+        "center": [
+          70,
+          58.5
+        ],
+        "ports": {
+          "W": [
+            0,
+            58.5
+          ],
+          "E": [
+            140,
+            58.5
+          ]
+        },
+        "portWidth": 16,
+        "coreWidth": 8,
+        "flowRegions": [
+          {
+            "port": "W",
+            "polygon": [
+              0,
+              29.25,
+              140,
+              29.25,
+              140,
+              87.75,
+              0,
+              87.75
+            ]
+          }
+        ]
+      }
+    },
+    "tread": {
+      "path": "./art/workshop/belt-surface-v2.webp",
+      "size": [
+        32,
+        64
+      ],
+      "logicalSize": [
+        8,
+        16
+      ],
+      "period": 8,
+      "direction": "E"
+    },
+    "layout": {
+      "inputX": 20,
+      "inputRows": [
+        32,
+        64,
+        96,
+        128,
+        160,
+        192,
+        224,
+        256,
+        288
+      ],
+      "collectorX": 112,
+      "machineInput": [
+        214,
+        214.666667
+      ],
+      "machineOutput": [
+        214,
+        105.40740699999998
+      ],
+      "outputX": 300,
+      "intakeHubY": 288,
+      "topOutletY": 64,
+      "inputSize": 28,
+      "outputSize": 30
+    },
+    "flowCoordinateSpace": "native asset pixels; polygons are disjoint; visible rubber is clipped below opaque rail overlay",
+    "layerOrder": [
+      "background",
+      "movingSurface",
+      "fixedRailOverlay",
+      "canonicalItems",
+      "machine"
+    ]
+  }
+}

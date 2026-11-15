@@ -1,14 +1,16 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { kindCounts, productLevels } from './catalog-rules.mjs';
+import { applyLongTermBalance, summarizeGeneratedBalance } from './long-term-balance.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
-const [catalogue, researchTable, stockTable, legacyJson, cropUses] = await Promise.all([
+const [catalogue, researchTable, stockTable, legacyJson, cropUses, baselineJson] = await Promise.all([
   read('docs/expansion/05-catalog.md'),
   read('docs/expansion/06-research.md'),
   read('docs/expansion/02-livestock-fish.md'),
   read('src/content/catalog.json'),
   read('docs/expansion/08-crop-uses.md'),
+  read('src/content/balance-baseline-v114.json'),
 ]);
 
 const levelFor = productLevels(cropUses);
@@ -151,7 +153,12 @@ while (pending.size) {
   if (pending.size === previous) fail(`研发前置无法解锁：${[...pending].join('、')}`);
 }
 
-const output = `${JSON.stringify({ initial, items, research }, null, 2)}\n`;
+// Detail tables retain their historical inputs. The formal LT policy overlays
+// prices from one immutable original snapshot, never game-data.json. Research
+// coins/costs/requires are copied from that snapshot without LT repricing.
+const baseline = JSON.parse(baselineJson);
+const balanced = applyLongTermBalance({ initial, items, research }, baseline);
+const output = `${JSON.stringify(balanced, null, 2)}\n`;
 const destination = new URL('src/content/game-data.json', root);
 if (process.argv.includes('--check')) {
   if (await readFile(destination, 'utf8') !== output) {
@@ -160,4 +167,6 @@ if (process.argv.includes('--check')) {
   console.log(`运行目录：${Object.keys(items).length} 个品项，${Object.keys(research).length} 个研发节点。`);
 } else {
   await writeFile(destination, output);
+  console.log(`已生成 ${balanced.balanceVersion}：${Object.keys(balanced.items).length} 个品项，${Object.keys(balanced.research).length} 个研发节点。`);
+  console.log(JSON.stringify(summarizeGeneratedBalance(balanced, baseline), null, 2));
 }

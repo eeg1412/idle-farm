@@ -1,0 +1,212 @@
+{
+  "stage": {
+    "name": "mature",
+    "row": 2,
+    "maxWidth": 202,
+    "maxHeight": 162,
+    "sourceAnchors": [
+      [
+        123,
+        813
+      ],
+      [
+        395,
+        813
+      ],
+      [
+        660,
+        813
+      ],
+      [
+        927,
+        813
+      ]
+    ],
+    "sourceCanvas": {
+      "left": -123,
+      "top": -202,
+      "width": 277,
+      "height": 220
+    },
+    "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+    "grounding": {
+      "x": 134.5,
+      "y": 271.5,
+      "radiusX": 54.5,
+      "radiusY": 9
+    },
+    "footprint": {
+      "referenceFrame": 0,
+      "framePath": "assets/livestock/animals/L06/mature-0.png",
+      "alphaThreshold": 128,
+      "region": {
+        "x": 0,
+        "y": 258,
+        "width": 320,
+        "height": 16
+      },
+      "supportMaterial": "opaque-feet",
+      "supportXRange": [
+        0,
+        186
+      ],
+      "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+      "bounds": {
+        "x": 82,
+        "y": 258,
+        "width": 105,
+        "height": 16
+      },
+      "contacts": [
+        {
+          "x": 94.5,
+          "y": 269,
+          "bounds": {
+            "x": 82,
+            "y": 258,
+            "width": 25,
+            "height": 11
+          }
+        },
+        {
+          "x": 142.5,
+          "y": 274,
+          "bounds": {
+            "x": 119,
+            "y": 258,
+            "width": 47,
+            "height": 16
+          }
+        },
+        {
+          "x": 179.5,
+          "y": 269,
+          "bounds": {
+            "x": 172,
+            "y": 258,
+            "width": 15,
+            "height": 11
+          }
+        }
+      ],
+      "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+    },
+    "supportBandHeight": 12,
+    "supportMaterial": "opaque-feet",
+    "feeding": {
+      "x": 212,
+      "y": 275,
+      "radiusX": 24,
+      "radiusY": 6,
+      "kind": "grain"
+    },
+    "feedingSource": {
+      "source": "pig",
+      "referenceFrame": 0,
+      "sourceMouth": [
+        224,
+        816
+      ],
+      "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+      "mouthBounds": {
+        "x": 187,
+        "y": 264,
+        "width": 44,
+        "height": 14
+      },
+      "sourceMouthBounds": {
+        "x": 190.193,
+        "y": 804.772,
+        "width": 60.337,
+        "height": 19.198
+      },
+      "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+    },
+    "supportXRange": [
+      0,
+      186
+    ],
+    "cellRects": [
+      {
+        "left": 0,
+        "top": 0,
+        "width": 282,
+        "height": 1254
+      },
+      {
+        "left": 282,
+        "top": 0,
+        "width": 273,
+        "height": 1254
+      },
+      {
+        "left": 555,
+        "top": 0,
+        "width": 268,
+        "height": 1254
+      },
+      {
+        "left": 823,
+        "top": 0,
+        "width": 297,
+        "height": 1254
+      }
+    ]
+  },
+  "registration": {
+    "anchors": [
+      [
+        123,
+        813
+      ],
+      [
+        395,
+        813
+      ],
+      [
+        660,
+        813
+      ],
+      [
+        927,
+        813
+      ]
+    ],
+    "canvas": [
+      -123,
+      -202,
+      277,
+      220
+    ],
+    "mouth": [
+      224,
+      816
+    ],
+    "cellRects": [
+      {
+        "left": 0,
+        "top": 0,
+        "width": 282,
+        "height": 1254
+      },
+      {
+        "left": 282,
+        "top": 0,
+        "width": 273,
+        "height": 1254
+      },
+      {
+        "left": 555,
+        "top": 0,
+        "width": 268,
+        "height": 1254
+      },
+      {
+        "left": 823,
+        "top": 0,
+        "width": 297,
+        "height": 1254
+      }
+    ]
+  }
+}

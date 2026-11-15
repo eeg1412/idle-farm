@@ -15,9 +15,9 @@ export const techDefinitions = [
   { key: 'cropBuy', name: '土地议价', source: '农业', description: '农田购买价格每级降低 1%' },
   { key: 'cropUpgrade', name: '田地改造', source: '农业', description: '农田升级价格每级降低 1%' },
   { key: 'cropYield', name: '丰收栽培', source: '农业', description: '农田每批收成每级增加 2 件' },
-  { key: 'appraisal', name: '经营评估', source: '通用', description: '出售牧场时，基础研发点倍率每级增加 0.02' },
+  { key: 'appraisal', name: '经营评估', source: '通用', description: '后续生产事件的研发点权益倍率每级增加 0.02，仅在出售牧场时领取' },
   { key: 'workshopSpeed', name: '工坊提速', source: '通用', description: '工坊生产每级提速 2%' },
-  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限每级增加 12 分钟' },
+  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限从 8 小时起，前 40 级每级增加 24 分钟，后 10 级每级增加 72 分钟' },
   { key: 'livestockBuy', name: '畜牧场议价', source: '畜牧', description: '畜牧场购买价格每级降低 1%', item: 'L01' },
   { key: 'livestockUpgrade', name: '畜牧场改造', source: '畜牧', description: '畜牧场升级价格每级降低 1%', item: 'L01' },
   { key: 'livestockYield', name: '畜群培育', source: '畜牧', description: '畜牧场每批产出每级增加 2 件', item: 'L01' },
@@ -37,6 +37,32 @@ export const techDefinitions = [
 ];
 
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
+const techBaseCosts = {
+  recipeDiscount: 25n,
+  qualityDiscount: 25n,
+  cropBuy: 25n,
+  cropUpgrade: 25n,
+  cropYield: 150n,
+  appraisal: 50n,
+  workshopSpeed: 75n,
+  delegation: 50n,
+  livestockBuy: 25n,
+  livestockUpgrade: 25n,
+  livestockYield: 150n,
+  livestockResearch: 25n,
+  livestockQuality: 25n,
+  livestockProcessing: 25n,
+  livestockCycle: 50n,
+  livestockRefining: 25n,
+  fishBuy: 25n,
+  fishUpgrade: 25n,
+  fishYield: 150n,
+  fishResearch: 25n,
+  fishQuality: 25n,
+  fishProcessing: 25n,
+  fishCycle: 50n,
+  fishRefining: 25n,
+};
 const yieldKeys = { C: 'cropYield', L: 'livestockYield', F: 'fishYield' };
 const qualityKeys = { L: 'livestockQuality', IL: 'livestockQuality', F: 'fishQuality', IF: 'fishQuality' };
 const researchKeys = { L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch' };
@@ -46,7 +72,6 @@ const effectDefinitions = {
   livestockYield: ['每批额外产出', 0, 2, '件'],
   fishYield: ['每批额外产出', 0, 2, '件'],
   appraisal: ['经营评估倍率', 10000, appraisalPerLevel, '倍', 10000],
-  delegation: ['离线结算上限', 120, 12, '分钟'],
   workshopSpeed: ['生产提速', 0, workshopPerLevel, '%', 100],
   livestockProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
   fishProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
@@ -63,7 +88,8 @@ const canPay = (world, coins, costs) => world.coins >= coins && costs.every(([id
 export const discount = (world, key) => discountPerLevel * techLevel(world, key);
 export const appraisalLevel = (world) => techLevel(world, 'appraisal');
 export const appraisalMultiplierBasisPoints = (world) => 10000 + appraisalPerLevel * appraisalLevel(world);
-export const delegationMilliseconds = (world) => 7200000 + 720000 * techLevel(world, 'delegation');
+const delegationMinutes = (level) => 480 + 24 * Math.min(level, 40) + 72 * Math.max(level - 40, 0);
+export const delegationMilliseconds = (world) => 60000 * delegationMinutes(techLevel(world, 'delegation'));
 export const delegationHours = (world) => delegationMilliseconds(world) / 3600000;
 export const facilityYieldBonus = (world, kind) => 2n * BigInt(techLevel(world, yieldKeys[kind]));
 
@@ -114,9 +140,8 @@ export function research(world, id) {
 
 function priceAt(item, quality) {
   const base = BigInt(item.price);
-  const linearStep = base * 12n / 100n || 1n;
   const overTen = quality > 10n ? quality - 10n : 0n;
-  return base + (quality - 1n) * linearStep + base * overTen ** 2n / 1000n;
+  return base + 12n * base * (quality - 1n) / 100n + base * overTen ** 2n / 1000n;
 }
 
 export function unitPrice(world, id) {
@@ -185,8 +210,10 @@ export function qualityOffer(world, id, steps = 1n) {
 
   const target = steps === 'max' ? affordableTarget(current, quote) : current + steps;
   const cost = quote(target);
+  const currentPrice = priceAt(item, current);
+  const nextPrice = priceAt(item, target);
   return { ...cost, affordable: target > current && cost.affordable, current, target,
-    currentPrice: priceAt(item, current), nextPrice: priceAt(item, target) };
+    currentPrice, nextPrice, priceDelta: nextPrice - currentPrice };
 }
 
 export function upgradeQuality(world, id, steps = 1n) {
@@ -210,11 +237,14 @@ export function techOffer(world, key) {
     requires.push(`已研发${item.subject ?? item.name}`);
   }
   const maxed = level >= techLevelLimit;
-  const cost = maxed ? 0n : BigInt(definition.prerequisite ? 4 : 1) << BigInt(Math.floor(level / 10));
+  const k = BigInt(level);
+  const cost = maxed ? 0n : techBaseCosts[key] / 25n * (25n + 5n * k + k * k);
   const [label, initial, step, unit, divisor = 1] = effectDefinitions[key] ?? ['费用降低', 0, discountPerLevel, '%', 100];
   const nextLevel = Math.min(techLevelLimit, level + 1);
-  const effect = { label, unit, current: (initial + level * step) / divisor,
-    next: (initial + nextLevel * step) / divisor };
+  const effect = key === 'delegation'
+    ? { label: '离线结算上限', unit: '分钟', current: delegationMinutes(level), next: delegationMinutes(nextLevel) }
+    : { label, unit, current: (initial + level * step) / divisor,
+      next: (initial + nextLevel * step) / divisor };
   return { level, maxed, cost, eligible: !maxed && requires.length === 0,
     affordable: !maxed && world.researchPoints >= cost, requires, effect };
 }

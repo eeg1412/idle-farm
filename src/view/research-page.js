@@ -152,18 +152,20 @@ function qualityDetails(ui, id, local) {
   const selected = local.step ?? 1n;
   const offer = qualityOffer(ui.w, id, selected);
   if (!offer) return;
-  const { current, target, currentPrice, nextPrice, coins, costs } = offer;
+  const { current, target, currentPrice, nextPrice, priceDelta, coins, costs } = offer;
   ui.feature(id === 'F01' ? 'scene-fish' : id, (content) => {
     content.heading(item.name, { size: 30 });
     content.detailRows([
       { label: '品质', value: { from: compact(current), to: compact(target) } },
-      { label: '单价', value: { from: compact(currentPrice), to: compact(nextPrice) } },
+      { label: '单价（金币）', value: { from: compact(currentPrice), to: compact(nextPrice) } },
+      { label: '本次每件涨价', value: compact(priceDelta) + ' 金币' },
     ], { variant: 'pill' });
   }, { ratio: 0.36, surface: item.kind === 'F' ? 'water' : undefined, align: 'center', style: 'research' });
   ui.buttons(qualitySteps.map(([label, step]) => ({
     label, tone: step === selected ? 'gold' : 'plain',
     onClick: () => { local.step = step; ui.refresh(); },
   })), { style: 'production' });
+  if (priceDelta === 0n) ui.text('本次升级单价不变，没有现金售价提升。', { muted: true });
   showMaterials(ui, costs, coins, '升级所需材料');
   ui.buttons([
     {
@@ -183,7 +185,14 @@ function techEffect(offer) {
   const transition = (current, next) => offer.maxed ? current : { from: current, to: next };
   const { label, current, next, unit } = offer.effect;
   const prefix = label === '费用降低' ? '降低' : label === '生产提速' ? '提速' : '';
-  const effect = (value) => `${prefix}${value}${unit}`;
+  const effect = (value) => {
+    if (unit === '分钟') {
+      const hours = Math.floor(value / 60);
+      const minutes = value % 60;
+      return (hours ? `${hours}小时` : '') + (minutes ? `${minutes}分钟` : '');
+    }
+    return `${prefix}${value}${unit}`;
+  };
   return { label, value: transition(effect(current), effect(next)) };
 }
 
@@ -228,6 +237,9 @@ function techDetails(ui, definition) {
     style: 'research',
   });
   ui.text(definition.description, { muted: true });
+  if (definition.key === 'appraisal') {
+    ui.text('升级只提高之后生产的点数收益，已有收益保持原倍率；出售牧场时领取。', { muted: true });
+  }
   techRequirements(ui, definition);
   if (offer.maxed) return;
   ui.heading('高级研发点', { size: 21 });

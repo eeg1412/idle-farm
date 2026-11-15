@@ -46,13 +46,13 @@ export function livestockLayout(id) {
 // Feed coordinates stay in the same fixed animal frame as mouth registration.
 // Both the live scene and static fallback exporter consume this geometry.
 export function livestockFeedLayout(feeding, texture, baseAnimalScale) {
-  // Keep a readable ground-space pile before depth perspective is applied.
+  // Keep the redesigned cool-rim tray readable before depth perspective.
   // Animal size still controls mouth position; it must not shrink this floor.
-  const visibleWidth = Math.max(feeding.radiusX * 2, 32 / baseAnimalScale);
+  const visibleWidth = Math.max(feeding.radiusX * 2, 52 / baseAnimalScale);
   const scale = visibleWidth / texture.bounds.width;
   const visibleHeight = texture.bounds.height * scale;
   const mouthDirection = Math.sign(feeding.x - 138) || 1;
-  // The mouth meets the rear of the pile; its lower front remains readable.
+  // The mouth meets the loaded rear of the tray; the front rim stays exposed.
   // Keep the registered mouth and animal feet fixed, and move feed + shadow.
   const groundX = feeding.x + mouthDirection * visibleWidth * 0.2;
   const groundY = feeding.y + visibleHeight * 0.55;

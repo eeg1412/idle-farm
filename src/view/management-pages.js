@@ -1,6 +1,6 @@
 import { catalog, facilityOffer, farmSaleOffer, quantity, tradeOffer } from '../game/world.js';
 import { unitPrice } from '../game/advancement.js';
-import { objectives } from '../game/objectives.js';
+import { objectives, taskCoinRewards } from '../game/objectives.js';
 import { compact } from './numbers.js';
 
 const entries = Object.entries(catalog.items);
@@ -426,6 +426,7 @@ export function renderTasks(ui) {
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
   ui.image('tasks-banner', 101);
+  ui.text('每项任务完成后自动发放一次金币，周回不重复领取。', { muted: true });
   const goals = active ? guide : [
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
     ...long.filter((goal) => !featuredGoals.includes(goal.id)),
@@ -433,6 +434,8 @@ export function renderTasks(ui) {
   for (const goal of goals) {
     ui.card((entry) => entry.feature(taskArt[goal.id], (card) => {
       card.heading(goal.name);
+      card.text('奖励 ' + compact(goal.rewardCoins) + ' 金币' + (goal.rewarded ? ' · 已到账' : ''),
+        { muted: !goal.rewarded });
       const progress = compact(goal.current) + ' / ' + compact(goal.required);
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
@@ -452,7 +455,7 @@ const instructions = [
   ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工，每批产出 1 件。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。已研发品项可继续升级品质。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。'],
-  ['出售牧场', '本轮生产总值决定预计获得的高级研发点。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个，需重新安排配方，原优先生产与未完成批次清空。'],
+  ['出售牧场', '生产积累高级研发点，确认出售牧场时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个，需重新安排配方，原优先生产与未完成批次清空。'],
 ];
 
 function showInstructions(ui) {
@@ -521,7 +524,6 @@ async function showExportSave(ui) {
   ui.dialog('导出存档', (panel) => {
     panel.card((card) => {
       card.row('存档版本', panel.saveManagement.version);
-      card.row('存档类型', panel.saveManagement.environment === 'development' ? '开发存档' : '正式存档');
       card.text(file.filename, { muted: true });
     }, { padding: 12, gap: 8 });
     panel.text('下载存档文件，或复制存档以便保存和迁移。');
@@ -572,7 +574,6 @@ function confirmImportSave(ui, candidate) {
     panel.text('导入后，将用此存档替换当前全部经营记录。');
     panel.card((card) => {
       card.row('源存档版本', candidate.version);
-      card.row('存档类型', summary.environment === 'development' ? '开发存档' : '正式存档');
       card.row('金币', summary.coins, { compact: true, icon: 'coin' });
       card.row('高级研发点', summary.researchPoints, { compact: true });
       card.row('设施总数', compact(summary.facilities));
@@ -647,7 +648,7 @@ function showImportSave(ui) {
     panel.text(state.message || '请选择存档文件，读取后将显示确认摘要。',
       { color: state.failed ? saveImportFailureColor : undefined });
     panel.row('当前版本', panel.saveManagement.version);
-    panel.text('仅支持相同游戏版本的存档，开发存档与正式存档不能互相导入。');
+    panel.text('仅支持相同游戏版本的存档。');
     panel.text('也可以在此页面粘贴存档文本，或拖入一个 JSON 存档文件。', { muted: true });
     panel.text('读取后会先显示存档摘要，确认后才替换当前记录。');
     panel.buttons([
@@ -738,12 +739,17 @@ function farmDetails(ui, offer) {
   const multiplierLabel = compact(multiplier) + (decimal ? '.' + decimal : '') + ' 倍';
   const details = [
     { icon: 'coin', label: '本轮生产总值', value: compact(offer.productionValue) },
-    { icon: 'nav-workshop', label: '经营评估倍率', value: multiplierLabel },
+    { icon: 'nav-workshop', label: '后续生产评估倍率', value: multiplierLabel },
   ];
   for (const { icon, label, value } of details) {
     ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true }), { padding: 8, gap: 6 });
   }
   ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
+  ui.text('点数在确认出售时领取。评估只影响之后的生产，不重算已有收益；不足一点的收益跨轮保留。', { muted: true });
+  const newRun = [{ icon: 'facility-field', label: '2 块小麦田、基础 60 金币' }];
+  if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm')) {
+    newRun.push({ icon: 'coin', label: '首次经营交接另奖 ' + compact(taskCoinRewards.newFarm) + ' 金币（仅一次）' });
+  }
   const changes = [
     ['保留', [{ icon: 'sale-retain', label: '研发、品质、经营改良、任务进度' }]],
     ['清空', [
@@ -754,7 +760,7 @@ function farmDetails(ui, offer) {
       { icon: 'nav-workshop', label: '现有 ' + compact(offer.stationCount) + ' 个工位重置为加工位、精制位各 1 个' },
       { icon: 'operation-switch', label: '原配方、优先生产和未完成批次清空' },
     ]],
-    ['新一轮', [{ icon: 'facility-field', label: '2 块小麦田、60 金币' }]],
+    ['新一轮', newRun],
   ];
   for (const [title, rows] of changes) {
     ui.card((card) => {

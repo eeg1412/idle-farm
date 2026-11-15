@@ -128,12 +128,22 @@
       "generatedWith": "built-in image_gen",
       "referenceFrames": [
         {
-          "path": "assets/livestock/animals/L04/adult-0.png",
-          "sha256": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4"
+          "path": "assets/livestock/choice-input-archive/v7/L04/adult-0.png",
+          "sha256": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4",
+          "archiveOf": "assets/livestock/animals/L04/adult-0.png",
+          "originalInputPath": "assets/livestock/animals/L04/adult-0.png",
+          "inputHash": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4",
+          "archivedAt": "2026-11-15",
+          "archiveReason": "Exact original image_gen V7 input preserved before L04 source-cell isolation and complete ear-tip crop repair; the generated choice artwork and historical prompt inputs are unchanged."
         },
         {
-          "path": "assets/livestock/animals/L04/adult-3.png",
-          "sha256": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867"
+          "path": "assets/livestock/choice-input-archive/v7/L04/adult-3.png",
+          "sha256": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867",
+          "archiveOf": "assets/livestock/animals/L04/adult-3.png",
+          "originalInputPath": "assets/livestock/animals/L04/adult-3.png",
+          "inputHash": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867",
+          "archivedAt": "2026-11-15",
+          "archiveReason": "Exact original image_gen V7 input preserved before L04 source-cell isolation and complete ear-tip crop repair; the generated choice artwork and historical prompt inputs are unchanged."
         }
       ],
       "promptFile": "assets/livestock/choice-prompts-v7.md"
@@ -194,12 +204,22 @@
       "generatedWith": "built-in image_gen",
       "referenceFrames": [
         {
-          "path": "assets/livestock/animals/L06/mature-0.png",
-          "sha256": "98a4a00fcb14ab1ecca783427b225f351ce82a7009e03bbd11bb336e4008ea6f"
+          "path": "assets/livestock/choice-input-archive/v7/L06/mature-0.png",
+          "sha256": "98a4a00fcb14ab1ecca783427b225f351ce82a7009e03bbd11bb336e4008ea6f",
+          "archiveOf": "assets/livestock/animals/L06/mature-0.png",
+          "originalInputPath": "assets/livestock/animals/L06/mature-0.png",
+          "inputHash": "98a4a00fcb14ab1ecca783427b225f351ce82a7009e03bbd11bb336e4008ea6f",
+          "archivedAt": "2026-11-15",
+          "archiveReason": "Exact original image_gen V7 input preserved before L06 mature anatomical front-hoof anchor repair; the source artwork, generated choice artwork and historical prompt inputs are unchanged."
         },
         {
-          "path": "assets/livestock/animals/L06/mature-3.png",
-          "sha256": "7ad470aca8b5244d4b149837ac5a264f9a8f63b13517880820a84903f67d6ac2"
+          "path": "assets/livestock/choice-input-archive/v7/L06/mature-3.png",
+          "sha256": "7ad470aca8b5244d4b149837ac5a264f9a8f63b13517880820a84903f67d6ac2",
+          "archiveOf": "assets/livestock/animals/L06/mature-3.png",
+          "originalInputPath": "assets/livestock/animals/L06/mature-3.png",
+          "inputHash": "7ad470aca8b5244d4b149837ac5a264f9a8f63b13517880820a84903f67d6ac2",
+          "archivedAt": "2026-11-15",
+          "archiveReason": "Exact original image_gen V7 input preserved before L06 mature anatomical front-hoof anchor repair; the source artwork, generated choice artwork and historical prompt inputs are unchanged."
         }
       ],
       "promptFile": "assets/livestock/choice-prompts-v7.md"

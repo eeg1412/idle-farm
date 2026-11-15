@@ -1,0 +1,118 @@
+{
+  "version": 5,
+  "stage": {
+    "width": 320,
+    "height": 320
+  },
+  "background": {
+    "path": "./art/workshop/background-v1.webp",
+    "size": [
+      320,
+      320
+    ],
+    "logicalSize": [
+      320,
+      320
+    ]
+  },
+  "machines": {
+    "processing": {
+      "path": "./art/workshop/processing-machine-portless-v5.webp",
+      "size": [
+        140,
+        620
+      ],
+      "logicalSize": [
+        65.45454545454545,
+        289.87012987012986
+      ],
+      "placement": {
+        "x": 127.15584415584416,
+        "y": 14.831168831168831,
+        "width": 65.45454545454545,
+        "height": 289.87012987012986
+      },
+      "bodyEdges": {
+        "left": 127.85714285714286,
+        "right": 192.14285714285714,
+        "top": 16,
+        "bottom": 304
+      },
+      "occlusionCover": {
+        "inputX": 147.85714285714286,
+        "outputX": 172.14285714285714
+      },
+      "sourceBounds": {
+        "left": 471,
+        "right": 746,
+        "top": 29,
+        "bottom": 1261
+      },
+      "sourceRotationDegrees": 0
+    },
+    "refining": {
+      "path": "./art/workshop/refining-machine-portless-v5.webp",
+      "size": [
+        148,
+        628
+      ],
+      "logicalSize": [
+        68.52733118971061,
+        290.7781350482315
+      ],
+      "placement": {
+        "x": 125.7363344051447,
+        "y": 14.842443729903536,
+        "width": 68.52733118971061,
+        "height": 290.7781350482315
+      },
+      "bodyEdges": {
+        "left": 126.89389067524115,
+        "right": 193.10610932475885,
+        "top": 16,
+        "bottom": 304
+      },
+      "occlusionCover": {
+        "inputX": 146.89389067524115,
+        "outputX": 173.10610932475885
+      },
+      "sourceBounds": {
+        "left": 465,
+        "right": 751,
+        "top": 21,
+        "bottom": 1265
+      },
+      "sourceRotationDegrees": 0
+    }
+  },
+  "conveyor": {
+    "speed": 0.04,
+    "tread": {
+      "path": "./art/workshop/belt-surface-v2.webp",
+      "size": [
+        32,
+        64
+      ],
+      "logicalSize": [
+        32,
+        16
+      ],
+      "period": 32,
+      "direction": "E"
+    },
+    "layout": {
+      "inputX": 0,
+      "outputX": 320,
+      "inputSize": 64,
+      "outputSize": 72,
+      "inputSpacing": 96,
+      "surfaceUnderlap": 3
+    },
+    "layerOrder": [
+      "background",
+      "movingBorderlessSurface",
+      "canonicalItems",
+      "solidMachineBody"
+    ]
+  }
+}

@@ -4,8 +4,22 @@ import { resolve } from 'node:path';
 import sharp from 'sharp';
 import { livestockFeedLayout, livestockLayout } from '../src/view/livestock-layout.js';
 import { exportLivestockChoices, livestockChoiceRegistrationPath } from '../assets/livestock/export-choices.mjs';
+import { exportLivestockFeed, livestockFeedRegistrationPath } from '../assets/livestock/export-feed.mjs';
 
-const choiceExport = await exportLivestockChoices();
+const selectedOptions = process.argv.filter((argument) => argument.startsWith('--species='));
+const selectedId = selectedOptions[0]?.slice('--species='.length);
+const selective = selectedOptions.length > 0;
+if (selectedOptions.length > 1 || (selective && (!selectedId ||
+  ['--feed-only', '--choices-only', '--choices-feed-only'].some((argument) => process.argv.includes(argument))))) {
+  throw new Error('Use one --species=<ID> alone with optional --refresh-scenes.');
+}
+if (process.argv.includes('--feed-only')) {
+  await exportLivestockFeed();
+  process.exit(0);
+}
+
+let choiceExport;
+if (!selective) choiceExport = await exportLivestockChoices();
 if (process.argv.includes('--choices-only')) {
   console.log('Exported new current-V5-referenced neutral portraits only; feeding frames, feed and fallbacks are untouched.');
   process.exit(0);
@@ -15,17 +29,35 @@ const sourceRoot = resolve('assets/livestock');
 const publicRoot = resolve('public/art/livestock');
 const layout = JSON.parse(await readFile(resolve(sourceRoot, 'layout.json'), 'utf8'));
 const feedingRegistration = JSON.parse(await readFile(resolve(sourceRoot, 'feeding-registration-v5.json'), 'utf8'));
-const feedRegistration = JSON.parse(await readFile(resolve(sourceRoot, 'feed-registration-v6.json'), 'utf8'));
+const feedRegistration = JSON.parse(await readFile(resolve(livestockFeedRegistrationPath), 'utf8'));
 const evidenceRoot = resolve(sourceRoot, 'choice-feed-evidence', feedRegistration.presentationRevision);
 const choicesFeedOnly = process.argv.includes('--choices-feed-only');
-const previousManifest = choicesFeedOnly ? JSON.parse(await readFile(resolve(sourceRoot, 'atlas.json'), 'utf8')) : null;
+const previousManifest = choicesFeedOnly || selective ? JSON.parse(await readFile(resolve(sourceRoot, 'atlas.json'), 'utf8')) : null;
+if (selective) {
+  if (!layout.species[selectedId] || !feedingRegistration.species[selectedId] || !previousManifest.species[selectedId]) {
+    throw new Error(`Unknown registered livestock species: ${selectedId}`);
+  }
+  const choices = JSON.parse(await readFile(resolve(livestockChoiceRegistrationPath), 'utf8'));
+  choiceExport = { records: Object.fromEntries(Object.entries(previousManifest.species)
+    .map(([id, record]) => [id, { ...record.animalIcon, referenceFrames: choices.species[id].referenceFrames }])) };
+}
+function stageScale(stage, width, height) {
+  if (stage.sourceScale !== undefined) {
+    if (!Number.isFinite(stage.sourceScale) || stage.sourceScale <= 0) {
+      throw new Error('Explicit registered sourceScale must be finite and positive.');
+    }
+    return stage.sourceScale;
+  }
+  return Math.min(stage.maxWidth / width, stage.maxHeight / height);
+}
 layout.version = feedingRegistration.version;
 layout.animation = 'feeding';
 layout.choiceRegistration = livestockChoiceRegistrationPath;
-layout.feedRegistration = 'assets/livestock/feed-registration-v6.json';
+layout.feedRegistration = livestockFeedRegistrationPath;
 layout.feedTexture = feedRegistration.texture;
 layout.historicalSources ??= { ...layout.sources.sheets };
 for (const [id, registration] of Object.entries(feedingRegistration.species)) {
+  if (selective && id !== selectedId) continue;
   const species = layout.species[id];
   if (species.productCell && !species.productCell.source) species.productCell.source = layout.historicalSources[species.source];
   species.source = registration.key;
@@ -35,9 +67,17 @@ for (const [id, registration] of Object.entries(feedingRegistration.species)) {
     stage.sourceAnchors = points.anchors;
     stage.sourceCanvas = { left, top, width, height };
     if (points.cellRects) stage.cellRects = points.cellRects;
-    stage.anchorMethod = 'V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.';
+    if (points.scale !== undefined) stage.sourceScale = points.scale;
+    else delete stage.sourceScale;
+    if (points.samplingCanvas) stage.sourceSamplingCanvas = points.samplingCanvas;
+    else delete stage.sourceSamplingCanvas;
+    if (points.cropRevision) {
+      stage.cropRevision = points.cropRevision;
+      stage.cropMethod = points.cropMethod;
+    }
+    stage.anchorMethod = points.anchorMethod ?? 'V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.';
     delete stage.footRegistration;
-    const scale = Math.min(stage.maxWidth / width, stage.maxHeight / height);
+    const scale = stageScale(stage, width, height);
     const [anchorX, anchorY] = points.anchors[0];
     const mouthX = layout.animalRoot.x + (points.mouth[0] - anchorX) * scale;
     const mouthY = layout.animalRoot.y + (points.mouth[1] - anchorY) * scale;
@@ -81,7 +121,10 @@ async function loadSource(file, isolation = layout.alphaIsolation) {
   const isolated = await sharp(pixels.data, { raw: pixels.info }).png().toBuffer();
   return { file, originalBytes: bytes, bytes: isolated, ...pixels };
 }
-const sources = new Map(await Promise.all(Object.entries(layout.sources.sheets).map(async ([key, file]) =>
+const selectedSources = selective ? new Set(layout.species[selectedId].stages
+  .map((stage) => stage.source ?? layout.species[selectedId].source)) : null;
+const sources = new Map(await Promise.all(Object.entries(layout.sources.sheets)
+  .filter(([key]) => !selective || selectedSources.has(key)).map(async ([key, file]) =>
   [key, await loadSource(file)])));
 
 const transparent = (width, height) => sharp({ create: {
@@ -121,6 +164,28 @@ async function registeredFrame(frameIndex, stage, species) {
     sourceIsolation, buffer };
 }
 
+async function resizeRegisteredFrame(frame, stage, scale, width, height) {
+  if (!stage.sourceSamplingCanvas) {
+    return sharp(frame.buffer).resize(width, height, { kernel: 'nearest' }).png().toBuffer();
+  }
+  const [baseWidth, baseHeight] = stage.sourceSamplingCanvas;
+  if (![baseWidth, baseHeight].every((value) => Number.isInteger(value) && value > 0)) {
+    throw new Error('Registered sampling canvas requires positive integer dimensions.');
+  }
+  // A wider source canvas must not change the established nearest-neighbor
+  // sample grid. Pad to whole multiples of the original sampling canvas,
+  // resize by the same integer ratio, then crop away only transparent padding.
+  const columns = Math.ceil(frame.crop.width / baseWidth), rows = Math.ceil(frame.crop.height / baseHeight);
+  const paddedWidth = columns * baseWidth, paddedHeight = rows * baseHeight;
+  const padded = await sharp(frame.buffer).extend({ top: 0, left: 0,
+    right: paddedWidth - frame.crop.width, bottom: paddedHeight - frame.crop.height,
+    background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+  const resized = await sharp(padded)
+    .resize(columns * Math.round(baseWidth * scale), rows * Math.round(baseHeight * scale),
+      { kernel: 'nearest' }).png().toBuffer();
+  return sharp(resized).extract({ left: 0, top: 0, width, height }).png().toBuffer();
+}
+
 await mkdir(sourceRoot, { recursive: true });
 const sourceGrids = new Map(Array.from(sources.keys(), (key) => [key, []]));
 const barn = await sharp(resolve(sourceRoot, layout.sources.barn)).resize(size, size, { kernel: 'nearest' }).png().toBuffer();
@@ -130,16 +195,18 @@ const feedCrop = await sharp(feedOriginal).extract(feedRegistration.sourceRectan
   .resize(feedTexture.bounds.width, feedTexture.bounds.height, { kernel: 'nearest', fit: 'fill' }).png().toBuffer();
 const feed = await transparent(...feedTexture.size).composite([{ input: feedCrop,
   left: feedTexture.bounds.x, top: feedTexture.bounds.y }]).png().toBuffer();
-await saveVersions(feed, resolve(sourceRoot, 'feed.png'), resolve(publicRoot, 'feed.webp'));
+const feedPublishedPath = resolve('public', feedTexture.path.replace(/^\.\//, ''));
+if (!selective) await saveVersions(feed, resolve(sourceRoot, feedRegistration.png), feedPublishedPath);
 // Static evidence consumes the actual published texture, just as the live loader does.
-const publishedFeed = await readFile(resolve(publicRoot, 'feed.webp'));
-const manifest = {
+const publishedFeed = await readFile(feedPublishedPath);
+const manifest = selective ? structuredClone(previousManifest) : {
   version: layout.version, generatedWith: 'built-in image_gen using approved pixel-v4 style; sharp alpha isolation, fixed anatomical registration and nearest-neighbor packing',
   animation: 'feeding', feedingRegistration: 'assets/livestock/feeding-registration-v5.json',
   choiceRegistration: layout.choiceRegistration,
   feedRegistration: layout.feedRegistration,
   feedPresentationRevision: feedRegistration.presentationRevision,
   feedTexture: { ...feedTexture, source: feedRegistration.source,
+    png: feedRegistration.png,
     sourceSha256: createHash('sha256').update(feedOriginal).digest('hex'),
     sha256: createHash('sha256').update(publishedFeed).digest('hex'),
     sourceRectangle: feedRegistration.sourceRectangle },
@@ -269,6 +336,7 @@ async function feedingScene(id, species, animal, stageIndex = species.stages.len
 }
 
 for (const [id, species] of Object.entries(layout.species)) {
+  if (selective && id !== selectedId) continue;
   const productAsset = await canonicalProduct(id);
   species.productVisual = { ...productAsset };
   const atlasLayers = [];
@@ -278,8 +346,8 @@ for (const [id, species] of Object.entries(layout.species)) {
     const alignmentLayers = [];
     // The same source canvas, anatomical origin and scale are used in all four
     // transforms. A blink or tail change cannot recenter the whole animal.
-    const scale = Math.min(stage.maxWidth / Math.max(...frames.map((frame) => frame.crop.width)),
-      stage.maxHeight / Math.max(...frames.map((frame) => frame.crop.height)));
+    const scale = stageScale(stage, Math.max(...frames.map((frame) => frame.crop.width)),
+      Math.max(...frames.map((frame) => frame.crop.height)));
     for (const [frameIndex, frame] of frames.entries()) {
       const width = Math.max(1, Math.round(frame.crop.width * scale));
       const height = Math.max(1, Math.round(frame.crop.height * scale));
@@ -288,7 +356,7 @@ for (const [id, species] of Object.entries(layout.species)) {
       if (left < 0 || top < 0 || left + width > size || top + height > size) {
         throw new Error(`Sprite exceeds scene: ${id} ${stage.name} ${frameIndex}`);
       }
-      const sprite = await sharp(frame.buffer).resize(width, height, { kernel: 'nearest' }).png().toBuffer();
+      const sprite = await resizeRegisteredFrame(frame, stage, scale, width, height);
       const scene = await transparent(size, size).composite([{ input: sprite, left, top }]).png().toBuffer();
       if (frameIndex === 0) Object.assign(stage, await deriveGrounding(scene, id, stage));
       const frameFolder = resolve(sourceRoot, 'animals', id);
@@ -297,8 +365,13 @@ for (const [id, species] of Object.entries(layout.species)) {
       atlasLayers.push({ input: scene, left: frameIndex * size, top: stageIndex * size });
       sourceGrids.get(frame.source).push({ input: scene, left: frameIndex * size, top: stage.row * size });
       records.push({ stage: stage.name, frame: frameIndex, source: frame.source, sourceCell: [frameIndex, stage.row],
+        sourceSha256: createHash('sha256').update(sources.get(frame.source).originalBytes).digest('hex'),
+        frameAsset: { path: `assets/livestock/animals/${id}/${stage.name}-${frameIndex}.png`,
+          sha256: createHash('sha256').update(scene).digest('hex') },
         sourceRectangle: frame.rectangle, sourceIsolation: frame.sourceIsolation, crop: frame.crop, root: [frame.rootX, frame.rootY],
         sourceAnchor: frame.sourceAnchor, stageScale: scale, anchorMethod: stage.anchorMethod,
+        ...(stage.cropRevision ? { cropRevision: stage.cropRevision, cropMethod: stage.cropMethod } : {}),
+        ...(stage.sourceSamplingCanvas ? { sourceSamplingCanvas: stage.sourceSamplingCanvas } : {}),
         sourceCanvas: stage.sourceCanvas, grounding: stage.grounding, footprint: stage.footprint,
         scenePlacement: [left, top, width, height], fixedGround: [layout.animalRoot.x, layout.animalRoot.y] });
       const guideY = Math.round(layout.animalRoot.y - height * 0.52);
@@ -339,6 +412,10 @@ for (const [id, species] of Object.entries(layout.species)) {
     feedingSources: species.stages.map((stage) => stage.feedingSource),
     stages: species.stages.map(({ name }) => name), atlasSize: [size * layout.idleFrames, size * species.stages.length],
     frames: records, productAsset,
+    atlasAsset: { source: `assets/livestock/atlases/${id}.png`,
+      sourceSha256: createHash('sha256').update(await readFile(resolve(sourceRoot, 'atlases', `${id}.png`))).digest('hex'),
+      path: `public/art/livestock/animals/${id}.webp`,
+      sha256: createHash('sha256').update(await readFile(resolve(publicRoot, 'animals', `${id}.webp`))).digest('hex') },
     ...(species.productCell ? { historicalProductCell: { source: species.productCell.source ?? species.source, ...species.productCell, consumed: false } } : {}),
     animalIcon: choiceExport.records[id],
     grounding: species.stages.map((stage) => stage.grounding),
@@ -355,10 +432,20 @@ for (const [id, species] of Object.entries(layout.species)) {
 
 await mkdir(resolve(sourceRoot, 'normalized'), { recursive: true });
 for (const [key, grid] of (choicesFeedOnly ? [] : sourceGrids)) {
-  await transparent(size * columns, size * rows).composite(grid).png({ compressionLevel: 9 })
+  const existing = selective ? await readFile(resolve(sourceRoot, 'normalized', `${key}.png`)) : null;
+  let normalized = existing ? sharp(existing) : transparent(size * columns, size * rows);
+  if (selective) {
+    const stageRows = new Set(layout.species[selectedId].stages
+      .filter((stage) => (stage.source ?? layout.species[selectedId].source) === key).map((stage) => stage.row));
+    const eraseRow = await sharp({ create: { width: size * columns, height: size, channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 1 } } }).png().toBuffer();
+    normalized = normalized.composite(Array.from(stageRows, (row) => ({ input: eraseRow, left: 0, top: row * size, blend: 'dest-out' })));
+    normalized = sharp(await normalized.png().toBuffer());
+  }
+  await normalized.composite(grid).png({ compressionLevel: 9 })
     .toFile(resolve(sourceRoot, 'normalized', `${key}.png`));
 }
-if (!choicesFeedOnly) await saveVersions(barn, resolve(sourceRoot, 'barn.png'), resolve(publicRoot, 'barn.webp'));
+if (!choicesFeedOnly && !selective) await saveVersions(barn, resolve(sourceRoot, 'barn.png'), resolve(publicRoot, 'barn.webp'));
 layout.productContract = { source: 'canonical inventory icons only', canonicalPath: 'public/wiki/icons/<ID>.webp',
   sourceSize: [96, 96], boundsAlphaThreshold: productAlphaThreshold, historicalProductCellsConsumed: false };
 manifest.productContract = layout.productContract;
@@ -371,6 +458,10 @@ const visuals = Object.fromEntries(Object.entries(layout.species).map(([id, spec
     grounding: species.stages.map((stage) => stage.grounding),
     product: { icon: id, bounds: species.productVisual.bounds } }]));
 await writeFile(resolve('src/content/livestock-visuals.json'), JSON.stringify(visuals, null, 2) + '\n');
+if (selective) {
+  console.log(`Exported registered source-cell repair for ${selectedId}; choices, feed, other species and shared barn retained.`);
+  process.exit(0);
+}
 // A source-art contact sheet for reviewing the requested two-species prototype; it is not a game screenshot.
 const reviewPanels = [
   { id: 'L01', stage: 'adult', frame: 0 }, { id: 'L01', stage: 'adult', frame: 1 },

@@ -1,11 +1,11 @@
 import { AccessibilitySystem, Application, extensions } from 'pixi.js';
 import {
   advanceWorld, newWorld, settleProduction, catalog,
-  buyFacility, upgradeFacility, assignFacility, buyStation, arrangeStation,
+  buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, arrangeStation, clearStation,
   setStationPriority, reserve, sell, sellBatch, sellFarm,
 } from './game/world.js';
 import { research, upgradeQuality, upgradeTech, qualityOffer } from './game/advancement.js';
-import { objectives } from './game/objectives.js';
+import { objectives, settleTaskRewards } from './game/objectives.js';
 import { viewportLayout } from './platform/layout.js';
 import {
   openWorldSave, readWorldSave, writeWorldSave, restoreWorldSave, settleOfflineWorld, acknowledgeOffline,
@@ -58,7 +58,7 @@ function updateSettings(draft, partial) {
 }
 
 const actions = {
-  buyFacility, upgradeFacility, assignFacility, buyStation, arrangeStation, setStationPriority,
+  buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, arrangeStation, clearStation, setStationPriority,
   reserve, sell, sellBatch, sellFarm, research, upgradeQuality, upgradeTech, updateSettings,
 };
 
@@ -113,15 +113,26 @@ function foreground(draft, deferFinalStarts = false, anchor = performance.now(),
   return anchor;
 }
 
-async function commit(draft, anchor) {
-  draft.revision = await writeWorldSave(db, draft);
+async function commit(draft, anchor, options) {
+  const rewards = settleTaskRewards(draft);
+  draft.revision = await writeWorldSave(db, draft, options);
   world = draft;
   frontAnchor = anchor;
   audio.configure(draft.settings);
+  return rewards;
 }
 
 function completedGuide(before, after) {
   return objectives(before).active && !objectives(after).active;
+}
+
+function taskRewardText(rewards) {
+  return rewards?.coins > 0n ? '任务奖励 +' + compact(rewards.coins) + ' 金币' : '';
+}
+
+function progressToast(before, after, rewards) {
+  return [completedGuide(before, after) ? longGoalsToast : '', taskRewardText(rewards)]
+    .filter(Boolean).join(' · ');
 }
 
 function showOffline() {
@@ -172,10 +183,11 @@ async function closeOffline(id, anchorAt, wallAt) {
   if (!acknowledgeOffline(draft, id)) return !draft.pendingOffline;
   try {
     const anchor = foreground(draft, false, anchorAt, wallAt);
-    await commit(draft, anchor);
+    const rewards = await commit(draft, anchor);
     offlineDialogId = undefined;
     paint();
-    if (completedGuide(before, draft)) view.toast(longGoalsToast);
+    const toast = progressToast(before, draft, rewards);
+    if (toast) view.toast(toast);
     return true;
   } catch (error) {
     if (error.code === 'revision-conflict') staleSave();
@@ -208,11 +220,12 @@ async function settleOffline(base, now, anchor) {
     try { draft = await settleInWorker(base, now); }
     catch { draft = settleLocally(base, now); }
   } else draft = settleLocally(base, now);
-  await commit(draft, anchor);
+  const rewards = await commit(draft, anchor);
   status = undefined;
   paint();
   showOffline();
-  if (completedGuide(base, draft)) view.toast(longGoalsToast);
+  const toast = progressToast(base, draft, rewards);
+  if (toast) view.toast(toast);
 }
 
 async function initialize(recovery) {
@@ -255,7 +268,7 @@ function feedback(name, args, before, after, quality) {
   if (name === 'upgradeQuality') return { float: '品质升至 ' + compact(quality.target) + ' 级', sound: 'success' };
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
-  if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.coins - before.coins) + ' 金币', sound: 'sell' };
+  if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - before.stats.revenue) + ' 金币', sound: 'sell' };
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
   if (name === 'upgradeFacility') return { float: '已升级', sound: 'success' };
@@ -277,14 +290,15 @@ function dispatch(name, ...args) {
       const quality = name === 'upgradeQuality' ? qualityOffer(draft, ...args) : null;
       if (actions[name](draft, ...args) === false) {
         settleProduction(draft);
-        await commit(draft, anchor);
+        const rewards = await commit(draft, anchor);
         paint();
         const message = ['sell', 'sellBatch', 'sellFarm'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
-        return { ok: false, message: completedGuide(before, draft) ? message + ' · ' + longGoalsToast : message };
+        const toast = progressToast(before, draft, rewards);
+        return { ok: false, message: toast ? message + ' · ' + toast : message };
       }
       settleProduction(draft);
-      await commit(draft, anchor);
+      const rewards = await commit(draft, anchor);
       if (name === 'sellFarm') {
         worldEpoch += 1;
         nextDisplayAt = 0;
@@ -292,7 +306,7 @@ function dispatch(name, ...args) {
       }
       paint();
       const result = feedback(name, args, beforeAction, draft, quality);
-      if (completedGuide(before, draft)) result.toast = [result.toast, longGoalsToast].filter(Boolean).join(' · ');
+      result.toast = [result.toast, progressToast(before, draft, rewards)].filter(Boolean).join(' · ');
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };
     } catch (error) {
@@ -334,11 +348,14 @@ function exportSave() {
       throw saveTransferError('经营记录尚未准备好，请稍后再导出。');
     }
     try {
-      const draft = structuredClone(world);
+      const before = world;
+      const draft = structuredClone(before);
       const anchor = foreground(draft);
-      await commit(draft, anchor);
+      const rewards = await commit(draft, anchor);
       const exported = transfer.exportWorld(world);
       paint();
+      const toast = progressToast(before, draft, rewards);
+      if (toast) view.toast(toast);
       return exported;
     } catch (error) {
       throw saveTransferError(transferFailure(error, '暂时无法导出存档，请稍后重试。'), error);
@@ -360,9 +377,10 @@ function importSave(candidate) {
       }
       // Import the saved progress as-is; time since the export earns no extra production.
       draft.wallAnchorMs = now;
+      const rewards = settleTaskRewards(draft);
       const next = await replaceWorldSave(db, draft, world.revision);
       activateReplacement(next);
-      return { ok: true, message: '存档已导入' };
+      return { ok: true, message: ['存档已导入', taskRewardText(rewards)].filter(Boolean).join(' · ') };
     } catch (error) {
       return { ok: false, message: transferFailure(error, '暂时无法导入存档，请稍后重试。') };
     }
@@ -377,6 +395,7 @@ function clearSave() {
     }
     try {
       const draft = newWorld(Date.now());
+      settleTaskRewards(draft);
       const next = await replaceWorldSave(db, draft, world.revision, { clearBackup: true });
       activateReplacement(next);
       return { ok: true, message: '存档已清除，新牧场已准备好' };
@@ -404,11 +423,8 @@ const view = createGameView(app, dispatch, () => {
     try {
       const draft = newWorld(Date.now());
       const anchor = performance.now();
-      draft.revision = await writeWorldSave(db, draft, { replaceCorrupt: true, corruptRevision: confirmation.corruptRevision });
-      world = draft;
-      frontAnchor = anchor;
+      await commit(draft, anchor, { replaceCorrupt: true, corruptRevision: confirmation.corruptRevision });
       status = undefined;
-      audio.configure(world.settings);
       paint();
     } catch (error) {
       if (error.code === 'revision-conflict') staleSave();
@@ -430,10 +446,11 @@ async function saveForeground(anchorAt, wallAt) {
   const draft = structuredClone(before);
   try {
     const anchor = foreground(draft, false, anchorAt, wallAt);
-    await commit(draft, anchor);
+    const rewards = await commit(draft, anchor);
     paint();
     if (visible) showOffline();
-    if (completedGuide(before, draft)) view.toast(longGoalsToast);
+    const toast = progressToast(before, draft, rewards);
+    if (toast) view.toast(toast);
   } catch (error) {
     if (error.code === 'revision-conflict') staleSave();
     else if (visible) view.toast('暂时无法保存经营记录');

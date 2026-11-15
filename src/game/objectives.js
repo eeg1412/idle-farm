@@ -9,6 +9,33 @@ const refining = destination('工坊', '精制');
 const warehouse = destination('仓库');
 const research = destination('研究');
 
+export const taskCoinRewards = Object.freeze({
+  firstHarvest: 10n,
+  firstFlour: 20n,
+  breadRecipe: 30n,
+  firstBread: 50n,
+  firstSale: 20n,
+  firstPlot: 15n,
+  livestockIntro: 100n,
+  fishIntro: 100n,
+  moreFields: 150n,
+  farmIncome: 5000n,
+  recipeCollection: 8000n,
+  qualityCollection: 12000n,
+  newFarm: 50n,
+  milleCrepe: 50000n,
+  itemCollection: 250000n,
+  qualityMaster: 80000n,
+  buildLivestock: 100n,
+  buildFish: 100n,
+  collectLivestock: 150n,
+  collectFish: 150n,
+  firstLivestockProcessing: 400n,
+  firstFishProcessing: 400n,
+  firstMixedProduct: 1500n,
+  threeSectorGift: 150000n,
+});
+
 const produced = (world, id) => world.stats.produced[id] ?? 0n;
 const learned = (world, id) => BigInt(world.unlocked.includes(id));
 const countWhere = (list, predicate) => BigInt(list.filter(predicate).length);
@@ -60,7 +87,8 @@ const longTerm = [
 
 function progress(world, [id, name, location, count, required = 1n]) {
   const current = count(world);
-  return { id, name, ...location, current, required, done: current >= required };
+  return { id, name, ...location, current, required, done: current >= required,
+    rewardCoins: taskCoinRewards[id], rewarded: world.taskRewards?.includes(id) ?? false };
 }
 
 export function objectives(world) {
@@ -72,5 +100,24 @@ export function objectives(world) {
     })));
   }
   return { guide, active, long: longTerm.map((task) => progress(world, task)) };
+}
+
+// The caller settles a private draft and commits its coins and receipt IDs together.
+// Neither progress queries nor save decoding issue rewards.
+export function settleTaskRewards(world) {
+  const { guide, long } = objectives(world);
+  const previous = world.taskRewards ?? [];
+  const rewarded = new Set(previous);
+  const ids = [];
+  let coins = 0n;
+  for (const task of [...guide, ...long]) {
+    if (!task.done || rewarded.has(task.id)) continue;
+    rewarded.add(task.id);
+    ids.push(task.id);
+    coins += task.rewardCoins;
+  }
+  world.taskRewards = [...previous, ...ids];
+  world.coins += coins;
+  return { ids, coins };
 }
 

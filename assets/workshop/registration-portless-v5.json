@@ -1,0 +1,146 @@
+{
+  "version": 5,
+  "generator": "built-in image_gen edit",
+  "prompt": "assets/workshop/prompts-portless-v5.md",
+  "entries": {
+    "processing": {
+      "path": "./art/workshop/processing-machine-portless-v5.webp",
+      "size": [
+        140,
+        620
+      ],
+      "logicalSize": [
+        65.45454545454545,
+        289.87012987012986
+      ],
+      "placement": {
+        "x": 127.15584415584416,
+        "y": 14.831168831168831,
+        "width": 65.45454545454545,
+        "height": 289.87012987012986
+      },
+      "bodyEdges": {
+        "left": 127.85714285714286,
+        "right": 192.14285714285714,
+        "top": 16,
+        "bottom": 304
+      },
+      "occlusionCover": {
+        "inputX": 147.85714285714286,
+        "outputX": 172.14285714285714
+      },
+      "sourceBounds": {
+        "left": 471,
+        "right": 746,
+        "top": 29,
+        "bottom": 1261
+      },
+      "sourceRotationDegrees": 0,
+      "source": "assets/workshop/raw/processing-machine-portless-v5.png",
+      "sourceGenerated": "C:/Users/eeg14/.codex/generated_images/01a1df5a-7dd5-78a0-a8fe-56db3bbc33ba/exec-376c5d3e-990a-4947-9375-f22732ec1f16.png",
+      "editInput": "assets/workshop/raw/processing-machine-long-v4.png",
+      "prompt": "assets/workshop/prompts-portless-v5.md",
+      "crop": {
+        "left": 468,
+        "top": 24,
+        "width": 280,
+        "height": 1240
+      },
+      "png": "assets/workshop/png/processing-machine-portless-v5.png",
+      "webp": "public/art/workshop/processing-machine-portless-v5.webp",
+      "bodyScale": 0.23376623376623376,
+      "sourceOcclusionCover": {
+        "inputX": 556.5555555555555,
+        "outputX": 660.4444444444445
+      },
+      "conversion": "uniform nearest-neighbor crop resize only; WebP quality 70, alpha quality 100, generated alpha preserved",
+      "visualIntent": "solid uninterrupted overhead cabinet; no fixed openings or protruding connections; display attachment Y is recipe-driven"
+    },
+    "refining": {
+      "path": "./art/workshop/refining-machine-portless-v5.webp",
+      "size": [
+        148,
+        628
+      ],
+      "logicalSize": [
+        68.52733118971061,
+        290.7781350482315
+      ],
+      "placement": {
+        "x": 125.7363344051447,
+        "y": 14.842443729903536,
+        "width": 68.52733118971061,
+        "height": 290.7781350482315
+      },
+      "bodyEdges": {
+        "left": 126.89389067524115,
+        "right": 193.10610932475885,
+        "top": 16,
+        "bottom": 304
+      },
+      "occlusionCover": {
+        "inputX": 146.89389067524115,
+        "outputX": 173.10610932475885
+      },
+      "sourceBounds": {
+        "left": 465,
+        "right": 751,
+        "top": 21,
+        "bottom": 1265
+      },
+      "sourceRotationDegrees": 0,
+      "source": "assets/workshop/raw/refining-machine-portless-v5.png",
+      "sourceGenerated": "C:/Users/eeg14/.codex/generated_images/01a1df5a-7dd5-78a0-a8fe-56db3bbc33ba/exec-ff00486d-d0c7-450c-8b5b-30fd2ecca5bc.png",
+      "editInput": "assets/workshop/raw/refining-machine-long-v4.png",
+      "prompt": "assets/workshop/prompts-portless-v5.md",
+      "crop": {
+        "left": 460,
+        "top": 16,
+        "width": 296,
+        "height": 1256
+      },
+      "png": "assets/workshop/png/refining-machine-portless-v5.png",
+      "webp": "public/art/workshop/refining-machine-portless-v5.webp",
+      "bodyScale": 0.2315112540192926,
+      "sourceOcclusionCover": {
+        "inputX": 551.3888888888889,
+        "outputX": 664.6111111111111
+      },
+      "conversion": "uniform nearest-neighbor crop resize only; WebP quality 70, alpha quality 100, generated alpha preserved",
+      "visualIntent": "solid uninterrupted overhead cabinet; no fixed openings or protruding connections; display attachment Y is recipe-driven"
+    }
+  },
+  "reused": {
+    "background": {
+      "path": "./art/workshop/background-v1.webp",
+      "size": [
+        320,
+        320
+      ],
+      "logicalSize": [
+        320,
+        320
+      ]
+    },
+    "movingSurface": {
+      "path": "./art/workshop/belt-surface-v2.webp",
+      "size": [
+        32,
+        64
+      ],
+      "logicalSize": [
+        8,
+        16
+      ],
+      "period": 8,
+      "direction": "E"
+    }
+  },
+  "inactiveHistory": [
+    "all horizontal machines",
+    "vertical rotated v3 machines",
+    "long-v4 machines with ports",
+    "all rail/port/corner/junction/cross graphics"
+  ],
+  "status": "candidate metadata; activate only together with matching final layout helper"
+}

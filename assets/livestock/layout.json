@@ -543,7 +543,7 @@
           "sourceCanvas": {
             "left": -108,
             "top": -192,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
@@ -643,7 +643,40 @@
           "supportXRange": [
             0,
             195
-          ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 781,
+              "width": 260,
+              "height": 218
+            },
+            {
+              "left": 260,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 515,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 770,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            }
+          ],
+          "sourceScale": 0.6932270916334662,
+          "sourceSamplingCanvas": [
+            251,
+            218
+          ],
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing."
         }
       ],
       "productCell": {
@@ -1138,31 +1171,31 @@
           "sourceAnchors": [
             [
               123,
-              813
+              819
             ],
             [
               395,
-              813
+              819
             ],
             [
               660,
-              813
+              819
             ],
             [
               927,
-              813
+              819
             ]
           ],
           "sourceCanvas": {
             "left": -123,
-            "top": -202,
+            "top": -208,
             "width": 277,
             "height": 220
           },
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source.",
           "grounding": {
             "x": 134.5,
-            "y": 271.5,
+            "y": 266.5,
             "radiusX": 54.5,
             "radiusY": 9
           },
@@ -1186,37 +1219,37 @@
               "x": 82,
               "y": 258,
               "width": 105,
-              "height": 16
+              "height": 11
             },
             "contacts": [
               {
                 "x": 94.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 82,
                   "y": 258,
                   "width": 25,
-                  "height": 11
+                  "height": 6
                 }
               },
               {
-                "x": 142.5,
-                "y": 274,
+                "x": 144,
+                "y": 269,
                 "bounds": {
-                  "x": 119,
+                  "x": 122,
                   "y": 258,
-                  "width": 47,
-                  "height": 16
+                  "width": 44,
+                  "height": 11
                 }
               },
               {
                 "x": 179.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 172,
                   "y": 258,
                   "width": 15,
-                  "height": 11
+                  "height": 6
                 }
               }
             ],
@@ -1226,7 +1259,7 @@
           "supportMaterial": "opaque-feet",
           "feeding": {
             "x": 212,
-            "y": 275,
+            "y": 271,
             "radiusX": 24,
             "radiusY": 6,
             "kind": "grain"
@@ -1241,15 +1274,15 @@
             "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
             "mouthBounds": {
               "x": 187,
-              "y": 264,
+              "y": 259,
               "width": 44,
-              "height": 14
+              "height": 15
             },
             "sourceMouthBounds": {
               "x": 190.193,
-              "y": 804.772,
+              "y": 803.916,
               "width": 60.337,
-              "height": 19.198
+              "height": 20.569
             },
             "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
           },
@@ -3075,9 +3108,9 @@
     "cattle": "raw/pixel-v4-cattle.png"
   },
   "choiceRegistration": "assets/livestock/choice-registration-v7.json",
-  "feedRegistration": "assets/livestock/feed-registration-v6.json",
+  "feedRegistration": "assets/livestock/feed-registration-v8.json",
   "feedTexture": {
-    "path": "./art/livestock/feed.webp",
+    "path": "./art/livestock/feed-v8.webp",
     "size": [
       128,
       64

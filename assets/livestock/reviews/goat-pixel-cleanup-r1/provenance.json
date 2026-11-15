@@ -1,0 +1,155 @@
+{
+  "revision": "l04-cell-isolation-r1",
+  "source": {
+    "file": "raw/pixel-v5-feeding-accessories.png",
+    "sha256": "9909c995c727d67394db5e395bcbdea7ac068db28ffc4ffab37da8df94ccb31a",
+    "originalSize": [
+      1254,
+      1254
+    ],
+    "normalized": "normalized/accessories.png"
+  },
+  "originalCanvas": [
+    -108,
+    -192,
+    251,
+    218
+  ],
+  "repairedCanvas": {
+    "left": -108,
+    "top": -192,
+    "width": 258,
+    "height": 218
+  },
+  "sourceSamplingCanvas": [
+    251,
+    218
+  ],
+  "stageScale": 0.6932270916334662,
+  "before": [
+    {
+      "frame": 0,
+      "sha256": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4",
+      "provenance": "Exact archived original V7 image_gen input"
+    },
+    {
+      "frame": 1,
+      "sha256": "f9254d1632695cc262c8440158518246844a64f6ca1ae98f921dc99b101a2758",
+      "provenance": "Unchanged original artwork through original 251x218 crop and 174x151 resize"
+    },
+    {
+      "frame": 2,
+      "sha256": "352d3c1e70dd65770c2e1289dcdf17750ec53ceb005d822eb45c77d107096947",
+      "provenance": "Unchanged original artwork through original 251x218 crop and 174x151 resize"
+    },
+    {
+      "frame": 3,
+      "sha256": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867",
+      "provenance": "Exact archived original V7 image_gen input"
+    }
+  ],
+  "after": [
+    {
+      "frame": 0,
+      "sourceAnchor": [
+        109,
+        973
+      ],
+      "sourceIsolation": {
+        "left": 1,
+        "top": 781,
+        "width": 258,
+        "height": 218
+      },
+      "frameAsset": {
+        "path": "assets/livestock/animals/L04/adult-0.png",
+        "sha256": "a74cb23dd95609d3e88cd1350b4e21c5d7d6abdc1e03f9e92d2b58a8257ff8e2"
+      }
+    },
+    {
+      "frame": 1,
+      "sourceAnchor": [
+        362,
+        973
+      ],
+      "sourceIsolation": {
+        "left": 260,
+        "top": 781,
+        "width": 252,
+        "height": 218
+      },
+      "frameAsset": {
+        "path": "assets/livestock/animals/L04/adult-1.png",
+        "sha256": "17c0123a9bbddf4d20bcea57e1599b6efcbd12e0ac119eee0bc9e2182f336a49"
+      }
+    },
+    {
+      "frame": 2,
+      "sourceAnchor": [
+        616,
+        973
+      ],
+      "sourceIsolation": {
+        "left": 515,
+        "top": 781,
+        "width": 251,
+        "height": 218
+      },
+      "frameAsset": {
+        "path": "assets/livestock/animals/L04/adult-2.png",
+        "sha256": "8d54e49193fb2d1a995f9d95f336344bdf80a25bfc7443618b7bc252b6f1a491"
+      }
+    },
+    {
+      "frame": 3,
+      "sourceAnchor": [
+        870,
+        973
+      ],
+      "sourceIsolation": {
+        "left": 770,
+        "top": 781,
+        "width": 250,
+        "height": 218
+      },
+      "frameAsset": {
+        "path": "assets/livestock/animals/L04/adult-3.png",
+        "sha256": "18e6529afad4087e9f37a84de98f10cefd6b315bc607e00dda9158e5b5bb1ac7"
+      }
+    }
+  ],
+  "atlas": {
+    "source": "assets/livestock/atlases/L04.png",
+    "sourceSha256": "342851af04341b095952937c95f6183e8d5827e657bd9125e0369427bd9d8468",
+    "path": "public/art/livestock/animals/L04.webp",
+    "sha256": "864fea04049f74feae7dbaed2bb6c0d3873837230e56b2e8b34c175b29ff00f9"
+  },
+  "fallback": {
+    "path": "public/art/scene-L04.webp",
+    "source": "assets/source/art/scene-L04.png",
+    "animation": "feeding",
+    "sourceSha256": "b2b8d5371e91d43e6caf596c67b60920321e3221972372ccbc849757b981640e",
+    "sha256": "52b7d4dbf841e277fa214fad55d6d3c64fd8966e01790513442c6c6208a75e35",
+    "feedTexture": {
+      "path": "./art/livestock/feed-v8.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+    "retained": false,
+    "refreshed": true
+  },
+  "scope": "Static artwork composition only; game runtime and animation loop not verified."
+}

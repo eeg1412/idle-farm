@@ -4,10 +4,10 @@
   "animation": "feeding",
   "feedingRegistration": "assets/livestock/feeding-registration-v5.json",
   "choiceRegistration": "assets/livestock/choice-registration-v7.json",
-  "feedRegistration": "assets/livestock/feed-registration-v6.json",
-  "feedPresentationRevision": "v6-r3",
+  "feedRegistration": "assets/livestock/feed-registration-v8.json",
+  "feedPresentationRevision": "v8-r1",
   "feedTexture": {
-    "path": "./art/livestock/feed.webp",
+    "path": "./art/livestock/feed-v8.webp",
     "size": [
       128,
       64
@@ -22,14 +22,15 @@
       64,
       60
     ],
-    "source": "raw/compound-feed-v6.png",
-    "sourceSha256": "7038f463bf185c7613d5c07a20194a5c3e4fe1f2de9057de8a543a98a1b90847",
-    "sha256": "d00086ea497b3bde46ec9d75e00b5be818fc812144f7299e053a2a77d2e2de9e",
+    "source": "raw/compound-feed-v8.png",
+    "png": "feed-v8.png",
+    "sourceSha256": "9f6cd35c9e82603714eb7692ac53bbfdbbbd9e625a6270f994cddbca2fd881b5",
+    "sha256": "57ffa8a27d9c8c31d2c16e57e0a932449fdcfe7bb7223617ad562d5e4fc07e43",
     "sourceRectangle": {
-      "left": 87,
-      "top": 184,
-      "width": 1650,
-      "height": 547
+      "left": 318,
+      "top": 104,
+      "width": 1264,
+      "height": 631
     }
   },
   "styleReference": "raw/pixel-v4-black-pig-style.png",
@@ -672,10 +673,10 @@
         "path": "public/art/scene-L01.webp",
         "source": "assets/source/art/scene-L01.png",
         "animation": "feeding",
-        "sourceSha256": "7d3c533b0c6eff6cd8022032d6f98e6f3fa7062fc9b7f659ff7a725cae39673d",
-        "sha256": "3935e6e7127ef3b64dd679dfc317a742f51b7bd85d8533de0e7f06e51efb07ce",
+        "sourceSha256": "17627a59da2ffe622b9c8b8eb53df7204fdf1a3d23d1014e7e347ae8c38fe54b",
+        "sha256": "7208c073ec0413d287503f4a478c7ebdb175c439484f009672030191d30ea9f8",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -691,7 +692,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -1414,10 +1415,10 @@
         "path": "public/art/scene-L02.webp",
         "source": "assets/source/art/scene-L02.png",
         "animation": "feeding",
-        "sourceSha256": "c28e06d4edfdc088ccd0a90ec4e79712fc8898a4c428731fca4899ad7d4ebb50",
-        "sha256": "6311b559eb4ecdbd4db72eaf749fab57d5afdbd105ee3c6c01dad834d533afe9",
+        "sourceSha256": "f7300d6e558a3df8e0f4c4e00e72bc7abd2b3fc97fd52270986aef85f7cf5549",
+        "sha256": "8c581fd5ca9bdb7534ff0f738755996dc17205e4524b820116fe74f9a5acb71e",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -1433,7 +1434,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -2006,10 +2007,10 @@
         "path": "public/art/scene-L03.webp",
         "source": "assets/source/art/scene-L03.png",
         "animation": "feeding",
-        "sourceSha256": "aef8cc3cdf631ac4105b484bf1775d8e69298a3b21393ca46715b87322476231",
-        "sha256": "ee27202a6acec133f5be22e562c623ad656136183504695fc95fa69e1d801b7f",
+        "sourceSha256": "24aa6a55276d9428c54b78e33fa7762392494426a5486d6974f7c9c79d3d2c25",
+        "sha256": "2ed73e7ee0dc38e5cbd0dc5c738f4031b4eb7335184bf2f7975adf9394b147e0",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -2025,7 +2026,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -2084,16 +2085,27 @@
             0,
             3
           ],
+          "sourceSha256": "9909c995c727d67394db5e395bcbdea7ac068db28ffc4ffab37da8df94ccb31a",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L04/adult-0.png",
+            "sha256": "a74cb23dd95609d3e88cd1350b4e21c5d7d6abdc1e03f9e92d2b58a8257ff8e2"
+          },
           "sourceRectangle": {
             "left": 1,
             "top": 781,
-            "width": 251,
+            "width": 258,
+            "height": 218
+          },
+          "sourceIsolation": {
+            "left": 1,
+            "top": 781,
+            "width": 258,
             "height": 218
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "root": [
@@ -2106,10 +2118,16 @@
           ],
           "stageScale": 0.6932270916334662,
           "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing.",
+          "sourceSamplingCanvas": [
+            251,
+            218
+          ],
           "sourceCanvas": {
             "left": -108,
             "top": -192,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "grounding": {
@@ -2177,7 +2195,7 @@
           "scenePlacement": [
             63,
             137,
-            174,
+            179,
             151
           ],
           "fixedGround": [
@@ -2193,16 +2211,27 @@
             1,
             3
           ],
+          "sourceSha256": "9909c995c727d67394db5e395bcbdea7ac068db28ffc4ffab37da8df94ccb31a",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L04/adult-1.png",
+            "sha256": "17c0123a9bbddf4d20bcea57e1599b6efcbd12e0ac119eee0bc9e2182f336a49"
+          },
           "sourceRectangle": {
             "left": 254,
             "top": 781,
-            "width": 251,
+            "width": 258,
+            "height": 218
+          },
+          "sourceIsolation": {
+            "left": 260,
+            "top": 781,
+            "width": 252,
             "height": 218
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "root": [
@@ -2215,10 +2244,16 @@
           ],
           "stageScale": 0.6932270916334662,
           "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing.",
+          "sourceSamplingCanvas": [
+            251,
+            218
+          ],
           "sourceCanvas": {
             "left": -108,
             "top": -192,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "grounding": {
@@ -2286,7 +2321,7 @@
           "scenePlacement": [
             63,
             137,
-            174,
+            179,
             151
           ],
           "fixedGround": [
@@ -2302,8 +2337,19 @@
             2,
             3
           ],
+          "sourceSha256": "9909c995c727d67394db5e395bcbdea7ac068db28ffc4ffab37da8df94ccb31a",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L04/adult-2.png",
+            "sha256": "8d54e49193fb2d1a995f9d95f336344bdf80a25bfc7443618b7bc252b6f1a491"
+          },
           "sourceRectangle": {
             "left": 508,
+            "top": 781,
+            "width": 258,
+            "height": 218
+          },
+          "sourceIsolation": {
+            "left": 515,
             "top": 781,
             "width": 251,
             "height": 218
@@ -2311,7 +2357,7 @@
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "root": [
@@ -2324,10 +2370,16 @@
           ],
           "stageScale": 0.6932270916334662,
           "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing.",
+          "sourceSamplingCanvas": [
+            251,
+            218
+          ],
           "sourceCanvas": {
             "left": -108,
             "top": -192,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "grounding": {
@@ -2395,7 +2447,7 @@
           "scenePlacement": [
             63,
             137,
-            174,
+            179,
             151
           ],
           "fixedGround": [
@@ -2411,16 +2463,27 @@
             3,
             3
           ],
+          "sourceSha256": "9909c995c727d67394db5e395bcbdea7ac068db28ffc4ffab37da8df94ccb31a",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L04/adult-3.png",
+            "sha256": "18e6529afad4087e9f37a84de98f10cefd6b315bc607e00dda9158e5b5bb1ac7"
+          },
           "sourceRectangle": {
             "left": 762,
             "top": 781,
-            "width": 251,
+            "width": 258,
+            "height": 218
+          },
+          "sourceIsolation": {
+            "left": 770,
+            "top": 781,
+            "width": 250,
             "height": 218
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "root": [
@@ -2433,10 +2496,16 @@
           ],
           "stageScale": 0.6932270916334662,
           "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing.",
+          "sourceSamplingCanvas": [
+            251,
+            218
+          ],
           "sourceCanvas": {
             "left": -108,
             "top": -192,
-            "width": 251,
+            "width": 258,
             "height": 218
           },
           "grounding": {
@@ -2504,7 +2573,7 @@
           "scenePlacement": [
             63,
             137,
-            174,
+            179,
             151
           ],
           "fixedGround": [
@@ -2528,6 +2597,12 @@
           96
         ],
         "boundsAlphaThreshold": 64
+      },
+      "atlasAsset": {
+        "source": "assets/livestock/atlases/L04.png",
+        "sourceSha256": "342851af04341b095952937c95f6183e8d5827e657bd9125e0369427bd9d8468",
+        "path": "public/art/livestock/animals/L04.webp",
+        "sha256": "864fea04049f74feae7dbaed2bb6c0d3873837230e56b2e8b34c175b29ff00f9"
       },
       "historicalProductCell": {
         "source": "raw/pixel-v4-accessories.png",
@@ -2561,12 +2636,22 @@
         "generatedWith": "built-in image_gen",
         "referenceFrames": [
           {
-            "path": "assets/livestock/animals/L04/adult-0.png",
-            "sha256": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4"
+            "path": "assets/livestock/choice-input-archive/v7/L04/adult-0.png",
+            "sha256": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4",
+            "archiveOf": "assets/livestock/animals/L04/adult-0.png",
+            "originalInputPath": "assets/livestock/animals/L04/adult-0.png",
+            "inputHash": "2ce012d926eb5bc5ddf8837297bb6836650fc16450957a9c7d1e8b096f22f0b4",
+            "archivedAt": "2026-11-15",
+            "archiveReason": "Exact original image_gen V7 input preserved before L04 source-cell isolation and complete ear-tip crop repair; the generated choice artwork and historical prompt inputs are unchanged."
           },
           {
-            "path": "assets/livestock/animals/L04/adult-3.png",
-            "sha256": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867"
+            "path": "assets/livestock/choice-input-archive/v7/L04/adult-3.png",
+            "sha256": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867",
+            "archiveOf": "assets/livestock/animals/L04/adult-3.png",
+            "originalInputPath": "assets/livestock/animals/L04/adult-3.png",
+            "inputHash": "7fb3fd68f1e6fb7c8d12b4dd4b6d1489ccb9700bac50b57bb11714755b910867",
+            "archivedAt": "2026-11-15",
+            "archiveReason": "Exact original image_gen V7 input preserved before L04 source-cell isolation and complete ear-tip crop repair; the generated choice artwork and historical prompt inputs are unchanged."
           }
         ],
         "promptFile": "assets/livestock/choice-prompts-v7.md",
@@ -2648,10 +2733,10 @@
         "path": "public/art/scene-L04.webp",
         "source": "assets/source/art/scene-L04.png",
         "animation": "feeding",
-        "sourceSha256": "9598bf96479020e2435491223640b02ea6aaeceb5b10c42ca82c4112b11393e4",
-        "sha256": "bb5ae44557e0f3874f8c9ec0ee0b344abc14c36988a9085ac371f75dc4c05990",
+        "sourceSha256": "b2b8d5371e91d43e6caf596c67b60920321e3221972372ccbc849757b981640e",
+        "sha256": "52b7d4dbf841e277fa214fad55d6d3c64fd8966e01790513442c6c6208a75e35",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -3240,10 +3325,10 @@
         "path": "public/art/scene-L05.webp",
         "source": "assets/source/art/scene-L05.png",
         "animation": "feeding",
-        "sourceSha256": "52d03b34ddfc859a02d0d1443eb0723d0979e51305450a1b294aae8e7831513a",
-        "sha256": "b5325ef1745c20bde63892df63f1325ad4a2a92a6ef208cbb5f4d4e72f31269e",
+        "sourceSha256": "26311b59ee8bdc396e08cf6c59838bb6fb91d7e06e55bfb308418d1b322736ad",
+        "sha256": "0af4d1bdd540d9fc98864f4015613435c63d48605ecb6c2a26bd3d58d3a66666",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -3259,7 +3344,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -3286,7 +3371,7 @@
         },
         {
           "x": 212,
-          "y": 275,
+          "y": 271,
           "radiusX": 24,
           "radiusY": 6,
           "kind": "grain"
@@ -3347,15 +3432,15 @@
           "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
           "mouthBounds": {
             "x": 187,
-            "y": 264,
+            "y": 259,
             "width": 44,
-            "height": 14
+            "height": 15
           },
           "sourceMouthBounds": {
             "x": 190.193,
-            "y": 804.772,
+            "y": 803.916,
             "width": 60.337,
-            "height": 19.198
+            "height": 20.569
           },
           "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
         }
@@ -3378,6 +3463,11 @@
             0,
             0
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/young-0.png",
+            "sha256": "e42a244a6c8a4cac11f3420d3878eaabb594dfbead86eb0b455324658979a655"
+          },
           "sourceRectangle": {
             "left": 2,
             "top": 109,
@@ -3483,6 +3573,11 @@
             1,
             0
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/young-1.png",
+            "sha256": "13349ca7120a833714340999cdeb2c28c56bfc55386f83c977710da8b1eebe83"
+          },
           "sourceRectangle": {
             "left": 266,
             "top": 109,
@@ -3588,6 +3683,11 @@
             2,
             0
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/young-2.png",
+            "sha256": "9fc845c12cb2d8df443957860172814a6d4a760b7d6ca912a43fae6fc6c7e156"
+          },
           "sourceRectangle": {
             "left": 536,
             "top": 109,
@@ -3693,6 +3793,11 @@
             3,
             0
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/young-3.png",
+            "sha256": "029950160f0e6fde91c83d2ce3bb581c80cb80e13b1a1916601043a607936217"
+          },
           "sourceRectangle": {
             "left": 799,
             "top": 109,
@@ -3798,6 +3903,11 @@
             0,
             1
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/growing-0.png",
+            "sha256": "4c88900fb0338413564aa6cb4f39fb25285dfc7127bad1bb2caec9f708dbe44f"
+          },
           "sourceRectangle": {
             "left": 0,
             "top": 363,
@@ -3913,6 +4023,11 @@
             1,
             1
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/growing-1.png",
+            "sha256": "bc796e4de62252aa7a3ec819712178317f80311c664a3f07bba50103cd1540ff"
+          },
           "sourceRectangle": {
             "left": 266,
             "top": 363,
@@ -4028,6 +4143,11 @@
             2,
             1
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/growing-2.png",
+            "sha256": "6b28681c7181f7c1f63b558996626a4201557739c208e9cadc5f09272663bdf5"
+          },
           "sourceRectangle": {
             "left": 532,
             "top": 363,
@@ -4143,6 +4263,11 @@
             3,
             1
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/growing-3.png",
+            "sha256": "54e5fc73ac07ac9d2e0674492d6c9a8177b0394d949aedc97e3007039f65ea42"
+          },
           "sourceRectangle": {
             "left": 795,
             "top": 363,
@@ -4258,6 +4383,11 @@
             0,
             2
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/mature-0.png",
+            "sha256": "afec35ab05201b57c51749a2dce53c0a79d889454b4baeec6e803bde269cec96"
+          },
           "sourceRectangle": {
             "left": 0,
             "top": 611,
@@ -4278,23 +4408,23 @@
           },
           "root": [
             123,
-            202
+            208
           ],
           "sourceAnchor": [
             123,
-            813
+            819
           ],
           "stageScale": 0.7292418772563177,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source.",
           "sourceCanvas": {
             "left": -123,
-            "top": -202,
+            "top": -208,
             "width": 277,
             "height": 220
           },
           "grounding": {
             "x": 134.5,
-            "y": 271.5,
+            "y": 266.5,
             "radiusX": 54.5,
             "radiusY": 9
           },
@@ -4318,37 +4448,37 @@
               "x": 82,
               "y": 258,
               "width": 105,
-              "height": 16
+              "height": 11
             },
             "contacts": [
               {
                 "x": 94.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 82,
                   "y": 258,
                   "width": 25,
-                  "height": 11
+                  "height": 6
                 }
               },
               {
-                "x": 142.5,
-                "y": 274,
+                "x": 144,
+                "y": 269,
                 "bounds": {
-                  "x": 119,
+                  "x": 122,
                   "y": 258,
-                  "width": 47,
-                  "height": 16
+                  "width": 44,
+                  "height": 11
                 }
               },
               {
                 "x": 179.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 172,
                   "y": 258,
                   "width": 15,
-                  "height": 11
+                  "height": 6
                 }
               }
             ],
@@ -4356,7 +4486,7 @@
           },
           "scenePlacement": [
             48,
-            123,
+            118,
             202,
             160
           ],
@@ -4373,6 +4503,11 @@
             1,
             2
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/mature-1.png",
+            "sha256": "331c541284966172a42b6adf077a5cd7a3d1f88b024fbe1ee3ba29d7abfe9138"
+          },
           "sourceRectangle": {
             "left": 272,
             "top": 611,
@@ -4393,23 +4528,23 @@
           },
           "root": [
             123,
-            202
+            208
           ],
           "sourceAnchor": [
             395,
-            813
+            819
           ],
           "stageScale": 0.7292418772563177,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source.",
           "sourceCanvas": {
             "left": -123,
-            "top": -202,
+            "top": -208,
             "width": 277,
             "height": 220
           },
           "grounding": {
             "x": 134.5,
-            "y": 271.5,
+            "y": 266.5,
             "radiusX": 54.5,
             "radiusY": 9
           },
@@ -4433,37 +4568,37 @@
               "x": 82,
               "y": 258,
               "width": 105,
-              "height": 16
+              "height": 11
             },
             "contacts": [
               {
                 "x": 94.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 82,
                   "y": 258,
                   "width": 25,
-                  "height": 11
+                  "height": 6
                 }
               },
               {
-                "x": 142.5,
-                "y": 274,
+                "x": 144,
+                "y": 269,
                 "bounds": {
-                  "x": 119,
+                  "x": 122,
                   "y": 258,
-                  "width": 47,
-                  "height": 16
+                  "width": 44,
+                  "height": 11
                 }
               },
               {
                 "x": 179.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 172,
                   "y": 258,
                   "width": 15,
-                  "height": 11
+                  "height": 6
                 }
               }
             ],
@@ -4471,7 +4606,7 @@
           },
           "scenePlacement": [
             48,
-            123,
+            118,
             202,
             160
           ],
@@ -4488,6 +4623,11 @@
             2,
             2
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/mature-2.png",
+            "sha256": "0fa9c0571cc38e4e4f733d506879fc7b4aab3d5ae3f3cbd18c9a1e549ac55d35"
+          },
           "sourceRectangle": {
             "left": 537,
             "top": 611,
@@ -4508,23 +4648,23 @@
           },
           "root": [
             123,
-            202
+            208
           ],
           "sourceAnchor": [
             660,
-            813
+            819
           ],
           "stageScale": 0.7292418772563177,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source.",
           "sourceCanvas": {
             "left": -123,
-            "top": -202,
+            "top": -208,
             "width": 277,
             "height": 220
           },
           "grounding": {
             "x": 134.5,
-            "y": 271.5,
+            "y": 266.5,
             "radiusX": 54.5,
             "radiusY": 9
           },
@@ -4548,37 +4688,37 @@
               "x": 82,
               "y": 258,
               "width": 105,
-              "height": 16
+              "height": 11
             },
             "contacts": [
               {
                 "x": 94.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 82,
                   "y": 258,
                   "width": 25,
-                  "height": 11
+                  "height": 6
                 }
               },
               {
-                "x": 142.5,
-                "y": 274,
+                "x": 144,
+                "y": 269,
                 "bounds": {
-                  "x": 119,
+                  "x": 122,
                   "y": 258,
-                  "width": 47,
-                  "height": 16
+                  "width": 44,
+                  "height": 11
                 }
               },
               {
                 "x": 179.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 172,
                   "y": 258,
                   "width": 15,
-                  "height": 11
+                  "height": 6
                 }
               }
             ],
@@ -4586,7 +4726,7 @@
           },
           "scenePlacement": [
             48,
-            123,
+            118,
             202,
             160
           ],
@@ -4603,6 +4743,11 @@
             3,
             2
           ],
+          "sourceSha256": "f50811fd5310fb9c313cf33d2ca664adf024f1d9d54ef67474f7df251459d58f",
+          "frameAsset": {
+            "path": "assets/livestock/animals/L06/mature-3.png",
+            "sha256": "5cae3f70aa73606411720e1dcb46ccae4881a6fa91f574f458a1facc1760ce67"
+          },
           "sourceRectangle": {
             "left": 804,
             "top": 611,
@@ -4623,23 +4768,23 @@
           },
           "root": [
             123,
-            202
+            208
           ],
           "sourceAnchor": [
             927,
-            813
+            819
           ],
           "stageScale": 0.7292418772563177,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source.",
           "sourceCanvas": {
             "left": -123,
-            "top": -202,
+            "top": -208,
             "width": 277,
             "height": 220
           },
           "grounding": {
             "x": 134.5,
-            "y": 271.5,
+            "y": 266.5,
             "radiusX": 54.5,
             "radiusY": 9
           },
@@ -4663,37 +4808,37 @@
               "x": 82,
               "y": 258,
               "width": 105,
-              "height": 16
+              "height": 11
             },
             "contacts": [
               {
                 "x": 94.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 82,
                   "y": 258,
                   "width": 25,
-                  "height": 11
+                  "height": 6
                 }
               },
               {
-                "x": 142.5,
-                "y": 274,
+                "x": 144,
+                "y": 269,
                 "bounds": {
-                  "x": 119,
+                  "x": 122,
                   "y": 258,
-                  "width": 47,
-                  "height": 16
+                  "width": 44,
+                  "height": 11
                 }
               },
               {
                 "x": 179.5,
-                "y": 269,
+                "y": 264,
                 "bounds": {
                   "x": 172,
                   "y": 258,
                   "width": 15,
-                  "height": 11
+                  "height": 6
                 }
               }
             ],
@@ -4701,7 +4846,7 @@
           },
           "scenePlacement": [
             48,
-            123,
+            118,
             202,
             160
           ],
@@ -4726,6 +4871,12 @@
           96
         ],
         "boundsAlphaThreshold": 64
+      },
+      "atlasAsset": {
+        "source": "assets/livestock/atlases/L06.png",
+        "sourceSha256": "13a2f66c5702fb10ec3abeea6d6bbec39525d2e54ad3fd095dc0e6f465128e09",
+        "path": "public/art/livestock/animals/L06.webp",
+        "sha256": "7444aa44f4f8741e0dc2502dee3608528b0e65da5b91013ef77c95d3ac89e00a"
       },
       "historicalProductCell": {
         "source": "raw/pixel-v4-pig-r2.png",
@@ -4759,12 +4910,22 @@
         "generatedWith": "built-in image_gen",
         "referenceFrames": [
           {
-            "path": "assets/livestock/animals/L06/mature-0.png",
-            "sha256": "98a4a00fcb14ab1ecca783427b225f351ce82a7009e03bbd11bb336e4008ea6f"
+            "path": "assets/livestock/choice-input-archive/v7/L06/mature-0.png",
+            "sha256": "98a4a00fcb14ab1ecca783427b225f351ce82a7009e03bbd11bb336e4008ea6f",
+            "archiveOf": "assets/livestock/animals/L06/mature-0.png",
+            "originalInputPath": "assets/livestock/animals/L06/mature-0.png",
+            "inputHash": "98a4a00fcb14ab1ecca783427b225f351ce82a7009e03bbd11bb336e4008ea6f",
+            "archivedAt": "2026-11-15",
+            "archiveReason": "Exact original image_gen V7 input preserved before L06 mature anatomical front-hoof anchor repair; the source artwork, generated choice artwork and historical prompt inputs are unchanged."
           },
           {
-            "path": "assets/livestock/animals/L06/mature-3.png",
-            "sha256": "7ad470aca8b5244d4b149837ac5a264f9a8f63b13517880820a84903f67d6ac2"
+            "path": "assets/livestock/choice-input-archive/v7/L06/mature-3.png",
+            "sha256": "7ad470aca8b5244d4b149837ac5a264f9a8f63b13517880820a84903f67d6ac2",
+            "archiveOf": "assets/livestock/animals/L06/mature-3.png",
+            "originalInputPath": "assets/livestock/animals/L06/mature-3.png",
+            "inputHash": "7ad470aca8b5244d4b149837ac5a264f9a8f63b13517880820a84903f67d6ac2",
+            "archivedAt": "2026-11-15",
+            "archiveReason": "Exact original image_gen V7 input preserved before L06 mature anatomical front-hoof anchor repair; the source artwork, generated choice artwork and historical prompt inputs are unchanged."
           }
         ],
         "promptFile": "assets/livestock/choice-prompts-v7.md",
@@ -4787,7 +4948,7 @@
         },
         {
           "x": 134.5,
-          "y": 271.5,
+          "y": 266.5,
           "radiusX": 54.5,
           "radiusY": 9
         }
@@ -4915,37 +5076,37 @@
             "x": 82,
             "y": 258,
             "width": 105,
-            "height": 16
+            "height": 11
           },
           "contacts": [
             {
               "x": 94.5,
-              "y": 269,
+              "y": 264,
               "bounds": {
                 "x": 82,
                 "y": 258,
                 "width": 25,
-                "height": 11
+                "height": 6
               }
             },
             {
-              "x": 142.5,
-              "y": 274,
+              "x": 144,
+              "y": 269,
               "bounds": {
-                "x": 119,
+                "x": 122,
                 "y": 258,
-                "width": 47,
-                "height": 16
+                "width": 44,
+                "height": 11
               }
             },
             {
               "x": 179.5,
-              "y": 269,
+              "y": 264,
               "bounds": {
                 "x": 172,
                 "y": 258,
                 "width": 15,
-                "height": 11
+                "height": 6
               }
             }
           ],
@@ -4960,10 +5121,10 @@
         "path": "public/art/scene-L06.webp",
         "source": "assets/source/art/scene-L06.png",
         "animation": "feeding",
-        "sourceSha256": "128cb1d25f33edde25976eb818f35654614d931793040bb8a353637ecd857ea5",
-        "sha256": "ed4e53b88333a53e29fafb78076d3f469be56f13e0930715a5fe752c1e0047bf",
+        "sourceSha256": "acf9c8c0db920433520a408aebc35bedc332dfdda4005f0a9c75556550767e31",
+        "sha256": "eb2b2a91a3f122ffd932ee8827fb38a0c48b54926b76f2effc74076bccac744c",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -6358,10 +6519,10 @@
         "path": "public/art/scene-L07.webp",
         "source": "assets/source/art/scene-L07.png",
         "animation": "feeding",
-        "sourceSha256": "3fb62c572352fc68ab386a650380f839f21fd56238f38a097b2af1006f69c63b",
-        "sha256": "ad1e3988bf658721f463dc765c700ea2465924282ec722e22914d477f3ae0095",
+        "sourceSha256": "78f79bf650f7ef3b752bbf82bf142a9f21b84aaab12ce42d1b51f63bfc56d7ed",
+        "sha256": "03e87ae5ec31a65a18da365114ca30a14f9d2d245173ee8f17832aa08bdf807e",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -6377,7 +6538,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -8178,10 +8339,10 @@
         "path": "public/art/scene-L08.webp",
         "source": "assets/source/art/scene-L08.png",
         "animation": "feeding",
-        "sourceSha256": "2e9255a337887bcfd29dd1962c0d1e7fa6bcdfc15e1db80fefb3e8e11502bb53",
-        "sha256": "5775c1b97c045ac734ab4884a81f4935bff978a6b721470f3628631c9a228ac5",
+        "sourceSha256": "6823e2c74c2e7da319e97c4782d4e8475c78c4186aa115b9e5c4bb5ec13e4a90",
+        "sha256": "af433b43d750f2e0a77738d6ba523aaee8f86095cc940a1693ece7bb33a6cd31",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -8197,7 +8358,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -9826,10 +9987,10 @@
         "path": "public/art/scene-L09.webp",
         "source": "assets/source/art/scene-L09.png",
         "animation": "feeding",
-        "sourceSha256": "c9cf2a0b15884de3ce80d018173879fd1fc27667ea5b1f44862f14395683ab5b",
-        "sha256": "07cf3ae91650189001cd4b4e8cd69a2761b59f445947f0e34d3dff1b53b60a55",
+        "sourceSha256": "d8706fb0e5cb510a34eec82ce48569a1c9caa41e30d073aae5e820726c97c797",
+        "sha256": "58828e997f2f6ccd607a01d464c4cf70f511c46c9b5cd7018ab06e42b1e30c64",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -9845,7 +10006,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }
@@ -11724,10 +11885,10 @@
         "path": "public/art/scene-L10.webp",
         "source": "assets/source/art/scene-L10.png",
         "animation": "feeding",
-        "sourceSha256": "46b64119243d5464db26d8163a2e0f485cd61060bee014264f3901584606642e",
-        "sha256": "61a682218b653417c1098fadb748c8993cdfcadd8854492fc6753970c44e42ef",
+        "sourceSha256": "7a99b91ec9a3e63f138c98fe5827fecf480e6b4dcabe9f5f15f14218f4b265eb",
+        "sha256": "2c54ad07d23067fee7ea2f2c053ed302c0b0f8fd573af1b9718aa4101b8d671f",
         "feedTexture": {
-          "path": "./art/livestock/feed.webp",
+          "path": "./art/livestock/feed-v8.webp",
           "size": [
             128,
             64
@@ -11743,7 +11904,7 @@
             60
           ]
         },
-        "feedLayers": "shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures",
+        "feedLayers": "V8 shallow cool-rim mixed feed tray and separate light shadow; shared livestockFeedLayout; no feed in animal textures",
         "retained": false,
         "refreshed": true
       }

@@ -1,7 +1,9 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { techLevelLimit } from '../game/advancement.js';
+import { taskCoinRewards } from '../game/objectives.js';
 import { newWorld, updateWorldWallTime } from '../game/world.js';
-import { catalog as legacyCatalog, workshopDurationMs } from '../game/state.js';
+import { migratePrestigeLedger, prestigeLedgerVersion } from '../game/prestige-ledger.js';
+import { catalog as legacyCatalog, farmSaleOffer as legacyFarmSaleOffer, workshopDurationMs } from '../game/state.js';
 import { decode as decodeLegacy } from './save.js';
 
 // Preserve the original database name so existing saves remain available after the rename.
@@ -121,7 +123,7 @@ export async function replaceWorldSave(db, world, expectedRevision, { clearBacku
     const saved = readRecord(current, 'current');
     if (saved.revision !== expectedRevision) throw new WorldSaveError('revision-conflict');
     const revision = nextRevision(expectedRevision, current, previous);
-    const next = { ...world, revision };
+    const next = migratePrestigeLedger({ ...world, revision });
     if (next.pendingOffline) next.pendingOffline = { ...next.pendingOffline, id: revision };
     const record = encodeWorld(next);
     if (clearBackup) store.delete('previous');
@@ -260,6 +262,21 @@ function offlineAmounts(summary, convert, convertSigned) {
   };
 }
 
+// A versioned record must contain every ledger field. Only an absent version is legacy.
+function ledgerAmounts(world, convert) {
+  if (!Object.hasOwn(world, 'prestigeLedgerVersion')) return {};
+  valid(world.prestigeLedgerVersion === prestigeLedgerVersion, 'prestigeLedgerVersion');
+  valid(typeof world.legacyResearchPointsSettled === 'boolean', 'legacyResearchPointsSettled');
+  const pending = convert(world.pendingLegacyResearchPoints, 'pendingLegacyResearchPoints');
+  valid(!world.legacyResearchPointsSettled || BigInt(pending) === 0n, 'pendingLegacyResearchPoints');
+  return {
+    lifetimeProductionValue: convert(world.lifetimeProductionValue, 'lifetimeProductionValue'),
+    prestigeCredit: convert(world.prestigeCredit, 'prestigeCredit'),
+    pendingLegacyResearchPoints: pending,
+    legacyResearchPointsSettled: world.legacyResearchPointsSettled,
+  };
+}
+
 function amounts(world, convert, convertSigned) {
   const pendingOffline = Object.hasOwn(world, 'pendingOffline') && offlineAmounts(world.pendingOffline, convert, convertSigned);
   if (pendingOffline) valid(pendingOffline.id <= world.revision, 'pendingOffline.id');
@@ -269,15 +286,24 @@ function amounts(world, convert, convertSigned) {
   return {
     ...world,
     settings,
+    taskRewards: taskRewardIds(world),
     coins: convert(world.coins, 'coins'),
     productionValue: convert(world.productionValue, 'productionValue'),
     researchPoints: convert(world.researchPoints, 'researchPoints'),
+    ...ledgerAmounts(world, convert),
     inventory: quantityMap(world.inventory, 'inventory', convert),
     reserves: quantityMap(world.reserves, 'reserves', convert),
     stats: recordStats(world.stats, world.completedRuns, convert),
     stations: stationBatches(world.stations, convert),
     ...(pendingOffline && { pendingOffline }),
   };
+}
+
+function taskRewardIds(world) {
+  const ids = Object.hasOwn(world, 'taskRewards') ? world.taskRewards : [];
+  valid(Array.isArray(ids) && new Set(ids).size === ids.length &&
+    ids.every((id) => typeof id === 'string' && Object.hasOwn(taskCoinRewards, id)), 'taskRewards');
+  return [...ids];
 }
 
 function validateRuns(world) {
@@ -348,6 +374,8 @@ function validateFacilityLists(world, key, kinds) {
 
 function validateWorld(world) {
   valid(world.schemaVersion === 2, 'schemaVersion');
+  valid(world.prestigeLedgerVersion === prestigeLedgerVersion, 'prestigeLedgerVersion');
+  ledgerAmounts(world, decimalText);
   validateRuns(world);
   valid(Array.isArray(world.unlocked) && new Set(world.unlocked).size === world.unlocked.length &&
     world.unlocked.every((id) => Object.hasOwn(catalog.items, id)) &&
@@ -357,6 +385,7 @@ function validateWorld(world) {
     valid(integer(level, `tech.${key}`) <= techLevelLimit, `tech.${key}`);
   }
   valid(typeof world.guideSkipped === 'boolean', 'guideSkipped');
+  taskRewardIds(world);
   const settings = object(world.settings, 'settings');
   if (Object.hasOwn(settings, 'pickerIconsOnly')) {
     valid(typeof settings.pickerIconsOnly === 'boolean', 'settings.pickerIconsOnly');
@@ -369,13 +398,21 @@ function validateWorld(world) {
 }
 
 function encodeWorld(world) {
-  validateWorld(world);
-  return amounts(world, decimalText, signedDecimalText);
+  // Encoding may prepare an old in-memory draft, but never mutates it or grants frozen RP.
+  const current = migratePrestigeLedger(world);
+  validateWorld(current);
+  return amounts(current, decimalText, signedDecimalText);
 }
 
 function migrateLegacy(record) {
   const old = decodeLegacy(record);
   const world = newWorld(old.wallAnchorMs);
+  // The schema-1 source predates the ledger, even though newWorld has current defaults.
+  delete world.prestigeLedgerVersion;
+  delete world.lifetimeProductionValue;
+  delete world.prestigeCredit;
+  delete world.pendingLegacyResearchPoints;
+  delete world.legacyResearchPointsSettled;
   const clock = integer(old.clockMs, 'clockMs');
   const cropDuration = legacyCatalog.items.C01.durationMs;
   const plots = old.plots.map((end) => ({
@@ -408,7 +445,7 @@ function migrateLegacy(record) {
   }
   const produced = Object.fromEntries(Object.entries(legacyStats).map(([stat, id]) => [id, old.stats[stat]]));
   if (old.everMadeIslandMilleCrepe) produced.P150 = 1n;
-  return {
+  const converted = {
     ...world,
     revision: old.revision,
     clockMs: clock,
@@ -433,6 +470,12 @@ function migrateLegacy(record) {
       revenue: old.completedRuns > 0 ? 0n : old.stats.revenue, lifetimeRevenue: old.stats.revenue },
     guideSkipped: old.guideSkipped ?? false,
   };
+  const migrated = migratePrestigeLedger(converted);
+  // Schema 1 used 20% appraisal per level; schema 2 used 2%. Preserve the source reward.
+  return {
+    ...migrated,
+    pendingLegacyResearchPoints: legacyFarmSaleOffer(old).reward * 25n,
+  };
 }
 
 function readRecord(record, slot) {
@@ -443,8 +486,10 @@ function readRecord(record, slot) {
     object(record, slot);
     const world = record.schemaVersion === 1 ? migrateLegacy(record) : amounts(record, decimal, signedDecimal);
     normalizeCropPlantings(world);
-    validateWorld(world);
-    return world;
+    // Reading creates a migration draft only; the existing write transaction commits it.
+    const current = migratePrestigeLedger(world);
+    validateWorld(current);
+    return current;
   } catch (error) {
     const failure = new WorldSaveError(`corrupt-${slot}`, error);
     failure.revision = recordRevision(record);
