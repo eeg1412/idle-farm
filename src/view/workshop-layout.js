@@ -12,11 +12,57 @@ export function workshopIconIds(id) {
 }
 
 export function workshopTextureSources(kind, config = visuals) {
+  const machine = config?.machines?.[machineKey(kind)];
+  const tread = config?.conveyor?.tread;
+  if (!machine?.path || !tread?.path || !Array.isArray(machine.size) || machine.size.length !== 2
+      || !Array.isArray(tread.size) || tread.size.length !== 2
+      || !Array.isArray(tread.logicalSize) || tread.logicalSize.length !== 2
+      || ![...machine.size, ...tread.size, ...tread.logicalSize].every((value) => Number.isFinite(value) && value > 0)
+      || ![machine.placement?.x, machine.placement?.y, machine.placement?.width, machine.placement?.height,
+        machine.bodyEdges?.left, machine.bodyEdges?.right, machine.bodyEdges?.top, machine.bodyEdges?.bottom,
+        machine.occlusionCover?.inputX, machine.occlusionCover?.outputX].every(Number.isFinite)) return [];
   return [
-    { key: textureKey('background'), ...config.background },
-    { key: textureKey('machine'), ...config.machines[machineKey(kind)] },
-    { key: textureKey('tread'), ...config.conveyor.tread },
+    { key: textureKey('machine'), ...machine },
+    { key: textureKey('tread'), ...tread },
   ];
+}
+
+function randomSequence(key) {
+  let seed = 2166136261;
+  for (const character of key) seed = Math.imul(seed ^ character.charCodeAt(0), 16777619) >>> 0;
+  return () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+}
+
+export function workshopMaterialOrder(materials, recipeId, cycle) {
+  const random = randomSequence(recipeId + ':' + cycle);
+  const order = [...materials];
+  for (let index = order.length - 1; index > 0; index -= 1) {
+    const other = Math.floor(random() * (index + 1));
+    [order[index], order[other]] = [order[other], order[index]];
+  }
+  return order;
+}
+
+export function workshopInputEvent(stream, serial) {
+  if (serial < 0 || !stream.materials.length) return [];
+  const eventCount = stream.materials.length;
+  const cycle = Math.floor(serial / eventCount);
+  const eventIndex = modulo(serial, eventCount);
+  const order = workshopMaterialOrder(stream.materials, stream.recipeId, cycle);
+  const groups = randomSequence(stream.recipeId + ':group:' + serial);
+  const count = 1 + Math.floor(groups() * stream.maxPerEvent);
+  return Array.from({ length: count }, (_, packetIndex) => {
+    // The main packet walks the full shuffled bag; extra packets may repeat any
+    // actual material, including single-material recipes. These are visuals only.
+    const id = packetIndex === 0 ? order[eventIndex] : order[Math.floor(groups() * order.length)];
+    const random = randomSequence(stream.recipeId + ':packet:' + serial + ':' + packetIndex + ':' + id);
+    const area = stream.spawnArea;
+    return { id, event: serial, cycle, packet: packetIndex,
+      origin: [area.minX, area.minY + random() * (area.maxY - area.minY)] };
+  });
 }
 
 function route(points) {
@@ -47,84 +93,74 @@ export function workshopSceneLayout(id, kind, config = visuals) {
   if (!item) return undefined;
   const machine = config.machines[machineKey(kind)];
   const edges = machine.bodyEdges;
-  const covers = machine.occlusionCover;
   const settings = config.conveyor.layout;
-  const materials = Object.keys(item.inputs ?? {});
-  const centerY = (edges.top + edges.bottom) / 2;
+  const centerY = config.stage.height / 2;
   const centerX = (edges.left + edges.right) / 2;
   const inputSize = settings.inputSize;
-  const inputCover = Math.max(covers.inputX, edges.left + inputSize / 2 + 2);
-  const outputCover = Math.min(covers.outputX, edges.right - settings.outputSize / 2 - 2);
-  const inputX = settings.inputX;
-  const outputX = clamp(settings.outputX, settings.outputSize / 2,
-    config.stage.width - settings.outputSize / 2);
-  const regions = [];
+  const inputCover = Math.max(machine.occlusionCover.inputX, edges.left + inputSize / 2 + 2);
+  const outputCover = Math.min(machine.occlusionCover.outputX, edges.right - settings.outputSize / 2 - 2);
+  const half = inputSize / 2;
+  const stream = {
+    recipeId: id, materials: Object.keys(item.inputs ?? {}), size: inputSize,
+    spacing: settings.inputSpacing, maxPerEvent: settings.maxPerEvent, coverX: inputCover,
+    spawnArea: { minX: -half, maxX: -half,
+      minY: half, maxY: config.stage.height - half },
+  };
+  stream.eventSlots = stream.materials.length
+    ? Math.ceil((stream.coverX - stream.spawnArea.minX) / stream.spacing) + 1 : 0;
+  stream.capacity = stream.eventSlots * stream.maxPerEvent;
+  const first = workshopInputEvent(stream, 0);
+  const delayMs = first.length
+    ? Math.min(...first.map((packet) => (inputCover - packet.origin[0]) / config.conveyor.speed)) : 0;
   function surface(fromX, toX) {
-    regions.push({
-      direction: 'E',
+    return { direction: 'E',
       polygon: [fromX, 0, toX, 0, toX, config.stage.height, fromX, config.stage.height],
-      bounds: { x: fromX, y: 0, width: toX - fromX, height: config.stage.height },
-    });
+      bounds: { x: fromX, y: 0, width: toX - fromX, height: config.stage.height } };
   }
-  surface(0, edges.left + settings.surfaceUnderlap);
-  surface(edges.right - settings.surfaceUnderlap, config.stage.width);
-  const path = route([[inputX, centerY], [edges.left, centerY], [inputCover, centerY]]);
-  const spacing = settings.inputSpacing;
-  const speed = config.conveyor.speed;
   return {
-    stage: config.stage, background: config.background, machine, conveyorPieces: [],
-    surfaceRegions: regions,
-    inputStream: { recipeId: id, materials, path, size: inputSize, spacing,
-      capacity: materials.length ? Math.ceil(path.length / spacing) + 1 : 0 },
+    stage: config.stage, machine,
+    surfaceRegions: [surface(0, edges.left + settings.surfaceUnderlap),
+      surface(edges.right - settings.surfaceUnderlap, config.stage.width)],
+    inputStream: stream,
     itemMasks: {
       input: { x: 0, y: 0, width: centerX, height: config.stage.height },
       output: { x: centerX, y: 0, width: config.stage.width - centerX, height: config.stage.height },
     },
-    output: { id, size: settings.outputSize, delayMs: path.length / speed,
-      path: route([[outputCover, centerY], [edges.right, centerY], [outputX, centerY]]) },
-    surfaceSpeed: speed, surfacePeriod: config.conveyor.tread.period,
+    output: { id, size: settings.outputSize, delayMs,
+      path: route([[outputCover, centerY], [edges.right, centerY],
+        [config.stage.width + settings.outputSize / 2, centerY]]) },
+    surfaceSpeed: config.conveyor.speed, surfacePeriod: config.conveyor.tread.period,
   };
 }
 
-export function workshopMaterialOrder(materials, recipeId, cycle) {
-  let seed = 2166136261;
-  for (const character of recipeId + ':' + cycle) seed = Math.imul(seed ^ character.charCodeAt(0), 16777619) >>> 0;
-  const order = [...materials];
-  for (let index = order.length - 1; index > 0; index -= 1) {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    const other = seed % (index + 1);
-    [order[index], order[other]] = [order[other], order[index]];
-  }
-  return order;
-}
-
-// Pure display math shared by the Pixi view and authorized static art composition.
+// Event membership and each packet's random height are stable for the recipe /
+// event seed. Every packet starts fully outside the left edge and rolls right.
 export function workshopMotionFrame(layout, clock, { started = true, running = true } = {}) {
   const travel = clock * layout.surfaceSpeed;
   const displacement = modulo(travel, layout.surfacePeriod);
   const stream = layout.inputStream;
   const latest = Math.floor(travel / stream.spacing);
-  const orders = new Map();
-  const inputs = Array.from({ length: stream.capacity }, (_, index) => {
-    const serial = latest - index;
-    const cycle = Math.max(0, Math.floor(serial / stream.materials.length));
-    if (!orders.has(cycle)) orders.set(cycle, workshopMaterialOrder(stream.materials, stream.recipeId, cycle));
-    const id = orders.get(cycle)[modulo(serial, stream.materials.length)];
+  const inputs = [];
+  for (let eventOffset = 0; eventOffset < stream.eventSlots; eventOffset += 1) {
+    const serial = latest - eventOffset;
+    const packets = workshopInputEvent(stream, serial);
     const distance = travel - serial * stream.spacing;
-    return { id, serial, cycle,
-      visible: Boolean(running && started && serial >= 0 && distance <= stream.path.length),
-      position: positionOn(stream.path, distance) };
-  });
+    for (let index = 0; index < stream.maxPerEvent; index += 1) {
+      const packet = packets[index];
+      const position = packet ? [packet.origin[0] + distance, packet.origin[1]] : [0, 0];
+      inputs.push({ id: packet?.id ?? stream.materials[0], event: serial,
+        cycle: packet?.cycle, packet: index, origin: packet?.origin,
+        visible: Boolean(running && started && packet && position[0] <= stream.coverX), position });
+    }
+  }
   const outputElapsed = clock - layout.output.delayMs;
   const distance = modulo(Math.max(0, outputElapsed) * layout.surfaceSpeed,
     layout.output.path.length + layout.output.size * 2);
-  const fraction = distance / layout.output.path.length;
   return {
     surfaceOffsets: layout.surfaceRegions.map(({ bounds }) => [displacement - bounds.x, 0]),
     inputs,
-    output: { visible: Boolean(running && started && outputElapsed >= 0 && distance <= layout.output.path.length),
-      position: positionOn(layout.output.path, distance),
-      alpha: fraction > 0.83 ? (1 - fraction) / 0.17 : 1 },
+    output: { visible: Boolean(running && started && outputElapsed >= 0 && distance < layout.output.path.length),
+      position: positionOn(layout.output.path, distance), alpha: 1 },
     machineOffset: [running ? Math.sin(clock / 41) * 1.5 : 0,
       running ? Math.sin(clock / 29) * 0.9 : 0],
   };

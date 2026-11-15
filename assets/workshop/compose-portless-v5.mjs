@@ -55,11 +55,18 @@ async function clippedIcon(id, size, position, mask, alpha = 1) {
   return { input: await sharp(buffer).extract({ left: x - left, top: y - top,
     width: right - x, height: bottom - y }).png().toBuffer(), left: x, top: y };
 }
+async function clippedMachine(buffer, width, height, left, top) {
+  const x = Math.max(0, left), y = Math.max(0, top);
+  const right = Math.min(W, left + width), bottom = Math.min(H, top + height);
+  return { input: await sharp(buffer).extract({ left: x - left, top: y - top,
+    width: right - x, height: bottom - y }).png().toBuffer(), left: x, top: y };
+}
 async function render(id, kind, label) {
   const layout = workshopSceneLayout(id, kind, config);
-  const background = await sharp(imagePath(layout.background)).resize(W, H, { kernel: 'nearest' }).png().toBuffer();
   const machine = layout.machine;
-  const machineImage = await sharp(imagePath(machine)).resize(Math.round(machine.placement.width * S), Math.round(machine.placement.height * S), { kernel: 'nearest' }).png().toBuffer();
+  const machineWidth = Math.round(machine.placement.width * S);
+  const machineHeight = Math.round(machine.placement.height * S);
+  const machineImage = await sharp(imagePath(machine)).resize(machineWidth, machineHeight, { kernel: 'nearest' }).png().toBuffer();
   const evidence = { config: 'assets/workshop/workshop-visuals-portless-v5-candidate.json', layoutSource: 'src/view/workshop-layout.js#workshopSceneLayout', frameSource: 'src/view/workshop-layout.js#workshopMotionFrame', recipe: id, layout, frames: {} };
   const states = [
     { name: 'waiting', clock: 0, options: { started: false, running: false } },
@@ -82,7 +89,10 @@ async function render(id, kind, label) {
         layout.itemMasks.output, frame.output.alpha);
       if (image) items.push(image);
     }
-    const rendered = await sharp(background).composite([{ input: surface }, ...items, { input: machineImage, left: Math.round((machine.placement.x + frame.machineOffset[0]) * S), top: Math.round((machine.placement.y + frame.machineOffset[1]) * S) }]).png().toBuffer();
+    const machineLayer = await clippedMachine(machineImage, machineWidth, machineHeight,
+      Math.round((machine.placement.x + frame.machineOffset[0]) * S),
+      Math.round((machine.placement.y + frame.machineOffset[1]) * S));
+    const rendered = await blank(W, H).composite([{ input: surface }, ...items, machineLayer]).png().toBuffer();
     for (const size of [320, 130]) await sharp(rendered).resize(size, size, { kernel: 'nearest' }).png().toFile(path.join(output, label + '-' + state.name + '-' + size + '.png'));
     await sharp(surface).resize(320, 320, { kernel: 'nearest' }).png().toFile(path.join(output, label + '-' + state.name + '-surface-only.png'));
   }

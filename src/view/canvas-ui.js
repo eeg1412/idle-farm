@@ -375,8 +375,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function loadLivestockTextures(id) {
     if (!Object.hasOwn(livestockSpecies, id)) return;
     const species = livestockSpecies[id];
-    const feedTexture = species.feedTexture;
-    if (!feedTexture?.path || feedTexture.size?.length !== 2) return;
+    const feedTexture = species?.feedTexture;
+    if (!feedTexture?.path || feedTexture.size?.length !== 2 || !species.product?.icon || !species.stages) return;
     const existing = livestockTextures.get(id);
     if (existing) return existing.textures;
     const entry = {};
@@ -422,8 +422,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function loadFishTextures(id) {
     if (!Object.hasOwn(fishSpecies, id)) return;
-    const habitat = fishHabitats[fishSpecies[id].habitat];
-    if (!habitat?.pond) return;
+    const species = fishSpecies[id];
+    const habitat = fishHabitats[species?.habitat];
+    if (!habitat?.pond || !species.stages) return;
     const existing = fishTextures.get(id);
     if (existing) return existing.textures;
     const entry = {};
@@ -464,6 +465,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!data.items[id]) return;
     const visibleKey = kind + ':' + id;
     const sources = workshopTextureSources(kind);
+    if (!sources?.length || sources.some((source) => !source?.path)) return;
     const key = visibleKey + '|' + sources.map((source) => source.path).join('|');
     const existing = workshopTextures.get(key);
     if (existing) return existing.textures;
@@ -489,7 +491,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!plot.animation) return;
     plot.animation.destroy();
     plot.animation = undefined;
-    plot.fallback.visible = true;
     activePlots.delete(plot);
   }
 
@@ -1244,7 +1245,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
       },
       feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover,
-        plotAnimation, livestockAnimation, fishAnimation, workshopAnimation } = {}) {
+        plotAnimation, livestockAnimation, fishAnimation, workshopAnimation, animationOnly = false } = {}) {
         const top = cursor;
         const scene = sceneKeys.has(id);
         const stacked = width < 210 || scale() > 1.6;
@@ -1274,17 +1275,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const imageWidth = artWidth - inset * 2;
         const imageHeight = artHeight - inset * 2;
         const animation = workshopAnimation?.id ? workshopAnimation : fishAnimation ?? livestockAnimation ?? plotAnimation;
+        // Animation cards never request fallback images, even before mounting is possible.
         if (animation && options.registerPlot) {
           const art = new Container();
-          const fallback = new Container();
           art.eventMode = 'none';
           art.position.set(artX + inset, artY + inset);
           parent.addChild(art);
-          art.addChild(fallback);
-          drawImage(fallback, id, 0, 0, imageWidth, imageHeight, crop);
-          options.registerPlot({ art, fallback, box: new Rectangle(0, 0, imageWidth, imageHeight),
+          options.registerPlot({ art, box: new Rectangle(0, 0, imageWidth, imageHeight),
             type: workshopAnimation?.id ? 'workshop' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
-        } else {
+        } else if (!animationOnly && !animation) {
           drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
         if (!stacked) parent.addChild(inkGraphics().rect(x + artWidth + 7, top, 1, height)
@@ -1791,11 +1790,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           plot.animation = mountWorkshopAnimation(plot.art, stationTextures, plot.box, plot,
             () => world?.stations[plot.kind]?.[plot.index], motion);
           plot.animation.update(animationFrame);
-          plot.fallback.visible = false;
           activePlots.add(plot);
           continue;
         }
         const { batch, index } = plot;
+        if (!batch) continue;
         visiblePlotIds.add(batch.id);
         const livestock = plot.type === 'livestock';
         const fish = plot.type === 'fish';
@@ -1824,7 +1823,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         } else plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart,
           world.facilities.C[index]?.planting);
         plot.animation.update(animationFrame);
-        plot.fallback.visible = false;
         activePlots.add(plot);
       }
     };

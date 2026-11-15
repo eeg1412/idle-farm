@@ -33,28 +33,28 @@ for (const [kind, source] of Object.entries(sources)) {
   const png = await sharp(rawPath).extract(source.crop).resize(source.size[0], source.size[1], { kernel: 'nearest' }).png().toBuffer();
   await fs.writeFile(pngPath, png);
   await sharp(png).webp({ quality: 70, alphaQuality: 100, effort: 6 }).toFile(finalPath);
-  const scale = 288 / (source.bounds.bottom - source.bounds.top);
+  const scale = 400 / (source.bounds.bottom - source.bounds.top);
   const centerX = (source.bounds.left + source.bounds.right) / 2;
   const width = (source.bounds.right - source.bounds.left) * scale;
-  const bodyEdges = { left: 160 - width / 2, right: 160 + width / 2, top: 16, bottom: 304 };
+  const bodyEdges = { left: 160 - width / 2, right: 160 + width / 2, top: -40, bottom: 360 };
   const logicalSize = [source.crop.width * scale, source.crop.height * scale];
-  const placement = { x: 160 + (source.crop.left - centerX) * scale, y: 16 + (source.crop.top - source.bounds.top) * scale, width: logicalSize[0], height: logicalSize[1] };
-  const occlusionCover = { inputX: bodyEdges.left + 20, outputX: bodyEdges.right - 20 };
+  const placement = { x: 160 + (source.crop.left - centerX) * scale, y: -40 + (source.crop.top - source.bounds.top) * scale, width: logicalSize[0], height: logicalSize[1] };
+  const coverInset = 20 * 400 / 288;
+  const occlusionCover = { inputX: bodyEdges.left + coverInset, outputX: bodyEdges.right - coverInset };
   machines[kind] = { path: './art/workshop/' + key + '.webp', size: source.size, logicalSize, placement, bodyEdges, occlusionCover, sourceBounds: source.bounds, sourceRotationDegrees: 0 };
-  registration[kind] = { ...machines[kind], source: rawPath.replaceAll('\\', '/'), sourceGenerated: source.generated, editInput: source.input, prompt: 'assets/workshop/prompts-portless-v5.md', crop: source.crop, png: pngPath.replaceAll('\\', '/'), webp: finalPath.replaceAll('\\', '/'), bodyScale: scale, sourceOcclusionCover: { inputX: source.bounds.left + 20 / scale, outputX: source.bounds.right - 20 / scale }, conversion: 'uniform nearest-neighbor crop resize only; WebP quality 70, alpha quality 100, generated alpha preserved', visualIntent: 'solid uninterrupted overhead cabinet; no fixed openings or protruding connections; display attachment Y is recipe-driven' };
+  registration[kind] = { ...machines[kind], source: rawPath.replaceAll('\\', '/'), sourceGenerated: source.generated, editInput: source.input, prompt: 'assets/workshop/prompts-portless-v5.md', crop: source.crop, png: pngPath.replaceAll('\\', '/'), webp: finalPath.replaceAll('\\', '/'), bodyScale: scale, sourceOcclusionCover: { inputX: source.bounds.left + coverInset / scale, outputX: source.bounds.right - coverInset / scale }, conversion: 'uniform nearest-neighbor crop resize only; WebP quality 70, alpha quality 100, generated alpha preserved', visualIntent: 'solid uninterrupted overhead cabinet; no fixed openings or protruding connections; displayed body uniformly enlarged and cropped by the stage' };
 }
 const candidate = {
   version: 5,
   stage: previous.stage,
-  background: previous.background,
   machines,
   conveyor: {
     speed: 0.04,
     tread: { ...previous.conveyor.tread, logicalSize: [32, previous.conveyor.tread.logicalSize[1]], period: 32 },
-    layout: { inputX: 0, outputX: 320, inputSize: 64, outputSize: 72, inputSpacing: 96, surfaceUnderlap: 3 },
-    layerOrder: ['background', 'movingBorderlessSurface', 'canonicalItems', 'solidMachineBody'],
+    layout: { inputSize: 88, outputSize: 96, inputSpacing: 96, maxPerEvent: 3, surfaceUnderlap: 3 },
+    layerOrder: ['movingBorderlessSurface', 'canonicalItems', 'solidMachineBody'],
   },
 };
 await fs.writeFile(path.join(base, 'workshop-visuals-portless-v5-candidate.json'), JSON.stringify(candidate, null, 2) + '\n');
-await fs.writeFile(path.join(base, 'registration-portless-v5.json'), JSON.stringify({ version: 5, generator: 'built-in image_gen edit', prompt: 'assets/workshop/prompts-portless-v5.md', entries: registration, reused: { background: previous.background, movingSurface: previous.conveyor.tread }, inactiveHistory: ['all horizontal machines', 'vertical rotated v3 machines', 'long-v4 machines with ports', 'all rail/port/corner/junction/cross graphics'], status: 'candidate metadata; activate only together with matching final layout helper' }, null, 2) + '\n');
+await fs.writeFile(path.join(base, 'registration-portless-v5.json'), JSON.stringify({ version: 5, generator: 'built-in image_gen edit', prompt: 'assets/workshop/prompts-portless-v5.md', entries: registration, reused: { movingSurface: previous.conveyor.tread }, inactiveHistory: ['all horizontal machines', 'vertical rotated v3 machines', 'long-v4 machines with ports', 'all rail/port/corner/junction/cross graphics'], status: 'candidate metadata; activate only together with matching final layout helper' }, null, 2) + '\n');
 console.log('Saved real-imagegen portless machines and candidate JSON; active runtime metadata left unchanged.');

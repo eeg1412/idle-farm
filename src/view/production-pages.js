@@ -5,8 +5,6 @@ import { unitPrice } from '../game/advancement.js';
 import { objectives } from '../game/objectives.js';
 import { reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
-import { livestockSpecies } from './livestock-animation.js';
-import { fishSpecies } from './fish-animation.js';
 
 const productionTabs = ['田地', '畜牧', '鱼池'];
 const workshopTabs = ['加工', '精制'];
@@ -225,7 +223,10 @@ function facilityCard(ui, kind, index, facility) {
         copy.button(crop ? '播种' : '安排养殖', () => chooseFacility(ui, kind, index), {
           tone: 'green', style: 'production',
         });
-      }, { ratio: 0.36, style: 'facility', artAspect: 0.97, align: 'center', onClick: openDetails });
+      }, {
+        ratio: 0.36, style: 'facility', artAspect: 0.97, align: 'center', onClick: openDetails,
+        animationOnly: Boolean(id),
+      });
       return;
     }
     const actions = [
@@ -251,11 +252,10 @@ function facilityCard(ui, kind, index, facility) {
       if (kind !== 'L') copy.buttons(actions, { style: 'production' });
     }, {
       ratio: 0.36, style: 'facility', artAspect: facilityArtAspects[kind], onClick: openDetails,
+      animationOnly: true,
       plotAnimation: crop && active ? { batch: active, index } : undefined,
-      livestockAnimation: kind === 'L' && active && Object.hasOwn(livestockSpecies, active.id)
-        ? { batch: active, index } : undefined,
-      fishAnimation: kind === 'F' && active && Object.hasOwn(fishSpecies, active.id)
-        ? { batch: active, index } : undefined,
+      livestockAnimation: kind === 'L' && active ? { batch: active, index } : undefined,
+      fishAnimation: kind === 'F' && active ? { batch: active, index } : undefined,
     });
     if (kind === 'L') body.buttons(actions, { style: 'production' });
   }, {
@@ -490,7 +490,7 @@ function stationCard(ui, kind, index, station, source, page) {
         copy.button('选择配方', () => chooseRecipe(ui, kind, index, source), { tone: 'gold', style: 'production' });
       }, {
         ratio: 0.35, style: 'workshop', align: 'center', onClick: openDetails,
-        workshopAnimation: { kind, index },
+        animationOnly: Boolean(id),
       });
       stationProgress(body, active, kind, index);
       return;
@@ -508,6 +508,7 @@ function stationCard(ui, kind, index, station, source, page) {
       ], { style: 'workshop' });
     }, {
       ratio: 0.35, style: 'workshop', artAspect: 1, onClick: openDetails,
+      animationOnly: true,
       workshopAnimation: { kind, index, id },
     });
     stationProgress(body, active, kind, index);

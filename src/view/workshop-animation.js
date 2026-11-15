@@ -41,8 +41,8 @@ function maskedItems(parent, label, bounds) {
   return items;
 }
 
-// Only invisible masks use Graphics. The floor, borderless moving belt surface
-// and solid machine body use the separately generated bitmap assets.
+// Only invisible masks use Graphics. The borderless moving belt surface and
+// solid machine body use the separately generated bitmap assets.
 export function mountWorkshopAnimation(parent, textures, box, reference, readStation, motion) {
   const { id, kind } = reference;
   const layout = workshopSceneLayout(id, kind);
@@ -51,15 +51,17 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
   scene.scale.set(fit);
   scene.position.set(box.x + (box.width - layout.stage.width * fit) / 2,
     box.y + (box.height - layout.stage.height * fit) / 2);
-  const backgroundLayer = layer(scene, 'workshop-background-layer');
+  const stageMask = new Graphics().rect(scene.x, scene.y,
+    layout.stage.width * fit, layout.stage.height * fit).fill(0xffffff);
+  stageMask.eventMode = 'none';
+  parent.addChild(stageMask);
+  scene.mask = stageMask;
   const conveyorLayer = layer(scene, 'workshop-conveyor-layer');
   const machineLayer = layer(scene, 'workshop-machine-layer');
   const movingSurface = layer(conveyorLayer, 'workshop-moving-surfaces');
   const canonicalItems = layer(conveyorLayer, 'workshop-canonical-items');
   const inputItems = maskedItems(canonicalItems, 'workshop-input-packets', layout.itemMasks.input);
   const outputItems = maskedItems(canonicalItems, 'workshop-output-items', layout.itemMasks.output);
-  bitmap(backgroundLayer, textures.get(textureKey('background')),
-    { x: 0, y: 0, width: layout.stage.width, height: layout.stage.height });
   const tread = visuals.conveyor.tread;
   const surfaces = layout.surfaceRegions.map((region) => {
     const { bounds } = region;
@@ -130,7 +132,7 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
     product.visible = frame.output.visible;
     if (product.visible) {
       product.position.set(...frame.output.position);
-      product.alpha = frame.output.alpha;
+      product.alpha = 1;
     }
     machineLayer.position.set(...frame.machineOffset);
   }
@@ -141,6 +143,7 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
       if (destroyed) return;
       destroyed = true;
       scene.destroy({ children: true });
+      stageMask.destroy();
     },
   };
 }
