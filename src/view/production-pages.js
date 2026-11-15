@@ -90,12 +90,12 @@ function dialogButtons(ui, label, action, disabled = false, style) {
 
 function replacementChoices(dialog, items, onSelect) {
   const iconsOnly = dialog.w.settings.pickerIconsOnly;
-  dialog.button(iconsOnly ? '显示：仅图标' : '显示：详细', async () => {
+  dialog.iconButton(iconsOnly ? 'view-list' : 'view-grid', iconsOnly ? '切换为详细显示' : '切换为仅图标', async () => {
     if (!await dialog.action('updateSettings', { pickerIconsOnly: !iconsOnly })) return;
     dialog.local.scroll = 0;
     dialog.local.indexKeyboard = 0;
     dialog.refresh();
-  }, { maxWidth: 150 });
+  }, { align: 'right' });
   dialog.choiceGrid(items, onSelect, { iconsOnly });
 }
 
@@ -114,7 +114,7 @@ function chooseFacility(ui, kind, index) {
       dlg.text('研发对应品种后即可安排。');
       dlg.button('前往研究', () => {
         dlg.close();
-        dlg.go('研究', { tab: '品种与配方' });
+        dlg.go('研究', { tab: '品种配方' });
       }, confirm);
     } else {
       replacementChoices(dlg, choices.map((id) => ({
@@ -174,6 +174,7 @@ function improveFacility(ui, kind, index) {
       });
     }
     dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
+    dlg.text(facility.batch ? '升级后本批产出立即增加，收获时间不变。' : '升级后每批产出立即生效。', { muted: true });
     dialogButtons(dlg, '确认升级', () => submit(dlg, 'upgradeFacility', [kind, index, selected.steps], null,
       '升至 ' + compact(quote.target) + ' 级'), !quote.affordable, 'production');
   }, { variant: 'facility-upgrade' });
@@ -258,7 +259,7 @@ function sourceSummary(ui, kind, id, note) {
     if (kind === 'I' || kind === 'P') body.item(id, item.name, note);
     else facilityPreview(body, kind, id, note);
     if (!ui.w.unlocked.includes(id)) {
-      body.button('查看研发条件', () => body.go('研究', { tab: '品种与配方', id }), confirm);
+      body.button('查看研发条件', () => body.go('研究', { tab: '品种配方', id }), confirm);
     }
   });
 }
@@ -271,7 +272,7 @@ export function renderProduction(ui) {
     ui.local.tab = value;
     ui.local.id = null;
     ui.refresh();
-  }, { style: 'segmented' });
+  }, { sticky: true, style: 'segmented' });
   const quote = facilityOffer(ui.w, kind);
   ui.titleBar(kind === 'C' ? '种植地块' : kind === 'L' ? '养殖场地' : '养殖鱼池', purchaseLabels[kind], () => purchaseFacility(ui, kind), {
     style: 'production', tone: 'green', disabled: quote?.atLimit,
@@ -334,10 +335,9 @@ function chooseRecipe(ui, kind, index, source) {
       dlg.text('暂无已研发的配方。');
       dlg.button('前往研究', () => {
         dlg.close();
-        dlg.go('研究', { tab: '品种与配方' });
+        dlg.go('研究', { tab: '品种配方' });
       }, confirm);
     } else {
-      dlg.text('新配方立即生效，材料齐备时开工。', { muted: true });
       replacementChoices(dlg, choices.map((id) => ({
         id,
         icon: id,
@@ -347,7 +347,6 @@ function chooseRecipe(ui, kind, index, source) {
       })), ({ id }) => submit(dlg, 'arrangeStation', [kind, index, id], null,
         station.batch ? '已切换配方' : '已安排配方'));
     }
-    dlg.button('关闭', () => dlg.close());
   });
 }
 

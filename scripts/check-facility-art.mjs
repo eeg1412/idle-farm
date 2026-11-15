@@ -77,6 +77,11 @@ await Promise.all(ids.map(async (id) => {
 console.log(`已检查 ${ids.length} 个独立设施场景图。`);
 
 const crops = ids.filter((id) => catalog.items[id].kind === 'C');
+const cropLayout = JSON.parse(await readFile(locate('assets/plot/crop-layout.json'), 'utf8'));
+sameIDs(crops, Object.keys(cropLayout.crops), '作物体型分类');
+if (crops.some((id) => !Object.hasOwn(cropLayout.sizes, cropLayout.crops[id]))) {
+  throw new Error('作物体型分类必须为已登记的大、中、小类型。');
+}
 const invalid = (await Promise.all(crops.map(async (id) => {
   try {
     const atlas = await readFile(new URL(`../public/art/plot/crops/${id}.webp`, import.meta.url));
@@ -94,8 +99,11 @@ if (invalid.length) throw new Error(`缺少或无法读取 640×640 透明成长
 console.log(`已检查 ${crops.length} 张作物图集，共 ${crops.length * 4} 个成长阶段。`);
 for (const id of crops) {
   await imageFile(`assets/plot/crop-frames/${id}.png`, 640, 640, true);
+  await imageFile(`assets/plot/crop-frames/${id}-front.png`, 640, 640, true);
   const publishedCrop = await readFile(locate(`public/art/plot/crops/${id}.webp`));
+  const publishedFront = await imageFile(`public/art/plot/crops/${id}-front.webp`, 640, 640, true);
   const frames = [];
+  const frontFrames = [];
   for (const [index, phase] of ['sown', 'seedling', 'growing', 'mature'].entries()) {
     const source = id === 'C01' ? `assets/plot/wheat/wheat-${index}.png` : `assets/plot/crops/${id}/${phase}.png`;
     const metadata = await sharp(await readFile(locate(source))).metadata();
@@ -105,15 +113,21 @@ for (const id of crops) {
       .ensureAlpha().raw().toBuffer();
     if (opaqueBounds(pixels, 320, 320).right < 0) throw new Error(`作物阶段为空：${id}/${phase}`);
     frames.push(digest(pixels));
+    const frontPixels = await sharp(publishedFront)
+      .extract({ left: index % 2 * 320, top: Math.floor(index / 2) * 320, width: 320, height: 320 })
+      .ensureAlpha().raw().toBuffer();
+    if (opaqueBounds(frontPixels, 320, 320).right < 0) throw new Error(`作物前排阶段为空：${id}/${phase}`);
+    frontFrames.push(digest(frontPixels));
   }
   if (new Set(frames).size !== 4) throw new Error(`作物必须有四个独立阶段：${id}`);
+  if (new Set(frontFrames).size !== 4) throw new Error(`作物前排必须有四个独立阶段：${id}`);
 }
 for (const key of ['sky', 'ground', 'sprinkler-base', 'sprinkler-ne', 'sprinkler-se', 'sprinkler-sw', 'sprinkler-nw']) {
   const size = key.startsWith('sprinkler') ? 64 : 320;
   await imageFile(`public/art/plot/${key}.webp`, size, size);
 }
 await readFile(locate('assets/plot/furrows.json'));
-console.log('已覆盖全部作物的物品图标、回退场景、四期原图/PNG图集及共用场景层。');
+console.log('已覆盖全部作物的物品图标、回退场景、显式体型、四期原图/前后排PNG和WebP图集及共用场景层。');
 
 const livestockLayout = JSON.parse(await readFile(new URL('../assets/livestock/layout.json', import.meta.url), 'utf8'));
 const livestockManifest = JSON.parse(await readFile(new URL('../assets/livestock/atlas.json', import.meta.url), 'utf8'));

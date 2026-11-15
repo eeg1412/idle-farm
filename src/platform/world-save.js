@@ -113,6 +113,32 @@ export async function writeWorldSave(db, world, { replaceCorrupt = false, corrup
   });
 }
 
+export async function replaceWorldSave(db, world, expectedRevision, { clearBackup = false } = {}) {
+  integer(expectedRevision, 'revision');
+  return transact(db, (store, current, previous) => {
+    if (current === undefined) throw new WorldSaveError('revision-conflict');
+    const saved = readRecord(current, 'current');
+    if (saved.revision !== expectedRevision) throw new WorldSaveError('revision-conflict');
+    const revision = nextRevision(expectedRevision, current, previous);
+    const next = { ...world, revision };
+    if (next.pendingOffline) next.pendingOffline = { ...next.pendingOffline, id: revision };
+    const record = encodeWorld(next);
+    if (clearBackup) store.delete('previous');
+    else store.put(current, 'previous');
+    store.put(record, 'current');
+    return next;
+  });
+}
+
+export function encodeWorldRecord(world) {
+  return encodeWorld(world);
+}
+
+export function decodeWorldRecord(record) {
+  if (record?.schemaVersion !== 2) throw new WorldSaveError('unsupported-version');
+  return readRecord(record, 'transfer');
+}
+
 export async function restoreWorldSave(db, { corruptRevision, backupRevision } = {}) {
   return transact(db, (store, current, previous) => {
     if (current === undefined) throw new WorldSaveError('revision-conflict');
@@ -236,9 +262,11 @@ function offlineAmounts(summary, convert, convertSigned) {
 function amounts(world, convert, convertSigned) {
   const pendingOffline = Object.hasOwn(world, 'pendingOffline') && offlineAmounts(world.pendingOffline, convert, convertSigned);
   if (pendingOffline) valid(pendingOffline.id <= world.revision, 'pendingOffline.id');
+  const settings = { pickerIconsOnly: false, ...object(world.settings, 'settings') };
+  delete settings.reducedMotion;
   return {
     ...world,
-    settings: { pickerIconsOnly: false, ...world.settings },
+    settings,
     coins: convert(world.coins, 'coins'),
     productionValue: convert(world.productionValue, 'productionValue'),
     researchPoints: convert(world.researchPoints, 'researchPoints'),
@@ -302,7 +330,6 @@ function validateWorld(world) {
   }
   valid(typeof world.guideSkipped === 'boolean', 'guideSkipped');
   const settings = object(world.settings, 'settings');
-  valid(typeof settings.reducedMotion === 'boolean', 'settings.reducedMotion');
   if (Object.hasOwn(settings, 'pickerIconsOnly')) {
     valid(typeof settings.pickerIconsOnly === 'boolean', 'settings.pickerIconsOnly');
   }

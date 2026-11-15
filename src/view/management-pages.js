@@ -56,7 +56,7 @@ function showFilters(ui) {
     local.page = 0;
     ui.refresh();
   };
-  ui.tabs(typeTabs, local.type, (value) => select('type', value), { style: 'framed' });
+  ui.tabs(typeTabs, local.type, (value) => select('type', value), { sticky: true, style: 'framed' });
   ui.tabs(sourceTabs, local.source, (value) => select('source', value), { style: 'framed' });
   if (local.type === '商品') {
     ui.tabs(complexityTabs, local.complexity, (value) => select('complexity', value), { style: 'framed' });
@@ -97,40 +97,23 @@ function showSource(ui, id) {
 }
 
 function showResearch(ui, id) {
-  ui.go('研究', { tab: '品种与配方', id });
+  ui.go('研究', { tab: '品种配方', id });
 }
 
-function salePanel(ui, ids, multiple = false) {
-  const state = {
-    percentages: Object.fromEntries(ids.map((id) => [id, 0])),
-    index: 0, pending: false, revised: false,
-  };
-  ui.dialog(multiple ? '出售所选' : '出售' + catalog.items[ids[0]].name, (panel) => {
-    const quotes = ids.map((id) => tradeOffer(panel.w, id, state.percentages[id]));
-    const chosen = quotes[state.index];
+function salePanel(ui, id) {
+  const state = { percent: 0, pending: false, revised: false };
+  ui.dialog('出售' + catalog.items[id].name, (panel) => {
+    const chosen = tradeOffer(panel.w, id, state.percent);
     if (!chosen) return;
-    if (multiple) {
-      panel.row('第 ' + (state.index + 1) + ' / ' + ids.length + ' 项', catalog.items[chosen.id].name);
-      panel.buttons([
-        {
-          label: '上一项', disabled: state.index === 0 || state.pending,
-          onClick: () => { state.index -= 1; panel.refresh(); },
-        },
-        {
-          label: '下一项', disabled: state.index + 1 === ids.length || state.pending,
-          onClick: () => { state.index += 1; panel.refresh(); },
-        },
-      ]);
-    }
     panel.card((entry) => {
       entry.feature(chosen.id, (body) => {
         body.row('当前库存', chosen.inventory, { compact: true, divider: true });
         body.row('单价', compact(chosen.price) + ' 金币', { compact: true });
       }, { ratio: 0.25 });
     }, { padding: 8, gap: 4 });
-    panel.slider(state.percentages[chosen.id], (percent) => {
+    panel.slider(state.percent, (percent) => {
       if (state.pending) return;
-      state.percentages[chosen.id] = percent;
+      state.percent = percent;
       state.revised = false;
       panel.refresh();
     }, { bubble: true });
@@ -140,27 +123,18 @@ function salePanel(ui, ids, multiple = false) {
       panel.text('本次将动用保留库存 ' + compact(chosen.reserveAffected) + ' 件。');
       panel.row('出售后库存', compact(chosen.remaining));
     }
-    const active = quotes.filter((quote) => quote.affordable);
-    if (multiple) {
-      panel.row('预计总得款', compact(active.reduce((total, quote) => total + quote.gain, 0n)));
-    }
     if (state.revised) panel.text('库存或售价已变化，请重新确认。');
     panel.buttons([
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
-        label: '确认出售', tone: 'gold', disabled: !active.length || state.pending,
+        label: '确认出售', tone: 'gold', disabled: !chosen.affordable || state.pending,
         onClick: async () => {
           if (state.pending) return;
           state.pending = true;
           panel.refresh();
-          const sold = multiple
-            ? await panel.action('sellBatch', quotes.filter((quote) => quote.percent > 0).map((quote) => ({
-              id: quote.id, percent: quote.percent, expectedQuote: quote,
-            })))
-            : await panel.action('sell', chosen.id, chosen.percent, chosen);
+          const sold = await panel.action('sell', chosen.id, chosen.percent, chosen);
           state.pending = false;
           if (sold) {
-            if (multiple) ui.local.selected = [];
             panel.close();
           } else {
             state.revised = true;
@@ -169,7 +143,7 @@ function salePanel(ui, ids, multiple = false) {
         },
       },
     ]);
-  }, multiple ? false : { variant: 'warehouse-sale' });
+  }, { variant: 'warehouse-sale' });
 }
 
 export function reservePanel(ui, id) {
@@ -246,7 +220,7 @@ function warehouseDetail(ui, id) {
     }
     panel.buttons([
       { label: '加工保留量', onClick: () => reservePanel(panel, id) },
-      { label: '出售', tone: 'gold', onClick: () => salePanel(panel, [id]), disabled: amount <= 0n },
+      { label: '出售', tone: 'gold', onClick: () => salePanel(panel, id), disabled: amount <= 0n },
     ]);
     panel.buttons([
       { label: '查看来源', onClick: () => showSource(panel, id) },
@@ -281,28 +255,12 @@ export function renderWarehouse(ui) {
     ui.refresh();
   }, { style: 'filter' });
   const stocked = entries.filter(([id]) => quantity(ui.w, id) > 0n);
-  const selected = ui.local.selected ??= [];
-  const toggleMulti = () => {
-    ui.local.multi = !ui.local.multi;
-    ui.local.selected = [];
-    ui.refresh();
-  };
-  if (stocked.length && ui.local.multi) {
-    ui.buttons([
-      { label: '退出多选', onClick: toggleMulti },
-      {
-        label: '出售所选', tone: 'gold', disabled: !selected.length,
-        onClick: () => salePanel(ui, [...selected], true),
-      },
-    ], { style: 'production' });
-  }
   const filtered = stocked.filter(([, item]) =>
     (ui.local.source === '全部' || item.sources.includes(ui.local.source)) &&
     (ui.local.type === '全部' || ui.local.type === typeOf(item)));
   if (!filtered.length) {
     if (stocked.length) {
       ui.text('此类别暂无库存。', { muted: true });
-      if (!ui.local.multi) ui.button('多选', toggleMulti);
     } else {
       ui.text('仓库暂无库存。', { muted: true });
       ui.buttons([
@@ -312,13 +270,9 @@ export function renderWarehouse(ui) {
     }
     return;
   }
-  paged(ui, filtered, ([id, item], _, index) => {
+  paged(ui, filtered, ([id, item]) => {
     const amount = quantity(ui.w, id);
-    const marked = selected.includes(id);
-    const open = ui.local.multi ? () => {
-      ui.local.selected = marked ? selected.filter((key) => key !== id) : [...selected, id];
-      ui.refresh();
-    } : () => warehouseDetail(ui, id);
+    const open = () => warehouseDetail(ui, id);
     ui.card((row) => {
       row.feature(id, (card) => {
         card.heading(item.name);
@@ -326,15 +280,10 @@ export function renderWarehouse(ui) {
         card.row('品质', compact(ui.w.quality[id] ?? 1n) + ' 级', { compact: true });
         card.row('单价', compact(unitPrice(ui.w, id)) + ' 金币', { compact: true });
       }, { ratio: 0.28, onClick: open });
-      if (ui.local.multi) {
-        row.button(marked ? '已勾选' : '勾选', open, { tone: marked ? 'gold' : 'plain' });
-      } else {
-        row.buttons([
-          { label: '详情', onClick: open },
-          { label: '出售', onClick: () => salePanel(ui, [id]), tone: 'gold' },
-          ...(index === 0 ? [{ label: '多选', onClick: toggleMulti }] : []),
-        ], { style: 'production' });
-      }
+      row.buttons([
+        { label: '详情', onClick: open },
+        { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold' },
+      ], { style: 'production' });
     }, { padding: 8, gap: 6 });
   });
 }
@@ -512,6 +461,180 @@ function showInstructions(ui) {
   });
 }
 
+function saveMessage(error, fallback) {
+  return error?.userMessage || fallback;
+}
+
+function savedResult(result, fallback) {
+  if (result?.ok !== false) return result;
+  const error = new Error(fallback);
+  error.userMessage = result.message || fallback;
+  throw error;
+}
+
+async function showExportSave(ui) {
+  let file;
+  try {
+    file = savedResult(await ui.saveAction('exportSave'), '未能导出存档，请重试。');
+    if (!file?.text || !file.filename) throw new Error('Missing save export');
+  } catch (error) {
+    ui.toast(saveMessage(error, '未能导出存档，请重试。'));
+    return;
+  }
+  const state = { pending: false, message: '' };
+  const deliver = async (panel, method) => {
+    if (state.pending) return;
+    state.pending = true;
+    state.message = '';
+    panel.refresh();
+    try {
+      savedResult(await panel.saveAction(method, method === 'download' ? file : file.text),
+        method === 'download' ? '未能下载存档，可以尝试复制存档。' : '未能复制存档，可以尝试下载存档。');
+      state.message = method === 'download' ? '已交给浏览器下载。' : '存档已复制。';
+    } catch (error) {
+      state.message = saveMessage(error,
+        method === 'download' ? '未能下载存档，可以尝试复制存档。' : '未能复制存档，可以尝试下载存档。');
+    } finally {
+      state.pending = false;
+      panel.refresh();
+    }
+  };
+  ui.dialog('导出存档', (panel) => {
+    panel.card((card) => {
+      card.row('存档版本', panel.saveManagement.version);
+      card.row('存档类型', panel.saveManagement.environment === 'development' ? '开发存档' : '正式存档');
+      card.text(file.filename, { muted: true });
+    }, { padding: 12, gap: 8 });
+    panel.text('下载存档文件，或复制存档以便保存和迁移。');
+    if (state.message) panel.text(state.message);
+    panel.buttons([
+      { label: '下载存档', tone: 'gold', disabled: state.pending, onClick: () => deliver(panel, 'download') },
+      { label: '复制存档', disabled: state.pending, onClick: () => deliver(panel, 'copyText') },
+    ], { style: 'production' });
+  }, { onClose: () => !state.pending });
+}
+
+async function replaceSave(panel, state, operation, candidate) {
+  if (state.pending) return;
+  state.pending = true;
+  state.message = '';
+  panel.refresh();
+  let succeeded = false;
+  const fallback = operation === 'importSave'
+    ? '未能导入存档，当前经营记录已保留。'
+    : '未能清除存档，当前经营记录已保留。';
+  try {
+    const result = await panel.saveAction(operation, ...(candidate ? [candidate] : []));
+    succeeded = Boolean(result?.ok);
+    if (!succeeded) state.message = result?.message || fallback;
+  } catch (error) {
+    state.message = saveMessage(error, fallback);
+  } finally {
+    state.pending = false;
+    if (!succeeded) panel.refresh();
+  }
+}
+
+function confirmImportSave(ui, candidate) {
+  const state = { pending: false, message: '' };
+  ui.dialog('确认导入存档', (panel) => {
+    const summary = candidate.summary;
+    panel.text('导入后，将用此存档替换当前全部经营记录。');
+    panel.card((card) => {
+      card.row('源存档版本', candidate.version);
+      card.row('存档类型', summary.environment === 'development' ? '开发存档' : '正式存档');
+      card.row('金币', summary.coins, { compact: true, icon: 'coin' });
+      card.row('高级研发点', summary.researchPoints, { compact: true });
+      card.row('设施总数', compact(summary.facilities));
+      card.row('已研发品项', compact(summary.unlocked));
+      card.row('已出售牧场', compact(summary.completedRuns) + ' 次');
+    }, { padding: 12, gap: 8 });
+    panel.text('不会补算存档导出后的离线收获。', { muted: true });
+    if (state.message) panel.text(state.message);
+    panel.buttons([
+      { label: '取消', disabled: state.pending, onClick: () => panel.close() },
+      {
+        label: '确认导入', tone: 'gold', disabled: state.pending,
+        onClick: () => replaceSave(panel, state, 'importSave', candidate),
+      },
+    ], { style: 'production' });
+  }, { onClose: () => !state.pending });
+}
+
+function showImportSave(ui) {
+  const state = { pending: false, message: '', closed: false };
+  const inspect = (text) => {
+    if (state.pending || state.closed) return;
+    state.message = '';
+    try {
+      const candidate = ui.saveManagement.inspectSave(text);
+      confirmImportSave(ui, candidate);
+    } catch (error) {
+      state.message = saveMessage(error, '无法读取这份存档，请确认文件完整且与当前版本一致。');
+      ui.refresh();
+    }
+  };
+  const receive = async (panel, method) => {
+    if (state.pending) return;
+    state.pending = true;
+    state.message = '';
+    panel.refresh();
+    let text;
+    try {
+      text = savedResult(await panel.saveAction(method), '未能读取存档，请使用粘贴或拖入文件。');
+    } catch (error) {
+      state.message = saveMessage(error, '未能读取存档，请使用粘贴或拖入文件。');
+    } finally {
+      state.pending = false;
+      panel.refresh();
+    }
+    if (typeof text === 'string' && !state.closed) inspect(text);
+  };
+  ui.dialog('导入存档', (panel) => {
+    state.closed = false;
+    panel.row('当前版本', panel.saveManagement.version);
+    panel.text('仅支持相同游戏版本的存档，开发存档与正式存档不能互相导入。');
+    panel.text('也可以在此页面粘贴存档文本，或拖入一个 JSON 存档文件。', { muted: true });
+    panel.text('读取后会先显示存档摘要，确认后才替换当前记录。');
+    if (state.message) panel.text(state.message);
+    panel.buttons([
+      { label: '选择文件', tone: 'gold', disabled: state.pending, onClick: () => receive(panel, 'captureImport') },
+      { label: '读取剪贴板', disabled: state.pending, onClick: () => receive(panel, 'readClipboard') },
+    ], { style: 'production' });
+  }, {
+    onImportText: inspect,
+    onClose() {
+      if (state.pending) return false;
+      state.closed = true;
+      return true;
+    },
+  });
+}
+
+function showClearSave(ui) {
+  const state = { pending: false, message: '' };
+  ui.dialog('确认清除存档', (panel) => {
+    panel.text('清除后将从新牧场重新开始。');
+    panel.card((card) => {
+      card.titleBar('全部重新开始');
+      card.detailRows([
+        { icon: 'coin', label: '金币、库存和全部设施' },
+        { icon: 'nav-research', label: '品种、配方、品质和永久科技' },
+        { icon: 'task-product', label: '任务进度、经营记录和出售牧场次数' },
+      ], { variant: 'pill' });
+    }, { padding: 12, gap: 8 });
+    panel.text('需要保留进度时，请先导出存档。');
+    if (state.message) panel.text(state.message);
+    panel.buttons([
+      { label: '取消', disabled: state.pending, onClick: () => panel.close() },
+      {
+        label: '确认清除', tone: 'danger', disabled: state.pending,
+        onClick: () => replaceSave(panel, state, 'clearSave'),
+      },
+    ], { style: 'production' });
+  }, { onClose: () => !state.pending });
+}
+
 export function renderSettings(ui) {
   const settings = ui.w.settings;
   ui.image('settings-banner', 96);
@@ -551,15 +674,20 @@ export function renderSettings(ui) {
     card.stepper(percent + '%',
       percent > 100 ? () => setScale(-25) : null,
       percent < 200 ? () => setScale(25) : null);
-    card.settingToggle('减弱动态', settings.reducedMotion,
-      () => ui.action('updateSettings', { reducedMotion: !settings.reducedMotion }));
   });
   ui.section('操作说明', 'settings-guide', (card) => {
     card.button('重看操作说明  ›', () => showInstructions(ui));
   });
+  ui.section('存档管理', 'nav-warehouse', (card) => {
+    card.buttons([
+      { label: '导出存档', onClick: () => showExportSave(ui) },
+      { label: '导入存档', onClick: () => showImportSave(ui) },
+    ], { style: 'production' });
+    card.button('清除存档', () => showClearSave(ui), { tone: 'danger' });
+  });
 }
 
-function farmDetails(ui, offer, summary = false) {
+function farmDetails(ui, offer) {
   const multiplier = Math.floor(offer.multiplierTenths / 10);
   const decimal = offer.multiplierTenths % 10;
   const multiplierLabel = compact(multiplier) + (decimal ? '.' + decimal : '') + ' 倍';
@@ -567,20 +695,10 @@ function farmDetails(ui, offer, summary = false) {
     { icon: 'coin', label: '本轮生产总值', value: compact(offer.productionValue) },
     { icon: 'nav-workshop', label: '经营评估倍率', value: multiplierLabel },
   ];
-  if (summary) {
-    ui.stats(details);
-  } else {
-    for (const { icon, label, value } of details) {
-      ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true }), { padding: 8, gap: 6 });
-    }
+  for (const { icon, label, value } of details) {
+    ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true }), { padding: 8, gap: 6 });
   }
   ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
-  if (summary) {
-    ui.row('保留', '工位、研发、品质、经营改良、任务进度');
-    ui.row('清空', '田地、畜牧场、鱼池、库存、金币');
-    ui.row('新一轮', '2 块小麦田、60 金币');
-    return;
-  }
   const changes = [
     ['保留', [{ icon: 'sale-retain', label: '工位、研发、品质、经营改良、任务进度' }]],
     ['清空', [
@@ -604,7 +722,7 @@ export function renderFarmSale(ui) {
     const state = { pending: false, revised: false };
     ui.dialog('确认出售牧场', (panel) => {
       const offer = farmSaleOffer(panel.w);
-      farmDetails(panel, offer, true);
+      farmDetails(panel, offer);
       if (!offer.reward) panel.text('本次出售可获得 0 点高级研发点。');
       if (state.revised) panel.text('经营记录或预计点数已变化，请重新确认。');
       panel.buttons([

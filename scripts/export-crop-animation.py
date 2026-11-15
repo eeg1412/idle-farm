@@ -17,20 +17,15 @@ ROOTS = sorted(
     (root for row in loads((ART / "furrows.json").read_text()) for root in row),
     key=lambda root: root[1],
 )
+LAYOUT = loads((ART / "crop-layout.json").read_text())
 
-# Height and width caps preserve the original spacing and the view of the sprinkler.
-FAMILIES = (
-    ("blade", 65, 37, (160, 105, 43), (2, 4, 13, 14, 15, 17, 38, 50, 59, 66)),
-    ("orchard", 59, 43, (118, 71, 44),
-     (5, 6, 8, 9, 11, 12, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 40, 43, 44, 45, 46, 49, 67, 68)),
-    ("vine", 48, 43, (137, 91, 54), (3, 10, 18, 19, 20, 34, 36, 47, 48, 55, 56)),
-    ("broad", 44, 43, (138, 92, 58), (21, 22, 33, 35, 37, 42)),
-    ("herb", 52, 39, (143, 87, 47), (7, 16, 39, 41, 51, 52, 53, 54, 57, 58, 60, 61, 62, 63, 64, 65)),
-)
+# Small plants keep their existing family proportions. Larger plants use the
+# explicit crop size and a wider root spacing rather than squeezing every tree
+# into the wheat-sized grid.
 PROFILES = {
-    f"C{number:02}": (form, height, width, seed_color)
-    for form, height, width, seed_color, numbers in FAMILIES
-    for number in numbers
+    f"C{number:02}": (form, family["height"], family["width"], tuple(family["seedColor"]))
+    for form, family in LAYOUT["families"].items()
+    for number in family["numbers"]
 }
 
 
@@ -133,6 +128,23 @@ def export_early_sheets(crops):
             sheet.crop(rectangle).save(target, optimize=True)
 
 
+def crop_roots(crop):
+    size = LAYOUT["sizes"][LAYOUT["crops"][crop]]
+    if LAYOUT["crops"][crop] == "small":
+        return ROOTS
+    roots = []
+    for x, y in ROOTS:
+        if y < size["minRootY"] or not size["edgeInset"] <= x <= SIZE - size["edgeInset"]:
+            continue
+        depth_scale = 0.72 + (y - 65) * (0.38 / 225)
+        spacing_x = size["spacingX"] * depth_scale
+        spacing_y = size["spacingY"] * depth_scale
+        if all(((x - other_x) / spacing_x) ** 2 + ((y - other_y) / spacing_y) ** 2 >= 1
+               for other_x, other_y in roots):
+            roots.append((x, y))
+    return roots
+
+
 def stamp_stage(source, crop, stage):
     alpha = source.getchannel("A")
     source = source.crop(alpha.getbbox())
@@ -141,41 +153,56 @@ def stamp_stage(source, crop, stage):
     root_zone = alpha.crop((0, max(0, height - max(2, height // 24)), width, height))
     stem = root_zone.point(lambda value: 255 if value >= 150 else 0).getbbox()
     stem_x = ((stem[0] + stem[2]) / 2) if stem else width / 2
-    _, mature_height, mature_width, _ = PROFILES[crop]
+    _, family_height, family_width, _ = PROFILES[crop]
+    size = LAYOUT["sizes"][LAYOUT["crops"][crop]]
+    mature_height = size["height"] or family_height
+    mature_width = size["width"] or family_width
     cap_height = (8, 18, mature_height * 0.71, mature_height)[stage]
     cap_width = (11, 18, mature_width * 0.78, mature_width)[stage]
-    layer = Image.new("RGBA", (SIZE, SIZE))
-    shadows = Image.new("RGBA", (SIZE, SIZE))
-    ink = ImageDraw.Draw(shadows)
-    placements = []
-    for x, y in ROOTS:
+    layers = [Image.new("RGBA", (SIZE, SIZE)) for _ in range(2)]
+    shadows = [Image.new("RGBA", (SIZE, SIZE)) for _ in range(2)]
+    inks = [ImageDraw.Draw(shadow) for shadow in shadows]
+    placements = [[], []]
+    for x, y in crop_roots(crop):
+        depth = int(y >= LAYOUT["foregroundRootY"])
         depth_scale = 0.72 + (y - 65) * (0.38 / 225)
-        scale = min(cap_height / height, cap_width / width) * depth_scale
+        # Fit the whole crown inside the sky, keeping the same registered root
+        # through all four phases. This does not crop the tops of orchard trees.
+        scale = min(cap_height * depth_scale / height, cap_width * depth_scale / width,
+                    max(2, y - 8) / height)
         w, h = max(2, round(width * scale)), max(2, round(height * scale))
         plant = source.resize((w, h), Image.Resampling.LANCZOS)
         left = x - round((width / 2 if stage == 0 else stem_x) * w / width)
         top = y - (h // 2 if stage == 0 else h - 1)
-        radius = min(8, max(2, w // 5))
-        ink.ellipse((x - radius, y - 1, x + radius, y + 2), fill=(58, 29, 12, 45 + stage * 14))
-        placements.append((plant, (left, top)))
-    layer.alpha_composite(shadows.filter(ImageFilter.GaussianBlur(0.55)))
-    for plant, offset in placements:
-        layer.alpha_composite(plant, offset)
-    return layer
+        radius = min(14, max(2, w // 5))
+        inks[depth].ellipse((x - radius, y - 1, x + radius, y + 2), fill=(58, 29, 12, 45 + stage * 14))
+        placements[depth].append((plant, (left, top)))
+    for layer, shadow, plants in zip(layers, shadows, placements):
+        layer.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(0.55)))
+        for plant, offset in plants:
+            layer.alpha_composite(plant, offset)
+    return layers
 
 
 def export_atlas(crop):
-    atlas = Image.new("RGBA", (SIZE * 2, SIZE * 2))
+    atlases = [Image.new("RGBA", (SIZE * 2, SIZE * 2)) for _ in range(2)]
     for stage, phase in enumerate(PHASES):
         if crop == "C01":
             frame = load_rgba(ART / "wheat" / f"wheat-{stage}.png")
             if frame.size != (SIZE, SIZE):
                 raise ValueError(f"Invalid wheat frame size: {frame.size}")
+            # C01 is approved full-scene artwork, not a collection of individual
+            # plants. Preserve every source pixel and its size/density, including
+            # the existing canonical atlas. The runtime renders it once, wholly
+            # in the foreground; splitting at a screen row would cut its stalks.
+            frames = [frame, frame]
         else:
-            frame = stamp_stage(load_rgba(ART / "crops" / crop / f"{phase}.png"), crop, stage)
-        atlas.alpha_composite(frame, ((stage % 2) * SIZE, (stage // 2) * SIZE))
-    atlas.save(ART / "crop-frames" / f"{crop}.png", optimize=True)
-    atlas.save(PUBLIC / f"{crop}.webp", quality=70, method=5, exact=True)
+            frames = stamp_stage(load_rgba(ART / "crops" / crop / f"{phase}.png"), crop, stage)
+        for atlas, frame in zip(atlases, frames):
+            atlas.alpha_composite(frame, ((stage % 2) * SIZE, (stage // 2) * SIZE))
+    for suffix, atlas in zip(("", "-front"), atlases):
+        atlas.save(ART / "crop-frames" / f"{crop}{suffix}.png", optimize=True)
+        atlas.save(PUBLIC / f"{crop}{suffix}.webp", quality=70, method=5, exact=True)
 
 
 def main():
@@ -185,6 +212,10 @@ def main():
         uncovered = set(crops) - ({"C01"} | PROFILES.keys())
         extra = PROFILES.keys() - set(crops)
         raise ValueError(f"Crop animation profiles missing {sorted(uncovered)}, extra {sorted(extra)}")
+    if set(crops) != LAYOUT["crops"].keys():
+        raise ValueError("Every crop must have an explicit animation size")
+    if any(size not in LAYOUT["sizes"] for size in LAYOUT["crops"].values()):
+        raise ValueError("Unknown crop animation size")
     PUBLIC.mkdir(parents=True, exist_ok=True)
     (ART / "crop-frames").mkdir(parents=True, exist_ok=True)
     export_early_sheets([crop for crop in crops if crop != "C01"])

@@ -25,14 +25,10 @@ const pages = {
 const tabs = ['牧场', '工坊', '仓库', '研究', '经营'];
 const tabIcons = ['nav-ranch', 'nav-workshop', 'nav-warehouse', 'nav-research', 'nav-management'];
 const drawnIcons = {
-  'settings-gear': {
-    colors: { d: 0x214531, g: 0x628567, l: 0xa7b99a },
-    rows: [
-      '....dd....', '.dd.dg.dd.', '.dgddddgd.', '..dglggd..',
-      'ddgl..ggdd', 'dlgl..gggd', '..dgllgd..', '.dgddddgd.',
-      '.dd.dg.dd.', '....dd....',
-    ],
-  },
+  'settings-gear': { kind: 'gear' },
+  'view-grid': { kind: 'grid' },
+  'view-list': { kind: 'list' },
+  close: { kind: 'close' },
 };
 const heroKeys = new Set(['fields', 'livestock', 'fish', 'workshop', 'warehouse', 'research',
   'tasks-banner', 'catalog-banner', 'sale-banner', 'settings-banner']);
@@ -77,6 +73,45 @@ function panel(parent, x, y, width, height, fill, outline, radius = 9) {
 }
 
 function drawPixelIcon(parent, icon, x, y, width, height) {
+  if (icon.kind) {
+    const art = inkGraphics();
+    const size = Math.min(width, height);
+    const cx = x + width / 2;
+    const cy = y + height / 2;
+    const unit = size / 24;
+    if (icon.kind === 'gear') {
+      const points = [];
+      for (let tooth = 0; tooth < 8; tooth += 1) {
+        for (const [turn, radius] of [[-0.45, 8.2], [-0.26, 11], [0.26, 11], [0.45, 8.2]]) {
+          const angle = (tooth + turn) * Math.PI / 4;
+          points.push(cx + Math.cos(angle) * radius * unit, cy + Math.sin(angle) * radius * unit);
+        }
+      }
+      art.poly(points).fill(0x668d6c).stroke({ color: 0x234c34, width: 1.6 * unit, join: 'round' });
+      art.circle(cx, cy, 6.6 * unit).fill(0xabc49b).stroke({ color: 0x426c49, width: unit });
+      art.circle(cx, cy, 3.5 * unit).fill(palette.pale).stroke({ color: 0x234c34, width: 1.8 * unit });
+      const highlightRadius = 5.3 * unit;
+      const highlightStart = Math.PI * 1.1;
+      art.moveTo(cx + Math.cos(highlightStart) * highlightRadius, cy + Math.sin(highlightStart) * highlightRadius)
+        .arc(cx, cy, highlightRadius, highlightStart, Math.PI * 1.7).stroke({ color: 0xd5e1bb, width: unit });
+    } else if (icon.kind === 'close') {
+      const outline = [-6, -10, 0, -4, 6, -10, 10, -6, 4, 0, 10, 6,
+        6, 10, 0, 4, -6, 10, -10, 6, -4, 0, -10, -6];
+      art.poly(outline.map((value, index) => (index % 2 ? cy : cx) + value * unit))
+        .fill(palette.ink).stroke({ color: 0x102315, width: 0.7 * unit, join: 'round' });
+    } else if (icon.kind === 'grid') {
+      for (const dx of [-8, 2]) for (const dy of [-8, 2]) {
+        art.roundRect(cx + dx * unit, cy + dy * unit, 6 * unit, 6 * unit, unit).fill(palette.ink);
+      }
+    } else if (icon.kind === 'list') {
+      for (const dy of [-8, -1, 6]) {
+        art.roundRect(cx - 9 * unit, cy + dy * unit, 4 * unit, 4 * unit, unit).fill(palette.ink);
+        art.roundRect(cx - 2 * unit, cy + dy * unit, 11 * unit, 4 * unit, unit).fill(palette.ink);
+      }
+    }
+    parent.addChild(art);
+    return;
+  }
   const columns = icon.rows[0].length;
   const unit = Math.max(1, Math.floor(Math.min(width / columns, height / icon.rows.length)));
   const left = Math.round(x + (width - columns * unit) / 2);
@@ -122,7 +157,7 @@ function compactLabel(parent, value, x, y, width, options) {
   return label;
 }
 
-export function createGameView(app, dispatch, restore, replace, onNavigate, browser = window) {
+export function createGameView(app, dispatch, restore, replace, onNavigate, browser = window, saveManagement = {}) {
   const developmentToolsEnabled = typeof __DEV_TEST_MODE__ !== 'undefined' && __DEV_TEST_MODE__;
   let settingsTitleClicks = 0;
   let developmentTitleTarget;
@@ -132,7 +167,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   root.mask = clip;
   let current = '牧场';
   let history = [];
-  const navigation = gameHistory(browser);
+  let navigation = gameHistory(browser);
   let routeDialogSequence = 0;
   let applyingRoute = false;
   let layout;
@@ -176,7 +211,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   const scale = () => clamp(world?.settings?.textScale ?? 1, 1, 2);
   function progressClock(now) {
-    const elapsed = progressTiming && !world.settings?.reducedMotion
+    const elapsed = progressTiming
       ? clamp(now - progressTiming.anchor, 0, progressTiming.maxElapsed) : 0;
     return world.clockMs + elapsed;
   }
@@ -215,15 +250,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       key, await loadImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
     ])).then((entries) => entries.every(([, texture]) => texture) ? new Map(entries) : undefined);
 
-    const atlasLoad = loadImage(path(`./art/plot/crops/${id}.webp?game=1&v=1`));
-    Promise.all([plotSharedLoad, atlasLoad]).then(([shared, atlas]) => {
+    const atlasLoad = loadImage(path(`./art/plot/crops/${id}.webp?game=1&v=2`));
+    const frontLoad = loadImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=2`));
+    Promise.all([plotSharedLoad, atlasLoad, frontLoad]).then(([shared, atlas, front]) => {
       const size = plotFrameSize;
-      if (!shared || !atlas || atlas.width !== size * 2 || atlas.height !== size * 2) return;
-      const stages = Array.from({ length: 4 }, (_, index) => new Texture({
-        source: atlas.source,
+      if (!shared || !atlas || !front || atlas.width !== size * 2 || atlas.height !== size * 2 ||
+          front.width !== size * 2 || front.height !== size * 2) return;
+      const frames = (texture) => Array.from({ length: 4 }, (_, index) => new Texture({
+        source: texture.source,
         frame: new Rectangle(index % 2 * size, Math.floor(index / 2) * size, size, size),
       }));
-      crop.textures = { shared, stages };
+      crop.textures = { shared, stages: frames(atlas), frontStages: frames(front) };
       if (visiblePlotIds.has(id)) requestRender();
     });
   }
@@ -347,6 +384,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       panel(parent, x + 1.5, y + 1, width - 3, height - 5, { color: palette.cream, alpha: 0 },
         green ? null : 0xfff5db, 12);
     }
+    const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : undefined);
+    if (iconOnly) {
+      drawImage(parent, iconOnly, x + (width - 24) / 2, y + (height - 24) / 2, 24, 24);
+      g.label = label;
+      const hitWidth = Math.max(48, width);
+      const hitHeight = Math.max(48, height);
+      if (!disabled) hitAt(g, parent, x - (hitWidth - width) / 2, y - (hitHeight - height) / 2,
+        hitWidth, hitHeight, fn);
+      return;
+    }
     const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
     const baseSize = options.emphasis ? 23 : 18;
     const size = Math.min(baseSize * scale(), (width - icon - 10) / Math.max(2, Array.from(String(label)).length));
@@ -382,6 +429,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   async function closeDialog() {
+    if (waiting) return;
     const shown = modal;
     if (shown?.closing) return;
     if (shown?.onClose) {
@@ -539,8 +587,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
   }
 
+  async function saveAction(name, ...args) {
+    if (waiting) return { ok: false, message: '正在处理存档，请稍候。' };
+    if (typeof saveManagement[name] !== 'function') return { ok: false, message: '当前无法执行这项存档操作。' };
+    waiting = true;
+    redraw();
+    try { return await saveManagement[name](...args); }
+    finally { waiting = false; redraw(); }
+  }
+
   function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
     let cursor = y;
+    let methodDepth = 0;
+    let trailingButtons = [];
     const rowGap = 7;
     const resetScroll = () => { local.scroll = 0; redraw(); };
     function scrollChoices(items, onSelect, columns, height, draw) {
@@ -561,8 +620,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       let visibleScroll = 0;
       function paint(scroll) {
         visibleScroll = scroll;
+        const viewportHeight = options.viewport?.height ?? availableHeight;
         const first = columns * Math.max(0, Math.floor((scroll - top) / step));
-        const end = Math.min(items.length, columns * Math.ceil((scroll + availableHeight - top) / step));
+        const end = Math.min(items.length, columns * Math.ceil((scroll + viewportHeight - top) / step));
         for (const [index, tile] of rendered) {
           if (index >= first && index < end) continue;
           tile.layer.destroy({ children: true });
@@ -607,7 +667,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           selected = clamp(selected + stepByKey[key], 0, items.length - 1);
           local.indexKeyboard = selected;
           const rowTop = top + Math.floor(selected / columns) * step;
-          if (rowTop < visibleScroll || rowTop + height > visibleScroll + availableHeight) changeScroll(rowTop - step);
+          const viewportHeight = options.viewport?.height ?? availableHeight;
+          if (rowTop < visibleScroll || rowTop + height > visibleScroll + viewportHeight) changeScroll(rowTop - step);
           else paint(visibleScroll);
           return true;
         };
@@ -618,6 +679,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     const ui = {
       w: world, local, width, height: availableHeight, refresh, go, back, action, float, toast,
+      saveManagement, saveAction,
       dialog: setDialog, close: closeDialog,
       tree(options) {
         const treeHeight = Math.max(120, availableHeight - cursor - 5);
@@ -686,6 +748,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (options.pill) panel(parent, x, cursor, width, 33, palette.pale, null, 9);
         const size = (compactRow ? 16 : 15) * scale();
         const valueStr = number(value);
+        if ((options.noWrap || label === '距收获') && value != null) {
+          const nameX = x + icon + (options.pill ? 6 : 0);
+          const room = Math.max(1, x + width - nameX - 2);
+          const name = textNode(parent, label, nameX, start, room,
+            { size, weight: '750', wrap: false });
+          const amount = textNode(parent, valueStr, nameX, start, room,
+            { size, weight: '800', wrap: false });
+          // Reserve the longest ordinary minute display so ticking seconds never reflows the row.
+          const measure = textNode(parent, '999 分 59 秒', 0, 0, room, { size, wrap: false });
+          const fit = Math.min(1, room / (name.width + Math.max(amount.width, measure.width) + 6));
+          measure.destroy();
+          name.scale.set(fit);
+          amount.scale.set(fit);
+          const height = Math.max(32, Math.ceil(size * 1.36) + 4, icon);
+          name.y = start + (height - name.height) / 2;
+          amount.position.set(x + width - amount.width, start + (height - amount.height) / 2);
+          cursor += height + (compactRow ? 3 : rowGap);
+          return;
+        }
         const aWidth = scale() > 1.45 || value == null ? width :
           Math.floor(width * (options.compact ? 0.68 : metric ? 0.65 : 0.53));
         const nameX = x + (options.valueIcon ? 0 : icon) + (options.pill ? 6 : 0);
@@ -746,6 +827,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           { emphasis: large, ...options });
         cursor += h + rowGap;
       },
+      iconButton(icon, label, fn, { align = 'right', ...options } = {}) {
+        const height = Math.max(44, Math.ceil(26 * scale()));
+        const left = align === 'left' ? x : align === 'center' ? x + (width - height) / 2 : x + width - height;
+        buttonAt(parent, left, cursor, height, height, label, fn, { ...options, iconOnly: icon });
+        cursor += height + rowGap;
+      },
       buttons(list, { style, size } = {}) {
         if (!list.length) return;
         const segmented = style === 'segmented' || style === 'framed';
@@ -761,10 +848,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (segmented) {
             panel(parent, x, cursor + 1, width, height, 0xe9d7b9, null, height / 2);
             panel(parent, x, cursor, width, height, palette.pale, palette.border, height / 2);
-            for (let position = 1; position < part.length; position += 1) {
-              parent.addChild(inkGraphics().rect(x + position * (buttonWidth + gap) - 1, cursor + 9, 1, height - 18)
-                .fill(palette.line));
-            }
           }
           part.forEach((item, pos) => buttonAt(parent, x + pos * (buttonWidth + gap), cursor,
             buttonWidth, height, item.label, item.onClick, { emphasis: segmented || style === 'production', segment: segmented, ...item }));
@@ -1262,7 +1345,32 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += 50;
       },
       get bottom() { return cursor; },
+      get footerBlocks() { return trailingButtons; },
     };
+    if (options.captureFooter) {
+      for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(ui))) {
+        if (typeof descriptor.value !== 'function') continue;
+        const draw = descriptor.value;
+        ui[name] = (...args) => {
+          const topLevel = methodDepth === 0;
+          const footerButton = topLevel && (name === 'button' || name === 'buttons');
+          if (topLevel && !footerButton) trailingButtons = [];
+          const owner = parent;
+          const layer = footerButton ? new Container() : undefined;
+          const top = cursor;
+          if (layer) { owner.addChild(layer); parent = layer; }
+          methodDepth += 1;
+          try { return draw(...args); }
+          finally {
+            methodDepth -= 1;
+            if (layer) {
+              parent = owner;
+              if (cursor > top) trailingButtons.push({ layer, top, bottom: cursor });
+            }
+          }
+        };
+      }
+    }
     return ui;
   }
 
@@ -1306,7 +1414,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (plot.animation) continue;
         if (!animationFrame) {
           const now = performance.now();
-          animationFrame = { clock: progressClock(now), now, reducedMotion: Boolean(world.settings?.reducedMotion) };
+          animationFrame = { clock: progressClock(now), now };
         }
         let animationStart = batch.start;
         if (!livestock && batch.end - batch.start < minPlotAnimationMs) {
@@ -1327,7 +1435,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     };
   }
 
-  function scrollArea(parent, x, y, width, height, state, draw, bleed = 0) {
+  function scrollArea(parent, x, y, width, height, state, draw, bleed = 0, { captureFooter = false } = {}) {
     const body = new Container();
     const mask = inkGraphics().rect(x - bleed, y, width + bleed * 2, height).fill(0xffffff);
     parent.addChild(body, mask);
@@ -1346,13 +1454,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     };
     const scrollObservers = [];
     const plots = [];
-    const ui = layoutUI(body, x + 2, 8, width - 4, state, height, bleed ? bleed + 2 : 0, pinTabs,
+    const viewport = { height };
+    const ui = layoutUI(body, x + 2, 0, width - 4, state, height, bleed ? bleed + 2 : 0, pinTabs,
       {
+        captureFooter, viewport,
         observeScroll: (observe) => scrollObservers.push(observe),
         registerPlot: state === locals[current] ? (plot) => plots.push(plot) : undefined,
       });
     draw(ui);
-    const max = Math.max(0, ui.bottom + 5 - height);
+    const footerBlocks = captureFooter ? ui.footerBlocks : [];
+    const footerTop = footerBlocks[0]?.top;
+    if (footerBlocks.length) {
+      const footerHeight = ui.bottom - footerTop + 10;
+      height = Math.max(1, height - footerHeight);
+      viewport.height = height;
+      mask.clear().rect(x - bleed, y, width + bleed * 2, height).fill(0xffffff);
+      const footer = new Container();
+      footer.label = 'dialog-footer';
+      footer.position.y = y + height + 6 - footerTop;
+      panel(parent, x - bleed, y + height, width + bleed * 2, footerHeight, palette.card, null, 0);
+      parent.addChild(footer);
+      for (const block of footerBlocks) footer.addChild(block.layer);
+    }
+    const contentBottom = footerTop ?? ui.bottom;
+    const max = Math.max(0, contentBottom + 5 - height);
     state.scroll = clamp(state.scroll ?? 0, 0, max);
     state.onScrollChange?.(state.scroll);
     for (const observe of scrollObservers) observe(state.scroll);
@@ -1427,7 +1552,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function topBar(parent, content, x, y, w) {
     if (developmentToolsEnabled) developmentTitleTarget = undefined;
     const height = 59;
-    const settingsWidth = 46;
+    const settingsWidth = 36;
+    const balanceHeight = 36;
+    const balanceTop = y + 12;
     panel(parent, 0, 0, frame.width, y + height, palette.paper, null, 0);
     parent.addChild(inkGraphics().rect(0, y + height - 1, frame.width, 1).fill(palette.line));
 
@@ -1436,17 +1563,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (showSettings) {
       const left = x + w - settingsWidth;
       const focused = !waiting && controls.length === focusIndex;
-      const gear = panel(parent, left, y + 7, settingsWidth, 45, palette.pale, focused ? palette.green : palette.border, 13);
+      const gear = panel(parent, left, balanceTop, settingsWidth, balanceHeight,
+        palette.pale, focused ? palette.green : palette.border, 11);
       gear.label = 'settings-button';
-      drawImage(parent, 'settings-gear', left + 8, y + 14, 30, 30);
-      if (!waiting) hitAt(gear, parent, left, y + 5, settingsWidth, 49, () => go('设置'));
+      drawImage(parent, 'settings-gear', left + 5, balanceTop + 5, 26, 26);
+      if (!waiting) hitAt(gear, parent, left - 6, balanceTop - 6, settingsWidth + 12, balanceHeight + 12, () => go('设置'));
     }
 
     if (!tabs.includes(current)) {
       const backWidth = 68;
       buttonAt(parent, x, y + 8, backWidth, 43, '‹ 返回', back);
-      const titleX = x + backWidth + 7;
-      const titleRoom = Math.max(1, right - titleX);
+      const titleRoom = Math.max(1, w - (backWidth + 7) * 2);
+      const titleX = x + (w - titleRoom) / 2;
       const title = textNode(parent, current, titleX, y, titleRoom, {
         size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
       });
@@ -1474,7 +1602,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const coinX = x + titleWidth + 8;
     const coinWidth = right - coinX;
     if (coinWidth < 34) return;
-    const coinSurface = panel(parent, coinX, y + 12, coinWidth, 36, palette.pale, palette.line, 18);
+    const coinSurface = panel(parent, coinX, balanceTop, coinWidth, balanceHeight, palette.pale, palette.line, 18);
     drawImage(parent, 'coin', coinX + 7, y + 17, 25, 25);
     const amount = compactLabel(parent, content.coins, coinX + 36, y, coinWidth - 42,
       { size: w < 330 ? 18 : 22, weight: '800' });
@@ -1488,7 +1616,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const segment = w / tabs.length;
     tabs.forEach((page, index) => {
       const at = x + segment * index;
-      if (index) parent.addChild(inkGraphics().rect(at, y + 13, 1, 51).fill(palette.line));
       if (page === current) panel(parent, at + 5, y + 46, segment - 10, 25, palette.selection, null, 15);
       if (!waiting) {
         const hit = inkGraphics();
@@ -1520,12 +1647,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const elapsed = (now - floating.started) / 650;
       if (elapsed >= 1) { floating = undefined; return; }
       const w = Math.min(210, frame.width - 24);
-      const y = clamp(floating.at.y - (world?.settings?.reducedMotion ? 12 : elapsed * 25), 24, frame.height - 40);
+      const y = clamp(floating.at.y - elapsed * 25, 24, frame.height - 40);
       const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
       const label = textNode(feedbackLayer, floating.message, x, y, w, { size: 17, align: 'center', color: palette.cream, weight: '800' });
       label.style.fill = palette.ink;
       label.style.stroke = { color: palette.cream, width: 4, join: 'round' };
-      if (!world?.settings?.reducedMotion) label.alpha = 1 - elapsed;
+      label.alpha = 1 - elapsed;
     }
   }
 
@@ -1559,7 +1686,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const w = Math.max(80, frame.width - left - Math.max(margin, inset.right + 6));
     topBar(root, world, left, inset.top, w);
     const hasTabs = tabs.includes(current);
-    const top = inset.top + 60;
+    const top = inset.top + 59;
     const bottom = frame.height - inset.bottom - (hasTabs ? 79 : 5);
     if (world && !status?.busy) {
       scrollArea(root, left, top, w, Math.max(40, bottom - top), locals[current], pages[current],
@@ -1628,20 +1755,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const boxWidth = fullSheet ? frame.width - boxLeft - inset.right - 2 : w;
       panel(root, boxLeft, boxY, boxWidth, boxHeight, palette.card, palette.border, 12);
       if (fullSheet) panel(root, boxLeft + 4, boxY + 4, boxWidth - 8, boxHeight - 8, palette.card, palette.line, 9);
-      if (variant === 'facility-upgrade') {
-        panel(root, left + 14, boxY + 8, w - 28, 43, palette.green, palette.line, 8);
-        textNode(root, modal.title, left + 16, boxY + 13, w - 32,
-          { size: Math.min(32, 27 * scale()), align: 'center', color: palette.cream, weight: '800' });
-      } else if (variant === 'warehouse-sale') {
-        textNode(root, modal.title, left + 8, boxY + 9, w - 16,
-          { size: Math.min(35, 29 * scale()), align: 'center', weight: '800' });
-      } else {
-        textNode(root, modal.title, left + 13, boxY + 12, w - 73, { size: 19 * Math.min(scale(), 1.45), weight: '800' });
-        buttonAt(root, left + w - 60, boxY + 5, 52, 48, '关闭', closeDialog);
-      }
-      const pad = modal.variant === 'farm-sale' ? 0 : 10;
-      scrollArea(root, left + pad, boxY + 56, w - pad * 2, Math.max(50, boxHeight - 65), modal, modal.draw,
-        fullSheet ? Math.max(0, left + pad - boxLeft) : pad);
+      const headerHeight = Math.max(56, Math.ceil(26 * Math.min(scale(), 1.45) * 1.36) + 14);
+      panel(root, boxLeft + 1, boxY + 1, boxWidth - 2, headerHeight, palette.green, null, 11);
+      panel(root, boxLeft + 1, boxY + headerHeight - 12, boxWidth - 2, 13, palette.green, null, 0);
+      const titleRoom = Math.max(1, boxWidth - 112);
+      const title = textNode(root, modal.title, boxLeft + 56, boxY, titleRoom, {
+        size: Math.min(26 * Math.min(scale(), 1.45), titleRoom / Math.max(1, Array.from(modal.title).length)),
+        align: 'center', color: palette.cream, weight: '800', wrap: false,
+      });
+      title.y = boxY + (headerHeight - title.height) / 2;
+      buttonAt(root, boxLeft + boxWidth - 49, boxY + (headerHeight - 44) / 2, 44, 44,
+        '关闭', closeDialog, { iconOnly: 'close' });
+      const pad = 10;
+      scrollArea(root, left + pad, boxY + headerHeight + 8, w - pad * 2,
+        Math.max(1, boxHeight - headerHeight - 16), modal, modal.draw,
+        fullSheet ? Math.max(0, left + pad - boxLeft) : pad, { captureFooter: true });
     }
     feedbackLayer = new Container();
     feedbackLayer.eventMode = 'none';
@@ -1688,7 +1816,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const wasDragging = Boolean(drag || sliderDrag);
     const commit = sliderDrag?.commit;
     const now = performance.now();
-    if (drag && blockTap && !drag.thumb && !cancelled && !world?.settings?.reducedMotion &&
+    if (drag && blockTap && !drag.thumb && !cancelled &&
         now - drag.lastTime < 95 && Math.abs(drag.velocity) > 0.06 && scrollTarget) {
       coast = { state: scrollTarget.state, velocity: drag.velocity, lastTime: now };
     }
@@ -1754,20 +1882,42 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     } else if (controls[focusIndex]?.key?.(event.key)) event.preventDefault();
   });
   app.canvas.addEventListener('paste', (event) => {
-    if (modal?.onPaste?.(event)) event.preventDefault();
+    if (modal?.onPaste?.(event)) { event.preventDefault(); return; }
+    if (!modal?.onImportText || waiting) return;
+    event.preventDefault();
+    const text = event.clipboardData?.getData('text/plain');
+    if (text) Promise.resolve(modal.onImportText(text)).catch(() => toast('无法读取导入内容。'));
+  });
+  app.canvas.addEventListener('dragover', (event) => {
+    if (modal?.onImportText) event.preventDefault();
+  });
+  app.canvas.addEventListener('drop', async (event) => {
+    const shown = modal;
+    if (!shown?.onImportText) return;
+    event.preventDefault();
+    if (waiting) return;
+    const files = event.dataTransfer?.files;
+    if (files?.length !== 1 || !/\.json$/i.test(files[0].name)) {
+      toast('请拖入一份 JSON 存档文件。');
+      return;
+    }
+    try {
+      const text = await files[0].text();
+      if (modal === shown && !waiting) await shown.onImportText(text);
+    } catch { toast('无法读取存档文件。'); }
   });
   document.addEventListener?.('visibilitychange', () => syncPlotVisibility?.());
   app.ticker.add(() => {
     if (notices || floating) drawFeedback();
     const now = performance.now();
-    if (progressTiming && progressBars.size && world && !world.settings?.reducedMotion && !status?.busy) {
+    if (progressTiming && progressBars.size && world && !status?.busy) {
       const clock = progressClock(now);
       for (const update of progressBars) {
         if (!update(clock)) progressBars.delete(update);
       }
     }
     if (coast) {
-      if (scrollTarget?.state !== coast.state || world?.settings?.reducedMotion) coast = null;
+      if (scrollTarget?.state !== coast.state) coast = null;
       else {
         const elapsed = Math.min(40, now - coast.lastTime);
         coast.lastTime = now;
@@ -1777,9 +1927,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (next <= 0 || next >= scrollTarget.max || Math.abs(coast.velocity) < 0.03) coast = null;
       }
     }
-    if (activePlots.size && world && !world.settings?.reducedMotion &&
+    if (activePlots.size && world &&
         !document.hidden && !modal && !pendingModal && !status?.busy) {
-      const animationFrame = { clock: progressClock(now), now, reducedMotion: false };
+      const animationFrame = { clock: progressClock(now), now };
       for (const plot of activePlots) plot.animation.update(animationFrame);
     }
     updateScrollThumb(now);
@@ -1803,8 +1953,38 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!drag && !sliderDrag) redraw();
   }
 
+  function resetSession() {
+    modal = undefined;
+    pendingModal = undefined;
+    history = [];
+    current = '牧场';
+    for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
+    locals.牧场.tab = '田地';
+    shortPlotStarts.clear();
+    livestockBatches.clear();
+    for (const plot of activePlots) unmountPlot(plot);
+    visiblePlotIds.clear();
+    progressTiming = undefined;
+    coast = null;
+    drag = null;
+    sliderDrag = null;
+    treeGesture = false;
+    pressedPointer = null;
+    blockTap = false;
+    focusIndex = -1;
+    floating = undefined;
+    notices = undefined;
+    point = undefined;
+    if (developmentToolsEnabled) settingsTitleClicks = 0;
+    // A new history session leaves old browser entries unable to restore stale dialogs.
+    navigation = gameHistory(browser);
+    recordRoute(true);
+    onNavigate?.(current);
+    redraw();
+  }
+
   return {
-    go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize,
+    go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize, resetSession,
     pauseProgress() { progressTiming = undefined; },
     render(nextLayout, nextWorld, nextStatus, nextProgressTiming) {
       if (nextWorld?.completedRuns !== world?.completedRuns || nextWorld?.clockMs < world?.clockMs) {

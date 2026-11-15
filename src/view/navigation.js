@@ -2,7 +2,7 @@ const routes = {
   牧场: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼池: 'fish' }],
   工坊: ['workshop', { 加工: 'processing', 精制: 'refining' }],
   仓库: ['warehouse', {}],
-  研究: ['research', { 品种与配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],
+  研究: ['research', { 品种配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],
   经营: ['management', {}],
   图鉴: ['catalog', { 用途: 'uses' }],
   任务: ['tasks', {}],

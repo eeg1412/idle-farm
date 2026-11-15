@@ -67,7 +67,7 @@ export function newWorld(now) {
     researchPoints: 0n, productionValue: 0n, completedRuns: 0, firstCompletedRunAtMs: null,
     facilities: startingFacilities(), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n },
-    guideSkipped: false, settings: { textScale: 1, reducedMotion: false, music: 70, sound: 75, pickerIconsOnly: false },
+    guideSkipped: false, settings: { textScale: 1, music: 70, sound: 75, pickerIconsOnly: false },
   };
   settleProduction(world);
   return world;
@@ -254,8 +254,13 @@ export function buyFacility(world, kind) {
 export function upgradeFacility(world, kind, index, steps) {
   const quote = facilityOffer(world, kind, index, steps);
   if (!quote?.affordable || quote.target === null) return false;
+  const facility = world.facilities[kind][index];
   world.coins -= quote.cost;
-  world.facilities[kind][index].level = String(quote.target);
+  facility.level = String(quote.target);
+  if (facility.batch) {
+    // Apply the upgraded yield to this harvest without restarting its growth clock.
+    facility.batch.amount = String(facilityOutput(world, kind, facility.batch.id, quote.target));
+  }
   return true;
 }
 

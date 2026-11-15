@@ -104,7 +104,7 @@ function drawWater(layer, particles, time) {
 }
 
 export function mountPlotAnimation(parent, textures, { x, y, width, height }, batch, animationStart = batch.start) {
-  const { shared, stages } = textures;
+  const { shared, stages, frontStages } = textures;
   const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
   const container = new Container();
   container.label = 'plot-animation';
@@ -127,12 +127,15 @@ export function mountPlotAnimation(parent, textures, { x, y, width, height }, ba
   addSprite(shared.get('sky'));
   addSprite(shared.get('ground'));
   const crop = addSprite(stages[0]);
+  crop.visible = batch.id !== 'C01';
   addSprite(shared.get('sprinkler-base'), sprinklerX, sprinklerY);
   const head = addSprite(shared.get(directions[0].key), sprinklerX, sprinklerY);
-  const stationaryHead = head.texture;
   const water = new Container();
   water.visible = false;
   scene.addChild(water);
+  // Whole plants rooted in front of the sprinkler cover both its hardware and
+  // the spray. Their crowns stay intact instead of being cut at a screen row.
+  const foreground = addSprite(frontStages[0]);
   parent.addChild(container);
 
   const particles = [];
@@ -140,27 +143,24 @@ export function mountPlotAnimation(parent, textures, { x, y, width, height }, ba
 
   return {
     container,
-    update({ clock, now, reducedMotion }) {
+    update({ clock, now }) {
       const elapsed = Math.max(0, clock - animationStart);
       const elapsedInCycle = elapsed % duration;
       const growthIndex = Math.floor(elapsedInCycle * stages.length / duration);
       const growthTexture = stages[growthIndex];
       if (crop.texture !== growthTexture) crop.texture = growthTexture;
+      const foregroundTexture = frontStages[growthIndex];
+      if (foreground.texture !== foregroundTexture) foreground.texture = foregroundTexture;
 
       let cropAlpha = 1;
-      if (!reducedMotion && growthIndex === stages.length - 1) {
+      if (growthIndex === stages.length - 1) {
         const remaining = duration - elapsedInCycle;
         const progress = Math.max(0, Math.min(1, 1 - (remaining - harvestGapMs) / harvestFadeMs));
         cropAlpha = 1 - progress * progress * (3 - 2 * progress);
       }
       crop.alpha = cropAlpha;
+      foreground.alpha = cropAlpha;
 
-      if (reducedMotion) {
-        if (head.texture !== stationaryHead) head.texture = stationaryHead;
-        water.visible = false;
-        lastSprayFrame = undefined;
-        return;
-      }
       const frame = Math.floor(now / sprayFrameMs);
       if (frame === lastSprayFrame) return;
       lastSprayFrame = frame;

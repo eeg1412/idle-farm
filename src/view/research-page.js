@@ -2,7 +2,7 @@ import { catalog, facilityOffer, productionDurationMs, quantity } from '../game/
 import { qualityOffer, researchOffer, techDefinitions, techOffer } from '../game/advancement.js';
 import { compact } from './numbers.js';
 
-const tabs = ['品种与配方', '品质', '经营改良'];
+const tabs = ['品种配方', '品质', '经营改良'];
 const sources = ['全部', '农业', '畜牧', '水产'];
 const kinds = ['全部', '原料', '中间产物', '商品'];
 const techSources = ['全部', '通用', ...sources.slice(1)];

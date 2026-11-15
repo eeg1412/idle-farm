@@ -9,8 +9,10 @@ import { objectives } from './game/objectives.js';
 import { viewportLayout } from './platform/layout.js';
 import {
   openWorldSave, readWorldSave, writeWorldSave, restoreWorldSave, settleOfflineWorld, acknowledgeOffline,
+  replaceWorldSave,
 } from './platform/world-save.js';
 import { createSaveQueue } from './platform/save-queue.js';
+import { createSaveTransfer, saveTransferError } from './platform/save-transfer.js';
 import { compact } from './view/numbers.js';
 import { createGameView } from './view/canvas-ui.js';
 import { createFarmAudio } from './platform/farm-audio.js';
@@ -23,6 +25,7 @@ await app.init({
   autoDensity: true, resolution: Math.min(devicePixelRatio, 2),
 });
 let world = null;
+let worldEpoch = 0;
 let db;
 let status;
 let layout;
@@ -34,6 +37,11 @@ let offlineDialogId;
 const audio = createFarmAudio();
 const saveQueue = createSaveQueue();
 const { enqueue } = saveQueue;
+const transfer = createSaveTransfer({ development: __DEV_TEST_MODE__ });
+const enqueueCurrent = (work) => {
+  const epoch = worldEpoch;
+  return enqueue(() => epoch === worldEpoch ? work() : undefined);
+};
 const longGoalsToast = '长期目标已开放';
 const offlineWorkerThresholdMs = 15 * 60 * 1000;
 const displayRefreshMs = 1000;
@@ -42,7 +50,7 @@ function updateSettings(draft, partial) {
   if (!partial || typeof partial !== 'object') return false;
   for (const [key, value] of Object.entries(partial)) {
     const valid = key === 'textScale' ? typeof value === 'number' && value >= 1 && value <= 2 :
-      (key === 'reducedMotion' || key === 'pickerIconsOnly') ? typeof value === 'boolean' :
+      key === 'pickerIconsOnly' ? typeof value === 'boolean' :
       ['music', 'sound'].includes(key) && Number.isInteger(value) && value >= 0 && value <= 100;
     if (!valid) return false;
   }
@@ -122,7 +130,7 @@ function showOffline() {
   }, { center: true, available: (current) => current?.pendingOffline?.id === report.id, onClose: () => {
     const anchor = performance.now();
     const now = Date.now();
-    return enqueue(() => closeOffline(report.id, anchor, now));
+    return enqueueCurrent(() => closeOffline(report.id, anchor, now));
   } });
 }
 
@@ -135,7 +143,7 @@ function staleSave() {
 
 function retryInitialization() {
   const failed = status;
-  return enqueue(() => status === failed && initialize());
+  return enqueueCurrent(() => status === failed && initialize());
 }
 
 async function closeOffline(id, anchorAt, wallAt) {
@@ -240,8 +248,9 @@ function feedback(name, args, before, after, quality) {
 function dispatch(name, ...args) {
   const anchorAt = performance.now();
   const wallAt = Date.now();
+  const epoch = worldEpoch;
   return enqueue(async () => {
-    if (!world || status?.busy || !actions[name]) return { ok: false };
+    if (epoch !== worldEpoch || !world || status?.busy || !actions[name]) return { ok: false };
     try {
       const before = world;
       const draft = structuredClone(before);
@@ -274,13 +283,101 @@ function dispatch(name, ...args) {
   });
 }
 
+function transferFailure(error, fallback) {
+  if (error.code === 'revision-conflict') {
+    staleSave();
+    return '经营记录已在其他页面更新，请返回正在经营的页面。';
+  }
+  return error.userMessage ?? fallback;
+}
+
+function activateReplacement(next) {
+  world = next;
+  worldEpoch += 1;
+  frontAnchor = performance.now();
+  displayedSecond = -1;
+  offlineDialogId = undefined;
+  status = undefined;
+  audio.configure(world.settings);
+  audio.setTrack('farm');
+  view.resetSession();
+  paint();
+  showOffline();
+}
+
+function exportSave() {
+  const epoch = worldEpoch;
+  return enqueue(async () => {
+    if (epoch !== worldEpoch || !world || status?.busy) {
+      throw saveTransferError('经营记录尚未准备好，请稍后再导出。');
+    }
+    try {
+      const draft = structuredClone(world);
+      const anchor = foreground(draft);
+      await commit(draft, anchor);
+      const exported = transfer.exportWorld(world);
+      paint();
+      return exported;
+    } catch (error) {
+      throw saveTransferError(transferFailure(error, '暂时无法导出存档，请稍后重试。'), error);
+    }
+  });
+}
+
+function importSave(candidate) {
+  const epoch = worldEpoch;
+  return enqueue(async () => {
+    if (epoch !== worldEpoch || !world || status?.busy) {
+      return { ok: false, message: '经营记录已变化，请重新读取存档。' };
+    }
+    try {
+      const draft = transfer.resolveCandidate(candidate);
+      const now = Date.now();
+      if (draft.firstCompletedRunAtMs !== null && draft.firstCompletedRunAtMs > now) {
+        throw saveTransferError('存档中的经营日期晚于当前时间，请核对设备时间后再导入。');
+      }
+      // Import the saved progress as-is; time since the export earns no extra production.
+      draft.wallAnchorMs = now;
+      const next = await replaceWorldSave(db, draft, world.revision);
+      activateReplacement(next);
+      return { ok: true, message: '存档已导入' };
+    } catch (error) {
+      return { ok: false, message: transferFailure(error, '暂时无法导入存档，请稍后重试。') };
+    }
+  });
+}
+
+function clearSave() {
+  const epoch = worldEpoch;
+  return enqueue(async () => {
+    if (epoch !== worldEpoch || !world || status?.busy) {
+      return { ok: false, message: '经营记录已变化，请重新确认。' };
+    }
+    try {
+      const draft = newWorld(Date.now());
+      const next = await replaceWorldSave(db, draft, world.revision, { clearBackup: true });
+      activateReplacement(next);
+      return { ok: true, message: '存档已清除，新牧场已准备好' };
+    } catch (error) {
+      return { ok: false, message: transferFailure(error, '暂时无法清除存档，请稍后重试。') };
+    }
+  });
+}
+
+const saveManagement = {
+  version: transfer.version, environment: transfer.environment,
+  exportSave, inspectSave: transfer.inspectSave, importSave, clearSave,
+  captureImport: transfer.captureImport, readClipboard: transfer.readClipboard,
+  copyText: transfer.copyText, download: transfer.download,
+};
+
 const view = createGameView(app, dispatch, () => {
   const recovery = status?.recovery;
-  if (recovery) return enqueue(() => status?.recovery === recovery && initialize(recovery));
+  if (recovery) return enqueueCurrent(() => status?.recovery === recovery && initialize(recovery));
 }, () => {
   const confirmation = status;
   if (!confirmation?.replaceable) return;
-  return enqueue(async () => {
+  return enqueueCurrent(async () => {
     if (status !== confirmation) return;
     try {
       const draft = newWorld(Date.now());
@@ -296,7 +393,7 @@ const view = createGameView(app, dispatch, () => {
       else view.toast('暂时无法新建经营记录');
     }
   });
-}, (page) => audio.setTrack(page === '工坊' ? 'workshop' : 'farm'));
+}, (page) => audio.setTrack(page === '工坊' ? 'workshop' : 'farm'), window, saveManagement);
 
 window.addEventListener('resize', resize);
 window.visualViewport?.addEventListener('resize', resize);
@@ -322,7 +419,7 @@ async function saveForeground(anchorAt, wallAt) {
   }
 }
 
-setInterval(() => { if (world && visible && !status?.busy && !saveQueue.pending) enqueue(saveForeground); }, 5000);
+setInterval(() => { if (world && visible && !status?.busy && !saveQueue.pending) enqueueCurrent(saveForeground); }, 5000);
 app.ticker.add(() => {
   if (!world || !visible || status?.busy || saveQueue.pending) return;
   const now = performance.now();
@@ -342,7 +439,7 @@ async function resumeOffline(anchor, now) {
     if (error.code === 'revision-conflict') staleSave();
     else {
       const failure = { busy: true, title: '暂时无法保存离线收获', retry: () =>
-        enqueue(() => status === failure && resumeOffline(anchor, now)) };
+        enqueueCurrent(() => status === failure && resumeOffline(anchor, now)) };
       status = failure;
       paint();
     }
@@ -357,7 +454,7 @@ document.addEventListener('visibilitychange', () => {
   view.pauseProgress();
   audio.setVisible(visible);
   const now = Date.now();
-  enqueue(() => becameVisible ? resumeOffline(anchor, now) : saveForeground(anchor, now));
+  enqueueCurrent(() => becameVisible ? resumeOffline(anchor, now) : saveForeground(anchor, now));
 });
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
