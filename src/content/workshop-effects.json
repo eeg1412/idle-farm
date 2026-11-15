@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "chimney": {
+    "path": "./art/workshop/chimney-v1.webp",
+    "size": [
+      96,
+      96
+    ],
+    "logicalSize": [
+      40,
+      40
+    ],
+    "anchor": [
+      0.5,
+      0.5
+    ]
+  },
+  "smoke": {
+    "textures": [
+      {
+        "path": "./art/workshop/smoke-1-v1.webp",
+        "size": [
+          96,
+          96
+        ]
+      },
+      {
+        "path": "./art/workshop/smoke-2-v1.webp",
+        "size": [
+          96,
+          96
+        ]
+      },
+      {
+        "path": "./art/workshop/smoke-3-v1.webp",
+        "size": [
+          96,
+          96
+        ]
+      }
+    ],
+    "intervalMs": 600,
+    "lifetimeMs": 3200,
+    "startSize": 24,
+    "endSize": 60,
+    "maxAlpha": 0.35,
+    "rise": 68,
+    "drift": 18,
+    "sway": 8
+  },
+  "mounts": {
+    "processing": {
+      "position": [
+        160,
+        92
+      ],
+      "emitter": [
+        160,
+        92
+      ]
+    },
+    "refining": {
+      "position": [
+        160,
+        92
+      ],
+      "emitter": [
+        160,
+        92
+      ]
+    }
+  }
+}

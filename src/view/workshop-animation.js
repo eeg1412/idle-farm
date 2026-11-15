@@ -58,6 +58,8 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
   scene.mask = stageMask;
   const conveyorLayer = layer(scene, 'workshop-conveyor-layer');
   const machineLayer = layer(scene, 'workshop-machine-layer');
+  const chimneyLayer = layer(scene, 'workshop-chimney-layer');
+  const smokeLayer = layer(scene, 'workshop-smoke-layer');
   const movingSurface = layer(conveyorLayer, 'workshop-moving-surfaces');
   const canonicalItems = layer(conveyorLayer, 'workshop-canonical-items');
   const inputItems = maskedItems(canonicalItems, 'workshop-input-packets', layout.itemMasks.input);
@@ -88,6 +90,14 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
   const product = itemSprite(outputItems, textures.get(id), layout.output.size);
   product.visible = false;
   bitmap(machineLayer, textures.get(textureKey('machine')), layout.machine.placement);
+  const chimney = bitmap(chimneyLayer, textures.get(textureKey('chimney')),
+    { x: 0, y: 0, width: layout.chimney.size[0], height: layout.chimney.size[1] });
+  chimney.anchor.set(...layout.chimney.anchor);
+  const smoke = Array.from({ length: layout.smoke.capacity }, () => {
+    const sprite = itemSprite(smokeLayer, textures.get(textureKey('smoke:0')), layout.smoke.startSize);
+    sprite.visible = false;
+    return { sprite, textureIndex: 0 };
+  });
 
   const phaseState = motion ?? {};
   if (phaseState.id !== id || phaseState.lastClock === undefined) {
@@ -135,6 +145,20 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
       product.alpha = 1;
     }
     machineLayer.position.set(...frame.machineOffset);
+    chimneyLayer.position.set(...frame.chimney.position);
+    smoke.forEach((puff, index) => {
+      const particle = frame.smoke[index];
+      const { sprite } = puff;
+      sprite.visible = particle.visible;
+      if (!sprite.visible) return;
+      if (puff.textureIndex !== particle.textureIndex) {
+        sprite.texture = textures.get(textureKey('smoke:' + particle.textureIndex));
+        puff.textureIndex = particle.textureIndex;
+      }
+      sprite.position.set(...particle.position);
+      sprite.scale.set(particle.size / Math.max(sprite.texture.width, sprite.texture.height));
+      sprite.alpha = particle.alpha;
+    });
   }
 
   return {

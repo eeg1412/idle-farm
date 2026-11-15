@@ -1,0 +1,241 @@
+{
+  "version": 1,
+  "date": "2026-11-16",
+  "generator": "built-in image_gen; one real transparent 2x2 sprite sheet",
+  "source": "assets/workshop/raw/chimney-smoke-v1.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "generated": "C:/Users/eeg14/.codex/generated_images/01a1df5a-7dd5-78a0-a8fe-56db3bbc33ba/exec-14e93e2e-c496-41f7-a84d-b306603359d4.png",
+  "prompt": "assets/workshop/prompts-chimney-smoke-v1.md",
+  "inputImages": [
+    {
+      "path": "public/art/workshop/processing-machine-wood-v6.webp",
+      "role": "actual current wood pixel style and top-down camera reference only"
+    },
+    {
+      "path": "public/art/workshop/refining-machine-wood-v6.webp",
+      "role": "actual current wood pixel style and top-down camera reference only"
+    }
+  ],
+  "entries": [
+    {
+      "key": "chimney-v1",
+      "cell": [
+        0,
+        0
+      ],
+      "visibleBounds": {
+        "left": 145,
+        "top": 145,
+        "right": 483,
+        "bottom": 489
+      },
+      "crop": {
+        "left": 115,
+        "top": 112,
+        "width": 400,
+        "height": 400
+      },
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "sourceApertureCenter": [
+        315,
+        312
+      ],
+      "targetApertureCenter": [
+        48,
+        48
+      ],
+      "apertureMethod": "direct source inspection; charcoal horizontal span x238..392 and vertical span y232..392 as exclusive pixel edges; centered crop maps opening to exact sprite center",
+      "path": "./art/workshop/chimney-v1.webp",
+      "png": "assets/workshop/png/chimney-v1.png",
+      "webp": "public/art/workshop/chimney-v1.webp",
+      "size": [
+        96,
+        96
+      ],
+      "sourceToTargetScale": 0.24,
+      "conversion": "independent square source crop; uniform nearest-neighbor resize; generated alpha preserved; WebP quality70 alpha100"
+    },
+    {
+      "key": "smoke-1-v1",
+      "cell": [
+        1,
+        0
+      ],
+      "visibleBounds": {
+        "left": 776,
+        "top": 128,
+        "right": 1087,
+        "bottom": 518
+      },
+      "crop": {
+        "left": 708,
+        "top": 99,
+        "width": 448,
+        "height": 448
+      },
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "path": "./art/workshop/smoke-1-v1.webp",
+      "png": "assets/workshop/png/smoke-1-v1.png",
+      "webp": "public/art/workshop/smoke-1-v1.webp",
+      "size": [
+        96,
+        96
+      ],
+      "sourceToTargetScale": 0.21428571428571427,
+      "conversion": "independent square source crop; uniform nearest-neighbor resize; generated alpha preserved; WebP quality70 alpha100"
+    },
+    {
+      "key": "smoke-2-v1",
+      "cell": [
+        0,
+        1
+      ],
+      "visibleBounds": {
+        "left": 80,
+        "top": 794,
+        "right": 538,
+        "bottom": 1104
+      },
+      "crop": {
+        "left": 53,
+        "top": 693,
+        "width": 512,
+        "height": 512
+      },
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "path": "./art/workshop/smoke-2-v1.webp",
+      "png": "assets/workshop/png/smoke-2-v1.png",
+      "webp": "public/art/workshop/smoke-2-v1.webp",
+      "size": [
+        96,
+        96
+      ],
+      "sourceToTargetScale": 0.1875,
+      "conversion": "independent square source crop; uniform nearest-neighbor resize; generated alpha preserved; WebP quality70 alpha100"
+    },
+    {
+      "key": "smoke-3-v1",
+      "cell": [
+        1,
+        1
+      ],
+      "visibleBounds": {
+        "left": 768,
+        "top": 695,
+        "right": 1095,
+        "bottom": 1176
+      },
+      "crop": {
+        "left": 660,
+        "top": 664,
+        "width": 544,
+        "height": 544
+      },
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "path": "./art/workshop/smoke-3-v1.webp",
+      "png": "assets/workshop/png/smoke-3-v1.png",
+      "webp": "public/art/workshop/smoke-3-v1.webp",
+      "size": [
+        96,
+        96
+      ],
+      "sourceToTargetScale": 0.17647058823529413,
+      "conversion": "independent square source crop; uniform nearest-neighbor resize; generated alpha preserved; WebP quality70 alpha100"
+    }
+  ],
+  "effects": {
+    "version": 1,
+    "chimney": {
+      "path": "./art/workshop/chimney-v1.webp",
+      "size": [
+        96,
+        96
+      ],
+      "logicalSize": [
+        40,
+        40
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "smoke": {
+      "textures": [
+        {
+          "path": "./art/workshop/smoke-1-v1.webp",
+          "size": [
+            96,
+            96
+          ]
+        },
+        {
+          "path": "./art/workshop/smoke-2-v1.webp",
+          "size": [
+            96,
+            96
+          ]
+        },
+        {
+          "path": "./art/workshop/smoke-3-v1.webp",
+          "size": [
+            96,
+            96
+          ]
+        }
+      ],
+      "intervalMs": 600,
+      "lifetimeMs": 3200,
+      "startSize": 24,
+      "endSize": 60,
+      "maxAlpha": 0.35,
+      "rise": 68,
+      "drift": 18,
+      "sway": 8
+    },
+    "mounts": {
+      "processing": {
+        "position": [
+          160,
+          92
+        ],
+        "emitter": [
+          160,
+          92
+        ]
+      },
+      "refining": {
+        "position": [
+          160,
+          92
+        ],
+        "emitter": [
+          160,
+          92
+        ]
+      }
+    }
+  },
+  "alphaPolicy": "preserve real generated transparency and translucent smoke wisps; runtime global maxAlpha0.35 is separate and is not baked into these textures",
+  "boundsMethod": "direct ordinary source-image inspection and focused alpha>128 reading; visible bounds right/bottom exclusive",
+  "status": "source and asset production evidence only; real layering/drift/opacity/130px experience remain unverified; no game or composition executed"
+}
