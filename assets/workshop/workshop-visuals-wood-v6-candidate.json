@@ -1,0 +1,105 @@
+{
+  "version": 6,
+  "stage": {
+    "width": 320,
+    "height": 320
+  },
+  "machines": {
+    "processing": {
+      "path": "./art/workshop/processing-machine-wood-v6.webp",
+      "size": [
+        165,
+        632
+      ],
+      "logicalSize": [
+        105.51558752997602,
+        404.15667466027173
+      ],
+      "placement": {
+        "x": 107.24220623501199,
+        "y": -41.91846522781775,
+        "width": 105.51558752997602,
+        "height": 404.15667466027173
+      },
+      "bodyEdges": {
+        "left": 109.16067146282974,
+        "right": 210.83932853717027,
+        "top": -40,
+        "bottom": 360
+      },
+      "occlusionCover": {
+        "inputX": 155.16067146282973,
+        "outputX": 160.83932853717027
+      },
+      "sourceBounds": {
+        "left": 450,
+        "right": 768,
+        "top": 20,
+        "bottom": 1271
+      },
+      "sourceRotationDegrees": 0
+    },
+    "refining": {
+      "path": "./art/workshop/refining-machine-wood-v6.webp",
+      "size": [
+        158,
+        634
+      ],
+      "logicalSize": [
+        100.71713147410358,
+        404.1434262948207
+      ],
+      "placement": {
+        "x": 109.80079681274901,
+        "y": -41.91235059760956,
+        "width": 100.71713147410358,
+        "height": 404.1434262948207
+      },
+      "bodyEdges": {
+        "left": 112.03187250996015,
+        "right": 207.96812749003985,
+        "top": -40,
+        "bottom": 360
+      },
+      "occlusionCover": {
+        "inputX": 158.03187250996015,
+        "outputX": 157.96812749003985
+      },
+      "sourceBounds": {
+        "left": 459,
+        "right": 760,
+        "top": 16,
+        "bottom": 1271
+      },
+      "sourceRotationDegrees": 0
+    }
+  },
+  "conveyor": {
+    "speed": 0.04,
+    "tread": {
+      "path": "./art/workshop/belt-surface-wood-v6.webp",
+      "size": [
+        104,
+        52
+      ],
+      "logicalSize": [
+        32,
+        16
+      ],
+      "period": 32,
+      "direction": "E"
+    },
+    "layout": {
+      "inputSize": 88,
+      "outputSize": 96,
+      "inputSpacing": 96,
+      "maxPerEvent": 3,
+      "surfaceUnderlap": 3
+    },
+    "layerOrder": [
+      "movingBorderlessSurface",
+      "canonicalItems",
+      "solidMachineBody"
+    ]
+  }
+}

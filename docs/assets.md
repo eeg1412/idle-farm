@@ -34,7 +34,7 @@ npm run wiki:build
 
 ### 设施场景
 
-68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于设施详情以及养殖卡和种植卡的动画回退；牲畜与鱼种选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。品种切换成功后立刻使用新对象的场景或动画。收成明细中的物品图标表示实际产物。
+68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于非动画设施详情及历史素材交付；牲畜与鱼种选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。牧场与工坊的已安排动画区域禁止回退图标、静态场景和程序占位，加载中／失败／资料缺失／卸载均保留区域；素材存在不构成运行回退授权。空设施初始选择图保留。收成明细中的物品图标表示实际产物。
 
 场景原图保存在 `assets/source/art/`，小幅场景表及其提示词保存在 `assets/source/art/facility-sheets/`。按从左到右、从上到下的 ID 顺序绘制和检查，裁去分隔线后导出单张 320×320 WebP，质量 70。运行 `python3 scripts/export-facility-scenes.py` 可重新裁切。首页横幅、空设施和三个首个品种保留整幅绘制的 PNG 原图。游戏只加载当前页面相关的场景。最终构建执行 `npm run art:check`，以原料目录检查设施场景是否齐全；单独执行检查按用户验证授权。
 
@@ -48,7 +48,7 @@ npm run wiki:build
 
 `src/content/crop-harvest.json` 逐ID区分整株和保留植株采收，记录采收部分、真实成长期／成熟期审图依据及成年采后素材可否复用。`assets/plot/reviews/repeat-harvest/` 的对照图由本地程序拼接已有原画，仅用于审阅，不能称作内置绘图工具新绘原画。需补画的成年采后状态使用内置 `image_gen` 编辑成熟单株，保留原成年枝冠／根脚与各ID来源；需要绘制原画的任务不能用程序擦除或放大小苗代替。`crop-visuals.json` 的保留植株条目新增 `harvestMode:'retainedPlant'` 与完整单株 `repeatBare` metadata，发布 `public/art/plot/plants/<ID>/bare.webp`；原四期继续用于首次换种，后续使用成年采后纹理和成熟纹理。
 
-洒水器用固定器身与四个同轴的 64×64 喷头叠图。水滴与落地水花独立用 PixiJS 绘制，四向出水点随喷头同步。WebP 质量为 70，透明区域保留。品种首张可见的地块卡出现时按需加载对应图集，同种作物共用。加载期间及失败时显示原有设施场景。
+洒水器用固定器身与四个同轴的 64×64 喷头叠图。水滴与落地水花独立用 PixiJS 绘制，四向出水点随喷头同步。WebP 质量为 70，透明区域保留。品种首张可见的地块卡出现时按需加载对应图集，同种作物共用。加载期间及失败不显示静态图或占位图。
 
 | 版本 | 位置 |
 | --- | --- |
@@ -91,7 +91,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 | 动物动画 | `public/art/livestock/animals/<ID>.webp`，1280×320 或 1280×960 | 每行一个阶段，每行四张 320×320 独立 idle 帧 |
 | 仓库／动画共用物品图 | `public/wiki/icons/<ID>.webp`，96×96 透明 | 实际可交易产出及动画产物；同一 URL、同一文件，按内容 bounds 接地，不另画动画产品 |
 | 牲畜选择图 | `public/ui-icons/livestock-<ID>.webp`，96×96 透明 | 清楚展示活牲畜本体，不带棚舍，不用蛋、奶、肉替代 |
-| 静态设施回退 | `public/art/scene-<ID>.webp`，320×320 | 加载期间、失败及静态设施详情 |
+| 静态设施素材 | `public/art/scene-<ID>.webp`，320×320 | 非动画设施详情及历史来源，不在动画加载中或失败时回退显示 |
 | 共享固定棚舍 | `public/art/livestock/barn.webp`，320×320 | 共用背景，原图及导出 PNG 均保留 |
 
 展示保底 9 秒，每帧 idle 300 毫秒，产品在收获前 3 秒淡入且肉用动物同期淡出，展示收获后产品及其阴影淡出；淡变为 300 毫秒 smoothstep。肉品跨收获边界保持成熟落脚点，不跳到幼年位置。实际收成不跟随展示循环。这些 WebP 按可见图块请求，动画实例退出视口、弹窗、换页或后台时销毁，不进入启动预缓存，已访问图可由现有离线缓存复用。资源检查按目录全部牲畜覆盖，不仅检查样例。
@@ -106,7 +106,25 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 生产转换入口 `npm run art:fish`，`--habitats-only` 只更新背景／河海元数据及回退。`fish-visuals.json` 每ID含stages/size/habitat，`fish-habitats.json` 两类含pond及water polygon/color/alpha，源布局唯一登记并生成。运行顺序背景→鱼→水色半透明层→程序动态水波，后三层只在水面。三期鳃后躯干点注册160,210，每期共用画布尺度；不逐帧bbox居中或缩放，不改变经济。真实循环／小尺寸与静态审图分别记录，路径、哈希、帧数或门禁不能代替视觉结论。
 
-共享背景、同种图集与选择图按需加载；滚出、弹窗、切页、后台卸载动画，失败回退同 ID 场景。成熟鱼淡出后再淡入鱼苗，固定鱼塘不参与淡变；本轮 9 秒保底与 300ms 参数为实现选择。WebP 不进入启动预缓存，已访问图沿现有离线图片缓存复用。
+共享背景、同种图集与选择图按需加载；滚出、弹窗、切页、后台卸载动画，加载中或失败不显示同ID场景或其他回退图标。成熟鱼淡出后再淡入鱼苗，固定鱼塘不参与淡变；本轮 9 秒保底与 300ms 参数为实现选择。WebP 不进入启动预缓存，已访问图沿现有离线图片缓存复用。
+
+### 工坊木质机器与木板履带
+
+2026-11-16按用户要求用内置image_gen独立重画三份木质原稿，替换旧金属机身／橡胶带面，不能用滤色或程序图形代替新绘图。真实输入及提示词在 `assets/workshop/prompts-wood-v6.md`，原稿在同目录 `raw/`，裁切来源和等比尺度在 `registration-wood-v6.json`。
+
+| 对象 | 发布资源 | 持久PNG |
+| --- | --- | --- |
+| 木质加工机 | `public/art/workshop/processing-machine-wood-v6.webp`，165×632透明 | `assets/workshop/png/processing-machine-wood-v6.png` |
+| 木质精制机 | `public/art/workshop/refining-machine-wood-v6.webp`，158×634透明 | `assets/workshop/png/refining-machine-wood-v6.png` |
+| 无边木板履带 | `public/art/workshop/belt-surface-wood-v6.webp`，104×52不透明 | `assets/workshop/png/belt-surface-wood-v6.png` |
+
+`export-wood-v6.mjs`仅进行源图裁切、等比最近邻与WebP70／Alpha100转换，生成 `workshop-visuals-wood-v6-candidate.json`；活跃入口为 `src/content/workshop-visuals.json`。机器按真实源轮廓等比放大到可见400高、Y=-40..360，由既有320²区域mask裁切；木板从新原稿相邻缝中心314..418裁出一个真实104px周期，逻辑宽与滚动period均32。运行只请求machine／tread，背景与旧金属资源保留历史，不回退加载。静态原稿／成品与实际130px组合、滚动、遮挡和用户认可分别记录，后两者未取得验证授权不能宣称通过。
+
+### 工坊独立烟囱与烟雾
+
+烟囱和烟雾在木质机身之上分层，不修改wood-v6机身原画。`assets/workshop/raw/chimney-smoke-v1.png`由内置image_gen真实生成透明2×2网格，烟囱顶口与三烟团分别裁出。实际提示词、输入与裁切／开口中心登记在同目录 `prompts-chimney-smoke-v1.md`、`registration-chimney-smoke-v1.json`，纯素材转换入口为 `export-chimney-smoke-v1.mjs`。
+
+发布 `public/art/workshop/chimney-v1.webp`、`smoke-1-v1.webp`、`smoke-2-v1.webp`、`smoke-3-v1.webp` 均为96×96透明纹理，持久PNG位于 `assets/workshop/png/`。烟囱源顶口中心315,312经400²真实裁切归一到48,48，锚点为0.5,0.5；安装与发射点、烟团生命周期等由 `src/content/workshop-effects.json`登记。烟团保留真实Alpha轮廓，再由显示层控制全局透明度，不能把不透明程序圆或整块灰底当烟雾素材。源／成品直接图片审阅与真实漂浮、半透明叠加、130px组合分别验收，未运行部分不得记为通过。
 
 ## 资源加载
 

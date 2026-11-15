@@ -1,0 +1,207 @@
+{
+  "version": 6,
+  "date": "2026-11-16",
+  "generator": "built-in image_gen, three independent drawing calls",
+  "promptFile": "assets/workshop/prompts-wood-v6.md",
+  "intent": "new wooden construction, true overhead, solid straight cabinet sides without ports; separate opaque borderless wooden tread; no background",
+  "entries": {
+    "processing": {
+      "path": "./art/workshop/processing-machine-wood-v6.webp",
+      "size": [
+        165,
+        632
+      ],
+      "logicalSize": [
+        105.51558752997602,
+        404.15667466027173
+      ],
+      "placement": {
+        "x": 107.24220623501199,
+        "y": -41.91846522781775,
+        "width": 105.51558752997602,
+        "height": 404.15667466027173
+      },
+      "bodyEdges": {
+        "left": 109.16067146282974,
+        "right": 210.83932853717027,
+        "top": -40,
+        "bottom": 360
+      },
+      "occlusionCover": {
+        "inputX": 155.16067146282973,
+        "outputX": 160.83932853717027
+      },
+      "sourceBounds": {
+        "left": 450,
+        "right": 768,
+        "top": 20,
+        "bottom": 1271
+      },
+      "sourceRotationDegrees": 0,
+      "source": "assets/workshop/raw/processing-machine-wood-v6.png",
+      "sourceSize": [
+        1219,
+        1290
+      ],
+      "generated": "C:/Users/eeg14/.codex/generated_images/01a1df5a-7dd5-78a0-a8fe-56db3bbc33ba/exec-4daa445c-79ce-474a-8f63-767cf1529057.png",
+      "inputImages": [
+        {
+          "path": "assets/workshop/raw/processing-machine-portless-v5.png",
+          "role": "tall geometry and 90-degree camera only; metal construction replaced"
+        },
+        {
+          "path": "public/art/livestock/barn.webp",
+          "role": "warm timber palette and pixel clusters only; no camera inheritance"
+        }
+      ],
+      "crop": {
+        "left": 444,
+        "top": 14,
+        "width": 330,
+        "height": 1264
+      },
+      "uniformWorldScale": 0.31974420463629094,
+      "sourceOcclusionCover": {
+        "inputX": 593.865,
+        "outputX": 611.625
+      },
+      "sourceBoundsMethod": "direct source inspection and focused alpha>128 bounds reading; exclusive right/bottom edges",
+      "png": "assets/workshop/png/processing-machine-wood-v6.png",
+      "webp": "public/art/workshop/processing-machine-wood-v6.webp",
+      "conversion": "uniform 1/2 nearest-neighbor source crop; uniform world scale to true body height 400; no rotation or material recoloring; WebP quality70 alpha100",
+      "prompt": "assets/workshop/prompts-wood-v6.md#processing-machine"
+    },
+    "refining": {
+      "path": "./art/workshop/refining-machine-wood-v6.webp",
+      "size": [
+        158,
+        634
+      ],
+      "logicalSize": [
+        100.71713147410358,
+        404.1434262948207
+      ],
+      "placement": {
+        "x": 109.80079681274901,
+        "y": -41.91235059760956,
+        "width": 100.71713147410358,
+        "height": 404.1434262948207
+      },
+      "bodyEdges": {
+        "left": 112.03187250996015,
+        "right": 207.96812749003985,
+        "top": -40,
+        "bottom": 360
+      },
+      "occlusionCover": {
+        "inputX": 158.03187250996015,
+        "outputX": 157.96812749003985
+      },
+      "sourceBounds": {
+        "left": 459,
+        "right": 760,
+        "top": 16,
+        "bottom": 1271
+      },
+      "sourceRotationDegrees": 0,
+      "source": "assets/workshop/raw/refining-machine-wood-v6.png",
+      "sourceSize": [
+        1219,
+        1290
+      ],
+      "generated": "C:/Users/eeg14/.codex/generated_images/01a1df5a-7dd5-78a0-a8fe-56db3bbc33ba/exec-22fe7d4b-7f0f-481b-a605-07e982b6a3fb.png",
+      "inputImages": [
+        {
+          "path": "assets/workshop/raw/refining-machine-portless-v5.png",
+          "role": "tall geometry and 90-degree camera only; industrial construction replaced"
+        },
+        {
+          "path": "public/art/livestock/barn.webp",
+          "role": "warm timber palette and pixel clusters only; no camera inheritance"
+        }
+      ],
+      "crop": {
+        "left": 452,
+        "top": 10,
+        "width": 316,
+        "height": 1268
+      },
+      "uniformWorldScale": 0.3187250996015936,
+      "sourceOcclusionCover": {
+        "inputX": 603.325,
+        "outputX": 603.125
+      },
+      "sourceBoundsMethod": "direct source inspection and focused alpha>128 bounds reading; exclusive right/bottom edges",
+      "png": "assets/workshop/png/refining-machine-wood-v6.png",
+      "webp": "public/art/workshop/refining-machine-wood-v6.webp",
+      "conversion": "uniform 1/2 nearest-neighbor source crop; uniform world scale to true body height 400; no rotation or material recoloring; WebP quality70 alpha100",
+      "prompt": "assets/workshop/prompts-wood-v6.md#refining-machine"
+    },
+    "tread": {
+      "path": "./art/workshop/belt-surface-wood-v6.webp",
+      "size": [
+        104,
+        52
+      ],
+      "logicalSize": [
+        32,
+        16
+      ],
+      "period": 32,
+      "direction": "E",
+      "source": "assets/workshop/raw/belt-surface-wood-v6.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "generated": "C:/Users/eeg14/.codex/generated_images/01a1df5a-7dd5-78a0-a8fe-56db3bbc33ba/exec-90df4a0d-6cda-49f4-bdf9-f0b95cf98313.png",
+      "inputImages": [],
+      "crop": {
+        "left": 314,
+        "top": 256,
+        "width": 104,
+        "height": 52
+      },
+      "png": "assets/workshop/png/belt-surface-wood-v6.png",
+      "webp": "public/art/workshop/belt-surface-wood-v6.webp",
+      "sourceJointColumnRuns": [
+        [
+          308,
+          320
+        ],
+        [
+          412,
+          424
+        ]
+      ],
+      "sourcePeriodCenters": [
+        314,
+        418
+      ],
+      "sourcePeriodPixels": 104,
+      "conversion": "one real vertical-plank period cropped from built-in image_gen source; no repainting or synthetic pattern; uniform logical scale 32/104; WebP quality70 alpha100",
+      "prompt": "assets/workshop/prompts-wood-v6.md#wooden-tread-surface"
+    }
+  },
+  "preserved": {
+    "stage": {
+      "width": 320,
+      "height": 320
+    },
+    "conveyorLayout": {
+      "inputSize": 88,
+      "outputSize": 96,
+      "inputSpacing": 96,
+      "maxPerEvent": 3,
+      "surfaceUnderlap": 3
+    },
+    "layerOrder": [
+      "movingBorderlessSurface",
+      "canonicalItems",
+      "solidMachineBody"
+    ],
+    "speed": 0.04,
+    "period": 32
+  },
+  "status": "producer writes candidate only and never writes active metadata; separately authorized activation is recorded in HANDOFF-wood-v6.md; direct image review only, no running or static composition"
+}
