@@ -1,0 +1,56 @@
+{
+  "purpose": "Targeted exact mature-body correction; remove harvested parts only",
+  "columns": 1,
+  "rows": 1,
+  "cellSize": 320,
+  "image": "assets/plot/repeat-harvest/mature-source-v2-C61.png",
+  "cells": [
+    {
+      "id": "C61",
+      "row": 0,
+      "column": 0,
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C61/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 238,
+          "height": 225
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C61/mature.webp",
+        "width": 238,
+        "height": 225,
+        "anchorX": 114,
+        "anchorY": 224,
+        "baseScale": 0.1638655462184874,
+        "source": {
+          "path": "assets/plot/crops/C61/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 238,
+            "height": 225
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 46,
+        "top": 72,
+        "width": 238,
+        "height": 225,
+        "scale": 1,
+        "rootX": 160,
+        "rootY": 296
+      }
+    }
+  ]
+}

@@ -30,7 +30,7 @@ let db;
 let status;
 let layout;
 let frontAnchor;
-let displayedSecond = -1;
+let nextDisplayAt = 0;
 let visible = !document.hidden;
 let visibleSince = visible ? performance.now() : Infinity;
 let offlineDialogId;
@@ -49,8 +49,7 @@ const displayRefreshMs = 1000;
 function updateSettings(draft, partial) {
   if (!partial || typeof partial !== 'object') return false;
   for (const [key, value] of Object.entries(partial)) {
-    const valid = key === 'textScale' ? typeof value === 'number' && value >= 1 && value <= 2 :
-      key === 'pickerIconsOnly' ? typeof value === 'boolean' :
+    const valid = key === 'pickerIconsOnly' ? typeof value === 'boolean' :
       ['music', 'sound'].includes(key) && Number.isInteger(value) && value >= 0 && value <= 100;
     if (!valid) return false;
   }
@@ -69,9 +68,31 @@ if (__DEV_TEST_MODE__) {
 }
 
 const px = (value) => Number.parseFloat(value) || 0;
-function paint(display = world, anchor = frontAnchor) {
-  const timing = display && anchor >= visibleSince ? { anchor, maxElapsed: displayRefreshMs } : undefined;
+function paint() {
+  let display = world;
+  let anchor = frontAnchor;
+  const live = display && visible && !status?.busy && Number.isFinite(frontAnchor) && frontAnchor >= visibleSince;
+  if (live) {
+    const now = performance.now();
+    display = structuredClone(world);
+    foreground(display, false, now);
+    // The projection stores whole milliseconds; keep the remaining frame phase in its anchor.
+    anchor = frontAnchor + (display.clockMs - world.clockMs);
+  }
+  const timing = live ? { anchor, epoch: worldEpoch } : undefined;
   if (layout) view.render(layout, display, status, timing);
+  nextDisplayAt = Infinity;
+  if (!live) return;
+  let nextEnd = Infinity;
+  for (const groups of [display.facilities, display.stations]) {
+    for (const slots of Object.values(groups)) {
+      for (const slot of slots) {
+        if (slot.batch && slot.batch.end > display.clockMs) nextEnd = Math.min(nextEnd, slot.batch.end);
+      }
+    }
+  }
+  // Reproject at the actual production boundary, even between regular snapshots.
+  nextDisplayAt = anchor + Math.min(displayRefreshMs, nextEnd - display.clockMs);
 }
 function resize() {
   const css = getComputedStyle(canvas);
@@ -99,17 +120,14 @@ async function commit(draft, anchor) {
   audio.configure(draft.settings);
 }
 
-function productionSummary(before, after) {
-  return Object.entries(after.stats.produced).map(([id, total]) =>
-    [id, total - (before.stats.produced[id] ?? 0n)]).filter(([, amount]) => amount > 0n);
-}
-
 function completedGuide(before, after) {
   return objectives(before).active && !objectives(after).active;
 }
 
 function showOffline() {
   const report = world?.pendingOffline;
+  // A native file window can hide the document; keep its import flow in front.
+  if (report && view.isImportingSave()) return;
   if (offlineDialogId === report?.id) return;
   offlineDialogId = report?.id;
   if (!report) { view.dismiss(); return; }
@@ -269,6 +287,7 @@ function dispatch(name, ...args) {
       await commit(draft, anchor);
       if (name === 'sellFarm') {
         worldEpoch += 1;
+        nextDisplayAt = 0;
         view.resetSession();
       }
       paint();
@@ -298,7 +317,7 @@ function activateReplacement(next) {
   world = next;
   worldEpoch += 1;
   frontAnchor = performance.now();
-  displayedSecond = -1;
+  nextDisplayAt = 0;
   offlineDialogId = undefined;
   status = undefined;
   audio.configure(world.settings);
@@ -370,7 +389,7 @@ function clearSave() {
 const saveManagement = {
   version: transfer.version, environment: transfer.environment,
   exportSave, inspectSave: transfer.inspectSave, importSave, clearSave,
-  captureImport: transfer.captureImport, readClipboard: transfer.readClipboard,
+  captureImport: transfer.captureImport, readImportFile: transfer.readImportFile, readClipboard: transfer.readClipboard,
   copyText: transfer.copyText, download: transfer.download,
 };
 
@@ -411,10 +430,9 @@ async function saveForeground(anchorAt, wallAt) {
   const draft = structuredClone(before);
   try {
     const anchor = foreground(draft, false, anchorAt, wallAt);
-    const changes = productionSummary(before, draft);
     await commit(draft, anchor);
-    if (visible && changes.length) audio.play(changes.some(([id]) => id[0] === 'I' || id[0] === 'P') ? 'finish' : 'harvest');
     paint();
+    if (visible) showOffline();
     if (completedGuide(before, draft)) view.toast(longGoalsToast);
   } catch (error) {
     if (error.code === 'revision-conflict') staleSave();
@@ -424,14 +442,10 @@ async function saveForeground(anchorAt, wallAt) {
 
 setInterval(() => { if (world && visible && !status?.busy && !saveQueue.pending) enqueueCurrent(saveForeground); }, 5000);
 app.ticker.add(() => {
-  if (!world || !visible || status?.busy || saveQueue.pending) return;
+  if (!world || !visible || status?.busy || frontAnchor < visibleSince) return;
   const now = performance.now();
-  const second = Math.floor(now / displayRefreshMs);
-  if (displayedSecond === second) return;
-  displayedSecond = second;
-  const display = structuredClone(world);
-  const anchor = foreground(display, false, now);
-  paint(display, anchor);
+  if (now < nextDisplayAt) return;
+  paint();
 });
 
 async function resumeOffline(anchor, now) {

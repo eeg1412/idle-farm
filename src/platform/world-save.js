@@ -1,4 +1,5 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
+import { techLevelLimit } from '../game/advancement.js';
 import { newWorld, updateWorldWallTime } from '../game/world.js';
 import { catalog as legacyCatalog, workshopDurationMs } from '../game/state.js';
 import { decode as decodeLegacy } from './save.js';
@@ -264,6 +265,7 @@ function amounts(world, convert, convertSigned) {
   if (pendingOffline) valid(pendingOffline.id <= world.revision, 'pendingOffline.id');
   const settings = { pickerIconsOnly: false, ...object(world.settings, 'settings') };
   delete settings.reducedMotion;
+  settings.textScale = 1;
   return {
     ...world,
     settings,
@@ -292,6 +294,31 @@ function validateRecipe(id, kind, field) {
   valid(typeof id === 'string' && Object.hasOwn(catalog.items, id) && catalog.items[id].kind.startsWith(kind), field);
 }
 
+function normalizeCropPlantings(world) {
+  const facilities = object(world.facilities, 'facilities');
+  valid(Array.isArray(facilities.C), 'facilities.C');
+  world.facilities = {
+    ...facilities,
+    C: facilities.C.map((slot, index) => {
+      object(slot, `facilities.C.${index}`);
+      if (slot.recipe === null || Object.hasOwn(slot, 'planting')) return slot;
+      // Missing history is explicit: do not infer this plot's age from aggregate production.
+      return { ...slot, planting: { id: slot.recipe, start: null, duration: null } };
+    }),
+  };
+}
+
+function validatePlanting(world, slot, field) {
+  if (!Object.hasOwn(slot, 'planting')) return;
+  const planting = object(slot.planting, `${field}.planting`);
+  valid(slot.recipe !== null && planting.id === slot.recipe, `${field}.planting.id`);
+  validateRecipe(planting.id, 'C', `${field}.planting.id`);
+  if (planting.start === null && planting.duration === null) return;
+  valid(integer(planting.start, `${field}.planting.start`) <= world.clockMs, `${field}.planting.start`);
+  valid(integer(planting.duration, `${field}.planting.duration`) > 0, `${field}.planting.duration`);
+  valid(Number.isSafeInteger(planting.start + planting.duration), `${field}.planting.duration`);
+}
+
 function validateFacilityLists(world, key, kinds) {
   const lists = object(world[key], key);
   for (const kind of kinds) {
@@ -303,6 +330,7 @@ function validateFacilityLists(world, key, kinds) {
       object(slot, field);
       if (slot.recipe !== null) validateRecipe(slot.recipe, kind, `${field}.recipe`);
       if (key === 'facilities') decimal(slot.level, `${field}.level`, 1n);
+      if (key === 'facilities' && kind === 'C') validatePlanting(world, slot, field);
       if (key === 'stations') {
         valid(typeof slot.priority === 'boolean', `${field}.priority`);
         if (slot.order !== undefined) integer(slot.order, `${field}.order`);
@@ -326,7 +354,7 @@ function validateWorld(world) {
     catalog.initial.every((id) => world.unlocked.includes(id)), 'unlocked');
   quantityMap(world.quality, 'quality', (value, field) => decimal(value, field, 1n));
   for (const [key, level] of Object.entries(object(world.tech, 'tech'))) {
-    valid(integer(level, `tech.${key}`) <= 5, `tech.${key}`);
+    valid(integer(level, `tech.${key}`) <= techLevelLimit, `tech.${key}`);
   }
   valid(typeof world.guideSkipped === 'boolean', 'guideSkipped');
   const settings = object(world.settings, 'settings');
@@ -414,6 +442,7 @@ function readRecord(record, slot) {
   try {
     object(record, slot);
     const world = record.schemaVersion === 1 ? migrateLegacy(record) : amounts(record, decimal, signedDecimal);
+    normalizeCropPlantings(world);
     validateWorld(world);
     return world;
   } catch (error) {

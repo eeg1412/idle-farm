@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "sceneSize": 320,
   "idleFrames": 4,
   "grid": {
@@ -9,12 +9,12 @@
   "sources": {
     "barn": "raw/barn.png",
     "sheets": {
-      "accessories": "raw/pixel-v4-accessories.png",
-      "pig": "raw/pixel-v4-pig-r2.png",
-      "rabbit": "raw/pixel-v4-rabbit.png",
-      "sheep": "raw/pixel-v4-sheep.png",
-      "muscovy": "raw/pixel-v4-muscovy.png",
-      "cattle": "raw/pixel-v4-cattle.png"
+      "accessories": "raw/pixel-v5-feeding-accessories.png",
+      "pig": "raw/pixel-v5-feeding-pig.png",
+      "rabbit": "raw/pixel-v5-feeding-rabbit.png",
+      "sheep": "raw/pixel-v5-feeding-sheep.png",
+      "muscovy": "raw/pixel-v5-feeding-muscovy.png",
+      "cattle": "raw/pixel-v5-feeding-cattle-r2.png"
     }
   },
   "animalRoot": {
@@ -34,65 +34,34 @@
           "maxHeight": 154,
           "sourceAnchors": [
             [
-              182,
-              230
+              109,
+              226
             ],
             [
-              433,
-              231
+              365,
+              226
             ],
             [
-              684,
-              230
+              618,
+              226
             ],
             [
-              937,
-              230
+              870,
+              226
             ]
           ],
           "sourceCanvas": {
-            "left": -143,
-            "top": -174,
-            "width": 209,
-            "height": 176
+            "left": -109,
+            "top": -206,
+            "width": 244,
+            "height": 212
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 45,
-              "top": 208,
-              "width": 198,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 286501.003,
-                "dx": 251,
-                "dy": 1
-              },
-              {
-                "error": 145099.002,
-                "dx": 502,
-                "dy": 0
-              },
-              {
-                "error": 149356.004,
-                "dx": 755,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 138,
+            "x": 134.5,
             "y": 269.5,
-            "radiusX": 32,
-            "radiusY": 5
+            "radiusX": 28.5,
+            "radiusY": 6
           },
           "footprint": {
             "referenceFrame": 0,
@@ -105,39 +74,76 @@
               "height": 14
             },
             "supportMaterial": "golden-feet",
+            "supportXRange": [
+              0,
+              182
+            ],
             "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
             "bounds": {
               "x": 108,
               "y": 259,
-              "width": 60,
-              "height": 11
+              "width": 53,
+              "height": 13
             },
             "contacts": [
               {
                 "x": 123.5,
-                "y": 270,
+                "y": 272,
                 "bounds": {
                   "x": 108,
                   "y": 259,
                   "width": 31,
-                  "height": 11
+                  "height": 13
                 }
               },
               {
-                "x": 158.5,
-                "y": 269,
+                "x": 146.5,
+                "y": 267,
                 "bounds": {
-                  "x": 149,
+                  "x": 132,
                   "y": 259,
-                  "width": 19,
-                  "height": 10
+                  "width": 29,
+                  "height": 8
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "golden-feet"
+          "supportMaterial": "golden-feet",
+          "feeding": {
+            "x": 202,
+            "y": 270,
+            "radiusX": 18,
+            "radiusY": 4,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "accessories",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              210,
+              221
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 183,
+              "y": 258,
+              "width": 34,
+              "height": 16
+            },
+            "sourceMouthBounds": {
+              "x": 180.299,
+              "y": 206.987,
+              "width": 53.87,
+              "height": 25.351
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            182
+          ]
         }
       ],
       "productCell": {
@@ -148,7 +154,8 @@
           "top": 102,
           "width": 99,
           "height": 115
-        }
+        },
+        "source": "raw/pixel-v4-accessories.png"
       },
       "source": "accessories",
       "productVisual": {
@@ -181,65 +188,34 @@
           "maxHeight": 170,
           "sourceAnchors": [
             [
-              128,
-              488
+              110,
+              475
             ],
             [
-              380,
-              488
+              363,
+              476
             ],
             [
-              631,
-              488
+              616,
+              476
             ],
             [
-              883,
-              488
+              870,
+              476
             ]
           ],
           "sourceCanvas": {
-            "left": -108,
-            "top": -200,
-            "width": 246,
-            "height": 204
+            "left": -110,
+            "top": -205,
+            "width": 250,
+            "height": 223
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 24,
-              "top": 466,
-              "width": 240,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 220489.022,
-                "dx": 252,
-                "dy": 0
-              },
-              {
-                "error": 133025.001,
-                "dx": 503,
-                "dy": 0
-              },
-              {
-                "error": 142939,
-                "dx": 755,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 129.5,
-            "y": 269.5,
-            "radiusX": 73.5,
-            "radiusY": 12
+            "x": 138,
+            "y": 267,
+            "radiusX": 61,
+            "radiusY": 10
           },
           "footprint": {
             "referenceFrame": 0,
@@ -252,59 +228,106 @@
               "height": 18
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              196
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 58,
+              "x": 79,
               "y": 256,
-              "width": 143,
-              "height": 15
+              "width": 118,
+              "height": 17
             },
             "contacts": [
               {
-                "x": 71.5,
-                "y": 271,
+                "x": 91.5,
+                "y": 267,
                 "bounds": {
-                  "x": 58,
+                  "x": 79,
                   "y": 256,
-                  "width": 27,
-                  "height": 15
+                  "width": 25,
+                  "height": 11
                 }
               },
               {
-                "x": 107.5,
-                "y": 268,
+                "x": 116,
+                "y": 261,
                 "bounds": {
-                  "x": 94,
+                  "x": 105,
                   "y": 256,
-                  "width": 27,
-                  "height": 12
+                  "width": 22,
+                  "height": 5
                 }
               },
               {
-                "x": 150.5,
-                "y": 271,
+                "x": 143.5,
+                "y": 273,
                 "bounds": {
-                  "x": 137,
+                  "x": 131,
                   "y": 256,
-                  "width": 27,
-                  "height": 15
+                  "width": 25,
+                  "height": 17
                 }
               },
               {
-                "x": 185.5,
-                "y": 271,
+                "x": 167.5,
+                "y": 267,
                 "bounds": {
-                  "x": 170,
+                  "x": 156,
                   "y": 256,
-                  "width": 31,
-                  "height": 15
+                  "width": 23,
+                  "height": 11
+                }
+              },
+              {
+                "x": 191,
+                "y": 267,
+                "bounds": {
+                  "x": 185,
+                  "y": 256,
+                  "width": 12,
+                  "height": 11
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 14,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 222,
+            "y": 279,
+            "radiusX": 24,
+            "radiusY": 6,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "accessories",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              220,
+              483
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 197,
+              "y": 266,
+              "width": 45,
+              "height": 16
+            },
+            "sourceMouthBounds": {
+              "x": 187.394,
+              "y": 469.753,
+              "width": 59.029,
+              "height": 20.988
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            196
+          ]
         }
       ],
       "productCell": {
@@ -315,7 +338,8 @@
           "top": 312,
           "width": 156,
           "height": 164
-        }
+        },
+        "source": "raw/pixel-v4-accessories.png"
       },
       "productVisual": {
         "icon": "L02",
@@ -347,65 +371,34 @@
           "maxHeight": 128,
           "sourceAnchors": [
             [
-              143,
-              725
+              112,
+              721
             ],
             [
-              395,
-              725
+              364,
+              721
             ],
             [
-              647,
-              725
+              617,
+              721
             ],
             [
-              899,
-              725
+              870,
+              721
             ]
           ],
           "sourceCanvas": {
-            "left": -110,
-            "top": -186,
-            "width": 220,
-            "height": 188
+            "left": -111,
+            "top": -180,
+            "width": 247,
+            "height": 193
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 37,
-              "top": 703,
-              "width": 213,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 155920.001,
-                "dx": 252,
-                "dy": 0
-              },
-              {
-                "error": 85322.002,
-                "dx": 504,
-                "dy": 0
-              },
-              {
-                "error": 66195.001,
-                "dx": 756,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136,
+            "x": 131,
             "y": 267.5,
-            "radiusX": 34,
-            "radiusY": 5
+            "radiusX": 27,
+            "radiusY": 7
           },
           "footprint": {
             "referenceFrame": 0,
@@ -418,39 +411,76 @@
               "height": 14
             },
             "supportMaterial": "golden-feet",
+            "supportXRange": [
+              0,
+              191
+            ],
             "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
             "bounds": {
-              "x": 104,
+              "x": 106,
               "y": 259,
-              "width": 64,
-              "height": 10
+              "width": 50,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 122,
-                "y": 269,
+                "x": 123.5,
+                "y": 271,
                 "bounds": {
-                  "x": 104,
+                  "x": 106,
                   "y": 259,
-                  "width": 36,
-                  "height": 10
+                  "width": 35,
+                  "height": 12
                 }
               },
               {
-                "x": 153,
-                "y": 266,
+                "x": 149,
+                "y": 264,
                 "bounds": {
-                  "x": 138,
+                  "x": 142,
                   "y": 259,
-                  "width": 30,
-                  "height": 7
+                  "width": 14,
+                  "height": 5
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "golden-feet"
+          "supportMaterial": "golden-feet",
+          "feeding": {
+            "x": 212,
+            "y": 273,
+            "radiusX": 20,
+            "radiusY": 5,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "accessories",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              224,
+              721
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 192,
+              "y": 262,
+              "width": 37,
+              "height": 13
+            },
+            "sourceMouthBounds": {
+              "x": 193.422,
+              "y": 708.938,
+              "width": 55.789,
+              "height": 19.602
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            191
+          ]
         }
       ],
       "productCell": {
@@ -461,7 +491,8 @@
           "top": 576,
           "width": 105,
           "height": 125
-        }
+        },
+        "source": "raw/pixel-v4-accessories.png"
       },
       "productVisual": {
         "icon": "L03",
@@ -493,63 +524,32 @@
           "maxHeight": 178,
           "sourceAnchors": [
             [
-              123,
-              972
+              109,
+              973
             ],
             [
-              375,
-              972
+              362,
+              973
             ],
             [
-              627,
-              972
+              616,
+              973
             ],
             [
-              879,
-              971
+              870,
+              973
             ]
           ],
           "sourceCanvas": {
-            "left": -94,
-            "top": -206,
-            "width": 219,
-            "height": 209
+            "left": -108,
+            "top": -192,
+            "width": 251,
+            "height": 218
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 32,
-              "top": 950,
-              "width": 214,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 142502.001,
-                "dx": 252,
-                "dy": 0
-              },
-              {
-                "error": 135575,
-                "dx": 504,
-                "dy": 0
-              },
-              {
-                "error": 149877.011,
-                "dx": 756,
-                "dy": -1
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 129,
-            "y": 268,
+            "x": 140,
+            "y": 269.5,
             "radiusX": 58,
             "radiusY": 10
           },
@@ -564,49 +564,86 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              195
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 73,
+              "x": 84,
               "y": 258,
               "width": 112,
-              "height": 12
+              "height": 14
             },
             "contacts": [
               {
-                "x": 84,
+                "x": 105.5,
                 "y": 267,
                 "bounds": {
-                  "x": 73,
+                  "x": 84,
                   "y": 258,
-                  "width": 22,
+                  "width": 43,
                   "height": 9
                 }
               },
               {
-                "x": 113,
-                "y": 266,
+                "x": 152.5,
+                "y": 270,
                 "bounds": {
-                  "x": 102,
+                  "x": 132,
                   "y": 258,
-                  "width": 22,
-                  "height": 8
+                  "width": 41,
+                  "height": 12
                 }
               },
               {
-                "x": 163.5,
-                "y": 270,
+                "x": 189,
+                "y": 272,
                 "bounds": {
-                  "x": 142,
+                  "x": 182,
                   "y": 258,
-                  "width": 43,
-                  "height": 12
+                  "width": 14,
+                  "height": 14
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 218,
+            "y": 279,
+            "radiusX": 21,
+            "radiusY": 5,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "accessories",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              224,
+              982
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 196,
+              "y": 266,
+              "width": 39,
+              "height": 16
+            },
+            "sourceMouthBounds": {
+              "x": 192.667,
+              "y": 967.23,
+              "width": 56.259,
+              "height": 23.08
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            195
+          ]
         }
       ],
       "productCell": {
@@ -617,7 +654,8 @@
           "top": 801,
           "width": 160,
           "height": 167
-        }
+        },
+        "source": "raw/pixel-v4-accessories.png"
       },
       "productVisual": {
         "icon": "L04",
@@ -649,64 +687,33 @@
           "maxHeight": 186,
           "sourceAnchors": [
             [
-              172,
-              1213
+              102,
+              1219
             ],
             [
-              423,
-              1213
+              356,
+              1219
             ],
             [
-              677,
-              1213
+              609,
+              1219
             ],
             [
-              930,
-              1213
+              863,
+              1219
             ]
           ],
           "sourceCanvas": {
-            "left": -144,
-            "top": -197,
-            "width": 209,
-            "height": 199
+            "left": -102,
+            "top": -194,
+            "width": 250,
+            "height": 219
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 34,
-              "top": 1191,
-              "width": 198,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 227483,
-                "dx": 251,
-                "dy": 0
-              },
-              {
-                "error": 172571.004,
-                "dx": 505,
-                "dy": 0
-              },
-              {
-                "error": 166914.003,
-                "dx": 758,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136.5,
+            "x": 138.5,
             "y": 268.5,
-            "radiusX": 37.5,
+            "radiusX": 29.5,
             "radiusY": 6
           },
           "footprint": {
@@ -720,39 +727,76 @@
               "height": 14
             },
             "supportMaterial": "golden-feet",
+            "supportXRange": [
+              0,
+              190
+            ],
             "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
             "bounds": {
-              "x": 101,
+              "x": 111,
               "y": 259,
-              "width": 71,
-              "height": 10
+              "width": 55,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 119,
-                "y": 269,
+                "x": 127,
+                "y": 271,
                 "bounds": {
-                  "x": 101,
+                  "x": 111,
                   "y": 259,
-                  "width": 36,
-                  "height": 10
+                  "width": 32,
+                  "height": 12
                 }
               },
               {
-                "x": 159,
-                "y": 268,
+                "x": 150.5,
+                "y": 266,
                 "bounds": {
-                  "x": 146,
+                  "x": 135,
                   "y": 259,
-                  "width": 26,
-                  "height": 9
+                  "width": 31,
+                  "height": 7
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "golden-feet"
+          "supportMaterial": "golden-feet",
+          "feeding": {
+            "x": 210,
+            "y": 278,
+            "radiusX": 18,
+            "radiusY": 4,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "accessories",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              220,
+              1227
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 191,
+              "y": 266,
+              "width": 34,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 189.171,
+              "y": 1212.421,
+              "width": 55.921,
+              "height": 23.026
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            190
+          ]
         }
       ],
       "productCell": {
@@ -763,7 +807,8 @@
           "top": 1050,
           "width": 121,
           "height": 151
-        }
+        },
+        "source": "raw/pixel-v4-accessories.png"
       },
       "productVisual": {
         "icon": "L05",
@@ -794,65 +839,34 @@
           "maxHeight": 90,
           "sourceAnchors": [
             [
-              147,
-              232
+              117,
+              259
             ],
             [
-              387,
-              232
+              381,
+              259
             ],
             [
-              628,
-              232
+              651,
+              259
             ],
             [
-              869,
-              232
+              914,
+              259
             ]
           ],
           "sourceCanvas": {
-            "left": -70,
-            "top": -134,
-            "width": 160,
-            "height": 136
+            "left": -115,
+            "top": -150,
+            "width": 235,
+            "height": 165
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 80,
-              "top": 210,
-              "width": 155,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 96722.001,
-                "dx": 240,
-                "dy": 0
-              },
-              {
-                "error": 80944,
-                "dx": 481,
-                "dy": 0
-              },
-              {
-                "error": 110988,
-                "dx": 722,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 134.5,
-            "y": 270,
-            "radiusX": 35.5,
-            "radiusY": 6
+            "x": 137.5,
+            "y": 269.5,
+            "radiusX": 18.5,
+            "radiusY": 5
           },
           "footprint": {
             "referenceFrame": 0,
@@ -865,39 +879,102 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              153
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 101,
+              "x": 121,
               "y": 258,
-              "width": 67,
-              "height": 12
+              "width": 33,
+              "height": 13
             },
             "contacts": [
               {
-                "x": 114,
-                "y": 270,
+                "x": 127,
+                "y": 268,
                 "bounds": {
-                  "x": 101,
+                  "x": 121,
                   "y": 258,
-                  "width": 26,
-                  "height": 12
+                  "width": 12,
+                  "height": 10
                 }
               },
               {
-                "x": 152.5,
-                "y": 270,
+                "x": 145,
+                "y": 271,
                 "bounds": {
-                  "x": 137,
+                  "x": 136,
                   "y": 258,
-                  "width": 31,
-                  "height": 12
+                  "width": 18,
+                  "height": 13
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 167,
+            "y": 274,
+            "radiusX": 13,
+            "radiusY": 4,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "pig",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              179,
+              262
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 154,
+              "y": 263,
+              "width": 24,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 151.182,
+              "y": 244.045,
+              "width": 51.273,
+              "height": 29.909
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            153
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
         },
         {
           "name": "growing",
@@ -906,65 +983,34 @@
           "maxHeight": 126,
           "sourceAnchors": [
             [
-              144,
-              473
+              125,
+              519
             ],
             [
-              385,
-              473
+              391,
+              519
             ],
             [
-              625,
-              473
+              657,
+              519
             ],
             [
-              866,
-              473
+              920,
+              519
             ]
           ],
           "sourceCanvas": {
-            "left": -75,
-            "top": -160,
-            "width": 186,
-            "height": 162
+            "left": -125,
+            "top": -156,
+            "width": 255,
+            "height": 178
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 72,
-              "top": 451,
-              "width": 179,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 152089.001,
-                "dx": 241,
-                "dy": 0
-              },
-              {
-                "error": 125966,
-                "dx": 481,
-                "dy": 0
-              },
-              {
-                "error": 104717.001,
-                "dx": 722,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136.5,
-            "y": 269,
-            "radiusX": 49.5,
-            "radiusY": 8
+            "x": 131,
+            "y": 269.5,
+            "radiusX": 35,
+            "radiusY": 7
           },
           "footprint": {
             "referenceFrame": 0,
@@ -977,49 +1023,112 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              163
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 89,
+              "x": 98,
               "y": 258,
-              "width": 95,
-              "height": 13
+              "width": 66,
+              "height": 15
             },
             "contacts": [
               {
-                "x": 105.5,
-                "y": 270,
+                "x": 107,
+                "y": 266,
                 "bounds": {
-                  "x": 89,
+                  "x": 98,
                   "y": 258,
-                  "width": 33,
-                  "height": 12
+                  "width": 18,
+                  "height": 8
                 }
               },
               {
-                "x": 151.5,
-                "y": 271,
+                "x": 138,
+                "y": 273,
                 "bounds": {
-                  "x": 141,
+                  "x": 123,
                   "y": 258,
-                  "width": 21,
-                  "height": 13
+                  "width": 30,
+                  "height": 15
                 }
               },
               {
-                "x": 173.5,
-                "y": 267,
+                "x": 159.5,
+                "y": 268,
                 "bounds": {
-                  "x": 163,
+                  "x": 155,
                   "y": 258,
-                  "width": 21,
-                  "height": 9
+                  "width": 9,
+                  "height": 10
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 185,
+            "y": 276,
+            "radiusX": 20,
+            "radiusY": 5,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "pig",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              197,
+              524
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 164,
+              "y": 265,
+              "width": 37,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 164.94,
+              "y": 511.319,
+              "width": 56.837,
+              "height": 21.506
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            163
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
         },
         {
           "name": "mature",
@@ -1028,65 +1137,34 @@
           "maxHeight": 162,
           "sourceAnchors": [
             [
-              138,
-              715
+              123,
+              813
             ],
             [
-              379,
-              715
+              395,
+              813
             ],
             [
-              620,
-              715
+              660,
+              813
             ],
             [
-              860,
-              715
+              927,
+              813
             ]
           ],
           "sourceCanvas": {
-            "left": -96,
-            "top": -179,
-            "width": 231,
-            "height": 181
+            "left": -123,
+            "top": -202,
+            "width": 277,
+            "height": 220
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 45,
-              "top": 693,
-              "width": 224,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 100225.001,
-                "dx": 241,
-                "dy": 0
-              },
-              {
-                "error": 108523,
-                "dx": 482,
-                "dy": 0
-              },
-              {
-                "error": 161539,
-                "dx": 722,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136.5,
-            "y": 266.5,
-            "radiusX": 77.5,
-            "radiusY": 13
+            "x": 134.5,
+            "y": 271.5,
+            "radiusX": 54.5,
+            "radiusY": 9
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1099,59 +1177,112 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              186
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 61,
+              "x": 82,
               "y": 258,
-              "width": 151,
-              "height": 11
+              "width": 105,
+              "height": 16
             },
             "contacts": [
               {
-                "x": 73,
-                "y": 267,
-                "bounds": {
-                  "x": 61,
-                  "y": 258,
-                  "width": 24,
-                  "height": 9
-                }
-              },
-              {
-                "x": 111.5,
-                "y": 264,
-                "bounds": {
-                  "x": 100,
-                  "y": 258,
-                  "width": 23,
-                  "height": 6
-                }
-              },
-              {
-                "x": 165.5,
+                "x": 94.5,
                 "y": 269,
                 "bounds": {
-                  "x": 153,
+                  "x": 82,
                   "y": 258,
                   "width": 25,
                   "height": 11
                 }
               },
               {
-                "x": 199.5,
-                "y": 266,
+                "x": 142.5,
+                "y": 274,
                 "bounds": {
-                  "x": 187,
+                  "x": 119,
                   "y": 258,
-                  "width": 25,
-                  "height": 8
+                  "width": 47,
+                  "height": 16
+                }
+              },
+              {
+                "x": 179.5,
+                "y": 269,
+                "bounds": {
+                  "x": 172,
+                  "y": 258,
+                  "width": 15,
+                  "height": 11
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 212,
+            "y": 275,
+            "radiusX": 24,
+            "radiusY": 6,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "pig",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              224,
+              816
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 187,
+              "y": 264,
+              "width": 44,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 190.193,
+              "y": 804.772,
+              "width": 60.337,
+              "height": 19.198
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            186
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
         }
       ],
       "productCell": {
@@ -1162,7 +1293,8 @@
           "top": 1059,
           "width": 203,
           "height": 136
-        }
+        },
+        "source": "raw/pixel-v4-pig-r2.png"
       },
       "source": "pig",
       "productVisual": {
@@ -1195,65 +1327,34 @@
           "maxHeight": 94,
           "sourceAnchors": [
             [
-              142,
-              225
+              119,
+              234
             ],
             [
-              392,
-              225
+              361,
+              234
             ],
             [
-              641,
-              225
+              604,
+              234
             ],
             [
-              891,
-              225
+              848,
+              234
             ]
           ],
           "sourceCanvas": {
-            "left": -81,
-            "top": -141,
-            "width": 156,
-            "height": 143
+            "left": -85,
+            "top": -125,
+            "width": 188,
+            "height": 137
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 65,
-              "top": 203,
-              "width": 147,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 103604.001,
-                "dx": 250,
-                "dy": 0
-              },
-              {
-                "error": 79414.002,
-                "dx": 499,
-                "dy": 0
-              },
-              {
-                "error": 109303.001,
-                "dx": 749,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 135,
-            "y": 270,
-            "radiusX": 36,
-            "radiusY": 6
+            "x": 132.5,
+            "y": 272,
+            "radiusX": 26.5,
+            "radiusY": 5
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1266,29 +1367,66 @@
               "height": 14
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              156
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 101,
+              "x": 108,
               "y": 260,
-              "width": 68,
-              "height": 10
+              "width": 49,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 135,
-                "y": 270,
+                "x": 132.5,
+                "y": 272,
                 "bounds": {
-                  "x": 101,
+                  "x": 108,
                   "y": 260,
-                  "width": 68,
-                  "height": 10
+                  "width": 49,
+                  "height": 12
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 169,
+            "y": 276,
+            "radiusX": 12,
+            "radiusY": 4,
+            "kind": "greens"
+          },
+          "feedingSource": {
+            "source": "rabbit",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              179,
+              239
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 157,
+              "y": 264,
+              "width": 23,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 155.449,
+              "y": 222.49,
+              "width": 44.122,
+              "height": 26.857
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            156
+          ]
         },
         {
           "name": "growing",
@@ -1297,65 +1435,34 @@
           "maxHeight": 140,
           "sourceAnchors": [
             [
-              144,
-              466
+              119,
+              503
             ],
             [
-              394,
-              466
+              361,
+              503
             ],
             [
-              643,
-              466
+              605,
+              503
             ],
             [
-              893,
-              466
+              848,
+              503
             ]
           ],
           "sourceCanvas": {
-            "left": -97,
-            "top": -175,
-            "width": 185,
-            "height": 177
+            "left": -108,
+            "top": -157,
+            "width": 235,
+            "height": 178
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 51,
-              "top": 444,
-              "width": 179,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 111613,
-                "dx": 250,
-                "dy": 0
-              },
-              {
-                "error": 77786.002,
-                "dx": 499,
-                "dy": 0
-              },
-              {
-                "error": 110591,
-                "dx": 749,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 137.5,
-            "y": 270,
-            "radiusX": 49.5,
-            "radiusY": 8
+            "x": 136.5,
+            "y": 271,
+            "radiusX": 35.5,
+            "radiusY": 6
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1368,39 +1475,66 @@
               "height": 14
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              169
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 90,
+              "x": 103,
               "y": 260,
-              "width": 95,
-              "height": 10
+              "width": 67,
+              "height": 11
             },
             "contacts": [
               {
-                "x": 108,
-                "y": 270,
+                "x": 136.5,
+                "y": 271,
                 "bounds": {
-                  "x": 90,
+                  "x": 103,
                   "y": 260,
-                  "width": 36,
-                  "height": 10
-                }
-              },
-              {
-                "x": 161.5,
-                "y": 270,
-                "bounds": {
-                  "x": 138,
-                  "y": 260,
-                  "width": 47,
-                  "height": 10
+                  "width": 67,
+                  "height": 11
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 187,
+            "y": 278,
+            "radiusX": 17,
+            "radiusY": 4,
+            "kind": "greens"
+          },
+          "feedingSource": {
+            "source": "rabbit",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              201,
+              511
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 170,
+              "y": 266,
+              "width": 31,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 172.714,
+              "y": 496.286,
+              "width": 52.036,
+              "height": 23.5
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            169
+          ]
         },
         {
           "name": "mature",
@@ -1409,65 +1543,34 @@
           "maxHeight": 178,
           "sourceAnchors": [
             [
-              142,
-              727
+              122,
+              779
             ],
             [
-              392,
-              727
+              366,
+              779
             ],
             [
-              641,
-              727
+              611,
+              779
             ],
             [
-              890,
-              727
+              854,
+              779
             ]
           ],
           "sourceCanvas": {
-            "left": -110,
-            "top": -219,
-            "width": 219,
-            "height": 221
+            "left": -122,
+            "top": -190,
+            "width": 255,
+            "height": 215
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 34,
-              "top": 705,
-              "width": 213,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 119140.001,
-                "dx": 250,
-                "dy": 0
-              },
-              {
-                "error": 74507.001,
-                "dx": 499,
-                "dy": 0
-              },
-              {
-                "error": 108420.002,
-                "dx": 748,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 134,
+            "x": 133.5,
             "y": 270,
-            "radiusX": 61,
-            "radiusY": 10
+            "radiusX": 47.5,
+            "radiusY": 8
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1480,31 +1583,25 @@
               "height": 14
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              178
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 75,
+              "x": 88,
               "y": 260,
-              "width": 118,
+              "width": 91,
               "height": 10
             },
             "contacts": [
               {
-                "x": 100,
+                "x": 133.5,
                 "y": 270,
                 "bounds": {
-                  "x": 75,
+                  "x": 88,
                   "y": 260,
-                  "width": 50,
-                  "height": 10
-                }
-              },
-              {
-                "x": 169.5,
-                "y": 270,
-                "bounds": {
-                  "x": 146,
-                  "y": 260,
-                  "width": 47,
+                  "width": 91,
                   "height": 10
                 }
               }
@@ -1512,7 +1609,40 @@
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 200,
+            "y": 278,
+            "radiusX": 20,
+            "radiusY": 5,
+            "kind": "greens"
+          },
+          "feedingSource": {
+            "source": "rabbit",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              217,
+              787
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 179,
+              "y": 266,
+              "width": 37,
+              "height": 15
+            },
+            "sourceMouthBounds": {
+              "x": 184.982,
+              "y": 772.855,
+              "width": 56.837,
+              "height": 23.042
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            178
+          ]
         }
       ],
       "productCell": {
@@ -1523,7 +1653,8 @@
           "top": 1073,
           "width": 195,
           "height": 114
-        }
+        },
+        "source": "raw/pixel-v4-rabbit.png"
       },
       "productVisual": {
         "icon": "L07",
@@ -1555,65 +1686,34 @@
           "maxHeight": 104,
           "sourceAnchors": [
             [
-              144,
-              228
+              116,
+              233
             ],
             [
-              379,
-              228
+              360,
+              233
             ],
             [
-              614,
-              228
+              605,
+              233
             ],
             [
-              849,
-              228
+              850,
+              233
             ]
           ],
           "sourceCanvas": {
-            "left": -68,
-            "top": -146,
-            "width": 156,
-            "height": 148
+            "left": -75,
+            "top": -119,
+            "width": 184,
+            "height": 139
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 78,
-              "top": 206,
-              "width": 151,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 88145.001,
-                "dx": 235,
-                "dy": 0
-              },
-              {
-                "error": 87153,
-                "dx": 470,
-                "dy": 0
-              },
-              {
-                "error": 78858.004,
-                "dx": 705,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136.5,
-            "y": 270,
-            "radiusX": 37.5,
-            "radiusY": 6
+            "x": 137,
+            "y": 270.5,
+            "radiusX": 29,
+            "radiusY": 5
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1626,39 +1726,112 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              163
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 101,
+              "x": 110,
               "y": 258,
-              "width": 71,
-              "height": 12
+              "width": 54,
+              "height": 13
             },
             "contacts": [
               {
-                "x": 115.5,
+                "x": 116,
                 "y": 270,
                 "bounds": {
-                  "x": 101,
+                  "x": 110,
                   "y": 258,
-                  "width": 29,
+                  "width": 12,
                   "height": 12
                 }
               },
               {
-                "x": 155.5,
-                "y": 270,
+                "x": 136.5,
+                "y": 271,
                 "bounds": {
-                  "x": 139,
+                  "x": 127,
                   "y": 258,
-                  "width": 33,
-                  "height": 12
+                  "width": 19,
+                  "height": 13
+                }
+              },
+              {
+                "x": 158,
+                "y": 271,
+                "bounds": {
+                  "x": 152,
+                  "y": 258,
+                  "width": 12,
+                  "height": 13
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 177,
+            "y": 280,
+            "radiusX": 13,
+            "radiusY": 4,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "sheep",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              181,
+              244
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 164,
+              "y": 266,
+              "width": 24,
+              "height": 16
+            },
+            "sourceMouthBounds": {
+              "x": 159.491,
+              "y": 226.309,
+              "width": 40.145,
+              "height": 26.764
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            163
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 260,
+              "height": 1254
+            },
+            {
+              "left": 260,
+              "top": 0,
+              "width": 250,
+              "height": 1254
+            },
+            {
+              "left": 510,
+              "top": 0,
+              "width": 254,
+              "height": 1254
+            },
+            {
+              "left": 764,
+              "top": 0,
+              "width": 276,
+              "height": 1254
+            }
+          ]
         },
         {
           "name": "growing",
@@ -1667,64 +1840,33 @@
           "maxHeight": 134,
           "sourceAnchors": [
             [
-              148,
-              466
+              116,
+              473
             ],
             [
-              383,
-              466
+              361,
+              473
             ],
             [
-              618,
-              466
+              606,
+              473
             ],
             [
-              853,
-              466
+              852,
+              473
             ]
           ],
           "sourceCanvas": {
-            "left": -79,
-            "top": -171,
-            "width": 173,
-            "height": 173
+            "left": -99,
+            "top": -153,
+            "width": 226,
+            "height": 177
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 71,
-              "top": 444,
-              "width": 167,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 70950,
-                "dx": 235,
-                "dy": 0
-              },
-              {
-                "error": 87822,
-                "dx": 470,
-                "dy": 0
-              },
-              {
-                "error": 87846.001,
-                "dx": 705,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 132.5,
-            "y": 270,
-            "radiusX": 43.5,
+            "x": 132,
+            "y": 271.5,
+            "radiusX": 43,
             "radiusY": 7
           },
           "footprint": {
@@ -1738,39 +1880,112 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              172
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
               "x": 91,
               "y": 258,
-              "width": 83,
-              "height": 12
+              "width": 82,
+              "height": 15
             },
             "contacts": [
               {
-                "x": 108,
+                "x": 100,
                 "y": 270,
                 "bounds": {
                   "x": 91,
                   "y": 258,
-                  "width": 34,
+                  "width": 18,
                   "height": 12
                 }
               },
               {
-                "x": 155.5,
-                "y": 270,
+                "x": 138.5,
+                "y": 273,
                 "bounds": {
-                  "x": 137,
+                  "x": 119,
                   "y": 258,
-                  "width": 37,
-                  "height": 12
+                  "width": 39,
+                  "height": 15
+                }
+              },
+              {
+                "x": 167,
+                "y": 273,
+                "bounds": {
+                  "x": 161,
+                  "y": 258,
+                  "width": 12,
+                  "height": 15
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 193,
+            "y": 287,
+            "radiusX": 20,
+            "radiusY": 5,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "sheep",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              191,
+              492
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 173,
+              "y": 266,
+              "width": 37,
+              "height": 23
+            },
+            "sourceMouthBounds": {
+              "x": 163.651,
+              "y": 467.554,
+              "width": 50.373,
+              "height": 31.313
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            172
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 260,
+              "height": 1254
+            },
+            {
+              "left": 260,
+              "top": 0,
+              "width": 250,
+              "height": 1254
+            },
+            {
+              "left": 510,
+              "top": 0,
+              "width": 254,
+              "height": 1254
+            },
+            {
+              "left": 764,
+              "top": 0,
+              "width": 276,
+              "height": 1254
+            }
+          ]
         },
         {
           "name": "mature",
@@ -1779,65 +1994,34 @@
           "maxHeight": 168,
           "sourceAnchors": [
             [
-              141,
-              721
+              116,
+              730
             ],
             [
-              376,
-              721
+              364,
+              730
             ],
             [
-              611,
-              721
+              610,
+              730
             ],
             [
-              847,
-              721
+              858,
+              730
             ]
           ],
           "sourceCanvas": {
-            "left": -92,
-            "top": -204,
-            "width": 213,
-            "height": 206
+            "left": -110,
+            "top": -196,
+            "width": 244,
+            "height": 220
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 51,
-              "top": 699,
-              "width": 208,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 59270.001,
-                "dx": 235,
-                "dy": 0
-              },
-              {
-                "error": 53154.001,
-                "dx": 470,
-                "dy": 0
-              },
-              {
-                "error": 84653,
-                "dx": 706,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 138,
-            "y": 271,
-            "radiusX": 59,
-            "radiusY": 10
+            "x": 131.5,
+            "y": 270.5,
+            "radiusX": 55.5,
+            "radiusY": 9
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1850,39 +2034,122 @@
               "height": 16
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              184
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 81,
+              "x": 78,
               "y": 258,
-              "width": 114,
-              "height": 13
+              "width": 107,
+              "height": 15
             },
             "contacts": [
               {
-                "x": 102,
-                "y": 271,
+                "x": 89,
+                "y": 269,
                 "bounds": {
-                  "x": 81,
+                  "x": 78,
                   "y": 258,
-                  "width": 42,
-                  "height": 13
+                  "width": 22,
+                  "height": 11
                 }
               },
               {
-                "x": 172.5,
-                "y": 271,
+                "x": 128,
+                "y": 273,
                 "bounds": {
-                  "x": 150,
+                  "x": 111,
                   "y": 258,
-                  "width": 45,
-                  "height": 13
+                  "width": 34,
+                  "height": 15
+                }
+              },
+              {
+                "x": 157,
+                "y": 268,
+                "bounds": {
+                  "x": 147,
+                  "y": 258,
+                  "width": 20,
+                  "height": 10
+                }
+              },
+              {
+                "x": 181,
+                "y": 269,
+                "bounds": {
+                  "x": 177,
+                  "y": 258,
+                  "width": 8,
+                  "height": 11
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 12,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 210,
+            "y": 284,
+            "radiusX": 24,
+            "radiusY": 6,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "sheep",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              210,
+              744
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 185,
+              "y": 266,
+              "width": 44,
+              "height": 20
+            },
+            "sourceMouthBounds": {
+              "x": 177.548,
+              "y": 724.762,
+              "width": 57.619,
+              "height": 26.19
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            184
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 260,
+              "height": 1254
+            },
+            {
+              "left": 260,
+              "top": 0,
+              "width": 250,
+              "height": 1254
+            },
+            {
+              "left": 510,
+              "top": 0,
+              "width": 254,
+              "height": 1254
+            },
+            {
+              "left": 764,
+              "top": 0,
+              "width": 276,
+              "height": 1254
+            }
+          ]
         }
       ],
       "productCell": {
@@ -1893,7 +2160,8 @@
           "top": 1059,
           "width": 158,
           "height": 130
-        }
+        },
+        "source": "raw/pixel-v4-sheep.png"
       },
       "productVisual": {
         "icon": "L08",
@@ -1925,65 +2193,34 @@
           "maxHeight": 104,
           "sourceAnchors": [
             [
-              153,
-              236
+              113,
+              218
             ],
             [
-              402,
-              236
+              369,
+              218
             ],
             [
-              651,
-              236
+              621,
+              218
             ],
             [
-              899,
-              236
+              875,
+              218
             ]
           ],
           "sourceCanvas": {
-            "left": -95,
-            "top": -156,
-            "width": 173,
-            "height": 158
+            "left": -73,
+            "top": -130,
+            "width": 180,
+            "height": 150
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 62,
-              "top": 214,
-              "width": 166,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 83930,
-                "dx": 249,
-                "dy": 0
-              },
-              {
-                "error": 69306.001,
-                "dx": 498,
-                "dy": 0
-              },
-              {
-                "error": 81390.002,
-                "dx": 746,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136.5,
-            "y": 268.5,
-            "radiusX": 28.5,
-            "radiusY": 5
+            "x": 146,
+            "y": 266.5,
+            "radiusX": 28,
+            "radiusY": 6
           },
           "footprint": {
             "referenceFrame": 0,
@@ -1996,39 +2233,86 @@
               "height": 14
             },
             "supportMaterial": "golden-feet",
+            "supportXRange": [
+              0,
+              170
+            ],
             "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
             "bounds": {
-              "x": 110,
+              "x": 120,
               "y": 259,
-              "width": 53,
+              "width": 52,
               "height": 10
             },
             "contacts": [
               {
-                "x": 122,
+                "x": 131,
                 "y": 269,
                 "bounds": {
-                  "x": 110,
+                  "x": 120,
                   "y": 259,
-                  "width": 24,
+                  "width": 22,
                   "height": 10
                 }
               },
               {
-                "x": 151,
-                "y": 268,
+                "x": 147,
+                "y": 267,
                 "bounds": {
-                  "x": 139,
+                  "x": 138,
                   "y": 259,
-                  "width": 24,
-                  "height": 9
+                  "width": 18,
+                  "height": 8
+                }
+              },
+              {
+                "x": 167.5,
+                "y": 264,
+                "bounds": {
+                  "x": 163,
+                  "y": 259,
+                  "width": 9,
+                  "height": 5
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "golden-feet"
+          "supportMaterial": "golden-feet",
+          "feeding": {
+            "x": 184,
+            "y": 278,
+            "radiusX": 12,
+            "radiusY": 4,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "muscovy",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              195,
+              227
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 171,
+              "y": 266,
+              "width": 23,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 172.4,
+              "y": 210.8,
+              "width": 41.4,
+              "height": 25.2
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            170
+          ]
         },
         {
           "name": "growing",
@@ -2037,64 +2321,33 @@
           "maxHeight": 145,
           "sourceAnchors": [
             [
-              155,
-              483
+              113,
+              475
             ],
             [
-              404,
-              483
+              367,
+              475
             ],
             [
-              652,
-              483
+              621,
+              475
             ],
             [
-              901,
-              483
+              875,
+              475
             ]
           ],
           "sourceCanvas": {
-            "left": -101,
-            "top": -183,
-            "width": 194,
-            "height": 185
+            "left": -99,
+            "top": -163,
+            "width": 222,
+            "height": 184
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 57,
-              "top": 461,
-              "width": 188,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 78524.001,
-                "dx": 249,
-                "dy": 0
-              },
-              {
-                "error": 60398.001,
-                "dx": 497,
-                "dy": 0
-              },
-              {
-                "error": 75204.001,
-                "dx": 746,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 136.5,
-            "y": 267.5,
-            "radiusX": 35.5,
+            "x": 132.5,
+            "y": 270.5,
+            "radiusX": 27.5,
             "radiusY": 6
           },
           "footprint": {
@@ -2108,39 +2361,76 @@
               "height": 14
             },
             "supportMaterial": "golden-feet",
+            "supportXRange": [
+              0,
+              181
+            ],
             "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
             "bounds": {
-              "x": 103,
+              "x": 107,
               "y": 259,
-              "width": 67,
-              "height": 10
+              "width": 51,
+              "height": 14
             },
             "contacts": [
               {
-                "x": 119.5,
-                "y": 269,
+                "x": 123.5,
+                "y": 273,
                 "bounds": {
-                  "x": 103,
+                  "x": 107,
                   "y": 259,
                   "width": 33,
-                  "height": 10
+                  "height": 14
                 }
               },
               {
-                "x": 155,
-                "y": 266,
+                "x": 145.5,
+                "y": 268,
                 "bounds": {
-                  "x": 140,
+                  "x": 133,
                   "y": 259,
-                  "width": 30,
-                  "height": 7
+                  "width": 25,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "golden-feet"
+          "supportMaterial": "golden-feet",
+          "feeding": {
+            "x": 199,
+            "y": 278,
+            "radiusX": 17,
+            "radiusY": 4,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "muscovy",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              207,
+              482
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 182,
+              "y": 266,
+              "width": 31,
+              "height": 14
+            },
+            "sourceMouthBounds": {
+              "x": 180.366,
+              "y": 468.876,
+              "width": 47.462,
+              "height": 21.434
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            181
+          ]
         },
         {
           "name": "mature",
@@ -2149,64 +2439,33 @@
           "maxHeight": 178,
           "sourceAnchors": [
             [
-              160,
-              750
+              113,
+              744
             ],
             [
-              409,
-              750
+              368,
+              744
             ],
             [
-              657,
-              750
+              623,
+              744
             ],
             [
-              907,
-              750
+              877,
+              744
             ]
           ],
           "sourceCanvas": {
-            "left": -124,
-            "top": -227,
-            "width": 238,
-            "height": 230
+            "left": -110,
+            "top": -182,
+            "width": 244,
+            "height": 207
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 38,
-              "top": 728,
-              "width": 234,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 90113.011,
-                "dx": 249,
-                "dy": 0
-              },
-              {
-                "error": 70101.002,
-                "dx": 497,
-                "dy": 0
-              },
-              {
-                "error": 86469.013,
-                "dx": 747,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 134.5,
-            "y": 268.5,
-            "radiusX": 42.5,
+            "x": 136.5,
+            "y": 267,
+            "radiusX": 36.5,
             "radiusY": 7
           },
           "footprint": {
@@ -2220,39 +2479,86 @@
               "height": 14
             },
             "supportMaterial": "golden-feet",
+            "supportXRange": [
+              0,
+              197
+            ],
             "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
             "bounds": {
-              "x": 94,
+              "x": 102,
               "y": 259,
-              "width": 81,
-              "height": 10
+              "width": 69,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 113,
-                "y": 269,
+                "x": 124,
+                "y": 271,
                 "bounds": {
-                  "x": 94,
+                  "x": 102,
                   "y": 259,
-                  "width": 38,
-                  "height": 10
+                  "width": 44,
+                  "height": 12
                 }
               },
               {
-                "x": 157,
-                "y": 268,
+                "x": 156,
+                "y": 266,
                 "bounds": {
-                  "x": 139,
+                  "x": 143,
                   "y": 259,
-                  "width": 36,
-                  "height": 9
+                  "width": 26,
+                  "height": 7
+                }
+              },
+              {
+                "x": 169,
+                "y": 263,
+                "bounds": {
+                  "x": 167,
+                  "y": 259,
+                  "width": 4,
+                  "height": 4
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 10,
-          "supportMaterial": "golden-feet"
+          "supportMaterial": "golden-feet",
+          "feeding": {
+            "x": 221,
+            "y": 280,
+            "radiusX": 22,
+            "radiusY": 5,
+            "kind": "grain"
+          },
+          "feedingSource": {
+            "source": "muscovy",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              225,
+              753
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 198,
+              "y": 266,
+              "width": 41,
+              "height": 16
+            },
+            "sourceMouthBounds": {
+              "x": 194.333,
+              "y": 738.578,
+              "width": 55.578,
+              "height": 21.689
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            197
+          ]
         }
       ],
       "productCell": {
@@ -2263,7 +2569,8 @@
           "top": 1068,
           "width": 206,
           "height": 136
-        }
+        },
+        "source": "raw/pixel-v4-muscovy.png"
       },
       "productVisual": {
         "icon": "L09",
@@ -2295,64 +2602,33 @@
           "maxHeight": 106,
           "sourceAnchors": [
             [
-              145,
-              246
+              111,
+              234
             ],
             [
-              391,
-              246
+              367,
+              234
             ],
             [
-              637,
-              246
+              622,
+              234
             ],
             [
-              882,
-              246
+              879,
+              234
             ]
           ],
           "sourceCanvas": {
-            "left": -98,
-            "top": -153,
-            "width": 187,
-            "height": 155
+            "left": -75,
+            "top": -118,
+            "width": 174,
+            "height": 134
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 49,
-              "top": 224,
-              "width": 183,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 129438.001,
-                "dx": 246,
-                "dy": 0
-              },
-              {
-                "error": 145679,
-                "dx": 492,
-                "dy": 0
-              },
-              {
-                "error": 106148.001,
-                "dx": 737,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 131.5,
-            "y": 267.5,
-            "radiusX": 38.5,
+            "x": 138.5,
+            "y": 272.5,
+            "radiusX": 35.5,
             "radiusY": 6
           },
           "footprint": {
@@ -2366,49 +2642,86 @@
               "height": 18
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              171
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 95,
+              "x": 105,
               "y": 256,
-              "width": 73,
-              "height": 14
+              "width": 67,
+              "height": 17
             },
             "contacts": [
               {
-                "x": 104,
-                "y": 270,
+                "x": 112.5,
+                "y": 272,
                 "bounds": {
-                  "x": 95,
+                  "x": 105,
                   "y": 256,
-                  "width": 18,
-                  "height": 14
+                  "width": 15,
+                  "height": 16
                 }
               },
               {
-                "x": 122,
-                "y": 265,
+                "x": 135,
+                "y": 273,
                 "bounds": {
-                  "x": 114,
+                  "x": 122,
                   "y": 256,
-                  "width": 16,
-                  "height": 9
+                  "width": 26,
+                  "height": 17
                 }
               },
               {
-                "x": 154,
-                "y": 270,
+                "x": 162.5,
+                "y": 272,
                 "bounds": {
-                  "x": 140,
+                  "x": 153,
                   "y": 256,
-                  "width": 28,
-                  "height": 14
+                  "width": 19,
+                  "height": 16
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 14,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 186,
+            "y": 281,
+            "radiusX": 14,
+            "radiusY": 4,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "cattle",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              182,
+              246
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 172,
+              "y": 266,
+              "width": 26,
+              "height": 18
+            },
+            "sourceMouthBounds": {
+              "x": 161.136,
+              "y": 228.102,
+              "width": 38.339,
+              "height": 26.542
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            171
+          ]
         },
         {
           "name": "growing",
@@ -2417,65 +2730,34 @@
           "maxHeight": 140,
           "sourceAnchors": [
             [
-              140,
-              493
+              109,
+              491
             ],
             [
-              386,
-              493
+              365,
+              491
             ],
             [
-              632,
-              493
+              620,
+              491
             ],
             [
-              880,
-              493
+              875,
+              491
             ]
           ],
           "sourceCanvas": {
-            "left": -108,
-            "top": -180,
-            "width": 221,
-            "height": 182
+            "left": -100,
+            "top": -149,
+            "width": 222,
+            "height": 174
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 35,
-              "top": 471,
-              "width": 215,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 132808.001,
-                "dx": 246,
-                "dy": 0
-              },
-              {
-                "error": 145666.001,
-                "dx": 492,
-                "dy": 0
-              },
-              {
-                "error": 142102.003,
-                "dx": 740,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 131,
-            "y": 268.5,
-            "radiusX": 54,
-            "radiusY": 9
+            "x": 130.5,
+            "y": 269,
+            "radiusX": 50.5,
+            "radiusY": 8
           },
           "footprint": {
             "referenceFrame": 0,
@@ -2488,49 +2770,106 @@
               "height": 18
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              178
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 79,
+              "x": 82,
               "y": 256,
-              "width": 104,
-              "height": 14
+              "width": 97,
+              "height": 17
             },
             "contacts": [
               {
-                "x": 90,
-                "y": 269,
+                "x": 91.5,
+                "y": 272,
                 "bounds": {
-                  "x": 79,
+                  "x": 82,
                   "y": 256,
-                  "width": 22,
-                  "height": 13
+                  "width": 19,
+                  "height": 16
                 }
               },
               {
-                "x": 112.5,
-                "y": 267,
+                "x": 112,
+                "y": 265,
                 "bounds": {
-                  "x": 102,
+                  "x": 104,
                   "y": 256,
-                  "width": 21,
-                  "height": 11
+                  "width": 16,
+                  "height": 9
+                }
+              },
+              {
+                "x": 138.5,
+                "y": 273,
+                "bounds": {
+                  "x": 129,
+                  "y": 256,
+                  "width": 19,
+                  "height": 17
                 }
               },
               {
                 "x": 163.5,
-                "y": 270,
+                "y": 269,
                 "bounds": {
-                  "x": 144,
+                  "x": 155,
                   "y": 256,
-                  "width": 39,
-                  "height": 14
+                  "width": 17,
+                  "height": 13
+                }
+              },
+              {
+                "x": 174.5,
+                "y": 269,
+                "bounds": {
+                  "x": 170,
+                  "y": 256,
+                  "width": 9,
+                  "height": 13
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 14,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 199,
+            "y": 284,
+            "radiusX": 20,
+            "radiusY": 5,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "cattle",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              190,
+              506
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 179,
+              "y": 266,
+              "width": 37,
+              "height": 21
+            },
+            "sourceMouthBounds": {
+              "x": 163.179,
+              "y": 485.714,
+              "width": 48.893,
+              "height": 27.75
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            178
+          ]
         },
         {
           "name": "mature",
@@ -2539,64 +2878,33 @@
           "maxHeight": 174,
           "sourceAnchors": [
             [
-              133,
-              725
+              107,
+              767
             ],
             [
-              380,
-              725
+              364,
+              767
             ],
             [
-              626,
-              725
+              619,
+              767
             ],
             [
-              874,
-              725
+              875,
+              767
             ]
           ],
           "sourceCanvas": {
-            "left": -115,
-            "top": -195,
-            "width": 249,
-            "height": 197
+            "left": -107,
+            "top": -186,
+            "width": 248,
+            "height": 212
           },
-          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
-          "footRegistration": {
-            "referenceFrame": 0,
-            "template": {
-              "left": 20,
-              "top": 703,
-              "width": 245,
-              "height": 22
-            },
-            "translations": [
-              {
-                "dx": 0,
-                "dy": 0,
-                "error": 0
-              },
-              {
-                "error": 123625.003,
-                "dx": 247,
-                "dy": 0
-              },
-              {
-                "error": 113699.003,
-                "dx": 493,
-                "dy": 0
-              },
-              {
-                "error": 168491.005,
-                "dx": 741,
-                "dy": 0
-              }
-            ]
-          },
+          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
           "grounding": {
-            "x": 133,
-            "y": 268,
-            "radiusX": 69,
+            "x": 134.5,
+            "y": 269,
+            "radiusX": 64.5,
             "radiusY": 11
           },
           "footprint": {
@@ -2610,59 +2918,106 @@
               "height": 18
             },
             "supportMaterial": "opaque-feet",
+            "supportXRange": [
+              0,
+              196
+            ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 66,
+              "x": 72,
               "y": 256,
-              "width": 134,
-              "height": 14
+              "width": 125,
+              "height": 18
             },
             "contacts": [
               {
-                "x": 78,
-                "y": 270,
+                "x": 83.5,
+                "y": 272,
                 "bounds": {
-                  "x": 66,
+                  "x": 72,
                   "y": 256,
-                  "width": 24,
-                  "height": 14
+                  "width": 23,
+                  "height": 16
                 }
               },
               {
-                "x": 108.5,
-                "y": 266,
+                "x": 108,
+                "y": 264,
                 "bounds": {
                   "x": 97,
                   "y": 256,
-                  "width": 23,
-                  "height": 10
+                  "width": 22,
+                  "height": 8
                 }
               },
               {
-                "x": 160,
-                "y": 270,
+                "x": 143.5,
+                "y": 274,
                 "bounds": {
-                  "x": 148,
+                  "x": 132,
                   "y": 256,
-                  "width": 24,
-                  "height": 14
+                  "width": 23,
+                  "height": 18
                 }
               },
               {
-                "x": 188,
+                "x": 172,
                 "y": 268,
                 "bounds": {
-                  "x": 176,
+                  "x": 162,
                   "y": 256,
-                  "width": 24,
+                  "width": 20,
                   "height": 12
+                }
+              },
+              {
+                "x": 193.5,
+                "y": 266,
+                "bounds": {
+                  "x": 190,
+                  "y": 256,
+                  "width": 7,
+                  "height": 10
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "supportBandHeight": 14,
-          "supportMaterial": "opaque-feet"
+          "supportMaterial": "opaque-feet",
+          "feeding": {
+            "x": 222,
+            "y": 283,
+            "radiusX": 24,
+            "radiusY": 6,
+            "kind": "hay"
+          },
+          "feedingSource": {
+            "source": "cattle",
+            "referenceFrame": 0,
+            "sourceMouth": [
+              210,
+              779
+            ],
+            "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
+            "mouthBounds": {
+              "x": 197,
+              "y": 266,
+              "width": 45,
+              "height": 19
+            },
+            "sourceMouthBounds": {
+              "x": 179.436,
+              "y": 762.089,
+              "width": 55.248,
+              "height": 23.327
+            },
+            "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
+          },
+          "supportXRange": [
+            0,
+            196
+          ]
         }
       ],
       "productCell": {
@@ -2673,7 +3028,8 @@
           "top": 1062,
           "width": 192,
           "height": 126
-        }
+        },
+        "source": "raw/pixel-v4-cattle.png"
       },
       "productVisual": {
         "icon": "L10",
@@ -2708,5 +3064,33 @@
     ],
     "boundsAlphaThreshold": 64,
     "historicalProductCellsConsumed": false
+  },
+  "animation": "feeding",
+  "historicalSources": {
+    "accessories": "raw/pixel-v4-accessories.png",
+    "pig": "raw/pixel-v4-pig-r2.png",
+    "rabbit": "raw/pixel-v4-rabbit.png",
+    "sheep": "raw/pixel-v4-sheep.png",
+    "muscovy": "raw/pixel-v4-muscovy.png",
+    "cattle": "raw/pixel-v4-cattle.png"
+  },
+  "choiceRegistration": "assets/livestock/choice-registration-v7.json",
+  "feedRegistration": "assets/livestock/feed-registration-v6.json",
+  "feedTexture": {
+    "path": "./art/livestock/feed.webp",
+    "size": [
+      128,
+      64
+    ],
+    "bounds": {
+      "x": 4,
+      "y": 4,
+      "width": 120,
+      "height": 56
+    },
+    "anchor": [
+      64,
+      60
+    ]
   }
 }

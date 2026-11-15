@@ -1,7 +1,6 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
-import { techDefinitions } from './advancement.js';
+import { techDefinitions, techLevelLimit } from './advancement.js';
 
-const techLevelLimit = 5;
 const coinGrant = 1_000_000_000_000n;
 
 export function grantDevelopmentTools(world) {

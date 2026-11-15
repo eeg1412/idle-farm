@@ -43,3 +43,31 @@ const layouts = {
 export function livestockLayout(id) {
   return layouts[livestockSizeById[id]];
 }
+// Feed coordinates stay in the same fixed animal frame as mouth registration.
+// Both the live scene and static fallback exporter consume this geometry.
+export function livestockFeedLayout(feeding, texture, baseAnimalScale) {
+  // Keep a readable ground-space pile before depth perspective is applied.
+  // Animal size still controls mouth position; it must not shrink this floor.
+  const visibleWidth = Math.max(feeding.radiusX * 2, 32 / baseAnimalScale);
+  const scale = visibleWidth / texture.bounds.width;
+  const visibleHeight = texture.bounds.height * scale;
+  const mouthDirection = Math.sign(feeding.x - 138) || 1;
+  // The mouth meets the rear of the pile; its lower front remains readable.
+  // Keep the registered mouth and animal feet fixed, and move feed + shadow.
+  const groundX = feeding.x + mouthDirection * visibleWidth * 0.2;
+  const groundY = feeding.y + visibleHeight * 0.55;
+  return {
+    x: groundX - texture.anchor[0] * scale,
+    y: groundY - texture.anchor[1] * scale,
+    width: texture.size[0] * scale,
+    height: texture.size[1] * scale,
+    scale,
+    shadow: {
+      x: groundX,
+      y: groundY + feeding.radiusY * 0.1,
+      radiusX: visibleWidth * 0.47,
+      radiusY: Math.max(feeding.radiusY * 0.82, visibleWidth * 0.07),
+      alpha: 0.2,
+    },
+  };
+}

@@ -1,0 +1,19 @@
+{
+  "version": 6,
+  "status": "Rejected by user: V4 portraits do not preserve current V5 animation identity. Historical only; replaced by choice-registration-v7.json.",
+  "purpose": "Independent head-up adult chooser portraits; never use a feeding animation frame as their source.",
+  "referenceLayout": "assets/livestock/layout-v4-before-feeding.json",
+  "alphaIsolation": { "threshold": 200 },
+  "species": {
+    "L01": { "source": "raw/pixel-v4-accessories.png", "stage": "adult", "frame": 0, "sourceCell": [0, 0], "rectangle": { "left": 39, "top": 56, "width": 209, "height": 176 } },
+    "L02": { "source": "raw/pixel-v4-accessories.png", "stage": "adult", "frame": 0, "sourceCell": [0, 1], "rectangle": { "left": 20, "top": 288, "width": 246, "height": 204 } },
+    "L03": { "source": "raw/pixel-v4-accessories.png", "stage": "adult", "frame": 0, "sourceCell": [0, 2], "rectangle": { "left": 33, "top": 539, "width": 220, "height": 188 } },
+    "L04": { "source": "raw/pixel-v4-accessories.png", "stage": "adult", "frame": 0, "sourceCell": [0, 3], "rectangle": { "left": 29, "top": 766, "width": 219, "height": 209 } },
+    "L05": { "source": "raw/pixel-v4-accessories.png", "stage": "adult", "frame": 0, "sourceCell": [0, 4], "rectangle": { "left": 28, "top": 1016, "width": 209, "height": 199 } },
+    "L06": { "source": "raw/pixel-v4-pig-r2.png", "stage": "mature", "frame": 0, "sourceCell": [0, 2], "rectangle": { "left": 42, "top": 536, "width": 231, "height": 181 } },
+    "L07": { "source": "raw/pixel-v4-rabbit.png", "stage": "mature", "frame": 0, "sourceCell": [0, 2], "rectangle": { "left": 32, "top": 508, "width": 219, "height": 221 } },
+    "L08": { "source": "raw/pixel-v4-sheep.png", "stage": "mature", "frame": 0, "sourceCell": [0, 2], "rectangle": { "left": 49, "top": 517, "width": 213, "height": 206 } },
+    "L09": { "source": "raw/pixel-v4-muscovy.png", "stage": "mature", "frame": 0, "sourceCell": [0, 2], "rectangle": { "left": 36, "top": 523, "width": 238, "height": 230 } },
+    "L10": { "source": "raw/pixel-v4-cattle.png", "stage": "mature", "frame": 0, "sourceCell": [0, 2], "rectangle": { "left": 18, "top": 530, "width": 249, "height": 197 } }
+  }
+}

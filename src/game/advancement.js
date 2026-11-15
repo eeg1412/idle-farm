@@ -1,34 +1,39 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 
-const levelLimit = 5;
+export const techLevelLimit = 50;
 const basis = 10000n;
+const discountPerLevel = 100;
+const appraisalPerLevel = 200;
+const workshopPerLevel = 200;
+const processingPerLevel = 50;
+const cyclePerLevel = 100;
 const cropReferences = ['C02', 'C04', 'C08', 'C11', 'C17', 'C22', 'C28', 'C35', 'C42', 'C50'];
 
 export const techDefinitions = [
-  { key: 'recipeDiscount', name: '配方笔记', source: '通用', description: '种子与配方的实物研发成本每级降低 10%' },
-  { key: 'qualityDiscount', name: '品质手册', source: '通用', description: '品质提升的实物成本每级降低 10%' },
-  { key: 'cropBuy', name: '土地议价', source: '农业', description: '农田购买价格每级降低 10%' },
-  { key: 'cropUpgrade', name: '田地改造', source: '农业', description: '农田升级价格每级降低 10%' },
-  { key: 'cropYield', name: '丰收栽培', source: '农业', description: '农田每批收成每级增加 1 件' },
-  { key: 'appraisal', name: '经营评估', source: '通用', description: '出售牧场时，基础研发点倍率每级增加 0.2' },
-  { key: 'workshopSpeed', name: '工坊提速', source: '通用', description: '工坊生产速率每级提高 20%' },
-  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限每级增加 2 小时' },
-  { key: 'livestockBuy', name: '畜牧场议价', source: '畜牧', description: '畜牧场购买价格每级降低 10%', item: 'L01' },
-  { key: 'livestockUpgrade', name: '畜牧场改造', source: '畜牧', description: '畜牧场升级价格每级降低 10%', item: 'L01' },
-  { key: 'livestockYield', name: '畜群培育', source: '畜牧', description: '畜牧场每批产出每级增加 1 件', item: 'L01' },
-  { key: 'livestockResearch', name: '畜牧研发手册', source: '畜牧', description: '牲畜与畜牧加工配方的实物研发成本每级降低 10%', item: 'L01' },
-  { key: 'livestockQuality', name: '畜牧品质手册', source: '畜牧', description: '畜牧原料与中间产物的实物品质成本每级降低 10%', item: 'L01' },
-  { key: 'livestockProcessing', name: '畜牧加工提速', source: '畜牧', description: '畜牧中间产物生产速率每级提高 5%', item: 'L01' },
-  { key: 'livestockCycle', name: '畜牧周期改良', source: '畜牧', description: '畜牧场生产速率每级提高 10%', item: 'L05', prerequisite: 'livestockYield' },
-  { key: 'livestockRefining', name: '畜牧精制专精', source: '畜牧', description: '含畜牧原料来源的商品精制速率每级提高 5%', item: 'PL01', prerequisite: 'livestockProcessing' },
-  { key: 'fishBuy', name: '鱼池议价', source: '水产', description: '鱼池购买价格每级降低 10%', item: 'F01' },
-  { key: 'fishUpgrade', name: '鱼池改造', source: '水产', description: '鱼池升级价格每级降低 10%', item: 'F01' },
-  { key: 'fishYield', name: '鱼群培育', source: '水产', description: '鱼池每批产出每级增加 1 件', item: 'F01' },
-  { key: 'fishResearch', name: '水产研发手册', source: '水产', description: '鱼类与水产加工配方的实物研发成本每级降低 10%', item: 'F01' },
-  { key: 'fishQuality', name: '水产品质手册', source: '水产', description: '水产原料与中间产物的实物品质成本每级降低 10%', item: 'F01' },
-  { key: 'fishProcessing', name: '水产加工提速', source: '水产', description: '水产中间产物生产速率每级提高 5%', item: 'F01' },
-  { key: 'fishCycle', name: '水产周期改良', source: '水产', description: '鱼池生产速率每级提高 10%', item: 'F05', prerequisite: 'fishYield' },
-  { key: 'fishRefining', name: '水产精制专精', source: '水产', description: '含水产原料来源的商品精制速率每级提高 5%', item: 'PF01', prerequisite: 'fishProcessing' },
+  { key: 'recipeDiscount', name: '配方笔记', source: '通用', description: '种子与配方的实物研发成本每级降低 1%' },
+  { key: 'qualityDiscount', name: '品质手册', source: '通用', description: '品质提升的实物成本每级降低 1%' },
+  { key: 'cropBuy', name: '土地议价', source: '农业', description: '农田购买价格每级降低 1%' },
+  { key: 'cropUpgrade', name: '田地改造', source: '农业', description: '农田升级价格每级降低 1%' },
+  { key: 'cropYield', name: '丰收栽培', source: '农业', description: '农田每批收成每级增加 2 件' },
+  { key: 'appraisal', name: '经营评估', source: '通用', description: '出售牧场时，基础研发点倍率每级增加 0.02' },
+  { key: 'workshopSpeed', name: '工坊提速', source: '通用', description: '工坊生产每级提速 2%' },
+  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限每级增加 12 分钟' },
+  { key: 'livestockBuy', name: '畜牧场议价', source: '畜牧', description: '畜牧场购买价格每级降低 1%', item: 'L01' },
+  { key: 'livestockUpgrade', name: '畜牧场改造', source: '畜牧', description: '畜牧场升级价格每级降低 1%', item: 'L01' },
+  { key: 'livestockYield', name: '畜群培育', source: '畜牧', description: '畜牧场每批产出每级增加 2 件', item: 'L01' },
+  { key: 'livestockResearch', name: '畜牧研发手册', source: '畜牧', description: '牲畜与畜牧加工配方的实物研发成本每级降低 1%', item: 'L01' },
+  { key: 'livestockQuality', name: '畜牧品质手册', source: '畜牧', description: '畜牧原料与中间产物的实物品质成本每级降低 1%', item: 'L01' },
+  { key: 'livestockProcessing', name: '畜牧加工提速', source: '畜牧', description: '畜牧中间产物生产每级提速 0.5%', item: 'L01' },
+  { key: 'livestockCycle', name: '畜牧周期改良', source: '畜牧', description: '畜牧场生产每级提速 1%', item: 'L05', prerequisite: 'livestockYield' },
+  { key: 'livestockRefining', name: '畜牧精制专精', source: '畜牧', description: '含畜牧原料来源的商品精制每级提速 0.5%', item: 'PL01', prerequisite: 'livestockProcessing' },
+  { key: 'fishBuy', name: '鱼池议价', source: '水产', description: '鱼池购买价格每级降低 1%', item: 'F01' },
+  { key: 'fishUpgrade', name: '鱼池改造', source: '水产', description: '鱼池升级价格每级降低 1%', item: 'F01' },
+  { key: 'fishYield', name: '鱼群培育', source: '水产', description: '鱼池每批产出每级增加 2 件', item: 'F01' },
+  { key: 'fishResearch', name: '水产研发手册', source: '水产', description: '鱼类与水产加工配方的实物研发成本每级降低 1%', item: 'F01' },
+  { key: 'fishQuality', name: '水产品质手册', source: '水产', description: '水产原料与中间产物的实物品质成本每级降低 1%', item: 'F01' },
+  { key: 'fishProcessing', name: '水产加工提速', source: '水产', description: '水产中间产物生产每级提速 0.5%', item: 'F01' },
+  { key: 'fishCycle', name: '水产周期改良', source: '水产', description: '鱼池生产每级提速 1%', item: 'F05', prerequisite: 'fishYield' },
+  { key: 'fishRefining', name: '水产精制专精', source: '水产', description: '含水产原料来源的商品精制每级提速 0.5%', item: 'PF01', prerequisite: 'fishProcessing' },
 ];
 
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
@@ -37,43 +42,45 @@ const qualityKeys = { L: 'livestockQuality', IL: 'livestockQuality', F: 'fishQua
 const researchKeys = { L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch' };
 const extraQualityInputs = { C: { I01: '1' }, L: { C01: '1' }, F: { I01: '1' } };
 const effectDefinitions = {
-  cropYield: ['每批额外产出', 0, 1, '件'],
-  livestockYield: ['每批额外产出', 0, 1, '件'],
-  fishYield: ['每批额外产出', 0, 1, '件'],
-  appraisal: ['经营评估倍率', 10, 2, '倍', 10],
-  delegation: ['离线结算上限', 2, 2, '小时'],
-  workshopSpeed: ['生产速率加成', 0, 20, '%'],
-  livestockProcessing: ['生产速率加成', 0, 5, '%'],
-  fishProcessing: ['生产速率加成', 0, 5, '%'],
-  livestockCycle: ['生产速率加成', 0, 10, '%'],
-  fishCycle: ['生产速率加成', 0, 10, '%'],
-  livestockRefining: ['生产速率加成', 0, 5, '%'],
-  fishRefining: ['生产速率加成', 0, 5, '%'],
+  cropYield: ['每批额外产出', 0, 2, '件'],
+  livestockYield: ['每批额外产出', 0, 2, '件'],
+  fishYield: ['每批额外产出', 0, 2, '件'],
+  appraisal: ['经营评估倍率', 10000, appraisalPerLevel, '倍', 10000],
+  delegation: ['离线结算上限', 120, 12, '分钟'],
+  workshopSpeed: ['生产提速', 0, workshopPerLevel, '%', 100],
+  livestockProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
+  fishProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
+  livestockCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
+  fishCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
+  livestockRefining: ['生产提速', 0, processingPerLevel, '%', 100],
+  fishRefining: ['生产提速', 0, processingPerLevel, '%', 100],
 };
 
 const techLevel = (world, key) => world.tech[key] ?? 0;
 const held = (world, id) => world.inventory[id] ?? 0n;
 const canPay = (world, coins, costs) => world.coins >= coins && costs.every(([id, amount]) => held(world, id) >= amount);
 
-export const discount = (world, key) => 1000 * techLevel(world, key);
+export const discount = (world, key) => discountPerLevel * techLevel(world, key);
 export const appraisalLevel = (world) => techLevel(world, 'appraisal');
-export const delegationHours = (world) => 2 + 2 * techLevel(world, 'delegation');
-export const facilityYieldBonus = (world, kind) => BigInt(techLevel(world, yieldKeys[kind]));
+export const appraisalMultiplierBasisPoints = (world) => 10000 + appraisalPerLevel * appraisalLevel(world);
+export const delegationMilliseconds = (world) => 7200000 + 720000 * techLevel(world, 'delegation');
+export const delegationHours = (world) => delegationMilliseconds(world) / 3600000;
+export const facilityYieldBonus = (world, kind) => 2n * BigInt(techLevel(world, yieldKeys[kind]));
 
 export function rate(world, id) {
   const item = catalog.items[id];
   if (!item || item.kind === 'C') return 10000;
-  if (item.kind === 'L') return 10000 + 1000 * techLevel(world, 'livestockCycle');
-  if (item.kind === 'F') return 10000 + 1000 * techLevel(world, 'fishCycle');
+  if (item.kind === 'L') return 10000 + cyclePerLevel * techLevel(world, 'livestockCycle');
+  if (item.kind === 'F') return 10000 + cyclePerLevel * techLevel(world, 'fishCycle');
 
-  const base = 10000 + 2000 * techLevel(world, 'workshopSpeed');
-  if (item.kind === 'IL') return base + 500 * techLevel(world, 'livestockProcessing');
-  if (item.kind === 'IF') return base + 500 * techLevel(world, 'fishProcessing');
+  const base = 10000 + workshopPerLevel * techLevel(world, 'workshopSpeed');
+  if (item.kind === 'IL') return base + processingPerLevel * techLevel(world, 'livestockProcessing');
+  if (item.kind === 'IF') return base + processingPerLevel * techLevel(world, 'fishProcessing');
   if (item.kind === 'I') return base;
 
   const livestock = item.sources.includes('畜牧') ? techLevel(world, 'livestockRefining') : 0;
   const fish = item.sources.includes('水产') ? techLevel(world, 'fishRefining') : 0;
-  return base + 500 * (livestock + fish);
+  return base + processingPerLevel * (livestock + fish);
 }
 
 function discounted(amount, reduction) {
@@ -195,17 +202,17 @@ export function techOffer(world, key) {
   const definition = techByKey[key];
   const level = techLevel(world, key);
   const requires = [];
-  if (definition.prerequisite && techLevel(world, definition.prerequisite) < levelLimit) {
-    requires.push(`${techByKey[definition.prerequisite].name} 5 级`);
+  if (definition.prerequisite && techLevel(world, definition.prerequisite) < techLevelLimit) {
+    requires.push(`${techByKey[definition.prerequisite].name} ${techLevelLimit} 级`);
   }
   if (definition.item && !world.unlocked.includes(definition.item)) {
     const item = catalog.items[definition.item];
     requires.push(`已研发${item.subject ?? item.name}`);
   }
-  const maxed = level >= levelLimit;
-  const cost = maxed ? 0n : BigInt(definition.prerequisite ? 4 : 1) << BigInt(level);
-  const [label, initial, step, unit, divisor = 1] = effectDefinitions[key] ?? ['费用减免', 0, 10, '%'];
-  const nextLevel = Math.min(levelLimit, level + 1);
+  const maxed = level >= techLevelLimit;
+  const cost = maxed ? 0n : BigInt(definition.prerequisite ? 4 : 1) << BigInt(Math.floor(level / 10));
+  const [label, initial, step, unit, divisor = 1] = effectDefinitions[key] ?? ['费用降低', 0, discountPerLevel, '%', 100];
+  const nextLevel = Math.min(techLevelLimit, level + 1);
   const effect = { label, unit, current: (initial + level * step) / divisor,
     next: (initial + nextLevel * step) / divisor };
   return { level, maxed, cost, eligible: !maxed && requires.length === 0,

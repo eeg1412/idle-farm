@@ -33,6 +33,10 @@ const drawnIcons = {
   'view-grid': { kind: 'grid' },
   'view-list': { kind: 'list' },
   close: { kind: 'close' },
+  ...Object.fromEntries(['left', 'right', 'up', 'down'].flatMap((direction) => [
+    ['chevron-' + direction, { kind: 'chevron', direction }],
+    ['arrow-' + direction, { kind: 'arrow', direction }],
+  ])),
 };
 const heroKeys = new Set(['fields', 'livestock', 'fish', 'workshop', 'warehouse', 'research',
   'tasks-banner', 'catalog-banner', 'sale-banner', 'settings-banner']);
@@ -133,6 +137,19 @@ function drawPixelIcon(parent, icon, x, y, width, height) {
         art.roundRect(cx - 9 * unit, cy + dy * unit, 4 * unit, 4 * unit, unit).fill(palette.ink);
         art.roundRect(cx - 2 * unit, cy + dy * unit, 11 * unit, 4 * unit, unit).fill(palette.ink);
       }
+    } else if (icon.kind === 'chevron' || icon.kind === 'arrow') {
+      const angle = { right: 0, down: Math.PI / 2, left: Math.PI, up: -Math.PI / 2 }[icon.direction];
+      const outline = icon.kind === 'chevron'
+        ? [-7, -8, -3, -11, 8, 0, -3, 11, -7, 8, 1, 0]
+        : [-10, -3, 1, -3, 1, -8, 10, 0, 1, 8, 1, 3, -10, 3];
+      const points = [];
+      for (let index = 0; index < outline.length; index += 2) {
+        const dx = outline[index] * unit;
+        const dy = outline[index + 1] * unit;
+        points.push(cx + dx * Math.cos(angle) - dy * Math.sin(angle),
+          cy + dx * Math.sin(angle) + dy * Math.cos(angle));
+      }
+      art.poly(points).fill(icon.color ?? palette.ink);
     }
     parent.addChild(art);
     return;
@@ -221,9 +238,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let blockTap = false;
   let feedbackLayer;
   let progressTiming;
+  let progressEpoch;
+  let lastProgressClock;
   let syncPlotVisibility;
   let plotSharedLoad;
   const progressBars = new Set();
+  const countdowns = new Set();
   const activePlots = new Set();
   const visiblePlotIds = new Set();
   const cropPlots = new Map();
@@ -238,11 +258,45 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const loadingImages = new Map();
   const frame = { width: 0, height: 0 };
 
-  const scale = () => clamp(world?.settings?.textScale ?? 1, 1, 2);
+  const scale = () => 1;
   function progressClock(now) {
-    const elapsed = progressTiming
-      ? clamp(now - progressTiming.anchor, 0, progressTiming.maxElapsed) : 0;
-    return world.clockMs + elapsed;
+    const elapsed = progressTiming ? Math.max(0, now - progressTiming.anchor) : 0;
+    const projected = world.clockMs + elapsed;
+    lastProgressClock = Math.max(lastProgressClock ?? projected, projected);
+    return lastProgressClock;
+  }
+
+  function currentBatch(source, fallback) {
+    if (!source) return fallback;
+    const collection = source.type === 'station' ? world?.stations : world?.facilities;
+    return collection?.[source.kind]?.[source.index]?.batch;
+  }
+
+  function bindCountdownText(label, readValue, align, readTone) {
+    if (!readValue) return;
+    const epoch = navigationEpoch;
+    let lastColor;
+    const update = (clock) => {
+      if (label.destroyed || epoch !== navigationEpoch) return false;
+      const next = number(readValue(clock));
+      if (label.text !== next) {
+        label.text = next;
+        align();
+      }
+      const color = readTone?.() === 'danger' ? palette.red : palette.ink;
+      if (color !== lastColor) { label.style.fill = color; lastColor = color; }
+      return true;
+    };
+    update(progressClock(performance.now()));
+    countdowns.add(update);
+  }
+
+  function updateBatchDisplays(now) {
+    const clock = progressClock(now);
+    for (const updates of [countdowns, progressBars]) {
+      for (const update of updates) if (!update(clock)) updates.delete(update);
+    }
+    return clock;
   }
 
   const requestRender = () => {
@@ -284,12 +338,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
     if (individual) {
       if (visual.stages?.length !== 4) return;
+      const retained = visual.harvestMode === 'retainedPlant';
+      if (retained && !visual.repeatBare) return;
       const plantLoad = Promise.all(visual.stages.map((stage) =>
         loadImage(path('./' + stage.path + '?game=1&v=4'))));
-      Promise.all([plotSharedLoad, plantLoad]).then(([shared, plants]) => {
+      const bareLoad = retained
+        ? loadImage(path('./' + visual.repeatBare.path + '?game=1&v=5')) : Promise.resolve(undefined);
+      Promise.all([plotSharedLoad, plantLoad, bareLoad]).then(([shared, plants, bare]) => {
         if (!shared || plants.some((texture, index) => !texture ||
             texture.width !== visual.stages[index].width || texture.height !== visual.stages[index].height)) return;
-        crop.textures = { shared, plants, visual };
+        if (retained && (!bare || bare.width !== visual.repeatBare.width || bare.height !== visual.repeatBare.height)) return;
+        crop.textures = { shared, plants, visual, bare };
         if (visiblePlotIds.has(id)) requestRender();
       });
       return;
@@ -313,23 +372,27 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function loadLivestockTextures(id) {
     if (!Object.hasOwn(livestockSpecies, id)) return;
     const species = livestockSpecies[id];
+    const feedTexture = species.feedTexture;
+    if (!feedTexture?.path || feedTexture.size?.length !== 2) return;
     const existing = livestockTextures.get(id);
     if (existing) return existing.textures;
     const entry = {};
     livestockTextures.set(id, entry);
     Promise.all([
       loadImage(path('./art/livestock/barn.webp?game=1&v=1')),
-      loadImage(path(`./art/livestock/animals/${id}.webp?game=1&v=1`)),
+      loadImage(path(`./art/livestock/animals/${id}.webp?game=1&v=3`)),
       loadImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
-    ]).then(([barn, atlas, product]) => {
+      loadImage(path(feedTexture.path + '?game=1&v=1')),
+    ]).then(([barn, atlas, product, feed]) => {
       const size = livestockFrameSize;
       const rows = species.stages;
-      if (!barn || !atlas || !product || barn.width !== size || barn.height !== size ||
+      if (!barn || !atlas || !product || !feed || barn.width !== size || barn.height !== size ||
           atlas.width !== size * livestockIdleFrames || atlas.height !== size * rows ||
-          product.width !== 96 || product.height !== 96) return;
+          product.width !== 96 || product.height !== 96 ||
+          feed.width !== feedTexture.size[0] || feed.height !== feedTexture.size[1]) return;
       const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: livestockIdleFrames }, (_, frame) =>
         new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
-      entry.textures = { barn, stages, product };
+      entry.textures = { barn, stages, product, feed };
       if (visiblePlotIds.has(id)) requestRender();
     });
   }
@@ -409,7 +472,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const scene = sceneKeys.has(id);
     if (!hero && !scene && !hasIcon(id)) return;
     const directory = hero || scene ? './art/' : uiIconKeys.has(id) ? './ui-icons/' : './wiki/icons/';
-    const url = path(directory + id + '.webp?game=1');
+    const livestockChoice = id.startsWith('livestock-') && data.items[id.slice(10)]?.kind === 'L';
+    const livestockScene = id.startsWith('scene-') && data.items[id.slice(6)]?.kind === 'L';
+    const version = livestockChoice ? '&v=4' : livestockScene ? '&v=3' : '';
+    const url = path(directory + id + '.webp?game=1' + version);
     const texture = textures.get(url);
     if (!texture) {
       if (hero || scene) panel(parent, x, y, w, h, 0xd8e5c7, null, 0);
@@ -449,6 +515,32 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     controls.push({ run, parent, x, y, width, height });
   }
 
+  function directionIcon(parent, direction, x, y, width, height, { arrow = false, color = palette.ink } = {}) {
+    drawPixelIcon(parent, { kind: arrow ? 'arrow' : 'chevron', direction, color }, x, y, width, height);
+  }
+
+  function transitionNode(parent, from, to, x, y, width,
+    { size = 16, color = palette.ink, arrowColor = color, align = 'right' } = {}) {
+    const layer = new Container();
+    layer.eventMode = 'none';
+    parent.addChild(layer);
+    const first = textNode(layer, from, 0, 0, width, { size, color, weight: '800', wrap: false });
+    const last = textNode(layer, to, 0, 0, width, { size, color, weight: '800', wrap: false });
+    const iconSize = Math.max(12, size);
+    const gap = 5;
+    const naturalWidth = first.width + last.width + iconSize + gap * 2;
+    const height = Math.max(first.height, last.height, iconSize);
+    first.y = (height - first.height) / 2;
+    last.position.set(first.width + gap * 2 + iconSize, (height - last.height) / 2);
+    directionIcon(layer, 'right', first.width + gap, (height - iconSize) / 2, iconSize, iconSize,
+      { arrow: true, color: arrowColor });
+    const fit = Math.min(1, Math.max(1, width) / naturalWidth);
+    layer.scale.set(fit);
+    layer.position.set(x + (align === 'center' ? (width - naturalWidth * fit) / 2 :
+      align === 'left' ? 0 : width - naturalWidth * fit), y);
+    return layer;
+  }
+
   function buttonAt(parent, x, y, width, height, label, fn, options = {}) {
     const disabled = !fn || options.disabled || waiting;
     const tone = options.tone ?? 'plain';
@@ -469,7 +561,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       panel(parent, x + 1.5, y + 1, width - 3, height - 5, { color: palette.cream, alpha: 0 },
         green ? null : 0xfff5db, 12);
     }
-    const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : undefined);
+    const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : label === '返回' || label === '上一页'
+      ? 'chevron-left' : label === '下一页' ? 'chevron-right' : undefined);
     if (iconOnly) {
       drawImage(parent, iconOnly, x + (width - 24) / 2, y + (height - 24) / 2, 24, 24);
       g.label = label;
@@ -480,12 +573,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       return;
     }
     const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
+    const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? 22 : 0;
     const baseSize = options.emphasis ? 23 : 18;
-    const size = Math.min(baseSize * scale(), (width - icon - 10) / Math.max(2, Array.from(String(label)).length));
-    const caption = textNode(parent, label, x + 4 + icon, y + 2, width - 8 - icon,
+    const size = Math.min(baseSize * scale(), (width - icon - trailing - 10) / Math.max(2, Array.from(String(label)).length));
+    const caption = textNode(parent, label, x + 4 + icon, y + 2, width - 8 - icon - trailing,
       { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink, weight: '750' });
     caption.y = y + (height - caption.height) / 2;
     if (icon) drawImage(parent, options.icon, Math.max(x + 5, caption.x - icon), y + (height - 18) / 2, 18, 18);
+    if (trailing) drawImage(parent, options.trailingIcon, x + width - trailing - 3, y + (height - 18) / 2, 18, 18);
     if (!disabled) hitAt(g, parent, x, y, width, height, fn);
   }
 
@@ -498,6 +593,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     info.ownerPage = current;
     info.navigationEpoch = navigationEpoch;
     info.pageContext = { ...captureContext(modal), linkedEntryParent: undefined };
+    if (info.onImportText || info.onImportFile) app.canvas.focus?.({ preventScroll: true });
     if (!modal && current === '研究' && linkedEntryParent) {
       info.parentPage = linkedEntryParent;
       linkedEntryParent = undefined;
@@ -748,9 +844,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (waiting) return { ok: false, message: '正在处理存档，请稍候。' };
     if (typeof saveManagement[name] !== 'function') return { ok: false, message: '当前无法执行这项存档操作。' };
     waiting = true;
-    redraw();
-    try { return await saveManagement[name](...args); }
-    finally { waiting = false; redraw(); }
+    try {
+      // Start native picker/clipboard work in the original input event before rebuilding the view.
+      const pending = saveManagement[name](...args);
+      redraw();
+      return await pending;
+    } finally {
+      waiting = false;
+      if (['captureImport', 'readClipboard', 'readImportFile', 'download', 'copyText'].includes(name)) {
+        app.canvas.focus?.({ preventScroll: true });
+      }
+      redraw();
+    }
   }
 
   function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
@@ -838,13 +943,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const ui = {
       w: world, local, width, height: availableHeight, refresh, back, action, float, toast,
       go: (page, settings) => go(page, settings, local.routeKey ? local : undefined),
+      isActive: () => local.routeKey ? modal === local && local.navigationEpoch === navigationEpoch : locals[current] === local,
       saveManagement, saveAction,
       dialog: setDialog, close: closeDialog,
       tree(options) {
         const treeHeight = Math.max(120, availableHeight - cursor - 5);
         mountResearchTree({
           ...options, parent, x, y: cursor, width, height: treeHeight,
-          drawImage, textNode, buttonAt, inkGraphics, requestRender, textScale: scale(),
+          drawImage, textNode, transitionNode, buttonAt, inkGraphics, requestRender, textScale: scale(),
           isWaiting: () => waiting || Boolean(modal),
           markGesture(active) {
             treeGesture = active;
@@ -854,10 +960,33 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         });
         cursor += treeHeight;
       },
-      heading(value, { aside, style, size = style === 'production' ? 27 : 22 } = {}) {
+      heading(value, { aside, asideNoWrap = false, style, size = style === 'production' ? 27 : 22 } = {}) {
         if (aside == null) {
           const t = textNode(parent, value, x, cursor + 2, width, { size: size * scale(), weight: '800' });
           cursor += t.height + 11;
+          return;
+        }
+        if (asideNoWrap) {
+          const preferredSize = (style === 'production' ? 18 : 16) * scale();
+          const minimumSize = Math.min(preferredSize, 12 * scale());
+          const info = textNode(parent, aside, x, cursor, Math.max(1, width - 13),
+            { size: preferredSize, weight: '800', wrap: false });
+          const maximumAsideWidth = Math.max(1, width * 0.56 - 13);
+          const beside = width > 160 && info.width * minimumSize / preferredSize <= maximumAsideWidth;
+          const available = beside ? maximumAsideWidth : Math.max(1, width - 13);
+          if (info.width > available) {
+            info.style.fontSize = preferredSize * available / info.width;
+            info.style.lineHeight = Math.ceil(info.style.fontSize * 1.36);
+          }
+          const title = textNode(parent, value, x, cursor + 2,
+            beside ? Math.max(1, width - info.width - 25) : width,
+            { size: size * scale(), weight: '800' });
+          info.position.set(x + width - info.width - 7,
+            beside ? title.y + Math.max(0, (title.height - info.height) / 2) : title.y + title.height + 7);
+          const badge = panel(parent, info.x - 6, info.y - 2, info.width + 13, info.height + 4,
+            palette.pale, null, 13);
+          parent.setChildIndex(badge, parent.getChildIndex(info));
+          cursor = Math.max(title.y + title.height, info.y + info.height + 2) + 8;
           return;
         }
         const room = scale() <= 1.45 && width > 160 ? Math.min(105, Math.floor(width * 0.39)) : 0;
@@ -906,23 +1035,33 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (icon && !options.valueIcon) drawImage(parent, options.icon, x, cursor + 1, icon - 3, icon - 3);
         if (options.pill) panel(parent, x, cursor, width, 33, palette.pale, null, 9);
         const size = (compactRow ? 16 : 15) * scale();
-        const valueStr = number(value);
+        if (options.valueAtClock) value = options.valueAtClock(progressClock(performance.now()));
+        const transition = value && typeof value === 'object' && value.from != null && value.to != null ? value :
+          options.from != null && options.to != null ? { from: options.from, to: options.to } : undefined;
+        const valueStr = transition ? number(transition.from) + ' ' + number(transition.to) : number(value);
         if ((options.noWrap || label === '距收获') && value != null) {
           const nameX = x + icon + (options.pill ? 6 : 0);
           const room = Math.max(1, x + width - nameX - 2);
           const name = textNode(parent, label, nameX, start, room,
             { size, weight: '750', wrap: false });
           const amount = textNode(parent, valueStr, nameX, start, room,
-            { size, weight: '800', wrap: false });
+            { size, weight: '800', wrap: false, color: options.tone === 'danger' ? palette.red : palette.ink });
           // Reserve the longest ordinary minute display so ticking seconds never reflows the row.
           const measure = textNode(parent, '999 分 59 秒', 0, 0, room, { size, wrap: false });
-          const fit = Math.min(1, room / (name.width + Math.max(amount.width, measure.width) + 6));
+          const nameWidth = name.width;
+          const baselineWidth = measure.width;
           measure.destroy();
-          name.scale.set(fit);
-          amount.scale.set(fit);
           const height = Math.max(32, Math.ceil(size * 1.36) + 4, icon);
-          name.y = start + (height - name.height) / 2;
-          amount.position.set(x + width - amount.width, start + (height - amount.height) / 2);
+          const align = () => {
+            amount.scale.set(1);
+            const fit = Math.min(1, room / (nameWidth + Math.max(amount.width, baselineWidth) + 6));
+            name.scale.set(fit);
+            amount.scale.set(fit);
+            name.y = start + (height - name.height) / 2;
+            amount.position.set(x + width - amount.width, start + (height - amount.height) / 2);
+          };
+          align();
+          bindCountdownText(amount, options.valueAtClock, align, options.toneAtClock);
           cursor += height + (compactRow ? 3 : rowGap);
           return;
         }
@@ -934,27 +1073,23 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const amountSize = (metric || comparison ? 20 : compactRow ? 17 : 15) * scale();
         const sameLine = value != null && scale() <= 1.45 && valueStr.length * amountSize * 0.55 <= width - aWidth;
         let b;
-        if (value != null) b = textNode(parent, valueStr + (options.onClick ? '  ›' : ''),
-          sameLine ? x + aWidth : x, sameLine ? cursor : cursor + a.height + 2,
-          (sameLine ? width - aWidth : width) - (options.valueIcon ? icon : 0), { size: amountSize, align: 'right', weight: '800',
-            color: options.tone === 'danger' ? palette.red : palette.ink });
-        if (icon && options.valueIcon) drawImage(parent, options.icon, x + width - icon, b?.y ?? cursor, icon - 3, icon - 3);
-        if (value == null && options.onClick) textNode(parent, '›', x + width - 18, cursor + 1, 18,
-          { size: amountSize, align: 'right', weight: '800' });
-        if (b && comparison && options.from != null && options.to != null && sameLine) {
-          parent.removeChild(b);
-          b.destroy();
-          const left = x + aWidth;
-          const room = (width - aWidth) / 3;
-          const middle = textNode(parent, '➜', left + room, cursor, room,
-            { size: amountSize, align: 'center', color: 0xce8918, weight: '800' });
-          const from = textNode(parent, options.from, left, cursor, room,
-            { size: amountSize, align: 'center', weight: '800' });
-          const to = textNode(parent, options.to, left + room * 2, cursor, room,
-            { size: amountSize, align: 'right', weight: '800' });
-          b = [middle, from, to].reduce((tallest, entry) => entry.height > tallest.height ? entry : tallest);
+        const valueLeft = sameLine ? x + aWidth : x;
+        const valueTop = sameLine ? cursor : cursor + a.height + 2;
+        const valueWidth = Math.max(1, (sameLine ? width - aWidth : width) -
+          (options.valueIcon ? icon : 0) - (options.onClick ? 20 : 0));
+        if (value != null) b = transition
+          ? transitionNode(parent, transition.from, transition.to, valueLeft, valueTop, valueWidth,
+            { size: amountSize, color: options.tone === 'danger' ? palette.red : palette.ink,
+              arrowColor: comparison ? 0xce8918 : options.tone === 'danger' ? palette.red : palette.ink })
+          : textNode(parent, valueStr, valueLeft, valueTop, valueWidth,
+            { size: amountSize, align: 'right', weight: '800', color: options.tone === 'danger' ? palette.red : palette.ink });
+        if (icon && options.valueIcon) drawImage(parent, options.icon, x + width - icon - (options.onClick ? 20 : 0),
+          b?.y ?? cursor, icon - 3, icon - 3);
+        if (options.onClick) {
+          const markerY = b ? b.y + (b.height - 16) / 2 : cursor + 3;
+          directionIcon(parent, 'right', x + width - 17, markerY, 16, 16);
         }
-        const height = Math.max(compactRow ? 32 : 0, options.onClick ? 44 : 0,
+        const height = Math.max(compactRow ? 32 : 0, options.onClick ? 48 : 0,
           (b ? b.y + b.height : start) - start + 2, a.height + 4, icon);
         if (options.divider || metric || comparison) parent.addChild(
           inkGraphics().rect(x, start + height, width, 1).fill({ color: palette.line, alpha: 0.7 }));
@@ -1029,13 +1164,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const gap = 6;
         let left = x;
         let height = 0;
-        for (const { label, tone, minCharacters = 0 } of entries) {
+        for (const { label, from, to, tone, minCharacters = 0 } of entries) {
           const size = (style === 'production' ? 15 : 13) * scale();
-          const w = Math.min(width, Math.ceil(Math.max(minCharacters, Array.from(String(label)).length) * size) + 16);
+          const transition = from != null && to != null;
+          const summary = transition ? number(from) + ' 至 ' + number(to) : label;
+          const w = Math.min(width, Math.ceil(Math.max(minCharacters, Array.from(String(summary)).length) * size) + 16);
           if (left + w > x + width) { cursor += height + gap; left = x; height = 0; }
-          const caption = textNode(parent, label, left + 5, cursor + 3, w - 10,
-            { size, color: tone === 'blocked' ? 0xffffff : tone === 'danger' ? palette.red :
-              tone === 'green' ? palette.cream : palette.ink, align: 'center' });
+          const color = tone === 'blocked' ? 0xffffff : tone === 'danger' ? palette.red :
+            tone === 'green' ? palette.cream : palette.ink;
+          const caption = transition
+            ? transitionNode(parent, from, to, left + 5, cursor + 3, w - 10, { size, color, align: 'center' })
+            : textNode(parent, label, left + 5, cursor + 3, w - 10, { size, color, align: 'center' });
           const h = caption.height + 6;
           const bg = panel(parent, left, cursor, w, h,
             tone === 'blocked' ? palette.red : tone === 'gold' ? palette.gold :
@@ -1211,25 +1350,42 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           { size: 17 * scale(), weight: '750' });
         cursor += t.height + rowGap;
       },
-      batchProgress(batch) {
+      countdown(label, source, { format, inactiveText = '暂停', inactiveTone = 'plain', ...options } = {}) {
+        const target = { ...source };
+        const readValue = (clock) => {
+          const batch = currentBatch(target);
+          if (!batch) return inactiveText;
+          const remaining = batch.end - clock;
+          return format ? format(remaining) : Math.max(0, Math.ceil(remaining / 1000)) + ' 秒';
+        };
+        ui.row(label, undefined, {
+          ...options, noWrap: true, valueAtClock: readValue,
+          toneAtClock: () => currentBatch(target) ? options.tone ?? 'plain' : inactiveTone,
+        });
+      },
+      batchProgress(batch, source) {
         const top = cursor;
         const track = panel(parent, x, top, width, 8, palette.line, null, 4);
         track.label = 'batch-progress-track';
         cursor += 8 + rowGap;
-        if (!batch || batch.end <= batch.start) return;
-        const { start, end } = batch;
+        if (!source && (!batch || batch.end <= batch.start)) return;
+        const target = source ? { ...source } : undefined;
+        const epoch = navigationEpoch;
         const fill = inkGraphics();
         fill.label = 'batch-progress-fill';
         parent.addChild(fill);
-        let previous = 0;
+        let previous = -1;
         const update = (clock) => {
-          const filled = width * clamp((clock - start) / (end - start), 0, 1);
+          if (fill.destroyed || epoch !== navigationEpoch) return false;
+          const active = currentBatch(target, batch);
+          const filled = active && active.end > active.start
+            ? width * clamp((clock - active.start) / (active.end - active.start), 0, 1) : 0;
           if (filled !== previous) {
             fill.clear();
             if (filled > 0) fill.roundRect(x, top, filled, 8, Math.min(filled / 2, 4)).fill(palette.leaf);
             previous = filled;
           }
-          return filled < width;
+          return true;
         };
         if (update(progressClock(performance.now()))) progressBars.add(update);
       },
@@ -1324,9 +1480,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const shadow = panel(layer, x, cursor + 3, width, h, { color: 0x886643, alpha: 0.10 }, null, radius);
         layer.setChildIndex(shadow, 0);
         if (onClick) {
-          const chevron = textNode(layer, '›', x + width - padding - 16, cursor, 16,
-            { size: 26, weight: '800', align: 'center', color: palette.green });
-          chevron.y = cursor + (h - chevron.height) / 2;
+          directionIcon(layer, 'right', x + width - padding - 18, cursor + (h - 22) / 2, 18, 22,
+            { color: palette.green });
           if (!waiting) hitAt(g, layer, x, cursor, width, h, onClick);
         }
         cursor += h + gap;
@@ -1412,7 +1567,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
       },
       indexRows(items, onSelect) {
-        const height = Math.max(45, Math.ceil(28 * 1.36 * scale() + 7));
+        const height = Math.max(48, Math.ceil(28 * 1.36 * scale() + 7));
         scrollChoices(items, onSelect, 1, height, (layer, { icon, label, status }, left, top, span) => {
           panel(layer, left, top, span, height, palette.card, palette.line, 9);
           if (icon) drawImage(layer, icon, left + 7, top + 6, 32, height - 12);
@@ -1421,8 +1576,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (title.width > span - 66) title.style.fontSize *= (span - 66) / title.width;
           textNode(layer, status, left + 47, top + height - 5 - Math.ceil(13 * scale() * 1.36), span - 66,
             { size: 13 * scale(), color: palette.muted });
-          textNode(layer, '›', left + span - 18, top + (height - 25) / 2, 12,
-            { size: 17, color: palette.green });
+          directionIcon(layer, 'right', left + span - 20, top + (height - 18) / 2, 15, 18,
+            { color: palette.green });
         });
       },
       choiceGrid(items, onSelect, { iconsOnly = false } = {}) {
@@ -1595,7 +1750,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const previous = livestockBatches.get('L:' + index);
           plot.animation = mountLivestockAnimation(plot.art, plotTextures, plot.box, batch,
             previous?.animationStart ?? batch.start, previous?.previousHarvestAt);
-        } else plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart);
+        } else plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart,
+          world.facilities.C[index]?.planting);
         plot.animation.update(animationFrame);
         plot.fallback.visible = false;
         activePlots.add(plot);
@@ -1741,8 +1897,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
 
     if (!tabs.includes(current) || pageParent) {
-      const backWidth = 68;
-      buttonAt(parent, x, y + 8, backWidth, 43, '‹ 返回', back);
+      const backWidth = 48;
+      buttonAt(parent, x, y + 8, backWidth, 43, '返回', back, { iconOnly: 'chevron-left' });
       const titleRoom = Math.max(1, w - (backWidth + 7) * 2);
       const titleX = x + (w - titleRoom) / 2;
       const title = textNode(parent, current, titleX, y, titleRoom, {
@@ -1844,6 +2000,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     root.hitArea = new Rectangle(0, 0, frame.width, frame.height);
     clip.clear().rect(x, y, width, height).fill(0xffffff);
     progressBars.clear();
+    countdowns.clear();
     for (const plot of activePlots) unmountPlot(plot);
     syncPlotVisibility = undefined;
     visiblePlotIds.clear();
@@ -2018,15 +2175,28 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     endPointer(undefined, true);
     if (needsRender) requestRender();
   });
+  let scrollWheelEvent;
   root.on('wheel', (event) => {
     if (!scrollTarget) return;
     const p = root.toLocal(event.global);
     if (p.x < scrollTarget.x || p.x > scrollTarget.right ||
         p.y < scrollTarget.y || p.y > scrollTarget.y + scrollTarget.height) return;
-    event.preventDefault?.();
     coast = null;
     const unit = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? scrollTarget.height : 1;
     changeScroll(scrollTarget.state.scroll + event.deltaY * unit / layout.scale);
+    scrollWheelEvent = event.nativeEvent;
+  });
+  // Pixi handles wheel in a passive capture listener; cancel only the event it consumed.
+  function preventScrollWheel(event) {
+    if (event !== scrollWheelEvent) return;
+    scrollWheelEvent = undefined;
+    event.preventDefault();
+  }
+  const wheelCanvas = app.canvas;
+  wheelCanvas.addEventListener('wheel', preventScrollWheel, { passive: false });
+  root.on('destroyed', () => {
+    wheelCanvas.removeEventListener('wheel', preventScrollWheel);
+    scrollWheelEvent = undefined;
   });
 
   app.canvas.addEventListener('keydown', (event) => {
@@ -2060,11 +2230,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (text) Promise.resolve(modal.onImportText(text)).catch(() => toast('无法读取导入内容。'));
   });
   app.canvas.addEventListener('dragover', (event) => {
-    if (modal?.onImportText) event.preventDefault();
+    if (modal?.onImportText || modal?.onImportFile) event.preventDefault();
   });
   app.canvas.addEventListener('drop', async (event) => {
     const shown = modal;
-    if (!shown?.onImportText) return;
+    if (!shown?.onImportText && !shown?.onImportFile) return;
     event.preventDefault();
     if (waiting) return;
     const files = event.dataTransfer?.files;
@@ -2073,20 +2243,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       return;
     }
     try {
-      const text = await files[0].text();
-      if (modal === shown && !waiting) await shown.onImportText(text);
-    } catch { toast('无法读取存档文件。'); }
+      if (shown.onImportFile) await shown.onImportFile(files[0]);
+      else {
+        const text = typeof saveManagement.readImportFile === 'function'
+          ? await saveAction('readImportFile', files[0]) : await files[0].text();
+        if (modal === shown && !waiting) await shown.onImportText(text);
+      }
+    } catch (error) { toast(error?.userMessage || '无法读取存档文件。'); }
   });
   document.addEventListener?.('visibilitychange', () => syncPlotVisibility?.());
   app.ticker.add(() => {
     if (notices || floating) drawFeedback();
     const now = performance.now();
-    if (progressTiming && progressBars.size && world && !status?.busy) {
-      const clock = progressClock(now);
-      for (const update of progressBars) {
-        if (!update(clock)) progressBars.delete(update);
-      }
-    }
+    const clock = world && !status?.busy && !document.hidden ? updateBatchDisplays(now) : undefined;
     if (coast) {
       if (scrollTarget?.state !== coast.state) coast = null;
       else {
@@ -2100,7 +2269,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     if (activePlots.size && world &&
         !document.hidden && !modal && !pendingModal && !status?.busy) {
-      const animationFrame = { clock: progressClock(now), now };
+      const animationFrame = { clock: clock ?? progressClock(now), now };
       for (const plot of activePlots) plot.animation.update(animationFrame);
     }
     updateScrollThumb(now);
@@ -2139,6 +2308,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     for (const plot of activePlots) unmountPlot(plot);
     visiblePlotIds.clear();
     progressTiming = undefined;
+    progressEpoch = undefined;
+    lastProgressClock = undefined;
+    progressBars.clear();
+    countdowns.clear();
     coast = null;
     drag = null;
     sliderDrag = null;
@@ -2157,10 +2330,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     redraw();
   }
 
+  function isImportingSave() {
+    const pending = [modal, pendingModal];
+    const visited = new Set();
+    while (pending.length) {
+      const dialog = pending.pop();
+      if (!dialog || visited.has(dialog) || dialog.navigationEpoch !== navigationEpoch) continue;
+      visited.add(dialog);
+      if (dialog.flow === 'save-import' || dialog.onImportText || dialog.onImportFile) return true;
+      pending.push(dialog.parentDialog);
+    }
+    return false;
+  }
+
   return {
-    go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize, resetSession,
-    pauseProgress() { progressTiming = undefined; },
+    go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize, resetSession, isImportingSave,
+    pauseProgress() {
+      if (world && progressTiming) progressClock(performance.now());
+      progressTiming = undefined;
+    },
     render(nextLayout, nextWorld, nextStatus, nextProgressTiming) {
+      if (nextProgressTiming?.epoch !== undefined && nextProgressTiming.epoch !== progressEpoch) {
+        progressEpoch = nextProgressTiming.epoch;
+        lastProgressClock = undefined;
+      }
       if (nextWorld?.completedRuns !== world?.completedRuns || nextWorld?.clockMs < world?.clockMs) {
         shortPlotStarts.clear();
         livestockBatches.clear();
@@ -2179,6 +2372,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       status = nextStatus;
       progressTiming = nextProgressTiming;
       resize(nextLayout);
+      if (world && !status?.busy && !document.hidden) updateBatchDisplays(performance.now());
     },
   };
 }

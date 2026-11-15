@@ -1,5 +1,5 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
-import { appraisalLevel, delegationHours, discount, facilityYieldBonus, rate, unitPrice } from './advancement.js';
+import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBonus, rate, unitPrice } from './advancement.js';
 
 export { catalog, unitPrice };
 
@@ -99,6 +99,12 @@ function startProduction(world, stations, onStart) {
       if (facility.batch || !facility.recipe) continue;
       const count = facilityOutput(world, kind, facility.recipe, BigInt(facility.level));
       facility.batch = makeBatch(world, facility.recipe, count);
+      if (kind === 'C' && (!facility.planting || facility.planting.id !== facility.batch.id)) {
+        facility.planting = {
+          id: facility.batch.id, start: facility.batch.start,
+          duration: facility.batch.end - facility.batch.start,
+        };
+      }
       onStart?.(facility);
     }
   }
@@ -185,7 +191,7 @@ export function updateWorldWallTime(world, now) {
   if (world.completedRuns > 0 && world.firstCompletedRunAtMs === null) {
     world.firstCompletedRunAtMs = world.wallAnchorMs;
   }
-  const elapsed = Math.max(0, Math.min(delegationHours(world) * 3600000, now - world.wallAnchorMs));
+  const elapsed = Math.max(0, Math.min(delegationMilliseconds(world), now - world.wallAnchorMs));
   advanceWorld(world, world.clockMs + elapsed);
   world.wallAnchorMs = Math.max(world.wallAnchorMs, now);
   return elapsed;
@@ -268,8 +274,17 @@ export function assignFacility(world, kind, index, id) {
   if (!Object.hasOwn(facilityTypes, kind) || !Number.isInteger(index)) return false;
   const facility = world.facilities[kind][index];
   if (!facility || catalog.items[id]?.kind !== kind || !world.unlocked.includes(id)) return false;
+  const changed = facility.recipe !== id;
   if (facility.batch?.id !== id) facility.batch = null;
   facility.recipe = id;
+  if (kind === 'C') {
+    if (changed) {
+      facility.planting = { id, start: world.clockMs, duration: productionDurationMs(world, id) };
+    } else if (!facility.planting) {
+      // A pre-session plot already assigned this crop has no provable first planting date.
+      facility.planting = { id, start: null, duration: null };
+    }
+  }
   settleProduction(world);
   return true;
 }
@@ -363,20 +378,20 @@ export function sell(world, id, percent, expectedQuote) {
 
 export function farmSaleOffer(world) {
   const productionValue = world.productionValue;
-  const multiplierTenths = 10 + 2 * appraisalLevel(world);
+  const multiplierBasisPoints = appraisalMultiplierBasisPoints(world);
   const base = BigInt((1n + productionValue / rewardThreshold).toString(2).length - 1);
   return {
-    completedRuns: world.completedRuns, productionValue, multiplierTenths,
+    completedRuns: world.completedRuns, productionValue, multiplierBasisPoints,
     stationCount: world.stations.I.length + world.stations.P.length,
     plotCount: world.facilities.C.length, livestockCount: world.facilities.L.length,
     pondCount: world.facilities.F.length,
-    reward: base * BigInt(multiplierTenths) / 10n,
+    reward: base * BigInt(multiplierBasisPoints) / 10000n,
   };
 }
 
 export function sellFarm(world, expectedOffer) {
   const actual = farmSaleOffer(world);
-  const check = ['completedRuns', 'multiplierTenths', 'reward', 'stationCount', 'plotCount', 'livestockCount', 'pondCount'];
+  const check = ['completedRuns', 'multiplierBasisPoints', 'reward', 'stationCount', 'plotCount', 'livestockCount', 'pondCount'];
   if (!expectedOffer || check.some((key) => actual[key] !== expectedOffer[key])) return false;
   world.researchPoints += actual.reward;
   world.completedRuns += 1;
@@ -387,10 +402,7 @@ export function sellFarm(world, expectedOffer) {
   world.inventory = {};
   world.reserves = {};
   world.facilities = startingFacilities('C01');
-  orderedStations(world);
-  world.stations = Object.fromEntries(Object.entries(world.stations).map(([kind, stations]) => [
-    kind, stations.map((station) => emptyStation(station.order)),
-  ]));
+  world.stations = { I: [emptyStation(0)], P: [emptyStation(1)] };
   settleProduction(world);
   return true;
 }

@@ -103,9 +103,43 @@ function drawWater(layer, particles, time) {
   }
 }
 
-function mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart) {
-  const { shared, plants, visual } = textures;
+function smoothstep(progress) {
+  const bounded = Math.max(0, Math.min(1, progress));
+  return bounded * bounded * (3 - 2 * bounded);
+}
+
+export function samplePlotAnimation({ batch, clock, animationStart = batch.start, plantingSession, harvestMode }) {
   const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
+  if (harvestMode === 'retainedPlant') {
+    const knownFirstPlanting = plantingSession?.id === batch.id && Number.isFinite(plantingSession.start)
+      && Number.isFinite(plantingSession.duration) && plantingSession.duration > 0;
+    const firstDuration = knownFirstPlanting ? Math.max(plantingSession.duration, minPlotAnimationMs) : 0;
+    const firstElapsed = knownFirstPlanting ? Math.max(0, clock - plantingSession.start) : Infinity;
+    if (firstElapsed >= firstDuration) {
+      // Unknown old sessions are already established plants. They never invent
+      // a historical sowing time or replay seedling growth after loading.
+      const repeatStart = knownFirstPlanting ? plantingSession.start + firstDuration : animationStart;
+      const phase = Math.max(0, clock - repeatStart) % duration;
+      const appears = smoothstep((phase - duration / 2) / harvestFadeMs);
+      const disappears = smoothstep((phase - (duration - harvestGapMs - harvestFadeMs)) / harvestFadeMs);
+      return { stage: 3, wholeAlpha: 1, matureAlpha: appears * (1 - disappears), bareVisible: true, repeated: true };
+    }
+    const stage = Math.floor(firstElapsed * 4 / firstDuration);
+    const remaining = firstDuration - firstElapsed;
+    const harvestAlpha = 1 - smoothstep(1 - (remaining - harvestGapMs) / harvestFadeMs);
+    return { stage, wholeAlpha: 1, matureAlpha: stage === 3 ? harvestAlpha : 1, bareVisible: stage === 3, repeated: false };
+  }
+  const phase = Math.max(0, clock - animationStart) % duration;
+  const stage = Math.floor(phase * 4 / duration);
+  const remaining = duration - phase;
+  return {
+    stage, wholeAlpha: stage === 3 ? 1 - smoothstep(1 - (remaining - harvestGapMs) / harvestFadeMs) : 1,
+    matureAlpha: 1, bareVisible: false, repeated: false,
+  };
+}
+
+function mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart, plantingSession) {
+  const { shared, plants, visual, bare } = textures;
   const container = new Container();
   container.label = 'plot-animation';
   container.eventMode = 'none';
@@ -143,6 +177,7 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
   scene.addChild(frontPlants);
 
   for (const texture of plants) texture.source.scaleMode = 'nearest';
+  if (bare) bare.source.scaleMode = 'nearest';
   // Each root owns its own sprite; only the four single-plant textures are
   // shared. No repeated plants or field placement are baked into a texture.
   const instances = [...visual.roots].sort((left, right) => left.y - right.y || left.x - right.x)
@@ -156,9 +191,24 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
       const plant = new Sprite({ texture: plants[0], roundPixels: true });
       plant.label = 'crop-plant';
       plant.eventMode = 'none';
-      group.addChild(shadow, plant);
+      let barePlant;
+      if (visual.harvestMode === 'retainedPlant') {
+        const stage = visual.repeatBare;
+        const matureStage = visual.stages[3];
+        const matureScale = Math.min(matureStage.baseScale * point.scale, point.maxHeight / matureStage.height);
+        // Even the far-row height cap is shared with the mature body. Fitting a
+        // bare silhouette separately here would change its size after picking.
+        const scale = matureScale * stage.registration.scaleToMature;
+        barePlant = new Sprite({ texture: bare, roundPixels: true });
+        barePlant.label = 'crop-retained-body';
+        barePlant.eventMode = 'none';
+        barePlant.pivot.set(stage.anchorX, stage.anchorY);
+        barePlant.scale.set(scale);
+        barePlant.visible = false;
+        group.addChild(shadow, barePlant, plant);
+      } else group.addChild(shadow, plant);
       (point.y >= footY ? frontPlants : backPlants).addChild(group);
-      return { point, plant, shadow };
+      return { point, plant, barePlant, shadow };
     });
   let growthStage;
   const applyStage = (index) => {
@@ -176,7 +226,9 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
     }
     growthStage = index;
   };
-  applyStage(0);
+  applyStage(samplePlotAnimation({
+    batch, clock: batch.start, animationStart, plantingSession, harvestMode: visual.harvestMode,
+  }).stage);
   parent.addChild(container);
   const particles = [];
   let lastSprayFrame;
@@ -184,17 +236,16 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
   return {
     container,
     update({ clock, now }) {
-      const elapsedInCycle = Math.max(0, clock - animationStart) % duration;
-      const index = Math.floor(elapsedInCycle * plants.length / duration);
-      applyStage(index);
-      let alpha = 1;
-      if (index === plants.length - 1) {
-        const remaining = duration - elapsedInCycle;
-        const progress = Math.max(0, Math.min(1, 1 - (remaining - harvestGapMs) / harvestFadeMs));
-        alpha = 1 - progress * progress * (3 - 2 * progress);
+      const sample = samplePlotAnimation({ batch, clock, animationStart, plantingSession, harvestMode: visual.harvestMode });
+      applyStage(sample.stage);
+      for (const { plant, barePlant } of instances) {
+        plant.alpha = sample.matureAlpha;
+        if (barePlant) barePlant.visible = sample.bareVisible;
       }
-      backPlants.alpha = alpha;
-      frontPlants.alpha = alpha;
+      // Whole-plant crops fade the planted layer. Retained crops keep a fully
+      // opaque adult body below the fruit/flower state at every harvest edge.
+      backPlants.alpha = sample.wholeAlpha;
+      frontPlants.alpha = sample.wholeAlpha;
       const frame = Math.floor(now / sprayFrameMs);
       if (frame === lastSprayFrame) return;
       lastSprayFrame = frame;
@@ -214,9 +265,9 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
   };
 }
 
-export function mountPlotAnimation(parent, textures, { x, y, width, height }, batch, animationStart = batch.start) {
+export function mountPlotAnimation(parent, textures, { x, y, width, height }, batch, animationStart = batch.start, plantingSession) {
   if (textures.visual?.mode === 'individual') {
-    return mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart);
+    return mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart, plantingSession);
   }
   const { shared, stages, frontStages } = textures;
   const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);

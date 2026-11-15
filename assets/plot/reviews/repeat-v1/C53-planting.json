@@ -1,0 +1,7 @@
+{
+  "source": "assets/plot/furrows.json",
+  "rows": 9,
+  "projection": {
+    "mode": "original-roots"
+  }
+}

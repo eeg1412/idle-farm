@@ -345,7 +345,9 @@ function renderCatalogDetail(ui, id) {
   } else {
     const needed = materials.reduce((sum, [, amount]) => sum + BigInt(amount), 0n);
     ui.card((card) => {
-      card.heading('配方材料', { aside: compact(materials.length) + ' 种 · 共 ' + compact(needed) + ' 件' });
+      card.heading('配方材料', {
+        aside: compact(materials.length) + ' 种 · 共 ' + compact(needed) + ' 件', asideNoWrap: true,
+      });
       card.detailRows(materials.map(([key, amount]) => ({
         icon: key, label: catalog.items[key].name, value: compact(amount), onClick: () => openDetail(key),
       })), { variant: 'recipe' });
@@ -450,7 +452,7 @@ const instructions = [
   ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工，每批产出 1 件。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。已研发品项可继续升级品质。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。'],
-  ['出售牧场', '本轮生产总值决定预计获得的高级研发点。出售后保留研发、品质、经营改良、工位和任务进度。'],
+  ['出售牧场', '本轮生产总值决定预计获得的高级研发点。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个，需重新安排配方，原优先生产与未完成批次清空。'],
 ];
 
 function showInstructions(ui) {
@@ -531,10 +533,14 @@ async function showExportSave(ui) {
   }, { onClose: () => !state.pending });
 }
 
+const saveImportFailureColor = 0xa03221;
+
 async function replaceSave(panel, state, operation, candidate) {
   if (state.pending) return;
   state.pending = true;
-  state.message = '';
+  if (operation === 'importSave') state.failed = false;
+  state.message = operation === 'importSave' ? '正在导入存档，请稍候…' : '正在清除存档，请稍候…';
+  panel.local.scroll = 0;
   panel.refresh();
   let succeeded = false;
   const fallback = operation === 'importSave'
@@ -543,8 +549,13 @@ async function replaceSave(panel, state, operation, candidate) {
   try {
     const result = await panel.saveAction(operation, ...(candidate ? [candidate] : []));
     succeeded = Boolean(result?.ok);
-    if (!succeeded) state.message = result?.message || fallback;
+    if (!succeeded) {
+      if (operation === 'importSave') state.failed = true;
+      state.message = result?.message || fallback;
+    }
+    else panel.toast(result.message || (operation === 'importSave' ? '存档已导入' : '存档已清除，新牧场已准备好'));
   } catch (error) {
+    if (operation === 'importSave') state.failed = true;
     state.message = saveMessage(error, fallback);
   } finally {
     state.pending = false;
@@ -553,9 +564,11 @@ async function replaceSave(panel, state, operation, candidate) {
 }
 
 function confirmImportSave(ui, candidate) {
-  const state = { pending: false, message: '' };
+  const state = { pending: false, message: '', failed: false };
   ui.dialog('确认导入存档', (panel) => {
     const summary = candidate.summary;
+    panel.text(state.message || '存档读取成功，请核对摘要后确认导入。',
+      { color: state.failed ? saveImportFailureColor : undefined });
     panel.text('导入后，将用此存档替换当前全部经营记录。');
     panel.card((card) => {
       card.row('源存档版本', candidate.version);
@@ -567,7 +580,6 @@ function confirmImportSave(ui, candidate) {
       card.row('已出售牧场', compact(summary.completedRuns) + ' 次');
     }, { padding: 12, gap: 8 });
     panel.text('不会补算存档导出后的离线收获。', { muted: true });
-    if (state.message) panel.text(state.message);
     panel.buttons([
       { label: '取消', disabled: state.pending, onClick: () => panel.close() },
       {
@@ -575,51 +587,77 @@ function confirmImportSave(ui, candidate) {
         onClick: () => replaceSave(panel, state, 'importSave', candidate),
       },
     ], { style: 'production' });
-  }, { onClose: () => !state.pending });
+  }, { flow: 'save-import', onClose: () => !state.pending });
 }
 
 function showImportSave(ui) {
-  const state = { pending: false, message: '', closed: false };
-  const inspect = (text) => {
-    if (state.pending || state.closed) return;
-    state.message = '';
-    try {
-      const candidate = ui.saveManagement.inspectSave(text);
-      confirmImportSave(ui, candidate);
-    } catch (error) {
-      state.message = saveMessage(error, '无法读取这份存档，请确认文件完整且与当前版本一致。');
-      ui.refresh();
+  const state = { pending: false, message: '', failed: false, closed: false, panel: undefined };
+  const showMessage = (message, failed = false) => {
+    state.message = message;
+    state.failed = failed;
+    if (state.panel?.isActive()) {
+      state.panel.local.scroll = 0;
+      state.panel.refresh();
     }
   };
-  const receive = async (panel, method) => {
-    if (state.pending) return;
+  const inspect = (text) => {
+    if (state.pending || state.closed || !state.panel?.isActive()) return;
     state.pending = true;
-    state.message = '';
-    panel.refresh();
-    let text;
+    showMessage('正在核对存档版本与数据…');
     try {
-      text = savedResult(await panel.saveAction(method), '未能读取存档，请使用粘贴或拖入文件。');
+      const candidate = ui.saveManagement.inspectSave(text);
+      if (!candidate?.summary || !candidate.version) throw new Error('Missing import summary');
+      state.pending = false;
+      state.message = '存档读取成功，请核对确认面板中的摘要。';
+      confirmImportSave(ui, candidate);
     } catch (error) {
+      state.pending = false;
+      showMessage(saveMessage(error, '无法读取这份存档，请确认文件完整且与当前版本一致。'), true);
+    }
+  };
+  const receive = async (panel, method, ...args) => {
+    if (state.pending || !panel?.isActive()) return;
+    state.pending = true;
+    state.failed = false;
+    state.message = method === 'captureImport' ? '正在选择并读取存档文件…'
+      : method === 'readClipboard' ? '正在读取剪贴板…' : '正在读取存档文件…';
+    panel.local.scroll = 0;
+    let text;
+    let failed = false;
+    try {
+      text = savedResult(await panel.saveAction(method, ...args), '未能读取存档，请使用粘贴或拖入文件。');
+    } catch (error) {
+      failed = true;
+      state.failed = true;
       state.message = saveMessage(error, '未能读取存档，请使用粘贴或拖入文件。');
     } finally {
       state.pending = false;
-      panel.refresh();
+      if (panel.isActive()) panel.refresh();
     }
-    if (typeof text === 'string' && !state.closed) inspect(text);
+    if (state.closed || !panel.isActive()) return;
+    if (typeof text === 'string') inspect(text);
+    else if (text === null) showMessage('未能取得存档文件：可能已取消选择，或受隐私模式／权限限制。请在此面板粘贴存档文本，或拖入 JSON 存档文件。', true);
+    else if (!failed) {
+      showMessage('没有读取到存档内容，请重新选择文件，或在此面板粘贴存档文本／拖入 JSON 存档文件。', true);
+    } else showMessage(state.message, true);
   };
   ui.dialog('导入存档', (panel) => {
+    state.panel = panel;
     state.closed = false;
+    panel.text(state.message || '请选择存档文件，读取后将显示确认摘要。',
+      { color: state.failed ? saveImportFailureColor : undefined });
     panel.row('当前版本', panel.saveManagement.version);
     panel.text('仅支持相同游戏版本的存档，开发存档与正式存档不能互相导入。');
     panel.text('也可以在此页面粘贴存档文本，或拖入一个 JSON 存档文件。', { muted: true });
     panel.text('读取后会先显示存档摘要，确认后才替换当前记录。');
-    if (state.message) panel.text(state.message);
     panel.buttons([
       { label: '选择文件', tone: 'gold', disabled: state.pending, onClick: () => receive(panel, 'captureImport') },
       { label: '读取剪贴板', disabled: state.pending, onClick: () => receive(panel, 'readClipboard') },
     ], { style: 'production' });
   }, {
+    flow: 'save-import',
     onImportText: inspect,
+    onImportFile: (file) => receive(state.panel, 'readImportFile', file),
     onClose() {
       if (state.pending) return false;
       state.closed = true;
@@ -631,6 +669,7 @@ function showImportSave(ui) {
 function showClearSave(ui) {
   const state = { pending: false, message: '' };
   ui.dialog('确认清除存档', (panel) => {
+    if (state.message) panel.text(state.message);
     panel.text('清除后将从新牧场重新开始。');
     panel.card((card) => {
       card.titleBar('全部重新开始');
@@ -641,7 +680,6 @@ function showClearSave(ui) {
       ], { variant: 'pill' });
     }, { padding: 12, gap: 8 });
     panel.text('需要保留进度时，请先导出存档。');
-    if (state.message) panel.text(state.message);
     panel.buttons([
       { label: '取消', disabled: state.pending, onClick: () => panel.close() },
       {
@@ -682,18 +720,8 @@ export function renderSettings(ui) {
       }, { ratio: 0.65, divider: key === 'music' });
     }
   });
-  ui.section('显示', 'settings-display', (card) => {
-    const percent = Math.round(settings.textScale * 100);
-    const setScale = (delta) => ui.action('updateSettings', {
-      textScale: Math.min(200, Math.max(100, percent + delta)) / 100,
-    });
-    card.text('文字大小', { fontSize: 18 });
-    card.stepper(percent + '%',
-      percent > 100 ? () => setScale(-25) : null,
-      percent < 200 ? () => setScale(25) : null);
-  });
   ui.section('操作说明', 'settings-guide', (card) => {
-    card.button('重看操作说明  ›', () => showInstructions(ui));
+    card.button('重看操作说明', () => showInstructions(ui), { trailingIcon: 'chevron-right' });
   });
   ui.section('存档管理', 'nav-warehouse', (card) => {
     card.buttons([
@@ -705,8 +733,8 @@ export function renderSettings(ui) {
 }
 
 function farmDetails(ui, offer) {
-  const multiplier = Math.floor(offer.multiplierTenths / 10);
-  const decimal = offer.multiplierTenths % 10;
+  const multiplier = Math.floor(offer.multiplierBasisPoints / 10000);
+  const decimal = String(offer.multiplierBasisPoints % 10000).padStart(4, '0').replace(/0+$/, '');
   const multiplierLabel = compact(multiplier) + (decimal ? '.' + decimal : '') + ' 倍';
   const details = [
     { icon: 'coin', label: '本轮生产总值', value: compact(offer.productionValue) },
@@ -717,10 +745,14 @@ function farmDetails(ui, offer) {
   }
   ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
   const changes = [
-    ['保留', [{ icon: 'sale-retain', label: '工位、研发、品质、经营改良、任务进度' }]],
+    ['保留', [{ icon: 'sale-retain', label: '研发、品质、经营改良、任务进度' }]],
     ['清空', [
       { icon: 'sale-reset', label: '田地、畜牧场、鱼池' },
       { icon: 'nav-warehouse', label: '库存、金币' },
+    ]],
+    ['工坊重置', [
+      { icon: 'nav-workshop', label: '现有 ' + compact(offer.stationCount) + ' 个工位重置为加工位、精制位各 1 个' },
+      { icon: 'operation-switch', label: '原配方、优先生产和未完成批次清空' },
     ]],
     ['新一轮', [{ icon: 'facility-field', label: '2 块小麦田、60 金币' }]],
   ];

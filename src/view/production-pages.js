@@ -164,13 +164,13 @@ function improveFacility(ui, kind, index) {
     })), { style: 'production' });
     const level = compact(facility.level);
     const target = compact(quote.target);
-    dlg.row('等级', level + ' → ' + target, { style: 'comparison', from: level, to: target });
+    dlg.row('等级', { from: level, to: target }, { style: 'comparison' });
     if (quote.output != null) {
       const current = quote.currentOutput ?? facility.batch?.amount;
       const from = current == null ? undefined : compact(current);
       const to = compact(quote.output);
-      dlg.row('每批' + itemName(facility.recipe), from == null ? to : from + ' → ' + to, {
-        style: 'comparison', icon: facility.recipe, from, to,
+      dlg.row('每批' + itemName(facility.recipe), from == null ? to : { from, to }, {
+        style: 'comparison', icon: facility.recipe,
       });
     }
     dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
@@ -192,7 +192,7 @@ function facilityDetails(ui, kind, index) {
       dlg.row('仓库库存', compact(quantity(dlg.w, id)) + ' 份');
       if (facility.batch) {
         dlg.row('本批产出', compact(facility.batch.amount) + ' 份');
-        dlg.row('距收获', remainingTime(facility.batch.end - dlg.w.clockMs));
+        dlg.countdown('距收获', { type: 'facility', kind, index }, { format: remainingTime });
       }
       if (facility.recipe && facility.recipe !== facility.batch?.id) {
         dlg.row('下批安排', assignedName(facility.recipe));
@@ -233,8 +233,9 @@ function facilityCard(ui, kind, index, facility) {
         copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', { style: 'metric', icon: id });
       }
       if (active) {
-        copy.row('距收获', remainingTime(active.end - ui.w.clockMs), { style: 'metric', icon: 'clock' });
-        copy.batchProgress(active);
+        const reference = { type: 'facility', kind, index };
+        copy.countdown('距收获', reference, { format: remainingTime, style: 'metric', icon: 'clock' });
+        copy.batchProgress(active, reference);
         if (facility.recipe !== active.id) {
           copy.row(crop ? '下批播种' : '下批安排', assignedName(facility.recipe), { style: 'metric' });
         }
@@ -403,10 +404,10 @@ function stationBadge(world, station) {
   return { label, tone: station.batch ? 'green' : 'blocked', minCharacters: 5 };
 }
 
-function stationProgress(ui, batch) {
-  ui.row('剩余', batch ? remainingTime(batch.end - ui.w.clockMs) : '暂停',
-    { tone: batch ? 'plain' : 'danger' });
-  ui.batchProgress(batch);
+function stationProgress(ui, batch, kind, index) {
+  const reference = { type: 'station', kind, index };
+  ui.countdown('剩余', reference, { format: remainingTime, inactiveText: '暂停', inactiveTone: 'danger' });
+  ui.batchProgress(batch, reference);
 }
 
 function openSources(ui, requirements) {
@@ -433,7 +434,7 @@ function stationDetails(ui, kind, index) {
       dlg.item(id, item.name, item.sources.join(' · '));
       dlg.row('当前库存', compact(quantity(dlg.w, id)));
       dlg.row(active ? '本批产出' : '每批产出', compact(active?.amount ?? item.output) + ' 件');
-      stationProgress(dlg, active);
+      stationProgress(dlg, active, kind, index);
       const next = catalog.items[station.recipe];
       if (next) {
         dlg.row('下批配方', next.name);
@@ -447,7 +448,7 @@ function stationDetails(ui, kind, index) {
         const requirements = requirementRows(dlg, station.recipe, { withLinks: true });
         reserveButtons(dlg, requirements);
       }
-    } else stationProgress(dlg, active);
+    } else stationProgress(dlg, active, kind, index);
     dlg.row('用料优先级', station.priority ? '优先' : '普通');
     dlg.button(station.priority ? '设为普通' : '设为优先', async () => {
       if (!await dlg.action('setStationPriority', kind, index, !station.priority)) return;
@@ -470,7 +471,7 @@ function stationCard(ui, kind, index, station, source) {
         copy.badges([badge], { style: 'production' });
         copy.button('选择配方', () => chooseRecipe(ui, kind, index, source), { tone: 'gold', style: 'production' });
       }, { ratio: 0.35, style: 'workshop', align: 'center', onClick: openDetails });
-      stationProgress(body, active);
+      stationProgress(body, active, kind, index);
       return;
     }
     const complexity = kind === 'P' ? ['单类', '双类', '三类'][item.sources.length - 1] : item.sources[0];
@@ -485,7 +486,7 @@ function stationCard(ui, kind, index, station, source) {
         { label: active ? '本批产出' : '每批产出', value: compact(active?.amount ?? item.output) + ' 件' },
       ], { style: 'workshop' });
     }, { ratio: 0.35, style: 'workshop', artAspect: 1.10, onClick: openDetails });
-    stationProgress(body, active);
+    stationProgress(body, active, kind, index);
     body.text('材料', { muted: true });
     const requirements = requirementRows(body, station.recipe, { style: 'workshop' });
     const actions = [{ label: '更换配方', tone: 'gold', onClick: () => chooseRecipe(ui, kind, index, source) }];

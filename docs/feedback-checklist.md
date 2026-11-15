@@ -2,6 +2,48 @@
 
 按实际源码接入、构建和交付结果维护；未运行的验收不得记为通过。用户重新报告的问题应重新打开。
 
+## 2026-11-15：长期经营与特色周目数值评估
+
+用户要求以专业游戏数值策划视角评估当前数值是否合理，目标为非常长期游玩和有特色的周目，交付 Markdown 报告。任务卡为 [数值评估](tasks/2026-11-15-balance-audit.md)。
+
+| 要求 | 交付与证据 | 状态与限制 |
+| --- | --- | --- |
+| 评估真实现行数值 | 分别读取生产、研发成长、周目和任务执行链，以 `game-data.json` 和 `world.js` / `advancement.js` 为依据 | 静态审查进行中；不以历史版本表格替代当前逻辑 |
+| 明确哪里不合理、为什么、改成什么 | 每项附数值或公式、具体对象、源码位置、可复核推导与建议参数 | 报告编写中；建议属于待标定方案，不修改游戏 |
+| 对齐长期经营和周目特色 | 分析短轮刷点、长期目标、产业选择、离线与重复重建的相互影响 | 未进行运行模拟或玩家行为实测 |
+| 生成 MD 报告 | 计划输出 `docs/reviews/2026-11-15-long-term-balance-report.md` | 用户未授权测试、预览或编译，本次均不运行；无推送授权 |
+
+## 2026-11-15：子代理上下文保持整洁
+
+用户明确要求毫不相干的任务不得重复分给同一子代理。[任务卡](tasks/2026-11-15-subagent-context.md)使用新建、无历史继承的delegation_rules，仅修改持久规约和任务卡；游戏中的计时等已在执行的直接依赖任务继续按原文件所有者收尾。此后无关任务必须新建干净上下文，不能以文件相同、工具相同或代理空闲为复用理由；槽位不足应排队／结束旧任务并明确交接。
+
+已写入AGENTS、任务分派技能／卡和development无人值守段；PM已读取实际条款，包含fork_turns:none、任务相关性与复用理由、agent↔objective↔artifact、槽位排队与先结束旧所有权再转交。后续独立的选择／饲料素材、Cloudflare、隐私导入提示与滚轮修复均使用新干净上下文。普通文档变更未运行验证。
+
+## 2026-11-15：图鉴数量单行、牲畜进食与保留植株采收
+
+本轮依据用户 PT19 截图及新增说明重新登记，[任务卡](tasks/2026-11-15-feeding-and-repeat-harvest.md)。此前普通 idle 与每轮重新播种是旧实现，不作为本轮通过依据。
+
+| 用户项 | 实际接入／计划 | 状态与限制 |
+| --- | --- | --- |
+| 1 图鉴配方材料右侧「共xx件」不换行 | 目标heading启用asideNoWrap，Pixi真实字宽预留右栏、wrap:false；常规窄屏同排，极窄整栏右齐下移而不拆数量 | PM已读实际heading与PT19调用；未运行画布验收 |
+| 2 所有牲畜 idle 改吃饲料 | 内置image_gen新6源V5、20期80真实进食帧与全部透明选择/回退已正式导出，黄牛白雾r2重画、黑猪/羊邻格片段用明确源格隔离，L01按真实前趾重新登记。feeding逐期真实口部来源，runtime每只grain/hay/greens独立程序饲料及轻影；3/2/1透视和原产品/时序不变 | [精确版本静态审阅](art-reviews/2026-11-15-livestock-feeding.md)已闭环全源/PNG/发布WebP/32选择/130四帧，mouthBounds仅真实低嘴局部、不含脚区；PM另直接看新源、发布黑猪、注册分镜及10种四帧小尺寸。真实循环/淡变/影子及用户认可未验收，资源门未运行 |
+| 3 作物区分整株与保留植株采收 | 已逐68ID审原阶段并写crop-harvest，22整株／46留株；16成年原图复用、30内置imagegen补成年bare并完成静态复审。C05扩冠/C36藤叶重排/C56残花球/C61高枝截短退回后各v2定向编辑复审关单，旧稿保留。plot逐株bare常驻底层+整株mature显隐、loader和planting第6参已写；正式producer已激活全部harvestMode/repeatBare。world/save同种/升级/续批保留，新换种记录{id,start,duration}；旧档双null历史未知直接成年循环 | [静态审阅](art-reviews/2026-11-15-repeat-harvest-crops.md)30补画approvedArtwork+16复用通过，314独立单株正式转换完成；[原稿/提示词索引](../assets/plot/repeat-harvest/sources.md)。PM已读正式metadata、真实采样/逐株/world/save/loader，并实际看v2 C05、C08/C12/C61根点与小尺寸；无幼苗放大。中文notes已修复读回。复用枝叶有差别，不能称纯果花差分图层；真实循环/外圈/读档离线未验收 |
+| 4 移除收获音效，其他页面也不播放 | main.saveForeground删除productionSummary和自动音效调用，farm-audio删除harvest/finish音型；原visible仅!document.hidden造成跨游戏页播放 | PM已读实际保存入口与音型表；主动操作音、音乐和原生产保存保持；未运行听觉验收 |
+| 5 删除文字大小设置，固定100% | view.scale固定1、删除控件；main设置动作不再接受textScale；world-save.amounts编码/解码归一字段1 | PM已读三个实际入口，旧同版200%档仍可读且不再生效；未运行读档／布局验收 |
+| 6 所有方向箭头用图标，返回只显示图标 | 公共Graphics绘制chevron/arrow，返回/分页iconOnly；详情/索引/说明尾标及数值变化结构化{from,to}，研究图例也用图形 | PM已读实际绘制和返回header、相关调用；内部语义label保留，图标按钮命中至少48。未运行触控／键盘／画布验收 |
+| 7 导出后导入文件无反应 | 用户明确窗口能弹出、选后无反应。readImportFile(File.text／非DOM FileReader)统一读取，空/权限/不支持/读取失败分明提示；严格版本/环境、BOM兼容。UI首行显示状态，isActive阻真正迟到，成功回牧场提示。另修visibilitychange→resumeOffline→showOffline可盖过导入/确认的条件路径：flow:'save-import'查询含当前/待显/父链，汇总在导入结束后由既有5秒保存重试呈现，实际结算不变 | PM已读整链，取消null静默及离线汇总覆盖是确定存在的条件问题；header/decimal编解码/WeakMap原对象传递未发现自导出必失败。不能把选择器打开时机当本次根因；用户设备具体触发未复现，未运行文件/浏览器实测 |
+| 8 出售牧场不保留工位 | world.sellFarm成功后直接stations={I:[emptyStation(0)],P:[emptyStation(1)]}；共享farmDetails预览/确认和说明均删工位保留，显示旧总数重置各1及原安排清空。stationCount继续作受影响快照防旧确认 | PM已读实际sellFarm和预览；I/P购位按当前count-1重新报价，后续order从2。明确用户新增规则，其他保留项和既有档读取不扩改；真实周回未运行验收 |
+| 追加 倒计时/进度条卡秒，1后从4开始 | main.paint只读投影当前world到当下，nextDisplayAt取常规1000ms与最近真实batch.end较早时点，普通保存不挡显示；timing={anchor,epoch}。canvas数字/bar/动画同连续clock，稳定设施/工位ref取新display batch，字变才改Text、旧条到end不注销；按压延后整页重画仍即时刷新旧节点绑定 | PM已读真实paint/ticker、countdown/currentBatch/batchProgress/render调用及生产页ref；保留ceil和真实周期/提交顺序，前后台先受限结算不越离线上限，换档/周回重置epoch缓存。未运行计时实验，5秒实际观感尚未验收 |
+| 追加9 选择牲畜例图不能低头，且与当前动画统一 | V4复用被用户否定后撤销，10项均用当前V5各ID成年/成熟0/3帧实际输入内置imagegen新绘普通站立图。V7登记参考帧/原稿hash/裁切，正式export-choices被主producer/choices-only消费，不回退V4；选择cache v4，80进食帧不变 | [最终静态报告](art-reviews/2026-11-15-livestock-choice-feed.md)已实际看10新源、正式96PNG/WebP、32发布图及深底，身份/抬头/完整轮廓静态通过。PM另实际看全部当前帧→V7对照和32成品，读真实登记/producer；[绘图提示词](../assets/livestock/choice-prompts-v7.md)。旧V4通过仅历史，真实选择网格和用户认可未验收 |
+| 追加10 共用复合饲料图片层 | 内置imagegen新透明复合颗粒料源、128×64 feed.png/WebP，feedTexture登记bounds/anchor；loader共享textures.feed，每只Sprite+轻影。CF-R01先后退回过小和头下遮挡，v6-r3共享helper以基础场景宽32再乘depth，向嘴前.2宽/.55高偏移，嘴/脚源不动；10fallback与20期4帧同公式 | QA已实际看完整130px及10fallback PNG/WebP，v6-r3静态通过并关CF-R01，前两版留档；PM已直接看feed WebP及最终10种四帧130图，并读共享helper/导出路径。[原稿提示词](../assets/livestock/choice-feed-prompts-v6.md)。真实Pixi画布/动态接触仍未验收 |
+| 追加11 publish:cloudflare | package.json新增`npx wrangler pages deploy ./dist --project-name idle-farm`；README/docs/cloudflare.md接入认证/构建前置/分支参数，gitignore忽略.wrangler，无依赖或lock改动 | PM已读参考pangya-web实际同名命令、其“不重建”说明与当前入口，发布现有dist不自动构建。未登录/创建远端/上传/部署/执行命令；远端项目名和生产分支尚未探测 |
+| 追加 隐私窗口选文件被误报取消 | 用户补充Chrome隐私窗口受限。AbortError/无handle仍保留null契约，UI不再断定取消，提示“可能取消或受隐私/权限限制”，明确拖入JSON/粘贴文本 | PM已读实际新提示与平台错误路径；不新增DOM输入、超时猜取消或隐私指纹检测。成功校验/确认链不改，不能泛称所有Chrome隐私模式必失败；设备行为未运行复现 |
+| 追加 passive wheel preventDefault报错 | root的Pixi wheel回调只滚动/标记nativeEvent，画布唯一passive:false原生监听仅取消同一个已处理事件，root销毁解绑；研究树原桥接保留 | 新干净owner读本地Pixi capture/passive及FederatedEvent源码定位，PM已读实际改动。滚轮坐标/scale/deltaMode/命中保持；未运行浏览器验收 |
+| 追加 永久科技50级与最终每级+2 | 共享techLevelLimit50贯通advancement/保存校验/开发发放，旧档原等级数保留；三类增产2n×level，50级额外100件。折扣每级1%满50%；速度/评估/离线满效果不变，分别用整数bp和ms；费用每10级一档，高阶前置满50。研究当前效果统一降低X%/提速X%，出售倍率显示1.02等真实小数 | PM已读真实核心/offer/BigInt奖励/check/保存/dev入口与两页UI；扩展式样、主式样/验收例/平衡说明/AGENTS已同步。[任务卡](tasks/2026-11-15-tech-50.md)。用户先+1后明确改+2，以最后要求为准。未执行经济/存档/开发入口测试或构建，实际经营未验收 |
+| 追加 导入失败红色提示 | management导入/确认用显式state.failed与现有text({color:0xa03221})；读文件/隐私限制/校验/损坏/实际替换失败红色，重读/核对/成功恢复正常；共用replaceSave只对importSave标红 | PM已直接读取状态转换与真实颜色API，不是传无效tone；清档提示/版本/交易/首行可见性保持。未运行画布颜色/交互验收 |
+
+本轮未获用户测试、预览、运行／语法检查、试编译或推送授权。静态审图、实际源读取、素材生成与转换和真实运行体验分别记录。
+
 ## 2026-11-15：大型作物缺排、空田开局、鱼池与返回层级
 
 本轮要求和所有权见[任务卡](tasks/2026-11-15-fish-rows-parent-navigation.md)。旧图集和弹窗记录不关闭本轮用户反馈；只记录真实接入，运行表现尚未验收。

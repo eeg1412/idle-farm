@@ -17,6 +17,10 @@ npm run build
 
 本地开发使用 `npm run dev`。在开发服务器的 `/#/settings` 页面连续点击页头「设置」11 下，即可解锁全部品种与配方、将全部永久科技升至 5 级，并追加 1T 金币。开发存档独立保存，所有 Build 产物及预览均不提供此入口，具体规则见[开发测试模式](docs/development.md#开发测试模式)。
 
+## Cloudflare 发布
+
+完成 [Cloudflare Pages 配置](docs/cloudflare.md)后，先运行 `npm run build`，再运行 `npm run publish:cloudflare`，将已有 `dist/` 上传到 Pages 项目 `idle-farm`。发布指令不自动构建；原有 [Sites 发布流程](docs/sites.md)继续保留。
+
 ## 从哪里开始
 
 | 内容 | 入口 |
@@ -30,4 +34,4 @@ npm run build
 | 已实现范围及后续模块 | [架构](docs/architecture.md) |
 | 验证 | [验收步骤](docs/verification.md) |
 | 用户反馈与交付状态 | [反馈清单](docs/feedback-checklist.md) |
-| 公开部署 | [Sites](docs/sites.md) |
+| 公开部署 | [Cloudflare Pages](docs/cloudflare.md) · [Sites](docs/sites.md) |

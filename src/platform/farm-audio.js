@@ -3,7 +3,7 @@ const scores = {
   workshop: [55, 62, 65, 67, 62, 65, 70, 67, 57, 64, 67, 69, 64, 67, 72, 69],
 };
 const effects = {
-  harvest: [69, 72], finish: [65, 72, 77], success: [60, 67], sell: [74, 77, 81],
+  success: [60, 67], sell: [74, 77, 81],
   research: [60, 64, 67, 72], prestige: [55, 60, 64, 67, 72],
 };
 const hz = (note) => 440 * 2 ** ((note - 69) / 12);

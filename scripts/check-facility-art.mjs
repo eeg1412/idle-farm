@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import catalog from '../src/content/game-data.json' with { type: 'json' };
 import livestockVisuals from '../src/content/livestock-visuals.json' with { type: 'json' };
 import cropVisuals from '../src/content/crop-visuals.json' with { type: 'json' };
+import cropHarvest from '../src/content/crop-harvest.json' with { type: 'json' };
 import fishVisuals from '../src/content/fish-visuals.json' with { type: 'json' };
 import fishHabitats from '../src/content/fish-habitats.json' with { type: 'json' };
 import { fishRegistration, fishSizeLayouts } from '../src/view/fish-layout.js';
@@ -44,6 +45,15 @@ function sameGrounding(left, right) {
 function sameBounds(left, right) {
   return left && right && ['x', 'y', 'width', 'height'].every((key) => left[key] === right[key]);
 }
+function validRegion(bounds, width, height) {
+  return bounds && ['x', 'y', 'width', 'height'].every((key) => Number.isFinite(bounds[key])) &&
+    bounds.x >= 0 && bounds.y >= 0 && bounds.width > 0 && bounds.height > 0 &&
+    bounds.x + bounds.width <= width && bounds.y + bounds.height <= height;
+}
+function containsPoint(bounds, x, y) {
+  return x >= bounds.x - 0.01 && x <= bounds.x + bounds.width + 0.01 &&
+    y >= bounds.y - 0.01 && y <= bounds.y + bounds.height + 0.01;
+}
 function validWater(water) {
   if (!Number.isInteger(water?.color) || water.color < 0 || water.color > 0xffffff ||
       !Number.isFinite(water.alpha) || water.alpha <= 0 || water.alpha >= 1 ||
@@ -74,13 +84,39 @@ function onProjectedFurrow(root, projection, points) {
       Math.abs(root.y - (origin.y + alongRay * ray.y)) <= 1;
   });
 }
-function noBakedGroundShadow(pixels, width, height, groundY, label) {
+async function cropPlantFile(id, stage, phase, sourcePath) {
+  if (stage?.phase !== phase || stage.path !== `art/plot/plants/${id}/${phase}.webp` ||
+      stage.source?.path !== sourcePath ||
+      !Number.isInteger(stage.width) || stage.width <= 0 || !Number.isInteger(stage.height) || stage.height <= 0 ||
+      !Number.isFinite(stage.anchorX) || stage.anchorX < 0 || stage.anchorX > stage.width ||
+      !Number.isFinite(stage.anchorY) || stage.anchorY < 0 || stage.anchorY > stage.height ||
+      !Number.isFinite(stage.baseScale) || stage.baseScale <= 0) {
+    throw new Error(`作物阶段必须使用同ID透明单株、固定根点与正数尺度：${id}/${phase}`);
+  }
+  const sourceMetadata = await sharp(await readFile(locate(sourcePath))).metadata();
+  const bounds = stage.source.bounds;
+  if (!sourceMetadata.hasAlpha || !bounds || !Number.isInteger(bounds.left) || !Number.isInteger(bounds.top) ||
+      !Number.isInteger(bounds.width) || !Number.isInteger(bounds.height) ||
+      bounds.left < 0 || bounds.top < 0 || bounds.width !== stage.width || bounds.height !== stage.height ||
+      bounds.left + bounds.width > sourceMetadata.width || bounds.top + bounds.height > sourceMetadata.height) {
+    throw new Error(`作物单株原图与透明裁切来源登记缺失或越界：${id}/${phase}`);
+  }
+  await imageFile(`assets/plot/plants/${id}/${phase}.png`, stage.width, stage.height, true);
+  const published = await imageFile('public/' + stage.path, stage.width, stage.height, true);
+  const pixels = await sharp(published).ensureAlpha().raw().toBuffer();
+  if (opaqueBounds(pixels, stage.width, stage.height).right < 0) throw new Error(`作物单株发布阶段为空：${id}/${phase}`);
+  return digest(pixels);
+}
+function noBakedGroundShadow(pixels, width, height, groundY, label, mouthBounds) {
   // Leave two rows for the pixel outline and ignore very faint source alpha noise.
   // This only flags a visible area below the foot line, not the artistic quality of a sprite.
   let belowCount = 0; let widestRow = 0;
   for (let y = Math.floor(groundY) + 3; y < height; y += 1) {
     let rowCount = 0;
     for (let x = 0; x < width; x += 1) {
+      // Only the registered local low mouth is exempt; keep scanning all other columns and ground.
+      if (mouthBounds && x >= mouthBounds.x && x < mouthBounds.x + mouthBounds.width &&
+          y >= mouthBounds.y && y < mouthBounds.y + mouthBounds.height) continue;
       if (pixels[(y * width + x) * 4 + 3] >= 32) rowCount += 1;
     }
     belowCount += rowCount;
@@ -116,14 +152,27 @@ const furrows = JSON.parse(await readFile(locate('assets/plot/furrows.json'), 'u
 const cropPhases = ['sown', 'seedling', 'growing', 'mature'];
 sameIDs(crops, Object.keys(cropLayout.crops), '作物体型分类');
 sameIDs(crops, Object.keys(cropVisuals), '作物运行视觉登记');
+sameIDs(crops, Object.keys(cropHarvest), '作物采收分类与原画审阅登记');
 if (crops.some((id) => !Object.hasOwn(cropLayout.sizes, cropLayout.crops[id]))) {
   throw new Error('作物体型分类必须为已登记的大、中、小类型。');
 }
 for (const id of crops) {
   const definition = cropVisuals[id];
+  const policy = cropHarvest[id];
   if (definition.size !== cropLayout.crops[id]) throw new Error(`作物运行体型与原画布局不一致：${id}`);
+  if (!['wholePlant', 'retainedPlant'].includes(policy.mode) || definition.harvestMode !== policy.mode ||
+      typeof policy.harvestedPart !== 'string' || !policy.harvestedPart.trim() ||
+      policy.review?.growingSource !== (id === 'C01' ? 'assets/plot/wheat/wheat-2.png' : `assets/plot/crops/${id}/growing.png`) ||
+      policy.review?.matureSource !== (id === 'C01' ? 'assets/plot/wheat/wheat-3.png' : `assets/plot/crops/${id}/mature.png`)) {
+    throw new Error(`作物必须有同源的整株/保留植株采收分类与真实阶段审阅来源：${id}`);
+  }
+  if (policy.mode === 'wholePlant' && (policy.repeatBare?.status !== 'notApplicable' || definition.repeatBare)) {
+    throw new Error(`整株采收作物不得误用保留植株裸株资源：${id}`);
+  }
   if (id === 'C01') {
-    if (definition.mode !== 'fieldAtlas' || definition.size !== 'small') throw new Error('C01 必须保留已认可的小麦整幅前景例外。');
+    if (definition.mode !== 'fieldAtlas' || definition.size !== 'small' || policy.mode !== 'wholePlant') {
+      throw new Error('C01 必须保留已认可的小麦整幅前景与整株采收例外。');
+    }
     await imageFile('assets/plot/crop-frames/C01.png', 640, 640, true);
     await imageFile('assets/plot/crop-frames/C01-front.png', 640, 640, true);
     const background = await imageFile('public/art/plot/crops/C01.webp', 640, 640, true);
@@ -189,40 +238,116 @@ for (const id of crops) {
   }
   const frames = [];
   for (const [index, phase] of cropPhases.entries()) {
-    const stage = definition.stages[index];
-    const expectedSource = `assets/plot/crops/${id}/${phase}.png`;
-    if (stage.phase !== phase || stage.path !== `art/plot/plants/${id}/${phase}.webp` ||
-        stage.source?.path !== expectedSource ||
-        !Number.isInteger(stage.width) || stage.width <= 0 || !Number.isInteger(stage.height) || stage.height <= 0 ||
-        !Number.isFinite(stage.anchorX) || stage.anchorX < 0 || stage.anchorX > stage.width ||
-        !Number.isFinite(stage.anchorY) || stage.anchorY < 0 || stage.anchorY > stage.height ||
-        !Number.isFinite(stage.baseScale) || stage.baseScale <= 0) {
-      throw new Error(`作物阶段必须使用同ID透明单株、固定根点与正数尺度：${id}/${phase}`);
-    }
-    const sourceMetadata = await sharp(await readFile(locate(expectedSource))).metadata();
-    const bounds = stage.source.bounds;
-    if (!sourceMetadata.hasAlpha || !bounds || !Number.isInteger(bounds.left) || !Number.isInteger(bounds.top) ||
-        !Number.isInteger(bounds.width) || !Number.isInteger(bounds.height) ||
-        bounds.left < 0 || bounds.top < 0 || bounds.width !== stage.width || bounds.height !== stage.height ||
-        bounds.left + bounds.width > sourceMetadata.width || bounds.top + bounds.height > sourceMetadata.height) {
-      throw new Error(`作物单株原图与透明裁切来源登记缺失或越界：${id}/${phase}`);
-    }
-    await imageFile(`assets/plot/plants/${id}/${phase}.png`, stage.width, stage.height, true);
-    const published = await imageFile('public/' + stage.path, stage.width, stage.height, true);
-    const pixels = await sharp(published).ensureAlpha().raw().toBuffer();
-    if (opaqueBounds(pixels, stage.width, stage.height).right < 0) throw new Error(`作物单株发布阶段为空：${id}/${phase}`);
-    frames.push(digest(pixels));
+    frames.push(await cropPlantFile(id, definition.stages[index], phase, `assets/plot/crops/${id}/${phase}.png`));
   }
   if (new Set(frames).size !== 4) throw new Error(`作物必须有四个独立阶段：${id}`);
+  if (policy.mode === 'retainedPlant') {
+    const bare = policy.repeatBare;
+    if (!['reuseGrowing', 'approvedArtwork'].includes(bare?.status) ||
+        typeof bare.sourcePath !== 'string' || !bare.sourcePath.trim() ||
+        (bare.status === 'reuseGrowing' && (bare.reusePhase !== 'growing' || bare.sourcePath !== policy.review.growingSource)) ||
+        bare.sourcePath === `assets/plot/crops/${id}/sown.png` || bare.sourcePath === `assets/plot/crops/${id}/seedling.png`) {
+      throw new Error(`保留植株作物必须使用已审阅可复用或已批准的成年裸株来源，不能发布待补画/待审素材：${id}`);
+    }
+    const bareFrame = await cropPlantFile(id, definition.repeatBare, 'bare', bare.sourcePath);
+    const bareVisual = definition.repeatBare;
+    const registration = bareVisual.registration;
+    const mature = definition.stages[3];
+    if (!registration || registration.matureStagePath !== mature.path ||
+        !Number.isFinite(registration.scaleToMature) || registration.scaleToMature <= 0 ||
+        !Number.isFinite(registration.anchorX) || !Number.isFinite(registration.anchorY) ||
+        Math.abs(bareVisual.baseScale - mature.baseScale * registration.scaleToMature) > 1e-9 ||
+        Math.abs(bareVisual.anchorX + bareVisual.source.bounds.left - registration.anchorX) > 1e-9 ||
+        Math.abs(bareVisual.anchorY + bareVisual.source.bounds.top - registration.anchorY) > 1e-9) {
+      throw new Error(`成年裸株必须沿用成熟株的共同尺度与原图固定根点，不能逐图按包围框放大：${id}`);
+    }
+    if (bare.status === 'reuseGrowing') {
+      if (registration.method !== 'reviewed-adult-source-shared-mature-scale' || registration.scaleToMature !== 1) {
+        throw new Error(`复用成年原画必须使用已审阅的共享成熟像素尺度：${id}`);
+      }
+    } else {
+      const sourceRegistration = cropLayout.repeatBare?.[id];
+      if (registration.method !== 'shared-mature-source-placement' ||
+          !sourceRegistration || sourceRegistration.method !== registration.method ||
+          registration.sourcePath !== bare.sourcePath || sourceRegistration.sourcePath !== bare.sourcePath ||
+          sourceRegistration.scaleToMature !== registration.scaleToMature ||
+          sourceRegistration.anchorX !== registration.anchorX || sourceRegistration.anchorY !== registration.anchorY ||
+          typeof registration.sourceSheet !== 'string' || !registration.sourceSheet.trim() ||
+          typeof registration.editedSheet !== 'string' || !registration.editedSheet.trim() ||
+          registration.sourceSheet !== sourceRegistration.sourceSheet || registration.editedSheet !== sourceRegistration.editedSheet ||
+          typeof registration.normalizedSheet !== 'string' || !registration.normalizedSheet.trim() ||
+          registration.normalizedSheet !== sourceRegistration.normalizedSheet ||
+          registration.cellSpace !== 'normalizedSheet' || sourceRegistration.cellSpace !== registration.cellSpace ||
+          typeof registration.anchorMethod !== 'string' || !registration.anchorMethod.trim() ||
+          sourceRegistration.anchorMethod !== registration.anchorMethod ||
+          JSON.stringify(registration.cell) !== JSON.stringify(sourceRegistration.cell) ||
+          JSON.stringify(registration.expectedRoot) !== JSON.stringify(sourceRegistration.expectedRoot) ||
+          JSON.stringify(registration.normalization) !== JSON.stringify(sourceRegistration.normalization)) {
+        throw new Error(`新绘成年裸株必须登记原成熟株位置、编辑原稿与共同根点来源：${id}`);
+      }
+      const normalization = registration.normalization;
+      const cell = registration.cell;
+      if (!normalization || ['sourceWidth', 'sourceHeight', 'width', 'height'].some((key) =>
+        !Number.isInteger(normalization[key]) || normalization[key] <= 0) ||
+          !cell || ['left', 'top', 'width', 'height'].some((key) => !Number.isInteger(cell[key])) ||
+          cell.left < 0 || cell.top < 0 || cell.width <= 0 || cell.height <= 0 ||
+          cell.left + cell.width > normalization.width || cell.top + cell.height > normalization.height ||
+          !Number.isFinite(registration.expectedRoot?.x) || !Number.isFinite(registration.expectedRoot?.y) ||
+          registration.expectedRoot.x < 0 || registration.expectedRoot.x > cell.width ||
+          registration.expectedRoot.y < 0 || registration.expectedRoot.y > cell.height) {
+        throw new Error(`裸株编辑格与成熟根点必须使用明确、有效的归一图坐标：${id}`);
+      }
+      const sourceSheet = await sharp(await readFile(locate(registration.sourceSheet))).metadata();
+      if (!sourceSheet.width || !sourceSheet.height) throw new Error(`成熟株编辑输入无法读取：${id}`);
+      const editedSheet = await sharp(await readFile(locate(registration.editedSheet))).metadata();
+      if (editedSheet.width !== normalization.sourceWidth || editedSheet.height !== normalization.sourceHeight) {
+        throw new Error(`裸株imagegen原稿尺寸与真实归一变换登记不一致：${id}`);
+      }
+      await imageFile(registration.normalizedSheet, normalization.width, normalization.height, true);
+      await imageFile(bare.sourcePath, cell.width, cell.height, true);
+    }
+    if (bareFrame === frames[3]) throw new Error(`连续采收的成年裸株不能与有收获部位的成熟阶段完全相同：${id}`);
+  }
 }
 for (const key of ['sky', 'ground', 'sprinkler-base', 'sprinkler-ne', 'sprinkler-se', 'sprinkler-sw', 'sprinkler-nw']) {
   const size = key.startsWith('sprinkler') ? 64 : 320;
   await imageFile(`public/art/plot/${key}.webp`, size, size);
 }
-console.log('已覆盖全部作物的物品图标、回退场景、体型与逐株根位、四期原图及独立透明单株；C01 保留已认可的整幅前后排例外。');
+console.log('已覆盖全部作物的物品图标、回退场景、体型与逐株根位、四期独立透明单株、显式采收分类及保留植株的成年裸株来源；C01 保留整幅例外，素材画风与连续采收体验仍需实际审阅。');
 
 const livestockLayout = JSON.parse(await readFile(new URL('../assets/livestock/layout.json', import.meta.url), 'utf8'));
 const livestockManifest = JSON.parse(await readFile(new URL('../assets/livestock/atlas.json', import.meta.url), 'utf8'));
+if (livestockLayout.animation !== 'feeding' || livestockManifest.animation !== 'feeding' ||
+    typeof livestockManifest.feedingRegistration !== 'string' || !livestockManifest.feedingRegistration.trim()) {
+  throw new Error('畜牧运行与裁切登记必须消费明确的进食原画来源。');
+}
+const feedingRegistration = JSON.parse(await readFile(locate(livestockManifest.feedingRegistration), 'utf8'));
+if (typeof livestockManifest.choiceRegistration !== 'string' ||
+    livestockManifest.choiceRegistration !== livestockLayout.choiceRegistration ||
+    typeof livestockManifest.feedRegistration !== 'string' ||
+    livestockManifest.feedRegistration !== livestockLayout.feedRegistration) {
+  throw new Error('畜牧抬头选择来源与复合饲料必须有独立且一致的生产登记。');
+}
+const livestockChoices = JSON.parse(await readFile(locate(livestockManifest.choiceRegistration), 'utf8'));
+const compoundFeed = JSON.parse(await readFile(locate(livestockManifest.feedRegistration), 'utf8'));
+const compoundTexture = compoundFeed.texture;
+if (compoundTexture?.path !== './art/livestock/feed.webp' ||
+    JSON.stringify(compoundTexture.size) !== '[128,64]' ||
+    !validRegion(compoundTexture.bounds, 128, 64) ||
+    !Array.isArray(compoundTexture.anchor) || compoundTexture.anchor.length !== 2 ||
+    !containsPoint(compoundTexture.bounds, ...compoundTexture.anchor) ||
+    JSON.stringify(livestockLayout.feedTexture) !== JSON.stringify(compoundTexture)) {
+  throw new Error('复合饲料纹理必须有实际内容bounds、地面anchor和128x64透明画布。');
+}
+const compoundFeedOriginal = await readFile(locate('assets/livestock/' + compoundFeed.source));
+await imageFile('assets/livestock/' + compoundFeed.source, ...compoundFeed.sourceSize, true);
+await imageFile('assets/livestock/feed.png', 128, 64, true);
+const compoundFeedPublished = await imageFile('public/art/livestock/feed.webp', 128, 64, true);
+if (livestockManifest.feedTexture?.source !== compoundFeed.source ||
+    livestockManifest.feedTexture.sourceSha256 !== digest(compoundFeedOriginal) ||
+    livestockManifest.feedTexture.sha256 !== digest(compoundFeedPublished)) {
+  throw new Error('复合饲料原稿与发布图的来源登记过期。');
+}
 await imageFile('public/art/livestock/barn.webp', 320, 320);
 await imageFile('assets/livestock/barn.png', 320, 320);
 await readFile(locate('assets/livestock/' + livestockLayout.sources.barn));
@@ -230,11 +355,25 @@ const livestock = ids.filter((id) => catalog.items[id].kind === 'L');
 sameIDs(livestock, Object.keys(livestockLayout.species), '畜牧原画登记');
 sameIDs(livestock, Object.keys(livestockManifest.species), '畜牧裁切登记');
 sameIDs(livestock, Object.keys(livestockVisuals), '畜牧运行登记');
+sameIDs(livestock, Object.keys(feedingRegistration.species), '畜牧进食口部与固定脚点来源');
+sameIDs(livestock, Object.keys(livestockChoices.species), '畜牧独立抬头选择来源');
 sameIDs(Object.keys(livestockLayout.sources.sheets), Object.keys(livestockManifest.sources), '畜牧多源原画');
+sameIDs(Object.keys(livestockLayout.sources.sheets), Object.keys(feedingRegistration.sources), '畜牧进食原画来源');
+if (feedingRegistration.version !== livestockLayout.version || feedingRegistration.version !== livestockManifest.version) {
+  throw new Error('畜牧进食原画登记版本与实际导出不一致。');
+}
+const livestockSourceSizes = new Map();
 for (const [key, file] of Object.entries(livestockLayout.sources.sheets)) {
   const source = livestockManifest.sources[key];
   const bytes = await readFile(locate('assets/livestock/' + file));
-  if (source.file !== file || source.sha256 !== digest(bytes)) throw new Error(`畜牧原画登记过期：${key}，请重新导出。`);
+  if (source.file !== file || source.sha256 !== digest(bytes) || feedingRegistration.sources[key] !== file) {
+    throw new Error(`畜牧原画登记过期：${key}，请重新导出。`);
+  }
+  const metadata = await sharp(bytes).metadata();
+  if (JSON.stringify(source.originalSize) !== JSON.stringify([metadata.width, metadata.height])) {
+    throw new Error(`畜牧原画真实尺寸与来源登记不一致：${key}`);
+  }
+  livestockSourceSizes.set(key, metadata);
   await imageFile('assets/livestock/' + source.normalized,
     livestockLayout.sceneSize * livestockLayout.grid.columns, livestockLayout.sceneSize * livestockLayout.grid.rows, true);
 }
@@ -243,6 +382,10 @@ let livestockFrameCount = 0;
 for (const id of livestock) {
   const definition = livestockLayout.species[id];
   const record = livestockManifest.species[id];
+  const feedDefinition = feedingRegistration.species[id];
+  if (JSON.stringify(livestockVisuals[id].feedTexture) !== JSON.stringify(compoundTexture)) {
+    throw new Error(`畜牧运行必须消费同一共用复合饲料图片契约：${id}`);
+  }
   const expectedStages = definition.slaughter ? 3 : 1;
   const expectedNames = definition.slaughter ? ['young', 'growing', 'mature'] : ['adult'];
   if (typeof definition.slaughter !== 'boolean' || definition.subject !== catalog.items[id].subject ||
@@ -250,7 +393,9 @@ for (const id of livestock) {
       livestockVisuals[id].slaughter !== definition.slaughter || livestockVisuals[id].stages !== expectedStages ||
       definition.stages.length !== expectedStages || record.frames.length !== expectedStages * 4 ||
       JSON.stringify(definition.stages.map(({ name }) => name)) !== JSON.stringify(expectedNames) ||
-      JSON.stringify(record.stages) !== JSON.stringify(expectedNames)) {
+      JSON.stringify(record.stages) !== JSON.stringify(expectedNames) || record.animation !== 'feeding' ||
+      feedDefinition.key !== definition.source || !['grain', 'hay', 'greens'].includes(feedDefinition.kind) ||
+      !Array.isArray(feedDefinition.stages) || feedDefinition.stages.length !== expectedStages) {
     throw new Error(`畜牧阶段或裁切登记不完整：${id}`);
   }
   const groundings = livestockVisuals[id].grounding;
@@ -259,6 +404,17 @@ for (const id of livestock) {
         !validGrounding(definition.stages[stage].grounding) ||
         !sameGrounding(grounding, definition.stages[stage].grounding))) {
     throw new Error(`畜牧阶段 grounding 缺失、无效或与原画登记不一致：${id}`);
+  }
+  const feeding = livestockVisuals[id].feeding;
+  if (!Array.isArray(feeding) || feeding.length !== expectedStages ||
+      !Array.isArray(record.feeding) || record.feeding.length !== expectedStages ||
+      !Array.isArray(record.feedingSources) || record.feedingSources.length !== expectedStages ||
+      feeding.some((entry, stage) => !validGrounding(entry) || !['grain', 'hay', 'greens'].includes(entry.kind) ||
+        !validGrounding(definition.stages[stage].feeding) ||
+        !sameGrounding(entry, definition.stages[stage].feeding) || entry.kind !== definition.stages[stage].feeding.kind ||
+        !validGrounding(record.feeding[stage]) || !sameGrounding(entry, record.feeding[stage]) ||
+        entry.kind !== record.feeding[stage].kind || entry.kind !== feedDefinition.kind)) {
+    throw new Error(`畜牧各阶段必须有同源的进食饲料位置、范围与显式种类：${id}`);
   }
   await imageFile(`assets/livestock/atlases/${id}.png`, 1280, expectedStages * 320, true);
   const bytes = await readFile(new URL(`../public/art/livestock/animals/${id}.webp`, import.meta.url));
@@ -272,7 +428,16 @@ for (const id of livestock) {
       record.frames.find((entry) => entry.stage === frameName && entry.frame === frame));
     const stageScale = registrations[0]?.stageScale;
     const supportDefinition = definition.stages[stage];
+    const feedStage = feedDefinition.stages[stage];
     const footprint = definition.stages[stage].footprint;
+    const supportRange = supportDefinition.supportXRange;
+    if (!Array.isArray(supportRange) || supportRange.length !== 2 ||
+        supportRange.some((value) => !Number.isFinite(value) || value < 0 || value > 320) ||
+        supportRange[0] >= supportRange[1] ||
+        JSON.stringify(footprint?.supportXRange) !== JSON.stringify(supportRange) ||
+        groundings[stage].x < supportRange[0] || groundings[stage].x > supportRange[1]) {
+      throw new Error(`畜牧支撑脚横向范围必须显式登记并与实际脚印来源一致：${id}/${frameName}`);
+    }
     if (!Number.isInteger(supportDefinition.supportBandHeight) || supportDefinition.supportBandHeight <= 0 ||
         !['golden-feet', 'opaque-feet'].includes(supportDefinition.supportMaterial) ||
         footprint?.supportMaterial !== supportDefinition.supportMaterial ||
@@ -291,22 +456,71 @@ for (const id of livestock) {
       !Array.isArray(entry.sourceAnchor) || entry.sourceAnchor.length !== 2 ||
       entry.sourceAnchor.some((coordinate) => !Number.isFinite(coordinate) || coordinate < 0) ||
       typeof entry.anchorMethod !== 'string' || entry.anchorMethod.trim().length === 0 ||
+      JSON.stringify(entry.sourceAnchor) !== JSON.stringify(supportDefinition.sourceAnchors?.[entry.frame]) ||
       !validGrounding(entry.grounding) || !sameGrounding(entry.grounding, groundings[stage]))) {
       throw new Error(`畜牧阶段共享尺度、固定解剖脚点或对齐方法登记缺失：${id}/${frameName}`);
+    }
+    const feedingSource = supportDefinition.feedingSource;
+    const recordedFeedingSource = record.feedingSources[stage];
+    const mouth = feedingSource?.sourceMouth;
+    const sourceSize = livestockSourceSizes.get(feedingSource?.source);
+    const sourceRectangle = registrations[0].sourceRectangle;
+    if (!feedingSource || feedingSource.referenceFrame !== 0 || !sourceSize ||
+        feedingSource.source !== registrations[0].source ||
+        feedingSource.source !== (supportDefinition.source ?? definition.source) ||
+        JSON.stringify(feedStage.anchors) !== JSON.stringify(supportDefinition.sourceAnchors) ||
+        JSON.stringify(feedStage.canvas) !== JSON.stringify([
+          supportDefinition.sourceCanvas?.left, supportDefinition.sourceCanvas?.top,
+          supportDefinition.sourceCanvas?.width, supportDefinition.sourceCanvas?.height,
+        ]) || JSON.stringify(feedStage.mouth) !== JSON.stringify(mouth) ||
+        !Array.isArray(mouth) || mouth.length !== 2 || mouth.some((value) => !Number.isFinite(value) || value < 0) ||
+        mouth[0] >= sourceSize.width || mouth[1] >= sourceSize.height ||
+        !sourceRectangle || mouth[0] < sourceRectangle.left || mouth[0] >= sourceRectangle.left + sourceRectangle.width ||
+        mouth[1] < sourceRectangle.top || mouth[1] >= sourceRectangle.top + sourceRectangle.height ||
+        typeof feedingSource.method !== 'string' || !feedingSource.method.trim() ||
+        recordedFeedingSource?.source !== feedingSource.source || recordedFeedingSource.referenceFrame !== 0 ||
+        JSON.stringify(recordedFeedingSource.sourceMouth) !== JSON.stringify(mouth) ||
+        recordedFeedingSource.method !== feedingSource.method) {
+      throw new Error(`畜牧进食点必须追溯到同阶段首帧原稿的真实口部登记：${id}/${frameName}`);
+    }
+    const mouthBounds = feedingSource.mouthBounds;
+    const sourceMouthBounds = feedingSource.sourceMouthBounds;
+    const sceneMouth = {
+      x: livestockLayout.animalRoot.x + (mouth[0] - registrations[0].sourceAnchor[0]) * stageScale,
+      y: livestockLayout.animalRoot.y + (mouth[1] - registrations[0].sourceAnchor[1]) * stageScale,
+    };
+    if (!validRegion(mouthBounds, 320, 320) || mouthBounds.height >= 320 ||
+        !(mouthBounds.x > supportRange[1] || mouthBounds.x + mouthBounds.width <= supportRange[0]) ||
+        !validRegion(sourceMouthBounds, sourceSize.width, sourceSize.height) ||
+        sourceMouthBounds.width >= sourceRectangle.width || sourceMouthBounds.height >= sourceRectangle.height ||
+        !containsPoint(sourceMouthBounds, mouth[0], mouth[1]) || !containsPoint(mouthBounds, sceneMouth.x, sceneMouth.y) ||
+        Math.abs(mouthBounds.x - (livestockLayout.animalRoot.x +
+          (sourceMouthBounds.x - registrations[0].sourceAnchor[0]) * stageScale)) > 0.01 ||
+        Math.abs(mouthBounds.y - (livestockLayout.animalRoot.y +
+          (sourceMouthBounds.y - registrations[0].sourceAnchor[1]) * stageScale)) > 0.01 ||
+        Math.abs(mouthBounds.width - sourceMouthBounds.width * stageScale) > 0.01 ||
+        Math.abs(mouthBounds.height - sourceMouthBounds.height * stageScale) > 0.01 ||
+        !sameBounds(recordedFeedingSource.mouthBounds, mouthBounds) ||
+        !sameBounds(recordedFeedingSource.sourceMouthBounds, sourceMouthBounds) ||
+        typeof feedingSource.mouthBoundsMethod !== 'string' || !feedingSource.mouthBoundsMethod.trim() ||
+        recordedFeedingSource.mouthBoundsMethod !== feedingSource.mouthBoundsMethod) {
+      throw new Error(`畜牧低嘴豁免必须是来源映射一致、包含登记嘴点且不触支撑脚区的局部区域：${id}/${frameName}`);
     }
     const frames = await Promise.all(Array.from({ length: 4 }, async (_, frame) => {
       const sourcePath = `assets/livestock/animals/${id}/${frameName}-${frame}.png`;
       const sourceBytes = await imageFile(sourcePath, 320, 320, true);
       const sourcePixels = await sharp(sourceBytes).ensureAlpha().raw().toBuffer();
-      // The silhouette foot line remains the fixed animal registration plane;
-      // an ellipse center can sit between the front and rear support feet.
-      noBakedGroundShadow(sourcePixels, 320, 320, livestockLayout.animalRoot.y, sourcePath);
+      // The true support-foot plane stays fixed. Low mouths use only their separately registered local exception.
+      noBakedGroundShadow(sourcePixels, 320, 320, livestockLayout.animalRoot.y, sourcePath, mouthBounds);
       const pixels = await sharp(bytes).extract({ left: frame * 320, top: stage * 320, width: 320, height: 320 })
         .ensureAlpha().raw().toBuffer();
-      noBakedGroundShadow(pixels, 320, 320, livestockLayout.animalRoot.y, `${id}/${frameName}/${frame} 发布帧`);
+      noBakedGroundShadow(pixels, 320, 320, livestockLayout.animalRoot.y, `${id}/${frameName}/${frame} 发布帧`, mouthBounds);
       let bottom = -1;
       for (let pixel = 3; pixel < pixels.length; pixel += 4) {
-        if (pixels[pixel] >= 128) bottom = Math.floor((pixel - 3) / 4 / 320);
+        const x = ((pixel - 3) / 4) % 320;
+        if (pixels[pixel] >= 128 && x >= supportRange[0] && x <= supportRange[1]) {
+          bottom = Math.floor((pixel - 3) / 4 / 320);
+        }
       }
       if (bottom < 268 || bottom > 272) throw new Error(`畜牧帧为空或脚位偏移：${id} ${stage}/${frame}`);
       return digest(pixels);
@@ -342,8 +556,45 @@ for (const id of livestock) {
       record.itemIcon?.path !== `public/wiki/icons/${id}.webp` || record.facilityScene?.path !== `public/art/scene-${id}.webp`) {
     throw new Error(`牲畜图、产出图或静态场景登记缺失：${id}`);
   }
+  const feedingFallback = record.facilityScene;
+  const feedingFallbackOriginal = await imageFile(`assets/source/art/scene-${id}.png`, 320, 320);
+  const feedingFallbackPublished = await imageFile(`public/art/scene-${id}.webp`, 320, 320);
+  if (feedingFallback.source !== `assets/source/art/scene-${id}.png` ||
+      feedingFallback.sourceSha256 !== digest(feedingFallbackOriginal) ||
+      feedingFallback.sha256 !== digest(feedingFallbackPublished) ||
+      JSON.stringify(feedingFallback.feedTexture) !== JSON.stringify(compoundTexture)) {
+    throw new Error(`畜牧回退必须复用当前独立复合饲料与持久场景来源：${id}`);
+  }
+  const headUp = livestockChoices.species[id];
+  const headUpBytes = await readFile(locate('assets/livestock/' + headUp.source));
+  const headUpSize = await sharp(headUpBytes).metadata();
+  const headUpRect = headUp.rectangle;
+  if (record.animalIcon.pose !== 'head-up' || record.animalIcon.registration !== livestockManifest.choiceRegistration ||
+      record.animalIcon.source !== headUp.source || record.animalIcon.sourceSha256 !== digest(headUpBytes) ||
+      headUp.sourceSha256 !== digest(headUpBytes) || headUp.generatedWith !== 'built-in image_gen' ||
+      record.animalIcon.stage !== headUp.stage || !['adult', 'mature'].includes(headUp.stage) || headUp.frame !== 0 ||
+      JSON.stringify(record.animalIcon.sourceCell) !== JSON.stringify(headUp.sourceCell) ||
+      JSON.stringify(record.animalIcon.sourceRectangle) !== JSON.stringify(headUpRect) ||
+      !validRegion({ x: headUpRect?.left, y: headUpRect?.top, width: headUpRect?.width, height: headUpRect?.height }, headUpSize.width, headUpSize.height) ||
+      Object.values(feedingRegistration.sources).includes(headUp.source)) {
+    throw new Error(`畜牧抬头选择来源缺失、过期或错误消费低头进食来源：${id}`);
+  }
+  if (!Array.isArray(headUp.referenceFrames) || headUp.referenceFrames.length !== 2 ||
+      JSON.stringify(record.animalIcon.referenceFrames) !== JSON.stringify(headUp.referenceFrames) ||
+      record.animalIcon.generatedWith !== 'built-in image_gen' ||
+      record.animalIcon.promptFile !== livestockChoices.promptFile ||
+      headUp.referenceFrames.some((reference, index) => reference.path !==
+        `assets/livestock/animals/${id}/${expectedNames.at(-1)}-${[0, 3][index]}.png`)) {
+    throw new Error(`畜牧普通选择图必须由同ID当前成熟动画0/3帧输入新生成，并保留实际提示词：${id}`);
+  }
+  await readFile(locate(livestockChoices.promptFile));
+  for (const reference of headUp.referenceFrames) {
+    if (reference.sha256 !== digest(await readFile(locate(reference.path)))) {
+      throw new Error(`畜牧普通选择图的当前动画输入登记过期：${id}`);
+    }
+  }
 }
-console.log(`已覆盖 ${livestock.length} 种牲畜、${livestockFrameCount} 张独立 idle 帧、首帧脚印 grounding、共享尺度/固定脚点登记、脚线下疑似投影、透明牲畜选择图、同ID仓库产物来源/内容bounds、回退及原画来源；画风与动画稳定性仍需实际审阅。`);
+console.log(`已覆盖 ${livestock.length} 种牲畜、${livestockFrameCount} 张独立 idle 帧、首帧脚印 grounding/显式支撑脚横向范围、进食口部来源与每阶段饲料登记、共享尺度/固定脚点、脚线下疑似投影、透明牲畜选择图、同ID仓库产物来源/内容bounds、回退及原画来源；真实进食动作、画风与动画稳定性仍需实际审阅。`);
 
 const fish = ids.filter((id) => catalog.items[id].kind === 'F');
 const fishLayout = JSON.parse(await readFile(locate('assets/fish/layout.json'), 'utf8'));

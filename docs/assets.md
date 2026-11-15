@@ -46,6 +46,8 @@ npm run wiki:build
 
 种植点沿底图真实垄脊布置，完整透视列族与各条田垄求交，列在田界自然进退，每排覆盖可种两端，不能只摆两列窄条。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片。
 
+`src/content/crop-harvest.json` 逐ID区分整株和保留植株采收，记录采收部分、真实成长期／成熟期审图依据及成年采后素材可否复用。`assets/plot/reviews/repeat-harvest/` 的对照图由本地程序拼接已有原画，仅用于审阅，不能称作内置绘图工具新绘原画。需补画的成年采后状态使用内置 `image_gen` 编辑成熟单株，保留原成年枝冠／根脚与各ID来源；需要绘制原画的任务不能用程序擦除或放大小苗代替。`crop-visuals.json` 的保留植株条目新增 `harvestMode:'retainedPlant'` 与完整单株 `repeatBare` metadata，发布 `public/art/plot/plants/<ID>/bare.webp`；原四期继续用于首次换种，后续使用成年采后纹理和成熟纹理。
+
 洒水器用固定器身与四个同轴的 64×64 喷头叠图。水滴与落地水花独立用 PixiJS 绘制，四向出水点随喷头同步。WebP 质量为 70，透明区域保留。品种首张可见的地块卡出现时按需加载对应图集，同种作物共用。加载期间及失败时显示原有设施场景。
 
 | 版本 | 位置 |
@@ -66,7 +68,15 @@ npm run wiki:build
 
 动物原画、透明选择图和回退中的动物层都不烘焙椭圆阴影，复用物品图也不烘焙程序影。每阶段四帧使用同一尺度和固定解剖脚点，不逐帧按 bbox 重居中或按加权脚底像素中心挪动。`atlas.json` 每帧保留 `fixedGround: [138,270]`，并记录阶段共享的正数 `stageScale`、人工解剖脚点 `sourceAnchor: [x,y]` 与实际 `anchorMethod`；`sourceAnchor` 使用原始整张源图的绝对像素坐标，`sourceCanvas.left/top` 是相对此 anchor 的偏移，画布尺寸同阶段固定。导出从 `sourceAnchor + sourceCanvas.left/top` 提取画布，同阶段共用 `stageScale` 与 `scenePlacement`。
 
-运行登记每 ID 使用 `{stages,slaughter,grounding,product}`。`grounding` 数组长度等于 `stages`，每项为 `{x,y,radiusX,radiusY}`，半径为有限正数，按阶段首帧真实支撑脚区域登记；`x/y` 可以不等于注册点 `(138,270)`，不逐帧测量或挪动动物。`product: {icon: ID, bounds: {x,y,width,height}}` 记录原有 96px 物品图可见 Alpha 的内容区域，动画直接加载与仓库相同的 `./wiki/icons/<ID>.webp?game=1`，按内容主体而非透明边距定位。肉品底边对齐成熟阶段落脚点，跨收获淡出保持；附属产物在动物附近接地。
+运行登记每ID使用 `{stages,slaughter,grounding,feeding,feedTexture,product}`。`grounding` 每期登记真实首帧支撑脚区 `{x,y,radiusX,radiusY}`，同阶段固定，不逐帧测量或挪动物。`feeding` 每期 `{x,y,radiusX,radiusY,kind}` 保留真实嘴点来源；当前全部动物共用复合饲料图片，不再按kind程序画细粒料。`feedTexture` 为 `{path:'./art/livestock/feed.webp',size:[128,64],bounds:{x:4,y:4,width:120,height:56},anchor:[64,60]}`，loader共享一张Texture，每只动物独立Sprite和程序轻影。`livestockFeedLayout`由runtime和静态导出共用，v6-r3修正基础动物缩放压小及头下遮挡，大小保留depth透视，料堆在真实嘴前；参数是实现选择，真实嘴/脚登记不动。`product`仍用96px canonical内容bounds，动画与仓库同URL，肉品跨收获保持成熟落点，附属产物在饲料相反侧接地。
+
+复合饲料实际新原画为 `assets/livestock/raw/compound-feed-v6.png`，成品PNG为 `assets/livestock/feed.png`、发布 `public/art/livestock/feed.webp`；登记 `feed-registration-v6.json`，提示词 `choice-feed-prompts-v6.md`。前两版130px因过小／遮头退回，最终 `choice-feed-evidence/v6-r3/` 第三版实际复查后通过静态范围；真实Pixi图层仍另验。
+
+选择图V7必须以各ID当前V5成年／成熟第0/3帧作内置imagegen输入，重新生成普通抬头站姿，不能从旧V4复用。新原画 `assets/livestock/raw/choice-v7/<ID>.png`，完整提示词 `choice-prompts-v7.md`，输入帧／源hash／裁切在 `choice-registration-v7.json`。`export-choices.mjs`由正式畜牧producer消费；`--choices-only`仅重导10项选择，不改变80进食帧/feed/回退。成品仍为 `public/ui-icons/livestock-<ID>.webp`，独立透明96px，URL cache v4；scene/animal沿v3，原仓库产品不变。旧V4复用交付保留在拒绝历史，不作当前来源。见[最新静态审阅](art-reviews/2026-11-15-livestock-choice-feed.md)。
+
+全种类、全部20阶段80帧本轮改为真实吃饲料idle，低头、啄食和咀嚼来自内置绘图工具的新原画，不能以整精灵旋转或静态缩放代替。新原稿、提示词、逐帧／图集、选择图和静态回退按精确版本交付；身体／脚点稳定性、正常透明底边缘和真实进食姿态须静态分镜审阅，真实循环另按授权验收。
+
+V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.md`、`feeding-registration-v5.json`；V4登记在切换前另存保留。低头嘴/喙可低于脚平面，脚线检查只在显式 `supportXRange` 判断；脚线下烘焙影仍按全幅原阈值拒绝，仅允许 `feedingSource.mouthBounds` 登记的真实低嘴局部。`sourceMouthBounds`保存其原稿映射，`mouthBoundsMethod`说明人工来源；局部框不能覆盖脚区或头前整片地面，审图须看最新版 `alignment/` 红框分镜，字段齐全不代替视觉判断。
 
 每个 `layout.species[ID].stages[i]` 顶层显式登记正整数 `supportBandHeight` 和 `supportMaterial: golden-feet | opaque-feet`。前者限定首帧固定脚区高度，后者指定金色脚趾／蹼或不透明蹄／爪的语义选择；`footprint` 保留选择结果，材质枚举与具体说明分别记入 `supportMaterial`／`supportSelection`。动物导出只消费登记，不按固定 L 名单推断，也不补默认脚区；`productCell` 完全可选，仅保留为未消费的历史溯源，不作为新动物必交项。
 

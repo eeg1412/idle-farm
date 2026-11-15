@@ -1,0 +1,91 @@
+{
+  "source": "assets/plot/furrows.json",
+  "rows": 9,
+  "projection": {
+    "vanishingPoint": {
+      "x": 392.7556084296397,
+      "y": -75.11250849762071
+    },
+    "referenceY": 180,
+    "sourceBoundaryColumns": [
+      {
+        "from": [
+          221,
+          67
+        ],
+        "to": [
+          24,
+          230
+        ]
+      },
+      {
+        "from": [
+          303,
+          78
+        ],
+        "to": [
+          184,
+          281
+        ]
+      }
+    ],
+    "columns": [
+      {
+        "index": 0,
+        "x": -192
+      },
+      {
+        "index": 1,
+        "x": -144
+      },
+      {
+        "index": 2,
+        "x": -96
+      },
+      {
+        "index": 3,
+        "x": -48
+      },
+      {
+        "index": 4,
+        "x": 0
+      },
+      {
+        "index": 5,
+        "x": 48
+      },
+      {
+        "index": 6,
+        "x": 96
+      },
+      {
+        "index": 7,
+        "x": 144
+      },
+      {
+        "index": 8,
+        "x": 192
+      },
+      {
+        "index": 9,
+        "x": 240
+      },
+      {
+        "index": 10,
+        "x": 288
+      },
+      {
+        "index": 11,
+        "x": 336
+      },
+      {
+        "index": 12,
+        "x": 384
+      },
+      {
+        "index": 13,
+        "x": 432
+      }
+    ]
+  }
+}

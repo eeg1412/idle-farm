@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite } from 'pixi.js';
 import livestockVisuals from '../content/livestock-visuals.json' with { type: 'json' };
-import { livestockLayout } from './livestock-layout.js';
+import { livestockFeedLayout, livestockLayout } from './livestock-layout.js';
 
 export const livestockFrameSize = 320;
 export const livestockIdleFrames = 4;
@@ -15,6 +15,20 @@ const animalRoot = { x: 138, y: 270 };
 function smoothstep(progress) {
   const bounded = Math.max(0, Math.min(1, progress));
   return bounded * bounded * (3 - 2 * bounded);
+}
+
+// The shared feed image is a separate ground layer in front of each stage's
+// registered mouth, transformed by the same perspective as its animal.
+function positionFeed(feed, shadow, feeding, texture, { animalScale, left, top }, baseAnimalScale) {
+  shadow.clear();
+  feed.visible = Boolean(feeding);
+  if (!feeding) return;
+  const geometry = livestockFeedLayout(feeding, texture, baseAnimalScale);
+  feed.scale.set(animalScale * geometry.scale);
+  feed.position.set(left + geometry.x * animalScale, top + geometry.y * animalScale);
+  const ground = geometry.shadow;
+  shadow.ellipse(ground.x, ground.y, ground.radiusX, ground.radiusY)
+    .fill({ color: 0x2b2118, alpha: ground.alpha });
 }
 
 export function sampleLivestockAnimation({
@@ -59,7 +73,7 @@ export function mountLivestockAnimation(
   container.addChild(scene, clip);
   scene.mask = clip;
 
-  for (const texture of [textures.barn, ...textures.stages.flat(), textures.product]) {
+  for (const texture of [textures.barn, textures.feed, ...textures.stages.flat(), textures.product]) {
     texture.source.scaleMode = 'nearest';
   }
   const addSprite = (parent, texture, label) => {
@@ -73,6 +87,7 @@ export function mountLivestockAnimation(
   const layout = livestockLayout(batch.id);
   const bounds = species.product.bounds;
   const matureGrounding = species.grounding[species.stages - 1];
+  const matureFeeding = species.feeding?.[species.stages - 1];
   const animals = layout.placements.map((placement, index) => {
     const group = new Container();
     group.label = 'livestock-group-' + index;
@@ -85,6 +100,13 @@ export function mountLivestockAnimation(
     shadow.label = 'livestock-shadow';
     shadow.eventMode = 'none';
     group.addChild(shadow);
+    const feedShadow = new Graphics();
+    feedShadow.label = 'livestock-feed-shadow';
+    feedShadow.eventMode = 'none';
+    feedShadow.scale.set(animalScale);
+    feedShadow.position.set(left, top);
+    group.addChild(feedShadow);
+    const feed = addSprite(group, textures.feed, 'livestock-feed');
     const animal = addSprite(group, textures.stages[0][0], 'livestock-animal');
     animal.scale.set(animalScale);
     animal.position.set(left, top);
@@ -92,14 +114,18 @@ export function mountLivestockAnimation(
     const productScale = layout.productSize * placement.depth / Math.max(bounds.width, bounds.height);
     const productWidth = bounds.width * productScale;
     const productHeight = bounds.height * productScale;
+    const feedSide = matureFeeding ? Math.sign(matureFeeding.x - animalRoot.x) || 1 : -1;
+    const sideProductX = left + matureGrounding.x * animalScale - feedSide * (
+      matureGrounding.radiusX * animalScale + 8 * placement.depth + productWidth / 2
+    );
     const productGround = {
       // Meat is centered on each animal's registered stance, rather than the
       // asymmetric hoof span. A single large animal and its meat use x=160.
-      x: species.slaughter ? placement.x : Math.min(
+      x: species.slaughter ? placement.x : Math.max(
+        16 + productWidth / 2, Math.min(
         livestockFrameSize - 16 - productWidth / 2,
-        left + (matureGrounding.x + matureGrounding.radiusX) * animalScale +
-          8 * placement.depth + productWidth / 2,
-      ),
+        sideProductX,
+      )),
       y: top + matureGrounding.y * animalScale + (species.slaughter ? 0 : 3 * placement.depth),
     };
     const productShadow = new Graphics();
@@ -119,22 +145,24 @@ export function mountLivestockAnimation(
       productGround.y - (bounds.y + bounds.height) * productScale,
     );
     product.alpha = 0;
-    return { animal, shadow, product, productShadow, animalScale, left, top };
+    return { animal, shadow, feed, feedShadow, product, productShadow, animalScale, left, top };
   });
 
-  let shadowStage;
-  const updateShadow = (stage) => {
-    if (shadowStage === stage) return;
+  let groundStage;
+  const updateGroundLayers = (stage) => {
+    if (groundStage === stage) return;
     const grounding = species.grounding[stage];
-    for (const { shadow, animalScale, left, top } of animals) {
+    for (const { shadow, feed, feedShadow, animalScale, left, top } of animals) {
       shadow.clear()
         .ellipse(left + grounding.x * animalScale, top + grounding.y * animalScale,
           grounding.radiusX * animalScale, grounding.radiusY * animalScale)
         .fill({ color: 0x2b2118, alpha: 0.45 });
+      positionFeed(feed, feedShadow, species.feeding?.[stage], species.feedTexture,
+        { animalScale, left, top }, layout.animalScale);
     }
-    shadowStage = stage;
+    groundStage = stage;
   };
-  updateShadow(0);
+  updateGroundLayers(0);
   parent.addChild(container);
 
   return {
@@ -142,7 +170,7 @@ export function mountLivestockAnimation(
     update({ clock, now }) {
       const sample = sampleLivestockAnimation({ batch, animationStart, clock, now, previousHarvestAt });
       const texture = textures.stages[sample.stage][sample.idleFrame];
-      updateShadow(sample.stage);
+      updateGroundLayers(sample.stage);
       for (const { animal, shadow, product, productShadow } of animals) {
         if (animal.texture !== texture) animal.texture = texture;
         animal.alpha = sample.animalAlpha;

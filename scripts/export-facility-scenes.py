@@ -21,6 +21,9 @@ THREE_COLUMNS = {"crops-51-59", "crops-60-68"}
 ORIGINALS = {"C01": "scene-wheat", "L01": "scene-hen", "F01": "scene-fish"}
 FISH_LAYOUT = ROOT / "assets/fish/layout.json"
 FISH_SCENES = loads(FISH_LAYOUT.read_text(encoding="utf-8")).get("species", {}) if FISH_LAYOUT.exists() else {}
+LIVESTOCK_LAYOUT = ROOT / "assets/livestock/layout.json"
+LIVESTOCK_DEFINITION = loads(LIVESTOCK_LAYOUT.read_text(encoding="utf-8")) if LIVESTOCK_LAYOUT.exists() else {}
+FEEDING_SCENES = LIVESTOCK_DEFINITION.get("species", {}) if LIVESTOCK_DEFINITION.get("animation") == "feeding" else {}
 
 
 def seams(image, horizontal=False, columns=5):
@@ -45,10 +48,10 @@ def seams(image, horizontal=False, columns=5):
 
 
 def save(name, scene):
-    # Fish animation exports own persistent fallback PNGs. Keep the regular
-    # facility exporter from replacing those with its historical sheet cells.
+    # Fish and explicitly registered feeding livestock own persistent fallback
+    # PNGs. Keep the regular exporter from restoring historical sheet cells.
     replacement = ART / f"scene-{name}.png"
-    if name in FISH_SCENES and replacement.exists():
+    if (name in FISH_SCENES or name in FEEDING_SCENES) and replacement.exists():
         with Image.open(replacement) as current:
             scene = current.convert("RGB")
     card = ImageOps.fit(scene, (320, 320), Image.Resampling.NEAREST)
@@ -62,6 +65,19 @@ def save(name, scene):
             record["fallback"]["sourceSha256"] = sha256(replacement.read_bytes()).hexdigest()
             record["fallback"]["sha256"] = sha256(published.read_bytes()).hexdigest()
             manifest_path.write_text(dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    feeding_manifest = ROOT / "assets/livestock/atlas.json"
+    if name in FEEDING_SCENES and replacement.exists() and feeding_manifest.exists():
+        manifest = loads(feeding_manifest.read_text(encoding="utf-8"))
+        record = manifest.get("species", {}).get(name, {})
+        asset = record.get("facilitySceneAsset") or record.get("facilityScene")
+        if asset and asset.get("source") == f"assets/source/art/scene-{name}.png":
+            # Preserve the actual manifest contract: refresh hashes only when
+            # this exporter owns an already-registered source/published digest.
+            if "sourceSha256" in asset:
+                asset["sourceSha256"] = sha256(replacement.read_bytes()).hexdigest()
+            if "sha256" in asset:
+                asset["sha256"] = sha256(published.read_bytes()).hexdigest()
+            feeding_manifest.write_text(dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main():

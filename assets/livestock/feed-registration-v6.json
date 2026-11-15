@@ -1,0 +1,14 @@
+{
+  "version": 6,
+  "presentationRevision": "v6-r3",
+  "source": "raw/compound-feed-v6.png",
+  "sourceSize": [1840, 854],
+  "sourceRectangle": { "left": 87, "top": 184, "width": 1650, "height": 547 },
+  "conversion": "Crop the actual generated alpha silhouette, normalize the mound to the registered 120x56 content rectangle with nearest-neighbor scaling, and place it in a transparent 128x64 canvas. Retain the unmodified image_gen original. No program-drawn feed particles replace this image.",
+  "texture": {
+    "path": "./art/livestock/feed.webp",
+    "size": [128, 64],
+    "bounds": { "x": 4, "y": 4, "width": 120, "height": 56 },
+    "anchor": [64, 60]
+  }
+}

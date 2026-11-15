@@ -1,5 +1,5 @@
-import { catalog, facilityOffer, productionDurationMs, quantity } from '../game/world.js';
-import { qualityOffer, researchOffer, techDefinitions, techOffer } from '../game/advancement.js';
+import { catalog, quantity } from '../game/world.js';
+import { qualityOffer, researchOffer, techDefinitions, techLevelLimit, techOffer } from '../game/advancement.js';
 import { compact } from './numbers.js';
 
 const tabs = ['品种配方', '品质', '经营改良'];
@@ -19,8 +19,6 @@ const cropUses = ['全部用途', ...Object.keys(cropUseRanges)];
 const catalogItems = Object.entries(catalog.items);
 const qualitySteps = [['+1', 1n], ['+10', 10n], ['+100', 100n], ['最高可升', 'max']];
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
-const facilityBuy = { cropBuy: 'C', livestockBuy: 'L', fishBuy: 'F' };
-const facilityUpgrade = { cropUpgrade: 'C', livestockUpgrade: 'L', fishUpgrade: 'F' };
 const livestockArt = {
   L01: 'facility-hen',
   L02: 'facility-buffalo',
@@ -158,8 +156,8 @@ function qualityDetails(ui, id, local) {
   ui.feature(id === 'F01' ? 'scene-fish' : id, (content) => {
     content.heading(item.name, { size: 30 });
     content.detailRows([
-      { label: '品质', value: `${compact(current)} → ${compact(target)}` },
-      { label: '单价', value: `${compact(currentPrice)} → ${compact(nextPrice)}` },
+      { label: '品质', value: { from: compact(current), to: compact(target) } },
+      { label: '单价', value: { from: compact(currentPrice), to: compact(nextPrice) } },
     ], { variant: 'pill' });
   }, { ratio: 0.36, surface: item.kind === 'F' ? 'water' : undefined, align: 'center', style: 'research' });
   ui.buttons(qualitySteps.map(([label, step]) => ({
@@ -181,32 +179,12 @@ function showQuality(ui, id) {
   ui.dialog(catalog.items[id].name, (dialog) => qualityDetails(dialog, id, local));
 }
 
-function techEffect(w, definition, offer) {
-  const key = definition.key;
-  const upgraded = offer.maxed ? w : { ...w, tech: { ...w.tech, [key]: offer.level + 1 } };
-  const transition = (current, next) => offer.maxed ? current : `${current} → ${next}`;
-  const buy = facilityBuy[key];
-  const upgrade = facilityUpgrade[key];
-  if (buy) {
-    return {
-      label: '建造价格', icon: 'operation-upgrade',
-      value: transition(compact(facilityOffer(w, buy).cost), compact(facilityOffer(upgraded, buy).cost)),
-    };
-  }
-  if (upgrade && w.facilities[upgrade].length) {
-    return {
-      label: '首座设施升级', icon: 'operation-upgrade',
-      value: transition(compact(facilityOffer(w, upgrade, 0).cost), compact(facilityOffer(upgraded, upgrade, 0).cost)),
-    };
-  }
-  if (key === 'workshopSpeed') {
-    return {
-      label: '面粉每批耗时', icon: 'clock',
-      value: transition(duration(productionDurationMs(w, 'I01')), duration(productionDurationMs(upgraded, 'I01'))),
-    };
-  }
+function techEffect(offer) {
+  const transition = (current, next) => offer.maxed ? current : { from: current, to: next };
   const { label, current, next, unit } = offer.effect;
-  return { label, value: transition(`${current}${unit}`, `${next}${unit}`) };
+  const prefix = label === '费用降低' ? '降低' : label === '生产提速' ? '提速' : '';
+  const effect = (value) => `${prefix}${value}${unit}`;
+  return { label, value: transition(effect(current), effect(next)) };
 }
 
 function techRequirements(ui, definition) {
@@ -214,7 +192,7 @@ function techRequirements(ui, definition) {
   if (definition.prerequisite) {
     const prerequisite = techByKey[definition.prerequisite];
     rows.push({
-      label: `${prerequisite.name} 5 级`,
+      label: `${prerequisite.name} ${techLevelLimit} 级`,
       icon: techIcon(prerequisite),
       value: techOffer(ui.w, prerequisite.key).maxed ? '已达成' : '未达成',
       onClick: () => showTech(ui, prerequisite),
@@ -239,9 +217,10 @@ function techDetails(ui, definition) {
   if (!offer) return;
   ui.feature(techIcon(definition), (content) => {
     content.heading(definition.name, { size: 30 });
-    const level = offer.maxed ? '5 级 · 已满级' : `${compact(offer.level)} → ${compact(offer.level + 1)} 级`;
-    content.badges([{ label: level }], { style: 'production' });
-    content.detailRows([techEffect(ui.w, definition, offer)], { variant: 'stack' });
+    const level = offer.maxed ? { label: `${techLevelLimit} 级 · 已满级` }
+      : { from: compact(offer.level), to: compact(offer.level + 1) + ' 级' };
+    content.badges([level], { style: 'production' });
+    content.detailRows([techEffect(offer)], { variant: 'stack' });
   }, {
     ratio: 0.42,
     surface: definition.source === '水产' ? 'water' : undefined,

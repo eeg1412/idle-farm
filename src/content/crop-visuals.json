@@ -1,11 +1,13 @@
 {
   "C01": {
     "mode": "fieldAtlas",
-    "size": "small"
+    "size": "small",
+    "harvestMode": "wholePlant"
   },
   "C02": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -585,6 +587,7 @@
   "C03": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -1043,11 +1046,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C03/bare.webp",
+      "width": 183,
+      "height": 143,
+      "anchorX": 90,
+      "anchorY": 142,
+      "baseScale": 0.20673076923076922,
+      "source": {
+        "path": "assets/plot/crops/C03/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 183,
+          "height": 143
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 90,
+        "anchorY": 142,
+        "matureStagePath": "art/plot/plants/C03/mature.webp"
+      }
+    }
   },
   "C04": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -1627,6 +1656,7 @@
   "C05": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -2073,11 +2103,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C05/bare.webp",
+      "width": 291,
+      "height": 304,
+      "anchorX": 142.5,
+      "anchorY": 290,
+      "baseScale": 0.5201793721973094,
+      "source": {
+        "path": "assets/plot/crops/C05/bare.png",
+        "bounds": {
+          "left": 18,
+          "top": 5,
+          "width": 291,
+          "height": 304
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C05/bare.png",
+        "anchorX": 160.5,
+        "anchorY": 295,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C05.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C05.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C05-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 320,
+          "height": 320
+        },
+        "cell": {
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C05/mature.webp"
+      }
+    }
   },
   "C06": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -2652,11 +2730,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C06/bare.webp",
+      "width": 200,
+      "height": 205,
+      "anchorX": 98.5,
+      "anchorY": 204,
+      "baseScale": 0.33636363636363636,
+      "source": {
+        "path": "assets/plot/crops/C06/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 200,
+          "height": 205
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 98.5,
+        "anchorY": 204,
+        "matureStagePath": "art/plot/plants/C06/mature.webp"
+      }
+    }
   },
   "C07": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -3231,11 +3335,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C07/bare.webp",
+      "width": 194,
+      "height": 184,
+      "anchorX": 101,
+      "anchorY": 183,
+      "baseScale": 0.3394495412844037,
+      "source": {
+        "path": "assets/plot/crops/C07/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 194,
+          "height": 184
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 101,
+        "anchorY": 183,
+        "matureStagePath": "art/plot/plants/C07/mature.webp"
+      }
+    }
   },
   "C08": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -3682,11 +3812,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C08/bare.webp",
+      "width": 207,
+      "height": 192,
+      "anchorX": 104,
+      "anchorY": 191,
+      "baseScale": 0.49361702127659574,
+      "source": {
+        "path": "assets/plot/crops/C08/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 207,
+          "height": 192
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 104,
+        "anchorY": 191,
+        "matureStagePath": "art/plot/plants/C08/mature.webp"
+      }
+    }
   },
   "C09": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -4133,11 +4289,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C09/bare.webp",
+      "width": 205,
+      "height": 210,
+      "anchorX": 102,
+      "anchorY": 209,
+      "baseScale": 0.5296803652968036,
+      "source": {
+        "path": "assets/plot/crops/C09/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 205,
+          "height": 210
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 102,
+        "anchorY": 209,
+        "matureStagePath": "art/plot/plants/C09/mature.webp"
+      }
+    }
   },
   "C10": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -4712,11 +4894,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C10/bare.webp",
+      "width": 318,
+      "height": 298,
+      "anchorX": 159.5,
+      "anchorY": 274,
+      "baseScale": 0.4065934065934066,
+      "source": {
+        "path": "assets/plot/crops/C10/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 22,
+          "width": 318,
+          "height": 298
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C10/bare.png",
+        "anchorX": 159.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 320,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C10/mature.webp"
+      }
+    }
   },
   "C11": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -5163,11 +5393,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C11/bare.webp",
+      "width": 320,
+      "height": 301,
+      "anchorX": 159.5,
+      "anchorY": 285,
+      "baseScale": 0.5,
+      "source": {
+        "path": "assets/plot/crops/C11/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 12,
+          "width": 320,
+          "height": 301
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C11/bare.png",
+        "anchorX": 159.5,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 640,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C11/mature.webp"
+      }
+    }
   },
   "C12": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -5614,11 +5892,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C12/bare.webp",
+      "width": 201,
+      "height": 209,
+      "anchorX": 107.5,
+      "anchorY": 208,
+      "baseScale": 0.4915254237288136,
+      "source": {
+        "path": "assets/plot/crops/C12/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 201,
+          "height": 209
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 107.5,
+        "anchorY": 208,
+        "matureStagePath": "art/plot/plants/C12/mature.webp"
+      }
+    }
   },
   "C13": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -6082,6 +6386,7 @@
   "C14": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -6545,6 +6850,7 @@
   "C15": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -7008,6 +7314,7 @@
   "C16": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -7471,6 +7778,7 @@
   "C17": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -7934,6 +8242,7 @@
   "C18": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -8397,6 +8706,7 @@
   "C19": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -8860,6 +9170,7 @@
   "C20": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -9323,6 +9634,7 @@
   "C21": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -9902,6 +10214,7 @@
   "C22": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -10481,6 +10794,7 @@
   "C23": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -10927,11 +11241,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C23/bare.webp",
+      "width": 320,
+      "height": 291,
+      "anchorX": 161.5,
+      "anchorY": 277,
+      "baseScale": 0.5576923076923077,
+      "source": {
+        "path": "assets/plot/crops/C23/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 20,
+          "width": 320,
+          "height": 291
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C23/bare.png",
+        "anchorX": 161.5,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C23/mature.webp"
+      }
+    }
   },
   "C24": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -11378,11 +11740,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C24/bare.webp",
+      "width": 320,
+      "height": 279,
+      "anchorX": 159.5,
+      "anchorY": 255,
+      "baseScale": 0.5021645021645021,
+      "source": {
+        "path": "assets/plot/crops/C24/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 41,
+          "width": 320,
+          "height": 279
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C24/bare.png",
+        "anchorX": 159.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 960,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C24/mature.webp"
+      }
+    }
   },
   "C25": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -11829,11 +12239,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C25/bare.webp",
+      "width": 280,
+      "height": 280,
+      "anchorX": 156.5,
+      "anchorY": 257,
+      "baseScale": 0.48945147679324896,
+      "source": {
+        "path": "assets/plot/crops/C25/bare.png",
+        "bounds": {
+          "left": 2,
+          "top": 40,
+          "width": 280,
+          "height": 280
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C25/bare.png",
+        "anchorX": 158.5,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 1280,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C25/mature.webp"
+      }
+    }
   },
   "C26": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -12280,11 +12738,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C26/bare.webp",
+      "width": 293,
+      "height": 287,
+      "anchorX": 133,
+      "anchorY": 264,
+      "baseScale": 0.48132780082987553,
+      "source": {
+        "path": "assets/plot/crops/C26/bare.png",
+        "bounds": {
+          "left": 27,
+          "top": 33,
+          "width": 293,
+          "height": 287
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C26/bare.png",
+        "anchorX": 160,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 0,
+          "top": 320,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C26/mature.webp"
+      }
+    }
   },
   "C27": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -12731,11 +13237,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C27/bare.webp",
+      "width": 318,
+      "height": 304,
+      "anchorX": 161,
+      "anchorY": 297,
+      "baseScale": 0.48945147679324896,
+      "source": {
+        "path": "assets/plot/crops/C27/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 318,
+          "height": 304
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C27/bare.png",
+        "anchorX": 161,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 320,
+          "top": 320,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C27/mature.webp"
+      }
+    }
   },
   "C28": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -13182,11 +13736,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C28/bare.webp",
+      "width": 198,
+      "height": 232,
+      "anchorX": 103.5,
+      "anchorY": 231,
+      "baseScale": 0.4978540772532189,
+      "source": {
+        "path": "assets/plot/crops/C28/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 198,
+          "height": 232
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 103.5,
+        "anchorY": 231,
+        "matureStagePath": "art/plot/plants/C28/mature.webp"
+      }
+    }
   },
   "C29": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -13633,11 +14213,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C29/bare.webp",
+      "width": 320,
+      "height": 316,
+      "anchorX": 161,
+      "anchorY": 295,
+      "baseScale": 0.4773662551440329,
+      "source": {
+        "path": "assets/plot/crops/C29/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 2,
+          "width": 320,
+          "height": 316
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C29/bare.png",
+        "anchorX": 161,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 640,
+          "top": 320,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C29/mature.webp"
+      }
+    }
   },
   "C30": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -14084,11 +14712,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C30/bare.webp",
+      "width": 214,
+      "height": 216,
+      "anchorX": 105,
+      "anchorY": 215,
+      "baseScale": 0.48333333333333334,
+      "source": {
+        "path": "assets/plot/crops/C30/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 214,
+          "height": 216
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 105,
+        "anchorY": 215,
+        "matureStagePath": "art/plot/plants/C30/mature.webp"
+      }
+    }
   },
   "C31": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -14535,11 +15189,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C31/bare.webp",
+      "width": 220,
+      "height": 216,
+      "anchorX": 111,
+      "anchorY": 215,
+      "baseScale": 0.48535564853556484,
+      "source": {
+        "path": "assets/plot/crops/C31/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 220,
+          "height": 216
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 111,
+        "anchorY": 215,
+        "matureStagePath": "art/plot/plants/C31/mature.webp"
+      }
+    }
   },
   "C32": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -14986,11 +15666,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C32/bare.webp",
+      "width": 314,
+      "height": 320,
+      "anchorX": 160,
+      "anchorY": 297,
+      "baseScale": 0.4915254237288136,
+      "source": {
+        "path": "assets/plot/crops/C32/bare.png",
+        "bounds": {
+          "left": 1,
+          "top": 0,
+          "width": 314,
+          "height": 320
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C32/bare.png",
+        "anchorX": 161,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 960,
+          "top": 320,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C32/mature.webp"
+      }
+    }
   },
   "C33": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -15565,11 +16293,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C33/bare.webp",
+      "width": 222,
+      "height": 206,
+      "anchorX": 101.5,
+      "anchorY": 205,
+      "baseScale": 0.30578512396694213,
+      "source": {
+        "path": "assets/plot/crops/C33/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 222,
+          "height": 206
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 101.5,
+        "anchorY": 205,
+        "matureStagePath": "art/plot/plants/C33/mature.webp"
+      }
+    }
   },
   "C34": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -16144,11 +16898,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C34/bare.webp",
+      "width": 218,
+      "height": 236,
+      "anchorX": 121,
+      "anchorY": 235,
+      "baseScale": 0.31759656652360513,
+      "source": {
+        "path": "assets/plot/crops/C34/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 218,
+          "height": 236
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 121,
+        "anchorY": 235,
+        "matureStagePath": "art/plot/plants/C34/mature.webp"
+      }
+    }
   },
   "C35": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -16723,11 +17503,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C35/bare.webp",
+      "width": 318,
+      "height": 283,
+      "anchorX": 161,
+      "anchorY": 272,
+      "baseScale": 0.37,
+      "source": {
+        "path": "assets/plot/crops/C35/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 25,
+          "width": 318,
+          "height": 283
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C35/bare.png",
+        "anchorX": 161,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 320,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C35/mature.webp"
+      }
+    }
   },
   "C36": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -17302,11 +18130,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C36/bare.webp",
+      "width": 305,
+      "height": 315,
+      "anchorX": 160,
+      "anchorY": 291,
+      "baseScale": 0.3533231474407945,
+      "source": {
+        "path": "assets/plot/crops/C36/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 5,
+          "width": 305,
+          "height": 315
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C36/bare.png",
+        "anchorX": 160,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1.1029411764705883,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C36.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C36.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C36-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 320,
+          "height": 320
+        },
+        "cell": {
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C36/mature.webp"
+      }
+    }
   },
   "C37": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -17770,6 +18646,7 @@
   "C38": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -18233,6 +19110,7 @@
   "C39": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -18691,11 +19569,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C39/bare.webp",
+      "width": 282,
+      "height": 302,
+      "anchorX": 172.5,
+      "anchorY": 296,
+      "baseScale": 0.17105263157894737,
+      "source": {
+        "path": "assets/plot/crops/C39/bare.png",
+        "bounds": {
+          "left": 4,
+          "top": 0,
+          "width": 282,
+          "height": 302
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C39/bare.png",
+        "anchorX": 176.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 1280,
+          "top": 320,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C39/mature.webp"
+      }
+    }
   },
   "C40": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -19270,11 +20196,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C40/bare.webp",
+      "width": 267,
+      "height": 315,
+      "anchorX": 109,
+      "anchorY": 296,
+      "baseScale": 0.334841628959276,
+      "source": {
+        "path": "assets/plot/crops/C40/bare.png",
+        "bounds": {
+          "left": 53,
+          "top": 0,
+          "width": 267,
+          "height": 315
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C40/bare.png",
+        "anchorX": 162,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 0,
+          "top": 640,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C40/mature.webp"
+      }
+    }
   },
   "C41": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -19854,6 +20828,7 @@
   "C42": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -20428,11 +21403,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C42/bare.webp",
+      "width": 318,
+      "height": 282,
+      "anchorX": 166.5,
+      "anchorY": 273,
+      "baseScale": 0.3394495412844037,
+      "source": {
+        "path": "assets/plot/crops/C42/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 23,
+          "width": 318,
+          "height": 282
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C42/bare.png",
+        "anchorX": 166.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 320,
+          "top": 640,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C42/mature.webp"
+      }
+    }
   },
   "C43": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -20879,11 +21902,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C43/bare.webp",
+      "width": 320,
+      "height": 297,
+      "anchorX": 167,
+      "anchorY": 286,
+      "baseScale": 0.48333333333333334,
+      "source": {
+        "path": "assets/plot/crops/C43/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 10,
+          "width": 320,
+          "height": 297
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C43/bare.png",
+        "anchorX": 167,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 640,
+          "top": 640,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C43/mature.webp"
+      }
+    }
   },
   "C44": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -21330,11 +22401,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C44/bare.webp",
+      "width": 309,
+      "height": 307,
+      "anchorX": 155.5,
+      "anchorY": 296,
+      "baseScale": 0.5550239234449761,
+      "source": {
+        "path": "assets/plot/crops/C44/bare.png",
+        "bounds": {
+          "left": 4,
+          "top": 0,
+          "width": 309,
+          "height": 307
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C44/bare.png",
+        "anchorX": 159.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 960,
+          "top": 640,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C44/mature.webp"
+      }
+    }
   },
   "C45": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -21781,11 +22900,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C45/bare.webp",
+      "width": 283,
+      "height": 292,
+      "anchorX": 146.5,
+      "anchorY": 278,
+      "baseScale": 0.5155555555555555,
+      "source": {
+        "path": "assets/plot/crops/C45/bare.png",
+        "bounds": {
+          "left": 2,
+          "top": 18,
+          "width": 283,
+          "height": 292
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C45/bare.png",
+        "anchorX": 148.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 1280,
+          "top": 640,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C45/mature.webp"
+      }
+    }
   },
   "C46": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -22232,11 +23399,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C46/bare.webp",
+      "width": 168,
+      "height": 157,
+      "anchorX": 85.5,
+      "anchorY": 156,
+      "baseScale": 0.5948717948717949,
+      "source": {
+        "path": "assets/plot/crops/C46/growing.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 168,
+          "height": 157
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 89.5,
+        "anchorY": 160,
+        "matureStagePath": "art/plot/plants/C46/mature.webp"
+      }
+    }
   },
   "C47": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -22811,11 +24004,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C47/bare.webp",
+      "width": 282,
+      "height": 253,
+      "anchorX": 109,
+      "anchorY": 239,
+      "baseScale": 0.3756345177664975,
+      "source": {
+        "path": "assets/plot/crops/C47/bare.png",
+        "bounds": {
+          "left": 33,
+          "top": 58,
+          "width": 282,
+          "height": 253
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C47/bare.png",
+        "anchorX": 142,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 960,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C47/mature.webp"
+      }
+    }
   },
   "C48": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -23390,11 +24631,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C48/bare.webp",
+      "width": 262,
+      "height": 314,
+      "anchorX": 105.5,
+      "anchorY": 290,
+      "baseScale": 0.35071090047393366,
+      "source": {
+        "path": "assets/plot/crops/C48/bare.png",
+        "bounds": {
+          "left": 58,
+          "top": 6,
+          "width": 262,
+          "height": 314
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C48/bare.png",
+        "anchorX": 163.5,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 0,
+          "top": 960,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C48/mature.webp"
+      }
+    }
   },
   "C49": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -23841,11 +25130,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C49/bare.webp",
+      "width": 177,
+      "height": 182,
+      "anchorX": 90,
+      "anchorY": 181,
+      "baseScale": 0.5771144278606966,
+      "source": {
+        "path": "assets/plot/crops/C49/growing.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 177,
+          "height": 182
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 94,
+        "anchorY": 185,
+        "matureStagePath": "art/plot/plants/C49/mature.webp"
+      }
+    }
   },
   "C50": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -24420,11 +25735,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C50/bare.webp",
+      "width": 318,
+      "height": 299,
+      "anchorX": 160,
+      "anchorY": 282,
+      "baseScale": 0.3378995433789954,
+      "source": {
+        "path": "assets/plot/crops/C50/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 14,
+          "width": 318,
+          "height": 299
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C50/bare.png",
+        "anchorX": 160,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 320,
+          "top": 960,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C50/mature.webp"
+      }
+    }
   },
   "C51": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -24999,11 +26362,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C51/bare.webp",
+      "width": 320,
+      "height": 311,
+      "anchorX": 160,
+      "anchorY": 287,
+      "baseScale": 0.38341968911917096,
+      "source": {
+        "path": "assets/plot/crops/C51/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 9,
+          "width": 320,
+          "height": 311
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C51/bare.png",
+        "anchorX": 160,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 640,
+          "top": 960,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C51/mature.webp"
+      }
+    }
   },
   "C52": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -25583,6 +26994,7 @@
   "C53": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -26041,11 +27453,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C53/bare.webp",
+      "width": 168,
+      "height": 143,
+      "anchorX": 83.5,
+      "anchorY": 142,
+      "baseScale": 0.20418848167539266,
+      "source": {
+        "path": "assets/plot/crops/C53/growing.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 168,
+          "height": 143
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 87.5,
+        "anchorY": 146,
+        "matureStagePath": "art/plot/plants/C53/mature.webp"
+      }
+    }
   },
   "C54": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -26509,6 +27947,7 @@
   "C55": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -27083,11 +28522,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C55/bare.webp",
+      "width": 309,
+      "height": 265,
+      "anchorX": 148,
+      "anchorY": 241,
+      "baseScale": 0.3490566037735849,
+      "source": {
+        "path": "assets/plot/crops/C55/bare.png",
+        "bounds": {
+          "left": 11,
+          "top": 55,
+          "width": 309,
+          "height": 265
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C55/bare.png",
+        "anchorX": 159,
+        "anchorY": 296,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 960,
+          "top": 960,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C55/mature.webp"
+      }
+    }
   },
   "C56": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -27662,11 +29149,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C56/bare.webp",
+      "width": 316,
+      "height": 315,
+      "anchorX": 157.5,
+      "anchorY": 275,
+      "baseScale": 0.43023255813953487,
+      "source": {
+        "path": "assets/plot/crops/C56/bare.png",
+        "bounds": {
+          "left": 4,
+          "top": 5,
+          "width": 316,
+          "height": 315
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C56/bare.png",
+        "anchorX": 161.5,
+        "anchorY": 280,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C56.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C56.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C56-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 320,
+          "height": 320
+        },
+        "cell": {
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C56/mature.webp"
+      }
+    }
   },
   "C57": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -28130,6 +29665,7 @@
   "C58": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -28709,6 +30245,7 @@
   "C59": {
     "mode": "individual",
     "size": "medium",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -29283,11 +30820,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C59/bare.webp",
+      "width": 318,
+      "height": 320,
+      "anchorX": 161.5,
+      "anchorY": 294,
+      "baseScale": 0.31223628691983124,
+      "source": {
+        "path": "assets/plot/crops/C59/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 318,
+          "height": 320
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C59/bare.png",
+        "anchorX": 161.5,
+        "anchorY": 294,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 0,
+          "top": 1280,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C59/mature.webp"
+      }
+    }
   },
   "C60": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -29751,6 +31336,7 @@
   "C61": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -30209,11 +31795,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C61/bare.webp",
+      "width": 304,
+      "height": 281,
+      "anchorX": 154,
+      "anchorY": 260,
+      "baseScale": 0.1638655462184874,
+      "source": {
+        "path": "assets/plot/crops/C61/bare.png",
+        "bounds": {
+          "left": 6,
+          "top": 37,
+          "width": 304,
+          "height": 281
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C61/bare.png",
+        "anchorX": 160,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C61.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C61.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C61-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 320,
+          "height": 320
+        },
+        "cell": {
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C61/mature.webp"
+      }
+    }
   },
   "C62": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -30672,11 +32306,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C62/bare.webp",
+      "width": 130,
+      "height": 167,
+      "anchorX": 58,
+      "anchorY": 166,
+      "baseScale": 0.19796954314720813,
+      "source": {
+        "path": "assets/plot/crops/C62/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 130,
+          "height": 167
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 58,
+        "anchorY": 166,
+        "matureStagePath": "art/plot/plants/C62/mature.webp"
+      }
+    }
   },
   "C63": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -31135,11 +32795,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C63/bare.webp",
+      "width": 305,
+      "height": 297,
+      "anchorX": 144.5,
+      "anchorY": 292,
+      "baseScale": 0.17889908256880735,
+      "source": {
+        "path": "assets/plot/crops/C63/bare.png",
+        "bounds": {
+          "left": 15,
+          "top": 2,
+          "width": 305,
+          "height": 297
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C63/bare.png",
+        "anchorX": 159.5,
+        "anchorY": 294,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 640,
+          "top": 1280,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C63/mature.webp"
+      }
+    }
   },
   "C64": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -31598,11 +33306,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C64/bare.webp",
+      "width": 252,
+      "height": 248,
+      "anchorX": 103,
+      "anchorY": 234,
+      "baseScale": 0.195,
+      "source": {
+        "path": "assets/plot/crops/C64/bare.png",
+        "bounds": {
+          "left": 35,
+          "top": 63,
+          "width": 252,
+          "height": 248
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C64/bare.png",
+        "anchorX": 138,
+        "anchorY": 297,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 1280,
+          "top": 0,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C64/mature.webp"
+      }
+    }
   },
   "C65": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -32061,11 +33817,37 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C65/bare.webp",
+      "width": 146,
+      "height": 165,
+      "anchorX": 70,
+      "anchorY": 164,
+      "baseScale": 0.21787709497206703,
+      "source": {
+        "path": "assets/plot/crops/C65/growing.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 146,
+          "height": 165
+        }
+      },
+      "registration": {
+        "method": "reviewed-adult-source-shared-mature-scale",
+        "scaleToMature": 1,
+        "anchorX": 70,
+        "anchorY": 164,
+        "matureStagePath": "art/plot/plants/C65/mature.webp"
+      }
+    }
   },
   "C66": {
     "mode": "individual",
     "size": "small",
+    "harvestMode": "wholePlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -32529,6 +34311,7 @@
   "C67": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -32975,11 +34758,59 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C67/bare.webp",
+      "width": 320,
+      "height": 297,
+      "anchorX": 161,
+      "anchorY": 292,
+      "baseScale": 0.6373626373626373,
+      "source": {
+        "path": "assets/plot/crops/C67/bare.png",
+        "bounds": {
+          "left": 0,
+          "top": 2,
+          "width": 320,
+          "height": 297
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C67/bare.png",
+        "anchorX": 161,
+        "anchorY": 294,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 960,
+          "top": 1280,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C67/mature.webp"
+      }
+    }
   },
   "C68": {
     "mode": "individual",
     "size": "large",
+    "harvestMode": "retainedPlant",
     "planting": {
       "source": "assets/plot/furrows.json",
       "rows": 9,
@@ -33426,6 +35257,53 @@
           }
         }
       }
-    ]
+    ],
+    "repeatBare": {
+      "phase": "bare",
+      "path": "art/plot/plants/C68/bare.webp",
+      "width": 303,
+      "height": 320,
+      "anchorX": 157,
+      "anchorY": 294,
+      "baseScale": 0.4566929133858268,
+      "source": {
+        "path": "assets/plot/crops/C68/bare.png",
+        "bounds": {
+          "left": 2,
+          "top": 0,
+          "width": 303,
+          "height": 320
+        }
+      },
+      "registration": {
+        "sourcePath": "assets/plot/crops/C68/bare.png",
+        "anchorX": 159,
+        "anchorY": 294,
+        "expectedRoot": {
+          "x": 160,
+          "y": 296
+        },
+        "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+        "scaleToMature": 1,
+        "method": "shared-mature-source-placement",
+        "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+        "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+        "cellSpace": "normalizedSheet",
+        "normalization": {
+          "sourceWidth": 1254,
+          "sourceHeight": 1254,
+          "width": 1600,
+          "height": 1600
+        },
+        "cell": {
+          "left": 1280,
+          "top": 1280,
+          "width": 320,
+          "height": 320
+        },
+        "matureStagePath": "art/plot/plants/C68/mature.webp"
+      }
+    }
   }
 }

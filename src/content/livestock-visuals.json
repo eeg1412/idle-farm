@@ -2,12 +2,38 @@
   "L01": {
     "stages": 1,
     "slaughter": false,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 202,
+        "y": 270,
+        "radiusX": 18,
+        "radiusY": 4,
+        "kind": "grain"
+      }
+    ],
     "grounding": [
       {
-        "x": 138,
+        "x": 134.5,
         "y": 269.5,
-        "radiusX": 32,
-        "radiusY": 5
+        "radiusX": 28.5,
+        "radiusY": 6
       }
     ],
     "product": {
@@ -23,12 +49,38 @@
   "L02": {
     "stages": 1,
     "slaughter": false,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 222,
+        "y": 279,
+        "radiusX": 24,
+        "radiusY": 6,
+        "kind": "hay"
+      }
+    ],
     "grounding": [
       {
-        "x": 129.5,
-        "y": 269.5,
-        "radiusX": 73.5,
-        "radiusY": 12
+        "x": 138,
+        "y": 267,
+        "radiusX": 61,
+        "radiusY": 10
       }
     ],
     "product": {
@@ -44,12 +96,38 @@
   "L03": {
     "stages": 1,
     "slaughter": false,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 212,
+        "y": 273,
+        "radiusX": 20,
+        "radiusY": 5,
+        "kind": "grain"
+      }
+    ],
     "grounding": [
       {
-        "x": 136,
+        "x": 131,
         "y": 267.5,
-        "radiusX": 34,
-        "radiusY": 5
+        "radiusX": 27,
+        "radiusY": 7
       }
     ],
     "product": {
@@ -65,10 +143,36 @@
   "L04": {
     "stages": 1,
     "slaughter": false,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 218,
+        "y": 279,
+        "radiusX": 21,
+        "radiusY": 5,
+        "kind": "hay"
+      }
+    ],
     "grounding": [
       {
-        "x": 129,
-        "y": 268,
+        "x": 140,
+        "y": 269.5,
         "radiusX": 58,
         "radiusY": 10
       }
@@ -86,11 +190,37 @@
   "L05": {
     "stages": 1,
     "slaughter": false,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 210,
+        "y": 278,
+        "radiusX": 18,
+        "radiusY": 4,
+        "kind": "grain"
+      }
+    ],
     "grounding": [
       {
-        "x": 136.5,
+        "x": 138.5,
         "y": 268.5,
-        "radiusX": 37.5,
+        "radiusX": 29.5,
         "radiusY": 6
       }
     ],
@@ -107,24 +237,64 @@
   "L06": {
     "stages": 3,
     "slaughter": true,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 167,
+        "y": 274,
+        "radiusX": 13,
+        "radiusY": 4,
+        "kind": "grain"
+      },
+      {
+        "x": 185,
+        "y": 276,
+        "radiusX": 20,
+        "radiusY": 5,
+        "kind": "grain"
+      },
+      {
+        "x": 212,
+        "y": 275,
+        "radiusX": 24,
+        "radiusY": 6,
+        "kind": "grain"
+      }
+    ],
     "grounding": [
       {
+        "x": 137.5,
+        "y": 269.5,
+        "radiusX": 18.5,
+        "radiusY": 5
+      },
+      {
+        "x": 131,
+        "y": 269.5,
+        "radiusX": 35,
+        "radiusY": 7
+      },
+      {
         "x": 134.5,
-        "y": 270,
-        "radiusX": 35.5,
-        "radiusY": 6
-      },
-      {
-        "x": 136.5,
-        "y": 269,
-        "radiusX": 49.5,
-        "radiusY": 8
-      },
-      {
-        "x": 136.5,
-        "y": 266.5,
-        "radiusX": 77.5,
-        "radiusY": 13
+        "y": 271.5,
+        "radiusX": 54.5,
+        "radiusY": 9
       }
     ],
     "product": {
@@ -140,24 +310,64 @@
   "L07": {
     "stages": 3,
     "slaughter": true,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 169,
+        "y": 276,
+        "radiusX": 12,
+        "radiusY": 4,
+        "kind": "greens"
+      },
+      {
+        "x": 187,
+        "y": 278,
+        "radiusX": 17,
+        "radiusY": 4,
+        "kind": "greens"
+      },
+      {
+        "x": 200,
+        "y": 278,
+        "radiusX": 20,
+        "radiusY": 5,
+        "kind": "greens"
+      }
+    ],
     "grounding": [
       {
-        "x": 135,
-        "y": 270,
-        "radiusX": 36,
+        "x": 132.5,
+        "y": 272,
+        "radiusX": 26.5,
+        "radiusY": 5
+      },
+      {
+        "x": 136.5,
+        "y": 271,
+        "radiusX": 35.5,
         "radiusY": 6
       },
       {
-        "x": 137.5,
+        "x": 133.5,
         "y": 270,
-        "radiusX": 49.5,
+        "radiusX": 47.5,
         "radiusY": 8
-      },
-      {
-        "x": 134,
-        "y": 270,
-        "radiusX": 61,
-        "radiusY": 10
       }
     ],
     "product": {
@@ -173,24 +383,64 @@
   "L08": {
     "stages": 3,
     "slaughter": true,
-    "grounding": [
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
       {
-        "x": 136.5,
-        "y": 270,
-        "radiusX": 37.5,
-        "radiusY": 6
+        "x": 177,
+        "y": 280,
+        "radiusX": 13,
+        "radiusY": 4,
+        "kind": "hay"
       },
       {
-        "x": 132.5,
-        "y": 270,
-        "radiusX": 43.5,
+        "x": 193,
+        "y": 287,
+        "radiusX": 20,
+        "radiusY": 5,
+        "kind": "hay"
+      },
+      {
+        "x": 210,
+        "y": 284,
+        "radiusX": 24,
+        "radiusY": 6,
+        "kind": "hay"
+      }
+    ],
+    "grounding": [
+      {
+        "x": 137,
+        "y": 270.5,
+        "radiusX": 29,
+        "radiusY": 5
+      },
+      {
+        "x": 132,
+        "y": 271.5,
+        "radiusX": 43,
         "radiusY": 7
       },
       {
-        "x": 138,
-        "y": 271,
-        "radiusX": 59,
-        "radiusY": 10
+        "x": 131.5,
+        "y": 270.5,
+        "radiusX": 55.5,
+        "radiusY": 9
       }
     ],
     "product": {
@@ -206,23 +456,63 @@
   "L09": {
     "stages": 3,
     "slaughter": true,
-    "grounding": [
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
       {
-        "x": 136.5,
-        "y": 268.5,
-        "radiusX": 28.5,
-        "radiusY": 5
+        "x": 184,
+        "y": 278,
+        "radiusX": 12,
+        "radiusY": 4,
+        "kind": "grain"
       },
       {
-        "x": 136.5,
-        "y": 267.5,
-        "radiusX": 35.5,
+        "x": 199,
+        "y": 278,
+        "radiusX": 17,
+        "radiusY": 4,
+        "kind": "grain"
+      },
+      {
+        "x": 221,
+        "y": 280,
+        "radiusX": 22,
+        "radiusY": 5,
+        "kind": "grain"
+      }
+    ],
+    "grounding": [
+      {
+        "x": 146,
+        "y": 266.5,
+        "radiusX": 28,
         "radiusY": 6
       },
       {
-        "x": 134.5,
-        "y": 268.5,
-        "radiusX": 42.5,
+        "x": 132.5,
+        "y": 270.5,
+        "radiusX": 27.5,
+        "radiusY": 6
+      },
+      {
+        "x": 136.5,
+        "y": 267,
+        "radiusX": 36.5,
         "radiusY": 7
       }
     ],
@@ -239,23 +529,63 @@
   "L10": {
     "stages": 3,
     "slaughter": true,
+    "feedTexture": {
+      "path": "./art/livestock/feed.webp",
+      "size": [
+        128,
+        64
+      ],
+      "bounds": {
+        "x": 4,
+        "y": 4,
+        "width": 120,
+        "height": 56
+      },
+      "anchor": [
+        64,
+        60
+      ]
+    },
+    "feeding": [
+      {
+        "x": 186,
+        "y": 281,
+        "radiusX": 14,
+        "radiusY": 4,
+        "kind": "hay"
+      },
+      {
+        "x": 199,
+        "y": 284,
+        "radiusX": 20,
+        "radiusY": 5,
+        "kind": "hay"
+      },
+      {
+        "x": 222,
+        "y": 283,
+        "radiusX": 24,
+        "radiusY": 6,
+        "kind": "hay"
+      }
+    ],
     "grounding": [
       {
-        "x": 131.5,
-        "y": 267.5,
-        "radiusX": 38.5,
+        "x": 138.5,
+        "y": 272.5,
+        "radiusX": 35.5,
         "radiusY": 6
       },
       {
-        "x": 131,
-        "y": 268.5,
-        "radiusX": 54,
-        "radiusY": 9
+        "x": 130.5,
+        "y": 269,
+        "radiusX": 50.5,
+        "radiusY": 8
       },
       {
-        "x": 133,
-        "y": 268,
-        "radiusX": 69,
+        "x": 134.5,
+        "y": 269,
+        "radiusX": 64.5,
         "radiusY": 11
       }
     ],

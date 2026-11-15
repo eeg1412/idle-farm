@@ -1,0 +1,1184 @@
+{
+  "purpose": "Precision editing source: remove only harvested parts; preserve every adult plant and registered cell/root",
+  "columns": 5,
+  "rows": 5,
+  "cellSize": 320,
+  "image": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+  "cells": [
+    {
+      "id": "C23",
+      "row": 0,
+      "column": 0,
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C23/mature.png",
+        "bounds": {
+          "left": 1,
+          "top": 1,
+          "width": 208,
+          "height": 197
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C23/mature.webp",
+        "width": 208,
+        "height": 197,
+        "anchorX": 105.5,
+        "anchorY": 196,
+        "baseScale": 0.5576923076923077,
+        "source": {
+          "path": "assets/plot/crops/C23/mature.png",
+          "bounds": {
+            "left": 1,
+            "top": 1,
+            "width": 208,
+            "height": 197
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 55,
+        "top": 100,
+        "width": 208,
+        "height": 197,
+        "scale": 1,
+        "rootX": 160,
+        "rootY": 296
+      }
+    },
+    {
+      "id": "C35",
+      "row": 0,
+      "column": 1,
+      "cell": {
+        "left": 320,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C35/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 200,
+          "height": 204
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C35/mature.webp",
+        "width": 200,
+        "height": 204,
+        "anchorX": 97.5,
+        "anchorY": 203,
+        "baseScale": 0.37,
+        "source": {
+          "path": "assets/plot/crops/C35/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 200,
+            "height": 204
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 383,
+        "top": 93,
+        "width": 200,
+        "height": 204,
+        "scale": 1,
+        "rootX": 480,
+        "rootY": 296
+      }
+    },
+    {
+      "id": "C36",
+      "row": 0,
+      "column": 2,
+      "cell": {
+        "left": 640,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C36/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 231,
+          "height": 186
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C36/mature.webp",
+        "width": 231,
+        "height": 186,
+        "anchorX": 150,
+        "anchorY": 185,
+        "baseScale": 0.3203463203463203,
+        "source": {
+          "path": "assets/plot/crops/C36/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 231,
+            "height": 186
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 664,
+        "top": 128,
+        "width": 209,
+        "height": 169,
+        "scale": 0.9066666666666666,
+        "rootX": 800,
+        "rootY": 296
+      }
+    },
+    {
+      "id": "C47",
+      "row": 0,
+      "column": 3,
+      "cell": {
+        "left": 960,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C47/mature.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 197,
+          "height": 187
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C47/mature.webp",
+        "width": 197,
+        "height": 187,
+        "anchorX": 118.5,
+        "anchorY": 186,
+        "baseScale": 0.3756345177664975,
+        "source": {
+          "path": "assets/plot/crops/C47/mature.png",
+          "bounds": {
+            "left": 4,
+            "top": 4,
+            "width": 197,
+            "height": 187
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1002,
+        "top": 110,
+        "width": 197,
+        "height": 187,
+        "scale": 1,
+        "rootX": 1120,
+        "rootY": 296
+      }
+    },
+    {
+      "id": "C64",
+      "row": 0,
+      "column": 4,
+      "cell": {
+        "left": 1280,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C64/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 200,
+          "height": 215
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C64/mature.webp",
+        "width": 200,
+        "height": 215,
+        "anchorX": 119.5,
+        "anchorY": 214,
+        "baseScale": 0.195,
+        "source": {
+          "path": "assets/plot/crops/C64/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 200,
+            "height": 215
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1321,
+        "top": 82,
+        "width": 200,
+        "height": 215,
+        "scale": 1,
+        "rootX": 1440,
+        "rootY": 296
+      }
+    },
+    {
+      "id": "C05",
+      "row": 1,
+      "column": 0,
+      "cell": {
+        "left": 0,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C05/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 223,
+          "height": 227
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C05/mature.webp",
+        "width": 223,
+        "height": 227,
+        "anchorX": 113,
+        "anchorY": 226,
+        "baseScale": 0.5201793721973094,
+        "source": {
+          "path": "assets/plot/crops/C05/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 223,
+            "height": 227
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 47,
+        "top": 390,
+        "width": 223,
+        "height": 227,
+        "scale": 1,
+        "rootX": 160,
+        "rootY": 616
+      }
+    },
+    {
+      "id": "C10",
+      "row": 1,
+      "column": 1,
+      "cell": {
+        "left": 320,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C10/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 182,
+          "height": 221
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C10/mature.webp",
+        "width": 182,
+        "height": 221,
+        "anchorX": 118,
+        "anchorY": 220,
+        "baseScale": 0.4065934065934066,
+        "source": {
+          "path": "assets/plot/crops/C10/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 182,
+            "height": 221
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 362,
+        "top": 396,
+        "width": 182,
+        "height": 221,
+        "scale": 1,
+        "rootX": 480,
+        "rootY": 616
+      }
+    },
+    {
+      "id": "C11",
+      "row": 1,
+      "column": 2,
+      "cell": {
+        "left": 640,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C11/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 232,
+          "height": 217
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C11/mature.webp",
+        "width": 232,
+        "height": 217,
+        "anchorX": 117,
+        "anchorY": 216,
+        "baseScale": 0.5,
+        "source": {
+          "path": "assets/plot/crops/C11/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 232,
+            "height": 217
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 683,
+        "top": 400,
+        "width": 232,
+        "height": 217,
+        "scale": 1,
+        "rootX": 800,
+        "rootY": 616
+      }
+    },
+    {
+      "id": "C24",
+      "row": 1,
+      "column": 3,
+      "cell": {
+        "left": 960,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C24/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 231,
+          "height": 232
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C24/mature.webp",
+        "width": 231,
+        "height": 232,
+        "anchorX": 113.5,
+        "anchorY": 231,
+        "baseScale": 0.5021645021645021,
+        "source": {
+          "path": "assets/plot/crops/C24/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 231,
+            "height": 232
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1007,
+        "top": 385,
+        "width": 231,
+        "height": 232,
+        "scale": 1,
+        "rootX": 1120,
+        "rootY": 616
+      }
+    },
+    {
+      "id": "C25",
+      "row": 1,
+      "column": 4,
+      "cell": {
+        "left": 1280,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C25/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 237,
+          "height": 233
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C25/mature.webp",
+        "width": 237,
+        "height": 233,
+        "anchorX": 124,
+        "anchorY": 232,
+        "baseScale": 0.48945147679324896,
+        "source": {
+          "path": "assets/plot/crops/C25/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 237,
+            "height": 233
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1316,
+        "top": 384,
+        "width": 237,
+        "height": 233,
+        "scale": 1,
+        "rootX": 1440,
+        "rootY": 616
+      }
+    },
+    {
+      "id": "C26",
+      "row": 2,
+      "column": 0,
+      "cell": {
+        "left": 0,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C26/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 241,
+          "height": 234
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C26/mature.webp",
+        "width": 241,
+        "height": 234,
+        "anchorX": 124,
+        "anchorY": 233,
+        "baseScale": 0.48132780082987553,
+        "source": {
+          "path": "assets/plot/crops/C26/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 241,
+            "height": 234
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 36,
+        "top": 703,
+        "width": 241,
+        "height": 234,
+        "scale": 1,
+        "rootX": 160,
+        "rootY": 936
+      }
+    },
+    {
+      "id": "C27",
+      "row": 2,
+      "column": 1,
+      "cell": {
+        "left": 320,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C27/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 237,
+          "height": 232
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C27/mature.webp",
+        "width": 237,
+        "height": 232,
+        "anchorX": 116,
+        "anchorY": 231,
+        "baseScale": 0.48945147679324896,
+        "source": {
+          "path": "assets/plot/crops/C27/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 237,
+            "height": 232
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 364,
+        "top": 705,
+        "width": 237,
+        "height": 232,
+        "scale": 1,
+        "rootX": 480,
+        "rootY": 936
+      }
+    },
+    {
+      "id": "C29",
+      "row": 2,
+      "column": 2,
+      "cell": {
+        "left": 640,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C29/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 243,
+          "height": 222
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C29/mature.webp",
+        "width": 243,
+        "height": 222,
+        "anchorX": 120.5,
+        "anchorY": 221,
+        "baseScale": 0.4773662551440329,
+        "source": {
+          "path": "assets/plot/crops/C29/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 243,
+            "height": 222
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 680,
+        "top": 715,
+        "width": 243,
+        "height": 222,
+        "scale": 1,
+        "rootX": 800,
+        "rootY": 936
+      }
+    },
+    {
+      "id": "C32",
+      "row": 2,
+      "column": 3,
+      "cell": {
+        "left": 960,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C32/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 236,
+          "height": 226
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C32/mature.webp",
+        "width": 236,
+        "height": 226,
+        "anchorX": 119,
+        "anchorY": 225,
+        "baseScale": 0.4915254237288136,
+        "source": {
+          "path": "assets/plot/crops/C32/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 236,
+            "height": 226
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1001,
+        "top": 711,
+        "width": 236,
+        "height": 226,
+        "scale": 1,
+        "rootX": 1120,
+        "rootY": 936
+      }
+    },
+    {
+      "id": "C39",
+      "row": 2,
+      "column": 4,
+      "cell": {
+        "left": 1280,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C39/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 228,
+          "height": 202
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C39/mature.webp",
+        "width": 228,
+        "height": 202,
+        "anchorX": 96.5,
+        "anchorY": 201,
+        "baseScale": 0.17105263157894737,
+        "source": {
+          "path": "assets/plot/crops/C39/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 228,
+            "height": 202
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1344,
+        "top": 735,
+        "width": 228,
+        "height": 202,
+        "scale": 1,
+        "rootX": 1440,
+        "rootY": 936
+      }
+    },
+    {
+      "id": "C40",
+      "row": 3,
+      "column": 0,
+      "cell": {
+        "left": 0,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C40/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 221,
+          "height": 200
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C40/mature.webp",
+        "width": 221,
+        "height": 200,
+        "anchorX": 98,
+        "anchorY": 199,
+        "baseScale": 0.334841628959276,
+        "source": {
+          "path": "assets/plot/crops/C40/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 221,
+            "height": 200
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 62,
+        "top": 1057,
+        "width": 221,
+        "height": 200,
+        "scale": 1,
+        "rootX": 160,
+        "rootY": 1256
+      }
+    },
+    {
+      "id": "C42",
+      "row": 3,
+      "column": 1,
+      "cell": {
+        "left": 320,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C42/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 218,
+          "height": 202
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C42/mature.webp",
+        "width": 218,
+        "height": 202,
+        "anchorX": 108,
+        "anchorY": 201,
+        "baseScale": 0.3394495412844037,
+        "source": {
+          "path": "assets/plot/crops/C42/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 218,
+            "height": 202
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 372,
+        "top": 1055,
+        "width": 218,
+        "height": 202,
+        "scale": 1,
+        "rootX": 480,
+        "rootY": 1256
+      }
+    },
+    {
+      "id": "C43",
+      "row": 3,
+      "column": 2,
+      "cell": {
+        "left": 640,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C43/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 240,
+          "height": 208
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C43/mature.webp",
+        "width": 240,
+        "height": 208,
+        "anchorX": 105.5,
+        "anchorY": 207,
+        "baseScale": 0.48333333333333334,
+        "source": {
+          "path": "assets/plot/crops/C43/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 240,
+            "height": 208
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 695,
+        "top": 1049,
+        "width": 240,
+        "height": 208,
+        "scale": 1,
+        "rootX": 800,
+        "rootY": 1256
+      }
+    },
+    {
+      "id": "C44",
+      "row": 3,
+      "column": 3,
+      "cell": {
+        "left": 960,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C44/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 209,
+          "height": 203
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C44/mature.webp",
+        "width": 209,
+        "height": 203,
+        "anchorX": 106,
+        "anchorY": 202,
+        "baseScale": 0.5550239234449761,
+        "source": {
+          "path": "assets/plot/crops/C44/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 209,
+            "height": 203
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1014,
+        "top": 1054,
+        "width": 209,
+        "height": 203,
+        "scale": 1,
+        "rootX": 1120,
+        "rootY": 1256
+      }
+    },
+    {
+      "id": "C45",
+      "row": 3,
+      "column": 4,
+      "cell": {
+        "left": 1280,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C45/mature.png",
+        "bounds": {
+          "left": 0,
+          "top": 0,
+          "width": 225,
+          "height": 207
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C45/mature.webp",
+        "width": 225,
+        "height": 207,
+        "anchorX": 114.5,
+        "anchorY": 206,
+        "baseScale": 0.5155555555555555,
+        "source": {
+          "path": "assets/plot/crops/C45/mature.png",
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 225,
+            "height": 207
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1326,
+        "top": 1050,
+        "width": 225,
+        "height": 207,
+        "scale": 1,
+        "rootX": 1440,
+        "rootY": 1256
+      }
+    },
+    {
+      "id": "C48",
+      "row": 4,
+      "column": 0,
+      "cell": {
+        "left": 0,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C48/mature.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 211,
+          "height": 201
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C48/mature.webp",
+        "width": 211,
+        "height": 201,
+        "anchorX": 94,
+        "anchorY": 200,
+        "baseScale": 0.35071090047393366,
+        "source": {
+          "path": "assets/plot/crops/C48/mature.png",
+          "bounds": {
+            "left": 4,
+            "top": 4,
+            "width": 211,
+            "height": 201
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 66,
+        "top": 1376,
+        "width": 211,
+        "height": 201,
+        "scale": 1,
+        "rootX": 160,
+        "rootY": 1576
+      }
+    },
+    {
+      "id": "C50",
+      "row": 4,
+      "column": 1,
+      "cell": {
+        "left": 320,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C50/mature.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 219,
+          "height": 180
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C50/mature.webp",
+        "width": 219,
+        "height": 180,
+        "anchorX": 116.5,
+        "anchorY": 179,
+        "baseScale": 0.3378995433789954,
+        "source": {
+          "path": "assets/plot/crops/C50/mature.png",
+          "bounds": {
+            "left": 4,
+            "top": 4,
+            "width": 219,
+            "height": 180
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 364,
+        "top": 1397,
+        "width": 219,
+        "height": 180,
+        "scale": 1,
+        "rootX": 480,
+        "rootY": 1576
+      }
+    },
+    {
+      "id": "C51",
+      "row": 4,
+      "column": 2,
+      "cell": {
+        "left": 640,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C51/mature.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 193,
+          "height": 191
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C51/mature.webp",
+        "width": 193,
+        "height": 191,
+        "anchorX": 104,
+        "anchorY": 190,
+        "baseScale": 0.38341968911917096,
+        "source": {
+          "path": "assets/plot/crops/C51/mature.png",
+          "bounds": {
+            "left": 4,
+            "top": 4,
+            "width": 193,
+            "height": 191
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 696,
+        "top": 1386,
+        "width": 193,
+        "height": 191,
+        "scale": 1,
+        "rootX": 800,
+        "rootY": 1576
+      }
+    },
+    {
+      "id": "C55",
+      "row": 4,
+      "column": 3,
+      "cell": {
+        "left": 960,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C55/mature.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 212,
+          "height": 194
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C55/mature.webp",
+        "width": 212,
+        "height": 194,
+        "anchorX": 96,
+        "anchorY": 193,
+        "baseScale": 0.3490566037735849,
+        "source": {
+          "path": "assets/plot/crops/C55/mature.png",
+          "bounds": {
+            "left": 4,
+            "top": 4,
+            "width": 212,
+            "height": 194
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1024,
+        "top": 1383,
+        "width": 212,
+        "height": 194,
+        "scale": 1,
+        "rootX": 1120,
+        "rootY": 1576
+      }
+    },
+    {
+      "id": "C56",
+      "row": 4,
+      "column": 4,
+      "cell": {
+        "left": 1280,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      },
+      "source": {
+        "path": "assets/plot/crops/C56/mature.png",
+        "bounds": {
+          "left": 4,
+          "top": 4,
+          "width": 172,
+          "height": 208
+        }
+      },
+      "originalStage": {
+        "phase": "mature",
+        "path": "art/plot/plants/C56/mature.webp",
+        "width": 172,
+        "height": 208,
+        "anchorX": 47.5,
+        "anchorY": 207,
+        "baseScale": 0.43023255813953487,
+        "source": {
+          "path": "assets/plot/crops/C56/mature.png",
+          "bounds": {
+            "left": 4,
+            "top": 4,
+            "width": 172,
+            "height": 208
+          }
+        }
+      },
+      "sourcePlacement": {
+        "left": 1393,
+        "top": 1369,
+        "width": 172,
+        "height": 208,
+        "scale": 1,
+        "rootX": 1440,
+        "rootY": 1576
+      }
+    }
+  ]
+}

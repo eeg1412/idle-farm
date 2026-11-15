@@ -254,7 +254,7 @@ function drawCard(parent, place, cardWidth, { inkGraphics, drawImage, textNode }
 }
 
 export function mountResearchTree({ parent, x, y, width, height, nodes, view, drawImage, textNode, buttonAt,
-  inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, mode, textScale = 1 }) {
+  transitionNode, inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, mode, textScale = 1 }) {
   const quality = mode === 'quality' || (mode === undefined && nodes.some((node) => node.nextLabel));
   const compact = height < 210;
   const plotTop = compact ? 50 : 77;
@@ -288,6 +288,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const tiles = new Map();
   let connections = '';
   let legend;
+  let legendLabel;
 
   function start() {
     view.overview = false;
@@ -343,12 +344,16 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     content.scale.set(view.scale);
     const detail = view.scale >= 0.66 ? 'full' : view.scale >= 0.34 ? 'icon' : 'marker';
     if (nodes.length && !compact) {
-      const label = quality ? '当前品质　→　下一品质' : detail === 'marker'
+      const label = quality ? '品质对照' : detail === 'marker'
         ? `绿块已完成 · 金块可研发 · 共 ${nodes.length} 项` : '前置在上 · 棕线前置 · 绿线后续';
-      if (legend?.text !== label) {
-        legend?.destroy();
-        legend = fitCaption(viewport, label, plot.x, plotTop - 25, plot.width, 20,
-          12 * Math.min(textScale, 1.2), muted, textNode);
+      if (legendLabel !== label) {
+        legend?.destroy({ children: true });
+        legendLabel = label;
+        legend = quality
+          ? transitionNode(viewport, '当前品质', '下一品质', plot.x, plotTop - 25, plot.width,
+            { size: 12 * Math.min(textScale, 1.2), color: muted, align: 'center' })
+          : fitCaption(viewport, label, plot.x, plotTop - 25, plot.width, 20,
+            12 * Math.min(textScale, 1.2), muted, textNode);
       }
     }
     const left = (plot.x - view.x) / view.scale;
