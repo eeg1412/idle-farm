@@ -49,11 +49,11 @@ export function gameHistory(browser) {
       active = undefined;
       return { route: parseGameHash(location.hash) };
     },
-    write(route, modal, replace = false, scroll = 0) {
+    write(route, modal, replace = false, scroll = 0, context) {
       const hash = gameHash(route);
       const previous = replace ? active?.previous : active?.key;
       const key = replace && active ? active.key : ++sequence;
-      active = { key, previous, route, modal, hash, scroll };
+      active = { key, previous, route, modal, hash, scroll, context };
       entries.set(key, active);
       history[replace ? 'replaceState' : 'pushState']({ ...history.state, farmNavigation: { session, key } }, '', hash);
       return active;

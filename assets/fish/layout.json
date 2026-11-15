@@ -1,0 +1,2282 @@
+{
+  "sceneSize": 320,
+  "grid": {
+    "columns": 5,
+    "rows": 5
+  },
+  "fishRoot": {
+    "x": 160,
+    "y": 210
+  },
+  "sources": {
+    "pond": "assets/source/art/scene-empty-pond.png",
+    "sheets": {
+      "F01": "raw/F01-idle-v1.png",
+      "F02": "raw/F02-idle-v1.png",
+      "F03": "raw/F03-idle-v1.png",
+      "F04": "raw/F04-idle-v1.png",
+      "F05": "raw/F05-idle-v1.png",
+      "F06": "raw/F06-idle-v1.png",
+      "F07": "raw/F07-idle-v1.png",
+      "F08": "raw/F08-idle-v1.png",
+      "F09": "raw/F09-idle-v1.png",
+      "F10": "raw/F10-idle-v1.png"
+    },
+    "ponds": {
+      "river": {
+        "source": "assets/fish/raw/river-pond-v2.png",
+        "png": "assets/fish/ponds/river.png",
+        "path": "public/art/fish/river-pond.webp",
+        "water": {
+          "polygon": [
+            [
+              99,
+              105
+            ],
+            [
+              147,
+              103
+            ],
+            [
+              196,
+              106
+            ],
+            [
+              246,
+              108
+            ],
+            [
+              278,
+              115
+            ],
+            [
+              292,
+              137
+            ],
+            [
+              299,
+              164
+            ],
+            [
+              299,
+              200
+            ],
+            [
+              292,
+              236
+            ],
+            [
+              276,
+              265
+            ],
+            [
+              247,
+              284
+            ],
+            [
+              207,
+              295
+            ],
+            [
+              167,
+              300
+            ],
+            [
+              128,
+              294
+            ],
+            [
+              92,
+              287
+            ],
+            [
+              61,
+              278
+            ],
+            [
+              38,
+              264
+            ],
+            [
+              23,
+              245
+            ],
+            [
+              16,
+              216
+            ],
+            [
+              15,
+              181
+            ],
+            [
+              19,
+              150
+            ],
+            [
+              29,
+              127
+            ],
+            [
+              51,
+              116
+            ],
+            [
+              77,
+              111
+            ]
+          ],
+          "color": 1346725,
+          "alpha": 0.24
+        }
+      },
+      "sea": {
+        "source": "assets/fish/raw/sea-pond-v1.png",
+        "png": "assets/fish/ponds/sea.png",
+        "path": "public/art/fish/sea-pond.webp",
+        "water": {
+          "polygon": [
+            [
+              38,
+              105
+            ],
+            [
+              69,
+              100
+            ],
+            [
+              104,
+              100
+            ],
+            [
+              143,
+              101
+            ],
+            [
+              183,
+              101
+            ],
+            [
+              222,
+              101
+            ],
+            [
+              258,
+              103
+            ],
+            [
+              286,
+              111
+            ],
+            [
+              297,
+              129
+            ],
+            [
+              300,
+              156
+            ],
+            [
+              302,
+              190
+            ],
+            [
+              300,
+              222
+            ],
+            [
+              291,
+              253
+            ],
+            [
+              274,
+              278
+            ],
+            [
+              246,
+              290
+            ],
+            [
+              208,
+              297
+            ],
+            [
+              169,
+              300
+            ],
+            [
+              128,
+              296
+            ],
+            [
+              91,
+              289
+            ],
+            [
+              58,
+              278
+            ],
+            [
+              35,
+              258
+            ],
+            [
+              23,
+              232
+            ],
+            [
+              17,
+              204
+            ],
+            [
+              14,
+              172
+            ],
+            [
+              17,
+              145
+            ],
+            [
+              24,
+              122
+            ]
+          ],
+          "color": 1476798,
+          "alpha": 0.25
+        }
+      }
+    }
+  },
+  "species": {
+    "F01": {
+      "subject": "鲫鱼",
+      "size": "small",
+      "source": "F01",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              156,
+              155
+            ],
+            [
+              397,
+              155
+            ],
+            [
+              639,
+              155
+            ],
+            [
+              881,
+              155
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 268,
+              "height": 275
+            },
+            {
+              "left": 268,
+              "top": 0,
+              "width": 244,
+              "height": 275
+            },
+            {
+              "left": 512,
+              "top": 0,
+              "width": 244,
+              "height": 275
+            },
+            {
+              "left": 756,
+              "top": 0,
+              "width": 268,
+              "height": 275
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              161,
+              397
+            ],
+            [
+              407,
+              398
+            ],
+            [
+              648,
+              398
+            ],
+            [
+              892,
+              398
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 275,
+              "width": 268,
+              "height": 245
+            },
+            {
+              "left": 268,
+              "top": 275,
+              "width": 244,
+              "height": 245
+            },
+            {
+              "left": 512,
+              "top": 275,
+              "width": 244,
+              "height": 245
+            },
+            {
+              "left": 756,
+              "top": 275,
+              "width": 268,
+              "height": 245
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              165,
+              640
+            ],
+            [
+              412,
+              640
+            ],
+            [
+              656,
+              640
+            ],
+            [
+              898,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 520,
+              "width": 268,
+              "height": 260
+            },
+            {
+              "left": 268,
+              "top": 520,
+              "width": 244,
+              "height": 260
+            },
+            {
+              "left": 512,
+              "top": 520,
+              "width": 244,
+              "height": 260
+            },
+            {
+              "left": 756,
+              "top": 520,
+              "width": 268,
+              "height": 260
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F02": {
+      "subject": "鲤鱼",
+      "size": "medium",
+      "source": "F02",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              152,
+              150
+            ],
+            [
+              396,
+              150
+            ],
+            [
+              640,
+              150
+            ],
+            [
+              883,
+              150
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 263,
+              "height": 272
+            },
+            {
+              "left": 263,
+              "top": 0,
+              "width": 246,
+              "height": 272
+            },
+            {
+              "left": 509,
+              "top": 0,
+              "width": 245,
+              "height": 272
+            },
+            {
+              "left": 754,
+              "top": 0,
+              "width": 270,
+              "height": 272
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              390
+            ],
+            [
+              407,
+              390
+            ],
+            [
+              651,
+              390
+            ],
+            [
+              892,
+              390
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 272,
+              "width": 263,
+              "height": 247
+            },
+            {
+              "left": 263,
+              "top": 272,
+              "width": 246,
+              "height": 247
+            },
+            {
+              "left": 509,
+              "top": 272,
+              "width": 245,
+              "height": 247
+            },
+            {
+              "left": 754,
+              "top": 272,
+              "width": 270,
+              "height": 247
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              164,
+              643
+            ],
+            [
+              411,
+              643
+            ],
+            [
+              655,
+              643
+            ],
+            [
+              900,
+              643
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 519,
+              "width": 263,
+              "height": 261
+            },
+            {
+              "left": 263,
+              "top": 519,
+              "width": 246,
+              "height": 261
+            },
+            {
+              "left": 509,
+              "top": 519,
+              "width": 245,
+              "height": 261
+            },
+            {
+              "left": 754,
+              "top": 519,
+              "width": 270,
+              "height": 261
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F03": {
+      "subject": "花鲈",
+      "size": "medium",
+      "source": "F03",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              159,
+              140
+            ],
+            [
+              404,
+              140
+            ],
+            [
+              645,
+              140
+            ],
+            [
+              885,
+              140
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 266,
+              "height": 265
+            },
+            {
+              "left": 266,
+              "top": 0,
+              "width": 240,
+              "height": 265
+            },
+            {
+              "left": 506,
+              "top": 0,
+              "width": 240,
+              "height": 265
+            },
+            {
+              "left": 746,
+              "top": 0,
+              "width": 278,
+              "height": 265
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              168,
+              386
+            ],
+            [
+              410,
+              386
+            ],
+            [
+              652,
+              386
+            ],
+            [
+              892,
+              386
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 265,
+              "width": 266,
+              "height": 246
+            },
+            {
+              "left": 266,
+              "top": 265,
+              "width": 240,
+              "height": 246
+            },
+            {
+              "left": 506,
+              "top": 265,
+              "width": 240,
+              "height": 246
+            },
+            {
+              "left": 746,
+              "top": 265,
+              "width": 278,
+              "height": 246
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              174,
+              629
+            ],
+            [
+              417,
+              629
+            ],
+            [
+              660,
+              629
+            ],
+            [
+              904,
+              629
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 511,
+              "width": 266,
+              "height": 269
+            },
+            {
+              "left": 266,
+              "top": 511,
+              "width": 240,
+              "height": 269
+            },
+            {
+              "left": 506,
+              "top": 511,
+              "width": 240,
+              "height": 269
+            },
+            {
+              "left": 746,
+              "top": 511,
+              "width": 278,
+              "height": 269
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F04": {
+      "subject": "虹鳟",
+      "size": "medium",
+      "source": "F04",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              159,
+              157
+            ],
+            [
+              411,
+              157
+            ],
+            [
+              657,
+              157
+            ],
+            [
+              904,
+              157
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 278,
+              "height": 276
+            },
+            {
+              "left": 278,
+              "top": 0,
+              "width": 246,
+              "height": 276
+            },
+            {
+              "left": 524,
+              "top": 0,
+              "width": 248,
+              "height": 276
+            },
+            {
+              "left": 772,
+              "top": 0,
+              "width": 268,
+              "height": 276
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              168,
+              390
+            ],
+            [
+              418,
+              390
+            ],
+            [
+              664,
+              390
+            ],
+            [
+              912,
+              390
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 276,
+              "width": 278,
+              "height": 236
+            },
+            {
+              "left": 278,
+              "top": 276,
+              "width": 246,
+              "height": 236
+            },
+            {
+              "left": 524,
+              "top": 276,
+              "width": 248,
+              "height": 236
+            },
+            {
+              "left": 772,
+              "top": 276,
+              "width": 268,
+              "height": 236
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              181,
+              620
+            ],
+            [
+              430,
+              620
+            ],
+            [
+              679,
+              620
+            ],
+            [
+              927,
+              620
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 512,
+              "width": 278,
+              "height": 268
+            },
+            {
+              "left": 278,
+              "top": 512,
+              "width": 246,
+              "height": 268
+            },
+            {
+              "left": 524,
+              "top": 512,
+              "width": 248,
+              "height": 268
+            },
+            {
+              "left": 772,
+              "top": 512,
+              "width": 268,
+              "height": 268
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F05": {
+      "subject": "鳜鱼",
+      "size": "medium",
+      "source": "F05",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              151,
+              141
+            ],
+            [
+              397,
+              141
+            ],
+            [
+              641,
+              141
+            ],
+            [
+              885,
+              141
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 254,
+              "height": 265
+            },
+            {
+              "left": 254,
+              "top": 0,
+              "width": 248,
+              "height": 265
+            },
+            {
+              "left": 502,
+              "top": 0,
+              "width": 248,
+              "height": 265
+            },
+            {
+              "left": 750,
+              "top": 0,
+              "width": 274,
+              "height": 265
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              388
+            ],
+            [
+              406,
+              388
+            ],
+            [
+              650,
+              388
+            ],
+            [
+              894,
+              388
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 265,
+              "width": 254,
+              "height": 245
+            },
+            {
+              "left": 254,
+              "top": 265,
+              "width": 248,
+              "height": 245
+            },
+            {
+              "left": 502,
+              "top": 265,
+              "width": 248,
+              "height": 245
+            },
+            {
+              "left": 750,
+              "top": 265,
+              "width": 274,
+              "height": 245
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              167,
+              636
+            ],
+            [
+              412,
+              636
+            ],
+            [
+              655,
+              636
+            ],
+            [
+              900,
+              636
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 510,
+              "width": 254,
+              "height": 270
+            },
+            {
+              "left": 254,
+              "top": 510,
+              "width": 248,
+              "height": 270
+            },
+            {
+              "left": 502,
+              "top": 510,
+              "width": 248,
+              "height": 270
+            },
+            {
+              "left": 750,
+              "top": 510,
+              "width": 274,
+              "height": 270
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F06": {
+      "subject": "银鲑",
+      "size": "large",
+      "source": "F06",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              145
+            ],
+            [
+              402,
+              145
+            ],
+            [
+              648,
+              145
+            ],
+            [
+              894,
+              145
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 276,
+              "height": 272
+            },
+            {
+              "left": 276,
+              "top": 0,
+              "width": 247,
+              "height": 272
+            },
+            {
+              "left": 523,
+              "top": 0,
+              "width": 252,
+              "height": 272
+            },
+            {
+              "left": 775,
+              "top": 0,
+              "width": 265,
+              "height": 272
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              174,
+              400
+            ],
+            [
+              423,
+              400
+            ],
+            [
+              670,
+              400
+            ],
+            [
+              920,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 272,
+              "width": 276,
+              "height": 248
+            },
+            {
+              "left": 276,
+              "top": 272,
+              "width": 247,
+              "height": 248
+            },
+            {
+              "left": 523,
+              "top": 272,
+              "width": 252,
+              "height": 248
+            },
+            {
+              "left": 775,
+              "top": 272,
+              "width": 265,
+              "height": 248
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              185,
+              638
+            ],
+            [
+              434,
+              638
+            ],
+            [
+              681,
+              638
+            ],
+            [
+              932,
+              638
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 520,
+              "width": 276,
+              "height": 260
+            },
+            {
+              "left": 276,
+              "top": 520,
+              "width": 247,
+              "height": 260
+            },
+            {
+              "left": 523,
+              "top": 520,
+              "width": 252,
+              "height": 260
+            },
+            {
+              "left": 775,
+              "top": 520,
+              "width": 265,
+              "height": 260
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F07": {
+      "subject": "鳗鱼",
+      "size": "large",
+      "source": "F07",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              169,
+              150
+            ],
+            [
+              416,
+              150
+            ],
+            [
+              661,
+              150
+            ],
+            [
+              905,
+              150
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 266,
+              "height": 275
+            },
+            {
+              "left": 266,
+              "top": 0,
+              "width": 243,
+              "height": 275
+            },
+            {
+              "left": 509,
+              "top": 0,
+              "width": 241,
+              "height": 275
+            },
+            {
+              "left": 750,
+              "top": 0,
+              "width": 274,
+              "height": 275
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              182,
+              397
+            ],
+            [
+              431,
+              397
+            ],
+            [
+              676,
+              397
+            ],
+            [
+              920,
+              397
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 275,
+              "width": 266,
+              "height": 243
+            },
+            {
+              "left": 266,
+              "top": 275,
+              "width": 243,
+              "height": 243
+            },
+            {
+              "left": 509,
+              "top": 275,
+              "width": 241,
+              "height": 243
+            },
+            {
+              "left": 750,
+              "top": 275,
+              "width": 274,
+              "height": 243
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              201,
+              634
+            ],
+            [
+              450,
+              634
+            ],
+            [
+              693,
+              634
+            ],
+            [
+              939,
+              634
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 518,
+              "width": 266,
+              "height": 262
+            },
+            {
+              "left": 266,
+              "top": 518,
+              "width": 243,
+              "height": 262
+            },
+            {
+              "left": 509,
+              "top": 518,
+              "width": 241,
+              "height": 262
+            },
+            {
+              "left": 750,
+              "top": 518,
+              "width": 274,
+              "height": 262
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F08": {
+      "subject": "真鲷",
+      "size": "medium",
+      "source": "F08",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              151,
+              146
+            ],
+            [
+              394,
+              146
+            ],
+            [
+              638,
+              146
+            ],
+            [
+              881,
+              146
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 264,
+              "height": 258
+            },
+            {
+              "left": 264,
+              "top": 0,
+              "width": 238,
+              "height": 258
+            },
+            {
+              "left": 502,
+              "top": 0,
+              "width": 240,
+              "height": 258
+            },
+            {
+              "left": 742,
+              "top": 0,
+              "width": 282,
+              "height": 258
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              375
+            ],
+            [
+              401,
+              375
+            ],
+            [
+              644,
+              375
+            ],
+            [
+              887,
+              375
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 258,
+              "width": 264,
+              "height": 242
+            },
+            {
+              "left": 264,
+              "top": 258,
+              "width": 238,
+              "height": 242
+            },
+            {
+              "left": 502,
+              "top": 258,
+              "width": 240,
+              "height": 242
+            },
+            {
+              "left": 742,
+              "top": 258,
+              "width": 282,
+              "height": 242
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              165,
+              617
+            ],
+            [
+              408,
+              617
+            ],
+            [
+              652,
+              617
+            ],
+            [
+              895,
+              617
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 500,
+              "width": 264,
+              "height": 280
+            },
+            {
+              "left": 264,
+              "top": 500,
+              "width": 238,
+              "height": 280
+            },
+            {
+              "left": 502,
+              "top": 500,
+              "width": 240,
+              "height": 280
+            },
+            {
+              "left": 742,
+              "top": 500,
+              "width": 282,
+              "height": 280
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F09": {
+      "subject": "大菱鲆",
+      "size": "large",
+      "source": "F09",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              150,
+              145
+            ],
+            [
+              400,
+              145
+            ],
+            [
+              648,
+              145
+            ],
+            [
+              897,
+              145
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 257,
+              "height": 274
+            },
+            {
+              "left": 257,
+              "top": 0,
+              "width": 248,
+              "height": 274
+            },
+            {
+              "left": 505,
+              "top": 0,
+              "width": 250,
+              "height": 274
+            },
+            {
+              "left": 755,
+              "top": 0,
+              "width": 269,
+              "height": 274
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              159,
+              404
+            ],
+            [
+              405,
+              404
+            ],
+            [
+              653,
+              404
+            ],
+            [
+              903,
+              404
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 274,
+              "width": 257,
+              "height": 245
+            },
+            {
+              "left": 257,
+              "top": 274,
+              "width": 248,
+              "height": 245
+            },
+            {
+              "left": 505,
+              "top": 274,
+              "width": 250,
+              "height": 245
+            },
+            {
+              "left": 755,
+              "top": 274,
+              "width": 269,
+              "height": 245
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              171,
+              640
+            ],
+            [
+              419,
+              640
+            ],
+            [
+              667,
+              640
+            ],
+            [
+              917,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 519,
+              "width": 257,
+              "height": 281
+            },
+            {
+              "left": 257,
+              "top": 519,
+              "width": 248,
+              "height": 281
+            },
+            {
+              "left": 505,
+              "top": 519,
+              "width": 250,
+              "height": 281
+            },
+            {
+              "left": 755,
+              "top": 519,
+              "width": 269,
+              "height": 281
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F10": {
+      "subject": "鲟鱼",
+      "size": "large",
+      "source": "F10",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              156,
+              148
+            ],
+            [
+              405,
+              148
+            ],
+            [
+              649,
+              148
+            ],
+            [
+              896,
+              148
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 263,
+              "height": 275
+            },
+            {
+              "left": 263,
+              "top": 0,
+              "width": 246,
+              "height": 275
+            },
+            {
+              "left": 509,
+              "top": 0,
+              "width": 246,
+              "height": 275
+            },
+            {
+              "left": 755,
+              "top": 0,
+              "width": 285,
+              "height": 275
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              171,
+              400
+            ],
+            [
+              420,
+              400
+            ],
+            [
+              666,
+              400
+            ],
+            [
+              915,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 275,
+              "width": 263,
+              "height": 247
+            },
+            {
+              "left": 263,
+              "top": 275,
+              "width": 246,
+              "height": 247
+            },
+            {
+              "left": 509,
+              "top": 275,
+              "width": 246,
+              "height": 247
+            },
+            {
+              "left": 755,
+              "top": 275,
+              "width": 285,
+              "height": 247
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              184,
+              643
+            ],
+            [
+              432,
+              643
+            ],
+            [
+              678,
+              643
+            ],
+            [
+              925,
+              643
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 522,
+              "width": 263,
+              "height": 258
+            },
+            {
+              "left": 263,
+              "top": 522,
+              "width": 246,
+              "height": 258
+            },
+            {
+              "left": 509,
+              "top": 522,
+              "width": 246,
+              "height": 258
+            },
+            {
+              "left": 755,
+              "top": 522,
+              "width": 285,
+              "height": 258
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    }
+  }
+}

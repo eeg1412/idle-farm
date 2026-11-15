@@ -2,6 +2,26 @@
 
 按实际源码接入、构建和交付结果维护；未运行的验收不得记为通过。用户重新报告的问题应重新打开。
 
+## 2026-11-15：大型作物缺排、空田开局、鱼池与返回层级
+
+本轮要求和所有权见[任务卡](tasks/2026-11-15-fish-rows-parent-navigation.md)。旧图集和弹窗记录不关闭本轮用户反馈；只记录真实接入，运行表现尚未验收。
+
+当日追加：用户截图明确否定 9排×2列方案，要求贴合实际田垄并铺满；随后明确要求每棵树／苗独立图片、运行逐棵摆放。旧的两列 PNG 静态结论撤销为历史交付，不能作为本项完成证据。鱼池也追加海／河背景和四层水面，不再以旧单一鱼塘结案。
+
+| 用户项 | 实际交付／接入 | 状态与限制 |
+| --- | --- | --- |
+| 1 树木贴田垄、铺满、逐棵独立精灵 | C-INDIVIDUAL实际交齐67种×4期268张单株WebP及对应trim PNG，crop-visuals覆盖68ID。`mountIndividualPlants`逐root创建独立Container／Sprite，根位固定，阶段改各株texture/pivot/scale；前后容器分在喷头／水花两侧。中大型完整透视列族与真实9垄求交，取消固定两列和medium前排筛空。loader仅C01加载旧fieldAtlas，C02+四张单株v4全部齐才挂载。Python旧入口已标准库转发唯一Node转换逻辑 | PM已直接读取实际加载与逐株创建代码，打开真实ground、C08／C05／C07背景摆位、C08根位／130图及两张发布单株。见[限定静态记录](art-reviews/2026-11-15-individual-crop-layout.md)。旧窄带方案不作通过证据，合成图只作交接不被runtime加载；真实画布与其余品种小尺寸未验收 |
+| 2 新游戏不默认播种小麦 | `newWorld` 显式向 startingFacilities 传 null，免费田地 recipe/batch 均为空；清档重开复用 newWorld；sellFarm 显式传 C01 | 源码交付；新档与清档需要先播种，初始金币解锁保留，既有档和周回未扩大修改；未运行验证 |
+| 3 鱼池专用技能、三期 idle 与体型数量 | 新 `farm-fish` 技能、按ID交付reference及AGENTS入口已交付。内置image_gen实际生成10张v1三期原稿，导出120张独立帧、10套1280×960 PNG／WebP、10张透明活鱼选择图、10个静态回退和共享鱼塘；layout/atlas登记人工鳃后躯干源锚点、阶段共享画布／尺度并注册到160,210。`fish-animation/layout` 实现3／2／1只、三期4帧、淡出后鱼苗淡入；卡片fishAnimation→公共loader→可见挂载已接，独立fishBatches保留短批相位。生产转换入口art:fish、资源门及常规设施导出的持久PNG优先／双哈希同步已交付 | [全量静态审阅](art-reviews/2026-11-15-fish-animation.md)已实际看全部源稿、分镜、发布图集、选择图、回退与32／130px总览，静态范围通过，无退回项；PM另看真实源码链、F01原稿／PNG、F09发布图集、选择与回退总览等。9秒保底是本轮选择，非用户固定确认。真实循环／淡变／选择器／可见生命周期仍未验收，资源门未运行；不将静态结论写成运行或用户全批认可 |
+| 3追加 海／河不同背景、鱼池四层与动态水波 | `layout.species[].habitat`唯一分类源生成每F的river/sea，新增两张内置image_gen全幅背景及320PNG／WebP；`fish-habitats.json`登记真实水域polygon/color/alpha。加载器按habitat选背景，运行背景→鱼→水色半透明层→程序水波，后三层裁在水域；5组短弧30fps扩散／漂移／alpha变化，独立moveTo起笔且不跟随鱼收获淡出。`--habitats-only`实际重导两背景、10回退和metadata，120帧／选择未重画 | [追加静态复查](art-reviews/2026-11-15-fish-animation.md)已看两原稿、PNG／WebP、全部最新回退与总览，静态范围通过，无侵岸或裁断鱼体的实证缺陷；PM也读四层代码并看320／130总览。分类依据见[养殖展示说明](expansion/02-livestock-fish.md#鱼池背景分类)，广盐／洄游类不写成绝对生态。真实动态水波和运行仍未验收 |
+| 4 弹窗无重复关闭 | 生产／研究／仓库纯底部关闭与返回入口已删除；操作说明末步改完成；完整整数详情去掉尾部返回，公共弹窗内容层兜底过滤纯关闭入口，标题栏 X 为通用关闭入口 | PM 已读实际公共控件与页面调用；确认／取消等业务动作保留，未运行交互验收 |
+| 5 返回到进入时标记的上级 | `captureContext/restoreContext` 显式保存来源 local、modal、parent、epoch；App back先弹窗父级／本页物品父层再pageParent，不调用浏览器back；图鉴快照恢复筛选、用途与scroll。外部定向研发首个详情带parentPage，正常节点详情留本页。浏览器entry另存context，主页面有来源时显示返回；main周回提交成功递增worldEpoch并resetSession | PM 已读父上下文、关闭、图鉴列表／trail、loader与重置真实源码；无来源直链图鉴／出售→经营，设置／任务→牧场。多入口和真实返回交互未运行验收 |
+| 权限 | 本轮只进行普通源码／文档读写、原画生成转换和静态素材审阅 | 不运行测试、检查、预览、语法／运行验证、编译，不提交／推送／发布 |
+
+鱼类持久原稿和实际提示词在 `assets/fish/raw/`、`assets/fish/prompts.md`，没有用静态缩放或滤镜伪造阶段／idle。仓库 canonical F 图保持原文件，选鱼网格使用同ID透明活鱼。固定塘来自原 `scene-empty-pond.png`，鱼与背景分层；运行和静态回退共用 `fish-layout.js` 只数、位置与深度。WebP 继续由原有离线构建规则排除启动预缓存，未运行该构建。
+
+河海追加后，旧单一pond文件仅保留历史，活跃背景原稿为 `raw/river-pond-v2.png`／`sea-pond-v1.png`，新提示词在 `assets/fish/habitat-prompts.md`。鱼、作物技能和AGENTS均已按真实metadata／运行路径同步。资源门改查C02+独立单株及河海四层登记，未运行任何门禁或编译。
+
 ## 2026-11-15：设置齿轮出现延伸到左侧的异常线条
 
 用户提供真实页面截图：齿轮按钮内的浅色线条延伸到画布最左侧。本轮重新打开前节反馈 3，旧的“源码接入”不能关闭该运行问题。任务卡为[设置齿轮圆弧连线修正](tasks/2026-11-15-settings-gear-line.md)。

@@ -1,0 +1,52 @@
+{
+  "F01": {
+    "stages": 3,
+    "size": "small",
+    "habitat": "river"
+  },
+  "F02": {
+    "stages": 3,
+    "size": "medium",
+    "habitat": "river"
+  },
+  "F03": {
+    "stages": 3,
+    "size": "medium",
+    "habitat": "sea"
+  },
+  "F04": {
+    "stages": 3,
+    "size": "medium",
+    "habitat": "river"
+  },
+  "F05": {
+    "stages": 3,
+    "size": "medium",
+    "habitat": "river"
+  },
+  "F06": {
+    "stages": 3,
+    "size": "large",
+    "habitat": "sea"
+  },
+  "F07": {
+    "stages": 3,
+    "size": "large",
+    "habitat": "river"
+  },
+  "F08": {
+    "stages": 3,
+    "size": "medium",
+    "habitat": "sea"
+  },
+  "F09": {
+    "stages": 3,
+    "size": "large",
+    "habitat": "sea"
+  },
+  "F10": {
+    "stages": 3,
+    "size": "large",
+    "habitat": "river"
+  }
+}

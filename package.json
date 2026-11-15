@@ -19,6 +19,7 @@
     "check": "npm run content:check && npm run art:check && npm test",
     "art:check": "node scripts/check-facility-art.mjs",
     "art:livestock": "node scripts/export-livestock-animation.mjs",
+    "art:fish": "node scripts/export-fish-animation.mjs",
     "content:generate": "node scripts/generate-game-data.mjs",
     "content:check": "node scripts/compile-content.mjs --check && node scripts/generate-game-data.mjs --check",
     "wiki:build": "node scripts/build-wiki.mjs"

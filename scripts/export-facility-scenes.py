@@ -1,6 +1,8 @@
 """Cut independently drawn facility scenes out of their source sheets."""
 
 from argparse import ArgumentParser
+from hashlib import sha256
+from json import dumps, loads
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -17,6 +19,8 @@ SHEETS = {
 }
 THREE_COLUMNS = {"crops-51-59", "crops-60-68"}
 ORIGINALS = {"C01": "scene-wheat", "L01": "scene-hen", "F01": "scene-fish"}
+FISH_LAYOUT = ROOT / "assets/fish/layout.json"
+FISH_SCENES = loads(FISH_LAYOUT.read_text(encoding="utf-8")).get("species", {}) if FISH_LAYOUT.exists() else {}
 
 
 def seams(image, horizontal=False, columns=5):
@@ -41,8 +45,23 @@ def seams(image, horizontal=False, columns=5):
 
 
 def save(name, scene):
+    # Fish animation exports own persistent fallback PNGs. Keep the regular
+    # facility exporter from replacing those with its historical sheet cells.
+    replacement = ART / f"scene-{name}.png"
+    if name in FISH_SCENES and replacement.exists():
+        with Image.open(replacement) as current:
+            scene = current.convert("RGB")
     card = ImageOps.fit(scene, (320, 320), Image.Resampling.NEAREST)
-    card.save(OUTPUT / f"scene-{name}.webp", quality=70, method=6)
+    published = OUTPUT / f"scene-{name}.webp"
+    card.save(published, quality=70, method=6)
+    manifest_path = ROOT / "assets/fish/atlas.json"
+    if name in FISH_SCENES and replacement.exists() and manifest_path.exists():
+        manifest = loads(manifest_path.read_text(encoding="utf-8"))
+        record = manifest.get("species", {}).get(name)
+        if record and record.get("fallback", {}).get("source") == f"assets/source/art/scene-{name}.png":
+            record["fallback"]["sourceSha256"] = sha256(replacement.read_bytes()).hexdigest()
+            record["fallback"]["sha256"] = sha256(published.read_bytes()).hexdigest()
+            manifest_path.write_text(dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main():

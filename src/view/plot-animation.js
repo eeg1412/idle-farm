@@ -103,7 +103,121 @@ function drawWater(layer, particles, time) {
   }
 }
 
+function mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart) {
+  const { shared, plants, visual } = textures;
+  const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
+  const container = new Container();
+  container.label = 'plot-animation';
+  container.eventMode = 'none';
+  container.position.set(x, y);
+  const clip = new Graphics().roundRect(0, 0, width, height, 10).fill(0xffffff);
+  const scene = new Container();
+  const factor = Math.max(width, height) / plotFrameSize;
+  scene.scale.set(factor);
+  scene.position.set((width - plotFrameSize * factor) / 2, (height - plotFrameSize * factor) / 2);
+  container.addChild(scene, clip);
+  scene.mask = clip;
+
+  const addSprite = (texture, left = 0, top = 0) => {
+    const sprite = new Sprite({ texture, roundPixels: true });
+    sprite.eventMode = 'none';
+    sprite.position.set(left, top);
+    scene.addChild(sprite);
+    return sprite;
+  };
+  addSprite(shared.get('sky'));
+  addSprite(shared.get('ground'));
+  const backPlants = new Container();
+  backPlants.label = 'crop-back-plants';
+  backPlants.eventMode = 'none';
+  scene.addChild(backPlants);
+  addSprite(shared.get('sprinkler-base'), sprinklerX, sprinklerY);
+  const head = addSprite(shared.get(directions[0].key), sprinklerX, sprinklerY);
+  const water = new Container();
+  water.visible = false;
+  water.eventMode = 'none';
+  scene.addChild(water);
+  const frontPlants = new Container();
+  frontPlants.label = 'crop-front-plants';
+  frontPlants.eventMode = 'none';
+  scene.addChild(frontPlants);
+
+  for (const texture of plants) texture.source.scaleMode = 'nearest';
+  // Each root owns its own sprite; only the four single-plant textures are
+  // shared. No repeated plants or field placement are baked into a texture.
+  const instances = [...visual.roots].sort((left, right) => left.y - right.y || left.x - right.x)
+    .map((point) => {
+      const group = new Container();
+      group.label = 'crop-root-' + point.row + '-' + point.column;
+      group.eventMode = 'none';
+      group.position.set(point.x, point.y);
+      const shadow = new Graphics();
+      shadow.eventMode = 'none';
+      const plant = new Sprite({ texture: plants[0], roundPixels: true });
+      plant.label = 'crop-plant';
+      plant.eventMode = 'none';
+      group.addChild(shadow, plant);
+      (point.y >= footY ? frontPlants : backPlants).addChild(group);
+      return { point, plant, shadow };
+    });
+  let growthStage;
+  const applyStage = (index) => {
+    if (growthStage === index) return;
+    const stage = visual.stages[index];
+    for (const { point, plant, shadow } of instances) {
+      // Anchors are measured once during source export, never per frame. A
+      // stage changes texture, size and pivot; the root container stays put.
+      const scale = Math.min(stage.baseScale * point.scale, point.maxHeight / stage.height);
+      plant.texture = plants[index];
+      plant.pivot.set(stage.anchorX, stage.anchorY);
+      plant.scale.set(scale);
+      const radius = Math.min(14, Math.max(2, Math.floor(stage.width * scale / 5)));
+      shadow.clear().ellipse(0, 0.5, radius, 1.5).fill({ color: 0x3a1d0c, alpha: (45 + index * 14) / 255 });
+    }
+    growthStage = index;
+  };
+  applyStage(0);
+  parent.addChild(container);
+  const particles = [];
+  let lastSprayFrame;
+
+  return {
+    container,
+    update({ clock, now }) {
+      const elapsedInCycle = Math.max(0, clock - animationStart) % duration;
+      const index = Math.floor(elapsedInCycle * plants.length / duration);
+      applyStage(index);
+      let alpha = 1;
+      if (index === plants.length - 1) {
+        const remaining = duration - elapsedInCycle;
+        const progress = Math.max(0, Math.min(1, 1 - (remaining - harvestGapMs) / harvestFadeMs));
+        alpha = 1 - progress * progress * (3 - 2 * progress);
+      }
+      backPlants.alpha = alpha;
+      frontPlants.alpha = alpha;
+      const frame = Math.floor(now / sprayFrameMs);
+      if (frame === lastSprayFrame) return;
+      lastSprayFrame = frame;
+      water.visible = true;
+      const time = now % cycleMs + cycleMs;
+      const direction = directions[Math.floor(time / (emissionMs * spraySpread.length)) % directions.length];
+      const headTexture = shared.get(direction.key);
+      if (head.texture !== headTexture) head.texture = headTexture;
+      drawWater(water, particles, time);
+    },
+    destroy() {
+      if (container.destroyed) return;
+      scene.mask = null;
+      clip.destroy();
+      container.destroy({ children: true });
+    },
+  };
+}
+
 export function mountPlotAnimation(parent, textures, { x, y, width, height }, batch, animationStart = batch.start) {
+  if (textures.visual?.mode === 'individual') {
+    return mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart);
+  }
   const { shared, stages, frontStages } = textures;
   const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
   const container = new Container();

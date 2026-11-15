@@ -1,5 +1,6 @@
 import { Container, Graphics, Rectangle, Sprite, Text, Texture, Assets } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
+import cropVisuals from '../content/crop-visuals.json' with { type: 'json' };
 import { compact } from './numbers.js';
 import { gameHistory } from './navigation.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
@@ -7,6 +8,9 @@ import { minPlotAnimationMs, mountPlotAnimation, plotFrameSize, plotSharedTextur
 import {
   livestockFrameSize, livestockIdleFrames, livestockSpecies, minLivestockAnimationMs, mountLivestockAnimation,
 } from './livestock-animation.js';
+import {
+  fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, minFishAnimationMs, mountFishAnimation,
+} from './fish-animation.js';
 import { renderResearch } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import {
@@ -51,11 +55,32 @@ const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalo
   'operation-switch', 'operation-upgrade', 'operation-sell', 'portrait-warehouse',
   ...Array.from({ length: 49 }, (_, index) => 'plot-C' + String(index + 2).padStart(2, '0')),
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'L').map(([id]) => 'livestock-' + id),
+  ...Object.entries(data.items).filter(([, item]) => item.kind === 'F').map(([id]) => 'fish-' + id),
 ]);
 const path = (name) => new URL(name, document.baseURI).href;
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id);
+function copyViewState(value, seen = new Map()) {
+  if (typeof value === 'function') return undefined;
+  if (!value || typeof value !== 'object') return value;
+  if (seen.has(value)) return seen.get(value);
+  const copy = Array.isArray(value) ? [] : {};
+  seen.set(value, copy);
+  for (const [key, child] of Object.entries(value)) {
+    if (typeof child !== 'function') copy[key] = copyViewState(child, seen);
+  }
+  return copy;
+}
+function restoreViewState(target, saved) {
+  for (const key of Object.keys(target)) if (!Object.hasOwn(saved, key)) delete target[key];
+  for (const [key, value] of Object.entries(saved)) {
+    if (value && typeof value === 'object' && target[key] && typeof target[key] === 'object' &&
+        Array.isArray(value) === Array.isArray(target[key])) restoreViewState(target[key], value);
+    else target[key] = copyViewState(value);
+  }
+  if (Array.isArray(target)) target.length = saved.length;
+}
 const inkGraphics = () => {
   const graphics = new Graphics();
   graphics.eventMode = 'none';
@@ -166,7 +191,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   app.stage.addChild(root, clip);
   root.mask = clip;
   let current = '牧场';
-  let history = [];
+  let pageParent;
+  let linkedEntryParent;
+  let navigationEpoch = 0;
   let navigation = gameHistory(browser);
   let routeDialogSequence = 0;
   let applyingRoute = false;
@@ -203,6 +230,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const shortPlotStarts = new Map();
   const livestockTextures = new Map();
   const livestockBatches = new Map();
+  const fishTextures = new Map();
+  const fishBatches = new Map();
   const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
   const textures = new Map();
   const failedImages = new Set();
@@ -244,14 +273,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function loadPlotTextures(id) {
     const existing = cropPlots.get(id);
     if (existing) return existing.textures;
+    const visual = cropVisuals[id];
+    const individual = visual?.mode === 'individual';
+    if (!individual && id !== 'C01') return;
     const crop = {};
     cropPlots.set(id, crop);
     plotSharedLoad ??= Promise.all(plotSharedTextureKeys.map(async (key) => [
       key, await loadImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
     ])).then((entries) => entries.every(([, texture]) => texture) ? new Map(entries) : undefined);
 
-    const atlasLoad = loadImage(path(`./art/plot/crops/${id}.webp?game=1&v=2`));
-    const frontLoad = loadImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=2`));
+    if (individual) {
+      if (visual.stages?.length !== 4) return;
+      const plantLoad = Promise.all(visual.stages.map((stage) =>
+        loadImage(path('./' + stage.path + '?game=1&v=4'))));
+      Promise.all([plotSharedLoad, plantLoad]).then(([shared, plants]) => {
+        if (!shared || plants.some((texture, index) => !texture ||
+            texture.width !== visual.stages[index].width || texture.height !== visual.stages[index].height)) return;
+        crop.textures = { shared, plants, visual };
+        if (visiblePlotIds.has(id)) requestRender();
+      });
+      return;
+    }
+
+    const atlasLoad = loadImage(path(`./art/plot/crops/${id}.webp?game=1&v=3`));
+    const frontLoad = loadImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=3`));
     Promise.all([plotSharedLoad, atlasLoad, frontLoad]).then(([shared, atlas, front]) => {
       const size = plotFrameSize;
       if (!shared || !atlas || !front || atlas.width !== size * 2 || atlas.height !== size * 2 ||
@@ -307,6 +352,46 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       });
     }
     for (const key of livestockBatches.keys()) if (!present.has(key)) livestockBatches.delete(key);
+  }
+
+  function loadFishTextures(id) {
+    if (!Object.hasOwn(fishSpecies, id)) return;
+    const habitat = fishHabitats[fishSpecies[id].habitat];
+    if (!habitat?.pond) return;
+    const existing = fishTextures.get(id);
+    if (existing) return existing.textures;
+    const entry = {};
+    fishTextures.set(id, entry);
+    Promise.all([
+      loadImage(path(habitat.pond.replace(/^public\//, './') + '?game=1&v=1')),
+      loadImage(path(`./art/fish/animals/${id}.webp?game=1&v=1`)),
+    ]).then(([pond, atlas]) => {
+      const size = fishFrameSize;
+      const rows = fishSpecies[id].stages;
+      if (!pond || !atlas || pond.width !== size || pond.height !== size ||
+          atlas.width !== size * fishIdleFrames || atlas.height !== size * rows) return;
+      const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: fishIdleFrames }, (_, frame) =>
+        new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
+      entry.textures = { pond, stages };
+      if (visiblePlotIds.has(id)) requestRender();
+    });
+  }
+
+  function syncFishBatches(nextWorld) {
+    const present = new Set();
+    for (const [index, facility] of (nextWorld?.facilities.F ?? []).entries()) {
+      const batch = facility.batch;
+      if (!batch || !Object.hasOwn(fishSpecies, batch.id)) continue;
+      present.add(index);
+      const previous = fishBatches.get(index);
+      if (previous?.id === batch.id && previous.start === batch.start && previous.end === batch.end) continue;
+      const shortBatch = batch.end - batch.start < minFishAnimationMs;
+      fishBatches.set(index, {
+        id: batch.id, start: batch.start, end: batch.end,
+        animationStart: shortBatch && previous?.id === batch.id ? previous.animationStart : batch.start,
+      });
+    }
+    for (const index of fishBatches.keys()) if (!present.has(index)) fishBatches.delete(index);
   }
 
   function unmountPlot(plot) {
@@ -410,6 +495,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       ? { title, draw, scroll: 0, ...options } : { title, draw, scroll: 0, center: options };
     info.routeKey = String(++routeDialogSequence);
     info.parentDialog = modal;
+    info.ownerPage = current;
+    info.navigationEpoch = navigationEpoch;
+    info.pageContext = { ...captureContext(modal), linkedEntryParent: undefined };
+    if (!modal && current === '研究' && linkedEntryParent) {
+      info.parentPage = linkedEntryParent;
+      linkedEntryParent = undefined;
+    }
     if (building) { pendingModal = info; requestRender(); }
     else {
       modal = info;
@@ -440,30 +532,85 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         shown.closing = false;
       }
     }
-    if (navigation?.active?.modal === shown && shown) {
-      queueMicrotask(() => {
-        if (modal === shown && !navigation.back()) dismissDialog();
-      });
-      return;
-    }
-    if (!navigation && shown?.parentDialog) {
+    if (availableDialog(shown?.parentDialog)) {
       modal = shown.parentDialog;
       focusIndex = -1;
+      recordRoute(true);
+      redraw();
+      return;
+    }
+    if (restoreContext(shown?.parentPage)) {
+      recordRoute(true);
       redraw();
       return;
     }
     dismissDialog();
   }
 
-  function go(page, options = {}) {
+  function availableDialog(dialog) {
+    return Boolean(dialog && dialog.navigationEpoch === navigationEpoch &&
+      (!world || !dialog.available || dialog.available(world)));
+  }
+
+  function captureContext(sourceDialog = modal) {
+    return {
+      page: current, local: copyViewState(locals[current]), modal: sourceDialog,
+      parent: pageParent, linkedEntryParent, epoch: navigationEpoch,
+    };
+  }
+
+  function rememberContext() {
+    const active = navigation?.active;
+    if (!active) return;
+    active.context = captureContext();
+    active.scroll = locals[current].scroll;
+  }
+
+  function restoreContext(context) {
+    if (!context || context.epoch !== navigationEpoch || !Object.hasOwn(pages, context.page)) return false;
+    const changedPage = current !== context.page;
+    current = context.page;
+    const local = locals[current];
+    restoreViewState(local, context.local);
+    pageParent = context.parent;
+    linkedEntryParent = context.linkedEntryParent;
+    modal = availableDialog(context.modal) ? context.modal : undefined;
+    pendingModal = undefined;
+    focusIndex = -1;
+    if (changedPage) onNavigate?.(current);
+    return true;
+  }
+
+  function defaultParent(page) {
+    const parent = page === '图鉴' || page === '出售牧场' ? '经营' : '牧场';
+    return {
+      page: parent, local: copyViewState(locals[parent]), modal: undefined,
+      parent: undefined, epoch: navigationEpoch,
+    };
+  }
+
+  function go(page, options = {}, sourceDialog) {
     if (!Object.hasOwn(pages, page)) return;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
-    if (page !== current) {
-      if (tabs.includes(page)) history = [];
-      else history.push(current);
+    rememberContext();
+    const changedPage = page !== current;
+    const directedEntry = options.id !== undefined || options.tab !== undefined;
+    const source = availableDialog(sourceDialog) && sourceDialog.ownerPage !== current
+      ? { ...sourceDialog.pageContext, modal: sourceDialog }
+      : captureContext(availableDialog(sourceDialog) ? sourceDialog : modal);
+    if (options.root) pageParent = undefined;
+    else if (changedPage || directedEntry) pageParent = source;
+    linkedEntryParent = page === '研究' && options.id !== undefined ? pageParent : undefined;
+    if (changedPage) {
       current = page;
       onNavigate?.(current);
+    }
+    if (page === '图鉴') {
+      delete locals[page].catalogId;
+      delete locals[page].catalogListParent;
+      locals[page].catalogTrail = [];
+      locals[page].showUses = false;
     }
     if (options.tab !== undefined) { locals[page].tab = options.tab; locals[page].scroll = 0; }
     if (options.id !== undefined) {
@@ -480,14 +627,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function back() {
+    if (waiting) return;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
     if (modal) { closeDialog(); return; }
-    if (navigation?.back()) return;
     if (locals[current].onBack?.()) return;
-    current = history.pop() ?? '牧场';
-    onNavigate?.(current);
+    if (!restoreContext(pageParent)) {
+      if (tabs.includes(current) && !pageParent) return;
+      restoreContext(defaultParent(current));
+    }
     focusIndex = -1;
+    recordRoute(true);
     redraw();
   }
 
@@ -498,7 +648,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         try { await navigator.clipboard.writeText(value.toString()); float('已复制'); }
         catch { toast('无法复制，请查看上方数值。'); }
       });
-      dialog.button('返回', dialog.close);
     }, { center: true });
   }
 
@@ -516,8 +665,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!navigation || applyingRoute) return;
     const route = routeSnapshot();
     const prior = navigation.active;
-    if (prior && Object.keys(route).every((key) => route[key] === prior.route[key])) return;
-    navigation.write(route, modal, replace, locals[current].scroll);
+    if (prior && Object.keys(route).every((key) => route[key] === prior.route[key])) {
+      rememberContext();
+      return;
+    }
+    navigation.write(route, modal, replace, locals[current].scroll, captureContext());
   }
 
   function restoreRoute(initial = false) {
@@ -527,25 +679,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const { page, tab, id } = entry.route;
     applyingRoute = true;
     coast = null;
-    if (page !== current) onNavigate?.(page);
-    current = page;
-    const local = locals[page];
-    local.tab = tab;
-    if (page === '图鉴') {
-      local.catalogId = id;
-      local.showUses = tab === '用途';
-      local.catalogTrail = [];
-      delete local.id;
-    } else if (id && (id !== local.linkedResearchItem || local.activeResearchTab !== tab)) local.id = id;
-    else delete local.id;
-    if (page === '研究') local.openResearchItem = Boolean(id && (initial || !entry.key));
-    if (page === '研究' && !id && local.linkedResearchItem) {
-      const panel = local.researchPanels?.[tab];
-      if (panel) delete panel.selected;
-      delete local.linkedResearchItem;
+    if (!restoreContext(entry.context)) {
+      if (page !== current) onNavigate?.(page);
+      current = page;
+      pageParent = tabs.includes(page) ? undefined : defaultParent(page);
+      linkedEntryParent = undefined;
+      const local = locals[page];
+      local.tab = tab;
+      if (page === '图鉴') {
+        local.catalogId = id;
+        local.showUses = tab === '用途';
+        local.catalogTrail = [];
+        delete local.catalogListParent;
+        delete local.id;
+      } else if (id && (id !== local.linkedResearchItem || local.activeResearchTab !== tab)) local.id = id;
+      else delete local.id;
+      if (page === '研究') local.openResearchItem = Boolean(id && (initial || !entry.key));
+      if (page === '研究' && !id && local.linkedResearchItem) {
+        const panel = local.researchPanels?.[tab];
+        if (panel) delete panel.selected;
+        delete local.linkedResearchItem;
+      }
+      if (entry.scroll !== undefined) local.scroll = entry.scroll;
+      modal = availableDialog(entry.modal) ? entry.modal : undefined;
     }
-    local.scroll = entry.scroll ?? 0;
-    modal = entry.modal?.available && !entry.modal.available(world) ? undefined : entry.modal;
     pendingModal = undefined;
     focusIndex = -1;
     if (!initial) redraw();
@@ -598,6 +755,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
     let cursor = y;
+    const dialogContent = Boolean(options.captureFooter);
     let methodDepth = 0;
     let trailingButtons = [];
     const rowGap = 7;
@@ -678,7 +836,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       cursor += countRows * step - gap + rowGap;
     }
     const ui = {
-      w: world, local, width, height: availableHeight, refresh, go, back, action, float, toast,
+      w: world, local, width, height: availableHeight, refresh, back, action, float, toast,
+      go: (page, settings) => go(page, settings, local.routeKey ? local : undefined),
       saveManagement, saveAction,
       dialog: setDialog, close: closeDialog,
       tree(options) {
@@ -820,6 +979,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         else draw(ui);
       },
       button(label, fn, options = {}) {
+        if (dialogContent && (label === '关闭' || label === '返回')) return;
         const h = Math.max(48, Math.ceil(27 * scale()));
         const large = options.style === 'primary' || options.style === 'production';
         const buttonWidth = Math.min(width, options.maxWidth ?? (options.style === 'primary' ? width * 0.86 : width));
@@ -834,6 +994,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += height + rowGap;
       },
       buttons(list, { style, size } = {}) {
+        if (dialogContent) list = list.filter((item) => item.label !== '关闭' &&
+          !(list.length === 1 && item.label === '返回'));
         if (!list.length) return;
         const segmented = style === 'segmented' || style === 'framed';
         const filter = style === 'filter';
@@ -911,7 +1073,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           width - icon, { size: 13 * scale(), color: palette.muted }).height + 2;
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
       },
-      feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover, plotAnimation, livestockAnimation } = {}) {
+      feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover,
+        plotAnimation, livestockAnimation, fishAnimation } = {}) {
         const top = cursor;
         const scene = sceneKeys.has(id);
         const stacked = width < 210 || scale() > 1.6;
@@ -939,7 +1102,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const crop = cover || scene || heroKeys.has(id);
         const imageWidth = artWidth - inset * 2;
         const imageHeight = artHeight - inset * 2;
-        const animation = livestockAnimation ?? plotAnimation;
+        const animation = fishAnimation ?? livestockAnimation ?? plotAnimation;
         if (animation && options.registerPlot) {
           const art = new Container();
           const fallback = new Container();
@@ -949,7 +1112,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           art.addChild(fallback);
           drawImage(fallback, id, 0, 0, imageWidth, imageHeight, crop);
           options.registerPlot({ art, fallback, box: new Rectangle(0, 0, imageWidth, imageHeight),
-            type: livestockAnimation ? 'livestock' : 'crop', ...animation });
+            type: fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
         } else {
           drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
@@ -1409,7 +1572,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const { batch, index } = plot;
         visiblePlotIds.add(batch.id);
         const livestock = plot.type === 'livestock';
-        const plotTextures = livestock ? loadLivestockTextures(batch.id) : loadPlotTextures(batch.id);
+        const fish = plot.type === 'fish';
+        const plotTextures = fish ? loadFishTextures(batch.id) : livestock ? loadLivestockTextures(batch.id) : loadPlotTextures(batch.id);
         if (!plotTextures) continue;
         if (plot.animation) continue;
         if (!animationFrame) {
@@ -1417,13 +1581,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           animationFrame = { clock: progressClock(now), now };
         }
         let animationStart = batch.start;
-        if (!livestock && batch.end - batch.start < minPlotAnimationMs) {
+        if (!livestock && !fish && batch.end - batch.start < minPlotAnimationMs) {
           // Keep the same visual start when a fast crop finishes another real batch.
           const previous = shortPlotStarts.get(index);
           if (previous?.id === batch.id) animationStart = previous.start;
           else shortPlotStarts.set(index, { id: batch.id, start: animationStart });
         }
-        if (livestock) {
+        if (fish) {
+          const previous = fishBatches.get(index);
+          plot.animation = mountFishAnimation(plot.art, plotTextures, plot.box, batch,
+            previous?.animationStart ?? batch.start);
+        } else if (livestock) {
           const previous = livestockBatches.get('L:' + index);
           plot.animation = mountLivestockAnimation(plot.art, plotTextures, plot.box, batch,
             previous?.animationStart ?? batch.start, previous?.previousHarvestAt);
@@ -1482,6 +1650,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     state.onScrollChange?.(state.scroll);
     for (const observe of scrollObservers) observe(state.scroll);
     if (navigation?.active && state === locals[current]) navigation.active.scroll = state.scroll;
+    if (state === locals[current]) rememberContext();
     body.y = y - state.scroll;
     if (pinned) pinned.layer.y = y + Math.max(0, pinned.top - state.scroll);
     scrollTarget = { body, state, max, x: x - bleed, right: x + width + bleed, y, height, pinned, scrollObservers };
@@ -1526,6 +1695,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     state.onScrollChange?.(state.scroll);
     for (const observe of scrollObservers) observe(state.scroll);
     if (navigation?.active && state === locals[current]) navigation.active.scroll = state.scroll;
+    if (state === locals[current]) rememberContext();
     body.y = y - state.scroll;
     if (pinned) pinned.layer.y = y + Math.max(0, pinned.top - state.scroll);
     if (thumb) thumb.y = y + thumbRange * (state.scroll / max);
@@ -1570,7 +1740,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (!waiting) hitAt(gear, parent, left - 6, balanceTop - 6, settingsWidth + 12, balanceHeight + 12, () => go('设置'));
     }
 
-    if (!tabs.includes(current)) {
+    if (!tabs.includes(current) || pageParent) {
       const backWidth = 68;
       buttonAt(parent, x, y + 8, backWidth, 43, '‹ 返回', back);
       const titleRoom = Math.max(1, w - (backWidth + 7) * 2);
@@ -1620,7 +1790,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (!waiting) {
         const hit = inkGraphics();
         parent.addChild(hit);
-        hitAt(hit, parent, at, y + 2, segment, 73, () => go(page));
+        hitAt(hit, parent, at, y + 2, segment, 73, () => go(page, { root: true }));
       }
       const artWidth = Math.min(55, segment - 8);
       drawImage(parent, tabIcons[index], at + (segment - artWidth) / 2, y + 3, artWidth, 44);
@@ -1777,6 +1947,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     drawFeedback();
     building = false;
     if (pendingModal) { modal = pendingModal; pendingModal = undefined; recordRoute(); requestRender(); }
+    else rememberContext();
     syncPlotVisibility?.();
   }
 
@@ -1954,14 +2125,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function resetSession() {
+    navigationEpoch += 1;
     modal = undefined;
     pendingModal = undefined;
-    history = [];
+    pageParent = undefined;
+    linkedEntryParent = undefined;
     current = '牧场';
     for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
     locals.牧场.tab = '田地';
     shortPlotStarts.clear();
     livestockBatches.clear();
+    fishBatches.clear();
     for (const plot of activePlots) unmountPlot(plot);
     visiblePlotIds.clear();
     progressTiming = undefined;
@@ -1990,6 +2164,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (nextWorld?.completedRuns !== world?.completedRuns || nextWorld?.clockMs < world?.clockMs) {
         shortPlotStarts.clear();
         livestockBatches.clear();
+        fishBatches.clear();
       } else {
         for (const [index, timeline] of shortPlotStarts) {
           const nextBatch = nextWorld?.facilities.C[index]?.batch;
@@ -1999,6 +2174,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
       }
       syncLivestockBatches(nextWorld);
+      syncFishBatches(nextWorld);
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;

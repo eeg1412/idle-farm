@@ -6,6 +6,7 @@ import { objectives } from '../game/objectives.js';
 import { reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 import { livestockSpecies } from './livestock-animation.js';
+import { fishSpecies } from './fish-animation.js';
 
 const productionTabs = ['田地', '畜牧', '鱼池'];
 const workshopTabs = ['加工', '精制'];
@@ -119,13 +120,12 @@ function chooseFacility(ui, kind, index) {
     } else {
       replacementChoices(dlg, choices.map((id) => ({
         id,
-        icon: kind === 'L' ? 'livestock-' + id : id,
+        icon: kind === 'L' ? 'livestock-' + id : kind === 'F' ? 'fish-' + id : id,
         label: assignedName(id),
         duration: remainingTime(productionDurationMs(dlg.w, id)),
         selected: id === facility.recipe && (!facility.batch || facility.batch.id === id),
       })), ({ id }) => submit(dlg, 'assignFacility', [kind, index, id], null, '已' + label));
     }
-    dlg.button('关闭', () => dlg.close());
   });
 }
 
@@ -200,7 +200,6 @@ function facilityDetails(ui, kind, index) {
       if (facility.recipe) dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, facility.recipe)));
     }
     if (!id) dlg.button('升级', () => improveFacility(dlg, kind, index), confirm);
-    dlg.button('关闭', () => dlg.close());
   });
 }
 
@@ -245,6 +244,8 @@ function facilityCard(ui, kind, index, facility) {
       ratio: 0.36, style: 'facility', artAspect: facilityArtAspects[kind], onClick: openDetails,
       plotAnimation: crop && active ? { batch: active, index } : undefined,
       livestockAnimation: kind === 'L' && active && Object.hasOwn(livestockSpecies, active.id)
+        ? { batch: active, index } : undefined,
+      fishAnimation: kind === 'F' && active && Object.hasOwn(fishSpecies, active.id)
         ? { batch: active, index } : undefined,
     });
     if (kind === 'L') body.buttons(actions, { style: 'production' });
@@ -417,7 +418,6 @@ function openSources(ui, requirements) {
   }
   ui.dialog('查看材料来源', (dlg) => {
     for (const { id } of materials) sourceButton(dlg, id);
-    dlg.button('关闭', () => dlg.close());
   });
 }
 
@@ -454,7 +454,6 @@ function stationDetails(ui, kind, index) {
       dlg.float?.(station.priority ? '已设为普通' : '已设为优先');
       dlg.refresh();
     });
-    dlg.button('关闭', () => dlg.close());
   });
 }
 

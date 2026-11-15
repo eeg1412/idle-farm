@@ -34,17 +34,17 @@ npm run wiki:build
 
 ### 设施场景
 
-68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于设施详情、作物与鱼种选择，以及养殖卡和种植卡的动画回退；牲畜选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。品种切换成功后立刻使用新对象的场景或动画。收成明细中的物品图标表示实际产物。
+68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于设施详情以及养殖卡和种植卡的动画回退；牲畜与鱼种选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。品种切换成功后立刻使用新对象的场景或动画。收成明细中的物品图标表示实际产物。
 
 场景原图保存在 `assets/source/art/`，小幅场景表及其提示词保存在 `assets/source/art/facility-sheets/`。按从左到右、从上到下的 ID 顺序绘制和检查，裁去分隔线后导出单张 320×320 WebP，质量 70。运行 `python3 scripts/export-facility-scenes.py` 可重新裁切。首页横幅、空设施和三个首个品种保留整幅绘制的 PNG 原图。游戏只加载当前页面相关的场景。最终构建执行 `npm run art:check`，以原料目录检查设施场景是否齐全；单独执行检查按用户验证授权。
 
 #### 作物生长动画
 
-全部 68 种作物的地块使用独立透明前景，场景画布为 320×320，沿用种植卡现有的宽高比。固定场景层位于 `public/art/plot/`，每种作物的四期图集位于 `public/art/plot/crops/<作物ID>.webp`。图集是 640×640，读取顺序为左上种子、右上幼苗、左下成长、右下成熟。小麦图集沿用确认过的四期画面。
+场景画布320×320，固定天空、田地与洒水器在 `public/art/plot/`。C02–C68按 `public/art/plot/plants/<ID>/{sown,seedling,growing,mature}.webp` 交付四张独立透明单株；每张只有一株，运行按 `crop-visuals.json` 根位分别创建Sprite，纹理可复用，位置／透视／遮挡逐株计算。旧C02+整田图集不再活跃加载。只有C01保留已认可640×640四期整幅前景例外，不能因统一新格式改掉原麦。
 
-透明 5×5 原画、提示词和裁切登记位于 `assets/plot/crop-atlases/`，早期素材图集位于 `assets/plot/early-atlases/`，独立单株与原始四期合成图分别放在 `assets/plot/crops/<ID>/` 与 `assets/plot/crop-frames/<ID>.png`。`C01` 例外沿用 `assets/plot/wheat/wheat-0.png` 至 `wheat-3.png` 的已确认整幅前景及同目录原图、提示词和 `compose.py`，不要求不存在的普通单株目录。用 `python3 scripts/export-crop-animation.py` 重新导出；新增作物同步导出器的株型、早期阶段和尺寸登记。四期各用独立植株前景，远景、田地、洒水器与水滴由全部作物共用。完整交付清单见 [farm-crops](../.agents/skills/farm-crops/SKILL.md)。
+透明5×5原画、提示词和裁切登记在 `assets/plot/crop-atlases/`，早期原稿在 `early-atlases/`，真实四期单株在 `assets/plot/crops/<ID>/`，派生透明PNG在 `assets/plot/plants/<ID>/`。`node scripts/export-crop-animation.mjs` 是唯一生产转换逻辑；旧Python入口仅标准库转发Node。导出元数据保留源路径／裁切bounds、每期根点与尺寸，运行不按bbox重测。C01沿用wheat-0..3.png及既有原画来源，不要求普通单株目录。完整清单见 [farm-crops](../.agents/skills/farm-crops/SKILL.md)。
 
-种植点沿底图的垄脊布置。每条可种的田垄从垄头到垄尾按固定株距排列，垄边与洒水器占地留出必要空间。株距要让成熟作物在手机卡片上仍能分辨。四个成长阶段共用种植点，切换阶段时株位对齐。
+种植点沿底图真实垄脊布置，完整透视列族与各条田垄求交，列在田界自然进退，每排覆盖可种两端，不能只摆两列窄条。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片。
 
 洒水器用固定器身与四个同轴的 64×64 喷头叠图。水滴与落地水花独立用 PixiJS 绘制，四向出水点随喷头同步。WebP 质量为 70，透明区域保留。品种首张可见的地块卡出现时按需加载对应图集，同种作物共用。加载期间及失败时显示原有设施场景。
 
@@ -87,6 +87,16 @@ npm run wiki:build
 展示保底 9 秒，每帧 idle 300 毫秒，产品在收获前 3 秒淡入且肉用动物同期淡出，展示收获后产品及其阴影淡出；淡变为 300 毫秒 smoothstep。肉品跨收获边界保持成熟落脚点，不跳到幼年位置。实际收成不跟随展示循环。这些 WebP 按可见图块请求，动画实例退出视口、弹窗、换页或后台时销毁，不进入启动预缓存，已访问图可由现有离线缓存复用。资源检查按目录全部牲畜覆盖，不仅检查样例。
 
 用户报告画风或选择图不可辨识时应重新打开反馈，实际状态由[反馈清单](feedback-checklist.md)维护。画风须实际查看新源图、手机实际图块尺寸和最近邻放大的像素边缘，同时确认细节足够；实际选择网格的图像与两种显示模式按授权验收。提示词含 `pixel-art`、素材数量／哈希、像素化滤镜、已有静态场景或透明文件、旧检查及构建通过都不证明风格合格，粗块图也不能靠像素标签结案，不能据此关闭反馈或写成用户已认可。
+
+### 鱼池动画与透明活鱼选择图
+
+按目录全部鱼种交付，完整规范见 [farm-fish](../.agents/skills/farm-fish/SKILL.md)。按habitat使用河／海两套320×320固定背景：`public/art/fish/river-pond.webp`、`sea-pond.webp`，本轮原稿为river-pond-v2／sea-pond-v1，旧单一pond保留历史。每鱼三期各四张独立原画，发布1280×960透明图集、质量70；来源、提示词、布局、逐帧PNG和图集均保留 `assets/fish/`。
+
+`public/ui-icons/fish-<ID>.webp` 为 96×96 透明活鱼，从成熟原画取得；`public/wiki/icons/<ID>.webp` 仍为 canonical 仓库渔获图，不重画替换。`assets/source/art/scene-<ID>.png` 和 `public/art/scene-<ID>.webp` 由共享鱼塘和本次成熟活鱼合成，按 `fish-layout.js` 共用展示只数、站位和深度；常规设施导出复用登记持久来源，避免重新导出时恢复旧鱼场景。
+
+生产转换入口 `npm run art:fish`，`--habitats-only` 只更新背景／河海元数据及回退。`fish-visuals.json` 每ID含stages/size/habitat，`fish-habitats.json` 两类含pond及water polygon/color/alpha，源布局唯一登记并生成。运行顺序背景→鱼→水色半透明层→程序动态水波，后三层只在水面。三期鳃后躯干点注册160,210，每期共用画布尺度；不逐帧bbox居中或缩放，不改变经济。真实循环／小尺寸与静态审图分别记录，路径、哈希、帧数或门禁不能代替视觉结论。
+
+共享背景、同种图集与选择图按需加载；滚出、弹窗、切页、后台卸载动画，失败回退同 ID 场景。成熟鱼淡出后再淡入鱼苗，固定鱼塘不参与淡变；本轮 9 秒保底与 300ms 参数为实现选择。WebP 不进入启动预缓存，已访问图沿现有离线图片缓存复用。
 
 ## 资源加载
 

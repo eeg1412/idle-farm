@@ -234,7 +234,6 @@ function warehouseDetail(ui, id) {
         panel.toast('无法复制，可在详情查看完整数量');
       }
     });
-    panel.button('关闭', () => panel.close());
   });
 }
 
@@ -288,23 +287,38 @@ export function renderWarehouse(ui) {
   });
 }
 
+function catalogViewSnapshot(local) {
+  return {
+    catalogId: local.catalogId ?? null,
+    showUses: Boolean(local.showUses),
+    scroll: local.scroll ?? 0,
+    type: local.type,
+    source: local.source,
+    complexity: local.complexity,
+    page: local.page ?? 0,
+  };
+}
+
 function renderCatalogDetail(ui, id) {
   const item = catalog.items[id];
   if (!item) return;
   const open = ui.w.unlocked.includes(id);
   ui.local.onBack = () => {
+    let parent;
     if (ui.local.catalogTrail?.length) {
-      ui.local.catalogId = ui.local.catalogTrail.pop();
-    } else {
-      ui.local.catalogId = null;
+      parent = ui.local.catalogTrail.pop();
+    } else if (ui.local.catalogListParent) {
+      parent = ui.local.catalogListParent;
+      delete ui.local.catalogListParent;
     }
-    ui.local.showUses = false;
-    ui.local.scroll = 0;
+    if (!parent) return false;
+    Object.assign(ui.local, parent);
     ui.refresh();
     return true;
   };
   const openDetail = (key) => {
-    (ui.local.catalogTrail ??= []).push(id);
+    if (key === id) return;
+    (ui.local.catalogTrail ??= []).push(catalogViewSnapshot(ui.local));
     ui.local.catalogId = key;
     ui.local.showUses = false;
     ui.local.scroll = 0;
@@ -361,6 +375,7 @@ export function renderCatalog(ui) {
   if (ui.local.id && catalog.items[ui.local.id]) {
     ui.local.catalogId = ui.local.id;
     ui.local.catalogTrail = [];
+    delete ui.local.catalogListParent;
     ui.local.showUses = ui.local.tab === '用途';
     ui.local.tab = undefined;
     ui.local.id = undefined;
@@ -379,6 +394,8 @@ export function renderCatalog(ui) {
   paged(ui, filtered, ([id, item], cell) => {
     const open = ui.w.unlocked.includes(id);
     cell.tile(id, item.name, () => {
+      ui.local.catalogListParent = catalogViewSnapshot(ui.local);
+      ui.local.catalogTrail = [];
       ui.local.catalogId = id;
       ui.local.showUses = false;
       ui.local.scroll = 0;
@@ -428,7 +445,7 @@ export function renderTasks(ui) {
 }
 
 const instructions = [
-  ['田地', '选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级增加每批收成。'],
+  ['田地', '新牧场先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
   ['畜牧和鱼池', '购买畜牧场或鱼池，再安排已研发的牲畜或鱼。更换对象立即开始新周期。'],
   ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工，每批产出 1 件。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。已研发品项可继续升级品质。'],
@@ -447,7 +464,7 @@ function showInstructions(ui) {
         onClick: () => { index -= 1; panel.refresh(); },
       },
       {
-        label: index + 1 === instructions.length ? '关闭' : '下一步', tone: 'gold',
+        label: index + 1 === instructions.length ? '完成' : '下一步', tone: 'gold',
         onClick: () => {
           if (index + 1 === instructions.length) {
             panel.close();

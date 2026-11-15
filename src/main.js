@@ -267,8 +267,11 @@ function dispatch(name, ...args) {
       }
       settleProduction(draft);
       await commit(draft, anchor);
-      if (name === 'sellFarm') view.go('牧场', { tab: '田地' });
-      else paint();
+      if (name === 'sellFarm') {
+        worldEpoch += 1;
+        view.resetSession();
+      }
+      paint();
       const result = feedback(name, args, beforeAction, draft, quality);
       if (completedGuide(before, draft)) result.toast = [result.toast, longGoalsToast].filter(Boolean).join(' · ');
       if (result.sound) audio.play(result.sound);

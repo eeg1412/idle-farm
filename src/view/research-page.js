@@ -92,7 +92,6 @@ function showMaterialSources(ui, costs) {
         };
       });
       dialog.detailRows(rows, { variant: 'stack' });
-      dialog.button('返回', () => dialog.close());
     });
   });
 }
@@ -131,13 +130,11 @@ function researchDetails(ui, id) {
 
   if (!offer) {
     if (ui.w.unlocked.includes(id)) ui.button('查看来源', () => ui.go('图鉴', { id }));
-    ui.button('返回', ui.close);
     return;
   }
 
   showMaterials(ui, offer.costs, offer.coins, '研发所需材料');
   ui.buttons([
-    { label: '返回', onClick: ui.close },
     {
       label: '研发', tone: 'gold', disabled: !offer.eligible || !offer.affordable,
       onClick: async () => {
@@ -171,7 +168,6 @@ function qualityDetails(ui, id, local) {
   })), { style: 'production' });
   showMaterials(ui, costs, coins, '升级所需材料');
   ui.buttons([
-    { label: '关闭', onClick: ui.close },
     {
       label: '确认升级', tone: 'gold', disabled: !offer.affordable,
       onClick: () => ui.action('upgradeQuality', id, target - current),
@@ -254,14 +250,10 @@ function techDetails(ui, definition) {
   });
   ui.text(definition.description, { muted: true });
   techRequirements(ui, definition);
-  if (offer.maxed) {
-    ui.button('返回', ui.close);
-    return;
-  }
+  if (offer.maxed) return;
   ui.heading('高级研发点', { size: 21 });
   ui.materialTable([{ id: 'coin', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.cost }], { style: 'research' });
   ui.buttons([
-    { label: '返回', onClick: ui.close },
     {
       label: '确认升级', tone: 'gold', disabled: !offer.eligible || !offer.affordable,
       onClick: async () => {

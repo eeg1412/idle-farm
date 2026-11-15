@@ -11,6 +11,7 @@
 - 小素材按大图透明网格绘制和裁切。大素材整幅生成，原图和页面用 WebP 均保留。
 - 生成素材验收使用 [farm-art-review](.agents/skills/farm-art-review/SKILL.md)，对照本次规格与已认可参考审图，不合格退回素材所有者重画；源图、成品与运行体验分别记录，缺证据不算通过。
 - 新增作物、牲畜或鱼类时，分别交付物品图标与同 ID 的独立设施场景图。构建前运行 `npm run art:check`。
-- 新增或改画作物时使用 [farm-crops](.agents/skills/farm-crops/SKILL.md)，同步交付物品图标、同 ID 独立设施场景和四阶段成长动画。遵循 [作物动画开发规范](docs/development.md#作物成长动画) 的原图、固定根位、周期和可见区域规则，保留 `C01` 小麦的已有整幅前景例外。仅有静态图的作物资源不得进入发布构建。
+- 新增或改画作物时使用 [farm-crops](.agents/skills/farm-crops/SKILL.md)，同步交付物品图标、同 ID 独立设施场景和四阶段成长动画。C02 起的树和苗必须是四期独立单株文件，运行每根一个 Sprite，可共享纹理，禁止用整田合成前景充作交付；单株位于 `public/art/plot/plants/<ID>/<phase>.webp`，`crop-visuals.json` 登记真实根位、根脚锚点和尺度。各排都要有，列沿真实 ground 的统一透视网格覆盖完整可种范围，不能只两列窄条；静态布植合成只作交接。复用已有单株无需重画，真正新增或改画源图才用 imagegen。遵循 [作物动画开发规范](docs/development.md#作物成长动画)，保留 `C01` 小麦已有整幅前景及旧图集例外，不改原麦。仅有静态图的作物资源不得进入发布构建。
 - 新增或改画牲畜时使用 [farm-livestock](.agents/skills/farm-livestock/SKILL.md)。畜牧动画与透明牲畜选择图覆盖目录全部 10 种牲畜，新增 ID 同步覆盖；交付活牲畜选择图、同 ID 静态回退和完整 idle 图集，动画产物直接复用仓库的 `public/wiki/icons/<ID>.webp`，不另画另一份产品，物品图与活牲畜图分开。动物与全部产物各有独立程序椭圆阴影，不烘焙进图；动物影按实际站立脚印登记，肉品在成熟阶段落脚点显示，idle 和跨收获边界不跳位。附属产品类保持成年，肉类三期均分，分类用显式 `slaughter`。展示保底 9 秒，最后 3 秒产品淡入且仅肉用动物淡出，展示收获后产品淡出；实际生产照旧。详见[畜牧动画开发规范](docs/development.md#畜牧动画)。
+- 新增或改画鱼类及鱼池动画时使用 [farm-fish](.agents/skills/farm-fish/SKILL.md)，按目录全部 `kind: F` 交付 canonical 仓库物品图、独立透明活鱼选择图、同 ID 静态回退和三期完整 idle 图集。每鱼在布局显式登记海／河 habitat，选择对应两套固定背景之一；画面依次为背景、鱼、水色透明层、程序动态水波，水域从 `fish-habitats.json` 的 polygon/color/alpha 消费，旧单一 pond 仅为历史。按显式体型小三只、中两只、大一只，近大远小；鱼苗、成长、成熟三期，成熟鱼淡出后再淡入鱼苗，并设展示保底。原画和导出保留固定身体锚点与来源，不用静态缩放冒充阶段／idle，不套用畜牧产品淡入或已删除的减弱动态。展示数量和周期不改变真实生产与任务统计，资源与画布验收分开记录。
 - Sites 发布目标为静态 `dist/`。发布步骤见 [docs/sites.md](docs/sites.md)。

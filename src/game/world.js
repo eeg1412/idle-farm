@@ -56,8 +56,8 @@ function makeBatch(world, id, amount) {
   return { id, amount: String(amount), start: world.clockMs, end: world.clockMs + productionDurationMs(world, id) };
 }
 
-function startingFacilities() {
-  return { C: Array.from({ length: facilityTypes.C.free }, () => ({ ...emptyFacility(), recipe: 'C01' })), L: [], F: [] };
+function startingFacilities(recipe) {
+  return { C: Array.from({ length: facilityTypes.C.free }, () => ({ ...emptyFacility(), recipe })), L: [], F: [] };
 }
 
 export function newWorld(now) {
@@ -65,7 +65,7 @@ export function newWorld(now) {
     schemaVersion: 2, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
     researchPoints: 0n, productionValue: 0n, completedRuns: 0, firstCompletedRunAtMs: null,
-    facilities: startingFacilities(), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
+    facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n },
     guideSkipped: false, settings: { textScale: 1, music: 70, sound: 75, pickerIconsOnly: false },
   };
@@ -386,7 +386,7 @@ export function sellFarm(world, expectedOffer) {
   world.stats.revenue = 0n;
   world.inventory = {};
   world.reserves = {};
-  world.facilities = startingFacilities();
+  world.facilities = startingFacilities('C01');
   orderedStations(world);
   world.stations = Object.fromEntries(Object.entries(world.stations).map(([kind, stations]) => [
     kind, stations.map((station) => emptyStation(station.order)),
