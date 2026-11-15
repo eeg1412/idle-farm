@@ -4,6 +4,9 @@ import { compact } from './numbers.js';
 import { gameHistory } from './navigation.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
 import { minPlotAnimationMs, mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
+import {
+  livestockFrameSize, livestockIdleFrames, livestockSpecies, minLivestockAnimationMs, mountLivestockAnimation,
+} from './livestock-animation.js';
 import { renderResearch } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import {
@@ -51,6 +54,7 @@ const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalo
   'settings-sound', 'settings-music', 'settings-display', 'settings-guide',
   'operation-switch', 'operation-upgrade', 'operation-sell', 'portrait-warehouse',
   ...Array.from({ length: 49 }, (_, index) => 'plot-C' + String(index + 2).padStart(2, '0')),
+  ...Object.entries(data.items).filter(([, item]) => item.kind === 'L').map(([id]) => 'livestock-' + id),
 ]);
 const path = (name) => new URL(name, document.baseURI).href;
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
@@ -119,6 +123,9 @@ function compactLabel(parent, value, x, y, width, options) {
 }
 
 export function createGameView(app, dispatch, restore, replace, onNavigate, browser = window) {
+  const developmentToolsEnabled = typeof __DEV_TEST_MODE__ !== 'undefined' && __DEV_TEST_MODE__;
+  let settingsTitleClicks = 0;
+  let developmentTitleTarget;
   const root = new Container();
   const clip = inkGraphics();
   app.stage.addChild(root, clip);
@@ -159,6 +166,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const visiblePlotIds = new Set();
   const cropPlots = new Map();
   const shortPlotStarts = new Map();
+  const livestockTextures = new Map();
+  const livestockBatches = new Map();
   const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
   const textures = new Map();
   const failedImages = new Set();
@@ -219,6 +228,50 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     });
   }
 
+  function loadLivestockTextures(id) {
+    if (!Object.hasOwn(livestockSpecies, id)) return;
+    const species = livestockSpecies[id];
+    const existing = livestockTextures.get(id);
+    if (existing) return existing.textures;
+    const entry = {};
+    livestockTextures.set(id, entry);
+    Promise.all([
+      loadImage(path('./art/livestock/barn.webp?game=1&v=1')),
+      loadImage(path(`./art/livestock/animals/${id}.webp?game=1&v=1`)),
+      loadImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
+    ]).then(([barn, atlas, product]) => {
+      const size = livestockFrameSize;
+      const rows = species.stages;
+      if (!barn || !atlas || !product || barn.width !== size || barn.height !== size ||
+          atlas.width !== size * livestockIdleFrames || atlas.height !== size * rows ||
+          product.width !== 96 || product.height !== 96) return;
+      const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: livestockIdleFrames }, (_, frame) =>
+        new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
+      entry.textures = { barn, stages, product };
+      if (visiblePlotIds.has(id)) requestRender();
+    });
+  }
+
+  function syncLivestockBatches(nextWorld) {
+    const present = new Set();
+    for (const [index, facility] of (nextWorld?.facilities.L ?? []).entries()) {
+      const batch = facility.batch;
+      if (!batch || !Object.hasOwn(livestockSpecies, batch.id)) continue;
+      const key = 'L:' + index;
+      present.add(key);
+      const previous = livestockBatches.get(key);
+      if (previous?.id === batch.id && previous.start === batch.start && previous.end === batch.end) continue;
+      const shortBatch = batch.end - batch.start < minLivestockAnimationMs;
+      const sameAnimal = previous?.id === batch.id;
+      livestockBatches.set(key, {
+        id: batch.id, start: batch.start, end: batch.end,
+        animationStart: shortBatch && sameAnimal ? previous.animationStart : batch.start,
+        previousHarvestAt: !shortBatch && sameAnimal && previous.end === batch.start ? batch.start : undefined,
+      });
+    }
+    for (const key of livestockBatches.keys()) if (!present.has(key)) livestockBatches.delete(key);
+  }
+
   function unmountPlot(plot) {
     if (!plot.animation) return;
     plot.animation.destroy();
@@ -265,6 +318,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     g.hitArea = new Rectangle(x, y, width, height);
     const run = (event) => {
       if (blockTap || waiting) return;
+      if (developmentToolsEnabled) settingsTitleClicks = 0;
       if (event) point = root.toLocal(event.global);
       else point = root.toLocal(parent.toGlobal({ x: x + width / 2, y: y + height / 2 }));
       fn(event);
@@ -355,6 +409,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function go(page, options = {}) {
     if (!Object.hasOwn(pages, page)) return;
+    if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
     if (page !== current) {
       if (tabs.includes(page)) history = [];
@@ -377,6 +432,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function back() {
+    if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
     if (modal) { closeDialog(); return; }
     if (navigation?.back()) return;
@@ -418,6 +474,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function restoreRoute(initial = false) {
     if (!navigation) return;
+    if (developmentToolsEnabled) settingsTitleClicks = 0;
     const entry = navigation.read();
     const { page, tab, id } = entry.route;
     applyingRoute = true;
@@ -771,7 +828,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           width - icon, { size: 13 * scale(), color: palette.muted }).height + 2;
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
       },
-      feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover, plotAnimation } = {}) {
+      feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover, plotAnimation, livestockAnimation } = {}) {
         const top = cursor;
         const scene = sceneKeys.has(id);
         const stacked = width < 210 || scale() > 1.6;
@@ -799,7 +856,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const crop = cover || scene || heroKeys.has(id);
         const imageWidth = artWidth - inset * 2;
         const imageHeight = artHeight - inset * 2;
-        if (plotAnimation && options.registerPlot) {
+        const animation = livestockAnimation ?? plotAnimation;
+        if (animation && options.registerPlot) {
           const art = new Container();
           const fallback = new Container();
           art.eventMode = 'none';
@@ -807,7 +865,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           parent.addChild(art);
           art.addChild(fallback);
           drawImage(fallback, id, 0, 0, imageWidth, imageHeight, crop);
-          options.registerPlot({ art, fallback, box: new Rectangle(0, 0, imageWidth, imageHeight), ...plotAnimation });
+          options.registerPlot({ art, fallback, box: new Rectangle(0, 0, imageWidth, imageHeight),
+            type: livestockAnimation ? 'livestock' : 'crop', ...animation });
         } else {
           drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
@@ -1241,7 +1300,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         const { batch, index } = plot;
         visiblePlotIds.add(batch.id);
-        const plotTextures = loadPlotTextures(batch.id);
+        const livestock = plot.type === 'livestock';
+        const plotTextures = livestock ? loadLivestockTextures(batch.id) : loadPlotTextures(batch.id);
         if (!plotTextures) continue;
         if (plot.animation) continue;
         if (!animationFrame) {
@@ -1249,13 +1309,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           animationFrame = { clock: progressClock(now), now, reducedMotion: Boolean(world.settings?.reducedMotion) };
         }
         let animationStart = batch.start;
-        if (batch.end - batch.start < minPlotAnimationMs) {
+        if (!livestock && batch.end - batch.start < minPlotAnimationMs) {
           // Keep the same visual start when a fast crop finishes another real batch.
           const previous = shortPlotStarts.get(index);
           if (previous?.id === batch.id) animationStart = previous.start;
           else shortPlotStarts.set(index, { id: batch.id, start: animationStart });
         }
-        plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart);
+        if (livestock) {
+          const previous = livestockBatches.get('L:' + index);
+          plot.animation = mountLivestockAnimation(plot.art, plotTextures, plot.box, batch,
+            previous?.animationStart ?? batch.start, previous?.previousHarvestAt);
+        } else plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart);
         plot.animation.update(animationFrame);
         plot.fallback.visible = false;
         activePlots.add(plot);
@@ -1350,7 +1414,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     scrollTarget.thumb.alpha = (drag?.thumb || scrollTarget.thumbHover) ? 0.72 : 0.56 - 0.32 * idle;
   }
 
+  function handleDevelopmentTitleTap(event) {
+    if (!developmentToolsEnabled || !event || event.button !== 0 || blockTap || waiting ||
+        current !== '设置' || !world || modal || pendingModal || status?.busy) return;
+    settingsTitleClicks += 1;
+    if (settingsTitleClicks !== 11) return;
+    settingsTitleClicks = 0;
+    point = root.toLocal(event.global);
+    void action('grantDevelopmentTools');
+  }
+
   function topBar(parent, content, x, y, w) {
+    if (developmentToolsEnabled) developmentTitleTarget = undefined;
     const height = 59;
     const settingsWidth = 46;
     panel(parent, 0, 0, frame.width, y + height, palette.paper, null, 0);
@@ -1376,6 +1451,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
       });
       title.y = y + (height - title.height) / 2;
+      if (developmentToolsEnabled && current === '设置' && content && !waiting && !status?.busy && !modal && !pendingModal) {
+        const titleHit = inkGraphics();
+        parent.addChild(titleHit);
+        titleHit.label = 'development-settings-title';
+        const hitWidth = Math.max(48, title.width + 8);
+        titleHit.eventMode = 'static';
+        titleHit.hitArea = new Rectangle(title.x + (title.width - hitWidth) / 2, y + 5, hitWidth, 49);
+        titleHit.on('pointertap', handleDevelopmentTitleTap);
+        developmentTitleTarget = titleHit;
+      }
       return;
     }
 
@@ -1579,6 +1664,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     scrollActivity = drag.lastTime;
   }
   root.on('pointerdown', (event) => {
+    if (developmentToolsEnabled && event.target !== developmentTitleTarget) settingsTitleClicks = 0;
     coast = null;
     beginDrag(event);
   });
@@ -1723,6 +1809,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     render(nextLayout, nextWorld, nextStatus, nextProgressTiming) {
       if (nextWorld?.completedRuns !== world?.completedRuns || nextWorld?.clockMs < world?.clockMs) {
         shortPlotStarts.clear();
+        livestockBatches.clear();
       } else {
         for (const [index, timeline] of shortPlotStarts) {
           const nextBatch = nextWorld?.facilities.C[index]?.batch;
@@ -1731,6 +1818,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           }
         }
       }
+      syncLivestockBatches(nextWorld);
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;

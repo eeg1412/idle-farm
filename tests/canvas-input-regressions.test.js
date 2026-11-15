@@ -1,15 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Assets, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent } from 'pixi.js';
+import { Assets, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Texture, TextureSource } from 'pixi.js';
 import 'pixi.js/events';
 import { advanceWorld, arrangeStation, buyFacility, catalog, newWorld } from '../src/game/world.js';
 import { createGameView } from '../src/view/canvas-ui.js';
 import { viewportLayout } from '../src/platform/layout.js';
+import { livestockSpecies, minLivestockAnimationMs } from '../src/view/livestock-animation.js';
 
 function setup(dispatch, browser) {
   const canvas = new EventTarget();
   globalThis.window = new EventTarget();
-  globalThis.document = { baseURI: 'https://game.example/' };
+  globalThis.document = Object.assign(new EventTarget(), { baseURI: 'https://game.example/', hidden: false });
   const frames = [];
   const ticks = [];
   globalThis.requestAnimationFrame = (fn) => frames.push(fn);
@@ -73,6 +74,274 @@ function setup(dispatch, browser) {
   };
   return { view, world, pages, point, key, wheel, stage, draw, flush, nodes, tick: () => ticks.forEach((fn) => fn()) };
 }
+
+function setupWithDevelopmentMode(enabled, dispatch, browser) {
+  const previous = Object.getOwnPropertyDescriptor(globalThis, '__DEV_TEST_MODE__');
+  if (enabled === undefined) delete globalThis.__DEV_TEST_MODE__;
+  else Object.defineProperty(globalThis, '__DEV_TEST_MODE__', { value: enabled, configurable: true, writable: true });
+  try {
+    return setup(dispatch, browser);
+  } finally {
+    if (previous) Object.defineProperty(globalThis, '__DEV_TEST_MODE__', previous);
+    else delete globalThis.__DEV_TEST_MODE__;
+  }
+}
+
+function settingsBrowser() {
+  const browser = new EventTarget();
+  let hash = '#/settings';
+  let state = null;
+  browser.location = { get hash() { return hash; }, set hash(next) { hash = next; } };
+  const write = (nextState, _title, nextHash) => { state = nextState; hash = nextHash; };
+  browser.history = { get state() { return state; }, replaceState: write, pushState: write };
+  return browser;
+}
+
+function tapText(game, label, pointerType = 'mouse') {
+  const node = game.nodes().find((entry) => entry.text === label);
+  assert.ok(node, label);
+  const center = node.toGlobal({ x: node.width / 2, y: node.height / 2 });
+  game.point('pointerdown', center.x, center.y, pointerType);
+  game.point('pointerup', center.x, center.y, pointerType);
+  game.flush();
+}
+
+function livestockAssetFixture(t, rejectAnimation = false) {
+  const requested = [];
+  t.mock.method(Assets, 'load', (url) => {
+    requested.push(url);
+    const pathname = new URL(url).pathname;
+    if (!pathname.startsWith('/art/livestock/')) return new Promise(() => {});
+    if (rejectAnimation) return Promise.reject(new Error('animation art unavailable'));
+    const id = pathname.match(/\/animals\/(L\d+)\.webp$/)?.[1];
+    const rows = livestockSpecies[id]?.stages ?? 1;
+    const width = pathname.includes('/animals/') ? 1280 : pathname.includes('/products/') ? 128 : 320;
+    const height = pathname.includes('/animals/') ? 320 * rows : width;
+    return Promise.resolve(new Texture({ source: new TextureSource({ width, height }) }));
+  });
+  return requested;
+}
+
+const livestockFacility = (id, start = 0, duration = catalog.items[id].durationMs) => ({
+  level: '1', recipe: id, batch: { id, start, end: start + duration, amount: catalog.items[id].output },
+});
+
+test('every livestock species mounts its own atlas and uses the correct adult or mature row', async (t) => {
+  for (const [id, species] of Object.entries(livestockSpecies)) {
+    const game = setup();
+    const requested = livestockAssetFixture(t);
+    game.world.facilities.L = [livestockFacility(id)];
+    game.view.go('牧场', { tab: '畜牧' });
+    game.draw(390, 844);
+    await new Promise(setImmediate);
+    game.flush();
+    assert.ok(game.nodes().some((node) => node.label === 'livestock-animation'), id);
+    assert.ok(requested.some((url) => url.includes(`/art/livestock/animals/${id}.webp`)), id);
+    assert.ok(requested.some((url) => url.includes(`/art/livestock/products/${id}.webp`)), id);
+    game.world.clockMs = Math.ceil(game.world.facilities.L[0].batch.end * 2 / 3);
+    game.draw(390, 844);
+    const animal = game.nodes().find((node) => node.label === 'livestock-animal');
+    assert.equal(animal.texture.frame.y, species.slaughter ? 640 : 0, id);
+    assert.equal(animal.texture.frame.width, 320, id);
+    assert.equal(animal.texture.frame.height, 320, id);
+  }
+});
+
+test('livestock choice icons load as contained animals while warehouse output keeps its item path', async (t) => {
+  const game = setup();
+  const requested = [];
+  const iconTexture = new Texture({ source: new TextureSource({ width: 96, height: 48 }) });
+  t.mock.method(Assets, 'load', (url) => {
+    requested.push(url);
+    return url.includes('/ui-icons/livestock-L06.webp') ? Promise.resolve(iconTexture) : new Promise(() => {});
+  });
+  game.world.unlocked.push('L06');
+  game.world.facilities.L = [livestockFacility('L06')];
+  game.view.go('牧场', { tab: '畜牧' });
+  game.draw(390, 844);
+  tapText(game, '更换');
+  await new Promise(setImmediate);
+  game.flush();
+  const icon = game.nodes().find((node) => node.texture === iconTexture);
+  assert.ok(icon);
+  assert.equal(icon.width, 32);
+  assert.equal(icon.height, 16);
+  assert.equal(Boolean(icon.mask), false);
+  assert.equal(icon.eventMode, 'none');
+  assert.ok(requested.some((url) => url.includes('/ui-icons/livestock-L06.webp')));
+
+  game.view.dismiss();
+  const beforeWarehouse = requested.length;
+  game.world.inventory.L02 = 3n;
+  game.view.go('仓库');
+  const warehouseRequests = requested.slice(beforeWarehouse);
+  assert.ok(warehouseRequests.some((url) => url.includes('/wiki/icons/L02.webp')));
+  assert.ok(warehouseRequests.every((url) => !url.includes('/ui-icons/livestock-')));
+});
+
+test('livestock animation loads only visible species and keeps Pixi hits and lifecycle boundaries', async (t) => {
+  const game = setup();
+  const requested = livestockAssetFixture(t);
+  game.world.facilities.L = Array.from({ length: 6 }, (_, index) => livestockFacility(index === 5 ? 'L06' : 'L01'));
+  game.view.go('牧场', { tab: '畜牧' });
+  game.draw(390, 844);
+  await new Promise(setImmediate);
+  game.flush();
+  const animations = () => game.nodes().filter((node) => node.label === 'livestock-animation');
+  assert.ok(animations().length > 0);
+  assert.ok(requested.some((url) => url.includes('/art/livestock/animals/L01.webp')));
+  assert.ok(requested.every((url) => !url.includes('/art/livestock/animals/L06.webp')));
+  assert.equal(requested.filter((url) => url.includes('/art/livestock/barn.webp')).length, 1);
+
+  const first = animations()[0];
+  const bounds = first.getBounds();
+  const point = { x: (bounds.minX + bounds.maxX) / 2, y: (bounds.minY + bounds.maxY) / 2 };
+  game.point('pointerdown', point.x, point.y, 'touch');
+  game.point('pointerup', point.x, point.y, 'touch');
+  game.flush();
+  assert.ok(game.nodes().some((node) => node.text === '畜牧场详情'));
+  assert.equal(animations().length, 0);
+  assert.equal(first.destroyed, true);
+  game.view.dismiss();
+  assert.ok(animations().length > 0);
+  document.hidden = true;
+  document.dispatchEvent(new Event('visibilitychange'));
+  assert.equal(animations().length, 0);
+  document.hidden = false;
+  document.dispatchEvent(new Event('visibilitychange'));
+  assert.ok(animations().length > 0);
+
+  const beforeScroll = animations();
+  assert.ok(game.wheel(190, 500, 10_000));
+  await new Promise(setImmediate);
+  game.flush();
+  assert.ok(requested.some((url) => url.includes('/art/livestock/animals/L06.webp')));
+  assert.ok(beforeScroll.every((animation) => animation.destroyed));
+  assert.ok(animations().length > 0);
+  game.view.go('仓库');
+  assert.equal(animations().length, 0);
+});
+
+test('short livestock batches keep their display phase and switching species starts without phantom products', async (t) => {
+  const game = setup();
+  livestockAssetFixture(t);
+  const realDuration = minLivestockAnimationMs / 9;
+  game.world.facilities.L = [livestockFacility('L06', 0, realDuration)];
+  game.view.go('牧场', { tab: '畜牧' });
+  game.draw(390, 844);
+  await new Promise(setImmediate);
+  game.flush();
+  const product = () => game.nodes().find((node) => node.label === 'livestock-product');
+  assert.equal(product().alpha, 0);
+  const start = minLivestockAnimationMs - 3000;
+  game.world.facilities.L[0] = livestockFacility('L06', start, realDuration);
+  game.world.clockMs = start + 150;
+  game.draw(390, 844);
+  assert.equal(product().alpha, 0.5);
+  assert.equal(game.nodes().find((node) => node.label === 'livestock-animal').alpha, 0.5);
+
+  game.world.facilities.L[0] = livestockFacility('L01', game.world.clockMs, realDuration);
+  game.draw(390, 844);
+  await new Promise(setImmediate);
+  game.flush();
+  assert.equal(product().alpha, 0);
+  assert.equal(game.nodes().find((node) => node.label === 'livestock-animal').alpha, 1);
+});
+
+test('livestock failure keeps the static facility while reduced motion freezes idle frames', async (t) => {
+  const failed = setup();
+  livestockAssetFixture(t, true);
+  failed.world.facilities.L = [livestockFacility('L06')];
+  failed.view.go('牧场', { tab: '畜牧' });
+  failed.draw(390, 844);
+  await new Promise(setImmediate);
+  failed.flush();
+  assert.ok(failed.nodes().some((node) => node.text === '黑猪'));
+  assert.ok(failed.nodes().every((node) => node.label !== 'livestock-animation'));
+
+  const game = setup();
+  livestockAssetFixture(t);
+  game.world.settings.reducedMotion = true;
+  game.world.facilities.L = [livestockFacility('L01')];
+  game.view.go('牧场', { tab: '畜牧' });
+  game.draw(390, 844);
+  await new Promise(setImmediate);
+  game.flush();
+  const animal = game.nodes().find((node) => node.label === 'livestock-animal');
+  assert.ok(animal);
+  const initial = animal.texture;
+  game.tick();
+  assert.equal(animal.texture, initial);
+  game.world.clockMs = game.world.facilities.L[0].batch.end - 3000;
+  game.draw(390, 844);
+  assert.equal(game.nodes().find((node) => node.label === 'livestock-product').alpha, 1);
+});
+
+test('development settings title grants only on the eleventh real mouse or touch tap', async () => {
+  for (const pointerType of ['mouse', 'touch']) {
+    const calls = [];
+    const game = setupWithDevelopmentMode(true, (_world, name) => {
+      calls.push(name);
+      return { ok: true };
+    }, settingsBrowser());
+    game.draw(390, 844);
+    for (let index = 0; index < 10; index += 1) tapText(game, '设置', pointerType);
+    assert.deepEqual(calls, [], pointerType + ': first ten taps must not grant');
+    tapText(game, '设置', pointerType);
+    await new Promise(setImmediate);
+    game.flush();
+    assert.deepEqual(calls, ['grantDevelopmentTools'], pointerType + ': eleventh tap grants exactly once');
+    tapText(game, '设置', pointerType);
+    assert.deepEqual(calls, ['grantDevelopmentTools'], pointerType + ': a new sequence must start at zero');
+  }
+});
+
+test('development title sequence resets after another setting control or page navigation', async () => {
+  for (const interruption of ['setting control', 'page navigation', 'browser route']) {
+    const calls = [];
+    const browser = settingsBrowser();
+    const game = setupWithDevelopmentMode(true, (_world, name) => {
+      calls.push(name);
+      return { ok: true };
+    }, browser);
+    game.draw(390, 844);
+    for (let index = 0; index < 10; index += 1) tapText(game, '设置');
+    if (interruption === 'setting control') {
+      tapText(game, '静音');
+      await new Promise(setImmediate);
+      game.flush();
+      assert.deepEqual(calls, ['updateSettings']);
+    } else if (interruption === 'page navigation') {
+      game.view.go('牧场');
+      game.view.go('设置');
+    } else {
+      browser.location.hash = '#/farm';
+      browser.dispatchEvent(new Event('hashchange'));
+      browser.location.hash = '#/settings';
+      browser.dispatchEvent(new Event('hashchange'));
+    }
+    for (let index = 0; index < 10; index += 1) tapText(game, '设置');
+    assert.equal(calls.filter((name) => name === 'grantDevelopmentTools').length, 0, interruption);
+    tapText(game, '设置');
+    await new Promise(setImmediate);
+    game.flush();
+    assert.equal(calls.filter((name) => name === 'grantDevelopmentTools').length, 1, interruption);
+  }
+});
+
+test('settings title has no development entry when the compile flag is absent or false', () => {
+  for (const enabled of [undefined, false]) {
+    const calls = [];
+    const game = setupWithDevelopmentMode(enabled, (_world, name) => {
+      calls.push(name);
+      return { ok: true };
+    }, settingsBrowser());
+    game.draw(390, 844);
+    assert.ok(game.nodes().every((node) => node.label !== 'development-settings-title'));
+    for (let index = 0; index < 22; index += 1) tapText(game, '设置', index % 2 ? 'touch' : 'mouse');
+    assert.deepEqual(calls, []);
+  }
+});
 
 test('browser navigation restores game pages, research tabs, and nested dialogs in both directions', async () => {
   const browser = new EventTarget();

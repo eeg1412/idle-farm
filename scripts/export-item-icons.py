@@ -161,6 +161,27 @@ def normalize_sheet(path):
     return normalized
 
 
+def apply_icon_overrides(sprites):
+    """Apply explicit canonical single-icon sources after historical atlas crops."""
+    registry = SOURCE / "overrides.json"
+    if not registry.is_file():
+        return
+    overrides = json.loads(registry.read_text(encoding="utf-8"))
+    if not isinstance(overrides, dict):
+        raise ValueError("item icon overrides must map IDs to source PNG paths")
+    source_root = SOURCE.resolve()
+    for item_id, relative_path in overrides.items():
+        if item_id not in sprites:
+            continue
+        path = (SOURCE / relative_path).resolve()
+        if not path.is_relative_to(source_root):
+            raise ValueError(f"{item_id}: icon override must stay inside assets/source/items")
+        with Image.open(path) as source:
+            if source.format != "PNG" or source.size != (SIZE, SIZE) or "A" not in source.getbands():
+                raise ValueError(f"{item_id}: override must be a transparent {SIZE}×{SIZE} PNG")
+            sprites[item_id] = source.convert("RGBA").copy()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     modes = parser.add_mutually_exclusive_group()
@@ -199,6 +220,7 @@ def main():
             failures.append(f"{path.name}: {error}")
     if failures:
         raise SystemExit("\n".join(failures))
+    apply_icon_overrides(sprites)
     if args.validate_source or args.normalize_to:
         return
 

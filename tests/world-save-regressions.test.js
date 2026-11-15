@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { IDBFactory } from 'fake-indexeddb';
 import { arrange as arrangeLegacy, newState } from '../src/game/state.js';
 import { arrangeStation, farmSaleOffer, newWorld, sellFarm } from '../src/game/world.js';
+import { grantDevelopmentTools } from '../src/game/development-tools.js';
 import { objectives } from '../src/game/objectives.js';
 import { encode as encodeLegacy } from '../src/platform/save.js';
 import { createSaveQueue } from '../src/platform/save-queue.js';
@@ -31,6 +32,36 @@ function rawRecord(db, slot, update) {
     tx.onabort = () => reject(tx.error);
   });
 }
+
+test('development grants persist in their own database without changing the release save', async (t) => {
+  const releaseDatabase = await freshDatabase(t);
+  const releaseWorld = newWorld(0);
+  releaseWorld.coins = 137n;
+  releaseWorld.tech.appraisal = 2;
+  releaseWorld.quality.C01 = '3';
+  releaseWorld.revision = await writeWorldSave(releaseDatabase, releaseWorld);
+  const releaseRecord = await rawRecord(releaseDatabase, 'current');
+
+  const developmentDatabase = await openWorldSave('idle-farm-development');
+  t.after(() => developmentDatabase.close());
+  assert.equal(releaseDatabase.name, 'tianjian-workshop');
+  assert.equal(developmentDatabase.name, 'idle-farm-development');
+  assert.equal(await readWorldSave(developmentDatabase), null);
+  const developmentWorld = newWorld(0);
+  assert.equal(grantDevelopmentTools(developmentWorld), true);
+  developmentWorld.revision = await writeWorldSave(developmentDatabase, developmentWorld);
+  assert.equal((await rawRecord(developmentDatabase, 'current')).coins, '1000000000060');
+  assert.deepEqual(await readWorldSave(developmentDatabase), developmentWorld);
+  assert.deepEqual(await rawRecord(releaseDatabase, 'current'), releaseRecord);
+  assert.deepEqual(await readWorldSave(releaseDatabase), releaseWorld);
+
+  const reopenedRelease = await openWorldSave();
+  const reopenedDevelopment = await openWorldSave('idle-farm-development');
+  t.after(() => reopenedRelease.close());
+  t.after(() => reopenedDevelopment.close());
+  assert.deepEqual(await readWorldSave(reopenedRelease), releaseWorld);
+  assert.deepEqual(await readWorldSave(reopenedDevelopment), developmentWorld);
+});
 
 test('two farm sales and reloading preserve tutorial completion and lifetime goals', async (t) => {
   const db = await freshDatabase(t);

@@ -21,9 +21,9 @@ export class WorldSaveError extends Error {
   }
 }
 
-export function openWorldSave() {
+export function openWorldSave(name = databaseName) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(databaseName, 1);
+    const request = indexedDB.open(name, 1);
     let blocked = false;
     request.onupgradeneeded = () => request.result.createObjectStore(storeName);
     request.onsuccess = () => {

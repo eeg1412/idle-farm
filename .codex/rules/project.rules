@@ -1,9 +1,11 @@
 # Codex 的项目级命令规则只影响沙箱外命令决策。
-# 推送规则保留交互审批，常规开发命令沿用当前环境策略。
+# 只有用户针对当前推送明确下达指示时才能推送；历史许可不延续到后续任务。
+# 此规约也适用于 git -c ... push 等变体、其他工具和脚本，不能通过改写命令绕过。
+# 推送规则保留交互审批；规则提示不替代用户授权，常规开发命令沿用当前环境策略。
 prefix_rule(
     pattern = ["git", "push"],
     decision = "prompt",
-    justification = "推送会变更远端仓库，需核对目标。",
+    justification = "推送会变更远端仓库，只有用户针对当前推送明确下达指示后才能执行；历史许可不延续。",
     match = ["git push origin main"],
     not_match = ["git status"],
 )

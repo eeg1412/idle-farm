@@ -1,0 +1,2712 @@
+{
+  "version": 4,
+  "sceneSize": 320,
+  "idleFrames": 4,
+  "grid": {
+    "columns": 5,
+    "rows": 5
+  },
+  "sources": {
+    "barn": "raw/barn.png",
+    "sheets": {
+      "accessories": "raw/pixel-v4-accessories.png",
+      "pig": "raw/pixel-v4-pig-r2.png",
+      "rabbit": "raw/pixel-v4-rabbit.png",
+      "sheep": "raw/pixel-v4-sheep.png",
+      "muscovy": "raw/pixel-v4-muscovy.png",
+      "cattle": "raw/pixel-v4-cattle.png"
+    }
+  },
+  "animalRoot": {
+    "x": 138,
+    "y": 270
+  },
+  "species": {
+    "L01": {
+      "subject": "蛋鸡",
+      "product": "鸡蛋",
+      "slaughter": false,
+      "stages": [
+        {
+          "name": "adult",
+          "row": 0,
+          "maxWidth": 154,
+          "maxHeight": 154,
+          "sourceAnchors": [
+            [
+              182,
+              230
+            ],
+            [
+              433,
+              231
+            ],
+            [
+              684,
+              230
+            ],
+            [
+              937,
+              230
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -143,
+            "top": -174,
+            "width": 209,
+            "height": 176
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 45,
+              "top": 208,
+              "width": 198,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 286501.003,
+                "dx": 251,
+                "dy": 1
+              },
+              {
+                "error": 145099.002,
+                "dx": 502,
+                "dy": 0
+              },
+              {
+                "error": 149356.004,
+                "dx": 755,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 138,
+            "y": 269.5,
+            "radiusX": 32,
+            "radiusY": 5
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L01/adult-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "golden-feet",
+            "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
+            "bounds": {
+              "x": 108,
+              "y": 259,
+              "width": 60,
+              "height": 11
+            },
+            "contacts": [
+              {
+                "x": 123.5,
+                "y": 270,
+                "bounds": {
+                  "x": 108,
+                  "y": 259,
+                  "width": 31,
+                  "height": 11
+                }
+              },
+              {
+                "x": 158.5,
+                "y": 269,
+                "bounds": {
+                  "x": 149,
+                  "y": 259,
+                  "width": 19,
+                  "height": 10
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "golden-feet"
+        }
+      ],
+      "productCell": {
+        "column": 4,
+        "row": 0,
+        "rectangle": {
+          "left": 1090,
+          "top": 102,
+          "width": 99,
+          "height": 115
+        }
+      },
+      "source": "accessories",
+      "productVisual": {
+        "icon": "L01",
+        "bounds": {
+          "x": 15,
+          "y": 8,
+          "width": 66,
+          "height": 79
+        },
+        "canonicalPath": "public/wiki/icons/L01.webp",
+        "sha256": "e3bd1810d5968d88d246fec4ddc797619820fb3b0069de00a0b677a60e0f46a5",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L02": {
+      "subject": "奶用水牛",
+      "product": "牛乳",
+      "source": "accessories",
+      "slaughter": false,
+      "stages": [
+        {
+          "name": "adult",
+          "row": 1,
+          "maxWidth": 202,
+          "maxHeight": 170,
+          "sourceAnchors": [
+            [
+              128,
+              488
+            ],
+            [
+              380,
+              488
+            ],
+            [
+              631,
+              488
+            ],
+            [
+              883,
+              488
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -108,
+            "top": -200,
+            "width": 246,
+            "height": 204
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 24,
+              "top": 466,
+              "width": 240,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 220489.022,
+                "dx": 252,
+                "dy": 0
+              },
+              {
+                "error": 133025.001,
+                "dx": 503,
+                "dy": 0
+              },
+              {
+                "error": 142939,
+                "dx": 755,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 129.5,
+            "y": 269.5,
+            "radiusX": 73.5,
+            "radiusY": 12
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L02/adult-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 256,
+              "width": 320,
+              "height": 18
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 58,
+              "y": 256,
+              "width": 143,
+              "height": 15
+            },
+            "contacts": [
+              {
+                "x": 71.5,
+                "y": 271,
+                "bounds": {
+                  "x": 58,
+                  "y": 256,
+                  "width": 27,
+                  "height": 15
+                }
+              },
+              {
+                "x": 107.5,
+                "y": 268,
+                "bounds": {
+                  "x": 94,
+                  "y": 256,
+                  "width": 27,
+                  "height": 12
+                }
+              },
+              {
+                "x": 150.5,
+                "y": 271,
+                "bounds": {
+                  "x": 137,
+                  "y": 256,
+                  "width": 27,
+                  "height": 15
+                }
+              },
+              {
+                "x": 185.5,
+                "y": 271,
+                "bounds": {
+                  "x": 170,
+                  "y": 256,
+                  "width": 31,
+                  "height": 15
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 14,
+          "supportMaterial": "opaque-feet"
+        }
+      ],
+      "productCell": {
+        "column": 4,
+        "row": 1,
+        "rectangle": {
+          "left": 1066,
+          "top": 312,
+          "width": 156,
+          "height": 164
+        }
+      },
+      "productVisual": {
+        "icon": "L02",
+        "bounds": {
+          "x": 11,
+          "y": 9,
+          "width": 74,
+          "height": 78
+        },
+        "canonicalPath": "public/wiki/icons/L02.webp",
+        "sha256": "c070897af6c1663e2a5238207c984fe4b7f2a64ac225186c9d26e899c4de93a3",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L03": {
+      "subject": "麻鸭",
+      "product": "鸭蛋",
+      "source": "accessories",
+      "slaughter": false,
+      "stages": [
+        {
+          "name": "adult",
+          "row": 2,
+          "maxWidth": 164,
+          "maxHeight": 128,
+          "sourceAnchors": [
+            [
+              143,
+              725
+            ],
+            [
+              395,
+              725
+            ],
+            [
+              647,
+              725
+            ],
+            [
+              899,
+              725
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -110,
+            "top": -186,
+            "width": 220,
+            "height": 188
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 37,
+              "top": 703,
+              "width": 213,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 155920.001,
+                "dx": 252,
+                "dy": 0
+              },
+              {
+                "error": 85322.002,
+                "dx": 504,
+                "dy": 0
+              },
+              {
+                "error": 66195.001,
+                "dx": 756,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136,
+            "y": 267.5,
+            "radiusX": 34,
+            "radiusY": 5
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L03/adult-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "golden-feet",
+            "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
+            "bounds": {
+              "x": 104,
+              "y": 259,
+              "width": 64,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 122,
+                "y": 269,
+                "bounds": {
+                  "x": 104,
+                  "y": 259,
+                  "width": 36,
+                  "height": 10
+                }
+              },
+              {
+                "x": 153,
+                "y": 266,
+                "bounds": {
+                  "x": 138,
+                  "y": 259,
+                  "width": 30,
+                  "height": 7
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "golden-feet"
+        }
+      ],
+      "productCell": {
+        "column": 4,
+        "row": 2,
+        "rectangle": {
+          "left": 1084,
+          "top": 576,
+          "width": 105,
+          "height": 125
+        }
+      },
+      "productVisual": {
+        "icon": "L03",
+        "bounds": {
+          "x": 15,
+          "y": 8,
+          "width": 65,
+          "height": 80
+        },
+        "canonicalPath": "public/wiki/icons/L03.webp",
+        "sha256": "bc1a98f7fb99b6ec4b77b16a3bd88b3cb8052be2486920fda140010989fc8809",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L04": {
+      "subject": "奶山羊",
+      "product": "山羊乳",
+      "source": "accessories",
+      "slaughter": false,
+      "stages": [
+        {
+          "name": "adult",
+          "row": 3,
+          "maxWidth": 174,
+          "maxHeight": 178,
+          "sourceAnchors": [
+            [
+              123,
+              972
+            ],
+            [
+              375,
+              972
+            ],
+            [
+              627,
+              972
+            ],
+            [
+              879,
+              971
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -94,
+            "top": -206,
+            "width": 219,
+            "height": 209
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 32,
+              "top": 950,
+              "width": 214,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 142502.001,
+                "dx": 252,
+                "dy": 0
+              },
+              {
+                "error": 135575,
+                "dx": 504,
+                "dy": 0
+              },
+              {
+                "error": 149877.011,
+                "dx": 756,
+                "dy": -1
+              }
+            ]
+          },
+          "grounding": {
+            "x": 129,
+            "y": 268,
+            "radiusX": 58,
+            "radiusY": 10
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L04/adult-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 73,
+              "y": 258,
+              "width": 112,
+              "height": 12
+            },
+            "contacts": [
+              {
+                "x": 84,
+                "y": 267,
+                "bounds": {
+                  "x": 73,
+                  "y": 258,
+                  "width": 22,
+                  "height": 9
+                }
+              },
+              {
+                "x": 113,
+                "y": 266,
+                "bounds": {
+                  "x": 102,
+                  "y": 258,
+                  "width": 22,
+                  "height": 8
+                }
+              },
+              {
+                "x": 163.5,
+                "y": 270,
+                "bounds": {
+                  "x": 142,
+                  "y": 258,
+                  "width": 43,
+                  "height": 12
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        }
+      ],
+      "productCell": {
+        "column": 4,
+        "row": 3,
+        "rectangle": {
+          "left": 1060,
+          "top": 801,
+          "width": 160,
+          "height": 167
+        }
+      },
+      "productVisual": {
+        "icon": "L04",
+        "bounds": {
+          "x": 13,
+          "y": 8,
+          "width": 69,
+          "height": 79
+        },
+        "canonicalPath": "public/wiki/icons/L04.webp",
+        "sha256": "f9e227496a8ee6dff4de136f5d478cef57671ff72794a2afb6630ed9601bf1ba",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L05": {
+      "subject": "产蛋鹅",
+      "product": "鹅蛋",
+      "source": "accessories",
+      "slaughter": false,
+      "stages": [
+        {
+          "name": "adult",
+          "row": 4,
+          "maxWidth": 152,
+          "maxHeight": 186,
+          "sourceAnchors": [
+            [
+              172,
+              1213
+            ],
+            [
+              423,
+              1213
+            ],
+            [
+              677,
+              1213
+            ],
+            [
+              930,
+              1213
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -144,
+            "top": -197,
+            "width": 209,
+            "height": 199
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 34,
+              "top": 1191,
+              "width": 198,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 227483,
+                "dx": 251,
+                "dy": 0
+              },
+              {
+                "error": 172571.004,
+                "dx": 505,
+                "dy": 0
+              },
+              {
+                "error": 166914.003,
+                "dx": 758,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136.5,
+            "y": 268.5,
+            "radiusX": 37.5,
+            "radiusY": 6
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L05/adult-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "golden-feet",
+            "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
+            "bounds": {
+              "x": 101,
+              "y": 259,
+              "width": 71,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 119,
+                "y": 269,
+                "bounds": {
+                  "x": 101,
+                  "y": 259,
+                  "width": 36,
+                  "height": 10
+                }
+              },
+              {
+                "x": 159,
+                "y": 268,
+                "bounds": {
+                  "x": 146,
+                  "y": 259,
+                  "width": 26,
+                  "height": 9
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "golden-feet"
+        }
+      ],
+      "productCell": {
+        "column": 4,
+        "row": 4,
+        "rectangle": {
+          "left": 1078,
+          "top": 1050,
+          "width": 121,
+          "height": 151
+        }
+      },
+      "productVisual": {
+        "icon": "L05",
+        "bounds": {
+          "x": 18,
+          "y": 8,
+          "width": 61,
+          "height": 80
+        },
+        "canonicalPath": "public/wiki/icons/L05.webp",
+        "sha256": "185230e802669bee6bbb20927f8a05c87f2131b52e4cccb4139c20d49c9e33df",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L06": {
+      "subject": "黑猪",
+      "product": "猪肉",
+      "slaughter": true,
+      "stages": [
+        {
+          "name": "young",
+          "row": 0,
+          "maxWidth": 110,
+          "maxHeight": 90,
+          "sourceAnchors": [
+            [
+              147,
+              232
+            ],
+            [
+              387,
+              232
+            ],
+            [
+              628,
+              232
+            ],
+            [
+              869,
+              232
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -70,
+            "top": -134,
+            "width": 160,
+            "height": 136
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 80,
+              "top": 210,
+              "width": 155,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 96722.001,
+                "dx": 240,
+                "dy": 0
+              },
+              {
+                "error": 80944,
+                "dx": 481,
+                "dy": 0
+              },
+              {
+                "error": 110988,
+                "dx": 722,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 134.5,
+            "y": 270,
+            "radiusX": 35.5,
+            "radiusY": 6
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L06/young-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 101,
+              "y": 258,
+              "width": 67,
+              "height": 12
+            },
+            "contacts": [
+              {
+                "x": 114,
+                "y": 270,
+                "bounds": {
+                  "x": 101,
+                  "y": 258,
+                  "width": 26,
+                  "height": 12
+                }
+              },
+              {
+                "x": 152.5,
+                "y": 270,
+                "bounds": {
+                  "x": 137,
+                  "y": 258,
+                  "width": 31,
+                  "height": 12
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "growing",
+          "row": 1,
+          "maxWidth": 166,
+          "maxHeight": 126,
+          "sourceAnchors": [
+            [
+              144,
+              473
+            ],
+            [
+              385,
+              473
+            ],
+            [
+              625,
+              473
+            ],
+            [
+              866,
+              473
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -75,
+            "top": -160,
+            "width": 186,
+            "height": 162
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 72,
+              "top": 451,
+              "width": 179,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 152089.001,
+                "dx": 241,
+                "dy": 0
+              },
+              {
+                "error": 125966,
+                "dx": 481,
+                "dy": 0
+              },
+              {
+                "error": 104717.001,
+                "dx": 722,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136.5,
+            "y": 269,
+            "radiusX": 49.5,
+            "radiusY": 8
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L06/growing-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 89,
+              "y": 258,
+              "width": 95,
+              "height": 13
+            },
+            "contacts": [
+              {
+                "x": 105.5,
+                "y": 270,
+                "bounds": {
+                  "x": 89,
+                  "y": 258,
+                  "width": 33,
+                  "height": 12
+                }
+              },
+              {
+                "x": 151.5,
+                "y": 271,
+                "bounds": {
+                  "x": 141,
+                  "y": 258,
+                  "width": 21,
+                  "height": 13
+                }
+              },
+              {
+                "x": 173.5,
+                "y": 267,
+                "bounds": {
+                  "x": 163,
+                  "y": 258,
+                  "width": 21,
+                  "height": 9
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "mature",
+          "row": 2,
+          "maxWidth": 202,
+          "maxHeight": 162,
+          "sourceAnchors": [
+            [
+              138,
+              715
+            ],
+            [
+              379,
+              715
+            ],
+            [
+              620,
+              715
+            ],
+            [
+              860,
+              715
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -96,
+            "top": -179,
+            "width": 231,
+            "height": 181
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 45,
+              "top": 693,
+              "width": 224,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 100225.001,
+                "dx": 241,
+                "dy": 0
+              },
+              {
+                "error": 108523,
+                "dx": 482,
+                "dy": 0
+              },
+              {
+                "error": 161539,
+                "dx": 722,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136.5,
+            "y": 266.5,
+            "radiusX": 77.5,
+            "radiusY": 13
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L06/mature-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 61,
+              "y": 258,
+              "width": 151,
+              "height": 11
+            },
+            "contacts": [
+              {
+                "x": 73,
+                "y": 267,
+                "bounds": {
+                  "x": 61,
+                  "y": 258,
+                  "width": 24,
+                  "height": 9
+                }
+              },
+              {
+                "x": 111.5,
+                "y": 264,
+                "bounds": {
+                  "x": 100,
+                  "y": 258,
+                  "width": 23,
+                  "height": 6
+                }
+              },
+              {
+                "x": 165.5,
+                "y": 269,
+                "bounds": {
+                  "x": 153,
+                  "y": 258,
+                  "width": 25,
+                  "height": 11
+                }
+              },
+              {
+                "x": 199.5,
+                "y": 266,
+                "bounds": {
+                  "x": 187,
+                  "y": 258,
+                  "width": 25,
+                  "height": 8
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        }
+      ],
+      "productCell": {
+        "column": 1,
+        "row": 4,
+        "rectangle": {
+          "left": 287,
+          "top": 1059,
+          "width": 203,
+          "height": 136
+        }
+      },
+      "source": "pig",
+      "productVisual": {
+        "icon": "L06",
+        "bounds": {
+          "x": 8,
+          "y": 20,
+          "width": 80,
+          "height": 56
+        },
+        "canonicalPath": "public/wiki/icons/L06.webp",
+        "sha256": "a35a1ee0c5f859b7f31b78d68fc406745971c5442272404ea12099f823a2230a",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L07": {
+      "subject": "肉兔",
+      "product": "兔肉",
+      "source": "rabbit",
+      "slaughter": true,
+      "stages": [
+        {
+          "name": "young",
+          "row": 0,
+          "maxWidth": 98,
+          "maxHeight": 94,
+          "sourceAnchors": [
+            [
+              142,
+              225
+            ],
+            [
+              392,
+              225
+            ],
+            [
+              641,
+              225
+            ],
+            [
+              891,
+              225
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -81,
+            "top": -141,
+            "width": 156,
+            "height": 143
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 65,
+              "top": 203,
+              "width": 147,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 103604.001,
+                "dx": 250,
+                "dy": 0
+              },
+              {
+                "error": 79414.002,
+                "dx": 499,
+                "dy": 0
+              },
+              {
+                "error": 109303.001,
+                "dx": 749,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 135,
+            "y": 270,
+            "radiusX": 36,
+            "radiusY": 6
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L07/young-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 101,
+              "y": 260,
+              "width": 68,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 135,
+                "y": 270,
+                "bounds": {
+                  "x": 101,
+                  "y": 260,
+                  "width": 68,
+                  "height": 10
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "growing",
+          "row": 1,
+          "maxWidth": 140,
+          "maxHeight": 140,
+          "sourceAnchors": [
+            [
+              144,
+              466
+            ],
+            [
+              394,
+              466
+            ],
+            [
+              643,
+              466
+            ],
+            [
+              893,
+              466
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -97,
+            "top": -175,
+            "width": 185,
+            "height": 177
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 51,
+              "top": 444,
+              "width": 179,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 111613,
+                "dx": 250,
+                "dy": 0
+              },
+              {
+                "error": 77786.002,
+                "dx": 499,
+                "dy": 0
+              },
+              {
+                "error": 110591,
+                "dx": 749,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 137.5,
+            "y": 270,
+            "radiusX": 49.5,
+            "radiusY": 8
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L07/growing-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 90,
+              "y": 260,
+              "width": 95,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 108,
+                "y": 270,
+                "bounds": {
+                  "x": 90,
+                  "y": 260,
+                  "width": 36,
+                  "height": 10
+                }
+              },
+              {
+                "x": 161.5,
+                "y": 270,
+                "bounds": {
+                  "x": 138,
+                  "y": 260,
+                  "width": 47,
+                  "height": 10
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "mature",
+          "row": 2,
+          "maxWidth": 166,
+          "maxHeight": 178,
+          "sourceAnchors": [
+            [
+              142,
+              727
+            ],
+            [
+              392,
+              727
+            ],
+            [
+              641,
+              727
+            ],
+            [
+              890,
+              727
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -110,
+            "top": -219,
+            "width": 219,
+            "height": 221
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 34,
+              "top": 705,
+              "width": 213,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 119140.001,
+                "dx": 250,
+                "dy": 0
+              },
+              {
+                "error": 74507.001,
+                "dx": 499,
+                "dy": 0
+              },
+              {
+                "error": 108420.002,
+                "dx": 748,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 134,
+            "y": 270,
+            "radiusX": 61,
+            "radiusY": 10
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L07/mature-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 75,
+              "y": 260,
+              "width": 118,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 100,
+                "y": 270,
+                "bounds": {
+                  "x": 75,
+                  "y": 260,
+                  "width": 50,
+                  "height": 10
+                }
+              },
+              {
+                "x": 169.5,
+                "y": 270,
+                "bounds": {
+                  "x": 146,
+                  "y": 260,
+                  "width": 47,
+                  "height": 10
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "opaque-feet"
+        }
+      ],
+      "productCell": {
+        "column": 1,
+        "row": 4,
+        "rectangle": {
+          "left": 287,
+          "top": 1073,
+          "width": 195,
+          "height": 114
+        }
+      },
+      "productVisual": {
+        "icon": "L07",
+        "bounds": {
+          "x": 8,
+          "y": 17,
+          "width": 80,
+          "height": 63
+        },
+        "canonicalPath": "public/wiki/icons/L07.webp",
+        "sha256": "8f6fee3ee287dd5d98978cdc6f0eaf7974269d93da68935652427052615012b3",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L08": {
+      "subject": "肉用绵羊",
+      "product": "绵羊肉",
+      "source": "sheep",
+      "slaughter": true,
+      "stages": [
+        {
+          "name": "young",
+          "row": 0,
+          "maxWidth": 110,
+          "maxHeight": 104,
+          "sourceAnchors": [
+            [
+              144,
+              228
+            ],
+            [
+              379,
+              228
+            ],
+            [
+              614,
+              228
+            ],
+            [
+              849,
+              228
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -68,
+            "top": -146,
+            "width": 156,
+            "height": 148
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 78,
+              "top": 206,
+              "width": 151,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 88145.001,
+                "dx": 235,
+                "dy": 0
+              },
+              {
+                "error": 87153,
+                "dx": 470,
+                "dy": 0
+              },
+              {
+                "error": 78858.004,
+                "dx": 705,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136.5,
+            "y": 270,
+            "radiusX": 37.5,
+            "radiusY": 6
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L08/young-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 101,
+              "y": 258,
+              "width": 71,
+              "height": 12
+            },
+            "contacts": [
+              {
+                "x": 115.5,
+                "y": 270,
+                "bounds": {
+                  "x": 101,
+                  "y": 258,
+                  "width": 29,
+                  "height": 12
+                }
+              },
+              {
+                "x": 155.5,
+                "y": 270,
+                "bounds": {
+                  "x": 139,
+                  "y": 258,
+                  "width": 33,
+                  "height": 12
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "growing",
+          "row": 1,
+          "maxWidth": 166,
+          "maxHeight": 134,
+          "sourceAnchors": [
+            [
+              148,
+              466
+            ],
+            [
+              383,
+              466
+            ],
+            [
+              618,
+              466
+            ],
+            [
+              853,
+              466
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -79,
+            "top": -171,
+            "width": 173,
+            "height": 173
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 71,
+              "top": 444,
+              "width": 167,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 70950,
+                "dx": 235,
+                "dy": 0
+              },
+              {
+                "error": 87822,
+                "dx": 470,
+                "dy": 0
+              },
+              {
+                "error": 87846.001,
+                "dx": 705,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 132.5,
+            "y": 270,
+            "radiusX": 43.5,
+            "radiusY": 7
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L08/growing-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 91,
+              "y": 258,
+              "width": 83,
+              "height": 12
+            },
+            "contacts": [
+              {
+                "x": 108,
+                "y": 270,
+                "bounds": {
+                  "x": 91,
+                  "y": 258,
+                  "width": 34,
+                  "height": 12
+                }
+              },
+              {
+                "x": 155.5,
+                "y": 270,
+                "bounds": {
+                  "x": 137,
+                  "y": 258,
+                  "width": 37,
+                  "height": 12
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "mature",
+          "row": 2,
+          "maxWidth": 202,
+          "maxHeight": 168,
+          "sourceAnchors": [
+            [
+              141,
+              721
+            ],
+            [
+              376,
+              721
+            ],
+            [
+              611,
+              721
+            ],
+            [
+              847,
+              721
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -92,
+            "top": -204,
+            "width": 213,
+            "height": 206
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 51,
+              "top": 699,
+              "width": 208,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 59270.001,
+                "dx": 235,
+                "dy": 0
+              },
+              {
+                "error": 53154.001,
+                "dx": 470,
+                "dy": 0
+              },
+              {
+                "error": 84653,
+                "dx": 706,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 138,
+            "y": 271,
+            "radiusX": 59,
+            "radiusY": 10
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L08/mature-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 258,
+              "width": 320,
+              "height": 16
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 81,
+              "y": 258,
+              "width": 114,
+              "height": 13
+            },
+            "contacts": [
+              {
+                "x": 102,
+                "y": 271,
+                "bounds": {
+                  "x": 81,
+                  "y": 258,
+                  "width": 42,
+                  "height": 13
+                }
+              },
+              {
+                "x": 172.5,
+                "y": 271,
+                "bounds": {
+                  "x": 150,
+                  "y": 258,
+                  "width": 45,
+                  "height": 13
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 12,
+          "supportMaterial": "opaque-feet"
+        }
+      ],
+      "productCell": {
+        "column": 1,
+        "row": 4,
+        "rectangle": {
+          "left": 309,
+          "top": 1059,
+          "width": 158,
+          "height": 130
+        }
+      },
+      "productVisual": {
+        "icon": "L08",
+        "bounds": {
+          "x": 8,
+          "y": 14,
+          "width": 80,
+          "height": 68
+        },
+        "canonicalPath": "public/wiki/icons/L08.webp",
+        "sha256": "2c2daa5ddb0e60c2fcc9d8a86768de9733ee74c2e9d3f76f93bfbc3a42141cb2",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L09": {
+      "subject": "番鸭",
+      "product": "鸭肉",
+      "source": "muscovy",
+      "slaughter": true,
+      "stages": [
+        {
+          "name": "young",
+          "row": 0,
+          "maxWidth": 100,
+          "maxHeight": 104,
+          "sourceAnchors": [
+            [
+              153,
+              236
+            ],
+            [
+              402,
+              236
+            ],
+            [
+              651,
+              236
+            ],
+            [
+              899,
+              236
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -95,
+            "top": -156,
+            "width": 173,
+            "height": 158
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 62,
+              "top": 214,
+              "width": 166,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 83930,
+                "dx": 249,
+                "dy": 0
+              },
+              {
+                "error": 69306.001,
+                "dx": 498,
+                "dy": 0
+              },
+              {
+                "error": 81390.002,
+                "dx": 746,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136.5,
+            "y": 268.5,
+            "radiusX": 28.5,
+            "radiusY": 5
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L09/young-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "golden-feet",
+            "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
+            "bounds": {
+              "x": 110,
+              "y": 259,
+              "width": 53,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 122,
+                "y": 269,
+                "bounds": {
+                  "x": 110,
+                  "y": 259,
+                  "width": 24,
+                  "height": 10
+                }
+              },
+              {
+                "x": 151,
+                "y": 268,
+                "bounds": {
+                  "x": 139,
+                  "y": 259,
+                  "width": 24,
+                  "height": 9
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "golden-feet"
+        },
+        {
+          "name": "growing",
+          "row": 1,
+          "maxWidth": 145,
+          "maxHeight": 145,
+          "sourceAnchors": [
+            [
+              155,
+              483
+            ],
+            [
+              404,
+              483
+            ],
+            [
+              652,
+              483
+            ],
+            [
+              901,
+              483
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -101,
+            "top": -183,
+            "width": 194,
+            "height": 185
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 57,
+              "top": 461,
+              "width": 188,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 78524.001,
+                "dx": 249,
+                "dy": 0
+              },
+              {
+                "error": 60398.001,
+                "dx": 497,
+                "dy": 0
+              },
+              {
+                "error": 75204.001,
+                "dx": 746,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 136.5,
+            "y": 267.5,
+            "radiusX": 35.5,
+            "radiusY": 6
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L09/growing-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "golden-feet",
+            "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
+            "bounds": {
+              "x": 103,
+              "y": 259,
+              "width": 67,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 119.5,
+                "y": 269,
+                "bounds": {
+                  "x": 103,
+                  "y": 259,
+                  "width": 33,
+                  "height": 10
+                }
+              },
+              {
+                "x": 155,
+                "y": 266,
+                "bounds": {
+                  "x": 140,
+                  "y": 259,
+                  "width": 30,
+                  "height": 7
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "golden-feet"
+        },
+        {
+          "name": "mature",
+          "row": 2,
+          "maxWidth": 180,
+          "maxHeight": 178,
+          "sourceAnchors": [
+            [
+              160,
+              750
+            ],
+            [
+              409,
+              750
+            ],
+            [
+              657,
+              750
+            ],
+            [
+              907,
+              750
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -124,
+            "top": -227,
+            "width": 238,
+            "height": 230
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 38,
+              "top": 728,
+              "width": 234,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 90113.011,
+                "dx": 249,
+                "dy": 0
+              },
+              {
+                "error": 70101.002,
+                "dx": 497,
+                "dy": 0
+              },
+              {
+                "error": 86469.013,
+                "dx": 747,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 134.5,
+            "y": 268.5,
+            "radiusX": 42.5,
+            "radiusY": 7
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L09/mature-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 260,
+              "width": 320,
+              "height": 14
+            },
+            "supportMaterial": "golden-feet",
+            "supportSelection": "Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.",
+            "bounds": {
+              "x": 94,
+              "y": 259,
+              "width": 81,
+              "height": 10
+            },
+            "contacts": [
+              {
+                "x": 113,
+                "y": 269,
+                "bounds": {
+                  "x": 94,
+                  "y": 259,
+                  "width": 38,
+                  "height": 10
+                }
+              },
+              {
+                "x": 157,
+                "y": 268,
+                "bounds": {
+                  "x": 139,
+                  "y": 259,
+                  "width": 36,
+                  "height": 9
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 10,
+          "supportMaterial": "golden-feet"
+        }
+      ],
+      "productCell": {
+        "column": 1,
+        "row": 4,
+        "rectangle": {
+          "left": 286,
+          "top": 1068,
+          "width": 206,
+          "height": 136
+        }
+      },
+      "productVisual": {
+        "icon": "L09",
+        "bounds": {
+          "x": 8,
+          "y": 20,
+          "width": 80,
+          "height": 56
+        },
+        "canonicalPath": "public/wiki/icons/L09.webp",
+        "sha256": "cfd3fcff9a2bc977b2f581782c6d68e5eb078f845ae1aba0d5d2681682684e8d",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    },
+    "L10": {
+      "subject": "肉用黄牛",
+      "product": "牛肉",
+      "source": "cattle",
+      "slaughter": true,
+      "stages": [
+        {
+          "name": "young",
+          "row": 0,
+          "maxWidth": 118,
+          "maxHeight": 106,
+          "sourceAnchors": [
+            [
+              145,
+              246
+            ],
+            [
+              391,
+              246
+            ],
+            [
+              637,
+              246
+            ],
+            [
+              882,
+              246
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -98,
+            "top": -153,
+            "width": 187,
+            "height": 155
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 49,
+              "top": 224,
+              "width": 183,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 129438.001,
+                "dx": 246,
+                "dy": 0
+              },
+              {
+                "error": 145679,
+                "dx": 492,
+                "dy": 0
+              },
+              {
+                "error": 106148.001,
+                "dx": 737,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 131.5,
+            "y": 267.5,
+            "radiusX": 38.5,
+            "radiusY": 6
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L10/young-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 256,
+              "width": 320,
+              "height": 18
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 95,
+              "y": 256,
+              "width": 73,
+              "height": 14
+            },
+            "contacts": [
+              {
+                "x": 104,
+                "y": 270,
+                "bounds": {
+                  "x": 95,
+                  "y": 256,
+                  "width": 18,
+                  "height": 14
+                }
+              },
+              {
+                "x": 122,
+                "y": 265,
+                "bounds": {
+                  "x": 114,
+                  "y": 256,
+                  "width": 16,
+                  "height": 9
+                }
+              },
+              {
+                "x": 154,
+                "y": 270,
+                "bounds": {
+                  "x": 140,
+                  "y": 256,
+                  "width": 28,
+                  "height": 14
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 14,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "growing",
+          "row": 1,
+          "maxWidth": 168,
+          "maxHeight": 140,
+          "sourceAnchors": [
+            [
+              140,
+              493
+            ],
+            [
+              386,
+              493
+            ],
+            [
+              632,
+              493
+            ],
+            [
+              880,
+              493
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -108,
+            "top": -180,
+            "width": 221,
+            "height": 182
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 35,
+              "top": 471,
+              "width": 215,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 132808.001,
+                "dx": 246,
+                "dy": 0
+              },
+              {
+                "error": 145666.001,
+                "dx": 492,
+                "dy": 0
+              },
+              {
+                "error": 142102.003,
+                "dx": 740,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 131,
+            "y": 268.5,
+            "radiusX": 54,
+            "radiusY": 9
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L10/growing-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 256,
+              "width": 320,
+              "height": 18
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 79,
+              "y": 256,
+              "width": 104,
+              "height": 14
+            },
+            "contacts": [
+              {
+                "x": 90,
+                "y": 269,
+                "bounds": {
+                  "x": 79,
+                  "y": 256,
+                  "width": 22,
+                  "height": 13
+                }
+              },
+              {
+                "x": 112.5,
+                "y": 267,
+                "bounds": {
+                  "x": 102,
+                  "y": 256,
+                  "width": 21,
+                  "height": 11
+                }
+              },
+              {
+                "x": 163.5,
+                "y": 270,
+                "bounds": {
+                  "x": 144,
+                  "y": 256,
+                  "width": 39,
+                  "height": 14
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 14,
+          "supportMaterial": "opaque-feet"
+        },
+        {
+          "name": "mature",
+          "row": 2,
+          "maxWidth": 202,
+          "maxHeight": 174,
+          "sourceAnchors": [
+            [
+              133,
+              725
+            ],
+            [
+              380,
+              725
+            ],
+            [
+              626,
+              725
+            ],
+            [
+              874,
+              725
+            ]
+          ],
+          "sourceCanvas": {
+            "left": -115,
+            "top": -195,
+            "width": 249,
+            "height": 197
+          },
+          "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+          "footRegistration": {
+            "referenceFrame": 0,
+            "template": {
+              "left": 20,
+              "top": 703,
+              "width": 245,
+              "height": 22
+            },
+            "translations": [
+              {
+                "dx": 0,
+                "dy": 0,
+                "error": 0
+              },
+              {
+                "error": 123625.003,
+                "dx": 247,
+                "dy": 0
+              },
+              {
+                "error": 113699.003,
+                "dx": 493,
+                "dy": 0
+              },
+              {
+                "error": 168491.005,
+                "dx": 741,
+                "dy": 0
+              }
+            ]
+          },
+          "grounding": {
+            "x": 133,
+            "y": 268,
+            "radiusX": 69,
+            "radiusY": 11
+          },
+          "footprint": {
+            "referenceFrame": 0,
+            "framePath": "assets/livestock/animals/L10/mature-0.png",
+            "alphaThreshold": 128,
+            "region": {
+              "x": 0,
+              "y": 256,
+              "width": 320,
+              "height": 18
+            },
+            "supportMaterial": "opaque-feet",
+            "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
+            "bounds": {
+              "x": 66,
+              "y": 256,
+              "width": 134,
+              "height": 14
+            },
+            "contacts": [
+              {
+                "x": 78,
+                "y": 270,
+                "bounds": {
+                  "x": 66,
+                  "y": 256,
+                  "width": 24,
+                  "height": 14
+                }
+              },
+              {
+                "x": 108.5,
+                "y": 266,
+                "bounds": {
+                  "x": 97,
+                  "y": 256,
+                  "width": 23,
+                  "height": 10
+                }
+              },
+              {
+                "x": 160,
+                "y": 270,
+                "bounds": {
+                  "x": 148,
+                  "y": 256,
+                  "width": 24,
+                  "height": 14
+                }
+              },
+              {
+                "x": 188,
+                "y": 268,
+                "bounds": {
+                  "x": 176,
+                  "y": 256,
+                  "width": 24,
+                  "height": 12
+                }
+              }
+            ],
+            "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
+          },
+          "supportBandHeight": 14,
+          "supportMaterial": "opaque-feet"
+        }
+      ],
+      "productCell": {
+        "column": 1,
+        "row": 4,
+        "rectangle": {
+          "left": 297,
+          "top": 1062,
+          "width": 192,
+          "height": 126
+        }
+      },
+      "productVisual": {
+        "icon": "L10",
+        "bounds": {
+          "x": 8,
+          "y": 20,
+          "width": 80,
+          "height": 55
+        },
+        "canonicalPath": "public/wiki/icons/L10.webp",
+        "sha256": "27c15278610a1a871beaf6e46dd218f6258d8f927cb05201d990735def4589a7",
+        "sourceSize": [
+          96,
+          96
+        ],
+        "boundsAlphaThreshold": 64
+      }
+    }
+  },
+  "alphaIsolation": {
+    "threshold": 200,
+    "method": "Remove generated transparency matting below alpha 200; keep original RGB and make the retained sprite opaque. Original PNGs are retained unchanged."
+  },
+  "styleReference": "raw/pixel-v4-black-pig-style.png",
+  "anchorMethod": "Reference stance-center ground point hand registered from the anatomical planted feet in source frame 0; the same stationary sole/hoof pattern is registered by integer translation in a fixed 22px lower-foot ROI. All four frames use one shared source canvas relative to that anatomical anchor and one stageScale. No per-frame bbox centering, weighted foot centroid or resizing.",
+  "productContract": {
+    "source": "canonical inventory icons only",
+    "canonicalPath": "public/wiki/icons/<ID>.webp",
+    "sourceSize": [
+      96,
+      96
+    ],
+    "boundsAlphaThreshold": 64,
+    "historicalProductCellsConsumed": false
+  }
+}

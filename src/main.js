@@ -55,6 +55,11 @@ const actions = {
   reserve, sell, sellBatch, sellFarm, research, upgradeQuality, upgradeTech, updateSettings,
 };
 
+if (__DEV_TEST_MODE__) {
+  const { grantDevelopmentTools } = await import('./game/development-tools.js');
+  actions.grantDevelopmentTools = grantDevelopmentTools;
+}
+
 const px = (value) => Number.parseFloat(value) || 0;
 function paint(display = world, anchor = frontAnchor) {
   const timing = display && anchor >= visibleSince ? { anchor, maxElapsed: displayRefreshMs } : undefined;
@@ -188,7 +193,7 @@ async function initialize(recovery) {
   status = { busy: true, title: '正在整理收获' };
   paint();
   try {
-    if (!db) db = await openWorldSave();
+    if (!db) db = await openWorldSave(__DEV_TEST_MODE__ ? 'idle-farm-development' : undefined);
     const previous = recovery ? await restoreWorldSave(db, {
       corruptRevision: recovery.corruptRevision, backupRevision: recovery.revision,
     }) : await readWorldSave(db);
@@ -217,6 +222,9 @@ async function initialize(recovery) {
 }
 
 function feedback(name, args, before, after, quality) {
+  if (__DEV_TEST_MODE__ && name === 'grantDevelopmentTools') {
+    return { toast: '开发测试模式：已解锁全部科技，并追加 1T 金币', sound: 'success' };
+  }
   if (name === 'research') return { toast: '已研发：' + catalog.items[args[0]].name, sound: 'research' };
   if (name === 'upgradeQuality') return { float: '品质升至 ' + compact(quality.target) + ' 级', sound: 'success' };
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };

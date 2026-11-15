@@ -173,6 +173,28 @@ test('each crop, livestock and fish facility requests its own art', () => {
   }
 });
 
+test('all active livestock main cards request animation while details remain static', () => {
+  const world = newWorld(0);
+  const ids = Object.keys(catalog.items).filter((id) => catalog.items[id].kind === 'L');
+  for (const id of ids) {
+    const batch = { id, start: 0, end: catalog.items[id].durationMs, amount: catalog.items[id].output };
+    world.facilities.L = [{ level: '1', recipe: id, batch }];
+    const view = pageFixture(world, { tab: '畜牧' });
+    renderProduction(view.ui);
+    const [, , options] = view.find('feature', (_, __, settings) => settings.style === 'facility');
+    assert.equal(options.plotAnimation, undefined);
+    assert.deepEqual(options.livestockAnimation, { batch, index: 0 }, id);
+    options.onClick();
+    const details = view.dialog('畜牧场详情');
+    assert.equal(details.find('feature', () => true)[2].livestockAnimation, undefined);
+
+    world.facilities.L[0].batch = null;
+    const idle = pageFixture(world, { tab: '畜牧' });
+    renderProduction(idle.ui);
+    assert.equal(idle.find('feature', (_, __, settings) => settings.style === 'facility')[2].livestockAnimation, undefined);
+  }
+});
+
 test('livestock choices identify the animal while details and upgrades show their facility scenes', () => {
   const world = newWorld(0);
   world.guideSkipped = true;
@@ -192,13 +214,33 @@ test('livestock choices identify the animal while details and upgrades show thei
   const choices = view.dialog('选择牲畜');
   assert.ok(choices.find('text', (label) => label.includes('立即开始新一批')));
   assert.deepEqual(choices.find('choiceGrid', () => true)[0].map(({ icon, label }) => [icon, label]), [
-    ['scene-L01', catalog.items.L01.subject], ['scene-L10', catalog.items.L10.subject],
+    ['livestock-L01', catalog.items.L01.subject], ['livestock-L10', catalog.items.L10.subject],
   ]);
 
   view.click('升级');
   const upgrade = view.dialog('升级畜牧场');
   assert.ok(upgrade.find('feature', (art) => art === 'scene-L10'));
   assert.ok(upgrade.find('row', (label, _, settings) => label.startsWith('每批') && settings.icon === 'L10'));
+});
+
+test('all livestock choices use separate animal icons while warehouse art keeps the output items', () => {
+  const world = newWorld(0);
+  const ids = Object.keys(catalog.items).filter((id) => catalog.items[id].kind === 'L');
+  world.unlocked.push(...ids);
+  world.facilities.L = [{ level: '1', recipe: 'L01', batch: null }];
+  const farm = pageFixture(world, { tab: '畜牧' });
+  renderProduction(farm.ui);
+  farm.click('更换');
+  const choices = farm.dialog('选择牲畜').find('choiceGrid', () => true)[0];
+  assert.deepEqual(choices.map(({ id, icon, label }) => [id, icon, label]),
+    ids.map((id) => [id, 'livestock-' + id, catalog.items[id].subject]));
+
+  world.inventory = Object.fromEntries(ids.map((id) => [id, 3n]));
+  const warehouse = pageFixture(world);
+  renderWarehouse(warehouse.ui);
+  const art = warehouse.calls.filter(([name]) => name === 'feature').map(([, args]) => args[0]);
+  assert.deepEqual(art.sort(), [...ids].sort());
+  assert.ok(art.every((id) => !id.startsWith('livestock-') && !id.startsWith('scene-')));
 });
 
 test('crop selection uses individual icons for all unlocked choices in one grid', () => {

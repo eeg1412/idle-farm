@@ -18,6 +18,7 @@
     "test": "node --test",
     "check": "npm run content:check && npm run art:check && npm test",
     "art:check": "node scripts/check-facility-art.mjs",
+    "art:livestock": "node scripts/export-livestock-animation.mjs",
     "content:generate": "node scripts/generate-game-data.mjs",
     "content:check": "node scripts/compile-content.mjs --check && node scripts/generate-game-data.mjs --check",
     "wiki:build": "node scripts/build-wiki.mjs"
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "fake-indexeddb": "6.2.8",
+    "sharp": "0.34.5",
     "vite": "7.3.1"
   }
 }

@@ -5,6 +5,7 @@ import { unitPrice } from '../game/advancement.js';
 import { objectives } from '../game/objectives.js';
 import { reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
+import { livestockSpecies } from './livestock-animation.js';
 
 const productionTabs = ['田地', '畜牧', '鱼池'];
 const workshopTabs = ['加工', '精制'];
@@ -118,7 +119,7 @@ function chooseFacility(ui, kind, index) {
     } else {
       replacementChoices(dlg, choices.map((id) => ({
         id,
-        icon: kind === 'L' ? 'scene-' + id : id,
+        icon: kind === 'L' ? 'livestock-' + id : id,
         label: assignedName(id),
         duration: remainingTime(productionDurationMs(dlg.w, id)),
         selected: id === facility.recipe && (!facility.batch || facility.batch.id === id),
@@ -242,6 +243,8 @@ function facilityCard(ui, kind, index, facility) {
     }, {
       ratio: 0.36, style: 'facility', artAspect: facilityArtAspects[kind], onClick: openDetails,
       plotAnimation: crop && active ? { batch: active, index } : undefined,
+      livestockAnimation: kind === 'L' && active && Object.hasOwn(livestockSpecies, active.id)
+        ? { batch: active, index } : undefined,
     });
     if (kind === 'L') body.buttons(actions, { style: 'production' });
   }, { style: 'production' });
