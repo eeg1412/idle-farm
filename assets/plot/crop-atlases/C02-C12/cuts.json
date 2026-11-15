@@ -1,0 +1,563 @@
+{
+  "atlas": "atlas.png",
+  "styleReference": "assets/plot/wheat/wheat-3.png",
+  "size": [
+    1254,
+    1254
+  ],
+  "grid": {
+    "columns": [
+      0,
+      250,
+      501,
+      752,
+      1000,
+      1254
+    ],
+    "rows": [
+      0,
+      248,
+      511,
+      746,
+      989,
+      1254
+    ]
+  },
+  "alpha": "round(max(0, alpha - 12) * 255 / 243)",
+  "boxFormat": [
+    "left",
+    "top",
+    "rightExclusive",
+    "bottomExclusive"
+  ],
+  "cuts": [
+    {
+      "id": "C02",
+      "name": "甘蔗",
+      "stage": "growing",
+      "row": 1,
+      "column": 1,
+      "cellBox": [
+        0,
+        0,
+        250,
+        248
+      ],
+      "cropBox": [
+        39,
+        28,
+        217,
+        242
+      ],
+      "file": "assets/plot/crops/C02/growing.png",
+      "size": [
+        178,
+        214
+      ]
+    },
+    {
+      "id": "C02",
+      "name": "甘蔗",
+      "stage": "mature",
+      "row": 1,
+      "column": 2,
+      "cellBox": [
+        250,
+        0,
+        501,
+        248
+      ],
+      "cropBox": [
+        262,
+        9,
+        489,
+        242
+      ],
+      "file": "assets/plot/crops/C02/mature.png",
+      "size": [
+        227,
+        233
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "草莓",
+      "stage": "growing",
+      "row": 1,
+      "column": 3,
+      "cellBox": [
+        501,
+        0,
+        752,
+        248
+      ],
+      "cropBox": [
+        532,
+        99,
+        715,
+        242
+      ],
+      "file": "assets/plot/crops/C03/growing.png",
+      "size": [
+        183,
+        143
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "草莓",
+      "stage": "mature",
+      "row": 1,
+      "column": 4,
+      "cellBox": [
+        752,
+        0,
+        1000,
+        248
+      ],
+      "cropBox": [
+        764,
+        99,
+        972,
+        242
+      ],
+      "file": "assets/plot/crops/C03/mature.png",
+      "size": [
+        208,
+        143
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "玉米",
+      "stage": "growing",
+      "row": 1,
+      "column": 5,
+      "cellBox": [
+        1000,
+        0,
+        1254,
+        248
+      ],
+      "cropBox": [
+        1043,
+        20,
+        1207,
+        242
+      ],
+      "file": "assets/plot/crops/C04/growing.png",
+      "size": [
+        164,
+        222
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "玉米",
+      "stage": "mature",
+      "row": 2,
+      "column": 1,
+      "cellBox": [
+        0,
+        248,
+        250,
+        511
+      ],
+      "cropBox": [
+        41,
+        253,
+        220,
+        498
+      ],
+      "file": "assets/plot/crops/C04/mature.png",
+      "size": [
+        179,
+        245
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "苹果",
+      "stage": "growing",
+      "row": 2,
+      "column": 2,
+      "cellBox": [
+        250,
+        248,
+        501,
+        511
+      ],
+      "cropBox": [
+        286,
+        288,
+        471,
+        497
+      ],
+      "file": "assets/plot/crops/C05/growing.png",
+      "size": [
+        185,
+        209
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "苹果",
+      "stage": "mature",
+      "row": 2,
+      "column": 3,
+      "cellBox": [
+        501,
+        248,
+        752,
+        511
+      ],
+      "cropBox": [
+        511,
+        270,
+        734,
+        497
+      ],
+      "file": "assets/plot/crops/C05/mature.png",
+      "size": [
+        223,
+        227
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "蓝莓",
+      "stage": "growing",
+      "row": 2,
+      "column": 4,
+      "cellBox": [
+        752,
+        248,
+        1000,
+        511
+      ],
+      "cropBox": [
+        773,
+        292,
+        973,
+        497
+      ],
+      "file": "assets/plot/crops/C06/growing.png",
+      "size": [
+        200,
+        205
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "蓝莓",
+      "stage": "mature",
+      "row": 2,
+      "column": 5,
+      "cellBox": [
+        1000,
+        248,
+        1254,
+        511
+      ],
+      "cropBox": [
+        1014,
+        299,
+        1234,
+        497
+      ],
+      "file": "assets/plot/crops/C06/mature.png",
+      "size": [
+        220,
+        198
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "茶叶",
+      "stage": "growing",
+      "row": 3,
+      "column": 1,
+      "cellBox": [
+        0,
+        511,
+        250,
+        746
+      ],
+      "cropBox": [
+        28,
+        546,
+        222,
+        730
+      ],
+      "file": "assets/plot/crops/C07/growing.png",
+      "size": [
+        194,
+        184
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "茶叶",
+      "stage": "mature",
+      "row": 3,
+      "column": 2,
+      "cellBox": [
+        250,
+        511,
+        501,
+        746
+      ],
+      "cropBox": [
+        264,
+        524,
+        482,
+        731
+      ],
+      "file": "assets/plot/crops/C07/mature.png",
+      "size": [
+        218,
+        207
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "桂花",
+      "stage": "growing",
+      "row": 3,
+      "column": 3,
+      "cellBox": [
+        501,
+        511,
+        752,
+        746
+      ],
+      "cropBox": [
+        518,
+        539,
+        725,
+        731
+      ],
+      "file": "assets/plot/crops/C08/growing.png",
+      "size": [
+        207,
+        192
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "桂花",
+      "stage": "mature",
+      "row": 3,
+      "column": 4,
+      "cellBox": [
+        752,
+        511,
+        1000,
+        746
+      ],
+      "cropBox": [
+        755,
+        524,
+        990,
+        734
+      ],
+      "file": "assets/plot/crops/C08/mature.png",
+      "size": [
+        235,
+        210
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "可可豆",
+      "stage": "growing",
+      "row": 3,
+      "column": 5,
+      "cellBox": [
+        1000,
+        511,
+        1254,
+        746
+      ],
+      "cropBox": [
+        1023,
+        524,
+        1228,
+        734
+      ],
+      "file": "assets/plot/crops/C09/growing.png",
+      "size": [
+        205,
+        210
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "可可豆",
+      "stage": "mature",
+      "row": 4,
+      "column": 1,
+      "cellBox": [
+        0,
+        746,
+        250,
+        989
+      ],
+      "cropBox": [
+        19,
+        764,
+        238,
+        978
+      ],
+      "file": "assets/plot/crops/C09/mature.png",
+      "size": [
+        219,
+        214
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "香草荚",
+      "stage": "growing",
+      "row": 4,
+      "column": 2,
+      "cellBox": [
+        250,
+        746,
+        501,
+        989
+      ],
+      "cropBox": [
+        298,
+        767,
+        448,
+        976
+      ],
+      "file": "assets/plot/crops/C10/growing.png",
+      "size": [
+        150,
+        209
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "香草荚",
+      "stage": "mature",
+      "row": 4,
+      "column": 3,
+      "cellBox": [
+        501,
+        746,
+        752,
+        989
+      ],
+      "cropBox": [
+        525,
+        757,
+        707,
+        978
+      ],
+      "file": "assets/plot/crops/C10/mature.png",
+      "size": [
+        182,
+        221
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "樱桃",
+      "stage": "growing",
+      "row": 4,
+      "column": 4,
+      "cellBox": [
+        752,
+        746,
+        1000,
+        989
+      ],
+      "cropBox": [
+        761,
+        769,
+        971,
+        976
+      ],
+      "file": "assets/plot/crops/C11/growing.png",
+      "size": [
+        210,
+        207
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "樱桃",
+      "stage": "mature",
+      "row": 4,
+      "column": 5,
+      "cellBox": [
+        1000,
+        746,
+        1254,
+        989
+      ],
+      "cropBox": [
+        1008,
+        759,
+        1240,
+        976
+      ],
+      "file": "assets/plot/crops/C11/mature.png",
+      "size": [
+        232,
+        217
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "栗子",
+      "stage": "growing",
+      "row": 5,
+      "column": 1,
+      "cellBox": [
+        0,
+        989,
+        250,
+        1254
+      ],
+      "cropBox": [
+        22,
+        1016,
+        223,
+        1225
+      ],
+      "file": "assets/plot/crops/C12/growing.png",
+      "size": [
+        201,
+        209
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "栗子",
+      "stage": "mature",
+      "row": 5,
+      "column": 2,
+      "cellBox": [
+        250,
+        989,
+        501,
+        1254
+      ],
+      "cropBox": [
+        258,
+        998,
+        494,
+        1225
+      ],
+      "file": "assets/plot/crops/C12/mature.png",
+      "size": [
+        236,
+        227
+      ]
+    }
+  ]
+}

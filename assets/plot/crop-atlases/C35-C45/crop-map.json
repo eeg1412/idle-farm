@@ -1,0 +1,635 @@
+{
+  "generator": "ImageGen",
+  "original": "raw.png",
+  "normalized": "normalized.png",
+  "prompt": "atlas-prompt.txt",
+  "original_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    5,
+    5
+  ],
+  "normalized_cell_size": 251,
+  "coordinate_convention": "Rectangles are left, top, right exclusive, bottom exclusive. Root anchors are relative to the cropped sprite.",
+  "alpha_cleanup": "Isolate each alpha≥32 connected component and retain its two-pixel edge. Rescale alpha from 18..250 to 0..255 and trim to the remaining alpha bounds.",
+  "sprites": [
+    {
+      "crop": "C35",
+      "name": "青椒",
+      "stage": "growing",
+      "row": 1,
+      "column": 1,
+      "source_rect": [
+        60,
+        75,
+        211,
+        227
+      ],
+      "normalized_rect": [
+        50,
+        51,
+        201,
+        203
+      ],
+      "sprite_size": [
+        151,
+        152
+      ],
+      "root_anchor": [
+        71,
+        151
+      ],
+      "sprite": "crops/C35/growing.png"
+    },
+    {
+      "crop": "C35",
+      "name": "青椒",
+      "stage": "mature",
+      "row": 1,
+      "column": 2,
+      "source_rect": [
+        279,
+        23,
+        479,
+        227
+      ],
+      "normalized_rect": [
+        297,
+        42,
+        455,
+        203
+      ],
+      "sprite_size": [
+        200,
+        204
+      ],
+      "root_anchor": [
+        98,
+        203
+      ],
+      "sprite": "crops/C35/mature.png"
+    },
+    {
+      "crop": "C36",
+      "name": "南瓜",
+      "stage": "growing",
+      "row": 1,
+      "column": 3,
+      "source_rect": [
+        532,
+        97,
+        718,
+        226
+      ],
+      "normalized_rect": [
+        547,
+        91,
+        708,
+        203
+      ],
+      "sprite_size": [
+        186,
+        129
+      ],
+      "root_anchor": [
+        91,
+        128
+      ],
+      "sprite": "crops/C36/growing.png"
+    },
+    {
+      "crop": "C36",
+      "name": "南瓜",
+      "stage": "mature",
+      "row": 1,
+      "column": 4,
+      "source_rect": [
+        757,
+        42,
+        988,
+        228
+      ],
+      "normalized_rect": [
+        798,
+        73,
+        959,
+        203
+      ],
+      "sprite_size": [
+        231,
+        186
+      ],
+      "root_anchor": [
+        113,
+        185
+      ],
+      "sprite": "crops/C36/mature.png"
+    },
+    {
+      "crop": "C37",
+      "name": "卷心菜",
+      "stage": "growing",
+      "row": 1,
+      "column": 5,
+      "source_rect": [
+        1049,
+        90,
+        1210,
+        227
+      ],
+      "normalized_rect": [
+        1049,
+        66,
+        1210,
+        203
+      ],
+      "sprite_size": [
+        161,
+        137
+      ],
+      "root_anchor": [
+        74,
+        136
+      ],
+      "sprite": "crops/C37/growing.png"
+    },
+    {
+      "crop": "C37",
+      "name": "卷心菜",
+      "stage": "mature",
+      "row": 2,
+      "column": 1,
+      "source_rect": [
+        16,
+        289,
+        242,
+        477
+      ],
+      "normalized_rect": [
+        45,
+        320,
+        206,
+        454
+      ],
+      "sprite_size": [
+        226,
+        188
+      ],
+      "root_anchor": [
+        111,
+        187
+      ],
+      "sprite": "crops/C37/mature.png"
+    },
+    {
+      "crop": "C38",
+      "name": "大葱",
+      "stage": "growing",
+      "row": 2,
+      "column": 2,
+      "source_rect": [
+        351,
+        304,
+        410,
+        471
+      ],
+      "normalized_rect": [
+        348,
+        293,
+        405,
+        454
+      ],
+      "sprite_size": [
+        59,
+        167
+      ],
+      "root_anchor": [
+        26,
+        166
+      ],
+      "sprite": "crops/C38/growing.png"
+    },
+    {
+      "crop": "C38",
+      "name": "大葱",
+      "stage": "mature",
+      "row": 2,
+      "column": 3,
+      "source_rect": [
+        549,
+        255,
+        703,
+        477
+      ],
+      "normalized_rect": [
+        571,
+        293,
+        683,
+        454
+      ],
+      "sprite_size": [
+        154,
+        222
+      ],
+      "root_anchor": [
+        70,
+        221
+      ],
+      "sprite": "crops/C38/mature.png"
+    },
+    {
+      "crop": "C39",
+      "name": "紫苏",
+      "stage": "growing",
+      "row": 2,
+      "column": 4,
+      "source_rect": [
+        794,
+        335,
+        939,
+        473
+      ],
+      "normalized_rect": [
+        806,
+        316,
+        951,
+        454
+      ],
+      "sprite_size": [
+        145,
+        138
+      ],
+      "root_anchor": [
+        76,
+        137
+      ],
+      "sprite": "crops/C39/growing.png"
+    },
+    {
+      "crop": "C39",
+      "name": "紫苏",
+      "stage": "mature",
+      "row": 2,
+      "column": 5,
+      "source_rect": [
+        1013,
+        275,
+        1241,
+        477
+      ],
+      "normalized_rect": [
+        1049,
+        311,
+        1210,
+        454
+      ],
+      "sprite_size": [
+        228,
+        202
+      ],
+      "root_anchor": [
+        112,
+        201
+      ],
+      "sprite": "crops/C39/mature.png"
+    },
+    {
+      "crop": "C40",
+      "name": "翡翠山椒",
+      "stage": "growing",
+      "row": 3,
+      "column": 1,
+      "source_rect": [
+        52,
+        572,
+        192,
+        720
+      ],
+      "normalized_rect": [
+        55,
+        557,
+        195,
+        705
+      ],
+      "sprite_size": [
+        140,
+        148
+      ],
+      "root_anchor": [
+        75,
+        147
+      ],
+      "sprite": "crops/C40/growing.png"
+    },
+    {
+      "crop": "C40",
+      "name": "翡翠山椒",
+      "stage": "mature",
+      "row": 3,
+      "column": 2,
+      "source_rect": [
+        268,
+        521,
+        489,
+        721
+      ],
+      "normalized_rect": [
+        296,
+        559,
+        457,
+        705
+      ],
+      "sprite_size": [
+        221,
+        200
+      ],
+      "root_anchor": [
+        105,
+        199
+      ],
+      "sprite": "crops/C40/mature.png"
+    },
+    {
+      "crop": "C41",
+      "name": "雪香白芝麻",
+      "stage": "growing",
+      "row": 3,
+      "column": 3,
+      "source_rect": [
+        547,
+        534,
+        698,
+        719
+      ],
+      "normalized_rect": [
+        562,
+        544,
+        693,
+        705
+      ],
+      "sprite_size": [
+        151,
+        185
+      ],
+      "root_anchor": [
+        77,
+        184
+      ],
+      "sprite": "crops/C41/growing.png"
+    },
+    {
+      "crop": "C41",
+      "name": "雪香白芝麻",
+      "stage": "mature",
+      "row": 3,
+      "column": 4,
+      "source_rect": [
+        784,
+        502,
+        962,
+        722
+      ],
+      "normalized_rect": [
+        813,
+        544,
+        943,
+        705
+      ],
+      "sprite_size": [
+        178,
+        220
+      ],
+      "root_anchor": [
+        86,
+        219
+      ],
+      "sprite": "crops/C41/mature.png"
+    },
+    {
+      "crop": "C42",
+      "name": "金冠菠萝",
+      "stage": "growing",
+      "row": 3,
+      "column": 5,
+      "source_rect": [
+        1036,
+        587,
+        1220,
+        720
+      ],
+      "normalized_rect": [
+        1049,
+        589,
+        1210,
+        705
+      ],
+      "sprite_size": [
+        184,
+        133
+      ],
+      "root_anchor": [
+        87,
+        132
+      ],
+      "sprite": "crops/C42/growing.png"
+    },
+    {
+      "crop": "C42",
+      "name": "金冠菠萝",
+      "stage": "mature",
+      "row": 4,
+      "column": 1,
+      "source_rect": [
+        19,
+        759,
+        237,
+        961
+      ],
+      "normalized_rect": [
+        45,
+        807,
+        206,
+        956
+      ],
+      "sprite_size": [
+        218,
+        202
+      ],
+      "root_anchor": [
+        108,
+        201
+      ],
+      "sprite": "crops/C42/mature.png"
+    },
+    {
+      "crop": "C43",
+      "name": "蜜香蕉",
+      "stage": "growing",
+      "row": 4,
+      "column": 2,
+      "source_rect": [
+        289,
+        797,
+        450,
+        957
+      ],
+      "normalized_rect": [
+        296,
+        796,
+        457,
+        956
+      ],
+      "sprite_size": [
+        161,
+        160
+      ],
+      "root_anchor": [
+        83,
+        159
+      ],
+      "sprite": "crops/C43/growing.png"
+    },
+    {
+      "crop": "C43",
+      "name": "蜜香蕉",
+      "stage": "mature",
+      "row": 4,
+      "column": 3,
+      "source_rect": [
+        503,
+        753,
+        743,
+        961
+      ],
+      "normalized_rect": [
+        547,
+        816,
+        708,
+        956
+      ],
+      "sprite_size": [
+        240,
+        208
+      ],
+      "root_anchor": [
+        112,
+        207
+      ],
+      "sprite": "crops/C43/mature.png"
+    },
+    {
+      "crop": "C44",
+      "name": "翡翠青柠",
+      "stage": "growing",
+      "row": 4,
+      "column": 4,
+      "source_rect": [
+        797,
+        777,
+        942,
+        957
+      ],
+      "normalized_rect": [
+        813,
+        795,
+        943,
+        956
+      ],
+      "sprite_size": [
+        145,
+        180
+      ],
+      "root_anchor": [
+        75,
+        179
+      ],
+      "sprite": "crops/C44/growing.png"
+    },
+    {
+      "crop": "C44",
+      "name": "翡翠青柠",
+      "stage": "mature",
+      "row": 4,
+      "column": 5,
+      "source_rect": [
+        1018,
+        756,
+        1227,
+        959
+      ],
+      "normalized_rect": [
+        1049,
+        800,
+        1210,
+        956
+      ],
+      "sprite_size": [
+        209,
+        203
+      ],
+      "root_anchor": [
+        104,
+        202
+      ],
+      "sprite": "crops/C44/mature.png"
+    },
+    {
+      "crop": "C45",
+      "name": "雪瓤椰子",
+      "stage": "growing",
+      "row": 5,
+      "column": 1,
+      "source_rect": [
+        43,
+        1044,
+        204,
+        1208
+      ],
+      "normalized_rect": [
+        46,
+        1046,
+        204,
+        1207
+      ],
+      "sprite_size": [
+        161,
+        164
+      ],
+      "root_anchor": [
+        81,
+        163
+      ],
+      "sprite": "crops/C45/growing.png"
+    },
+    {
+      "crop": "C45",
+      "name": "雪瓤椰子",
+      "stage": "mature",
+      "row": 5,
+      "column": 2,
+      "source_rect": [
+        268,
+        1006,
+        493,
+        1213
+      ],
+      "normalized_rect": [
+        296,
+        1059,
+        457,
+        1207
+      ],
+      "sprite_size": [
+        225,
+        207
+      ],
+      "root_anchor": [
+        107,
+        206
+      ],
+      "sprite": "crops/C45/mature.png"
+    }
+  ]
+}

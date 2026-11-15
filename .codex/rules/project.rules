@@ -1,0 +1,9 @@
+# Codex 的项目级命令规则只影响沙箱外命令决策。
+# 推送规则保留交互审批，常规开发命令沿用当前环境策略。
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "推送会变更远端仓库，需核对目标。",
+    match = ["git push origin main"],
+    not_match = ["git status"],
+)

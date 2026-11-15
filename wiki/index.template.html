@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>放置农场 · 配方图鉴</title>
+<style>
+:root{color-scheme:light;--ink:#263827;--muted:#50634d;--green:#214b3a;--cream:#fff9e9;--line:#d8caa4;--gold:#eab24a;--paper:#f4edda;font-family:"Rethink Sans",system-ui,"PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #9d5c1e;outline-offset:3px}[hidden]{display:none!important}a{color:var(--green);text-underline-offset:3px}.frame{width:min(100% - 36px,1080px);margin-inline:auto}
+header{background:var(--green);color:var(--cream);border-bottom:5px solid var(--gold);padding:32px 0 35px}.brand{margin:0 0 9px;color:#f4d993;font-weight:700;letter-spacing:.16em}h1{font-size:clamp(36px,7vw,66px);margin:0;line-height:1.05;letter-spacing:.04em}
+main{padding:27px 0 50px}.controls{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap}.search{display:grid;gap:5px;flex:0 1 310px;width:100%;font-weight:700}.search input{min-width:0;padding:11px 12px;border:1px solid #a99d7e;background:var(--cream);color:var(--ink);border-radius:4px}.filters{display:flex;flex-wrap:wrap;gap:6px}.filters button,.pager button{min-height:40px;border:1px solid #a99d7e;border-radius:4px;background:var(--cream);color:var(--ink);padding:8px 13px;font-weight:700}.filters [aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--cream)}.pager button:disabled{opacity:.45;cursor:default}
+.list-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0;color:var(--muted);min-height:40px}.pager{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.pager p{margin:0;font-variant-numeric:tabular-nums}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:12px;scroll-margin-top:10px}.card{padding:14px;background:var(--cream);border:1px solid var(--line);border-radius:7px;box-shadow:0 2px #dfd3b5;scroll-margin:12px}.card:target{border-color:#936325}.identity{display:flex;align-items:center;gap:12px}.icon{display:grid;place-items:center;flex:none;width:58px;height:58px;border:1px solid #e4d9b8;background:#f4ecd4;border-radius:5px}.icon img{width:54px;height:54px;object-fit:contain;image-rendering:pixelated}.card h2{font-size:1.1rem;line-height:1.35;margin:2px 0 0}.category{margin:0;font-size:.77rem;color:var(--muted)}.recipe{margin:10px 0 0;border-top:1px solid var(--line);padding-top:8px;font-size:.89rem;line-height:1.65}.recipe strong{display:block;color:var(--muted);font-size:.77rem}.recipe ul{display:flex;flex-wrap:wrap;gap:2px 9px;padding:0;list-style:none;margin:1px 0 0}.batch{margin:3px 0 0;color:var(--muted)}.empty{background:var(--cream);border:1px solid var(--line);padding:26px}.footer-pager{margin-top:18px}.skip{position:absolute;left:8px;top:-80px;background:var(--cream);padding:8px;z-index:1}.skip:focus{top:8px}
+@media(max-width:560px){.frame{width:calc(100% - 24px)}header{padding:24px 0}.search{flex:1 1 100%}.filters button{padding:8px 10px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.card{padding:9px}.identity{gap:7px}.icon{width:44px;height:44px}.icon img{width:40px;height:40px}.card h2{font-size:.95rem}.list-bar{align-items:flex-start}.pager{gap:5px}.pager button{padding:7px}}
+.sources{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;margin-top:12px}.complexity{display:flex;align-items:center;gap:7px;font-size:.87rem;font-weight:700}.complexity select{font:inherit;padding:7px 10px;min-height:40px;border:1px solid #a99d7e;border-radius:4px;background:var(--cream);color:var(--ink)}select:focus-visible{outline:3px solid #9d5c1e;outline-offset:3px}.card h2,.recipe a,.batch{overflow-wrap:anywhere}.card:focus-visible{outline:3px solid #9d5c1e;outline-offset:2px}
+</style>
+</head>
+<body>
+<a class="skip" href="#catalog">跳到品项</a>
+<header><div class="frame"><p class="brand">放置农场</p><h1>配方图鉴</h1></div></header>
+<main class="frame">
+<div class="controls">
+  <nav class="filters" aria-label="物品分类">
+    <button type="button" data-kind="" aria-pressed="true">全部</button>
+    <button type="button" data-kind="raw" aria-pressed="false">原料</button>
+    <button type="button" data-kind="intermediate" aria-pressed="false">中间产物</button>
+    <button type="button" data-kind="product" aria-pressed="false">商品</button>
+  </nav>
+  <label class="search">搜索品项<input type="search" placeholder="输入物品或材料名称" autocomplete="off"></label>
+</div>
+<div class="sources">
+  <nav class="filters" aria-label="原料来源">
+    <button type="button" data-sector="" aria-pressed="true">全部来源</button>
+    <button type="button" data-sector="agriculture" aria-pressed="false">农业</button>
+    <button type="button" data-sector="livestock" aria-pressed="false">畜牧</button>
+    <button type="button" data-sector="fish" aria-pressed="false">水产</button>
+  </nav>
+  <label class="complexity" hidden>商品配方<select id="complexity">
+    <option value="">不限来源数</option><option value="1">单类商品</option>
+    <option value="2">双类商品</option><option value="3">三类商品</option>
+  </select></label>
+</div>
+<div class="list-bar"><p id="count" role="status"></p><nav class="pager" aria-label="顶部翻页"></nav></div>
+<section id="catalog" class="grid" aria-label="品项"></section>
+<p id="empty" class="empty" hidden>没有找到符合条件的品项。</p>
+<nav class="pager footer-pager" aria-label="底部翻页"></nav>
+<noscript>请启用 JavaScript 查看配方图鉴。</noscript>
+</main>
+<script id="items" type="application/json">%%CATALOG%%</script>
+<script>
+(() => {
+  const rows = JSON.parse(document.querySelector('#items').textContent);
+  const items = new Map(rows.map((item) => [item.id, item]));
+  const sources = { agriculture: '农业', livestock: '畜牧', fish: '水产' };
+  const rawLabels = { agriculture: '作物', livestock: '畜牧原料', fish: '水产原料' };
+  const rawSources = { agriculture: '田地收获', livestock: '畜牧场', fish: '鱼池' };
+  const productLabels = { 1: '单类商品', 2: '双类商品', 3: '三类商品' };
+  const catalog = document.querySelector('#catalog');
+  const input = document.querySelector('input');
+  const filters = [...document.querySelectorAll('[data-kind]')];
+  const sectorFilters = [...document.querySelectorAll('[data-sector]')];
+  const complexity = document.querySelector('#complexity');
+  const pageSize = 25;
+  let kind = '';
+  let sector = '';
+  let page = 0;
+  const observer = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue;
+      target.src = target.dataset.src;
+      observer.unobserve(target);
+    }
+  }, { rootMargin: '120px 0px' }) : null;
+
+  function element(tag, text, className) {
+    const node = document.createElement(tag);
+    if (text) node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  }
+
+  function icon(item) {
+    const slot = element('span', '', 'icon');
+    const img = element('img');
+    img.alt = '';
+    img.width = 96;
+    img.height = 96;
+    img.decoding = 'async';
+    img.dataset.src = './icons/' + item.id + '.webp?v=%%ICON_REVISION%%';
+    img.addEventListener('error', () => img.remove(), { once: true });
+    slot.append(img);
+    if (observer) observer.observe(img);
+    else img.src = img.dataset.src;
+    return slot;
+  }
+
+  function duration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    return minutes === 0 ? seconds + ' 秒' : minutes + ' 分钟' + (remainder ? ' ' + remainder + ' 秒' : '');
+  }
+
+  function card(item) {
+    const article = element('article', '', 'card');
+    article.id = item.id;
+    article.tabIndex = -1;
+    const identity = element('div', '', 'identity');
+    const title = element('div');
+    const isRaw = item.kind === 'raw';
+    const isProduct = item.kind === 'product';
+    const label = isRaw ? rawLabels[item.sectors[0]] :
+      item.sectors.map((key) => sources[key]).join('＋') + ' · ' + (isProduct ? productLabels[item.sectors.length] : '中间产物');
+    title.append(element('p', label, 'category'), element('h2', item.name));
+    identity.append(icon(item), title);
+    const recipe = element('div', '', 'recipe');
+    if (isRaw) {
+      const source = rawSources[item.sectors[0]] + (item.species ? ' · ' + item.species : '');
+      recipe.append(element('strong', '获取方式'), element('p', source, 'batch'));
+    } else {
+      recipe.append(element('strong', '配方材料'));
+      const list = element('ul');
+      for (const [id, amount] of item.inputs) {
+        const entry = element('li');
+        const link = element('a', items.get(id).name);
+        link.href = '#' + id;
+        entry.append(link, document.createTextNode(' × ' + amount));
+        list.append(entry);
+      }
+      recipe.append(list);
+      if (isProduct) {
+        const total = item.inputs.reduce((sum, [, amount]) => sum + BigInt(amount), 0n);
+        recipe.append(element('p', item.inputs.length + ' 种中间产物 · 共 ' + total + ' 件', 'batch'));
+        recipe.append(element('p', '商品等级 ' + item.level, 'batch'));
+      }
+    }
+    recipe.append(element('p', (isRaw ? '基础收成 ' + item.output + ' 份' : '每批产出 ' + item.output + ' 件') + ' · ' + duration(item.seconds), 'batch'));
+    if (item.stage > 1) recipe.append(element('p', '最长生产链 ' + item.stage + ' 道工序', 'batch'));
+    recipe.append(element('p', '基准单价 ' + BigInt(item.price).toLocaleString('zh-CN') + ' 金币', 'batch'));
+    article.append(identity, recipe);
+    return article;
+  }
+
+  function render() {
+    observer?.disconnect();
+    const query = input.value.trim().normalize('NFKC');
+    const results = rows.filter((item) => (!kind || item.kind === kind) &&
+      (!sector || item.sectors.includes(sector)) &&
+      (!complexity.value || item.sectors.length === Number(complexity.value)) &&
+      (!query || item.name.includes(query) || item.species?.includes(query) || item.inputs.some(([id]) => items.get(id).name.includes(query))));
+    if (kind === 'product') results.sort((a, b) => a.level - b.level);
+    const count = Math.ceil(results.length / pageSize);
+    page = Math.min(page, Math.max(0, count - 1));
+    catalog.replaceChildren(...results.slice(page * pageSize, (page + 1) * pageSize).map(card));
+    document.querySelector('#empty').hidden = results.length > 0;
+    document.querySelector('#count').textContent = results.length + ' 个品项';
+    for (const filter of filters) filter.setAttribute('aria-pressed', String(filter.dataset.kind === kind));
+    for (const filter of sectorFilters) filter.setAttribute('aria-pressed', String(filter.dataset.sector === sector));
+    complexity.parentElement.hidden = kind !== 'product';
+    for (const nav of document.querySelectorAll('.pager')) {
+      const previous = element('button', '上一页');
+      const next = element('button', '下一页');
+      previous.disabled = page === 0;
+      next.disabled = page + 1 >= count;
+      previous.onclick = () => turn(-1);
+      next.onclick = () => turn(1);
+      nav.hidden = count < 2;
+      nav.replaceChildren(previous, element('p', (page + 1) + ' / ' + count), next);
+    }
+  }
+
+  function clearHash() {
+    if (location.hash) history.replaceState(null, '', location.href.split('#')[0]);
+  }
+
+  function turn(step) {
+    clearHash();
+    page += step;
+    render();
+    catalog.scrollIntoView({ block: 'start' });
+  }
+
+  function openLinkedItem() {
+    const id = location.hash.slice(1);
+    const index = rows.findIndex((item) => item.id === id);
+    if (index < 0) return;
+    input.value = '';
+    kind = '';
+    sector = '';
+    complexity.value = '';
+    page = Math.floor(index / pageSize);
+    render();
+    const item = document.getElementById(id);
+    item?.scrollIntoView({ block: 'center' });
+    item?.focus({ preventScroll: true });
+  }
+
+  for (const filter of filters) filter.onclick = () => {
+    clearHash();
+    kind = filter.dataset.kind;
+    if (kind !== 'product') complexity.value = '';
+    page = 0;
+    render();
+  };
+  for (const filter of sectorFilters) filter.onclick = () => { clearHash(); sector = filter.dataset.sector; page = 0; render(); };
+  complexity.onchange = () => { clearHash(); page = 0; render(); };
+  input.oninput = () => { clearHash(); page = 0; render(); };
+  window.addEventListener('hashchange', openLinkedItem);
+  render();
+  openLinkedItem();
+})();
+</script>
+</body>
+</html>

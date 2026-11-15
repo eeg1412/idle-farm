@@ -1,0 +1,32 @@
+{
+  "name": "idle-farm",
+  "description": "放置农场 (idle farm)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eeg1412/idle-farm.git"
+  },
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "npm run art:check && npm run wiki:build && vite build && node scripts/build-offline.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --test",
+    "check": "npm run content:check && npm run art:check && npm test",
+    "art:check": "node scripts/check-facility-art.mjs",
+    "content:generate": "node scripts/generate-game-data.mjs",
+    "content:check": "node scripts/compile-content.mjs --check && node scripts/generate-game-data.mjs --check",
+    "wiki:build": "node scripts/build-wiki.mjs"
+  },
+  "dependencies": {
+    "pixi.js": "8.23.0"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.8",
+    "vite": "7.3.1"
+  }
+}

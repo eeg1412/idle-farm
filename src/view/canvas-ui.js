@@ -1,0 +1,1740 @@
+import { Container, Graphics, Rectangle, Sprite, Text, Texture, Assets } from 'pixi.js';
+import data from '../content/game-data.json' with { type: 'json' };
+import { compact } from './numbers.js';
+import { gameHistory } from './navigation.js';
+import { renderProduction, renderWorkshop } from './production-pages.js';
+import { minPlotAnimationMs, mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
+import { renderResearch } from './research-page.js';
+import { mountResearchTree } from './research-tree.js';
+import {
+  renderWarehouse, renderCatalog, renderTasks, renderSettings, renderFarmSale, renderManagement,
+} from './management-pages.js';
+
+const palette = {
+  paper: 0xfcf2e2, card: 0xfff9ee, ink: 0x172f1b, muted: 0x625d4c, border: 0xc8aa7e,
+  green: 0x297b34, leaf: 0x56a940, selection: 0xdcebd2, gold: 0xffce45, pale: 0xf6e9d0,
+  cream: 0xfffdf7, red: 0xa03221, dark: 0x223524, gray: 0xede5d7, line: 0xe3d0b3,
+};
+const pages = {
+  牧场: renderProduction, 工坊: renderWorkshop, 仓库: renderWarehouse, 研究: renderResearch, 经营: renderManagement,
+  图鉴: renderCatalog, 任务: renderTasks, 设置: renderSettings, 出售牧场: renderFarmSale,
+};
+const tabs = ['牧场', '工坊', '仓库', '研究', '经营'];
+const tabIcons = ['nav-ranch', 'nav-workshop', 'nav-warehouse', 'nav-research', 'nav-management'];
+const drawnIcons = {
+  'settings-gear': {
+    colors: { d: 0x214531, g: 0x628567, l: 0xa7b99a },
+    rows: [
+      '....dd....', '.dd.dg.dd.', '.dgddddgd.', '..dglggd..',
+      'ddgl..ggdd', 'dlgl..gggd', '..dgllgd..', '.dgddddgd.',
+      '.dd.dg.dd.', '....dd....',
+    ],
+  },
+};
+const heroKeys = new Set(['fields', 'livestock', 'fish', 'workshop', 'warehouse', 'research',
+  'tasks-banner', 'catalog-banner', 'sale-banner', 'settings-banner']);
+const sceneKeys = new Set(['scene-wheat', 'scene-empty-field', 'scene-hen', 'scene-empty-barn',
+  'scene-fish', 'scene-empty-pond', 'scene-composite-gift']);
+for (const [id, item] of Object.entries(data.items)) {
+  if (['C', 'L', 'F'].includes(item.kind)) {
+    sceneKeys.add('scene-' + id);
+  }
+}
+const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalog', 'facility-field', 'facility-empty-field',
+  'facility-hen', 'facility-empty-barn', 'facility-fish', 'facility-empty-pond', 'facility-mill',
+  'facility-kitchen', 'coin', 'clock', 'task-barn', 'task-fish', 'task-process', 'task-product',
+  'sale-retain', 'sale-reset', 'tech-water', 'tech-farm', 'tech-livestock', 'tech-workshop',
+  'facility-buffalo', 'facility-mallard', 'facility-goat', 'facility-goose', 'facility-pig',
+  'facility-rabbit', 'facility-sheep', 'facility-muscovy', 'facility-cattle',
+  'facility-carp', 'facility-sea-bass', 'facility-trout', 'facility-mandarin-fish', 'facility-salmon',
+  'facility-eel', 'facility-sea-bream', 'facility-turbot', 'facility-sturgeon',
+  'settings-sound', 'settings-music', 'settings-display', 'settings-guide',
+  'operation-switch', 'operation-upgrade', 'operation-sell', 'portrait-warehouse',
+  ...Array.from({ length: 49 }, (_, index) => 'plot-C' + String(index + 2).padStart(2, '0')),
+]);
+const path = (name) => new URL(name, document.baseURI).href;
+const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
+const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
+const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id);
+const inkGraphics = () => {
+  const graphics = new Graphics();
+  graphics.eventMode = 'none';
+  return graphics;
+};
+
+function panel(parent, x, y, width, height, fill, outline, radius = 9) {
+  const g = inkGraphics();
+  if (radius) g.roundRect(x, y, width, height, Math.min(radius, width / 2, height / 2));
+  else g.rect(x, y, width, height);
+  g.fill(fill);
+  if (outline) g.stroke({ color: outline, width: 1.1 });
+  parent.addChild(g);
+  return g;
+}
+
+function drawPixelIcon(parent, icon, x, y, width, height) {
+  const columns = icon.rows[0].length;
+  const unit = Math.max(1, Math.floor(Math.min(width / columns, height / icon.rows.length)));
+  const left = Math.round(x + (width - columns * unit) / 2);
+  const top = Math.round(y + (height - icon.rows.length * unit) / 2);
+  const art = inkGraphics();
+  for (const [key, color] of Object.entries(icon.colors)) {
+    icon.rows.forEach((row, dy) => Array.from(row).forEach((pixel, dx) => {
+      if (pixel === key) art.rect(left + dx * unit, top + dy * unit, unit, unit);
+    }));
+    art.fill(color);
+  }
+  parent.addChild(art);
+}
+
+function textNode(parent, value, x, y, width, options = {}) {
+  const { size = 16, color = palette.ink, align = 'left', weight = '600', wrap = true } = options;
+  const label = new Text({ text: number(value), style: {
+    fontFamily: 'system-ui, "PingFang SC", "Microsoft YaHei", sans-serif',
+    fontSize: size, fontWeight: weight, fill: color, align, wordWrap: wrap,
+    wordWrapWidth: Math.max(8, width), breakWords: wrap, lineHeight: Math.ceil(size * 1.36),
+  } });
+  label.eventMode = 'none';
+  const shift = align === 'right' ? Math.max(0, width - label.width) :
+    align === 'center' ? Math.max(0, (width - label.width) / 2) : 0;
+  label.position.set(x + shift, y);
+  parent.addChild(label);
+  return label;
+}
+
+function compactLabel(parent, value, x, y, width, options) {
+  const label = textNode(parent, compact(value), x, y, width, { ...options, wrap: false });
+  for (let places = 1; label.width > width && places >= 0; places -= 1) {
+    label.text = compact(value, places);
+  }
+  if (label.width > width) {
+    label.style.fontSize = Math.max(11, Math.floor(label.style.fontSize * width / label.width));
+  }
+  if (label.width > width) {
+    label.style.wordWrap = true;
+    label.style.breakWords = true;
+  }
+  if (options.align === 'right') label.x = x + Math.max(0, width - label.width);
+  return label;
+}
+
+export function createGameView(app, dispatch, restore, replace, onNavigate, browser = window) {
+  const root = new Container();
+  const clip = inkGraphics();
+  app.stage.addChild(root, clip);
+  root.mask = clip;
+  let current = '牧场';
+  let history = [];
+  const navigation = gameHistory(browser);
+  let routeDialogSequence = 0;
+  let applyingRoute = false;
+  let layout;
+  let world;
+  let status;
+  let waiting = false;
+  let pendingRender = false;
+  let modal;
+  let pendingModal;
+  let notices;
+  let floating;
+  let point;
+  let scrollTarget;
+  let focusIndex = -1;
+  let controls = [];
+  let building = false;
+  let drag = null;
+  let sliderDrag = null;
+  let treeGesture = false;
+  let coast = null;
+  let scrollActivity = -Infinity;
+  let pressedPointer = null;
+  let needsRender = false;
+  let blockTap = false;
+  let feedbackLayer;
+  let progressTiming;
+  let syncPlotVisibility;
+  let plotSharedLoad;
+  const progressBars = new Set();
+  const activePlots = new Set();
+  const visiblePlotIds = new Set();
+  const cropPlots = new Map();
+  const shortPlotStarts = new Map();
+  const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
+  const textures = new Map();
+  const failedImages = new Set();
+  const loadingImages = new Map();
+  const frame = { width: 0, height: 0 };
+
+  const scale = () => clamp(world?.settings?.textScale ?? 1, 1, 2);
+  function progressClock(now) {
+    const elapsed = progressTiming && !world.settings?.reducedMotion
+      ? clamp(now - progressTiming.anchor, 0, progressTiming.maxElapsed) : 0;
+    return world.clockMs + elapsed;
+  }
+
+  const requestRender = () => {
+    needsRender = true;
+    if (pendingRender) return;
+    pendingRender = true;
+    requestAnimationFrame(() => {
+      pendingRender = false;
+      if (!treeGesture && (pressedPointer === null || sliderDrag)) redraw();
+    });
+  };
+
+  function loadImage(url) {
+    const texture = textures.get(url);
+    if (texture || failedImages.has(url)) return Promise.resolve(texture);
+    if (loadingImages.has(url)) return loadingImages.get(url);
+    const pending = Assets.load(url).then((asset) => {
+      asset.source.scaleMode = 'nearest';
+      textures.set(url, asset);
+      return asset;
+    }).catch(() => {
+      failedImages.add(url);
+    }).finally(() => loadingImages.delete(url));
+    loadingImages.set(url, pending);
+    return pending;
+  }
+
+  function loadPlotTextures(id) {
+    const existing = cropPlots.get(id);
+    if (existing) return existing.textures;
+    const crop = {};
+    cropPlots.set(id, crop);
+    plotSharedLoad ??= Promise.all(plotSharedTextureKeys.map(async (key) => [
+      key, await loadImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
+    ])).then((entries) => entries.every(([, texture]) => texture) ? new Map(entries) : undefined);
+
+    const atlasLoad = loadImage(path(`./art/plot/crops/${id}.webp?game=1&v=1`));
+    Promise.all([plotSharedLoad, atlasLoad]).then(([shared, atlas]) => {
+      const size = plotFrameSize;
+      if (!shared || !atlas || atlas.width !== size * 2 || atlas.height !== size * 2) return;
+      const stages = Array.from({ length: 4 }, (_, index) => new Texture({
+        source: atlas.source,
+        frame: new Rectangle(index % 2 * size, Math.floor(index / 2) * size, size, size),
+      }));
+      crop.textures = { shared, stages };
+      if (visiblePlotIds.has(id)) requestRender();
+    });
+  }
+
+  function unmountPlot(plot) {
+    if (!plot.animation) return;
+    plot.animation.destroy();
+    plot.animation = undefined;
+    plot.fallback.visible = true;
+    activePlots.delete(plot);
+  }
+
+  function drawImage(parent, id, x, y, w, h, crop = false) {
+    if (!id || w < 1 || h < 1) return;
+    if (drawnIcons[id]) { drawPixelIcon(parent, drawnIcons[id], x, y, w, h); return; }
+    const hero = heroKeys.has(id);
+    const scene = sceneKeys.has(id);
+    if (!hero && !scene && !hasIcon(id)) return;
+    const directory = hero || scene ? './art/' : uiIconKeys.has(id) ? './ui-icons/' : './wiki/icons/';
+    const url = path(directory + id + '.webp?game=1');
+    const texture = textures.get(url);
+    if (!texture) {
+      if (hero || scene) panel(parent, x, y, w, h, 0xd8e5c7, null, 0);
+      if (!loadingImages.has(url) && !failedImages.has(url)) {
+        loadImage(url).then((asset) => { if (asset) requestRender(); });
+      }
+      return;
+    }
+    const sprite = new Sprite({ texture, roundPixels: true });
+    sprite.eventMode = 'none';
+    const factor = (crop ? Math.max : Math.min)(w / texture.width, h / texture.height);
+    sprite.scale.set(factor);
+    sprite.position.set(x + (w - sprite.width) / 2, y + (h - sprite.height) / 2);
+    parent.addChild(sprite);
+    if (crop) {
+      const mask = inkGraphics();
+      if (scene) mask.roundRect(x, y, w, h, 10);
+      else mask.rect(x, y, w, h);
+      mask.fill(0xffffff);
+      parent.addChild(mask);
+      sprite.mask = mask;
+    }
+  }
+
+  function hitAt(g, parent, x, y, width, height, fn) {
+    g.eventMode = 'static';
+    g.cursor = 'pointer';
+    g.hitArea = new Rectangle(x, y, width, height);
+    const run = (event) => {
+      if (blockTap || waiting) return;
+      if (event) point = root.toLocal(event.global);
+      else point = root.toLocal(parent.toGlobal({ x: x + width / 2, y: y + height / 2 }));
+      fn(event);
+    };
+    g.on('pointertap', run);
+    controls.push({ run, parent, x, y, width, height });
+  }
+
+  function buttonAt(parent, x, y, width, height, label, fn, options = {}) {
+    const disabled = !fn || options.disabled || waiting;
+    const tone = options.tone ?? 'plain';
+    const index = disabled ? -1 : controls.length;
+    const focused = index >= 0 && index === focusIndex;
+    const green = tone === 'green' && !disabled;
+    const gold = tone === 'gold' && !disabled;
+    const stroke = focused ? palette.green : green ? 0x226328 : gold ? 0xd69a24 : palette.border;
+    const fill = disabled ? palette.gray : gold ? palette.gold : green ? palette.green :
+      tone === 'danger' ? 0xf5ddce : palette.pale;
+    let g;
+    if (options.segment) {
+      g = green || focused ? panel(parent, x + 2, y + 2, width - 4, height - 4, fill, stroke, height / 2) : inkGraphics();
+      if (!g.parent) parent.addChild(g);
+    } else {
+      panel(parent, x, y + 2, width, height - 2, green ? 0x205e28 : gold ? 0xb77919 : 0xe2c9a6, null, 13);
+      g = panel(parent, x, y, width, height - 3, fill, stroke, 13);
+      panel(parent, x + 1.5, y + 1, width - 3, height - 5, { color: palette.cream, alpha: 0 },
+        green ? null : 0xfff5db, 12);
+    }
+    const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
+    const baseSize = options.emphasis ? 23 : 18;
+    const size = Math.min(baseSize * scale(), (width - icon - 10) / Math.max(2, Array.from(String(label)).length));
+    const caption = textNode(parent, label, x + 4 + icon, y + 2, width - 8 - icon,
+      { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink, weight: '750' });
+    caption.y = y + (height - caption.height) / 2;
+    if (icon) drawImage(parent, options.icon, Math.max(x + 5, caption.x - icon), y + (height - 18) / 2, 18, 18);
+    if (!disabled) hitAt(g, parent, x, y, width, height, fn);
+  }
+
+  function setDialog(title, draw, options = false) {
+    coast = null;
+    const info = typeof options === 'object'
+      ? { title, draw, scroll: 0, ...options } : { title, draw, scroll: 0, center: options };
+    info.routeKey = String(++routeDialogSequence);
+    info.parentDialog = modal;
+    if (building) { pendingModal = info; requestRender(); }
+    else {
+      modal = info;
+      focusIndex = -1;
+      recordRoute();
+      redraw();
+    }
+  }
+
+  function dismissDialog() {
+    coast = null;
+    modal = undefined;
+    pendingModal = undefined;
+    focusIndex = -1;
+    recordRoute(true);
+    redraw();
+  }
+
+  async function closeDialog() {
+    const shown = modal;
+    if (shown?.closing) return;
+    if (shown?.onClose) {
+      shown.closing = true;
+      try {
+        if (await shown.onClose() === false || modal !== shown) return;
+      } finally {
+        shown.closing = false;
+      }
+    }
+    if (navigation?.active?.modal === shown && shown) {
+      queueMicrotask(() => {
+        if (modal === shown && !navigation.back()) dismissDialog();
+      });
+      return;
+    }
+    if (!navigation && shown?.parentDialog) {
+      modal = shown.parentDialog;
+      focusIndex = -1;
+      redraw();
+      return;
+    }
+    dismissDialog();
+  }
+
+  function go(page, options = {}) {
+    if (!Object.hasOwn(pages, page)) return;
+    coast = null;
+    if (page !== current) {
+      if (tabs.includes(page)) history = [];
+      else history.push(current);
+      current = page;
+      onNavigate?.(current);
+    }
+    if (options.tab !== undefined) { locals[page].tab = options.tab; locals[page].scroll = 0; }
+    if (options.id !== undefined) {
+      locals[page].id = options.id;
+      locals[page].scroll = 0;
+      if (page === '研究') locals[page].openResearchItem = true;
+    }
+    else if (page === '研究' && options.tab !== undefined) delete locals[page].linkedResearchItem;
+    modal = undefined;
+    pendingModal = undefined;
+    focusIndex = -1;
+    recordRoute();
+    redraw();
+  }
+
+  function back() {
+    coast = null;
+    if (modal) { closeDialog(); return; }
+    if (navigation?.back()) return;
+    if (locals[current].onBack?.()) return;
+    current = history.pop() ?? '牧场';
+    onNavigate?.(current);
+    focusIndex = -1;
+    redraw();
+  }
+
+  function showExactNumber(label, value) {
+    setDialog(label, (dialog) => {
+      dialog.fullNumber(value);
+      dialog.button('复制数值', async () => {
+        try { await navigator.clipboard.writeText(value.toString()); float('已复制'); }
+        catch { toast('无法复制，请查看上方数值。'); }
+      });
+      dialog.button('返回', dialog.close);
+    }, { center: true });
+  }
+
+  function routeSnapshot() {
+    const local = locals[current];
+    const tab = current === '图鉴' ? (local.showUses || local.tab === '用途' ? '用途' : undefined) : local.tab;
+    return {
+      page: current, tab,
+      id: (current === '图鉴' ? local.id ?? local.catalogId : local.id ?? local.linkedResearchItem) || undefined,
+      dialog: modal?.routeKey,
+    };
+  }
+
+  function recordRoute(replace = false) {
+    if (!navigation || applyingRoute) return;
+    const route = routeSnapshot();
+    const prior = navigation.active;
+    if (prior && Object.keys(route).every((key) => route[key] === prior.route[key])) return;
+    navigation.write(route, modal, replace, locals[current].scroll);
+  }
+
+  function restoreRoute(initial = false) {
+    if (!navigation) return;
+    const entry = navigation.read();
+    const { page, tab, id } = entry.route;
+    applyingRoute = true;
+    coast = null;
+    if (page !== current) onNavigate?.(page);
+    current = page;
+    const local = locals[page];
+    local.tab = tab;
+    if (page === '图鉴') {
+      local.catalogId = id;
+      local.showUses = tab === '用途';
+      local.catalogTrail = [];
+      delete local.id;
+    } else if (id && (id !== local.linkedResearchItem || local.activeResearchTab !== tab)) local.id = id;
+    else delete local.id;
+    if (page === '研究') local.openResearchItem = Boolean(id && (initial || !entry.key));
+    if (page === '研究' && !id && local.linkedResearchItem) {
+      const panel = local.researchPanels?.[tab];
+      if (panel) delete panel.selected;
+      delete local.linkedResearchItem;
+    }
+    local.scroll = entry.scroll ?? 0;
+    modal = entry.modal?.available && !entry.modal.available(world) ? undefined : entry.modal;
+    pendingModal = undefined;
+    focusIndex = -1;
+    if (!initial) redraw();
+    applyingRoute = false;
+    if (!entry.key || (entry.modal && !modal)) recordRoute(true);
+  }
+
+  function refresh() {
+    recordRoute();
+    redraw();
+  }
+
+  function toast(message) {
+    notices = { message, expires: performance.now() + 2500 };
+    drawFeedback();
+  }
+
+  function float(message) {
+    const at = point ?? { x: frame.width / 2, y: frame.height * 0.72 };
+    floating = { message, at: { x: at.x, y: at.y }, started: performance.now() };
+    drawFeedback();
+  }
+
+  async function action(name, ...args) {
+    if (waiting) return false;
+    waiting = true;
+    const savedPoint = point;
+    redraw();
+    try {
+      const result = await dispatch(name, ...args);
+      point = savedPoint;
+      if (!result?.ok) { if (result?.message) toast(result.message); return false; }
+      if (result.float) float(result.float);
+      if (result.toast) toast(result.toast);
+      return true;
+    } finally {
+      waiting = false;
+      redraw();
+    }
+  }
+
+  function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
+    let cursor = y;
+    const rowGap = 7;
+    const resetScroll = () => { local.scroll = 0; redraw(); };
+    function scrollChoices(items, onSelect, columns, height, draw) {
+      if (!items.length) return;
+      const top = cursor;
+      const gap = columns > 1 ? 7 : 4;
+      const step = height + gap;
+      const cellWidth = (width + gap) / columns - gap;
+      const countRows = Math.ceil(items.length / columns);
+      const list = new Container();
+      list.eventMode = 'none';
+      parent.addChild(list);
+      const hit = inkGraphics();
+      parent.addChild(hit);
+      const rendered = new Map();
+      const focus = controls.length;
+      let selected = clamp(local.indexKeyboard ?? 0, 0, items.length - 1);
+      let visibleScroll = 0;
+      function paint(scroll) {
+        visibleScroll = scroll;
+        const first = columns * Math.max(0, Math.floor((scroll - top) / step));
+        const end = Math.min(items.length, columns * Math.ceil((scroll + availableHeight - top) / step));
+        for (const [index, tile] of rendered) {
+          if (index >= first && index < end) continue;
+          tile.layer.destroy({ children: true });
+          rendered.delete(index);
+        }
+        for (let index = first; index < end; index += 1) {
+          const left = x + (index % columns) * (cellWidth + gap);
+          const at = top + Math.floor(index / columns) * step;
+          let tile = rendered.get(index);
+          if (!tile) {
+            const layer = new Container();
+            list.addChild(layer);
+            draw(layer, items[index], left, at, cellWidth);
+            const outline = inkGraphics();
+            layer.addChild(outline);
+            tile = { layer, outline };
+            rendered.set(index, tile);
+          }
+          tile.outline.clear();
+          if (focusIndex === focus && selected === index) {
+            tile.outline.roundRect(left, at, cellWidth, height, 9).stroke({ color: palette.green, width: 2 });
+          }
+        }
+      }
+      if (!waiting) {
+        hitAt(hit, parent, x, top, width, countRows * step - gap, (event) => {
+          let index = selected;
+          if (event) {
+            const position = parent.toLocal(event.global);
+            const row = Math.floor((position.y - top) / step);
+            const column = Math.floor((position.x - x) / (cellWidth + gap));
+            if (position.y - top - row * step >= height || position.x - x - column * (cellWidth + gap) >= cellWidth) return;
+            index = row * columns + column;
+          }
+          const item = items[index];
+          if (item && !item.selected) onSelect(item);
+        });
+        controls[focus].height = height;
+        controls[focus].key = (key) => {
+          const stepByKey = { ArrowDown: columns, ArrowUp: -columns, ArrowLeft: -1, ArrowRight: 1 };
+          if (!Object.hasOwn(stepByKey, key)) return false;
+          selected = clamp(selected + stepByKey[key], 0, items.length - 1);
+          local.indexKeyboard = selected;
+          const rowTop = top + Math.floor(selected / columns) * step;
+          if (rowTop < visibleScroll || rowTop + height > visibleScroll + availableHeight) changeScroll(rowTop - step);
+          else paint(visibleScroll);
+          return true;
+        };
+      }
+      options.observeScroll?.(paint);
+      paint(local.scroll ?? 0);
+      cursor += countRows * step - gap + rowGap;
+    }
+    const ui = {
+      w: world, local, width, height: availableHeight, refresh, go, back, action, float, toast,
+      dialog: setDialog, close: closeDialog,
+      tree(options) {
+        const treeHeight = Math.max(120, availableHeight - cursor - 5);
+        mountResearchTree({
+          ...options, parent, x, y: cursor, width, height: treeHeight,
+          drawImage, textNode, buttonAt, inkGraphics, requestRender, textScale: scale(),
+          isWaiting: () => waiting || Boolean(modal),
+          markGesture(active) {
+            treeGesture = active;
+            if (active) coast = null;
+            else if (needsRender) requestRender();
+          },
+        });
+        cursor += treeHeight;
+      },
+      heading(value, { aside, style, size = style === 'production' ? 27 : 22 } = {}) {
+        if (aside == null) {
+          const t = textNode(parent, value, x, cursor + 2, width, { size: size * scale(), weight: '800' });
+          cursor += t.height + 11;
+          return;
+        }
+        const room = scale() <= 1.45 && width > 160 ? Math.min(105, Math.floor(width * 0.39)) : 0;
+        const title = textNode(parent, value, x, cursor + 2, width - room,
+          { size: size * scale(), weight: '800' });
+        const info = textNode(parent, aside, room ? x + width - room : x,
+          room ? cursor + 5 : title.y + title.height, room ? room - 8 : width,
+          { size: (style === 'production' ? 18 : 16) * scale(), align: room ? 'right' : 'left', weight: '800' });
+        if (room) {
+          const badge = panel(parent, info.x - 6, info.y - 2, info.width + 13, info.height + 4, palette.pale, null, 13);
+          parent.setChildIndex(badge, parent.getChildIndex(info));
+        }
+        cursor = Math.max(title.y + title.height, info.y + info.height) + 8;
+      },
+      titleBar(title, label, fn, options = {}) {
+        const compactTitle = options.compact === true;
+        const production = options.style === 'production';
+        const inset = compactTitle ? 0 : 12;
+        const beside = Boolean(label) && width >= 186 * Math.min(scale(), 1.32);
+        const buttonWidth = beside ? Math.min(width * 0.48, Math.max(90, label.length * 16 * scale() + 20)) : width;
+        const headingWidth = width - inset - (beside ? buttonWidth + 8 : 0);
+        const top = cursor;
+        const t = textNode(parent, title, x + inset, top, headingWidth, {
+          size: (compactTitle ? 19 : production ? 35 : 30) * scale(), weight: '800',
+        });
+        const height = Math.max(t.height, beside ? 48 : 28);
+        t.y += (height - t.height) / 2;
+        if (!compactTitle) parent.addChild(inkGraphics().roundRect(x + 1, t.y + 4, 4, Math.max(15, t.height - 8), 2).fill(palette.green));
+        if (beside) buttonAt(parent, x + width - buttonWidth, top, buttonWidth, height, label, fn,
+          { tone: 'gold', emphasis: production, ...options });
+        cursor += height + rowGap;
+        if (label && !beside) ui.button(label, fn, { tone: 'gold', ...options });
+      },
+      text(value, options = {}) {
+        const { fontSize = 15, muted = false, color } = options;
+        const t = textNode(parent, value, x, cursor, width,
+          { size: fontSize * scale(), color: color ?? (muted ? palette.muted : palette.ink) });
+        cursor += t.height + rowGap;
+      },
+      row(label, value, options = {}) {
+        const metric = options.style === 'metric';
+        const comparison = options.style === 'comparison';
+        const compactRow = options.compact || metric || comparison;
+        const start = cursor;
+        const icon = options.icon && (hasIcon(options.icon) || sceneKeys.has(options.icon)) ? (compactRow ? 29 : 28) : 0;
+        if (icon && !options.valueIcon) drawImage(parent, options.icon, x, cursor + 1, icon - 3, icon - 3);
+        if (options.pill) panel(parent, x, cursor, width, 33, palette.pale, null, 9);
+        const size = (compactRow ? 16 : 15) * scale();
+        const valueStr = number(value);
+        const aWidth = scale() > 1.45 || value == null ? width :
+          Math.floor(width * (options.compact ? 0.68 : metric ? 0.65 : 0.53));
+        const nameX = x + (options.valueIcon ? 0 : icon) + (options.pill ? 6 : 0);
+        const a = textNode(parent, label, nameX, cursor + 2, x + aWidth - nameX - (value == null && options.onClick ? 20 : 0),
+          { size, weight: '750' });
+        const amountSize = (metric || comparison ? 20 : compactRow ? 17 : 15) * scale();
+        const sameLine = value != null && scale() <= 1.45 && valueStr.length * amountSize * 0.55 <= width - aWidth;
+        let b;
+        if (value != null) b = textNode(parent, valueStr + (options.onClick ? '  ›' : ''),
+          sameLine ? x + aWidth : x, sameLine ? cursor : cursor + a.height + 2,
+          (sameLine ? width - aWidth : width) - (options.valueIcon ? icon : 0), { size: amountSize, align: 'right', weight: '800',
+            color: options.tone === 'danger' ? palette.red : palette.ink });
+        if (icon && options.valueIcon) drawImage(parent, options.icon, x + width - icon, b?.y ?? cursor, icon - 3, icon - 3);
+        if (value == null && options.onClick) textNode(parent, '›', x + width - 18, cursor + 1, 18,
+          { size: amountSize, align: 'right', weight: '800' });
+        if (b && comparison && options.from != null && options.to != null && sameLine) {
+          parent.removeChild(b);
+          b.destroy();
+          const left = x + aWidth;
+          const room = (width - aWidth) / 3;
+          const middle = textNode(parent, '➜', left + room, cursor, room,
+            { size: amountSize, align: 'center', color: 0xce8918, weight: '800' });
+          const from = textNode(parent, options.from, left, cursor, room,
+            { size: amountSize, align: 'center', weight: '800' });
+          const to = textNode(parent, options.to, left + room * 2, cursor, room,
+            { size: amountSize, align: 'right', weight: '800' });
+          b = [middle, from, to].reduce((tallest, entry) => entry.height > tallest.height ? entry : tallest);
+        }
+        const height = Math.max(compactRow ? 32 : 0, options.onClick ? 44 : 0,
+          (b ? b.y + b.height : start) - start + 2, a.height + 4, icon);
+        if (options.divider || metric || comparison) parent.addChild(
+          inkGraphics().rect(x, start + height, width, 1).fill({ color: palette.line, alpha: 0.7 }));
+        if (options.onClick && !waiting) {
+          const hit = inkGraphics();
+          parent.addChild(hit);
+          hitAt(hit, parent, x, start, width, height, options.onClick);
+        }
+        cursor += height + (compactRow ? 3 : rowGap);
+      },
+      detailRows(entries, { variant = 'label' } = {}) {
+        const draw = (group) => entries.forEach(({ label, value, icon, tone, onClick }) => {
+          group.row(label, value, {
+            icon, tone, compact: true, divider: variant === 'label', onClick,
+            valueIcon: variant === 'label' && value != null, pill: variant === 'pill' && scale() <= 1.2,
+          });
+        });
+        if (variant === 'recipe') {
+          for (const entry of entries) ui.card((group) => group.row(entry.label, entry.value,
+            { icon: entry.icon, compact: true, onClick: entry.onClick }), { padding: 6, gap: 4 });
+        } else if (variant === 'label') ui.card(draw, { padding: 7, gap: 6, style: 'subtle' });
+        else draw(ui);
+      },
+      button(label, fn, options = {}) {
+        const h = Math.max(48, Math.ceil(27 * scale()));
+        const large = options.style === 'primary' || options.style === 'production';
+        const buttonWidth = Math.min(width, options.maxWidth ?? (options.style === 'primary' ? width * 0.86 : width));
+        buttonAt(parent, x + (width - buttonWidth) / 2, cursor, buttonWidth, h, label, fn,
+          { emphasis: large, ...options });
+        cursor += h + rowGap;
+      },
+      buttons(list, { style, size } = {}) {
+        if (!list.length) return;
+        const segmented = style === 'segmented' || style === 'framed';
+        const filter = style === 'filter';
+        const count = width >= 240 && scale() <= 1.6 ? 4 :
+          ((width >= 180 && segmented) || (width >= 225 && style === 'production')) && scale() <= 1.6 ? 3 : 2;
+        const perLine = Math.min(count, list.length);
+        const height = Math.max(size === 'large' ? 53 : filter ? 43 : 48, Math.ceil(26 * scale()));
+        const gap = segmented ? 2 : 6;
+        for (let i = 0; i < list.length; i += perLine) {
+          const part = list.slice(i, i + perLine);
+          const buttonWidth = (width - (part.length - 1) * gap) / part.length;
+          if (segmented) {
+            panel(parent, x, cursor + 1, width, height, 0xe9d7b9, null, height / 2);
+            panel(parent, x, cursor, width, height, palette.pale, palette.border, height / 2);
+            for (let position = 1; position < part.length; position += 1) {
+              parent.addChild(inkGraphics().rect(x + position * (buttonWidth + gap) - 1, cursor + 9, 1, height - 18)
+                .fill(palette.line));
+            }
+          }
+          part.forEach((item, pos) => buttonAt(parent, x + pos * (buttonWidth + gap), cursor,
+            buttonWidth, height, item.label, item.onClick, { emphasis: segmented || style === 'production', segment: segmented, ...item }));
+          cursor += height + rowGap;
+        }
+      },
+      tabs(values, selected, onSelect, { keepScroll = false, sticky = false, style, size } = {}) {
+        const choices = values.map((label) => ({
+          label, onClick: () => { onSelect(label); if (!keepScroll && local.scroll) resetScroll(); },
+          tone: label === selected ? 'green' : 'plain',
+        }));
+        if (sticky && pinTabs) {
+          cursor += pinTabs(cursor, choices, style, size);
+        } else ui.buttons(choices, { style, size });
+      },
+      badges(entries, { style } = {}) {
+        const gap = 6;
+        let left = x;
+        let height = 0;
+        for (const { label, tone, minCharacters = 0 } of entries) {
+          const size = (style === 'production' ? 15 : 13) * scale();
+          const w = Math.min(width, Math.ceil(Math.max(minCharacters, Array.from(String(label)).length) * size) + 16);
+          if (left + w > x + width) { cursor += height + gap; left = x; height = 0; }
+          const caption = textNode(parent, label, left + 5, cursor + 3, w - 10,
+            { size, color: tone === 'blocked' ? 0xffffff : tone === 'danger' ? palette.red :
+              tone === 'green' ? palette.cream : palette.ink, align: 'center' });
+          const h = caption.height + 6;
+          const bg = panel(parent, left, cursor, w, h,
+            tone === 'blocked' ? palette.red : tone === 'gold' ? palette.gold :
+              tone === 'green' ? palette.green : palette.pale, null, 9);
+          parent.setChildIndex(bg, parent.getChildIndex(caption));
+          height = Math.max(height, h);
+          left += w + gap;
+        }
+        if (height) cursor += height + rowGap;
+      },
+      image(id, size = 56, { title } = {}) {
+        const hero = heroKeys.has(id);
+        const bleed = hero ? fullBleed : 0;
+        const h = hero ? Math.max(id === 'research' ? 54 : 66, Math.min(title ? 205 : 162, size)) : size;
+        const left = x - bleed;
+        const span = hero ? width + bleed * 2 : Math.min(width, size);
+        drawImage(parent, id, left, cursor, span, h, hero);
+        if (title) {
+          const band = Math.min(57, h / 2);
+          const base = cursor + h - band;
+          panel(parent, left, base, span, band, { color: palette.dark, alpha: 0.65 }, null, 0);
+          const caption = textNode(parent, title, x + 18, base, width - 18,
+            { size: Math.min(32, 27 * scale()), weight: '800', color: palette.cream });
+          caption.y = base + (band - caption.height) / 2;
+          parent.addChild(inkGraphics().roundRect(x + 4, base + 12, 4, band - 24, 2).fill(palette.gold));
+        }
+        cursor += h + rowGap;
+      },
+      item(id, title, description) {
+        const icon = hasIcon(id) ? 60 : 0;
+        if (icon) drawImage(parent, id, x, cursor, 52, 52);
+        const label = textNode(parent, title ?? data.items[id]?.name ?? '', x + icon, cursor,
+          width - icon, { size: 18 * scale(), weight: '800' });
+        const extra = description == null ? 0 : textNode(parent, description, x + icon, cursor + label.height + 2,
+          width - icon, { size: 13 * scale(), color: palette.muted }).height + 2;
+        cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
+      },
+      feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover, plotAnimation } = {}) {
+        const top = cursor;
+        const scene = sceneKeys.has(id);
+        const stacked = width < 210 || scale() > 1.6;
+        const artWidth = stacked ? Math.min(width, 135) : Math.floor(width * clamp(ratio, 0.16, 0.48));
+        const artHeight = Math.round(artWidth * (artAspect ?? (style === 'facility' || style === 'workshop' ? 1.08 : 1)));
+        const artX = stacked ? x + (width - artWidth) / 2 : x;
+        const drawX = stacked ? x : x + artWidth + 16;
+        const drawY = stacked ? top + artHeight + 8 : top;
+        const copy = new Container();
+        parent.addChild(copy);
+        const child = layoutUI(copy, drawX, drawY, width - (drawX - x), local, availableHeight);
+        draw(child);
+        const copyHeight = child.bottom - top - rowGap;
+        const height = Math.max(artHeight, copyHeight);
+        if (!stacked && (align === 'center' || style === 'upgrade')) copy.y = (height - copyHeight) / 2;
+        const artY = stacked ? top : top + (height - artHeight) / 2;
+        if (surface !== 'none' && !scene) panel(parent, artX, artY, artWidth, artHeight,
+          surface === 'water' ? 0xc0ddd9 : palette.pale, null, 8);
+        if (onClick && !waiting) {
+          const hit = inkGraphics();
+          parent.addChild(hit);
+          hitAt(hit, parent, artX, artY, artWidth, artHeight, onClick);
+        }
+        const inset = scene ? 0 : 2;
+        const crop = cover || scene || heroKeys.has(id);
+        const imageWidth = artWidth - inset * 2;
+        const imageHeight = artHeight - inset * 2;
+        if (plotAnimation && options.registerPlot) {
+          const art = new Container();
+          const fallback = new Container();
+          art.eventMode = 'none';
+          art.position.set(artX + inset, artY + inset);
+          parent.addChild(art);
+          art.addChild(fallback);
+          drawImage(fallback, id, 0, 0, imageWidth, imageHeight, crop);
+          options.registerPlot({ art, fallback, box: new Rectangle(0, 0, imageWidth, imageHeight), ...plotAnimation });
+        } else {
+          drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
+        }
+        if (!stacked) parent.addChild(inkGraphics().rect(x + artWidth + 7, top, 1, height)
+          .fill(palette.line));
+        cursor = top + height + rowGap;
+      },
+      stats(entries, { columns = entries.length, style } = {}) {
+        const count = width < (style === 'workshop' ? 143 : 185) || scale() > 1.5 ? 1 : Math.max(1, columns);
+        const gap = 5;
+        const cellWidth = (width - gap * (count - 1)) / count;
+        for (let index = 0; index < entries.length; index += count) {
+          const top = cursor;
+          let height = 0;
+          const cells = [];
+          entries.slice(index, index + count).forEach(({ label, value }, column) => {
+            const layer = new Container();
+            const left = x + column * (cellWidth + gap);
+            parent.addChild(layer);
+            const a = textNode(layer, label, left + 4, top + 4, cellWidth - 8,
+              { size: (style === 'workshop' ? 14 : 13) * scale(), align: 'center', color: palette.ink });
+            const b = textNode(layer, value, left + 4, a.y + a.height, cellWidth - 8,
+              { size: (style === 'workshop' ? 22 : 17) * scale(), align: 'center', weight: '800' });
+            height = Math.max(height, b.y + b.height - top + 5);
+            cells.push({ layer, left });
+          });
+          for (const { layer, left } of cells) {
+            const bg = panel(layer, left, top, cellWidth, height, style === 'workshop' ? palette.card : palette.pale,
+              style === 'workshop' ? palette.line : null, 6);
+            layer.setChildIndex(bg, 0);
+          }
+          cursor += height + rowGap;
+        }
+      },
+      balance(label, value, { variant, accent, inline = false } = {}) {
+        const top = cursor;
+        const research = variant === 'quality' || variant === 'efficiency';
+        if (research) {
+          const pad = Math.min(9, Math.max(3, (width - 288) / 2));
+          const accessible = scale() > 1.5 && width >= 236;
+          const marker = variant === 'efficiency' ? 14 : 0;
+          const left = x + pad + marker;
+          const title = textNode(parent, label, left, top + 6,
+            width - pad * 2 - marker - (accessible ? 112 : 0),
+            { size: Math.min(34, 27 * scale()), weight: '800' });
+          const line = top + Math.max(accessible ? 49 : 38, title.height + 12);
+          if (marker) parent.addChild(inkGraphics().roundRect(x + pad + 2, top + 10, 5, 25, 2).fill(palette.green));
+          parent.addChild(inkGraphics().rect(x + pad, line, width - pad * 2, 1)
+            .fill(palette.line));
+          const amount = compactLabel(parent, value, x + pad, line + 2, width - pad * 2,
+            { size: Math.min(63, 40 * scale()), align: 'right', weight: '800' });
+          const height = amount.y + amount.height - top + 5;
+          const panelBg = panel(parent, x, top, width, height, palette.card, palette.border, 9);
+          parent.setChildIndex(panelBg, parent.getChildIndex(title));
+          if (accessible) buttonAt(parent, x + width - 111, top + 2, 105, 46, '查看完整数值',
+            () => showExactNumber(label, value));
+          else if (!waiting) hitAt(panelBg, parent, x, top, width, height, () => showExactNumber(label, value));
+          cursor += height + rowGap + 3;
+          return;
+        }
+        if (inline) {
+          const t = textNode(parent, label + '  ' + number(value), x + 6, top + 10, width - 12,
+            { size: 27 * scale(), weight: '800', align: 'center' });
+          const h = t.height + 20;
+          const bg = panel(parent, x, top, width, h, palette.card, palette.border, 9);
+          parent.setChildIndex(bg, parent.getChildIndex(t));
+          cursor += h + rowGap;
+          return;
+        }
+        const exact = typeof value === 'bigint';
+        const horizontal = exact ? 2 : 9;
+        const size = Math.min(31, (variant ? 22 : 15) * scale());
+        const detail = exact && width >= 236 && (!variant || scale() > 1.5);
+        const center = !exact || (variant === 'centered' && !detail);
+        const a = textNode(parent, label, x + horizontal, top + 6, width - (detail ? 116 : horizontal * 2),
+          { size, align: center ? 'center' : 'left', weight: '800' });
+        const labelHeight = detail ? Math.max(52, a.height + 6) : a.height + 6;
+        if (detail) {
+          buttonAt(parent, x + width - 110, top + 2, 108, 48, '查看完整数值', () => showExactNumber(label, value));
+        }
+        const options = { size: (variant === 'centered' ? 49 : variant === 'research' ? 37 : 28) * scale(),
+          align: center ? 'center' : 'right', weight: '800' };
+        const b = (exact ? compactLabel : textNode)(parent, value, x + horizontal, top + labelHeight + 2,
+          width - horizontal * 2, options);
+        const height = b.y + b.height - top + 6;
+        if (center) b.x = x + (width - b.width) / 2;
+        const bg = panel(parent, x, top, width, height, accent ? palette.pale : palette.card,
+          variant ? palette.border : null, 9);
+        parent.setChildIndex(bg, parent.getChildIndex(a));
+        if (exact && !detail && !waiting) hitAt(bg, parent, x, top, width, height, () => showExactNumber(label, value));
+        cursor += height + rowGap;
+      },
+      fullNumber(value) {
+        const digits = String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ', ');
+        const t = textNode(parent, digits, x, cursor, width,
+          { size: 17 * scale(), weight: '750' });
+        cursor += t.height + rowGap;
+      },
+      batchProgress(batch) {
+        const top = cursor;
+        const track = panel(parent, x, top, width, 8, palette.line, null, 4);
+        track.label = 'batch-progress-track';
+        cursor += 8 + rowGap;
+        if (!batch || batch.end <= batch.start) return;
+        const { start, end } = batch;
+        const fill = inkGraphics();
+        fill.label = 'batch-progress-fill';
+        parent.addChild(fill);
+        let previous = 0;
+        const update = (clock) => {
+          const filled = width * clamp((clock - start) / (end - start), 0, 1);
+          if (filled !== previous) {
+            fill.clear();
+            if (filled > 0) fill.roundRect(x, top, filled, 8, Math.min(filled / 2, 4)).fill(palette.leaf);
+            previous = filled;
+          }
+          return filled < width;
+        };
+        if (update(progressClock(performance.now()))) progressBars.add(update);
+      },
+      materialTable(rows, { style, title } = {}) {
+        if (!rows.length) return;
+        if (title) ui.heading(title, { size: 21 });
+        if (width < 195 || scale() > 1.5) {
+          for (const { id, label, owned, needed, onClick } of rows) {
+            ui.row(label ?? data.items[id]?.name ?? '', number(owned) + ' / ' + number(needed), {
+              icon: id, tone: owned < needed ? 'danger' : 'plain',
+            });
+            if (onClick) ui.button('查看来源', onClick);
+          }
+          return;
+        }
+        const featured = ['workshop', 'research', 'balance'].includes(style);
+        const nameWidth = Math.floor(width * (featured ? 0.52 : 0.44));
+        const amountWidth = (width - nameWidth) / 2;
+        const top = cursor;
+        const at = parent.children.length;
+        const line = inkGraphics();
+        const headings = [featured ? '' : '材料', '持有', '所需'];
+        headings.forEach((label, index) => {
+          const left = index === 0 ? x + 5 : x + nameWidth + (index - 1) * amountWidth;
+          const w = index === 0 ? nameWidth - 5 : amountWidth - 6;
+          textNode(parent, label, left, top + 3, w, { size: 13 * scale(), align: index === 0 ? 'left' : 'right', color: palette.muted });
+        });
+        const headerHeight = Math.ceil((featured ? 29 : 23) * scale());
+        cursor += headerHeight;
+        for (const { id, label, owned, needed, onClick } of rows) {
+          line.moveTo(x, cursor).lineTo(x + width, cursor);
+          const icon = hasIcon(id) ? (featured ? 38 : 27) : 0;
+          if (icon) drawImage(parent, id, x + 3, cursor + 5, icon - 4, icon - 4);
+          const a = textNode(parent, label ?? data.items[id]?.name ?? '', x + icon + 4, cursor + 4,
+            nameWidth - icon - 7, { size: (featured ? 17 : 14) * scale(), weight: '750' });
+          const b = textNode(parent, owned, x + nameWidth, cursor + 4, amountWidth - 6,
+            { size: (featured ? 18 : 14) * scale(), align: 'right', color: owned < needed ? palette.red : palette.ink, weight: '800' });
+          const c = textNode(parent, needed, x + nameWidth + amountWidth, cursor + 4, amountWidth - 6,
+            { size: (featured ? 18 : 14) * scale(), align: 'right', weight: '800' });
+          const height = Math.max(onClick || featured ? 45 : 34, a.height + 8, b.height + 8, c.height + 8);
+          a.y = cursor + (height - a.height) / 2;
+          b.y = cursor + (height - b.height) / 2;
+          c.y = cursor + (height - c.height) / 2;
+          if (onClick && !waiting) {
+            const hit = inkGraphics();
+            parent.addChild(hit);
+            hitAt(hit, parent, x, cursor, width, height, onClick);
+          }
+          cursor += height;
+        }
+        const border = panel(parent, x, top, width, cursor - top, palette.card, palette.line, 6);
+        parent.setChildIndex(border, at);
+        const header = panel(parent, x + 1, top + 1, width - 2, headerHeight - 1, palette.pale, null, 5);
+        parent.setChildIndex(header, at + 1);
+        parent.addChild(line.stroke({ color: palette.line, width: 1 }));
+        cursor += rowGap;
+      },
+      tile(id, label, onClick, { description } = {}) {
+        const top = cursor;
+        const size = Math.min(width - 20, 138);
+        const artX = x + (width - size) / 2;
+        const title = textNode(parent, label, x + 8, top + size + 13, width - 16,
+          { size: 18 * scale(), align: 'center', weight: '800' });
+        const extra = description ? textNode(parent, description, x + 8, title.y + title.height + 3,
+          width - 16, { size: 12 * scale(), align: 'center', color: palette.muted }).height + 3 : 0;
+        const height = title.y + title.height + extra - top + 10;
+        const surface = (rowHeight) => {
+          const bg = panel(parent, x, top, width, rowHeight, palette.card,
+            onClick && controls.length === focusIndex ? palette.green : palette.border, 13);
+          bg.label = 'catalog-tile';
+          parent.setChildIndex(bg, parent.getChildIndex(title));
+          if (onClick && !waiting) hitAt(bg, parent, x, top, width, rowHeight, onClick);
+        };
+        if (options.tileSurfaces) options.tileSurfaces.push({ height, surface });
+        else surface(height);
+        drawImage(parent, id, artX, top + 8, size, size);
+        cursor += height + rowGap;
+      },
+      card(draw, { padding = 10, gap = 9, style, onClick } = {}) {
+        const layer = new Container();
+        parent.addChild(layer);
+        const child = layoutUI(layer, x + padding, cursor + padding,
+          width - padding * 2 - (onClick ? 24 : 0), local, availableHeight, 0, undefined,
+          { registerPlot: options.registerPlot });
+        draw(child);
+        const h = child.bottom - cursor + Math.max(2, padding - 5);
+        const focused = onClick && controls.length === focusIndex;
+        const radius = style === 'subtle' ? 10 : 15;
+        const g = panel(layer, x, cursor, width, h, palette.card,
+          focused ? palette.green : style === 'subtle' ? palette.line : palette.border, radius);
+        layer.setChildIndex(g, 0);
+        const shadow = panel(layer, x, cursor + 3, width, h, { color: 0x886643, alpha: 0.10 }, null, radius);
+        layer.setChildIndex(shadow, 0);
+        if (onClick) {
+          const chevron = textNode(layer, '›', x + width - padding - 16, cursor, 16,
+            { size: 26, weight: '800', align: 'center', color: palette.green });
+          chevron.y = cursor + (h - chevron.height) / 2;
+          if (!waiting) hitAt(g, layer, x, cursor, width, h, onClick);
+        }
+        cursor += h + gap;
+      },
+      split(left, right, { ratio = 0.64, divider = false } = {}) {
+        if (width < 265 || scale() > 1.45) {
+          left(ui);
+          right(ui);
+        } else {
+          const leftWidth = Math.round(width * ratio) - 4;
+          const a = layoutUI(parent, x, cursor, leftWidth, local, availableHeight);
+          const b = layoutUI(parent, x + leftWidth + 8, cursor, width - leftWidth - 8, local, availableHeight);
+          left(a);
+          right(b);
+          cursor = Math.max(a.bottom, b.bottom);
+        }
+        if (divider) {
+          parent.addChild(inkGraphics().rect(x, cursor, width, 1).fill(palette.line));
+          cursor += 9;
+        }
+      },
+      section(label, icon, draw) {
+        const top = cursor;
+        const layer = new Container();
+        parent.addChild(layer);
+        const heading = textNode(layer, label, x + 45, top + 6, width - 52, { size: 20 * scale(), weight: '800' });
+        const tagHeight = Math.max(41, heading.height + 12);
+        const child = layoutUI(layer, x + 12, top + tagHeight + 11, width - 24, local, availableHeight);
+        draw(child);
+        const border = panel(layer, x, top + 20, width, child.bottom - top - 13, palette.card, palette.border, 8);
+        layer.setChildIndex(border, 0);
+        const tag = panel(layer, x + 7, top, Math.min(width - 14, heading.width + 49), tagHeight, palette.gold, palette.border, 7);
+        layer.setChildIndex(tag, 1);
+        drawImage(layer, icon, x + 15, top + (tagHeight - 27) / 2, 27, 27);
+        cursor = child.bottom + 17;
+      },
+      settingToggle(label, checked, onClick) {
+        const top = cursor;
+        const caption = textNode(parent, label, x + 4, top + 8, width - 78,
+          { size: 15 * scale(), weight: '750' });
+        const height = Math.max(48, caption.height + 15);
+        const trackX = x + width - 59;
+        const trackY = top + (height - 25) / 2;
+        const hit = inkGraphics().roundRect(trackX, trackY, 55, 25, 12)
+          .fill(checked ? palette.green : 0xa39579).stroke({ color: palette.border, width: 1 });
+        hit.circle(trackX + (checked ? 42 : 13), trackY + 12.5, 9.5).fill(palette.cream);
+        parent.addChild(hit);
+        if (onClick && !waiting) hitAt(hit, parent, x, top, width, height, onClick);
+        cursor += height + rowGap;
+      },
+      stepper(value, decrease, increase) {
+        const top = cursor;
+        const keyWidth = Math.min(62, Math.floor(width * 0.24));
+        const height = Math.max(48, Math.ceil(35 * scale()));
+        buttonAt(parent, x, top, keyWidth, height, '−', decrease, { tone: 'gold' });
+        buttonAt(parent, x + width - keyWidth, top, keyWidth, height, '＋', increase, { tone: 'gold' });
+        const middle = width - (keyWidth + 6) * 2;
+        panel(parent, x + keyWidth + 6, top, middle, height, palette.card, palette.border, 6);
+        const caption = textNode(parent, value, x + keyWidth + 6, top, middle,
+          { size: Math.min(25 * scale(), middle / Math.max(3, String(value).length * 0.55)), align: 'center', weight: '800' });
+        caption.y = top + (height - caption.height) / 2;
+        cursor += height + rowGap;
+      },
+      grid(items, draw, { equalHeight = false } = {}) {
+        const columns = width < 280 || scale() > 1.45 ? 1 : 2;
+        const gap = 8;
+        const cellWidth = (width - (columns - 1) * gap) / columns;
+        for (let index = 0; index < items.length; index += columns) {
+          const top = cursor;
+          const tileSurfaces = equalHeight ? [] : undefined;
+          let next = top;
+          items.slice(index, index + columns).forEach((entry, column) => {
+            const cell = layoutUI(parent, x + column * (cellWidth + gap), top, cellWidth, local, availableHeight,
+              0, undefined, { tileSurfaces });
+            draw(cell, entry);
+            next = Math.max(next, cell.bottom);
+          });
+          if (tileSurfaces?.length) {
+            const height = Math.max(...tileSurfaces.map((tile) => tile.height));
+            for (const tile of tileSurfaces) tile.surface(height);
+          }
+          cursor = next;
+        }
+      },
+      indexRows(items, onSelect) {
+        const height = Math.max(45, Math.ceil(28 * 1.36 * scale() + 7));
+        scrollChoices(items, onSelect, 1, height, (layer, { icon, label, status }, left, top, span) => {
+          panel(layer, left, top, span, height, palette.card, palette.line, 9);
+          if (icon) drawImage(layer, icon, left + 7, top + 6, 32, height - 12);
+          const title = textNode(layer, label, left + 47, top + 4, span - 66,
+            { size: 15 * scale(), weight: '800', wrap: false });
+          if (title.width > span - 66) title.style.fontSize *= (span - 66) / title.width;
+          textNode(layer, status, left + 47, top + height - 5 - Math.ceil(13 * scale() * 1.36), span - 66,
+            { size: 13 * scale(), color: palette.muted });
+          textNode(layer, '›', left + span - 18, top + (height - 25) / 2, 12,
+            { size: 17, color: palette.green });
+        });
+      },
+      choiceGrid(items, onSelect, { iconsOnly = false } = {}) {
+        const font = Math.min(17, 13 * scale());
+        const largeType = scale() > 1.55;
+        const minimum = iconsOnly ? 48 : largeType ? 131 : 99;
+        const limit = iconsOnly ? 8 : largeType ? 2 : 4;
+        const columns = clamp(Math.floor((width + 7) / (minimum + 7)), 1, limit);
+        const lineHeight = Math.ceil(font * 1.2);
+        const height = iconsOnly ? 49 : 47 + lineHeight * 3;
+        scrollChoices(items, onSelect, columns, height, (layer, item, left, top, span) => {
+          const card = panel(layer, left, top, span, height,
+            item.selected ? palette.selection : palette.card, item.selected ? palette.green : palette.line, 11);
+          card.label = 'picker-choice:' + item.id;
+          drawImage(layer, item.icon ?? item.id, left + (span - 32) / 2, top + (iconsOnly ? 8 : 6), 32, 32);
+          if (iconsOnly) return;
+          const title = textNode(layer, item.label, left + 5, top + 42, span - 10,
+            { size: font, align: 'center', weight: '800' });
+          title.style.lineHeight = lineHeight;
+          while (title.height > lineHeight * 2 && title.style.fontSize > 9) {
+            title.style.fontSize -= 1;
+            title.style.lineHeight = Math.ceil(title.style.fontSize * 1.2);
+          }
+          title.x = left + (span - title.width) / 2;
+          title.y = top + 40 + (lineHeight * 2 - title.height) / 2;
+          textNode(layer, item.duration, left + 4, top + height - lineHeight - 4, span - 8,
+            { size: Math.max(10, font - 2), align: 'center', color: palette.muted, wrap: false });
+        });
+      },
+      slider(value, onChange, { min = 0, max = 100, step = 1, label = '', bubble = false, onCommit } = {}) {
+        if (label) ui.row(label, value + '%');
+        const top = cursor, usable = Math.max(1, width - 24);
+        const fraction = clamp((value - min) / Math.max(1, max - min), 0, 1);
+        const trackY = top + (bubble ? 32 : 20);
+        const thumbX = x + 12 + usable * fraction;
+        const g = inkGraphics().roundRect(x + 12, trackY, usable, 10, 5).fill(palette.pale);
+        if (fraction > 0) g.roundRect(x + 12, trackY, usable * fraction, 10, 5).fill(palette.gold);
+        if (!bubble) g.circle(thumbX, trackY + 5, 11).fill(palette.gold).stroke({ color: palette.border, width: 2 });
+        parent.addChild(g);
+        if (bubble) {
+          const labelX = clamp(thumbX - 27, x, x + width - 54);
+          panel(parent, labelX, top, 54, 24, palette.gold, palette.line, 5);
+          textNode(parent, value + '%', labelX, top + 2, 54, { size: 14, align: 'center', weight: '800' });
+          drawImage(parent, 'coin', thumbX - 14, trackY - 9, 28, 28);
+        }
+        if (!waiting) {
+          if (controls.length === focusIndex) parent.addChild(inkGraphics().roundRect(x, top, width, 50, 5)
+            .stroke({ color: 0x168455, width: 2 }));
+          const changeByKey = (next) => {
+            if (next === value) return;
+            onChange(next);
+            onCommit?.(next);
+          };
+          const track = (event) => {
+            const localPoint = root.toLocal(event.global);
+            const ratio = clamp((localPoint.x - track.startX) / usable, 0, 1);
+            const next = clamp(min + Math.round((max - min) * ratio / step) * step, min, max);
+            if (next !== track.current) { track.current = next; onChange(next); }
+          };
+          track.current = value;
+          track.commit = () => onCommit?.(track.current);
+          g.eventMode = 'static';
+          g.hitArea = new Rectangle(x, top, width, 50);
+          g.cursor = 'pointer';
+          g.on('pointerdown', (event) => {
+            event.stopPropagation();
+            point = root.toLocal(event.global);
+            track.startX = root.toLocal(parent.toGlobal({ x: x + 12, y: top })).x;
+            sliderDrag = track;
+            track(event);
+          });
+          controls.push({ parent, x, y: top, width, height: 50, run() {
+            changeByKey(value >= max ? min : Math.min(max, value + step));
+          }, key(key) {
+            if (key === 'ArrowLeft' || key === 'ArrowDown') changeByKey(Math.max(min, value - step));
+            else if (key === 'ArrowRight' || key === 'ArrowUp') changeByKey(Math.min(max, value + step));
+            else if (key === 'Home') changeByKey(min);
+            else if (key === 'End') changeByKey(max);
+            else return false;
+            return true;
+          } });
+        }
+        cursor += 50;
+      },
+      get bottom() { return cursor; },
+    };
+    return ui;
+  }
+
+  function observePlots(plots, { body, state, x, right, y, height, pinned }) {
+    const tab = state.tab;
+    const maskLeft = Math.max(0, x);
+    const maskRight = Math.min(frame.width, right);
+    const maskTop = Math.max(0, -y);
+    const maskBottom = Math.min(height, frame.height - y);
+    for (const plot of plots) {
+      const start = body.toLocal({ x: 0, y: 0 }, plot.art);
+      const end = body.toLocal({ x: plot.box.width, y: plot.box.height }, plot.art);
+      plot.bounds = new Rectangle(start.x, start.y, end.x - start.x, end.y - start.y);
+    }
+    return (scroll = state.scroll) => {
+      visiblePlotIds.clear();
+      if (!world || status?.busy || modal || pendingModal || document.hidden ||
+          state !== locals[current] || state.tab !== tab) {
+        for (const plot of activePlots) unmountPlot(plot);
+        return;
+      }
+      // Once pinned, the tabs stay at the top of the scroll mask.
+      const pinnedTop = pinned && Math.max(scroll, pinned.top);
+      let animationFrame;
+      for (const plot of plots) {
+        const left = Math.max(plot.bounds.left, maskLeft);
+        const right = Math.min(plot.bounds.right, maskRight);
+        const top = Math.max(plot.bounds.top, scroll + maskTop);
+        const bottom = Math.min(plot.bounds.bottom, scroll + maskBottom);
+        const covered = pinned && left >= pinned.left && right <= pinned.right &&
+          top >= pinnedTop && bottom <= pinnedTop + pinned.height;
+        if (left >= right || top >= bottom || covered) {
+          unmountPlot(plot);
+          continue;
+        }
+        const { batch, index } = plot;
+        visiblePlotIds.add(batch.id);
+        const plotTextures = loadPlotTextures(batch.id);
+        if (!plotTextures) continue;
+        if (plot.animation) continue;
+        if (!animationFrame) {
+          const now = performance.now();
+          animationFrame = { clock: progressClock(now), now, reducedMotion: Boolean(world.settings?.reducedMotion) };
+        }
+        let animationStart = batch.start;
+        if (batch.end - batch.start < minPlotAnimationMs) {
+          // Keep the same visual start when a fast crop finishes another real batch.
+          const previous = shortPlotStarts.get(index);
+          if (previous?.id === batch.id) animationStart = previous.start;
+          else shortPlotStarts.set(index, { id: batch.id, start: animationStart });
+        }
+        plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart);
+        plot.animation.update(animationFrame);
+        plot.fallback.visible = false;
+        activePlots.add(plot);
+      }
+    };
+  }
+
+  function scrollArea(parent, x, y, width, height, state, draw, bleed = 0) {
+    const body = new Container();
+    const mask = inkGraphics().rect(x - bleed, y, width + bleed * 2, height).fill(0xffffff);
+    parent.addChild(body, mask);
+    body.mask = mask;
+    let pinned;
+    const pinTabs = (top, choices, style, size) => {
+      const layer = new Container();
+      parent.addChild(layer);
+      layer.mask = mask;
+      const group = layoutUI(layer, x + 2, 4, width - 4, state, height);
+      group.buttons(choices, { style, size });
+      const backdrop = panel(layer, x, 0, width, group.bottom, palette.paper, null, 0);
+      layer.setChildIndex(backdrop, 0);
+      pinned = { layer, top, left: x, right: x + width, height: group.bottom };
+      return group.bottom;
+    };
+    const scrollObservers = [];
+    const plots = [];
+    const ui = layoutUI(body, x + 2, 8, width - 4, state, height, bleed ? bleed + 2 : 0, pinTabs,
+      {
+        observeScroll: (observe) => scrollObservers.push(observe),
+        registerPlot: state === locals[current] ? (plot) => plots.push(plot) : undefined,
+      });
+    draw(ui);
+    const max = Math.max(0, ui.bottom + 5 - height);
+    state.scroll = clamp(state.scroll ?? 0, 0, max);
+    state.onScrollChange?.(state.scroll);
+    for (const observe of scrollObservers) observe(state.scroll);
+    if (navigation?.active && state === locals[current]) navigation.active.scroll = state.scroll;
+    body.y = y - state.scroll;
+    if (pinned) pinned.layer.y = y + Math.max(0, pinned.top - state.scroll);
+    scrollTarget = { body, state, max, x: x - bleed, right: x + width + bleed, y, height, pinned, scrollObservers };
+    if (plots.length) {
+      syncPlotVisibility = observePlots(plots, scrollTarget);
+      scrollObservers.push(syncPlotVisibility);
+    }
+    if (max > 0) {
+      const thumbH = Math.max(22, height * height / (height + max));
+      const trackX = scrollTarget.right;
+      const thumb = inkGraphics().roundRect(trackX - 5, 0, 5, thumbH, 2.5).fill(0x243d30);
+      thumb.eventMode = 'static';
+      thumb.cursor = 'ns-resize';
+      thumb.hitArea = new Rectangle(trackX - 14, 0, 14, thumbH);
+      thumb.on('pointerdown', (event) => {
+        if (!event.isPrimary || event.button !== 0) return;
+        event.stopPropagation();
+        beginDrag(event, true);
+      });
+      thumb.on('pointerover', () => {
+        if (scrollTarget?.thumb !== thumb) return;
+        scrollTarget.thumbHover = true;
+        updateScrollThumb(performance.now());
+      });
+      thumb.on('pointerout', () => {
+        if (scrollTarget?.thumb !== thumb) return;
+        scrollTarget.thumbHover = false;
+        updateScrollThumb(performance.now());
+      });
+      parent.addChild(thumb);
+      scrollTarget.thumb = thumb;
+      scrollTarget.thumbRange = Math.max(1, height - thumbH);
+      thumb.y = y + scrollTarget.thumbRange * (state.scroll / max);
+      updateScrollThumb(performance.now());
+    }
+  }
+
+  function changeScroll(value, active = true) {
+    if (!scrollTarget) return;
+    const { max, body, state, y, thumb, thumbRange, pinned, scrollObservers } = scrollTarget;
+    state.scroll = clamp(value, 0, max);
+    state.onScrollChange?.(state.scroll);
+    for (const observe of scrollObservers) observe(state.scroll);
+    if (navigation?.active && state === locals[current]) navigation.active.scroll = state.scroll;
+    body.y = y - state.scroll;
+    if (pinned) pinned.layer.y = y + Math.max(0, pinned.top - state.scroll);
+    if (thumb) thumb.y = y + thumbRange * (state.scroll / max);
+    if (active) scrollActivity = performance.now();
+    updateScrollThumb(performance.now());
+  }
+
+  function updateScrollThumb(now) {
+    if (!scrollTarget?.thumb) return;
+    const idle = clamp((now - scrollActivity - 550) / 520, 0, 1);
+    scrollTarget.thumb.alpha = (drag?.thumb || scrollTarget.thumbHover) ? 0.72 : 0.56 - 0.32 * idle;
+  }
+
+  function topBar(parent, content, x, y, w) {
+    const height = 59;
+    const settingsWidth = 46;
+    panel(parent, 0, 0, frame.width, y + height, palette.paper, null, 0);
+    parent.addChild(inkGraphics().rect(0, y + height - 1, frame.width, 1).fill(palette.line));
+
+    const showSettings = current !== '设置' && Boolean(content);
+    const right = x + w - (showSettings ? settingsWidth + 7 : 0);
+    if (showSettings) {
+      const left = x + w - settingsWidth;
+      const focused = !waiting && controls.length === focusIndex;
+      const gear = panel(parent, left, y + 7, settingsWidth, 45, palette.pale, focused ? palette.green : palette.border, 13);
+      gear.label = 'settings-button';
+      drawImage(parent, 'settings-gear', left + 8, y + 14, 30, 30);
+      if (!waiting) hitAt(gear, parent, left, y + 5, settingsWidth, 49, () => go('设置'));
+    }
+
+    if (!tabs.includes(current)) {
+      const backWidth = 68;
+      buttonAt(parent, x, y + 8, backWidth, 43, '‹ 返回', back);
+      const titleX = x + backWidth + 7;
+      const titleRoom = Math.max(1, right - titleX);
+      const title = textNode(parent, current, titleX, y, titleRoom, {
+        size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
+      });
+      title.y = y + (height - title.height) / 2;
+      return;
+    }
+
+    const titleWidth = w < 330 ? 103 : 123;
+    const title = textNode(parent, '放置农场', x + 3, y, titleWidth, {
+      size: Math.min((titleWidth - 5) / 4, 26 * scale()), weight: '850',
+    });
+    title.y = y + (height - title.height) / 2;
+    if (!content) return;
+
+    const coinX = x + titleWidth + 8;
+    const coinWidth = right - coinX;
+    if (coinWidth < 34) return;
+    const coinSurface = panel(parent, coinX, y + 12, coinWidth, 36, palette.pale, palette.line, 18);
+    drawImage(parent, 'coin', coinX + 7, y + 17, 25, 25);
+    const amount = compactLabel(parent, content.coins, coinX + 36, y, coinWidth - 42,
+      { size: w < 330 ? 18 : 22, weight: '800' });
+    amount.y = y + (height - amount.height) / 2;
+    if (!waiting) hitAt(coinSurface, parent, coinX, y + 7, coinWidth, 46, () => showExactNumber('金币', content.coins));
+  }
+
+  function bottomBar(parent, x, y, w) {
+    const height = frame.height - y;
+    panel(parent, 0, y, frame.width, height + 24, palette.cream, palette.border, 17);
+    const segment = w / tabs.length;
+    tabs.forEach((page, index) => {
+      const at = x + segment * index;
+      if (index) parent.addChild(inkGraphics().rect(at, y + 13, 1, 51).fill(palette.line));
+      if (page === current) panel(parent, at + 5, y + 46, segment - 10, 25, palette.selection, null, 15);
+      if (!waiting) {
+        const hit = inkGraphics();
+        parent.addChild(hit);
+        hitAt(hit, parent, at, y + 2, segment, 73, () => go(page));
+      }
+      const artWidth = Math.min(55, segment - 8);
+      drawImage(parent, tabIcons[index], at + (segment - artWidth) / 2, y + 3, artWidth, 44);
+      const caption = textNode(parent, page, at, y + 46, segment, {
+        size: Math.min(22, 17 * scale(), (segment - 8) / 2), align: 'center', weight: '850',
+      });
+      caption.y = y + 46 + (25 - caption.height) / 2;
+    });
+  }
+
+  function drawFeedback() {
+    if (!feedbackLayer) return;
+    for (const child of feedbackLayer.removeChildren()) child.destroy();
+    const now = performance.now();
+    if (notices && notices.expires > now) {
+      const inset = layout.inset.top;
+      const w = frame.width - 28;
+      const bubble = textNode(feedbackLayer, notices.message, 20, inset + 76, w - 12,
+        { size: 15 * Math.min(1.45, scale()), color: palette.cream, align: 'center' });
+      const bg = panel(feedbackLayer, 14, inset + 69, w, bubble.height + 15, palette.dark, null);
+      feedbackLayer.setChildIndex(bg, 0);
+    } else notices = undefined;
+    if (floating) {
+      const elapsed = (now - floating.started) / 650;
+      if (elapsed >= 1) { floating = undefined; return; }
+      const w = Math.min(210, frame.width - 24);
+      const y = clamp(floating.at.y - (world?.settings?.reducedMotion ? 12 : elapsed * 25), 24, frame.height - 40);
+      const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
+      const label = textNode(feedbackLayer, floating.message, x, y, w, { size: 17, align: 'center', color: palette.cream, weight: '800' });
+      label.style.fill = palette.ink;
+      label.style.stroke = { color: palette.cream, width: 4, join: 'round' };
+      if (!world?.settings?.reducedMotion) label.alpha = 1 - elapsed;
+    }
+  }
+
+  function redraw() {
+    if (!layout || building) return;
+    if (treeGesture || (pressedPointer !== null && !sliderDrag)) {
+      needsRender = true;
+      syncPlotVisibility?.();
+      return;
+    }
+    needsRender = false;
+    building = true;
+    const { x, y, width, height, scale: zoom, inset } = layout;
+    frame.width = width / zoom;
+    frame.height = height / zoom;
+    root.position.set(x, y);
+    root.scale.set(zoom);
+    root.eventMode = 'static';
+    root.hitArea = new Rectangle(0, 0, frame.width, frame.height);
+    clip.clear().rect(x, y, width, height).fill(0xffffff);
+    progressBars.clear();
+    for (const plot of activePlots) unmountPlot(plot);
+    syncPlotVisibility = undefined;
+    visiblePlotIds.clear();
+    for (const child of root.removeChildren()) child.destroy({ children: true });
+    controls = [];
+    scrollTarget = undefined;
+    panel(root, 0, 0, frame.width, frame.height, palette.paper, null, 0);
+    const margin = frame.width > 550 ? (frame.width - 520) / 2 : 8;
+    const left = Math.max(margin, inset.left + 6);
+    const w = Math.max(80, frame.width - left - Math.max(margin, inset.right + 6));
+    topBar(root, world, left, inset.top, w);
+    const hasTabs = tabs.includes(current);
+    const top = inset.top + 60;
+    const bottom = frame.height - inset.bottom - (hasTabs ? 79 : 5);
+    if (world && !status?.busy) {
+      scrollArea(root, left, top, w, Math.max(40, bottom - top), locals[current], pages[current],
+        Math.max(0, Math.min(left, frame.width - left - w)));
+      if (hasTabs) bottomBar(root, left, bottom + 2, w);
+    } else {
+      const ui = layoutUI(root, left, top + 20, w, {}, Math.max(40, bottom - top));
+      ui.heading(status?.title ?? '正在准备牧场');
+      if (status?.message) ui.text(status.message);
+      if (status?.recoverable) {
+        if (status.confirmRestore) {
+          if (status.recovery) {
+            const time = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' })
+              .format(status.recovery.wallAnchorMs);
+            ui.row('备份时间', time);
+          }
+          ui.buttons([
+            { label: '返回', onClick: () => { status.confirmRestore = false; redraw(); } },
+            { label: '确认恢复', onClick: restore, tone: 'gold' },
+          ]);
+        } else ui.button('恢复上次记录', () => {
+          status.confirmRestore = true;
+          status.confirmReplace = false;
+          redraw();
+        }, { tone: 'gold' });
+      }
+      if (status?.retry) ui.button('重新读取记录', status.retry, { tone: 'gold' });
+      if (status?.replaceable) {
+        if (status.confirmReplace) {
+          ui.text('新建后将清除这份无法读取的经营记录。');
+          ui.buttons([
+            { label: '取消', onClick: () => { status.confirmReplace = false; redraw(); } },
+            { label: '确认新建', onClick: replace, tone: 'danger' },
+          ]);
+        } else ui.button('新建经营记录', () => {
+          status.confirmReplace = true;
+          status.confirmRestore = false;
+          redraw();
+        });
+      }
+    }
+
+    if (modal && world && !status?.busy) {
+      controls = [];
+      const overTabs = modal.variant === 'warehouse-sale' && hasTabs;
+      const sheetBottom = overTabs ? bottom + 2 : frame.height - inset.bottom - 7;
+      const shade = inkGraphics().rect(0, 0, frame.width, frame.height)
+        .fill({ color: palette.dark, alpha: overTabs ? 0.36 : 0.64 });
+      shade.eventMode = 'static';
+      root.addChild(shade);
+      if (overTabs) {
+        bottomBar(root, left, sheetBottom, w);
+        const cover = inkGraphics().rect(0, sheetBottom, frame.width, frame.height - sheetBottom)
+          .fill({ color: palette.dark, alpha: 0 });
+        cover.eventMode = 'static';
+        root.addChild(cover);
+        controls = [];
+      }
+      const variant = modal.variant;
+      const minimum = variant === 'warehouse-sale' ? 358 : variant === 'facility-upgrade' ? 475 : 250;
+      const ratio = variant === 'warehouse-sale' ? 0.48 : variant === 'facility-upgrade' ? 0.57 : 0.77;
+      const boxHeight = Math.min(Math.max(minimum, frame.height * ratio), sheetBottom - inset.top - 14);
+      const boxY = modal.center ? (frame.height - boxHeight) / 2 : sheetBottom - boxHeight;
+      const fullSheet = variant === 'warehouse-sale' || variant === 'facility-upgrade';
+      const boxLeft = fullSheet ? inset.left + 2 : left;
+      const boxWidth = fullSheet ? frame.width - boxLeft - inset.right - 2 : w;
+      panel(root, boxLeft, boxY, boxWidth, boxHeight, palette.card, palette.border, 12);
+      if (fullSheet) panel(root, boxLeft + 4, boxY + 4, boxWidth - 8, boxHeight - 8, palette.card, palette.line, 9);
+      if (variant === 'facility-upgrade') {
+        panel(root, left + 14, boxY + 8, w - 28, 43, palette.green, palette.line, 8);
+        textNode(root, modal.title, left + 16, boxY + 13, w - 32,
+          { size: Math.min(32, 27 * scale()), align: 'center', color: palette.cream, weight: '800' });
+      } else if (variant === 'warehouse-sale') {
+        textNode(root, modal.title, left + 8, boxY + 9, w - 16,
+          { size: Math.min(35, 29 * scale()), align: 'center', weight: '800' });
+      } else {
+        textNode(root, modal.title, left + 13, boxY + 12, w - 73, { size: 19 * Math.min(scale(), 1.45), weight: '800' });
+        buttonAt(root, left + w - 60, boxY + 5, 52, 48, '关闭', closeDialog);
+      }
+      const pad = modal.variant === 'farm-sale' ? 0 : 10;
+      scrollArea(root, left + pad, boxY + 56, w - pad * 2, Math.max(50, boxHeight - 65), modal, modal.draw,
+        fullSheet ? Math.max(0, left + pad - boxLeft) : pad);
+    }
+    feedbackLayer = new Container();
+    feedbackLayer.eventMode = 'none';
+    root.addChild(feedbackLayer);
+    drawFeedback();
+    building = false;
+    if (pendingModal) { modal = pendingModal; pendingModal = undefined; recordRoute(); requestRender(); }
+    syncPlotVisibility?.();
+  }
+
+  function beginDrag(event, thumb = false) {
+    if (!scrollTarget?.max || !event.isPrimary || event.button !== 0) return;
+    const p = root.toLocal(event.global);
+    if (p.x < scrollTarget.x || p.x > scrollTarget.right ||
+        p.y < scrollTarget.y || p.y > scrollTarget.y + scrollTarget.height) return;
+    coast = null;
+    blockTap = false;
+    drag = { pointerId: event.pointerId, y: p.y, at: scrollTarget.state.scroll, thumb,
+      lastScroll: scrollTarget.state.scroll, lastTime: performance.now(), velocity: 0 };
+    scrollActivity = drag.lastTime;
+  }
+  root.on('pointerdown', (event) => {
+    coast = null;
+    beginDrag(event);
+  });
+  root.on('globalpointermove', (event) => {
+    if (sliderDrag) { sliderDrag(event); return; }
+    if (!drag || event.pointerId !== drag.pointerId || !scrollTarget) return;
+    const distance = root.toLocal(event.global).y - drag.y;
+    if (Math.abs(distance) > (drag.thumb ? 0 : 7)) blockTap = true;
+    if (!blockTap) return;
+    const ratio = drag.thumb ? scrollTarget.max / scrollTarget.thumbRange : -1;
+    changeScroll(drag.at + distance * ratio);
+    const now = performance.now();
+    const position = scrollTarget.state.scroll;
+    const instantaneous = (position - drag.lastScroll) / Math.max(10, now - drag.lastTime);
+    drag.velocity = clamp(drag.velocity * 0.28 + instantaneous * 0.72, -2.6, 2.6);
+    drag.lastScroll = position;
+    drag.lastTime = now;
+  });
+  function endPointer(event, cancelled = false) {
+    if (event && drag && event.pointerId !== drag.pointerId) return;
+    const wasDragging = Boolean(drag || sliderDrag);
+    const commit = sliderDrag?.commit;
+    const now = performance.now();
+    if (drag && blockTap && !drag.thumb && !cancelled && !world?.settings?.reducedMotion &&
+        now - drag.lastTime < 95 && Math.abs(drag.velocity) > 0.06 && scrollTarget) {
+      coast = { state: scrollTarget.state, velocity: drag.velocity, lastTime: now };
+    }
+    drag = null;
+    sliderDrag = null;
+    commit?.();
+    if (blockTap) setTimeout(() => { blockTap = false; }, 0);
+    if (wasDragging) requestRender();
+  }
+  root.on('pointerup', (event) => endPointer(event));
+  root.on('pointerupoutside', (event) => endPointer(event));
+  root.on('pointercancel', (event) => endPointer(event, true));
+  app.canvas.addEventListener('pointerdown', (event) => {
+    if (event.isPrimary && event.button === 0) pressedPointer = event.pointerId;
+  }, { capture: true });
+  function releasePointer(event) {
+    if (event.pointerId !== pressedPointer) return;
+    pressedPointer = null;
+    endPointer(event, event.type === 'pointercancel');
+    if (needsRender) requestRender();
+  }
+  window.addEventListener('pointerup', releasePointer);
+  window.addEventListener('pointercancel', releasePointer);
+  window.addEventListener('blur', () => {
+    pressedPointer = null;
+    treeGesture = false;
+    coast = null;
+    endPointer(undefined, true);
+    if (needsRender) requestRender();
+  });
+  root.on('wheel', (event) => {
+    if (!scrollTarget) return;
+    const p = root.toLocal(event.global);
+    if (p.x < scrollTarget.x || p.x > scrollTarget.right ||
+        p.y < scrollTarget.y || p.y > scrollTarget.y + scrollTarget.height) return;
+    event.preventDefault?.();
+    coast = null;
+    const unit = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? scrollTarget.height : 1;
+    changeScroll(scrollTarget.state.scroll + event.deltaY * unit / layout.scale);
+  });
+
+  app.canvas.addEventListener('keydown', (event) => {
+    if (modal?.onKeyDown?.(event)) { event.preventDefault(); return; }
+    if (event.key === 'Escape') { event.preventDefault(); back(); return; }
+    if (!controls.length) return;
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      focusIndex = focusIndex < 0 ? (event.shiftKey ? controls.length - 1 : 0)
+        : (focusIndex + (event.shiftKey ? -1 : 1) + controls.length) % controls.length;
+      const target = controls[focusIndex];
+      if (scrollTarget) {
+        let container = target.parent;
+        while (container && container !== scrollTarget.body) container = container.parent;
+        if (container) {
+          const y = scrollTarget.body.toLocal(target.parent.toGlobal({ x: target.x, y: target.y })).y;
+          changeScroll(y - Math.max(12, scrollTarget.height / 3));
+        }
+      }
+      redraw();
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      controls[focusIndex]?.run();
+    } else if (controls[focusIndex]?.key?.(event.key)) event.preventDefault();
+  });
+  app.canvas.addEventListener('paste', (event) => {
+    if (modal?.onPaste?.(event)) event.preventDefault();
+  });
+  document.addEventListener?.('visibilitychange', () => syncPlotVisibility?.());
+  app.ticker.add(() => {
+    if (notices || floating) drawFeedback();
+    const now = performance.now();
+    if (progressTiming && progressBars.size && world && !world.settings?.reducedMotion && !status?.busy) {
+      const clock = progressClock(now);
+      for (const update of progressBars) {
+        if (!update(clock)) progressBars.delete(update);
+      }
+    }
+    if (coast) {
+      if (scrollTarget?.state !== coast.state || world?.settings?.reducedMotion) coast = null;
+      else {
+        const elapsed = Math.min(40, now - coast.lastTime);
+        coast.lastTime = now;
+        const next = scrollTarget.state.scroll + coast.velocity * elapsed;
+        changeScroll(next);
+        coast.velocity *= Math.exp(-elapsed / 165);
+        if (next <= 0 || next >= scrollTarget.max || Math.abs(coast.velocity) < 0.03) coast = null;
+      }
+    }
+    if (activePlots.size && world && !world.settings?.reducedMotion &&
+        !document.hidden && !modal && !pendingModal && !status?.busy) {
+      const animationFrame = { clock: progressClock(now), now, reducedMotion: false };
+      for (const plot of activePlots) plot.animation.update(animationFrame);
+    }
+    updateScrollThumb(now);
+  });
+
+  if (navigation) {
+    restoreRoute(true);
+    const syncRoute = () => {
+      if (navigation.active?.hash !== browser.location.hash ||
+          browser.history.state?.farmNavigation?.key !== navigation.active?.key) restoreRoute();
+    };
+    browser.addEventListener('popstate', syncRoute);
+    browser.addEventListener('hashchange', syncRoute);
+  }
+
+  function resize(nextLayout) {
+    const resized = !layout || layout.width !== nextLayout.width || layout.height !== nextLayout.height;
+    layout = nextLayout;
+    if (resized) { pressedPointer = null; treeGesture = false; coast = null; endPointer(undefined, true); floating = undefined; }
+    // Keep captured pointer targets intact until a drag finishes.
+    if (!drag && !sliderDrag) redraw();
+  }
+
+  return {
+    go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize,
+    pauseProgress() { progressTiming = undefined; },
+    render(nextLayout, nextWorld, nextStatus, nextProgressTiming) {
+      if (nextWorld?.completedRuns !== world?.completedRuns || nextWorld?.clockMs < world?.clockMs) {
+        shortPlotStarts.clear();
+      } else {
+        for (const [index, timeline] of shortPlotStarts) {
+          const nextBatch = nextWorld?.facilities.C[index]?.batch;
+          if (!nextBatch || nextBatch.id !== timeline.id || nextBatch.end - nextBatch.start >= minPlotAnimationMs) {
+            shortPlotStarts.delete(index);
+          }
+        }
+      }
+      world = nextWorld;
+      status = nextStatus;
+      progressTiming = nextProgressTiming;
+      resize(nextLayout);
+    },
+  };
+}

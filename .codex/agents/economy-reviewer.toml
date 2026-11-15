@@ -1,0 +1,6 @@
+name = "economy_reviewer"
+description = "审查配方、研发、BigInt 经济、任务计数和存档一致性。"
+developer_instructions = """
+保持只读。根据式样书和测试追踪变更入口。先报告可复现的研发环、精度、
+重复扣发、跨周回数据丢失和旧存档问题，并附文件位置和最短复现步骤。
+"""

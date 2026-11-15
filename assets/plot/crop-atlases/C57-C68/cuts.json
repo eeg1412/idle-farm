@@ -1,0 +1,619 @@
+{
+  "source": "raw.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "layout": [
+    5,
+    5
+  ],
+  "cropCoordinates": "Pixel boxes [left, top, right, bottom], exclusive right and bottom.",
+  "alphaCleanup": "Subtract the generator's faint alpha matte with clamp and rescale. Keep connected components of at least 24 pixels with a core of at least 5 pixels above alpha 70. Trim to the nonzero alpha box.",
+  "unusedCell": [
+    5,
+    5
+  ],
+  "sprites": [
+    {
+      "cropId": "C57",
+      "name": "亚麻",
+      "stage": "growing",
+      "row": 1,
+      "column": 1,
+      "cellBox": [
+        0,
+        0,
+        260,
+        250
+      ],
+      "trimmedSourceBox": [
+        75,
+        73,
+        186,
+        236
+      ],
+      "size": [
+        111,
+        163
+      ],
+      "baseX": 55,
+      "file": "assets/plot/crops/C57/growing.png"
+    },
+    {
+      "cropId": "C57",
+      "name": "亚麻",
+      "stage": "mature",
+      "row": 1,
+      "column": 2,
+      "cellBox": [
+        260,
+        0,
+        500,
+        250
+      ],
+      "trimmedSourceBox": [
+        305,
+        23,
+        454,
+        236
+      ],
+      "size": [
+        149,
+        213
+      ],
+      "baseX": 70,
+      "file": "assets/plot/crops/C57/mature.png"
+    },
+    {
+      "cropId": "C58",
+      "name": "黄麻",
+      "stage": "growing",
+      "row": 1,
+      "column": 3,
+      "cellBox": [
+        500,
+        0,
+        750,
+        250
+      ],
+      "trimmedSourceBox": [
+        563,
+        71,
+        684,
+        236
+      ],
+      "size": [
+        121,
+        165
+      ],
+      "baseX": 63,
+      "file": "assets/plot/crops/C58/growing.png"
+    },
+    {
+      "cropId": "C58",
+      "name": "黄麻",
+      "stage": "mature",
+      "row": 1,
+      "column": 4,
+      "cellBox": [
+        750,
+        0,
+        995,
+        250
+      ],
+      "trimmedSourceBox": [
+        784,
+        13,
+        971,
+        236
+      ],
+      "size": [
+        187,
+        223
+      ],
+      "baseX": 95,
+      "file": "assets/plot/crops/C58/mature.png"
+    },
+    {
+      "cropId": "C59",
+      "name": "剑麻",
+      "stage": "growing",
+      "row": 1,
+      "column": 5,
+      "cellBox": [
+        995,
+        0,
+        1254,
+        250
+      ],
+      "trimmedSourceBox": [
+        1060,
+        126,
+        1192,
+        235
+      ],
+      "size": [
+        132,
+        109
+      ],
+      "baseX": 65,
+      "file": "assets/plot/crops/C59/growing.png"
+    },
+    {
+      "cropId": "C59",
+      "name": "剑麻",
+      "stage": "mature",
+      "row": 2,
+      "column": 1,
+      "cellBox": [
+        0,
+        250,
+        260,
+        500
+      ],
+      "trimmedSourceBox": [
+        12,
+        279,
+        249,
+        490
+      ],
+      "size": [
+        237,
+        211
+      ],
+      "baseX": 114,
+      "file": "assets/plot/crops/C59/mature.png"
+    },
+    {
+      "cropId": "C60",
+      "name": "茜草",
+      "stage": "growing",
+      "row": 2,
+      "column": 2,
+      "cellBox": [
+        260,
+        250,
+        500,
+        500
+      ],
+      "trimmedSourceBox": [
+        302,
+        273,
+        456,
+        490
+      ],
+      "size": [
+        154,
+        217
+      ],
+      "baseX": 79,
+      "file": "assets/plot/crops/C60/growing.png"
+    },
+    {
+      "cropId": "C60",
+      "name": "茜草",
+      "stage": "mature",
+      "row": 2,
+      "column": 3,
+      "cellBox": [
+        500,
+        250,
+        750,
+        500
+      ],
+      "trimmedSourceBox": [
+        524,
+        266,
+        738,
+        490
+      ],
+      "size": [
+        214,
+        224
+      ],
+      "baseX": 89,
+      "file": "assets/plot/crops/C60/mature.png"
+    },
+    {
+      "cropId": "C61",
+      "name": "蓝靛草",
+      "stage": "growing",
+      "row": 2,
+      "column": 4,
+      "cellBox": [
+        750,
+        250,
+        995,
+        500
+      ],
+      "trimmedSourceBox": [
+        782,
+        316,
+        960,
+        490
+      ],
+      "size": [
+        178,
+        174
+      ],
+      "baseX": 87,
+      "file": "assets/plot/crops/C61/growing.png"
+    },
+    {
+      "cropId": "C61",
+      "name": "蓝靛草",
+      "stage": "mature",
+      "row": 2,
+      "column": 5,
+      "cellBox": [
+        995,
+        250,
+        1254,
+        500
+      ],
+      "trimmedSourceBox": [
+        1005,
+        265,
+        1243,
+        490
+      ],
+      "size": [
+        238,
+        225
+      ],
+      "baseX": 114,
+      "file": "assets/plot/crops/C61/mature.png"
+    },
+    {
+      "cropId": "C62",
+      "name": "洋甘菊",
+      "stage": "growing",
+      "row": 3,
+      "column": 1,
+      "cellBox": [
+        0,
+        500,
+        260,
+        727
+      ],
+      "trimmedSourceBox": [
+        65,
+        549,
+        195,
+        716
+      ],
+      "size": [
+        130,
+        167
+      ],
+      "baseX": 57,
+      "file": "assets/plot/crops/C62/growing.png"
+    },
+    {
+      "cropId": "C62",
+      "name": "洋甘菊",
+      "stage": "mature",
+      "row": 3,
+      "column": 2,
+      "cellBox": [
+        260,
+        500,
+        500,
+        727
+      ],
+      "trimmedSourceBox": [
+        275,
+        515,
+        472,
+        716
+      ],
+      "size": [
+        197,
+        201
+      ],
+      "baseX": 101,
+      "file": "assets/plot/crops/C62/mature.png"
+    },
+    {
+      "cropId": "C63",
+      "name": "薄荷",
+      "stage": "growing",
+      "row": 3,
+      "column": 3,
+      "cellBox": [
+        500,
+        500,
+        750,
+        727
+      ],
+      "trimmedSourceBox": [
+        556,
+        567,
+        679,
+        716
+      ],
+      "size": [
+        123,
+        149
+      ],
+      "baseX": 60,
+      "file": "assets/plot/crops/C63/growing.png"
+    },
+    {
+      "cropId": "C63",
+      "name": "薄荷",
+      "stage": "mature",
+      "row": 3,
+      "column": 4,
+      "cellBox": [
+        750,
+        500,
+        995,
+        727
+      ],
+      "trimmedSourceBox": [
+        762,
+        516,
+        980,
+        716
+      ],
+      "size": [
+        218,
+        200
+      ],
+      "baseX": 106,
+      "file": "assets/plot/crops/C63/mature.png"
+    },
+    {
+      "cropId": "C64",
+      "name": "紫锥菊",
+      "stage": "growing",
+      "row": 3,
+      "column": 5,
+      "cellBox": [
+        995,
+        500,
+        1254,
+        727
+      ],
+      "trimmedSourceBox": [
+        1028,
+        555,
+        1215,
+        715
+      ],
+      "size": [
+        187,
+        160
+      ],
+      "baseX": 94,
+      "file": "assets/plot/crops/C64/growing.png"
+    },
+    {
+      "cropId": "C64",
+      "name": "紫锥菊",
+      "stage": "mature",
+      "row": 4,
+      "column": 1,
+      "cellBox": [
+        0,
+        727,
+        260,
+        975
+      ],
+      "trimmedSourceBox": [
+        32,
+        748,
+        232,
+        963
+      ],
+      "size": [
+        200,
+        215
+      ],
+      "baseX": 119,
+      "file": "assets/plot/crops/C64/mature.png"
+    },
+    {
+      "cropId": "C65",
+      "name": "薰衣草",
+      "stage": "growing",
+      "row": 4,
+      "column": 2,
+      "cellBox": [
+        260,
+        727,
+        500,
+        975
+      ],
+      "trimmedSourceBox": [
+        306,
+        798,
+        452,
+        963
+      ],
+      "size": [
+        146,
+        165
+      ],
+      "baseX": 70,
+      "file": "assets/plot/crops/C65/growing.png"
+    },
+    {
+      "cropId": "C65",
+      "name": "薰衣草",
+      "stage": "mature",
+      "row": 4,
+      "column": 3,
+      "cellBox": [
+        500,
+        727,
+        750,
+        975
+      ],
+      "trimmedSourceBox": [
+        536,
+        750,
+        715,
+        964
+      ],
+      "size": [
+        179,
+        214
+      ],
+      "baseX": 82,
+      "file": "assets/plot/crops/C65/mature.png"
+    },
+    {
+      "cropId": "C66",
+      "name": "黑麦",
+      "stage": "growing",
+      "row": 4,
+      "column": 4,
+      "cellBox": [
+        750,
+        727,
+        995,
+        975
+      ],
+      "trimmedSourceBox": [
+        787,
+        780,
+        944,
+        961
+      ],
+      "size": [
+        157,
+        181
+      ],
+      "baseX": 79,
+      "file": "assets/plot/crops/C66/growing.png"
+    },
+    {
+      "cropId": "C66",
+      "name": "黑麦",
+      "stage": "mature",
+      "row": 4,
+      "column": 5,
+      "cellBox": [
+        995,
+        727,
+        1254,
+        975
+      ],
+      "trimmedSourceBox": [
+        1019,
+        733,
+        1223,
+        963
+      ],
+      "size": [
+        204,
+        230
+      ],
+      "baseX": 99,
+      "file": "assets/plot/crops/C66/mature.png"
+    },
+    {
+      "cropId": "C67",
+      "name": "酿酒梨",
+      "stage": "growing",
+      "row": 5,
+      "column": 1,
+      "cellBox": [
+        0,
+        975,
+        260,
+        1254
+      ],
+      "trimmedSourceBox": [
+        46,
+        1006,
+        200,
+        1217
+      ],
+      "size": [
+        154,
+        211
+      ],
+      "baseX": 79,
+      "file": "assets/plot/crops/C67/growing.png"
+    },
+    {
+      "cropId": "C67",
+      "name": "酿酒梨",
+      "stage": "mature",
+      "row": 5,
+      "column": 2,
+      "cellBox": [
+        260,
+        975,
+        500,
+        1254
+      ],
+      "trimmedSourceBox": [
+        281,
+        988,
+        463,
+        1219
+      ],
+      "size": [
+        182,
+        231
+      ],
+      "baseX": 93,
+      "file": "assets/plot/crops/C67/mature.png"
+    },
+    {
+      "cropId": "C68",
+      "name": "桑葚",
+      "stage": "growing",
+      "row": 5,
+      "column": 3,
+      "cellBox": [
+        500,
+        975,
+        730,
+        1254
+      ],
+      "trimmedSourceBox": [
+        524,
+        1038,
+        705,
+        1219
+      ],
+      "size": [
+        181,
+        181
+      ],
+      "baseX": 93,
+      "file": "assets/plot/crops/C68/growing.png"
+    },
+    {
+      "cropId": "C68",
+      "name": "桑葚",
+      "stage": "mature",
+      "row": 5,
+      "column": 4,
+      "cellBox": [
+        730,
+        975,
+        1008,
+        1254
+      ],
+      "trimmedSourceBox": [
+        739,
+        993,
+        993,
+        1219
+      ],
+      "size": [
+        254,
+        226
+      ],
+      "baseX": 121,
+      "file": "assets/plot/crops/C68/mature.png"
+    }
+  ]
+}
