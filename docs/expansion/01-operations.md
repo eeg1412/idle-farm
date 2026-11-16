@@ -178,11 +178,11 @@
 
 ## 1.5 任务金额与迁移
 
-任务共69项（原24项ID、完成条件与自动结算顺序保持，新增45项），逐项ID、条件、金币与RP见[游戏式样8.3](../game-design.md#83-任务系统)，金额来源见[方案附录F5](../reviews/2026-11-16-economy-rebalance-plan.md#f5-任务奖励)。金币奖励为reward=round2(I_ref(预计完成时刻)×60×m)（2位有效数字，m为分钟系数，I_ref为方案4.1参考收入）；合计约2.48×10¹⁶金币，入门主线19项合计636,640金币。原8项产业项（buildLivestock、collectLivestock、buildFish、collectFish、firstLivestockProcessing、firstFishProcessing、firstMixedProduct、newFarm）由长期组移入产业支线显示，ID与条件不变，已领状态保留。farmIncome阈值由100000改为10000000000。
+任务共67项（主线移除「批量出货」和「设定工位优先」，保留这两项的已领状态），逐项ID、条件、金币与RP见[游戏式样8.3](../game-design.md#83-任务系统)，金额来源见[方案附录F5](../reviews/2026-11-16-economy-rebalance-plan.md#f5-任务奖励)。金币奖励为reward=round2(I_ref(预计完成时刻)×60×m)（2位有效数字，m为分钟系数，I_ref为方案4.1参考收入）；合计约2.48×10¹⁶金币，入门主线17项合计631,040金币。原8项产业项（buildLivestock、collectLivestock、buildFish、collectFish、firstLivestockProcessing、firstFishProcessing、firstMixedProduct、newFarm）由长期组移入产业支线显示，ID与条件不变，已领状态保留。farmIncome阈值由100000改为10000000000。
 
 8项长期任务另发固定研发点，共40,700RP：collection200 500、collection300 2,000、collection400 6,000、itemCollection 20,000、runs5 200、runs20 1,000、runs50 3,000、runs100 8,000。objectives.js导出taskResearchPointRewards；settleTaskRewards在同一草稿内同时加金币、researchPoints与taskRewards领取ID，失败全回滚。奖励加金币，部分长期任务另加固定 RP；均不加售货数量/收入/活动/T/credit。不发材料奖励。已领标记跨轮保留、不补差不追缴；读档、解码和导入不发奖，新任务仅在下一次成功提交时评估，旧档已满足的新任务在首次成功提交时一次性补发。
 
-新增统计stats.batchSales（BigInt，存档十进制字符串，缺省0）：sellBatch成功且有≥2个成交报价时在同一出售事务内+1，失败回滚，周回不清零。
+保留兼容旧档的统计stats.batchSales（BigInt，存档十进制字符串，缺省0）：sellBatch成功且有≥2个成交报价时在同一出售事务内+1，失败回滚，周回不清零。
 
 账字段固定为prestigeLedgerVersion='LT-2026-11-v3'，lifetimeProductionValue、prestigeCredit、pendingLegacyResearchPoints为BigInt，legacyResearchPointsSettled为boolean，保存为十进制字符串。v2→v3迁移：
 

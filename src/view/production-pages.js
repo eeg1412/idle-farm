@@ -185,7 +185,12 @@ function facilityDetails(ui, kind, index) {
       }
       if (facility.recipe) dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, facility.recipe)));
     }
-    if (!id) dlg.button('升级', () => improveFacility(dlg, kind, index), confirm);
+    if (!id) {
+      const quote = facilityOffer(dlg.w, kind, index, 1n);
+      dlg.button('升级', () => improveFacility(dlg, kind, index), {
+        ...confirm, indicator: quote?.affordable ?? false,
+      });
+    }
   });
 }
 
@@ -209,15 +214,20 @@ function facilityCard(ui, kind, index, facility) {
       });
       return;
     }
+    let upgradeQuote;
+    const getUpgradeQuote = () => upgradeQuote ??= facilityOffer(ui.w, kind, index, 1n);
     const actions = [
       { label: crop ? '换种' : '更换', onClick: () => chooseFacility(ui, kind, index) },
-      { label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index) },
+      {
+        label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index),
+        indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false,
+      },
     ];
     body.feature(facilityImage(kind, id), (copy) => {
       const level = compact(facility.level) + ' 级';
       copy.heading(assignedName(id), { style: 'production', aside: crop ? level : undefined });
       if (!crop) copy.badges([{ label: level }], { style: 'production' });
-      const amount = active?.amount ?? facilityOffer(ui.w, kind, index)?.currentOutput;
+      const amount = active?.amount ?? getUpgradeQuote()?.currentOutput;
       if (amount != null) {
         copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', { style: 'metric', icon: id });
       }
@@ -361,10 +371,6 @@ function purchaseStation(ui, kind) {
   });
 }
 
-function stationOutput(world, kind, index) {
-  return stationUpgradeOffer(world, kind, index, 1n)?.currentOutput;
-}
-
 function improveStation(ui, kind, index) {
   let selected = upgradeOptions[0];
   ui.dialog('升级' + stationNames[kind], (dlg) => {
@@ -462,7 +468,8 @@ function stationDetails(ui, kind, index) {
     const active = station.batch;
     const id = active?.id ?? station.recipe;
     const item = catalog.items[id];
-    const output = stationOutput(dlg.w, kind, index);
+    const quote = stationUpgradeOffer(dlg.w, kind, index, 1n);
+    const output = quote?.currentOutput;
     dlg.badges([stationBadge(dlg.w, station)], { style: 'production' });
     dlg.row('等级', compact(station.level) + ' 级');
     if (item) {
@@ -499,7 +506,10 @@ function stationDetails(ui, kind, index) {
           dlg.refresh();
         },
       },
-      { label: '升级', tone: 'gold', onClick: () => improveStation(dlg, kind, index) },
+      {
+        label: '升级', tone: 'gold', onClick: () => improveStation(dlg, kind, index),
+        indicator: quote?.affordable ?? false,
+      },
     ], { style: 'production' });
   });
 }
@@ -511,15 +521,19 @@ function stationCard(ui, kind, index, station, source) {
   const badge = stationBadge(ui.w, station);
   const level = { label: compact(station.level) + ' 级' };
   const openDetails = () => stationDetails(ui, kind, index);
-  // Workshop rows: 升级 is always the rightmost and the only gold button.
-  const upgrade = { label: '升级', tone: 'gold', onClick: () => improveStation(ui, kind, index) };
+  let upgradeQuote;
+  const getUpgradeQuote = () => upgradeQuote ??= stationUpgradeOffer(ui.w, kind, index, 1n);
+  const upgrade = {
+    label: '升级', tone: 'gold', onClick: () => improveStation(ui, kind, index),
+    indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false,
+  };
   ui.card((body) => {
     if (!item) {
       body.feature(emptyStationArt[kind], (copy) => {
         copy.heading('空' + stationNames[kind], { style: 'production' });
         copy.badges([level, badge], { style: 'production' });
         copy.buttons([
-          { label: '选择配方', onClick: () => chooseRecipe(ui, kind, index, source) },
+          { label: '选择配方', tone: 'green', onClick: () => chooseRecipe(ui, kind, index, source) },
           upgrade,
         ], { style: 'production' });
       }, {
@@ -539,7 +553,10 @@ function stationCard(ui, kind, index, station, source) {
       ], { style: 'production' });
       copy.stats([
         { label: '当前库存', value: compact(quantity(ui.w, id)) },
-        { label: active ? '本批产出' : '每批产出', value: compact(active?.amount ?? stationOutput(ui.w, kind, index)) + ' 件' },
+        {
+          label: active ? '本批产出' : '每批产出',
+          value: compact(active?.amount ?? getUpgradeQuote()?.currentOutput) + ' 件',
+        },
       ], { style: 'workshop' });
     }, {
       ratio: 0.35, style: 'workshop', artAspect: 1, onClick: openDetails,
@@ -606,6 +623,6 @@ export function renderWorkshop(ui) {
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
   if (quote) ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
-    style: 'production', tone: 'plain', disabled: quote.atLimit,
+    style: 'production', tone: 'gold', disabled: quote.atLimit,
   });
 }
