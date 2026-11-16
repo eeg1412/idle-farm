@@ -226,6 +226,17 @@ export function objectives(world) {
   return { guide, active, long: longTerm.map((task) => progress(world, task)) };
 }
 
+// Same task as objectives(world): `active ? guide.find((task) => !task.done && !task.branch) : null`.
+// Branch entries always carry a non-empty branch, so only main-guide tasks qualify, and `active`
+// holds exactly when some main-guide task is undone; the first undone main task is the answer.
+export function activeGuideTask(world) {
+  for (const task of mainGuide) {
+    const entry = progress(world, task);
+    if (!entry.done) return entry;
+  }
+  return null;
+}
+
 // The caller settles a private draft and commits its coins, RP and receipt IDs together.
 // Neither progress queries nor save decoding issue rewards. Branch tasks are settled even
 // before they are displayed, so a task regrouped from the long-term list keeps its timing.

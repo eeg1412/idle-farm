@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite } from 'pixi.js';
+import { Container, Graphics, GraphicsContext, Sprite } from 'pixi.js';
 import fishVisuals from '../content/fish-visuals.json' with { type: 'json' };
 import habitatVisuals from '../content/fish-habitats.json' with { type: 'json' };
 import { fishRegistration, fishSizeLayouts } from './fish-layout.js';
@@ -28,29 +28,63 @@ function waterBounds(polygon) {
   return { left, top, width: Math.max(...xs) - left, height: Math.max(...ys) - top };
 }
 
-function rippleArc(graphics, x, y, radiusX, radiusY, start, end, color, alpha) {
+function rippleArc(target, x, y, radiusX, radiusY, start, end, color, alpha) {
   // Every short arc starts its own path. Never connect it to an earlier shape.
-  graphics.moveTo(x + Math.cos(start) * radiusX, y + Math.sin(start) * radiusY);
+  target.moveTo(x + Math.cos(start) * radiusX, y + Math.sin(start) * radiusY);
   const segments = 12;
   for (let step = 1; step <= segments; step += 1) {
     const angle = start + (end - start) * step / segments;
-    graphics.lineTo(x + Math.cos(angle) * radiusX, y + Math.sin(angle) * radiusY);
+    target.lineTo(x + Math.cos(angle) * radiusX, y + Math.sin(angle) * radiusY);
   }
-  graphics.stroke({ color, alpha, width: 0.85, cap: 'round', join: 'round' });
+  target.stroke({ color, alpha, width: 0.85, cap: 'round', join: 'round' });
 }
 
-function drawRipples(graphics, bounds, color, now) {
-  graphics.clear();
-  for (const [index, [across, down]] of ripplePositions.entries()) {
-    const progress = ((now + index * rippleCycleMs / ripplePositions.length) % rippleCycleMs) / rippleCycleMs;
-    const depth = 0.68 + down * 0.38;
-    const radiusX = (8 + 25 * progress) * depth;
-    const radiusY = radiusX * 0.24;
-    const x = bounds.left + across * bounds.width + Math.sin(now / 4800 + index) * 3;
-    const y = bounds.top + down * bounds.height + progress * 3;
-    const alpha = Math.sin(progress * Math.PI) * 0.26;
-    rippleArc(graphics, x, y, radiusX, radiusY, Math.PI * 0.12, Math.PI * 0.86, color, alpha);
-    rippleArc(graphics, x, y, radiusX, radiusY, Math.PI * 1.1, Math.PI * 1.78, color, alpha * 0.72);
+// Ripple geometry depends on the 3600 ms progress cycle, which is exactly 108
+// steps of the 30 fps water clock. Each ripple's shape is baked once per step
+// into a shared GraphicsContext; only the slow sideways drift (period 2π·4800 ms,
+// never aligned with the cycle) stays live as the Graphics' x offset.
+const rippleCycleFrames = Math.round(rippleCycleMs / waterFrameMs);
+const emptyRippleContext = new GraphicsContext();
+// Keyed by water bounds and colour. Contexts are shared by every pond with the
+// same habitat and live for the module lifetime (habitats × 5 × 108 at most);
+// a pond's destroy never touches them.
+const rippleContextCache = new Map();
+
+function rippleSlots(bounds, color) {
+  const key = [bounds.left, bounds.top, bounds.width, bounds.height, color].join(',');
+  let slots = rippleContextCache.get(key);
+  if (!slots) {
+    slots = ripplePositions.map(() => new Array(rippleCycleFrames));
+    rippleContextCache.set(key, slots);
+  }
+  return slots;
+}
+
+function rippleContext(slots, bounds, color, index, slot) {
+  let context = slots[index][slot];
+  if (context) return context;
+  const [across, down] = ripplePositions[index];
+  const slotMs = slot * waterFrameMs;
+  const progress = ((slotMs + index * rippleCycleMs / ripplePositions.length) % rippleCycleMs) / rippleCycleMs;
+  const depth = 0.68 + down * 0.38;
+  const radiusX = (8 + 25 * progress) * depth;
+  const radiusY = radiusX * 0.24;
+  const x = bounds.left + across * bounds.width;
+  const y = bounds.top + down * bounds.height + progress * 3;
+  const alpha = Math.sin(progress * Math.PI) * 0.26;
+  context = new GraphicsContext();
+  rippleArc(context, x, y, radiusX, radiusY, Math.PI * 0.12, Math.PI * 0.86, color, alpha);
+  rippleArc(context, x, y, radiusX, radiusY, Math.PI * 1.1, Math.PI * 1.78, color, alpha * 0.72);
+  slots[index][slot] = context;
+  return context;
+}
+
+function showRipples(rippleGraphics, slots, bounds, color, waterFrame, now) {
+  const slot = waterFrame % rippleCycleFrames;
+  for (const [index, graphics] of rippleGraphics.entries()) {
+    const context = rippleContext(slots, bounds, color, index, slot);
+    if (graphics.context !== context) graphics.context = context;
+    graphics.x = Math.sin(now / 4800 + index) * 3;
   }
 }
 
@@ -139,11 +173,21 @@ export function mountFishAnimation(
   surface.addChild(tint);
 
   // Layer 4: fine animated wave highlights, independent of the fish lifecycle.
-  const waves = new Graphics();
+  const waves = new Container();
   waves.label = 'fish-water-waves';
   waves.eventMode = 'none';
   surface.addChild(waves);
   const rippleColor = species.habitat === 'sea' ? 0xd0edf5 : 0xd0e9df;
+  const ripples = rippleSlots(bounds, rippleColor);
+  // One Graphics per ripple, drawn in the original order. Constructed from a
+  // shared context, so none of them owns a context that destroy could free.
+  const rippleGraphics = ripplePositions.map((_, index) => {
+    const graphics = new Graphics(emptyRippleContext);
+    graphics.label = 'fish-water-wave-' + index;
+    graphics.eventMode = 'none';
+    waves.addChild(graphics);
+    return graphics;
+  });
   let lastWaterFrame;
   parent.addChild(container);
 
@@ -159,7 +203,7 @@ export function mountFishAnimation(
       const waterNow = Math.max(0, now ?? clock);
       const waterFrame = Math.floor(waterNow / waterFrameMs);
       if (waterFrame !== lastWaterFrame) {
-        drawRipples(waves, bounds, rippleColor, waterNow);
+        showRipples(rippleGraphics, ripples, bounds, rippleColor, waterFrame, waterNow);
         lastWaterFrame = waterFrame;
       }
     },
@@ -167,6 +211,9 @@ export function mountFishAnimation(
       if (container.destroyed) return;
       surface.mask = null;
       scene.mask = null;
+      // Shared ripple contexts stay alive for other ponds. A falsy option on a
+      // Graphics built from a shared context frees only the Graphics itself.
+      for (const graphics of rippleGraphics) graphics.destroy();
       clip.destroy();
       container.destroy({ children: true });
     },

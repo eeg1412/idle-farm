@@ -2,7 +2,7 @@ import {
   catalog, facilityOffer, productionDurationMs, quantity, stationOffer, stationRequirements, stationUpgradeOffer,
 } from '../game/world.js';
 import { unitPrice } from '../game/advancement.js';
-import { objectives } from '../game/objectives.js';
+import { activeGuideTask } from '../game/objectives.js';
 import { reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
@@ -285,8 +285,7 @@ export function renderProduction(ui) {
     style: 'production', tone: 'green', disabled: quote?.atLimit,
   });
   if (kind === 'C') {
-    const taskState = objectives(ui.w);
-    const objective = taskState.active ? taskState.guide.find((task) => !task.done && !task.branch) : null;
+    const objective = activeGuideTask(ui.w);
     if (objective) {
       const earnForLand = objective.id === 'firstPlot' && ui.w.coins < quote.cost;
       ui.button(earnForLand ? '扩建田地 · 前往出货' : '任务 · ' + objective.name,

@@ -4,6 +4,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import sharp from 'sharp';
+import { writeRuntimeCropVisuals } from './compile-crop-visuals.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const art = path.join(root, 'assets/plot');
@@ -296,7 +297,12 @@ for (const crop of selected) {
 if (draftBare) {
   await mkdir(path.join(art, 'repeat-harvest'), { recursive: true });
   await writeFile(path.join(art, 'repeat-harvest/draft-visuals.json'), JSON.stringify(draftVisuals, null, 2) + '\n');
-} else await writeFile(metadataPath, JSON.stringify(Object.fromEntries(Object.entries(visuals).sort()), null, 2) + '\n');
+} else {
+  await writeFile(metadataPath, JSON.stringify(Object.fromEntries(Object.entries(visuals).sort()), null, 2) + '\n');
+  // The game bundle imports only the runtime subset; regenerate it from the
+  // metadata just written so both files never drift.
+  await writeRuntimeCropVisuals({ from: metadataPath });
+}
 for (const crop of reviewIds) {
   if (!visuals[crop] || visuals[crop].mode !== 'individual') throw new Error(`No individual plant metadata: ${crop}`);
   await exportReview(crop, visuals[crop]);

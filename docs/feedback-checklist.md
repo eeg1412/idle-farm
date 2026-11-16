@@ -271,3 +271,13 @@ PM已实开真实原稿及4最终WebP，并读效果登记→源表→all-loaded
 | 24任务与原页面同步 | objectives仅奖励映射、原Pixi报价、原commit自动发奖 | 源码/文档已交付；24条件不改、已领不补差、不增加入口；补正intro需原sold>0前提；画布交互未验收 |
 | 验证与交付边界 | 用户尚未明确授权运行验证 | 未运行测试、模拟、冒烟、预览、语法／运行时检查或编译；无推送／部署授权 |
 
+
+# 2026-11-16：性能第二批与性能规约
+
+用户：“按照推荐方案 修改，涵盖 1. 优化项（按收益排序） 和 2. 待剖析或需用户决定（含推荐方案），方案暂不改的 不要改。”追加：“修改完之后 增加性能规约的md文档，防止后面的人犯类似的错误。”执行卡：[性能第二批](tasks/2026-11-16-perf-batch2.md)。
+
+| 要求 | 实际路径／证据 | 当前状态与限制 |
+| --- | --- | --- |
+| §1 剩余项 R2、L4、L2b、R5、R6、R7 | canvas-ui.js、main.js、world.js `productionRestarter`、objectives.js `activeGuideTask`、fish-animation.js、`crop-visuals.runtime.json` 及生成脚本 | 已实施并经 PM 读码核对；R7 有亚像素时刻差；未运行测试、剖析或画布验收 |
+| §2 推荐直接实施的 S1–S4；S5–S7 不改 | canvas-ui.js（S1、S2）、build-offline.mjs（S3）、world-save.js（S4） | 已实施；最终 `npm run build` 退出码 0；S5 需剖析授权，S6、S7 按推荐未改 |
+| 性能规约文档 | `docs/performance.md`；入口 `AGENTS.md`、`docs/development.md` 界面实装节 | 已完成 |

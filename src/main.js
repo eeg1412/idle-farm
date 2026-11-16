@@ -94,7 +94,7 @@ function paint() {
     anchor = frontAnchor + (display.clockMs - world.clockMs);
   }
   const timing = live ? { anchor, epoch: worldEpoch } : undefined;
-  if (layout) view.render(layout, display, status, timing, world);
+  if (layout) view.render(layout, display, status, timing);
   nextDisplayAt = Infinity;
   if (!live) return;
   let nextEnd = Infinity;

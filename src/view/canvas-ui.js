@@ -1,6 +1,6 @@
-import { Container, Graphics, Rectangle, Sprite, Text, Texture, Assets } from 'pixi.js';
+import { Container, Graphics, Rectangle, Sprite, Text, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
-import cropVisuals from '../content/crop-visuals.json' with { type: 'json' };
+import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import { compact } from './numbers.js';
 import { gameHistory } from './navigation.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
@@ -87,8 +87,14 @@ function restoreViewState(target, saved) {
   }
   if (Array.isArray(target)) target.length = saved.length;
 }
-// Fields that move with the projected clock alone; nothing on a page draws them statically.
-const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs']);
+// Fields no page draws statically: the projected clock moves them every frame, and the save
+// revision changes on every commit (including the 5-second autosave) without any visible effect.
+const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs', 'revision']);
+// Texture LRU limits for page icons and facility scenes. Animation textures are never evicted.
+const iconCacheLimit = 200;
+const sceneCacheLimit = 40;
+// Upper bound on how long an unchanged frame may stay on screen without a render.
+const idleRenderMs = 1000;
 // Plain-data equality for projected worlds; shared references short-circuit.
 function sameState(a, b, skip) {
   if (a === b) return true;
@@ -257,8 +263,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let feedbackLayer;
   let noticeNode;
   let floatNode;
-  let worldSource;
   let drawn;
+  // Any change to the stage sets this; the stage is rendered only on dirty frames (plus a slow
+  // safety refresh), never skipped when something may have changed.
+  let frameDirty = true;
+  let lastRenderAt = -Infinity;
+  const markDirty = () => { frameDirty = true; };
   let progressTiming;
   let progressEpoch;
   let lastProgressClock;
@@ -282,6 +292,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const textures = new Map();
   const failedImages = new Set();
   const loadingImages = new Map();
+  // LRU order (oldest first) of page icons and scenes drawn by drawImage, url -> category.
+  const imageUse = new Map();
+  // Urls used by any animation loader: never evicted, even if a page also draws them as icons.
+  const pinnedImages = new Set();
+  // Urls drawn since the current page build started; these may be on screen and are never evicted.
+  let imagesInUse = new Set();
+  const unloadingImages = new Map();
+  // Animations parked during a rebuild, keyed by type/slot/batch, waiting to be re-attached.
+  const retainedAnimations = new Map();
   const frame = { width: 0, height: 0 };
 
   const scale = () => 1;
@@ -310,9 +329,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (label.text !== next) {
         label.text = next;
         align();
+        markDirty();
       }
       const color = readTone?.() === 'danger' ? palette.red : palette.ink;
-      if (color !== lastColor) { label.style.fill = color; lastColor = color; }
+      if (color !== lastColor) { label.style.fill = color; lastColor = color; markDirty(); }
       return true;
     };
     update(progressClock(performance.now()));
@@ -329,6 +349,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   const requestRender = () => {
     needsRender = true;
+    markDirty();
     if (pendingRender) return;
     pendingRender = true;
     requestAnimationFrame(() => {
@@ -341,15 +362,56 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const texture = textures.get(url);
     if (texture || failedImages.has(url)) return Promise.resolve(texture);
     if (loadingImages.has(url)) return loadingImages.get(url);
-    const pending = Assets.load(url).then((asset) => {
+    // An evicted url finishes unloading before it loads again, so Assets cannot hand back
+    // the texture that is about to be destroyed.
+    const unloading = unloadingImages.get(url);
+    const pending = (unloading ? unloading.then(() => Assets.load(url)) : Assets.load(url)).then((asset) => {
       asset.source.scaleMode = 'nearest';
       textures.set(url, asset);
+      markDirty();
       return asset;
     }).catch(() => {
       failedImages.add(url);
     }).finally(() => loadingImages.delete(url));
     loadingImages.set(url, pending);
     return pending;
+  }
+
+  // Animation scenes (crop plants, livestock, fish, workshop) load through here and are pinned.
+  function loadAnimationImage(url) {
+    pinnedImages.add(url);
+    return loadImage(url);
+  }
+
+  function touchImage(url, category) {
+    imagesInUse.add(url);
+    if (!category) return;
+    imageUse.delete(url);
+    imageUse.set(url, category);
+  }
+
+  // Evicts least recently drawn icons and scenes beyond their limits. Only loaded textures that
+  // no animation uses and the current page has not drawn are candidates.
+  function trimImages() {
+    for (const [category, limit] of [['icon', iconCacheLimit], ['scene', sceneCacheLimit]]) {
+      let count = 0;
+      for (const [url, kind] of imageUse) if (kind === category && textures.has(url) && !pinnedImages.has(url)) count += 1;
+      if (count <= limit) continue;
+      for (const [url, kind] of imageUse) {
+        if (count <= limit) break;
+        if (kind !== category || !textures.has(url) || pinnedImages.has(url) || imagesInUse.has(url) ||
+            loadingImages.has(url)) continue;
+        textures.delete(url);
+        imageUse.delete(url);
+        count -= 1;
+        // Assets.unload destroys the texture and drops it from the Assets caches; a later
+        // drawImage reloads it (normally from the browser HTTP cache).
+        const unloading = Assets.unload(url).catch(() => {}).finally(() => {
+          if (unloadingImages.get(url) === unloading) unloadingImages.delete(url);
+        });
+        unloadingImages.set(url, unloading);
+      }
+    }
   }
 
   function loadPlotTextures(id) {
@@ -361,7 +423,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const crop = {};
     cropPlots.set(id, crop);
     plotSharedLoad ??= Promise.all(plotSharedTextureKeys.map(async (key) => [
-      key, await loadImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
+      key, await loadAnimationImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
     ])).then((entries) => entries.every(([, texture]) => texture) ? new Map(entries) : undefined);
 
     if (individual) {
@@ -369,9 +431,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const retained = visual.harvestMode === 'retainedPlant';
       if (retained && !visual.repeatBare) return;
       const plantLoad = Promise.all(visual.stages.map((stage) =>
-        loadImage(path('./' + stage.path + '?game=1&v=4'))));
+        loadAnimationImage(path('./' + stage.path + '?game=1&v=4'))));
       const bareLoad = retained
-        ? loadImage(path('./' + visual.repeatBare.path + '?game=1&v=5')) : Promise.resolve(undefined);
+        ? loadAnimationImage(path('./' + visual.repeatBare.path + '?game=1&v=5')) : Promise.resolve(undefined);
       Promise.all([plotSharedLoad, plantLoad, bareLoad]).then(([shared, plants, bare]) => {
         if (!shared || plants.some((texture, index) => !texture ||
             texture.width !== visual.stages[index].width || texture.height !== visual.stages[index].height)) return;
@@ -382,8 +444,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       return;
     }
 
-    const atlasLoad = loadImage(path(`./art/plot/crops/${id}.webp?game=1&v=3`));
-    const frontLoad = loadImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=3`));
+    const atlasLoad = loadAnimationImage(path(`./art/plot/crops/${id}.webp?game=1&v=3`));
+    const frontLoad = loadAnimationImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=3`));
     Promise.all([plotSharedLoad, atlasLoad, frontLoad]).then(([shared, atlas, front]) => {
       const size = plotFrameSize;
       if (!shared || !atlas || !front || atlas.width !== size * 2 || atlas.height !== size * 2 ||
@@ -407,10 +469,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const entry = {};
     livestockTextures.set(id, entry);
     Promise.all([
-      loadImage(path('./art/livestock/barn.webp?game=1&v=1')),
-      loadImage(path(`./art/livestock/animals/${id}.webp?game=1&v=4`)),
-      loadImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
-      loadImage(path(feedTexture.path + '?game=1&v=1')),
+      loadAnimationImage(path('./art/livestock/barn.webp?game=1&v=1')),
+      loadAnimationImage(path(`./art/livestock/animals/${id}.webp?game=1&v=4`)),
+      loadAnimationImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
+      loadAnimationImage(path(feedTexture.path + '?game=1&v=1')),
     ]).then(([barn, atlas, product, feed]) => {
       const size = livestockFrameSize;
       const rows = species.stages;
@@ -455,8 +517,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const entry = {};
     fishTextures.set(id, entry);
     Promise.all([
-      loadImage(path(habitat.pond.replace(/^public\//, './') + '?game=1&v=1')),
-      loadImage(path(`./art/fish/animals/${id}.webp?game=1&v=1`)),
+      loadAnimationImage(path(habitat.pond.replace(/^public\//, './') + '?game=1&v=1')),
+      loadAnimationImage(path(`./art/fish/animals/${id}.webp?game=1&v=1`)),
     ]).then(([pond, atlas]) => {
       const size = fishFrameSize;
       const rows = fishSpecies[id].stages;
@@ -498,10 +560,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     workshopTextures.set(key, entry);
     Promise.all([
       ...workshopIconIds(id).map(async (iconId) => [iconId,
-        await loadImage(path('./wiki/icons/' + iconId + '.webp?game=1')),
+        await loadAnimationImage(path('./wiki/icons/' + iconId + '.webp?game=1')),
       ]),
       ...sources.map(async (source) => [source.key,
-        await loadImage(path(source.path + '?game=1')),
+        await loadAnimationImage(path(source.path + '?game=1')),
       ]),
     ]).then((assets) => {
       if (assets.some(([, texture]) => !texture)) return;
@@ -515,8 +577,68 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function unmountPlot(plot) {
     if (!plot.animation) return;
     plot.animation.destroy();
+    if (plot.holder && !plot.holder.destroyed) plot.holder.destroy({ children: true });
     plot.animation = undefined;
+    plot.holder = undefined;
+    plot.retained = undefined;
     activePlots.delete(plot);
+    markDirty();
+  }
+
+  // Before a rebuild destroys the old page, a mounted animation is detached (not destroyed) so
+  // the new card for the same slot and batch can adopt it. Nothing renders in between.
+  function parkPlot(plot) {
+    const { animation, holder, retained } = plot;
+    if (!animation || !holder || holder.destroyed || !retained) { unmountPlot(plot); return; }
+    holder.parent?.removeChild(holder);
+    const previous = retainedAnimations.get(retained.key);
+    if (previous) destroyRetained(previous);
+    retainedAnimations.set(retained.key, { animation, holder, ...retained });
+    plot.animation = undefined;
+    plot.holder = undefined;
+    plot.retained = undefined;
+    activePlots.delete(plot);
+  }
+
+  function destroyRetained(entry) {
+    entry.animation.destroy();
+    if (!entry.holder.destroyed) entry.holder.destroy({ children: true });
+  }
+
+  // Parked animations that no visible card adopted unload exactly as before.
+  function flushRetainedAnimations() {
+    if (!retainedAnimations.size) return;
+    for (const entry of retainedAnimations.values()) destroyRetained(entry);
+    retainedAnimations.clear();
+    markDirty();
+  }
+
+  // Re-attaches a parked animation only when every input it was mounted with is unchanged.
+  function adoptAnimation(plot, retained) {
+    const entry = retainedAnimations.get(retained.key);
+    if (!entry) return false;
+    retainedAnimations.delete(retained.key);
+    if (entry.textures !== retained.textures || entry.motion !== retained.motion ||
+        !sameState(entry.signature, retained.signature)) {
+      destroyRetained(entry);
+      return false;
+    }
+    plot.art.addChild(entry.holder);
+    plot.animation = entry.animation;
+    plot.holder = entry.holder;
+    plot.retained = retained;
+    activePlots.add(plot);
+    markDirty();
+    return true;
+  }
+
+  // Each animation mounts into its own holder so it can be moved between cards as one node.
+  function animationHolder(plot) {
+    const holder = new Container();
+    holder.eventMode = 'none';
+    plot.art.addChild(holder);
+    plot.holder = holder;
+    return holder;
   }
 
   function drawImage(parent, id, x, y, w, h, crop = false, trackViewport = true) {
@@ -530,6 +652,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const livestockScene = id.startsWith('scene-') && data.items[id.slice(6)]?.kind === 'L';
     const version = livestockChoice ? '&v=4' : livestockScene ? '&v=4' : '';
     const url = path(directory + id + '.webp?game=1' + version);
+    touchImage(url, scene ? 'scene' : hero ? undefined : 'icon');
     if (trackViewport && scrollImages) {
       const layer = new Container();
       layer.eventMode = 'none';
@@ -571,6 +694,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     sprite.scale.set(factor);
     sprite.position.set(x + (w - sprite.width) / 2, y + (h - sprite.height) / 2);
     parent.addChild(sprite);
+    markDirty();
     if (crop) {
       const mask = inkGraphics();
       if (scene) mask.roundRect(x, y, w, h, 10);
@@ -1169,6 +1293,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const percent = Math.round(fraction * 100);
           if (percent === previous) return;
           previous = percent;
+          markDirty();
           fill.clear();
           if (percent === 100) fill.circle(cx, cy, radius).fill(palette.green);
           else if (percent > 0) fill.moveTo(cx, cy).lineTo(cx, cy - radius)
@@ -1546,6 +1671,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const pixel = 1 / ((layout?.scale || 1) * (app.renderer.resolution || 1));
           const filled = raw >= width ? width : Math.min(width, Math.round(raw / pixel) * pixel);
           if (filled !== previous) {
+            markDirty();
             fill.clear();
             if (filled > 0) fill.roundRect(x, top, filled, 8, Math.min(filled / 2, 4)).fill(palette.leaf);
             previous = filled;
@@ -1937,10 +2063,22 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             motion = { kind: plot.kind, index: plot.index, id: plot.id, clock: 0, started: false };
             workshopMotionStates.set(motionKey, motion);
           }
-          plot.animation = mountWorkshopAnimation(plot.art, stationTextures, plot.box, plot,
+          const retained = {
+            key: 'workshop:' + plot.kind + ':' + plot.index + ':' + plot.id,
+            textures: stationTextures, motion,
+            signature: { width: plot.box.width, height: plot.box.height },
+          };
+          if (adoptAnimation(plot, retained)) {
+            plot.animation.update(animationFrame);
+            continue;
+          }
+          // The station is read through the slot (kind/index), which the retention key fixes.
+          plot.animation = mountWorkshopAnimation(animationHolder(plot), stationTextures, plot.box, plot,
             () => world?.stations[plot.kind]?.[plot.index], motion);
+          plot.retained = retained;
           plot.animation.update(animationFrame);
           activePlots.add(plot);
+          markDirty();
           continue;
         }
         const { batch, index } = plot;
@@ -1962,18 +2100,38 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (previous?.id === batch.id) animationStart = previous.start;
           else shortPlotStarts.set(index, { id: batch.id, start: animationStart });
         }
+        const previousFish = fish ? fishBatches.get(index) : undefined;
+        const previousAnimal = livestock ? livestockBatches.get('L:' + index) : undefined;
+        if (fish) animationStart = previousFish?.animationStart ?? batch.start;
+        else if (livestock) animationStart = previousAnimal?.animationStart ?? batch.start;
+        const previousHarvestAt = livestock ? previousAnimal?.previousHarvestAt : undefined;
+        const planting = !livestock && !fish ? world.facilities.C[index]?.planting : undefined;
+        // Every mount input is part of the retention check; a parked animation is reused only
+        // when it would be mounted with the same slot, batch, timeline, textures and box.
+        const retained = {
+          key: plot.type + ':' + index + ':' + batch.id + ':' + batch.start,
+          textures: plotTextures,
+          signature: {
+            batch: { ...batch }, animationStart, previousHarvestAt, planting: planting ?? null,
+            width: plot.box.width, height: plot.box.height,
+          },
+        };
+        if (adoptAnimation(plot, retained)) {
+          plot.animation.update(animationFrame);
+          continue;
+        }
+        const holder = animationHolder(plot);
         if (fish) {
-          const previous = fishBatches.get(index);
-          plot.animation = mountFishAnimation(plot.art, plotTextures, plot.box, batch,
-            previous?.animationStart ?? batch.start);
+          plot.animation = mountFishAnimation(holder, plotTextures, plot.box, batch, animationStart);
         } else if (livestock) {
-          const previous = livestockBatches.get('L:' + index);
-          plot.animation = mountLivestockAnimation(plot.art, plotTextures, plot.box, batch,
-            previous?.animationStart ?? batch.start, previous?.previousHarvestAt);
-        } else plot.animation = mountPlotAnimation(plot.art, plotTextures, plot.box, batch, animationStart,
-          world.facilities.C[index]?.planting);
+          plot.animation = mountLivestockAnimation(holder, plotTextures, plot.box, batch,
+            animationStart, previousHarvestAt);
+        } else plot.animation = mountPlotAnimation(holder, plotTextures, plot.box, batch, animationStart,
+          planting);
+        plot.retained = retained;
         plot.animation.update(animationFrame);
         activePlots.add(plot);
+        markDirty();
       }
     };
   }
@@ -2105,12 +2263,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (thumb) thumb.y = y + thumbRange * (state.scroll / max);
     if (active) scrollActivity = performance.now();
     updateScrollThumb(performance.now());
+    markDirty();
   }
 
   function updateScrollThumb(now) {
     if (!scrollTarget?.thumb) return;
     const idle = clamp((now - scrollActivity - 550) / 520, 0, 1);
-    scrollTarget.thumb.alpha = (drag?.thumb || scrollTarget.thumbHover) ? 0.72 : 0.56 - 0.32 * idle;
+    const alpha = (drag?.thumb || scrollTarget.thumbHover) ? 0.72 : 0.56 - 0.32 * idle;
+    if (scrollTarget.thumb.alpha !== alpha) {
+      scrollTarget.thumb.alpha = alpha;
+      markDirty();
+    }
   }
 
   function handleDevelopmentTitleTap(event) {
@@ -2207,6 +2370,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function drawFeedback() {
     if (!feedbackLayer) return;
+    // Called on build, on new feedback and every frame while feedback is shown or fading out.
+    markDirty();
     // Each message is built once per feedback layer; later frames only move and fade it.
     const live = (node, source) => node && node.source === source && !node.layer.destroyed &&
       node.layer.parent === feedbackLayer;
@@ -2257,15 +2422,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!layout || building) return;
     if (treeGesture || (pressedPointer !== null && !sliderDrag)) {
       needsRender = true;
+      markDirty();
       syncPlotVisibility?.();
       return;
     }
     needsRender = false;
     building = true;
+    markDirty();
     // A throwing page must not leave `building` set, or every later redraw would be skipped.
     try { build(); }
+    catch (error) { flushRetainedAnimations(); throw error; }
     finally { building = false; }
-    drawn = { layout, world, status, source: worldSource, epoch: progressTiming?.epoch };
+    drawn = { layout, world, status, epoch: progressTiming?.epoch };
     if (pendingModal) {
       const next = pendingModal;
       pendingModal = undefined;
@@ -2273,7 +2441,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       recordRoute();
       requestRender();
     } else rememberContext();
+    // Visible cards adopt their parked animations here; the rest unload as before.
     syncPlotVisibility?.();
+    flushRetainedAnimations();
+    trimImages();
   }
 
   function build() {
@@ -2288,9 +2459,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     progressBars.clear();
     countdowns.clear();
     updateDialogSampleProgress = undefined;
-    for (const plot of activePlots) unmountPlot(plot);
+    for (const plot of [...activePlots]) parkPlot(plot);
     syncPlotVisibility = undefined;
     visiblePlotIds.clear();
+    imagesInUse = new Set();
     for (const child of root.removeChildren()) child.destroy({ children: true });
     controls = [];
     scrollTarget = undefined;
@@ -2534,7 +2706,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     } catch (error) { toast(error?.userMessage || '无法读取存档文件。'); }
   });
-  document.addEventListener?.('visibilitychange', () => syncPlotVisibility?.());
+  document.addEventListener?.('visibilitychange', () => { markDirty(); syncPlotVisibility?.(); });
+  // Input, focus, viewport and context events may change what is shown (hover, gestures in the
+  // research tree, sliders, text entry); each marks the next frame dirty.
+  for (const type of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'pointerleave', 'wheel',
+    'keydown', 'keyup', 'paste', 'drop', 'dragover', 'focus', 'blur', 'webglcontextrestored']) {
+    app.canvas.addEventListener(type, markDirty, { passive: true, capture: true });
+  }
+  for (const type of ['pointerup', 'pointercancel', 'blur', 'focus', 'resize', 'pageshow']) {
+    window.addEventListener(type, markDirty, { passive: true });
+  }
+  window.visualViewport?.addEventListener('resize', markDirty, { passive: true });
+  // Pixi tracks drags that leave the canvas through document-level pointer moves.
+  document.addEventListener?.('pointermove', markDirty, { passive: true, capture: true });
   app.ticker.add(() => {
     if (notices || floating) drawFeedback();
     const now = performance.now();
@@ -2556,9 +2740,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         !document.hidden && !modal && !pendingModal && !status?.busy) {
       const animationFrame = { clock: clock ?? progressClock(now), now };
       for (const plot of activePlots) plot.animation.update(animationFrame);
+      markDirty();
     }
+    if (coast) markDirty();
     updateScrollThumb(now);
   });
+  // The stage renders only on dirty frames (R6): Pixi's per-tick render is replaced by this
+  // LOW-priority listener, which runs after every NORMAL update in the same tick (including
+  // the game's own paint), so a change made in a frame is rendered in that frame. The frame
+  // rate itself is unchanged while anything moves; idle frames render at most once a second.
+  if (typeof app.render === 'function' && typeof app.ticker.remove === 'function') {
+    app.ticker.remove(app.render, app);
+    app.ticker.add(() => {
+      const now = performance.now();
+      if (!frameDirty && now - lastRenderAt < idleRenderMs) return;
+      frameDirty = false;
+      lastRenderAt = now;
+      app.render();
+    }, undefined, UPDATE_PRIORITY.LOW);
+  }
 
   if (navigation) {
     restoreRoute(true);
@@ -2573,6 +2773,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function resize(nextLayout) {
     const resized = !layout || layout.width !== nextLayout.width || layout.height !== nextLayout.height;
     layout = nextLayout;
+    markDirty();
     if (resized) { pressedPointer = null; treeGesture = false; coast = null; endPointer(undefined, true); floating = undefined; }
     // Keep captured pointer targets intact until a drag finishes.
     if (!drag && !sliderDrag) redraw();
@@ -2592,6 +2793,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     fishBatches.clear();
     workshopMotionStates.clear();
     for (const plot of activePlots) unmountPlot(plot);
+    flushRetainedAnimations();
     visiblePlotIds.clear();
     progressTiming = undefined;
     progressEpoch = undefined;
@@ -2635,8 +2837,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (world && progressTiming) progressClock(performance.now());
       progressTiming = undefined;
     },
-    // `nextSource` is the committed world `nextWorld` was projected from (itself when not projected).
-    render(nextLayout, nextWorld, nextStatus, nextProgressTiming, nextSource = nextWorld) {
+    render(nextLayout, nextWorld, nextStatus, nextProgressTiming) {
+      // A new world or status may change anything that reads `world` lazily; render this frame.
+      markDirty();
       if (nextProgressTiming?.epoch !== undefined && nextProgressTiming.epoch !== progressEpoch) {
         progressEpoch = nextProgressTiming.epoch;
         lastProgressClock = undefined;
@@ -2661,12 +2864,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if ((station?.batch?.id ?? station?.recipe) !== phase.id) workshopMotionStates.delete(key);
       }
       // Rebuild only when something a page draws statically may differ. When just the clock
-      // moved, countdowns, progress bars and animations follow `world` frame by frame.
+      // moved, countdowns, progress bars and animations follow `world` frame by frame. A new
+      // commit (such as the 5-second autosave) whose data equal the drawn world, apart from
+      // the clock fields and save revision, needs no rebuild either (S1).
       const structural = !drawn || nextLayout !== layout || drawn.layout !== nextLayout ||
-        nextStatus !== drawn.status || nextSource !== drawn.source ||
+        nextStatus !== drawn.status ||
         nextProgressTiming?.epoch !== drawn.epoch || !sameState(nextWorld, drawn.world, clockOnlyFields);
       world = nextWorld;
-      worldSource = nextSource;
       status = nextStatus;
       progressTiming = nextProgressTiming;
       if (structural) resize(nextLayout);

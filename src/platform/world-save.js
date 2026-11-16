@@ -82,11 +82,37 @@ function transact(db, operate) {
   });
 }
 
+// Per connection: the record this session last committed to `current`, so routine saves can
+// skip re-decoding it. A full read and validation still runs on the first save, after any
+// failure or mismatch, and on every fullCheckInterval-th save, so outside damage is found within a minute.
+const fullCheckInterval = 12;
+const lastWritten = new WeakMap();
+const markerFields = ['revision', 'schemaVersion', 'prestigeLedgerVersion', 'wallAnchorMs', 'clockMs',
+  'coins', 'productionValue', 'researchPoints'];
+
+function recordMarker(record) {
+  return markerFields.map((field) => record?.[field]);
+}
+
+function sameMarker(record, marker) {
+  return record !== null && typeof record === 'object' && !Array.isArray(record) &&
+    markerFields.every((field, index) => record[field] === marker[index]);
+}
+
 export async function writeWorldSave(db, world, { replaceCorrupt = false, corruptRevision } = {}) {
   integer(world.revision, 'revision');
-  return transact(db, (store, current, previous) => {
+  const known = lastWritten.get(db);
+  lastWritten.delete(db);
+  let written;
+  let checked;
+  const revision = await transact(db, (store, current, previous) => {
     let saved;
-    if (current !== undefined) {
+    // Trust `current` only when it still carries exactly the revision and marker this session wrote.
+    checked = replaceCorrupt || !known || known.sinceFull + 1 >= fullCheckInterval ||
+      known.marker[0] !== world.revision || !sameMarker(current, known.marker);
+    if (!checked) {
+      saved = { revision: recordRevision(current) };
+    } else if (current !== undefined) {
       try {
         saved = readRecord(current, 'current');
       } catch (error) {
@@ -112,8 +138,12 @@ export async function writeWorldSave(db, world, { replaceCorrupt = false, corrup
     const next = encodeWorld({ ...world, revision });
     if (saved) store.put(current, 'previous');
     store.put(next, 'current');
+    written = recordMarker(next);
     return revision;
   });
+  // Reached only after the transaction committed; a rejection leaves no marker, forcing a full check next time.
+  lastWritten.set(db, { marker: written, sinceFull: checked ? 0 : known.sinceFull + 1 });
+  return revision;
 }
 
 export async function replaceWorldSave(db, world, expectedRevision, { clearBackup = false } = {}) {

@@ -176,34 +176,104 @@ function orderedStations(world) {
   return stations.sort((a, b) => Number(b.priority) - Number(a.priority) || a.order - b.order);
 }
 
+// Caller guarantees the facility is idle and has a recipe.
+function startFacility(world, kind, facility, onStart) {
+  const count = facilityOutput(world, kind, facility.recipe, BigInt(facility.level));
+  facility.batch = makeBatch(world, facility.recipe, count);
+  if (kind === 'C' && (!facility.planting || facility.planting.id !== facility.batch.id)) {
+    facility.planting = {
+      id: facility.batch.id, start: facility.batch.start,
+      duration: facility.batch.end - facility.batch.start,
+    };
+  }
+  onStart?.(facility);
+}
+
+// Caller guarantees the station is idle and has a recipe; returns false (no mutation) when short of inputs.
+function startStation(world, station, onStart) {
+  const level = station.level ?? '1';
+  const materials = stationRequirements(world, station.recipe, level);
+  if (materials.some(({ owned, needed }) => owned < needed)) return false;
+  const inputs = {};
+  for (const { id, needed } of materials) {
+    world.inventory[id] = quantity(world, id) - needed;
+    inputs[id] = needed;
+  }
+  station.batch = { ...makeBatch(world, station.recipe, stationOutput(station.recipe, level)), inputs };
+  onStart?.(station);
+  return true;
+}
+
 function startProduction(world, stations, onStart) {
   for (const [kind, facilities] of Object.entries(world.facilities)) {
     for (const facility of facilities) {
       if (facility.batch || !facility.recipe) continue;
-      const count = facilityOutput(world, kind, facility.recipe, BigInt(facility.level));
-      facility.batch = makeBatch(world, facility.recipe, count);
-      if (kind === 'C' && (!facility.planting || facility.planting.id !== facility.batch.id)) {
-        facility.planting = {
-          id: facility.batch.id, start: facility.batch.start,
-          duration: facility.batch.end - facility.batch.start,
-        };
-      }
-      onStart?.(facility);
+      startFacility(world, kind, facility, onStart);
     }
   }
   for (const station of stations) {
     if (station.batch || !station.recipe) continue;
-    const level = station.level ?? '1';
-    const materials = stationRequirements(world, station.recipe, level);
-    if (materials.some(({ owned, needed }) => owned < needed)) continue;
-    const inputs = {};
-    for (const { id, needed } of materials) {
-      world.inventory[id] = quantity(world, id) - needed;
-      inputs[id] = needed;
-    }
-    station.batch = { ...makeBatch(world, station.recipe, stationOutput(station.recipe, level)), inputs };
-    onStart?.(station);
+    startStation(world, station, onStart);
   }
+}
+
+// Incremental restarts for advanceWorld. Must start exactly what a full startProduction scan would,
+// in the same order: after one full scan, the only idle facilities with a recipe are those just
+// completed, and an idle station that failed its input check can only pass again once one of its
+// input IDs has been deposited (between scans inventory otherwise only decreases; reserves, levels
+// and recipes are fixed during an advance).
+function productionRestarter(world, stations, onStart) {
+  const facilityKinds = new Map();
+  let facilityCount = 0;
+  for (const [kind, facilities] of Object.entries(world.facilities)) {
+    for (const facility of facilities) facilityKinds.set(facility, { kind, rank: facilityCount++ });
+  }
+  const stationRanks = new Map(stations.map((station, rank) => [station, rank]));
+  // Aliased entries (one object at two positions) cannot be ranked uniquely; keep the full scan.
+  const distinct = facilityKinds.size === facilityCount && stationRanks.size === stations.length &&
+    !stations.some((station) => facilityKinds.has(station));
+  const waiting = new Map();
+  const inputIds = (station) => Object.keys(catalog.items[station.recipe]?.inputs ?? {});
+  const block = (station) => {
+    for (const id of inputIds(station)) {
+      let set = waiting.get(id);
+      if (!set) waiting.set(id, set = new Set());
+      set.add(station);
+    }
+  };
+  const unblock = (station) => {
+    for (const id of inputIds(station)) waiting.get(id)?.delete(station);
+  };
+  let scanned = false;
+
+  return (completed, depositedIds) => {
+    if (!distinct || !scanned) {
+      startProduction(world, stations, onStart);
+      if (!distinct) return;
+      scanned = true;
+      waiting.clear();
+      for (const station of stations) if (!station.batch && station.recipe) block(station);
+      return;
+    }
+    const facilities = [];
+    const ready = new Set();
+    for (const entry of completed) {
+      if (entry.batch || !entry.recipe) continue;
+      if (facilityKinds.has(entry)) facilities.push(entry);
+      else ready.add(entry);
+    }
+    for (const id of depositedIds) {
+      for (const station of waiting.get(id) ?? []) ready.add(station);
+    }
+    facilities.sort((a, b) => facilityKinds.get(a).rank - facilityKinds.get(b).rank);
+    for (const facility of facilities) startFacility(world, facilityKinds.get(facility).kind, facility, onStart);
+    const candidates = [...ready].sort((a, b) => stationRanks.get(a) - stationRanks.get(b));
+    for (const station of candidates) {
+      unblock(station);
+      if (station.batch || !station.recipe) continue;
+      if (!startStation(world, station, onStart)) block(station);
+    }
+  };
 }
 
 export function settleProduction(world) {
@@ -258,20 +328,25 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {})
     if (entry.batch) enqueue(entry);
   }
 
+  const restart = productionRestarter(world, stations, enqueue);
   if (heap[0]?.batch.end !== world.clockMs && (world.clockMs < targetMs || !deferFinalStarts)) {
-    startProduction(world, stations, enqueue);
+    restart([], []);
   }
   const contributions = productionContributionBatch(world);
   try {
     while (heap.length && heap[0].batch.end <= targetMs) {
       const completedAt = heap[0].batch.end;
       world.clockMs = completedAt;
+      const completed = [];
+      const depositedIds = new Set();
       do {
         const entry = popEvent(heap);
         deposit(world, entry.batch, contributions);
+        depositedIds.add(entry.batch.id);
         entry.batch = null;
+        completed.push(entry);
       } while (heap[0]?.batch.end === completedAt);
-      if (completedAt !== targetMs || !deferFinalStarts) startProduction(world, stations, enqueue);
+      if (completedAt !== targetMs || !deferFinalStarts) restart(completed, depositedIds);
     }
   } finally {
     contributions.flush();
