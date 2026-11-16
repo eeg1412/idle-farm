@@ -126,6 +126,8 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 发布 `public/art/workshop/chimney-v1.webp`、`smoke-1-v1.webp`、`smoke-2-v1.webp`、`smoke-3-v1.webp` 均为96×96透明纹理，持久PNG位于 `assets/workshop/png/`。烟囱源顶口中心315,312经400²真实裁切归一到48,48，锚点为0.5,0.5；安装与发射点、烟团生命周期等由 `src/content/workshop-effects.json`登记。烟团保留真实Alpha轮廓，再由显示层控制全局透明度，不能把不透明程序圆或整块灰底当烟雾素材。源／成品直接图片审阅与真实漂浮、半透明叠加、130px组合分别验收，未运行部分不得记为通过。
 
+第 2 版效果配置复用烟囱与烟团纹理。工坊齿轮新增 `public/art/workshop/gear-v1.webp`（96×96 透明，旋转锚点 0.5,0.5），空仓图标采用 `public/ui-icons/warehouse-empty-v1.webp`（160×160 透明）。[源图、绘制提示和导出记录](art-reviews/2026-11-16-workshop-warehouse-assets.md)。
+
 ## 资源加载
 
 - Wiki 每页最多渲染 25 条。仅接近视口的当前页图标赋予图片 URL，交叉观察距离为 120 CSS 像素。缺少交叉观察能力时只请求当前页。搜索、筛选和跨页材料链接更新当前页，非当前页不发起新请求。

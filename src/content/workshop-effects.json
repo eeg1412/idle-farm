@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "chimney": {
     "path": "./art/workshop/chimney-v1.webp",
     "size": [
@@ -7,13 +7,18 @@
       96
     ],
     "logicalSize": [
-      40,
-      40
+      47,
+      47
     ],
     "anchor": [
       0.5,
       0.5
     ]
+  },
+  "gear": {
+    "path": "./art/workshop/gear-v1.webp",
+    "size": [96, 96],
+    "anchor": [0.5, 0.5]
   },
   "smoke": {
     "textures": [
@@ -39,35 +44,23 @@
         ]
       }
     ],
-    "intervalMs": 600,
-    "lifetimeMs": 3200,
-    "startSize": 24,
-    "endSize": 60,
-    "maxAlpha": 0.35,
-    "rise": 68,
-    "drift": 18,
-    "sway": 8
+    "intervalMs": 560,
+    "lifetimeMs": 3360,
+    "startSize": 32,
+    "endSize": 88,
+    "maxAlpha": 0.54,
+    "rise": 82,
+    "drift": 30,
+    "sway": 11
   },
   "mounts": {
-    "processing": {
-      "position": [
-        160,
-        92
-      ],
-      "emitter": [
-        160,
-        92
-      ]
-    },
-    "refining": {
-      "position": [
-        160,
-        92
-      ],
-      "emitter": [
-        160,
-        92
-      ]
-    }
+    "chimneys": [
+      { "offset": [0, -68], "phaseMs": 0, "driftDirection": -1 },
+      { "offset": [0, 68], "phaseMs": 280, "driftDirection": 1 }
+    ],
+    "gears": [
+      { "offset": [-16, -7], "size": 44, "periodMs": 1900, "direction": 1, "angle": 0 },
+      { "offset": [19, 10], "size": 36, "periodMs": 1550, "direction": -1, "angle": 0.32 }
+    ]
   }
 }

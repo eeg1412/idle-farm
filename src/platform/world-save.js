@@ -15,6 +15,8 @@ const facilityKinds = ['C', 'L', 'F'];
 const stationKinds = ['I', 'P'];
 const limits = { C: 40, L: 40, F: 40, I: 48, P: 32 };
 const legacyStats = { wheat: 'C01', flour: 'I01', bread: 'P01' };
+// Existing saves may still carry receipts from retired tasks.
+const retiredTaskRewardIds = new Set(['bulkSale', 'stationPriority']);
 
 export class WorldSaveError extends Error {
   constructor(code, cause) {
@@ -338,8 +340,11 @@ function amounts(world, convert, convertSigned) {
 
 function taskRewardIds(world) {
   const ids = Object.hasOwn(world, 'taskRewards') ? world.taskRewards : [];
-  valid(Array.isArray(ids) && new Set(ids).size === ids.length &&
-    ids.every((id) => typeof id === 'string' && Object.hasOwn(taskCoinRewards, id)), 'taskRewards');
+  valid(
+    Array.isArray(ids) && new Set(ids).size === ids.length &&
+      ids.every((id) => typeof id === 'string' && (Object.hasOwn(taskCoinRewards, id) || retiredTaskRewardIds.has(id))),
+    'taskRewards',
+  );
   return [...ids];
 }
 

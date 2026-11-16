@@ -6,6 +6,7 @@ const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const modulo = (value, period) => ((value % period) + period) % period;
 const machineKey = (kind) => kind === 'P' ? 'refining' : 'processing';
 const textureKey = (key) => 'workshop:' + key;
+const finitePair = (pair) => Array.isArray(pair) && pair.length === 2 && pair.every(Number.isFinite);
 
 export function workshopIconIds(id) {
   if (!data.items[id]) return [];
@@ -15,9 +16,7 @@ export function workshopIconIds(id) {
 export function workshopTextureSources(kind, config = visuals) {
   const machine = config?.machines?.[machineKey(kind)];
   const tread = config?.conveyor?.tread;
-  const mount = effects.mounts?.[machineKey(kind)];
-  const chimney = effects.chimney;
-  const smoke = effects.smoke;
+  const { chimney, gear, mounts, smoke } = effects;
   if (!machine?.path || !tread?.path || !Array.isArray(machine.size) || machine.size.length !== 2
       || !Array.isArray(tread.size) || tread.size.length !== 2
       || !Array.isArray(tread.logicalSize) || tread.logicalSize.length !== 2
@@ -25,20 +24,23 @@ export function workshopTextureSources(kind, config = visuals) {
       || ![machine.placement?.x, machine.placement?.y, machine.placement?.width, machine.placement?.height,
         machine.bodyEdges?.left, machine.bodyEdges?.right, machine.bodyEdges?.top, machine.bodyEdges?.bottom,
         machine.occlusionCover?.inputX, machine.occlusionCover?.outputX].every(Number.isFinite)) return [];
-  const effectTextures = [chimney, ...(smoke?.textures ?? [])];
-  if (!mount || smoke?.textures?.length !== 3
+  const effectTextures = [chimney, gear, ...(smoke?.textures ?? [])];
+  if (smoke?.textures?.length !== 3 || mounts?.chimneys?.length !== 2 || !mounts?.gears?.length
       || !effectTextures.every((asset) => asset?.path && Array.isArray(asset.size)
         && asset.size.length === 2 && asset.size.every((value) => Number.isFinite(value) && value > 0))
-      || ![...(chimney?.logicalSize ?? []), ...(chimney?.anchor ?? []),
-        ...(mount.position ?? []), ...(mount.emitter ?? [])].every(Number.isFinite)
-      || chimney?.logicalSize?.length !== 2 || chimney?.anchor?.length !== 2
-      || mount.position?.length !== 2 || mount.emitter?.length !== 2
+      || !finitePair(chimney.logicalSize) || !finitePair(chimney.anchor) || !finitePair(gear.anchor)
+      || !mounts.chimneys.every(({ offset, phaseMs, driftDirection }) => finitePair(offset)
+        && Number.isFinite(phaseMs) && (driftDirection === -1 || driftDirection === 1))
+      || !mounts.gears.every(({ offset, size, periodMs, direction, angle }) => finitePair(offset)
+        && [size, periodMs].every((value) => Number.isFinite(value) && value > 0)
+        && (direction === -1 || direction === 1) && Number.isFinite(angle))
       || ![smoke.intervalMs, smoke.lifetimeMs, smoke.startSize, smoke.endSize].every((value) => Number.isFinite(value) && value > 0)
       || ![smoke.maxAlpha, smoke.rise, smoke.drift, smoke.sway].every(Number.isFinite)) return [];
   return [
     { key: textureKey('machine'), ...machine },
     { key: textureKey('tread'), ...tread },
     { key: textureKey('chimney'), ...chimney },
+    { key: textureKey('gear'), ...gear },
     ...smoke.textures.map((asset, index) => ({ key: textureKey('smoke:' + index), ...asset })),
   ];
 }
@@ -108,11 +110,18 @@ export function workshopSceneLayout(id, kind, config = visuals) {
   const item = data.items[id];
   if (!item) return undefined;
   const machine = config.machines[machineKey(kind)];
-  const effectMount = effects.mounts[machineKey(kind)];
   const edges = machine.bodyEdges;
   const settings = config.conveyor.layout;
   const centerY = config.stage.height / 2;
   const centerX = (edges.left + edges.right) / 2;
+  const mountPosition = ([x, y]) => [centerX + x, centerY + y];
+  const chimneys = effects.mounts.chimneys.map(({ offset, ...source }) => ({
+    ...source, position: mountPosition(offset),
+  }));
+  const gears = effects.mounts.gears.map(({ offset, ...gear }) => ({
+    ...gear, position: mountPosition(offset),
+  }));
+  const capacityPerEmitter = Math.ceil(effects.smoke.lifetimeMs / effects.smoke.intervalMs);
   const inputSize = settings.inputSize;
   const inputCover = Math.max(machine.occlusionCover.inputX, edges.left + inputSize / 2 + 2);
   const outputCover = Math.min(machine.occlusionCover.outputX, edges.right - settings.outputSize / 2 - 2);
@@ -136,10 +145,10 @@ export function workshopSceneLayout(id, kind, config = visuals) {
   }
   return {
     stage: config.stage, machine,
-    chimney: { position: effectMount.position, anchor: effects.chimney.anchor,
-      size: effects.chimney.logicalSize },
-    smoke: { ...effects.smoke, emitter: effectMount.emitter, recipeId: id,
-      capacity: Math.ceil(effects.smoke.lifetimeMs / effects.smoke.intervalMs) },
+    chimney: { mounts: chimneys, anchor: effects.chimney.anchor, size: effects.chimney.logicalSize },
+    gear: { mounts: gears, anchor: effects.gear.anchor },
+    smoke: { ...effects.smoke, emitters: chimneys, recipeId: id,
+      capacityPerEmitter, capacity: capacityPerEmitter * chimneys.length },
     surfaceRegions: [surface(0, edges.left + settings.surfaceUnderlap),
       surface(edges.right - settings.surfaceUnderlap, config.stage.width)],
     inputStream: stream,
@@ -159,25 +168,29 @@ function machineOffsetAt(clock) {
 }
 
 function smokeFrame(smoke, clock, active) {
-  const latest = Math.floor(clock / smoke.intervalMs);
+  if (!active) return [];
   return Array.from({ length: smoke.capacity }, (_, index) => {
-    const serial = latest - index;
-    const born = serial * smoke.intervalMs;
+    const emitterIndex = Math.floor(index / smoke.capacityPerEmitter);
+    const { position, phaseMs, driftDirection } = smoke.emitters[emitterIndex];
+    const latest = Math.floor((clock - phaseMs) / smoke.intervalMs);
+    const serial = latest - index % smoke.capacityPerEmitter;
+    if (serial < 0) return undefined;
+    const born = phaseMs + serial * smoke.intervalMs;
     const age = clock - born;
-    const progress = clamp(age / smoke.lifetimeMs, 0, 1);
-    const random = randomSequence(smoke.recipeId + ':smoke:' + serial);
+    if (age < 0 || age >= smoke.lifetimeMs) return undefined;
+    const progress = age / smoke.lifetimeMs;
+    const random = randomSequence(smoke.recipeId + ':smoke:' + emitterIndex + ':' + serial);
     const phase = random() * Math.PI * 2;
     const driftScale = 0.75 + random() * 0.5;
     const riseScale = 0.85 + random() * 0.3;
     const birthOffset = machineOffsetAt(born);
     const sway = Math.sin(progress * Math.PI * 2 + phase) * Math.sin(progress * Math.PI);
     return {
-      serial, textureIndex: modulo(serial, smoke.textures.length),
-      visible: Boolean(active && serial >= 0 && age >= 0 && age < smoke.lifetimeMs),
-      position: [smoke.emitter[0] + birthOffset[0] + smoke.drift * progress * driftScale + smoke.sway * sway,
-        smoke.emitter[1] + birthOffset[1] - smoke.rise * progress * riseScale],
+      textureIndex: modulo(serial + emitterIndex, smoke.textures.length),
+      position: [position[0] + birthOffset[0] + driftDirection * smoke.drift * progress * driftScale + smoke.sway * sway,
+        position[1] + birthOffset[1] - smoke.rise * progress * riseScale],
       size: smoke.startSize + (smoke.endSize - smoke.startSize) * progress,
-      alpha: clamp(smoke.maxAlpha, 0, 0.35) * Math.min(1, progress / 0.15)
+      alpha: clamp(smoke.maxAlpha, 0, 0.6) * Math.min(1, progress / 0.12)
         * Math.min(1, (1 - progress) / 0.55),
     };
   });
@@ -213,8 +226,8 @@ export function workshopMotionFrame(layout, clock, { started = true, running = t
     output: { visible: Boolean(running && started && outputElapsed >= 0 && distance < layout.output.path.length),
       position: positionOn(layout.output.path, distance), alpha: 1 },
     machineOffset,
-    chimney: { position: [layout.chimney.position[0] + machineOffset[0],
-      layout.chimney.position[1] + machineOffset[1]] },
+    gearAngles: layout.gear.mounts.map(({ angle, direction, periodMs }) =>
+      angle + direction * Math.PI * 2 * modulo(clock, periodMs) / periodMs),
     smoke: smokeFrame(layout.smoke, clock, running && started),
   };
 }

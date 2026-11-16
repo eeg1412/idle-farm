@@ -17,6 +17,7 @@ const cropUseRanges = {
 };
 const cropUses = ['全部用途', ...Object.keys(cropUseRanges)];
 const catalogItems = Object.entries(catalog.items);
+const recipeResearch = Object.entries(catalog.research);
 const qualitySteps = [['+1', 1n], ['+10', 10n], ['+100', 100n], ['最高可升', 'max']];
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
 const livestockArt = {
@@ -342,7 +343,32 @@ function showNodeFinder(ui, nodes, view, efficiency, quality) {
   });
 }
 
-export function renderResearch(ui) {
+export function researchReadyTabs(world) {
+  const readyTabs = new Set();
+  const unlocked = new Set(world.unlocked);
+  if (recipeResearch.some(([id, node]) => {
+    if (unlocked.has(id) || !node.requires.every((required) => unlocked.has(required))) return false;
+    const offer = researchOffer(world, id, unlocked);
+    return offer?.eligible && offer.affordable;
+  })) readyTabs.add(tabs[0]);
+
+  for (const id of unlocked) {
+    // Each level adds at least 5 of its own item before discount. With up to 50% off,
+    // subtracting the two rounded cumulative costs leaves a cost of at least 2.
+    if (quantity(world, id) >= 2n && qualityOffer(world, id, 1n)?.affordable) {
+      readyTabs.add(tabs[1]);
+      break;
+    }
+  }
+
+  if (techDefinitions.some(({ key }) => {
+    const offer = techOffer(world, key);
+    return offer?.eligible && offer.affordable;
+  })) readyTabs.add(tabs[2]);
+  return readyTabs;
+}
+
+export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
   const local = ui.local;
   const { id, openResearchItem } = local;
   const linked = id && catalog.items[id];
@@ -362,7 +388,7 @@ export function renderResearch(ui) {
     local.tab = tab;
     delete local.linkedResearchItem;
     ui.refresh();
-  }, { keepScroll: true, sticky: true, style: 'segmented' });
+  }, { keepScroll: true, sticky: true, style: 'segmented', indicatorTabs: readyTabs });
   const efficiency = active === tabs[2];
   const quality = active === tabs[1];
   if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency' });

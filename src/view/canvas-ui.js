@@ -12,7 +12,7 @@ import {
   fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, minFishAnimationMs, mountFishAnimation,
 } from './fish-animation.js';
 import { mountWorkshopAnimation, workshopIconIds, workshopTextureSources } from './workshop-animation.js';
-import { renderResearch } from './research-page.js';
+import { renderResearch, researchReadyTabs } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import {
   renderWarehouse, renderCatalog, renderTasks, renderSettings, renderFarmSale, renderManagement,
@@ -28,6 +28,7 @@ const pages = {
   图鉴: renderCatalog, 任务: renderTasks, 设置: renderSettings, 出售牧场: renderFarmSale,
 };
 const tabs = ['牧场', '工坊', '仓库', '研究', '经营'];
+const noResearchReadyTabs = new Set();
 const defaultDialogSampleEveryMs = 3000;
 const tabIcons = ['nav-ranch', 'nav-workshop', 'nav-warehouse', 'nav-research', 'nav-management'];
 const drawnIcons = {
@@ -58,7 +59,7 @@ const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalo
   'facility-carp', 'facility-sea-bass', 'facility-trout', 'facility-mandarin-fish', 'facility-salmon',
   'facility-eel', 'facility-sea-bream', 'facility-turbot', 'facility-sturgeon',
   'settings-sound', 'settings-music', 'settings-display', 'settings-guide',
-  'operation-switch', 'operation-upgrade', 'operation-sell', 'portrait-warehouse',
+  'operation-switch', 'operation-upgrade', 'operation-sell', 'portrait-warehouse', 'warehouse-empty-v1',
   ...Array.from({ length: 49 }, (_, index) => 'plot-C' + String(index + 2).padStart(2, '0')),
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'L').map(([id]) => 'livestock-' + id),
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'F').map(([id]) => 'fish-' + id),
@@ -121,6 +122,13 @@ function panel(parent, x, y, width, height, fill, outline, radius = 9) {
   if (outline) g.stroke({ color: outline, width: 1.1 });
   parent.addChild(g);
   return g;
+}
+
+function drawIndicator(parent, right, top) {
+  const radius = 6;
+  const inset = radius + 3;
+  parent.addChild(inkGraphics().circle(right - inset, top + inset, radius)
+    .fill(palette.red).stroke({ color: palette.cream, width: 1.1 }));
 }
 
 function drawPixelIcon(parent, icon, x, y, width, height) {
@@ -264,6 +272,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let noticeNode;
   let floatNode;
   let drawn;
+  let lastResearchReady;
   // Any change to the stage sets this; the stage is rendered only on dirty frames (plus a slow
   // safety refresh), never skipped when something may have changed.
   let frameDirty = true;
@@ -320,7 +329,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function bindCountdownText(label, readValue, align, readTone) {
     if (!readValue) return;
     const epoch = navigationEpoch;
-    const row = listRow;
+    const row = listRow?.layer;
     let lastColor;
     const update = (clock) => {
       if (label.destroyed || epoch !== navigationEpoch) return false;
@@ -746,8 +755,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return layer;
   }
 
+  function showButtonIndicator(options, draw) {
+    if (options.indicator) {
+      draw();
+      return;
+    }
+    const show = () => { if (options.indicatorWhenVisible()) draw(); };
+    let row = listRow;
+    while (row && !row.observeIndicators) row = row.outerRow;
+    if (row) (row.indicators ??= []).push(show);
+    else show();
+  }
+
   function buttonAt(parent, x, y, width, height, label, fn, options = {}) {
     const disabled = !fn || options.disabled || waiting;
+    const hasIndicator = options.indicator || (!disabled && options.indicatorWhenVisible);
     const tone = options.tone ?? 'plain';
     const index = disabled ? -1 : controls.length;
     const focused = index >= 0 && index === focusIndex;
@@ -769,6 +791,22 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : label === '返回' ? 'chevron-left' : undefined);
     if (iconOnly) {
       drawImage(parent, iconOnly, x + (width - 24) / 2, y + (height - 24) / 2, 24, 24);
+    } else {
+      const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
+      const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? 22 : 0;
+      const baseSize = options.emphasis ? 23 : 18;
+      const size = Math.min(baseSize * scale(), (width - icon - trailing - 10) / Math.max(2, Array.from(String(label)).length));
+      const caption = textNode(parent, label, x + 4 + icon, y + 2, width - 8 - icon - trailing,
+        { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink, weight: '750' });
+      caption.y = y + (height - caption.height) / 2;
+      if (icon) drawImage(parent, options.icon, Math.max(x + 5, caption.x - icon), y + (height - 18) / 2, 18, 18);
+      if (trailing) drawImage(parent, options.trailingIcon, x + width - trailing - 3, y + (height - 18) / 2, 18, 18);
+    }
+    if (hasIndicator) {
+      const segmentInset = options.segment ? 2 : 0;
+      showButtonIndicator(options, () => drawIndicator(parent, x + width - segmentInset, y + segmentInset));
+    }
+    if (iconOnly) {
       g.label = label;
       const hitWidth = Math.max(48, width);
       const hitHeight = Math.max(48, height);
@@ -776,15 +814,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         hitWidth, hitHeight, fn);
       return;
     }
-    const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
-    const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? 22 : 0;
-    const baseSize = options.emphasis ? 23 : 18;
-    const size = Math.min(baseSize * scale(), (width - icon - trailing - 10) / Math.max(2, Array.from(String(label)).length));
-    const caption = textNode(parent, label, x + 4 + icon, y + 2, width - 8 - icon - trailing,
-      { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink, weight: '750' });
-    caption.y = y + (height - caption.height) / 2;
-    if (icon) drawImage(parent, options.icon, Math.max(x + 5, caption.x - icon), y + (height - 18) / 2, 18, 18);
-    if (trailing) drawImage(parent, options.trailingIcon, x + width - trailing - 3, y + (height - 18) / 2, 18, 18);
     if (!disabled) hitAt(g, parent, x, y, width, height, fn);
   }
 
@@ -1259,9 +1288,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (label && !beside) ui.button(label, fn, { tone: 'gold', ...options });
       },
       text(value, options = {}) {
-        const { fontSize = 15, muted = false, color } = options;
+        const { fontSize = 15, muted = false, color, align } = options;
         const t = textNode(parent, value, x, cursor, width,
-          { size: fontSize * scale(), color: color ?? (muted ? palette.muted : palette.ink) });
+          { size: fontSize * scale(), color: color ?? (muted ? palette.muted : palette.ink), align });
         cursor += t.height + rowGap;
       },
       sampleProgress(label) {
@@ -1437,10 +1466,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           cursor += height + rowGap;
         }
       },
-      tabs(values, selected, onSelect, { keepScroll = false, sticky = false, style, size } = {}) {
+      tabs(values, selected, onSelect, { keepScroll = false, sticky = false, style, size, indicatorTabs } = {}) {
         const choices = values.map((label) => ({
           label, onClick: () => { onSelect(label); if (!keepScroll && local.scroll) resetScroll(); },
           tone: label === selected ? 'green' : 'plain',
+          indicator: indicatorTabs?.has(label),
         }));
         if (sticky && pinTabs) {
           cursor += pinTabs(cursor, choices, style, size);
@@ -1471,12 +1501,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         if (height) cursor += height + rowGap;
       },
-      image(id, size = 56, { title } = {}) {
+      image(id, size = 56, { title, center = false } = {}) {
         const hero = heroKeys.has(id);
         const bleed = hero ? fullBleed : 0;
         const h = hero ? Math.max(id === 'research' ? 54 : 66, Math.min(title ? 205 : 162, size)) : size;
-        const left = x - bleed;
         const span = hero ? width + bleed * 2 : Math.min(width, size);
+        const left = center && !hero ? x + Math.round((width - span) / 2) : x - bleed;
         drawImage(parent, id, left, cursor, span, h, hero);
         if (title) {
           const band = Math.min(57, h / 2);
@@ -1656,7 +1686,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (!source && (!batch || batch.end <= batch.start)) return;
         const target = source ? { ...source } : undefined;
         const epoch = navigationEpoch;
-        const row = listRow;
+        const row = listRow?.layer;
         const fill = inkGraphics();
         fill.label = 'batch-progress-fill';
         parent.addChild(fill);
@@ -1865,7 +1895,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const top = cursor;
           const layer = new Container();
           parent.addChild(layer);
-          listRow = layer;
+          const row = { layer, top, outerRow, observeIndicators: Boolean(options.observeScroll) };
+          listRow = row;
           const tileSurfaces = equalHeight ? [] : undefined;
           let next = top;
           items.slice(index, index + count).forEach((entry, column) => {
@@ -1878,7 +1909,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             const height = Math.max(...tileSurfaces.map((tile) => tile.height));
             for (const tile of tileSurfaces) tile.surface(height);
           }
-          rows.push({ layer, top, bottom: next });
+          row.bottom = next;
+          rows.push(row);
           if (focusIndex >= index && focusIndex < index + count) {
             local.scroll = Math.max(0, top - (options.viewport?.pinned?.height ?? 0));
           }
@@ -1886,8 +1918,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         listRow = outerRow;
         options.observeScroll?.((scroll) => {
-          for (const { layer, top, bottom } of rows) {
+          for (const row of rows) {
+            const { layer, top, bottom, indicators } = row;
             layer.visible = withinScrollViewport(top, bottom, scroll, options.viewport, x, x + width);
+            if (layer.visible && indicators) {
+              row.indicators = undefined;
+              for (const show of indicators) show();
+            }
           }
         });
       },
@@ -2347,7 +2384,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!waiting) hitAt(coinSurface, parent, coinX, y + 7, coinWidth, 46, () => showExactNumber('金币', content.coins));
   }
 
-  function bottomBar(parent, x, y, w) {
+  function bottomBar(parent, x, y, w, readyTabs) {
     const height = frame.height - y;
     panel(parent, 0, y, frame.width, height + 24, palette.cream, palette.border, 17);
     const segment = w / tabs.length;
@@ -2365,6 +2402,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         size: Math.min(22, 17 * scale(), (segment - 8) / 2), align: 'center', weight: '850',
       });
       caption.y = y + 46 + (25 - caption.height) / 2;
+      if (page === '研究' && readyTabs.size) drawIndicator(parent, at + segment, y);
     });
   }
 
@@ -2447,6 +2485,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     trimImages();
   }
 
+  function cachedResearchReadyTabs(world) {
+    const { coins, researchPoints, unlocked, inventory, quality, tech } = world;
+    // Committed and projected worlds expose these inputs as read-only snapshots.
+    const inputs = { coins, researchPoints, unlocked, inventory, quality, tech };
+    if (!sameState(lastResearchReady?.inputs, inputs)) {
+      lastResearchReady = { inputs, tabs: researchReadyTabs(world) };
+    }
+    return lastResearchReady.tabs;
+  }
+
   function build() {
     const { x, y, width, height, scale: zoom, inset } = layout;
     frame.width = width / zoom;
@@ -2472,12 +2520,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const w = Math.max(80, frame.width - left - Math.max(margin, inset.right + 6));
     topBar(root, world, left, inset.top, w);
     const hasTabs = tabs.includes(current);
+    const hasWorld = world && !status?.busy;
+    const readyTabs = hasWorld && hasTabs && !waiting ? cachedResearchReadyTabs(world) : noResearchReadyTabs;
     const top = inset.top + 59;
     const bottom = frame.height - inset.bottom - (hasTabs ? 79 : 5);
-    if (world && !status?.busy) {
-      scrollArea(root, left, top, w, Math.max(40, bottom - top), locals[current], pages[current],
+    if (hasWorld) {
+      const drawPage = current === '研究' ? (ui) => renderResearch(ui, readyTabs) : pages[current];
+      scrollArea(root, left, top, w, Math.max(40, bottom - top), locals[current], drawPage,
         Math.max(0, Math.min(left, frame.width - left - w)));
-      if (hasTabs) bottomBar(root, left, bottom + 2, w);
+      if (hasTabs) bottomBar(root, left, bottom + 2, w, readyTabs);
     } else {
       const ui = layoutUI(root, left, top + 20, w, {}, Math.max(40, bottom - top));
       ui.heading(status?.title ?? '正在准备牧场');
@@ -2515,7 +2566,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     }
 
-    if (modal && world && !status?.busy) {
+    if (modal && hasWorld) {
       controls = [];
       const overTabs = modal.variant === 'warehouse-sale' && hasTabs;
       const sheetBottom = overTabs ? bottom + 2 : frame.height - inset.bottom - 7;
@@ -2524,7 +2575,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       shade.eventMode = 'static';
       root.addChild(shade);
       if (overTabs) {
-        bottomBar(root, left, sheetBottom, w);
+        bottomBar(root, left, sheetBottom, w, readyTabs);
         const cover = inkGraphics().rect(0, sheetBottom, frame.width, frame.height - sheetBottom)
           .fill({ color: palette.dark, alpha: 0 });
         cover.eventMode = 'static';
@@ -2786,6 +2837,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     pageParent = undefined;
     linkedEntryParent = undefined;
     current = '牧场';
+    lastResearchReady = undefined;
     for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
     locals.牧场.tab = '田地';
     shortPlotStarts.clear();
