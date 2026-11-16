@@ -173,7 +173,7 @@ function qualityDetails(ui, id, local) {
   showMaterials(ui, costs, coins, '升级所需材料');
   if (offer.researchPoints > 0n) {
     ui.heading('高级研发点', { size: 21 });
-    ui.materialTable([{ id: 'coin', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.researchPoints }],
+    ui.materialTable([{ id: 'research-point', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.researchPoints }],
       { style: 'research' });
   }
   ui.buttons([
@@ -252,7 +252,8 @@ function techDetails(ui, definition) {
   techRequirements(ui, definition);
   if (offer.maxed) return;
   ui.heading('高级研发点', { size: 21 });
-  ui.materialTable([{ id: 'coin', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.cost }], { style: 'research' });
+  ui.materialTable([{ id: 'research-point', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.cost }],
+    { style: 'research' });
   ui.buttons([
     {
       label: '确认升级', tone: 'gold', disabled: !offer.eligible || !offer.affordable,
@@ -398,7 +399,9 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
   }, { keepScroll: true, sticky: true, style: 'segmented', indicatorTabs: readyTabs });
   const efficiency = active === tabs[2];
   const quality = active === tabs[1];
-  if (efficiency || quality) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency' });
+  if (efficiency || quality) {
+    ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point' });
+  }
   const nodes = efficiency ? techNodes(ui.w) : quality ? qualityNodes(ui.w) : researchNodes(ui.w);
   const select = (key) => {
     if (efficiency) showTech(ui, techByKey[key]);

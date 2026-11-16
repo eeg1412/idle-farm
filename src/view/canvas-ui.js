@@ -52,7 +52,7 @@ for (const [id, item] of Object.entries(data.items)) {
 }
 const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalog', 'facility-field', 'facility-empty-field',
   'facility-hen', 'facility-empty-barn', 'facility-fish', 'facility-empty-pond', 'facility-mill',
-  'facility-kitchen', 'coin', 'clock', 'task-barn', 'task-fish', 'task-process', 'task-product',
+  'facility-kitchen', 'coin', 'research-point', 'clock', 'task-barn', 'task-fish', 'task-process', 'task-product',
   'sale-retain', 'sale-reset', 'tech-water', 'tech-farm', 'tech-livestock', 'tech-workshop',
   'facility-buffalo', 'facility-mallard', 'facility-goat', 'facility-goose', 'facility-pig',
   'facility-rabbit', 'facility-sheep', 'facility-muscovy', 'facility-cattle',
@@ -1601,19 +1601,23 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           cursor += height + rowGap;
         }
       },
-      balance(label, value, { variant, accent, inline = false } = {}) {
+      balance(label, value, { variant, accent, inline = false, icon } = {}) {
         const top = cursor;
         const research = variant === 'quality' || variant === 'efficiency';
         if (research) {
           const pad = Math.min(9, Math.max(3, (width - 288) / 2));
           const accessible = scale() > 1.5 && width >= 236;
+          const iconSize = icon && hasIcon(icon) ? 26 : 0;
           const marker = variant === 'efficiency' ? 14 : 0;
-          const left = x + pad + marker;
+          const titleInset = iconSize ? iconSize + 4 : marker;
+          const left = x + pad + titleInset;
           const title = textNode(parent, label, left, top + 6,
-            width - pad * 2 - marker - (accessible ? 112 : 0),
+            width - pad * 2 - titleInset - (accessible ? 112 : 0),
             { size: Math.min(34, 27 * scale()), weight: '800' });
-          const line = top + Math.max(accessible ? 49 : 38, title.height + 12);
-          if (marker) parent.addChild(inkGraphics().roundRect(x + pad + 2, top + 10, 5, 25, 2).fill(palette.green));
+          const titleHeight = Math.max(accessible ? 49 : 38, title.height + 12);
+          const line = top + titleHeight;
+          if (iconSize) drawImage(parent, icon, x + pad, top + (titleHeight - iconSize) / 2, iconSize, iconSize);
+          else if (marker) parent.addChild(inkGraphics().roundRect(x + pad + 2, top + 10, 5, 25, 2).fill(palette.green));
           parent.addChild(inkGraphics().rect(x + pad, line, width - pad * 2, 1)
             .fill(palette.line));
           const amount = compactLabel(parent, value, x + pad, line + 2, width - pad * 2,
