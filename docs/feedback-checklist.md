@@ -281,3 +281,13 @@ PM已实开真实原稿及4最终WebP，并读效果登记→源表→all-loaded
 | §1 剩余项 R2、L4、L2b、R5、R6、R7 | canvas-ui.js、main.js、world.js `productionRestarter`、objectives.js `activeGuideTask`、fish-animation.js、`crop-visuals.runtime.json` 及生成脚本 | 已实施并经 PM 读码核对；R7 有亚像素时刻差；未运行测试、剖析或画布验收 |
 | §2 推荐直接实施的 S1–S4；S5–S7 不改 | canvas-ui.js（S1、S2）、build-offline.mjs（S3）、world-save.js（S4） | 已实施；最终 `npm run build` 退出码 0；S5 需剖析授权，S6、S7 按推荐未改 |
 | 性能规约文档 | `docs/performance.md`；入口 `AGENTS.md`、`docs/development.md` 界面实装节 | 已完成 |
+
+# 2026-11-16：经济与研发平衡第二轮评估
+
+用户要求在不改玩法的前提下评估经济、研发资源与其他数值的平衡和循环，目标为入门期有事做、之后以挂机为主、回访有事做、长周期；成果是一份含“哪里改、为什么改、确切方案”的 md 文档。执行卡：[第二轮评估](tasks/2026-11-16-economy-balance-pass2.md)。
+
+| 要求 | 实际路径／证据 | 当前状态与限制 |
+| --- | --- | --- |
+| 平衡评估与确切修改方案文档 | `docs/reviews/2026-11-16-economy-balance-pass2.md`（ECO-07） | 已交付：12 个问题、F1–F9、品质 RP 专项（4.10）、合并参数表（4.11）；PM 已读码核对 B1–B3；时间类数字为手算估算，未模拟；未改代码，待用户决定实施范围 |
+| 已知线索：`bulkSale` 无界面入口；`newFarm`/`firstTech`/`delegationTech` 9.6e10 在第二轮开局到账 | objectives.js:137、46-48；`src/view` 无 `sellBatch` 调用 | `bulkSale` 成立且导致引导卡死、长期任务不显示（推荐删除）；经营三项建议下调为 2e10/1e10/1e10；另发现阈值任务套利与 0 产值出售刷奖励，见文档 B2、B3 |
+| 三行业（种田/畜牧/水产）平衡与价格曲线；用户允许颠覆性经济修改 | 同一文档续作（ECO-07）；PM 抽样：作物 U 5–3,125、牧渔 200–31,250，牧渔成本 10 倍；作物单价倒挂 C12–C14、C16–C17、C19–C20 | 进行中；仍不新增系统与界面，保留 ID 与旧档兼容；未模拟 |
