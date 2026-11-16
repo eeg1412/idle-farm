@@ -19,6 +19,7 @@ SHEETS = {
 }
 THREE_COLUMNS = {"crops-51-59", "crops-60-68"}
 ORIGINALS = {"C01": "scene-wheat", "L01": "scene-hen", "F01": "scene-fish"}
+GAME_DATA = ROOT / "src/content/game-data.json"
 FISH_LAYOUT = ROOT / "assets/fish/layout.json"
 FISH_SCENES = loads(FISH_LAYOUT.read_text(encoding="utf-8")).get("species", {}) if FISH_LAYOUT.exists() else {}
 LIVESTOCK_LAYOUT = ROOT / "assets/livestock/layout.json"
@@ -99,6 +100,23 @@ def main():
         for item, name in ORIGINALS.items():
             with Image.open(ART / f"{name}.png") as source:
                 save(item, source.convert("RGB"))
+        # Appended C/L/F (not in any sheet or ORIGINALS) export their own
+        # assets/source/art/scene-<ID>.png; missing sources are reported.
+        sheeted = {item for items in SHEETS.values() for item in items} | set(ORIGINALS)
+        catalogue = loads(GAME_DATA.read_text(encoding="utf-8"))["items"]
+        missing = []
+        for item, record in catalogue.items():
+            if record.get("kind") not in {"C", "L", "F"} or item in sheeted:
+                continue
+            source_path = ART / f"scene-{item}.png"
+            if not source_path.exists():
+                missing.append(item)
+                continue
+            with Image.open(source_path) as source:
+                save(item, source.convert("RGB"))
+        if missing:
+            raise SystemExit("missing facility scene sources: "
+                             + ", ".join(f"assets/source/art/scene-{item}.png" for item in missing))
 
 
 if __name__ == "__main__":

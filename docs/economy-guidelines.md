@@ -224,7 +224,7 @@
 - 现状：满足。
 
 **E-25 玩法覆盖【不变量】**
-- 规则：`src/main.js` `actions` 白名单中每个产生成功经营事件的动作（及其主要分支，如改种），以及科技、代管、图鉴、出售牧场多轮，至少有一项任务引导。豁免：画布外的配方 Wiki、离线结算、`updateSettings`；按用户反馈移出任务列表的「批量出货」（`sellBatch`，界面无入口）与「设定工位优先」（`setStationPriority`），其已领记录保留（`docs/feedback-checklist.md`、01 §1.5）；清空设施与工位（`clearFacility`、`clearStation`）属辅助操作，不设任务。新增动作必须同时新增任务。
+- 规则：`src/main.js` `actions` 白名单中每个产生成功经营事件的动作（及其主要分支，如改种），以及科技、代管、图鉴、出售牧场多轮，至少有一项任务引导。豁免：离线结算、`updateSettings`；按用户反馈移出任务列表的「批量出货」（`sellBatch`，界面无入口）与「设定工位优先」（`setStationPriority`），其已领记录保留（`docs/feedback-checklist.md`、01 §1.5）；清空设施与工位（`clearFacility`、`clearStation`）属辅助操作，不设任务。新增动作必须同时新增任务。
 - 原因：P11，旧 24 项未覆盖升级设施、改种、品质、工位、保留量、科技、代管、图鉴等。
 - 检查：按白名单逐个动作核对 `objectives.js` 的条件函数。
 - 违反：补任务后才可上线该动作。
@@ -255,7 +255,7 @@
 - 违反：撤回数据改动。
 
 **E-29 平衡版本号与变更记录【不变量】**
-- 规则：任何影响价格、产量、周期、费用、研发、品质、RP、离线或任务金额与门槛的改动，都递增 `balanceVersion`（格式 `LT-YYYY-MM-vN`）；只有改 RP 常数或 T 口径时才递增 `prestigeLedgerVersion`（两者可以不同）；存档字段变化时递增 `schemaVersion`；在 `docs/expansion/07` 记录新旧参数对照与迁移规则；与 AGENTS.md 条文冲突的改动先取得用户批准并更新 AGENTS.md。
+- 规则：任何影响价格、产量、周期、费用、研发、品质、RP、离线或任务金额与门槛的改动，都递增 `balanceVersion`（格式 `LT-YYYY-MM-vN`）；按 `farm-content` 工作流在类别末尾追加新品项、且已有品项的价格与研发逐字节不变时，不递增 `balanceVersion`，只在 07 记录新增 ID；只有改 RP 常数或 T 口径时才递增 `prestigeLedgerVersion`（两者可以不同）；存档字段变化时递增 `schemaVersion`；在 `docs/expansion/07` 记录新旧参数对照与迁移规则；与 AGENTS.md 条文冲突的改动先取得用户批准并更新 AGENTS.md。
 - 检查：`game-data.json` 的 `balanceVersion` 与 `scripts/long-term-balance.mjs` 的 `balanceVersion` 常量一致，且 07 中有对应记录；`prestige-ledger.js` 版本只随 RP 常数或 T 口径变化。
 - 违反：补版本号与记录后才可合入。
 - 现状：满足，`balanceVersion` 两处均为 `LT-2026-11-v4`；`prestigeLedgerVersion` 为 `LT-2026-11-v3`（LT-v4 未改 RP 常数）。

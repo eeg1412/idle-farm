@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "npm run wiki:build && vite build && node scripts/build-offline.mjs",
+    "build": "vite build && node scripts/build-offline.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test",
     "check": "npm run content:check && npm run art:check && npm test",
@@ -22,7 +22,6 @@
     "art:fish": "node scripts/export-fish-animation.mjs",
     "content:generate": "node scripts/generate-game-data.mjs",
     "content:check": "node scripts/compile-content.mjs --check && node scripts/generate-game-data.mjs --check",
-    "wiki:build": "node scripts/build-wiki.mjs",
     "publish:cloudflare": "npx wrangler pages deploy ./dist --project-name idle-farm"
   },
   "dependencies": {

@@ -62,8 +62,23 @@ function isRecipe(item) {
 function preserveStructure(catalogue, baseline) {
   if (baseline.version !== '1.14') fail('仅可使用固定1.14原始快照');
   if (catalogue.initial.join(',') !== baseline.initial.join(',')) fail('初始品项发生变化');
-  if (Object.keys(catalogue.items).length !== Object.keys(baseline.items).length
-    || Object.keys(catalogue.research).length !== Object.keys(baseline.research).length) fail('目录覆盖范围发生变化');
+  // Appended items (outside the snapshot) must number above the highest
+  // snapshot ID of their kind and carry a research node; snapshot IDs keep the
+  // per-ID comparison below.
+  const rankOf = (id) => Number(/\d+$/.exec(id)?.[0]);
+  const snapshotMax = {};
+  for (const [id, original] of Object.entries(baseline.items)) {
+    snapshotMax[original.kind] = Math.max(snapshotMax[original.kind] ?? 0, rankOf(id));
+  }
+  for (const [id, item] of Object.entries(catalogue.items)) {
+    if (Object.hasOwn(baseline.items, id)) continue;
+    if (!snapshotMax[item.kind] || !(rankOf(id) > snapshotMax[item.kind])) fail(`${id}必须追加在${item.kind}类快照最大编号之后`);
+    if (!Number.isSafeInteger(item.generationSeconds) || item.generationSeconds <= 0) fail(`${id}缺少代际秒`);
+    if (!catalogue.research[id]) fail(`追加品项${id}缺少研发节点`);
+  }
+  for (const id of Object.keys(catalogue.research)) {
+    if (!Object.hasOwn(baseline.research, id) && Object.hasOwn(baseline.items, id)) fail(`${id}的研发覆盖范围发生变化`);
+  }
   for (const [id, original] of Object.entries(baseline.items)) {
     const item = catalogue.items[id];
     if (!item || !Number.isSafeInteger(item.generationSeconds) || item.generationSeconds * 1000 !== original.durationMs
@@ -316,8 +331,14 @@ export function applyLongTermBalance(catalogue, baseline, policy) {
 // calendar-time simulation. Processing/refining capacity remain separate.
 export function summarizeGeneratedBalance(catalogue, baseline, policy) {
   const notes = generationNotes.get(catalogue);
-  const prices = { changed: 0, unchanged: 0, byKind: {} };
+  // Items outside the 1.14 snapshot are counted as added and never compared
+  // with an old price.
+  const prices = { changed: 0, unchanged: 0, added: 0, byKind: {} };
   for (const [id, item] of Object.entries(catalogue.items)) {
+    if (!Object.hasOwn(baseline.items, id)) {
+      prices.added += 1;
+      continue;
+    }
     const change = BigInt(item.price) - BigInt(baseline.items[id].price);
     const kind = prices.byKind[item.kind] ??= { up: 0, down: 0, same: 0 };
     kind[change > 0n ? 'up' : change < 0n ? 'down' : 'same'] += 1;
@@ -391,7 +412,7 @@ export function summarizeGeneratedBalance(catalogue, baseline, policy) {
     prices,
     priceOrderViolations,
     samplePrices: sample(['C01', 'C02', 'C10', 'C13', 'C25', 'C35', 'C50', 'L01', 'L05', 'L10', 'F01', 'F05', 'F10', 'I01', 'P01', 'IL01', 'P150', 'PD18', 'PT50'],
-      (id) => catalogue.items[id] && {
+      (id) => catalogue.items[id] && Object.hasOwn(baseline.items, id) && {
         old: baseline.items[id].price,
         generated: catalogue.items[id].price,
         durationMs: catalogue.items[id].durationMs,

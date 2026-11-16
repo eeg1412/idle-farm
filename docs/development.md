@@ -106,5 +106,5 @@
 
 ## 内容
 
-格式1.14的稳定目录、生产拓扑、原始售价和原研发明细来自扩展式样的[生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)及[显式等级](expansion/08-crop-uses.md)。LT-2026-11-v2先按[正式算法](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者通过 `node scripts/generate-game-data.mjs` 进行正式内容生成；oldPrice只读不可变src/content/balance-baseline-v114.json，禁止用新输出充旧输入。输出game-data.json的格式version仍为1.14、balanceVersion为LT-2026-11-v2；运行基价以该结果为唯一来源，523项research coins/costs/requires逐项保留原值。Wiki仍为独立HTML构建入口，经济口径须消费同版生成数据，旧明细价格只作历史输入。生成输出说明不等于独立验证，所有检查/模拟/测试仍遵守前述授权限制。
+格式1.14的稳定目录、生产拓扑、原始售价和原研发明细来自扩展式样的[生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)及[显式等级](expansion/08-crop-uses.md)。LT-2026-11-v2先按[正式算法](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者通过 `node scripts/generate-game-data.mjs` 进行正式内容生成；oldPrice只读不可变src/content/balance-baseline-v114.json，禁止用新输出充旧输入。输出game-data.json的格式version仍为1.14、balanceVersion为LT-2026-11-v2；运行基价以该结果为唯一来源，523项research coins/costs/requires逐项保留原值。旧明细价格只作历史输入。生成输出说明不等于独立验证，所有检查/模拟/测试仍遵守前述授权限制。
 

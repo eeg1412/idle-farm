@@ -36,7 +36,7 @@ npm run build
 npm run publish:cloudflare
 ```
 
-`build` 沿用现有素材检查、Wiki 生成、Vite 构建及离线缓存生成流程。发布始终使用磁盘上当前的 `dist/`；修改源码后需要先重新构建，避免上传旧产物。
+`build` 沿用现有 Vite 构建及离线缓存生成流程（`vite build && node scripts/build-offline.mjs`）；素材检查需另行运行 `npm run art:check`。发布始终使用磁盘上当前的 `dist/`；修改源码后需要先重新构建，避免上传旧产物。
 
 可以通过 npm 追加 Wrangler 参数。例如显式指定分支（将 `main` 换成该 Pages 项目实际的生产分支）：
 

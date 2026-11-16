@@ -12,6 +12,10 @@ SOURCE = ROOT / "assets/source/items"
 OUTPUT = ROOT / "public/wiki/icons"
 EXPANSION_CATALOG = ROOT / "docs/expansion/05-catalog.md"
 CROP_SPEC = ROOT / "docs/expansion/08-crop-uses.md"
+SNAPSHOT = ROOT / "src/content/balance-baseline-v114.json"
+GAME_DATA = ROOT / "src/content/game-data.json"
+# The first 525 IDs keep their 5×5 atlas groups; appended IDs use overrides.json.
+ATLAS_ITEMS = 525
 SIZE = 96
 GRID_SIZE = 5
 CELL_MARGIN_FRACTION = 0.04
@@ -22,21 +26,31 @@ ALPHA_CLEANUP = [0 if value < 12 else value for value in range(256)]
 
 
 def atlas_groups():
+    """Return the 21 frozen atlas groups of the first 525 IDs (the 1.14 snapshot)."""
+    snapshot_ids = set(json.loads(SNAPSHOT.read_text(encoding="utf-8"))["items"])
     legacy_ids = list(json.loads((ROOT / "src/content/catalog.json").read_text())["items"])
     catalog_ids = re.findall(r"^\| ([A-Z]+[0-9]+) \|", EXPANSION_CATALOG.read_text(), re.MULTILINE)
     animal_ids = [item_id for item_id in catalog_ids
-                  if re.fullmatch(r"(?:IL|IF|PL|PF|PD|PT|L|F)\d{2}", item_id)]
+                  if item_id in snapshot_ids and re.fullmatch(r"(?:IL|IF|PL|PF|PD|PT|L|F)\d{2}", item_id)]
     crop_grid = CROP_SPEC.read_text().partition("## 图标格序")[2]
     crop_ids = re.findall(r"\b[A-Z]+\d+(?= \|)", crop_grid)
     ids = legacy_ids + animal_ids + crop_ids
-    if (len(legacy_ids) != 300 or len(animal_ids) != 150 or len(crop_ids) != 75 or len(catalog_ids) != 525
-            or len(set(ids)) != 525 or set(ids) != set(catalog_ids)):
+    if (len(legacy_ids) != 300 or len(animal_ids) != 150 or len(crop_ids) != 75
+            or len(snapshot_ids) != ATLAS_ITEMS or len(set(ids)) != ATLAS_ITEMS or set(ids) != snapshot_ids
+            or not snapshot_ids <= set(catalog_ids)):
         raise ValueError("expected 300 legacy IDs, 150 animal expansion IDs and 75 crop expansion IDs matching the catalogue")
     groups = {}
     for start in range(0, len(ids), GRID_SIZE ** 2):
         group = ids[start:start + GRID_SIZE ** 2]
         groups[f"{group[0]}-{group[-1]}"] = group
     return groups
+
+
+def appended_ids():
+    """Catalogue IDs beyond the 525 atlas items, in game-data order; each needs an override icon."""
+    snapshot_ids = set(json.loads(SNAPSHOT.read_text(encoding="utf-8"))["items"])
+    return [item_id for item_id in json.loads(GAME_DATA.read_text(encoding="utf-8"))["items"]
+            if item_id not in snapshot_ids]
 
 
 def read_sheet(path):
@@ -161,17 +175,26 @@ def normalize_sheet(path):
     return normalized
 
 
-def apply_icon_overrides(sprites):
-    """Apply explicit canonical single-icon sources after historical atlas crops."""
+def apply_icon_overrides(sprites, appended=()):
+    """Apply explicit canonical single-icon sources after historical atlas crops.
+
+    Appended IDs (beyond the 525 atlas items) have no atlas cell and must each
+    come from overrides.json; they join the export set here.
+    """
     registry = SOURCE / "overrides.json"
     if not registry.is_file():
+        if appended:
+            raise SystemExit("missing assets/source/items/overrides.json for appended IDs: " + ", ".join(appended))
         return
     overrides = json.loads(registry.read_text(encoding="utf-8"))
     if not isinstance(overrides, dict):
         raise ValueError("item icon overrides must map IDs to source PNG paths")
+    missing = [item_id for item_id in appended if item_id not in overrides]
+    if missing:
+        raise SystemExit("appended IDs need a 96×96 override icon in overrides.json: " + ", ".join(missing))
     source_root = SOURCE.resolve()
     for item_id, relative_path in overrides.items():
-        if item_id not in sprites:
+        if item_id not in sprites and item_id not in appended:
             continue
         path = (SOURCE / relative_path).resolve()
         if not path.is_relative_to(source_root):
@@ -197,6 +220,7 @@ def main():
         parser.error("--normalize-to must be separate from --source-dir")
     try:
         groups = atlas_groups()
+        appended = [] if args.sheet else appended_ids()
     except (OSError, ValueError) as error:
         parser.error(str(error))
     selected = list(dict.fromkeys(args.sheet)) if args.sheet else list(groups)
@@ -220,7 +244,9 @@ def main():
             failures.append(f"{path.name}: {error}")
     if failures:
         raise SystemExit("\n".join(failures))
-    apply_icon_overrides(sprites)
+    apply_icon_overrides(sprites, appended)
+    if not args.sheet and len(sprites) != ATLAS_ITEMS + len(appended):
+        raise SystemExit(f"expected {ATLAS_ITEMS} atlas icons plus {len(appended)} appended icons, got {len(sprites)}")
     if args.validate_source or args.normalize_to:
         return
 

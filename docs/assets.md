@@ -21,10 +21,11 @@
 python3 scripts/export-item-icons.py --source-dir assets/source/items/raw --normalize-to assets/source/items
 python3 scripts/export-item-icons.py
 python3 scripts/export-item-icons.py --check
-npm run wiki:build
 ```
 
-导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。新增图标及 Wiki 的 525 项数值依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`，再执行 Wiki 构建。Wiki 的生产入口是 `dist/wiki/index.html`，源码版可直接打开 `public/wiki/index.html`，相邻 `icons/` 目录必须一并提供。
+导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。新增图标的 525 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
+
+发布图目录 `public/wiki/icons/` 是游戏运行时的物品图标来源，仓库、产物栏、牧场与鱼池动画、导出脚本和素材检查均引用该路径。路径中的 `wiki` 为历史名称：早期独立配方 Wiki 已删除，该目录与其中图标保留不动。
 
 新增图标表依次为 `L01-IL05`、`IL06-PL10`、`PL11-PF15`、`PF16-PD20`、`PT01-PT25`、`PT26-PT50`、`C51-P160`、`C57-I122`、`I123-P180`。各表各 25 格，具体顺序见同目录提示词和配方总表。
 
@@ -130,9 +131,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 ## 资源加载
 
-- Wiki 每页最多渲染 25 条。仅接近视口的当前页图标赋予图片 URL，交叉观察距离为 120 CSS 像素。缺少交叉观察能力时只请求当前页。搜索、筛选和跨页材料链接更新当前页，非当前页不发起新请求。
-- Wiki HTML 内置结构化配方与名称，因此本地打开无需读取外部 JSON。图片独立存放，使用相对 URL。发布时按整套图标内容计算版本参数，避免旧缓存与新版配方混用。
 - PixiJS 游戏的牧场、工坊、仓库和图鉴列表连续滚动。列表只绘制进入视口的内容，并在其进入视口时按需请求对应图标和场景图。图片请求按资源 URL 合并并发请求，失败时保留名称及布局。物品图与界面图分别来自 `public/wiki/icons/` 和 `public/ui-icons/`。动画挂载和卸载遵循各场景的既有规则。
-- Service Worker 的安装清单排除 Wiki 及其图片，Wiki 导航走浏览器常规请求。未来添加游戏 WebP 时也应从预缓存清单排除，只预缓存启动壳和必需依赖。原图不进入 `dist/`。
+- Service Worker 的安装清单排除所有 WebP 图片；游戏图片（`art/`、`ui-icons/`、`wiki/icons/` 下带 `?game=1` 的请求）在首次加载后按需缓存。除游戏首页外的导航走浏览器常规请求。未来添加游戏 WebP 时也应从预缓存清单排除，只预缓存启动壳和必需依赖。原图不进入 `dist/`。
 
 游戏大幅场景分别保留在 `assets/source/art/*.png`，各页发布图在 `public/art/*.webp`。游戏按当前页面的可见内容请求相应横幅、场景及图标，并沿用已访问发布图片的缓存。

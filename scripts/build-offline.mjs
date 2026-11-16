@@ -27,7 +27,7 @@ await Promise.all(cropAtlasFiles.map((name) => {
 const onDemandChunk = /^dist\/assets\/(?:WebGPURenderer|CanvasRenderer|AccessibilitySystem)-[\w-]+\.js$/;
 
 const published = (await files('dist')).filter((path) => path !== 'dist/sw.js').sort();
-const paths = published.filter((path) => !path.startsWith('dist/wiki/') && !path.endsWith('.webp') &&
+const paths = published.filter((path) => !path.endsWith('.webp') &&
   !onDemandChunk.test(path));
 const imagePaths = published.filter((path) => path.endsWith('.webp') &&
   ['dist/art/', 'dist/ui-icons/', 'dist/wiki/icons/'].some((directory) => path.startsWith(directory)));

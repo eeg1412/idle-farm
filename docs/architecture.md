@@ -19,7 +19,6 @@
 | `src/view/management-pages.js` | 仓库、图鉴、任务、设置、出售牧场 |
 | `src/main.js` | 时间推进、交互提交、离线汇总和存档边界 |
 | `scripts/generate-game-data.mjs` | 将 1.14 式样表转换为运行数据 |
-| `scripts/build-wiki.mjs` | 独立 Wiki 的生成与图标版本 |
 | `scripts/export-livestock-animation.mjs` | 按多来源布局裁切牲畜原画，导出固定脚位图集、独立产品、透明牲畜选择图及运行视觉登记 |
 | `scripts/export-crop-animation.py` | 按目录和固定根位生成四期作物图集，保留 C01 小麦整幅前景例外 |
 | `.agents/skills/farm-livestock/`、`.agents/skills/farm-crops/` | 新增和改画时按 ID 交付内容、原画、图标、回退及动画的项目技能 |
@@ -28,6 +27,6 @@
 
 `vite.config.js` 在编译时仅对开发服务器启用 `__DEV_TEST_MODE__`。设置页的 11 次连续点击通过 `src/main.js` 的动作队列在同一存档事务中发放。开发服务器使用 `idle-farm-development` 数据库，正式构建沿用 `tianjian-workshop`。构建期拦截器禁止产物包含开发入口、奖励模块或开发存档标识。
 
-畜牧视觉布局位于 `assets/livestock/layout.json`，以显式 `slaughter` 区分成年附属产品与三阶段肉用动物；生成数据、资源检查和 UI 使用相同登记，覆盖目录全部牲畜。选择网格用 `public/ui-icons/livestock-<ID>.webp` 活体图，仓库用 `public/wiki/icons/<ID>.webp` 产出图，动画用独立产品图，避免混用。用户报告选择图不可辨识后，相关反馈已重新打开；完整资源链或构建通过不代表实际选择界面已经验收。
+畜牧视觉布局位于 `assets/livestock/layout.json`，以显式 `slaughter` 区分成年附属产品与三阶段肉用动物；生成数据、资源检查和 UI 使用相同登记，覆盖目录全部牲畜。选择网格用 `public/ui-icons/livestock-<ID>.webp` 活体图，仓库用 `public/wiki/icons/<ID>.webp` 产出图（目录名中的 `wiki` 为历史名称，独立 Wiki 已删除），动画用独立产品图，避免混用。用户报告选择图不可辨识后，相关反馈已重新打开；完整资源链或构建通过不代表实际选择界面已经验收。
 
 [开发规范](development.md) · [1.14 式样](expansion/README.md) · [界面参考图](ui-references/v1.14/README.md)

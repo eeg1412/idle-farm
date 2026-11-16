@@ -157,9 +157,9 @@ test('online navigation preserves browser redirects and HTTP errors', async () =
   }
 });
 
-test('the worker bypasses Wiki, unknown, and cross-origin navigations', () => {
+test('the worker bypasses unknown and cross-origin navigations', () => {
   const worker = createWorker();
-  for (const url of [`${scope}wiki/`, `${scope}wiki/index.html`, `${scope}missing`,
+  for (const url of [`${scope}missing`,
     'https://game.example/', 'https://another.example/workshop/']) {
     assert.equal(worker.request(url).response, undefined, url);
   }

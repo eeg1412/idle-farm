@@ -30,7 +30,7 @@ npm run build
 | 畜牧与水产设计 | [1.14 扩展式样书](docs/expansion/README.md) |
 | 当前经济式样与调整依据 | [LT-v2经营](docs/expansion/01-operations.md) · [价格算法](docs/expansion/07-balance-validation.md) · [调整定案](docs/reviews/2026-11-15-long-term-balance-report.md) |
 | 历史年度估算 | [1.13数值平衡归档](docs/balance.md)，不作为现版完成天数 |
-| 独立配方 Wiki | [直接打开](public/wiki/index.html) · [图标技术规格](docs/assets.md) |
+| 物品图标与资源加载 | [图标技术规格](docs/assets.md) |
 | 页面、按钮与反馈 | [界面与交互规格](docs/ui.md) |
 | 已实现范围及后续模块 | [架构](docs/architecture.md) |
 | 验证 | [验收步骤](docs/verification.md) |
