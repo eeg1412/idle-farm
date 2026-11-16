@@ -17,7 +17,7 @@ export const techDefinitions = [
   { key: 'cropYield', name: '丰收栽培', source: '农业', description: '农田每批收成每级增加 2%，满级翻倍' },
   { key: 'appraisal', name: '经营评估', source: '通用', description: '后续生产事件的研发点权益倍率每级增加 0.02，仅在出售牧场时领取' },
   { key: 'workshopSpeed', name: '工坊提速', source: '通用', description: '工坊生产每级提速 2%' },
-  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限从 12 小时起，前 20 级每级增加 36 分钟，后 30 级每级增加 48 分钟' },
+  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限从 24 小时起，前 10 级每级增加 144 分钟，后 40 级每级增加 36 分钟' },
   { key: 'livestockBuy', name: '畜牧场议价', source: '畜牧', description: '畜牧场购买价格每级降低 1%', item: 'L01' },
   { key: 'livestockUpgrade', name: '畜牧场改造', source: '畜牧', description: '畜牧场升级价格每级降低 1%', item: 'L01' },
   { key: 'livestockYield', name: '畜群培育', source: '畜牧', description: '畜牧场每批产出每级增加 2%，满级翻倍', item: 'L01' },
@@ -88,7 +88,7 @@ const canPay = (world, coins, costs) => world.coins >= coins && costs.every(([id
 export const discount = (world, key) => discountPerLevel * techLevel(world, key);
 export const appraisalLevel = (world) => techLevel(world, 'appraisal');
 export const appraisalMultiplierBasisPoints = (world) => 10000 + appraisalPerLevel * appraisalLevel(world);
-const delegationMinutes = (level) => 720 + 36 * Math.min(level, 20) + 48 * Math.max(level - 20, 0);
+const delegationMinutes = (level) => 1440 + 144 * Math.min(level, 10) + 36 * Math.max(level - 10, 0);
 export const delegationMilliseconds = (world) => 60000 * delegationMinutes(techLevel(world, 'delegation'));
 export const delegationHours = (world) => delegationMilliseconds(world) / 3600000;
 // Yield technology is a multiplicative bonus in basis points: output × (10000 + bonus) / 10000.
@@ -116,6 +116,7 @@ function discounted(amount, reduction) {
 
 function pay(world, offer) {
   world.coins -= offer.coins;
+  if (offer.researchPoints) world.researchPoints -= offer.researchPoints;
   for (const [id, amount] of offer.costs) world.inventory[id] = held(world, id) - amount;
 }
 
@@ -167,6 +168,14 @@ function qualityCoins({ numerator, denominator }, level) {
   return (qualityCoinCoefficient(level) * numerator + denominator - 1n) / denominator;
 }
 
+// Cumulative quality research points: Rc(q) = d + ⌊d(d+1)(2d+1)/1800⌋, d = q − 100; Rc(q ≤ 100) = 0.
+// Not reduced by any discount technology.
+function qualityResearchPoints(level) {
+  if (level <= 100n) return 0n;
+  const d = level - 100n;
+  return d + d * (d + 1n) * (2n * d + 1n) / 1800n;
+}
+
 function qualitySum(level) {
   return level * (level + 1n) / 2n - 1n;
 }
@@ -200,6 +209,7 @@ export function qualityOffer(world, id, steps = 1n) {
   const coinRate = qualityCoinRate(item);
   const currentCoins = qualityCoins(coinRate, current);
   const currentSum = qualitySum(current);
+  const currentResearchPoints = qualityResearchPoints(current);
   const materials = Object.entries(coefficients).map(([material, coefficient]) => ({
     id: material, coefficient, levelCost: material === id ? 1n : 0n,
   }));
@@ -211,7 +221,9 @@ export function qualityOffer(world, id, steps = 1n) {
       discounted(coefficient * sum + levelCost * (target - 1n), reduction) -
         discounted(coefficient * currentSum + levelCost * (current - 1n), reduction),
     ]).filter(([, count]) => count > 0n);
-    return { coins, costs, affordable: canPay(world, coins, costs) };
+    const researchPoints = qualityResearchPoints(target) - currentResearchPoints;
+    return { coins, costs, researchPoints,
+      affordable: canPay(world, coins, costs) && world.researchPoints >= researchPoints };
   };
 
   const target = steps === 'max' ? affordableTarget(current, quote) : current + steps;

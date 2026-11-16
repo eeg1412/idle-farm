@@ -1,5 +1,6 @@
 import { catalog, quantity } from '../game/world.js';
 import { qualityOffer, researchOffer, techDefinitions, techLevelLimit, techOffer, unitPrice } from '../game/advancement.js';
+import { hoursLabel } from './management-pages.js';
 import { compact } from './numbers.js';
 
 const tabs = ['品种配方', '品质', '经营改良'];
@@ -66,6 +67,7 @@ function techIcon(definition) {
 
 function duration(milliseconds) {
   const deciseconds = Math.ceil(milliseconds / 100);
+  if (deciseconds >= 36000) return hoursLabel(deciseconds / 10);
   const minutes = Math.floor(deciseconds / 600);
   const seconds = (deciseconds % 600) / 10;
   return minutes ? `${compact(minutes)} 分钟${seconds ? ` ${seconds} 秒` : ''}` : `${seconds} 秒`;
@@ -169,6 +171,11 @@ function qualityDetails(ui, id, local) {
   })), { style: 'production' });
   if (priceDelta === 0n) ui.text('本次升级单价不变，没有现金售价提升。', { muted: true });
   showMaterials(ui, costs, coins, '升级所需材料');
+  if (offer.researchPoints > 0n) {
+    ui.heading('高级研发点', { size: 21 });
+    ui.materialTable([{ id: 'coin', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.researchPoints }],
+      { style: 'research' });
+  }
   ui.buttons([
     {
       label: '确认升级', tone: 'gold', disabled: !offer.affordable,
@@ -391,7 +398,7 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
   }, { keepScroll: true, sticky: true, style: 'segmented', indicatorTabs: readyTabs });
   const efficiency = active === tabs[2];
   const quality = active === tabs[1];
-  if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency' });
+  if (efficiency || quality) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency' });
   const nodes = efficiency ? techNodes(ui.w) : quality ? qualityNodes(ui.w) : researchNodes(ui.w);
   const select = (key) => {
     if (efficiency) showTech(ui, techByKey[key]);

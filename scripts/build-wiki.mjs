@@ -45,15 +45,29 @@ function parseSpecies(markdown) {
   return species;
 }
 
-function parseCatalog(markdown, species, levelFor) {
+// LT-2026-11-v4: spec 耗时/产量/售价 columns are generator inputs (耗时 = generation seconds g),
+// so the wiki's economic values come from the same-version generated runtime data.
+function runtimeEconomy(gameData, id) {
+  const item = gameData.items?.[id];
+  assert.ok(item, `${id} is missing from src/content/game-data.json`);
+  assert.ok(Number.isSafeInteger(item.durationMs) && item.durationMs > 0 && item.durationMs % 1000 === 0,
+    `${id} has an invalid runtime durationMs: ${item.durationMs}`);
+  const output = String(item.output);
+  const price = String(item.price);
+  assert.ok(positiveInteger.test(output) && positiveInteger.test(price), `${id} has an invalid runtime output/price`);
+  return { seconds: item.durationMs / 1000, output, price };
+}
+
+function parseCatalog(markdown, species, levelFor, gameData) {
   const items = new Map();
   for (const line of markdown.split('\n')) {
     if (!/^\| [A-Z]+\d+ \|/.test(line)) continue;
-    const [id, name, seconds, output, price, recipe] = splitRow(line);
+    const [id, name, specSeconds, specOutput, specPrice, recipe] = splitRow(line);
     const [, prefix, rank] = /^([A-Z]+)(\d+)$/.exec(id);
     const group = groups[prefix];
     assert.ok(group && !items.has(id) && name, id);
-    assert.ok([seconds, output, price].every((number) => positiveInteger.test(number)), id);
+    assert.ok([specSeconds, specOutput, specPrice].every((number) => positiveInteger.test(number)), id);
+    const { seconds, output, price } = runtimeEconomy(gameData, id);
     const inputs = parseIngredients(recipe, id);
     const prerequisites = inputs.map(([key]) => {
       const ingredient = items.get(key);
@@ -81,7 +95,7 @@ function parseCatalog(markdown, species, levelFor) {
     const source = species.get(id);
     if (source) assert.equal(source.material, name, id);
     const level = group.kind === 'product' ? levelFor(prefix, Number(rank), sectors.length) : undefined;
-    items.set(id, { id, name, kind: group.kind, sectors, inputs, stage, output, seconds: Number(seconds), price,
+    items.set(id, { id, name, kind: group.kind, sectors, inputs, stage, output, seconds, price,
       ...(level && { level }),
       ...(source && { species: source.name }),
     });
@@ -98,12 +112,14 @@ function parseCatalog(markdown, species, levelFor) {
   return rows;
 }
 
-const [catalogMarkdown, speciesMarkdown, cropUses] = await Promise.all([
+const [catalogMarkdown, speciesMarkdown, cropUses, gameDataJson] = await Promise.all([
   read('../docs/expansion/05-catalog.md'),
   read('../docs/expansion/02-livestock-fish.md'),
   read('../docs/expansion/08-crop-uses.md'),
+  read('../src/content/game-data.json'),
 ]);
-const rows = parseCatalog(catalogMarkdown, parseSpecies(speciesMarkdown), productLevels(cropUses));
+const gameData = JSON.parse(gameDataJson);
+const rows = parseCatalog(catalogMarkdown, parseSpecies(speciesMarkdown), productLevels(cropUses), gameData);
 
 if (process.argv.includes('--check-data')) {
   console.log(`图鉴数据校验通过：${rows.length} 个品项，${rows.filter((item) => item.inputs.length).length} 条生产配方。`);

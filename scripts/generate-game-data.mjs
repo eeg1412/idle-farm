@@ -81,9 +81,13 @@ function specTable(markdown, heading, header) {
   return rows;
 }
 
-const anchorRows = specTable(balanceSpec, '### 7.7 研发总价锚点', '| U锚点 | 基准值B |');
+const anchorRows = specTable(balanceSpec, '### 7.7 研发总价锚点', '| e锚点 | 基准值B | 材料时限秒 |');
 if (anchorRows.length !== 6) fail(`07研发总价锚点应为6行：${anchorRows.length}`);
-const researchAnchors = anchorRows.map(([u, b]) => ({ u: BigInt(positiveInteger(u, '研发U锚点')), b: BigInt(positiveInteger(b, '研发基准值B')) }));
+const researchAnchors = anchorRows.map(([e, b, capSeconds]) => ({
+  e: BigInt(positiveInteger(e, '研发e锚点')),
+  b: BigInt(positiveInteger(b, '研发基准值B')),
+  capSeconds: BigInt(positiveInteger(capSeconds, '研发材料时限秒')),
+}));
 const researchOverrides = {};
 for (const [id, coins, materials] of specTable(balanceSpec, '### 7.8 研发引导覆盖', '| ID | 金币 | 材料 |')) {
   if (!idPattern.test(id) || Object.hasOwn(researchOverrides, id)) fail(`07研发引导覆盖ID无效：${id}`);
@@ -94,9 +98,14 @@ for (const [id, coins, materials] of specTable(balanceSpec, '### 7.8 研发引�
 const researchPolicy = { researchAnchors, researchOverrides };
 
 const stock = new Map();
-for (const [id, subject, name, seconds, output, price] of readRows(stockTable, '养殖表', 6, (id) => /^[LF]/.test(id))) {
+for (const [id, subject, name, seconds, output, price, production] of readRows(stockTable, '养殖表', 7, (id) => /^[LF]\d/.test(id))) {
   if (stock.has(id) || !subject) fail(`${id}的养殖对象无效`);
-  stock.set(id, { subject, name, seconds, output, price });
+  const generation = integerNumber(seconds, `${id}耗时`);
+  const productionSeconds = integerNumber(positiveInteger(production, `${id}生产秒`), `${id}生产秒`);
+  if (generation < 1 || generation > 300) fail(`${id}耗时超出品类范围：${seconds}`);
+  if (id.startsWith('L') && productionSeconds !== 4 * generation) fail(`${id}生产秒必须为4×耗时：${production}`);
+  if (id.startsWith('F') && productionSeconds > 14400) fail(`${id}生产秒不得超过14400：${production}`);
+  stock.set(id, { subject, name, seconds, output, price, productionSeconds });
 }
 
 const items = {};
@@ -115,14 +124,18 @@ for (const [id, name, seconds, output, price, recipe] of readRows(catalogue, '�
   if ((kind === 'L' || kind === 'F') && (!animal || animal.name !== name || animal.seconds !== seconds || animal.output !== output || animal.price !== price)) {
     fail(`${id}的物品表与养殖表不一致`);
   }
+  // g (耗时) is the generation second; t is the production cycle: crops t=g,
+  // livestock/fish t=养殖表「生产秒」. Only t reaches game-data.json.
+  const production = animal ? animal.productionSeconds : cycle;
   items[id] = {
     name,
     ...(animal ? { subject: animal.subject } : {}),
-    durationMs: cycle * 1000,
+    durationMs: production * 1000,
     output: positiveInteger(output, `${id}产量`),
     price: positiveInteger(price, `${id}售价`),
     inputs,
     kind,
+    generationSeconds: cycle,
   };
 }
 
@@ -188,13 +201,14 @@ while (pending.size) {
   if (pending.size === previous) fail(`研发前置无法解锁：${[...pending].join('、')}`);
 }
 
-// Detail tables retain their historical inputs; only topology, cycles, output,
-// research prerequisites and research material kinds are used (checked against
-// the immutable 1.14 snapshot, never game-data.json). LT-2026-11-v3 then prices
-// raw goods by cycle (5κt³/144·out) and recipes by markup plus work value, and
-// regenerates every research node's coins and material quantities from its
-// unit value U using the 07 §7.7 anchors; 07 §7.8 guide overrides replace the
-// quantities of the listed entry nodes. See docs/expansion/07.
+// Detail tables retain their historical inputs; only topology, generation
+// seconds, recipe output, research prerequisites and research material kinds
+// are checked against the immutable 1.14 snapshot (never game-data.json).
+// LT-2026-11-v4 prices raw goods by generation g and production cycle t
+// (σ·5g²(g+127)·t/(1000·20016·out)), recipes by markup plus work value, and
+// regenerates every research node's coins and material quantities from its era
+// value e using the 07 §7.7 anchors and material time limits; the 07 §7.8 guide
+// override replaces the listed entry node. See docs/expansion/07.
 const baseline = JSON.parse(baselineJson);
 const balanced = applyLongTermBalance({ initial, items, research }, baseline, researchPolicy);
 const output = `${JSON.stringify(balanced, null, 2)}\n`;

@@ -50,7 +50,7 @@ test('development grants persist in their own database without changing the rele
   const developmentWorld = newWorld(0);
   assert.equal(grantDevelopmentTools(developmentWorld), true);
   developmentWorld.revision = await writeWorldSave(developmentDatabase, developmentWorld);
-  assert.equal((await rawRecord(developmentDatabase, 'current')).coins, '1000000000060');
+  assert.equal((await rawRecord(developmentDatabase, 'current')).coins, '1000000000600');
   assert.deepEqual(await readWorldSave(developmentDatabase), developmentWorld);
   assert.deepEqual(await rawRecord(releaseDatabase, 'current'), releaseRecord);
   assert.deepEqual(await readWorldSave(releaseDatabase), releaseWorld);
@@ -83,7 +83,8 @@ test('two farm sales and reloading preserve tutorial completion and lifetime goa
   assert.equal(resumed.active, false);
   assert.ok(resumed.guide.filter((goal) => !goal.branch).every((goal) => goal.done));
   assert.equal(resumed.long.find(({ id }) => id === 'farmIncome').current, 1200n);
-  assert.equal(resumed.long.find(({ id }) => id === 'moreFields').current, 3n);
+  // 农地扩建 counts extra fields currently owned; a farm sale resets the farm to its two free fields.
+  assert.equal(resumed.long.find(({ id }) => id === 'moreFields').current, 0n);
 });
 
 test('replacement display preference defaults on older saves and survives farm sale and reload', async (t) => {
@@ -207,7 +208,7 @@ test('stale recovery and replacement cannot overwrite a repaired record', async 
   const [first, stale] = await Promise.allSettled([restoreWorldSave(db, options), restoreWorldSave(second, options)]);
   assert.equal(first.status, 'fulfilled');
   assert.equal(first.value.revision, 3);
-  assert.equal(first.value.coins, 60n);
+  assert.equal(first.value.coins, 600n);
   assert.equal(stale.status, 'rejected');
   assert.equal(stale.reason.code, 'revision-conflict');
   await assert.rejects(writeWorldSave(second, newWorld(0), { replaceCorrupt: true, corruptRevision: 2 }),

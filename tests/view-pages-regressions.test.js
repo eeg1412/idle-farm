@@ -3,7 +3,7 @@ import test from 'node:test';
 import {
   advanceWorld, arrangeStation, assignFacility, catalog, farmSaleOffer, newWorld, productionDurationMs, reserve, sell, sellFarm,
 } from '../src/game/world.js';
-import { renderTasks, renderWarehouse } from '../src/view/management-pages.js';
+import { hoursLabel, renderTasks, renderWarehouse } from '../src/view/management-pages.js';
 import { renderProduction, renderWorkshop } from '../src/view/production-pages.js';
 import { renderResearch } from '../src/view/research-page.js';
 
@@ -160,7 +160,7 @@ test('the expansion guide sends a player who needs more coins to sell stock', ()
   world.stats.produced = { C01: 1n, I01: 1n, P01: 1n };
   world.stats.sold = 1n;
   world.unlocked.push('P01');
-  world.coins = 59n;
+  world.coins = 599n;
 
   const production = pageFixture(world);
   renderProduction(production.ui);
@@ -171,7 +171,7 @@ test('the expansion guide sends a player who needs more coins to sell stock', ()
   renderTasks(tasks.ui);
   tasks.click('前往出货');
   assert.ok(tasks.find('go', (target) => target === '仓库'));
-  world.coins = 60n;
+  world.coins = 600n;
   renderTasks(tasks.ui);
   tasks.click('前往田地');
   assert.ok(tasks.find('go', (target, { tab }) => target === '牧场' && tab === '田地'));
@@ -279,7 +279,7 @@ test('crop selection uses individual icons for all unlocked choices in one grid'
   assert.deepEqual(chooser.find('choiceGrid', () => true)[0].map(({ id, icon }) => [id, icon]), ids.map((id) => [id, id]));
 });
 
-test('research keeps separate cameras, connects real dependencies, and only shows points in efficiency', () => {
+test('research keeps separate cameras, connects real dependencies, and shows points in quality and efficiency', () => {
   const world = newWorld(0);
   world.researchPoints = 10n ** 120n + 9n;
   const local = { scroll: 0 };
@@ -300,7 +300,7 @@ test('research keeps separate cameras, connects real dependencies, and only show
   assert.notEqual(quality.view, recipes.view);
   assert.deepEqual(quality.nodes.map(({ id }) => id).sort(), [...world.unlocked].sort());
   assert.ok(quality.nodes.every(({ requires }) => requires.length === 0));
-  assert.equal(points(), undefined);
+  assert.deepEqual(points(), ['高级研发点', world.researchPoints, { variant: 'efficiency' }]);
   const improvement = redraw('经营改良');
   assert.deepEqual(improvement.nodes.find(({ id }) => id === 'fishCycle').requires, ['fishYield']);
   assert.deepEqual(points(), ['高级研发点', world.researchPoints, { variant: 'efficiency' }]);
@@ -328,4 +328,12 @@ test('research finder locates the new brewing gift box without opening its detai
   assert.equal(tree.view.focus, 'P180');
   assert.ok(finder.find('close', () => true));
   assert.equal(finder.find('dialog', () => true), undefined);
+});
+
+test('durations of an hour or more read as hours and whole minutes rounded up', () => {
+  assert.equal(hoursLabel(3600), '1 小时');
+  assert.equal(hoursLabel(3601), '1 小时 1 分');
+  assert.equal(hoursLabel(5400), '1 小时 30 分');
+  assert.equal(hoursLabel(14_400), '4 小时');
+  assert.equal(hoursLabel(86_399), '24 小时');
 });

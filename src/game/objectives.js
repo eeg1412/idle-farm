@@ -11,7 +11,7 @@ const research = destination('研究');
 const codex = destination('图鉴');
 const farmSale = destination('出售牧场');
 
-// LT-2026-11-v3 reward table (economy plan appendix F5); the original 24 task IDs are unchanged.
+// LT-2026-11-v4 reward table (economy balance pass 2, section 5.3); the original task IDs are unchanged.
 export const taskCoinRewards = Object.freeze({
   firstHarvest: 340n,
   firstFlour: 390n,
@@ -29,45 +29,45 @@ export const taskCoinRewards = Object.freeze({
   firstQuality: 3_500n,
   recipeTrio: 20_000n,
   fieldLevel10: 48_000n,
-  codex20: 540_000n,
-  livestockIntro: 140_000n,
-  buildLivestock: 34_000n,
-  collectLivestock: 43_000n,
-  livestockUpgrade: 54_000n,
-  fishIntro: 1_100_000n,
-  buildFish: 270_000n,
-  collectFish: 290_000n,
-  fishUpgrade: 300_000n,
-  firstLivestockProcessing: 2_000_000n,
-  firstFishProcessing: 3_600_000n,
-  firstMixedProduct: 20_000_000n,
-  newFarm: 96_000_000_000n,
-  firstTech: 96_000_000_000n,
-  delegationTech: 96_000_000_000n,
-  moreFields: 59_000_000_000n,
+  codex20: 130_000n,
+  livestockIntro: 14_000n,
+  buildLivestock: 3_500n,
+  collectLivestock: 3_500n,
+  livestockUpgrade: 4_500n,
+  fishIntro: 18_000n,
+  buildFish: 4_500n,
+  collectFish: 4_500n,
+  fishUpgrade: 4_500n,
+  firstLivestockProcessing: 20_000n,
+  firstFishProcessing: 25_000n,
+  firstMixedProduct: 70_000n,
+  newFarm: 20_000_000_000n,
+  firstTech: 10_000_000_000n,
+  delegationTech: 10_000_000_000n,
+  moreFields: 730_000_000n,
   farmIncome: 43_000_000_000n,
-  recipeCollection: 200_000_000_000n,
-  qualityCollection: 7_200_000_000n,
+  recipeCollection: 22_000_000n,
+  qualityCollection: 610_000n,
   milleCrepe: 460_000_000_000_000n,
   itemCollection: 2_800_000_000_000_000n,
-  qualityMaster: 1_000_000_000_000n,
+  qualityMaster: 19_000_000_000n,
   threeSectorGift: 2_700_000_000_000_000n,
   collection100: 13_000_000_000n,
   collection200: 290_000_000_000n,
   collection300: 5_000_000_000_000n,
   collection400: 69_000_000_000_000n,
-  quality25: 20_000_000_000n,
-  quality50: 96_000_000_000n,
-  quality200: 6_000_000_000_000n,
-  quality400: 600_000_000_000_000n,
-  facilityLevel50: 11_000_000_000n,
-  facilityLevel100: 43_000_000_000n,
-  facilityLevel200: 960_000_000_000n,
-  facilityLevel400: 120_000_000_000_000n,
-  stationLevel10: 620_000_000n,
-  stationLevel50: 140_000_000_000n,
-  stationLevel100: 1_400_000_000_000n,
-  stationLevel200: 260_000_000_000_000n,
+  quality25: 6_400_000n,
+  quality50: 300_000_000n,
+  quality200: 1_200_000_000_000n,
+  quality400: 84_000_000_000_000n,
+  facilityLevel50: 92_000_000n,
+  facilityLevel100: 5_900_000_000n,
+  facilityLevel200: 380_000_000_000n,
+  facilityLevel400: 25_000_000_000_000n,
+  stationLevel10: 110_000n,
+  stationLevel50: 230_000_000n,
+  stationLevel100: 14_000_000_000n,
+  stationLevel200: 970_000_000_000n,
   techLevel25: 530_000_000_000n,
   techLevel100: 2_500_000_000_000n,
   techLevel300: 47_000_000_000_000n,
@@ -93,6 +93,15 @@ export const taskResearchPointRewards = Object.freeze({
   runs20: 1_000n,
   runs50: 3_000n,
   runs100: 8_000n,
+});
+
+// Lifetime production value T (prestige ledger) each gated task needs before it counts as done.
+export const taskProductionGates = Object.freeze({
+  newFarm: 130_000_000_000n,
+  runs5: 2_000_000_000_000_000n,
+  runs20: 200_000_000_000_000_000n,
+  runs50: 8_000_000_000_000_000_000n,
+  runs100: 70_000_000_000_000_000_000n,
 });
 
 const produced = (world, id) => world.stats.produced[id] ?? 0n;
@@ -182,8 +191,9 @@ const introductionBranches = [
 ];
 
 const longTerm = [
-  ['moreFields', '农地扩建', plotCondition, field, (world) => world.stats.plots, 10n],
-  ['farmIncome', '经营收入', '累计出货收入达到 {目标} 金币', warehouse, (world) => world.stats.lifetimeRevenue, 10_000_000_000n],
+  ['moreFields', '农地扩建', '当前拥有至少 {目标} 块额外田地', field,
+    (world) => BigInt(Math.max(0, world.facilities.C.length - 2)), 10n],
+  ['farmIncome', '经营收入', '累计出货收入达到 {目标} 金币', warehouse, (world) => world.stats.lifetimeRevenue, 1_000_000_000_000n],
   ['recipeCollection', '工坊配方集', recipeCondition, research,
     (world) => countWhere(world.unlocked, (id) => id.startsWith('P')), 25n],
   ['qualityCollection', '品质进阶', `让至少 {目标} 种物品的品质达到 ${qualityCollectionLevel} 级`, research,
@@ -224,7 +234,9 @@ const longTerm = [
 
 function progress(world, [id, name, condition, location, count, required = 1n, branch]) {
   const current = count(world);
-  return { id, name, condition, ...location, current, required, done: current >= required,
+  const gate = taskProductionGates[id] ?? null;
+  const gateMet = gate === null || (world.lifetimeProductionValue ?? 0n) >= gate;
+  return { id, name, condition, ...location, current, required, gate, gateMet, done: current >= required && gateMet,
     rewardCoins: taskCoinRewards[id], rewardResearchPoints: taskResearchPointRewards[id] ?? 0n,
     rewarded: world.taskRewards?.includes(id) ?? false, ...(branch && { branch }) };
 }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { researchOffer, techDefinitions, techOffer } from '../src/game/advancement.js';
+import { researchOffer, techDefinitions, techLevelLimit, techOffer } from '../src/game/advancement.js';
 import { grantDevelopmentTools } from '../src/game/development-tools.js';
 import { advanceWorld, arrangeStation, catalog, newWorld } from '../src/game/world.js';
 
@@ -20,7 +20,7 @@ test('development tools unlock every item and complete every technology without 
   for (const { key } of techDefinitions) {
     const offer = techOffer(world, key);
     assert.equal(offer.maxed, true, key);
-    assert.equal(offer.level, 5, key);
+    assert.equal(offer.level, techLevelLimit, key);
     assert.equal(offer.eligible, false, key);
   }
 });

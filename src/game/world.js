@@ -6,8 +6,8 @@ export { catalog, unitPrice };
 
 const facilityTypes = {
   C: { buy: 'cropBuy', upgrade: 'cropUpgrade', buyBase: 600n, upgradeA: 300n, free: 2 },
-  L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', buyBase: 6000n, upgradeA: 3000n, free: 0 },
-  F: { buy: 'fishBuy', upgrade: 'fishUpgrade', buyBase: 6000n, upgradeA: 3000n, free: 0 },
+  L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', buyBase: 600n, upgradeA: 300n, free: 0 },
+  F: { buy: 'fishBuy', upgrade: 'fishUpgrade', buyBase: 600n, upgradeA: 300n, free: 0 },
 };
 const facilityGrowth = 5n;
 const stationTypes = {
@@ -59,9 +59,15 @@ function stationUpgradeTotal(type, level) {
   return type.upgradeA * upgradeWeight(level);
 }
 
+// Per-batch station multiplier W(L) = 1 + j + floor(j^2/64), j = L - 1; scales output and every input alike.
+export function stationMultiplier(level) {
+  const j = BigInt(level) - 1n;
+  return 1n + j + j * j / 64n;
+}
+
 function stationOutput(id, level) {
   const item = catalog.items[id];
-  return item ? BigInt(item.output) * BigInt(level) : null;
+  return item ? BigInt(item.output) * stationMultiplier(level) : null;
 }
 
 // Resolve a step request into a positive count; 'max' finds the most affordable steps (at least one).
@@ -117,10 +123,10 @@ export function forecastHourlyProduction(world) {
     if (!recipe) continue;
     const item = catalog.items[recipe];
     const duration = BigInt(productionDurationMs(world, recipe));
-    const stationLevel = BigInt(level);
-    addRate(recipe, duration, BigInt(item.output) * stationLevel, 0n);
+    const scale = stationMultiplier(level);
+    addRate(recipe, duration, BigInt(item.output) * scale, 0n);
     for (const [id, amount] of Object.entries(item.inputs ?? {})) {
-      addRate(id, duration, 0n, BigInt(amount) * stationLevel);
+      addRate(id, duration, 0n, BigInt(amount) * scale);
     }
   }
 
@@ -161,9 +167,9 @@ export function availableToProduce(world, id) {
   return available > 0n ? available : 0n;
 }
 
-// A station at level L consumes every recipe input x L per batch.
+// A station at level L consumes every recipe input x W(L) per batch (see stationMultiplier).
 export function stationRequirements(world, id, level = 1n) {
-  const scale = BigInt(level);
+  const scale = stationMultiplier(level);
   return Object.entries(catalog.items[id]?.inputs ?? {}).map(([key, amount]) => ({
     id: key, owned: availableToProduce(world, key), needed: BigInt(amount) * scale,
   }));

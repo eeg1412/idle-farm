@@ -1,9 +1,9 @@
 import {
-  catalog, facilityOffer, productionDurationMs, quantity, stationOffer, stationRequirements, stationUpgradeOffer,
+  catalog, facilityOffer, productionDurationMs, quantity, stationMultiplier, stationOffer, stationRequirements, stationUpgradeOffer,
 } from '../game/world.js';
 import { unitPrice } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
-import { reservePanel } from './management-pages.js';
+import { hoursLabel, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
 const productionTabs = ['田地', '畜牧', '鱼池'];
@@ -48,6 +48,7 @@ function facilityPreview(ui, kind, id, note) {
 function remainingTime(ms) {
   const seconds = Math.max(0, Math.ceil(ms / 1000));
   if (seconds < 60) return seconds + ' 秒';
+  if (seconds >= 3600) return hoursLabel(seconds);
   const minutes = Math.floor(seconds / 60);
   const remainder = seconds % 60;
   return remainder ? minutes + ' 分 ' + remainder + ' 秒' : minutes + ' 分';
@@ -482,7 +483,7 @@ function stationDetails(ui, kind, index) {
       if (next) {
         dlg.row('下批配方', next.name);
         dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, station.recipe)));
-        const level = BigInt(station.level);
+        const level = stationMultiplier(station.level);
         const materialValue = Object.entries(next.inputs).reduce(
           (sum, [material, amount]) => sum + unitPrice(dlg.w, material) * BigInt(amount) * level, 0n,
         );

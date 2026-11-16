@@ -1,6 +1,6 @@
 import { catalog, facilityOffer, farmSaleOffer, forecastHourlyProduction, quantity, tradeOffer } from '../game/world.js';
 import { unitPrice } from '../game/advancement.js';
-import { objectives, taskCoinRewards } from '../game/objectives.js';
+import { objectives, taskCoinRewards, taskProductionGates } from '../game/objectives.js';
 import { compact } from './numbers.js';
 
 const entries = Object.entries(catalog.items);
@@ -38,8 +38,16 @@ function complexityOf(item) {
   return complexityTabs[item.sources.length] ?? '全部';
 }
 
+// Durations of 60 minutes or more: whole minutes rounded up, no seconds.
+export function hoursLabel(seconds) {
+  const minutes = Math.ceil(seconds / 60);
+  const remainder = minutes % 60;
+  return Math.floor(minutes / 60) + ' 小时' + (remainder ? ' ' + remainder + ' 分' : '');
+}
+
 function timeLabel(milliseconds) {
   const seconds = Math.ceil(milliseconds / 1000);
+  if (seconds >= 3600) return hoursLabel(seconds);
   const minutes = Math.floor(seconds / 60);
   const remainder = seconds % 60;
   return minutes ? minutes + ' 分' + (remainder ? ' ' + remainder + ' 秒' : '') : seconds + ' 秒';
@@ -469,7 +477,8 @@ export function renderTasks(ui) {
       const researchPoints = goal.rewardResearchPoints ?? 0n;
       const reward = '奖励 ' + compact(goal.rewardCoins) + ' 金币' +
         (researchPoints > 0n ? ' + ' + compact(researchPoints) + ' 高级研发点' : '');
-      card.text(reward + (goal.rewarded ? ' · 已到账' : ''), { muted: !goal.rewarded });
+      const gate = goal.gate != null && !goal.gateMet ? ' · 需累计产值 ' + compact(goal.gate) : '';
+      card.text(reward + gate + (goal.rewarded ? ' · 已到账' : ''), { muted: !goal.rewarded });
       const progress = compact(goal.current) + ' / ' + required;
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
@@ -486,10 +495,10 @@ export function renderTasks(ui) {
 const instructions = [
   ['田地', '新牧场先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
   ['畜牧和鱼池', '购买畜牧场或鱼池，再安排已研发的牲畜或鱼。更换对象立即开始新周期。'],
-  ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出件数等于工位等级，材料投入按等级同步增加；升级工位从下一批起生效。'],
-  ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。已研发品项可继续升级品质。'],
+  ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出随工位等级增长（1+j+⌊j²/64⌋ 倍），材料投入同比放大；升级工位从下一批起生效。'],
+  ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。已研发品项可继续升级品质，品质 100 级以上另需高级研发点。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。'],
-  ['出售牧场', '生产积累高级研发点，确认出售牧场时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个（均为 1 级），需重新安排配方，原优先生产与未完成批次清空。'],
+  ['出售牧场', '生产积累高级研发点，确认出售牧场时领取，未满一点的收益跨轮保留。品质 100 级以上另需高级研发点。任意产值均可出售。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个（均为 1 级），需重新安排配方，原优先生产与未完成批次清空。'],
 ];
 
 function showInstructions(ui) {
@@ -780,8 +789,9 @@ function farmDetails(ui, offer) {
   }
   ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
   ui.text('点数在确认出售时领取。评估只影响之后的生产，不重算已有收益；不足一点的收益跨轮保留。', { muted: true });
-  const newRun = [{ icon: 'facility-field', label: '2 块小麦田、基础 60 金币' }];
-  if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm')) {
+  const newRun = [{ icon: 'facility-field', label: '2 块小麦田、基础 600 金币' }];
+  if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm') &&
+    (ui.w.lifetimeProductionValue ?? 0n) >= taskProductionGates.newFarm) {
     newRun.push({ icon: 'coin', label: '首次经营交接另奖 ' + compact(taskCoinRewards.newFarm) + ' 金币（仅一次）' });
   }
   const changes = [
