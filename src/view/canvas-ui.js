@@ -87,6 +87,20 @@ function restoreViewState(target, saved) {
   }
   if (Array.isArray(target)) target.length = saved.length;
 }
+// Fields that move with the projected clock alone; nothing on a page draws them statically.
+const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs']);
+// Plain-data equality for projected worlds; shared references short-circuit.
+function sameState(a, b, skip) {
+  if (a === b) return true;
+  if (!a || !b || typeof a !== 'object' || typeof b !== 'object' || Array.isArray(a) !== Array.isArray(b)) return false;
+  const keys = Object.keys(a);
+  if (keys.length !== Object.keys(b).length) return false;
+  for (const key of keys) {
+    if (skip?.has(key)) continue;
+    if (!Object.hasOwn(b, key) || !sameState(a[key], b[key])) return false;
+  }
+  return true;
+}
 const inkGraphics = () => {
   const graphics = new Graphics();
   graphics.eventMode = 'none';
@@ -241,6 +255,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let needsRender = false;
   let blockTap = false;
   let feedbackLayer;
+  let noticeNode;
+  let floatNode;
+  let worldSource;
+  let drawn;
   let progressTiming;
   let progressEpoch;
   let lastProgressClock;
@@ -1522,8 +1540,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (fill.destroyed || epoch !== navigationEpoch) return false;
           if (row && !row.visible) return true;
           const active = currentBatch(target, batch);
-          const filled = active && active.end > active.start
+          const raw = active && active.end > active.start
             ? width * clamp((clock - active.start) / (active.end - active.start), 0, 1) : 0;
+          // Redraw only when the fill moves by a whole device pixel.
+          const pixel = 1 / ((layout?.scale || 1) * (app.renderer.resolution || 1));
+          const filled = raw >= width ? width : Math.min(width, Math.round(raw / pixel) * pixel);
           if (filled !== previous) {
             fill.clear();
             if (filled > 0) fill.roundRect(x, top, filled, 8, Math.min(filled / 2, 4)).fill(palette.leaf);
@@ -2186,27 +2207,50 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function drawFeedback() {
     if (!feedbackLayer) return;
-    for (const child of feedbackLayer.removeChildren()) child.destroy();
+    // Each message is built once per feedback layer; later frames only move and fade it.
+    const live = (node, source) => node && node.source === source && !node.layer.destroyed &&
+      node.layer.parent === feedbackLayer;
+    const drop = (node) => { if (node && !node.layer.destroyed) node.layer.destroy({ children: true }); };
     const now = performance.now();
     if (notices && notices.expires > now) {
-      const inset = layout.inset.top;
-      const w = frame.width - 28;
-      const bubble = textNode(feedbackLayer, notices.message, 20, inset + 76, w - 12,
-        { size: 15 * Math.min(1.45, scale()), color: palette.cream, align: 'center' });
-      const bg = panel(feedbackLayer, 14, inset + 69, w, bubble.height + 15, palette.dark, null);
-      feedbackLayer.setChildIndex(bg, 0);
-    } else notices = undefined;
-    if (floating) {
-      const elapsed = (now - floating.started) / 650;
-      if (elapsed >= 1) { floating = undefined; return; }
-      const w = Math.min(210, frame.width - 24);
-      const y = clamp(floating.at.y - elapsed * 25, 24, frame.height - 40);
-      const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
+      if (!live(noticeNode, notices)) {
+        drop(noticeNode);
+        const layer = new Container();
+        layer.eventMode = 'none';
+        // The toast stays beneath a floating label, as when both were direct children.
+        feedbackLayer.addChildAt(layer, 0);
+        const inset = layout.inset.top;
+        const w = frame.width - 28;
+        const bubble = textNode(layer, notices.message, 20, inset + 76, w - 12,
+          { size: 15 * Math.min(1.45, scale()), color: palette.cream, align: 'center' });
+        const bg = panel(layer, 14, inset + 69, w, bubble.height + 15, palette.dark, null);
+        layer.setChildIndex(bg, 0);
+        noticeNode = { source: notices, layer };
+      }
+    } else {
+      notices = undefined;
+      drop(noticeNode);
+      noticeNode = undefined;
+    }
+    const elapsed = floating ? (now - floating.started) / 650 : 1;
+    if (elapsed >= 1) {
+      floating = undefined;
+      drop(floatNode);
+      floatNode = undefined;
+      return;
+    }
+    const w = Math.min(210, frame.width - 24);
+    const y = clamp(floating.at.y - elapsed * 25, 24, frame.height - 40);
+    const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
+    if (!live(floatNode, floating)) {
+      drop(floatNode);
       const label = textNode(feedbackLayer, floating.message, x, y, w, { size: 17, align: 'center', color: palette.cream, weight: '800' });
       label.style.fill = palette.ink;
       label.style.stroke = { color: palette.cream, width: 4, join: 'round' };
-      label.alpha = 1 - elapsed;
+      floatNode = { source: floating, layer: label, shift: label.x - x };
     }
+    floatNode.layer.position.set(x + floatNode.shift, y);
+    floatNode.layer.alpha = 1 - elapsed;
   }
 
   function redraw() {
@@ -2218,6 +2262,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     needsRender = false;
     building = true;
+    // A throwing page must not leave `building` set, or every later redraw would be skipped.
+    try { build(); }
+    finally { building = false; }
+    drawn = { layout, world, status, source: worldSource, epoch: progressTiming?.epoch };
+    if (pendingModal) {
+      const next = pendingModal;
+      pendingModal = undefined;
+      activateDialog(next);
+      recordRoute();
+      requestRender();
+    } else rememberContext();
+    syncPlotVisibility?.();
+  }
+
+  function build() {
     const { x, y, width, height, scale: zoom, inset } = layout;
     frame.width = width / zoom;
     frame.height = height / zoom;
@@ -2330,15 +2389,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     feedbackLayer.eventMode = 'none';
     root.addChild(feedbackLayer);
     drawFeedback();
-    building = false;
-    if (pendingModal) {
-      const next = pendingModal;
-      pendingModal = undefined;
-      activateDialog(next);
-      recordRoute();
-      requestRender();
-    } else rememberContext();
-    syncPlotVisibility?.();
   }
 
   function beginDrag(event, thumb = false) {
@@ -2585,7 +2635,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (world && progressTiming) progressClock(performance.now());
       progressTiming = undefined;
     },
-    render(nextLayout, nextWorld, nextStatus, nextProgressTiming) {
+    // `nextSource` is the committed world `nextWorld` was projected from (itself when not projected).
+    render(nextLayout, nextWorld, nextStatus, nextProgressTiming, nextSource = nextWorld) {
       if (nextProgressTiming?.epoch !== undefined && nextProgressTiming.epoch !== progressEpoch) {
         progressEpoch = nextProgressTiming.epoch;
         lastProgressClock = undefined;
@@ -2609,10 +2660,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const station = nextWorld?.stations[phase.kind]?.[phase.index];
         if ((station?.batch?.id ?? station?.recipe) !== phase.id) workshopMotionStates.delete(key);
       }
+      // Rebuild only when something a page draws statically may differ. When just the clock
+      // moved, countdowns, progress bars and animations follow `world` frame by frame.
+      const structural = !drawn || nextLayout !== layout || drawn.layout !== nextLayout ||
+        nextStatus !== drawn.status || nextSource !== drawn.source ||
+        nextProgressTiming?.epoch !== drawn.epoch || !sameState(nextWorld, drawn.world, clockOnlyFields);
       world = nextWorld;
+      worldSource = nextSource;
       status = nextStatus;
       progressTiming = nextProgressTiming;
-      resize(nextLayout);
+      if (structural) resize(nextLayout);
       if (world && !status?.busy && !document.hidden) updateBatchDisplays(performance.now());
     },
   };

@@ -94,8 +94,8 @@ function showMaterialSources(ui, costs) {
   });
 }
 
-function researchStatus(w, id, offer) {
-  if (w.unlocked.includes(id)) return { status: '已研发', tone: 'done' };
+function researchStatus(w, id, offer, unlocked = null) {
+  if (unlocked ? unlocked.has(id) : w.unlocked.includes(id)) return { status: '已研发', tone: 'done' };
   if (offer?.eligible && offer.affordable) return { status: '可研发', tone: 'ready' };
   if (offer?.eligible) return { status: '材料不足', tone: 'locked' };
   return { status: '前置未完成', tone: 'locked' };
@@ -260,15 +260,17 @@ function showTech(ui, definition) {
 }
 
 function researchNodes(w) {
+  const unlocked = new Set(w.unlocked);
   return catalogItems.map(([id, item]) => ({
     id, label: researchName(item), icon: researchIcon(id),
     requires: catalog.research[id]?.requires ?? [],
-    ...researchStatus(w, id, researchOffer(w, id)),
+    ...researchStatus(w, id, researchOffer(w, id, unlocked), unlocked),
   }));
 }
 
 function qualityNodes(w) {
-  return catalogItems.filter(([id]) => w.unlocked.includes(id)).map(([id, item]) => {
+  const unlocked = new Set(w.unlocked);
+  return catalogItems.filter(([id]) => unlocked.has(id)).map(([id, item]) => {
     const offer = qualityOffer(w, id);
     return {
       id, label: item.name, icon: id, requires: [],

@@ -76,6 +76,31 @@ export function recordProductionContribution(world, deltaValue, multiplierBasisP
   world.prestigeCredit += (current - previous) * BigInt(multiplierBasisPoints);
 }
 
+// Equivalent to calling recordProductionContribution per deposit while the multiplier stays fixed:
+// the per-deposit square-root differences telescope, so one credit at flush is exactly equal.
+// The ledger migrates lazily on the first contribution, as recordProductionContribution does.
+export function productionContributionBatch(world) {
+  let startRoot = null;
+  let multiplier = 0n;
+  return {
+    add(deltaValue, multiplierBasisPoints) {
+      if (startRoot === null) {
+        const ledger = migratePrestigeLedger(world);
+        if (ledger !== world) Object.assign(world, ledger);
+        startRoot = integerSquareRoot(activityScale * world.lifetimeProductionValue);
+        multiplier = BigInt(multiplierBasisPoints);
+      }
+      world.lifetimeProductionValue += deltaValue;
+    },
+    flush() {
+      if (startRoot === null) return;
+      const current = integerSquareRoot(activityScale * world.lifetimeProductionValue);
+      world.prestigeCredit += (current - startRoot) * multiplier;
+      startRoot = null;
+    },
+  };
+}
+
 export function prestigeLedgerOffer(world) {
   const ledger = migratePrestigeLedger(world);
   const newResearchPoints = ledger.prestigeCredit / creditPerPoint;

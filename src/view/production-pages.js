@@ -247,7 +247,7 @@ function facilityCard(ui, kind, index, facility) {
   });
 }
 
-function sourceSummary(ui, kind, id, note) {
+function sourceSummary(ui, kind, id, note, { buttonTone = 'gold' } = {}) {
   const item = catalog.items[id];
   if (item?.kind?.[0] !== kind) return;
   ui.card((card) => {
@@ -255,7 +255,7 @@ function sourceSummary(ui, kind, id, note) {
     if (kind === 'I' || kind === 'P') body.item(id, item.name, note);
     else facilityPreview(body, kind, id, note);
     if (!ui.w.unlocked.includes(id)) {
-      body.button('查看研发条件', () => body.go('研究', { tab: '品种配方', id }), confirm);
+      body.button('查看研发条件', () => body.go('研究', { tab: '品种配方', id }), { tone: buttonTone });
     }
   });
 }
@@ -385,9 +385,12 @@ function improveStation(ui, kind, index) {
       },
     })), { style: 'production' });
     dlg.row('等级', { from: compact(station.level), to: compact(quote.target) }, { style: 'comparison' });
-    dlg.row('每批产出' + (item ? item.name : ''), {
-      from: compact(quote.currentOutput) + ' 件', to: compact(quote.output) + ' 件',
-    }, { style: 'comparison', icon: item ? id : undefined });
+    // An empty station (or a legacy batch without a recipe) has no next-batch output to compare.
+    if (quote.currentOutput != null && quote.output != null) {
+      dlg.row('每批产出' + (item ? item.name : ''), {
+        from: compact(quote.currentOutput) + ' 件', to: compact(quote.output) + ' 件',
+      }, { style: 'comparison', icon: item ? id : undefined });
+    }
     dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
     dlg.text(station.batch
       ? '升级从下一批起生效，本批产出与已扣材料不变。每批材料投入随等级同步增加。'
@@ -487,13 +490,18 @@ function stationDetails(ui, kind, index) {
         reserveButtons(dlg, requirements);
       }
     } else stationProgress(dlg, active, kind, index);
-    dlg.button('升级' + stationNames[kind], () => improveStation(dlg, kind, index), confirm);
     dlg.row('用料优先级', station.priority ? '优先' : '普通');
-    dlg.button(station.priority ? '设为普通' : '设为优先', async () => {
-      if (!await dlg.action('setStationPriority', kind, index, !station.priority)) return;
-      dlg.float?.(station.priority ? '已设为普通' : '已设为优先');
-      dlg.refresh();
-    });
+    dlg.buttons([
+      {
+        label: station.priority ? '设为普通' : '设为优先',
+        onClick: async () => {
+          if (!await dlg.action('setStationPriority', kind, index, !station.priority)) return;
+          dlg.float?.(station.priority ? '已设为普通' : '已设为优先');
+          dlg.refresh();
+        },
+      },
+      { label: '升级', tone: 'gold', onClick: () => improveStation(dlg, kind, index) },
+    ], { style: 'production' });
   });
 }
 
@@ -504,14 +512,15 @@ function stationCard(ui, kind, index, station, source) {
   const badge = stationBadge(ui.w, station);
   const level = { label: compact(station.level) + ' 级' };
   const openDetails = () => stationDetails(ui, kind, index);
-  const upgrade = { label: '升级', onClick: () => improveStation(ui, kind, index) };
+  // Workshop rows: 升级 is always the rightmost and the only gold button.
+  const upgrade = { label: '升级', tone: 'gold', onClick: () => improveStation(ui, kind, index) };
   ui.card((body) => {
     if (!item) {
       body.feature(emptyStationArt[kind], (copy) => {
         copy.heading('空' + stationNames[kind], { style: 'production' });
         copy.badges([level, badge], { style: 'production' });
         copy.buttons([
-          { label: '选择配方', tone: 'gold', onClick: () => chooseRecipe(ui, kind, index, source) },
+          { label: '选择配方', onClick: () => chooseRecipe(ui, kind, index, source) },
           upgrade,
         ], { style: 'production' });
       }, {
@@ -541,11 +550,9 @@ function stationCard(ui, kind, index, station, source) {
     stationProgress(body, active, kind, index);
     body.text('材料', { muted: true });
     const requirements = requirementRows(body, station.recipe, { style: 'workshop', level: station.level });
-    const actions = [
-      { label: '更换配方', tone: 'gold', onClick: () => chooseRecipe(ui, kind, index, source) },
-      { ...upgrade, tone: 'gold' },
-    ];
-    if (requirements.length) actions.push({ label: '查看来源', tone: 'gold', onClick: () => openSources(ui, requirements) });
+    const actions = [{ label: '更换配方', onClick: () => chooseRecipe(ui, kind, index, source) }];
+    if (requirements.length) actions.push({ label: '查看来源', onClick: () => openSources(ui, requirements) });
+    actions.push(upgrade);
     body.buttons(actions, { style: 'production' });
     reserveButtons(body, requirements);
   }, {
@@ -593,13 +600,13 @@ export function renderWorkshop(ui) {
     return current?.sources.includes(source) || next?.sources.includes(source);
   });
   const sourceIndex = focus ? list.findIndex(({ station }) => station.recipe === focus || station.batch?.id === focus) : -1;
-  if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方');
+  if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方', { buttonTone: 'plain' });
   if (list.length) {
     const focusIndex = productionFocusIndex(local, kind, list.length - 1, focus, sourceIndex);
     ui.scrollList(list, (cell, { station, index }) => stationCard(cell, kind, index, station, source), { focusIndex });
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
   if (quote) ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
-    style: 'production', tone: 'gold', disabled: quote.atLimit,
+    style: 'production', tone: 'plain', disabled: quote.atLimit,
   });
 }

@@ -119,11 +119,13 @@ function pay(world, offer) {
   for (const [id, amount] of offer.costs) world.inventory[id] = held(world, id) - amount;
 }
 
-export function researchOffer(world, id) {
+// `unlocked` is an optional Set built once from world.unlocked by callers that make many offers.
+export function researchOffer(world, id, unlocked = null) {
+  const isUnlocked = unlocked ? (key) => unlocked.has(key) : (key) => world.unlocked.includes(key);
   const node = catalog.research[id];
-  if (!node || world.unlocked.includes(id)) return null;
+  if (!node || isUnlocked(id)) return null;
 
-  const requires = node.requires.filter((required) => !world.unlocked.includes(required));
+  const requires = node.requires.filter((required) => !isUnlocked(required));
   const eligible = requires.length === 0;
   const reduction = discount(world, researchKeys[catalog.items[id].kind] ?? 'recipeDiscount');
   const coins = BigInt(node.coins);

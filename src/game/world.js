@@ -1,6 +1,6 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBonus, rate, unitPrice } from './advancement.js';
-import { newPrestigeLedger, prestigeLedgerOffer, recordProductionContribution, settlePrestigeLedger } from './prestige-ledger.js';
+import { newPrestigeLedger, prestigeLedgerOffer, productionContributionBatch, settlePrestigeLedger } from './prestige-ledger.js';
 
 export { catalog, unitPrice };
 
@@ -210,13 +210,14 @@ export function settleProduction(world) {
   startProduction(world, orderedStations(world));
 }
 
-function deposit(world, batch) {
+function deposit(world, batch, contributions) {
   const { id } = batch;
   const count = BigInt(batch.amount);
   world.inventory[id] = quantity(world, id) + count;
   const value = count * unitPrice(world, id);
   // Freeze any legacy contribution before this new completion enters the run total.
-  recordProductionContribution(world, value, appraisalMultiplierBasisPoints(world));
+  // Within one advance the appraisal multiplier is fixed, so the credit is batched and flushed once.
+  contributions.add(value, appraisalMultiplierBasisPoints(world));
   world.productionValue += value;
   world.stats.produced[id] = (world.stats.produced[id] ?? 0n) + count;
 }
@@ -260,15 +261,20 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {})
   if (heap[0]?.batch.end !== world.clockMs && (world.clockMs < targetMs || !deferFinalStarts)) {
     startProduction(world, stations, enqueue);
   }
-  while (heap.length && heap[0].batch.end <= targetMs) {
-    const completedAt = heap[0].batch.end;
-    world.clockMs = completedAt;
-    do {
-      const entry = popEvent(heap);
-      deposit(world, entry.batch);
-      entry.batch = null;
-    } while (heap[0]?.batch.end === completedAt);
-    if (completedAt !== targetMs || !deferFinalStarts) startProduction(world, stations, enqueue);
+  const contributions = productionContributionBatch(world);
+  try {
+    while (heap.length && heap[0].batch.end <= targetMs) {
+      const completedAt = heap[0].batch.end;
+      world.clockMs = completedAt;
+      do {
+        const entry = popEvent(heap);
+        deposit(world, entry.batch, contributions);
+        entry.batch = null;
+      } while (heap[0]?.batch.end === completedAt);
+      if (completedAt !== targetMs || !deferFinalStarts) startProduction(world, stations, enqueue);
+    }
+  } finally {
+    contributions.flush();
   }
   world.clockMs = targetMs;
 }

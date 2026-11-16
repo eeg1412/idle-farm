@@ -68,19 +68,33 @@ if (__DEV_TEST_MODE__) {
 }
 
 const px = (value) => Number.parseFloat(value) || 0;
+const copySlots = (groups) => Object.fromEntries(Object.entries(groups).map(([kind, slots]) =>
+  [kind, slots.map((slot) => ({ ...slot }))]));
+// Display-only projection copy. foreground/advanceWorld assign top-level scalars (clock, wall
+// anchor, production value, ledger), replace slot batch/planting objects, set station order,
+// and write inventory and stats.produced entries; everything else is shared and only read by the view.
+function projectWorld(source) {
+  return {
+    ...source,
+    inventory: { ...source.inventory },
+    stats: { ...source.stats, produced: { ...source.stats.produced } },
+    facilities: copySlots(source.facilities),
+    stations: copySlots(source.stations),
+  };
+}
 function paint() {
   let display = world;
   let anchor = frontAnchor;
   const live = display && visible && !status?.busy && Number.isFinite(frontAnchor) && frontAnchor >= visibleSince;
   if (live) {
     const now = performance.now();
-    display = structuredClone(world);
+    display = projectWorld(world);
     foreground(display, false, now);
     // The projection stores whole milliseconds; keep the remaining frame phase in its anchor.
     anchor = frontAnchor + (display.clockMs - world.clockMs);
   }
   const timing = live ? { anchor, epoch: worldEpoch } : undefined;
-  if (layout) view.render(layout, display, status, timing);
+  if (layout) view.render(layout, display, status, timing, world);
   nextDisplayAt = Infinity;
   if (!live) return;
   let nextEnd = Infinity;
@@ -122,8 +136,15 @@ async function commit(draft, anchor, options) {
   return rewards;
 }
 
+// Committed worlds are never mutated, so each one's guide state is evaluated at most once.
+const guideActivity = new WeakMap();
+function guideActive(state) {
+  if (!guideActivity.has(state)) guideActivity.set(state, objectives(state).active);
+  return guideActivity.get(state);
+}
+
 function completedGuide(before, after) {
-  return objectives(before).active && !objectives(after).active;
+  return guideActive(before) && !guideActive(after);
 }
 
 function taskRewardText(rewards) {
@@ -263,7 +284,7 @@ async function initialize(recovery) {
   }
 }
 
-function feedback(name, args, before, after, quality) {
+function feedback(name, args, revenueBefore, after, quality) {
   if (__DEV_TEST_MODE__ && name === 'grantDevelopmentTools') {
     return { toast: '开发测试模式：已解锁全部科技，并追加 1T 金币', sound: 'success' };
   }
@@ -271,7 +292,7 @@ function feedback(name, args, before, after, quality) {
   if (name === 'upgradeQuality') return { float: '品质升至 ' + compact(quality.target) + ' 级', sound: 'success' };
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
-  if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - before.stats.revenue) + ' 金币', sound: 'sell' };
+  if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
   if (name === 'upgradeFacility' || name === 'upgradeStation') return { float: '已升级', sound: 'success' };
@@ -289,7 +310,8 @@ function dispatch(name, ...args) {
       const before = world;
       const draft = structuredClone(before);
       const anchor = foreground(draft, true, anchorAt, wallAt);
-      const beforeAction = structuredClone(draft);
+      // Feedback reads only the revenue before the action; a BigInt needs no copy.
+      const revenueBefore = draft.stats.revenue;
       const quality = name === 'upgradeQuality' ? qualityOffer(draft, ...args) : null;
       if (actions[name](draft, ...args) === false) {
         settleProduction(draft);
@@ -308,7 +330,7 @@ function dispatch(name, ...args) {
         view.resetSession();
       }
       paint();
-      const result = feedback(name, args, beforeAction, draft, quality);
+      const result = feedback(name, args, revenueBefore, draft, quality);
       result.toast = [result.toast, progressToast(before, draft, rewards)].filter(Boolean).join(' · ');
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };
