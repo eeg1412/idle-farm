@@ -1,4 +1,4 @@
-import { catalog, facilityOffer, farmSaleOffer, quantity, tradeOffer } from '../game/world.js';
+import { catalog, facilityOffer, farmSaleOffer, forecastHourlyProduction, quantity, tradeOffer } from '../game/world.js';
 import { unitPrice } from '../game/advancement.js';
 import { objectives, taskCoinRewards } from '../game/objectives.js';
 import { compact } from './numbers.js';
@@ -8,7 +8,6 @@ const typeTabs = ['全部', '原料', '中间产物', '商品'];
 const sourceTabs = ['全部', '农业', '畜牧', '水产'];
 const complexityTabs = ['全部', '单类', '双类', '三类'];
 const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池' };
-const PAGE_SIZE = 12;
 
 const managementEntries = [
   { page: '任务', icon: 'task-product', description: '查看任务进度' },
@@ -53,7 +52,7 @@ function showFilters(ui) {
   local.complexity ??= '全部';
   const select = (key, value) => {
     local[key] = value;
-    local.page = 0;
+    local.scroll = 0;
     ui.refresh();
   };
   ui.tabs(typeTabs, local.type, (value) => select('type', value), { sticky: true, style: 'framed' });
@@ -67,26 +66,6 @@ function matchesFilters(local, item) {
   return (local.type === '全部' || local.type === typeOf(item)) &&
     (local.source === '全部' || item.sources.includes(local.source)) &&
     (local.type !== '商品' || local.complexity === '全部' || local.complexity === complexityOf(item));
-}
-
-function paged(ui, items, draw, useGrid = false) {
-  const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-  const page = Math.min(Math.max(0, ui.local.page ?? 0), pages - 1);
-  const change = (direction) => {
-    ui.local.page = page + direction;
-    ui.local.scroll = 0;
-    ui.refresh();
-  };
-  const visible = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  if (useGrid) ui.grid(visible, (cell, entry) => draw(entry, cell), { equalHeight: true });
-  else visible.forEach((entry, index) => draw(entry, ui, index));
-  if (pages > 1) {
-    ui.row('页码', compact(page + 1) + ' / ' + compact(pages));
-    ui.buttons([
-      { label: '上一页', onClick: () => change(-1), disabled: page === 0 },
-      { label: '下一页', onClick: () => change(1), disabled: page + 1 === pages },
-    ]);
-  }
 }
 
 function showSource(ui, id) {
@@ -226,42 +205,72 @@ function warehouseDetail(ui, id) {
       { label: '查看来源', onClick: () => showSource(panel, id) },
       { label: '查看用途', onClick: () => panel.go('图鉴', { id, tab: '用途' }) },
     ]);
-    panel.button('复制完整数量', async () => {
-      try {
-        await navigator.clipboard.writeText(amount.toString());
-        panel.float('已复制');
-      } catch {
-        panel.toast('无法复制，可在详情查看完整数量');
-      }
-    });
   });
+}
+
+function hourlyRateLabel(rate, signed = false) {
+  const sign = rate < 0n ? '−' : signed && rate > 0n ? '+' : '';
+  const absolute = rate < 0n ? -rate : rate;
+  const whole = absolute / 100n;
+  const fraction = (absolute % 100n).toString().padStart(2, '0').replace(/0+$/, '');
+  return sign + compact(whole) + (whole < 10000n && fraction ? '.' + fraction : '');
+}
+
+function compareHourlyRates(left, right) {
+  if (left.net === right.net) return left.id.localeCompare(right.id);
+  const leftDeficit = left.net < 0n;
+  const rightDeficit = right.net < 0n;
+  if (leftDeficit !== rightDeficit) return leftDeficit ? -1 : 1;
+  return (leftDeficit ? left.net < right.net : left.net > right.net) ? -1 : 1;
+}
+
+function sampleHourlyProduction(world) {
+  return forecastHourlyProduction(world).sort(compareHourlyRates);
+}
+
+function showHourlyProduction(ui) {
+  ui.dialog('每小时产出与支出', (panel) => {
+    const rows = panel.local.sampledValue ?? [];
+    panel.sampleProgress('每 3 秒更新一次');
+    if (!rows.length) {
+      panel.text('暂无已安排生产的设施或工位。');
+      return;
+    }
+    panel.scrollList(rows, (row, { id, produced, consumed, net }) => {
+      row.card((cell) => {
+        cell.item(id, catalog.items[id].name);
+        cell.stats([
+          { label: '产出', value: hourlyRateLabel(produced) },
+          { label: '支出', value: hourlyRateLabel(consumed) },
+          { label: '净变化', value: hourlyRateLabel(net, true) },
+        ]);
+      }, { padding: 8, gap: 8 });
+    });
+  }, { sample: sampleHourlyProduction, sampleEveryMs: 3000 });
 }
 
 export function renderWarehouse(ui) {
   ui.image('warehouse', Math.round(ui.width * 0.35));
+  ui.button('查看产出／支出图表', () => showHourlyProduction(ui));
   ui.local.source ??= '全部';
   ui.local.type ??= '全部';
   ui.tabs(typeTabs, ui.local.type, (type) => {
     ui.local.type = type;
-    ui.local.page = 0;
     ui.local.scroll = 0;
     ui.refresh();
   }, { sticky: true, style: 'segmented' });
   ui.tabs(sourceTabs, ui.local.source, (source) => {
     ui.local.source = source;
-    ui.local.page = 0;
     ui.local.scroll = 0;
     ui.refresh();
   }, { style: 'filter' });
-  const stocked = entries.filter(([id]) => quantity(ui.w, id) > 0n);
-  const filtered = stocked.filter(([, item]) =>
+  const obtained = entries.filter(([id]) => Object.hasOwn(ui.w.inventory, id));
+  const filtered = obtained.filter(([, item]) =>
     (ui.local.source === '全部' || item.sources.includes(ui.local.source)) &&
     (ui.local.type === '全部' || ui.local.type === typeOf(item)));
   if (!filtered.length) {
-    if (stocked.length) {
-      ui.text('此类别暂无库存。', { muted: true });
-    } else {
-      ui.text('仓库暂无库存。', { muted: true });
+    ui.text('库存 0', { muted: true });
+    if (!obtained.length) {
       ui.buttons([
         { label: '前往田地', onClick: () => ui.go('牧场', { tab: '田地' }) },
         { label: '前往工坊', onClick: () => ui.go('工坊') },
@@ -269,19 +278,19 @@ export function renderWarehouse(ui) {
     }
     return;
   }
-  paged(ui, filtered, ([id, item]) => {
+  ui.scrollList(filtered, (cell, [id, item]) => {
     const amount = quantity(ui.w, id);
     const open = () => warehouseDetail(ui, id);
-    ui.card((row) => {
+    cell.card((row) => {
       row.feature(id, (card) => {
         card.heading(item.name);
-        card.row('库存', amount, { style: 'metric', compact: true, divider: true });
+        card.row('库存', amount, { style: 'metric', compact: true, divider: true, noWrap: true });
         card.row('品质', compact(ui.w.quality[id] ?? 1n) + ' 级', { compact: true });
         card.row('单价', compact(unitPrice(ui.w, id)) + ' 金币', { compact: true });
       }, { ratio: 0.28, onClick: open });
       row.buttons([
         { label: '详情', onClick: open },
-        { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold' },
+        { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold', disabled: amount <= 0n },
       ], { style: 'production' });
     }, { padding: 8, gap: 6 });
   });
@@ -295,7 +304,6 @@ function catalogViewSnapshot(local) {
     type: local.type,
     source: local.source,
     complexity: local.complexity,
-    page: local.page ?? 0,
   };
 }
 
@@ -368,8 +376,11 @@ function renderCatalogDetail(ui, id) {
   ]);
   if (ui.local.showUses) {
     ui.heading('用于以下配方');
-    if (!uses.length) ui.text('暂无生产配方使用此品项。', { muted: true });
-    ui.grid(uses, (cell, [key, entry]) => cell.tile(key, entry.name, () => openDetail(key)), { equalHeight: true });
+    if (!uses.length) {
+      ui.text('暂无生产配方使用此品项。', { muted: true });
+      return;
+    }
+    ui.scrollList(uses, (cell, [key, entry]) => cell.tile(key, entry.name, () => openDetail(key)), { columns: 'auto' });
   }
 }
 
@@ -392,8 +403,11 @@ export function renderCatalog(ui) {
   showFilters(ui);
   const filtered = entries.filter(([, item]) => matchesFilters(ui.local, item));
   if (ui.local.type === '商品') filtered.sort(([, left], [, right]) => left.level - right.level);
-  if (!filtered.length) ui.text('此类别暂无品项。', { muted: true });
-  paged(ui, filtered, ([id, item], cell) => {
+  if (!filtered.length) {
+    ui.text('此类别暂无品项。', { muted: true });
+    return;
+  }
+  ui.scrollList(filtered, (cell, [id, item]) => {
     const open = ui.w.unlocked.includes(id);
     cell.tile(id, item.name, () => {
       ui.local.catalogListParent = catalogViewSnapshot(ui.local);
@@ -403,7 +417,7 @@ export function renderCatalog(ui) {
       ui.local.scroll = 0;
       ui.refresh();
     }, { description: open ? undefined : '未解锁' });
-  }, true);
+  }, { columns: 'auto' });
 }
 
 const taskArt = {
@@ -431,8 +445,8 @@ export function renderTasks(ui) {
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
     ...long.filter((goal) => !featuredGoals.includes(goal.id)),
   ];
-  for (const goal of goals) {
-    ui.card((entry) => entry.feature(taskArt[goal.id], (card) => {
+  ui.scrollList(goals, (cell, goal) => {
+    cell.card((entry) => entry.feature(taskArt[goal.id], (card) => {
       card.heading(goal.name);
       card.text('奖励 ' + compact(goal.rewardCoins) + ' 金币' + (goal.rewarded ? ' · 已到账' : ''),
         { muted: !goal.rewarded });
@@ -446,7 +460,7 @@ export function renderTasks(ui) {
           compact: true, disabled: goal.done, tone: goal.done ? 'plain' : 'gold',
         });
     }, { ratio: 0.32 }), { padding: 8, gap: 6 });
-  }
+  });
 }
 
 const instructions = [

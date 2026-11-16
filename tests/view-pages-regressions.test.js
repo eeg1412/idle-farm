@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { arrangeStation, catalog, newWorld, reserve } from '../src/game/world.js';
+import {
+  advanceWorld, arrangeStation, assignFacility, catalog, farmSaleOffer, newWorld, productionDurationMs, reserve, sell, sellFarm,
+} from '../src/game/world.js';
 import { renderTasks, renderWarehouse } from '../src/view/management-pages.js';
 import { renderProduction, renderWorkshop } from '../src/view/production-pages.js';
 import { renderResearch } from '../src/view/research-page.js';
@@ -14,6 +16,10 @@ function pageFixture(w, local = {}) {
         calls.push([method, args]);
         if (method === 'card') args[0](ui);
         if (method === 'feature') args[1](ui);
+        if (method === 'scrollList') {
+          const [items, draw] = args;
+          items.forEach((item, index) => draw(ui, item, index));
+        }
       };
     },
   });
@@ -53,6 +59,25 @@ test('warehouse shows permanent filters, current quality and price, and exact st
   const details = view.dialog('小麦');
   assert.ok(details.find('fullNumber', (value) => value === amount));
   assert.ok(details.find('fullNumber', (value) => value === 17n));
+});
+
+test('warehouse keeps sold-out items until the next run starts', () => {
+  const world = newWorld(0);
+  assert.ok(assignFacility(world, 'C', 0, 'C01'));
+  advanceWorld(world, productionDurationMs(world, 'C01'));
+  assert.ok(sell(world, 'C01', 100));
+
+  const soldOut = pageFixture(world);
+  renderWarehouse(soldOut.ui);
+  assert.ok(soldOut.find('feature', (id) => id === 'C01'));
+  assert.ok(soldOut.find('row', (label, value) => label === '库存' && value === 0n));
+  assert.ok(soldOut.find('buttons', (items) => items.some((item) => item.label === '出售' && item.disabled)));
+
+  assert.ok(sellFarm(world, farmSaleOffer(world)));
+  assert.ok(world.stats.produced.C01 > 0n);
+  const nextRun = pageFixture(world);
+  renderWarehouse(nextRun.ui);
+  assert.equal(nextRun.find('feature', (id) => id === 'C01'), undefined);
 });
 
 test('workshop shows usable stock and reserve controls without listing deducted inputs', () => {

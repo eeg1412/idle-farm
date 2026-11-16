@@ -22,8 +22,6 @@ const upgradeOptions = [
   { label: '+1', steps: 1n }, { label: '+10', steps: 10n },
   { label: '+100', steps: 100n }, { label: '最高可升', steps: 'max' },
 ];
-const facilityPageSize = 6;
-const stationPageSize = 4;
 
 const confirm = { tone: 'gold' };
 
@@ -55,24 +53,6 @@ function remainingTime(ms) {
   return remainder ? minutes + ' 分 ' + remainder + ' 秒' : minutes + ' 分';
 }
 
-function visibleItems(items, index, size) {
-  const pages = Math.max(1, Math.ceil(items.length / size));
-  const page = Math.max(0, Math.min(index ?? 0, pages - 1));
-  return {
-    entries: items.slice(page * size, (page + 1) * size),
-    page, pages, offset: page * size,
-  };
-}
-
-function paginate(ui, view, select) {
-  if (view.pages <= 1) return;
-  ui.row('页数', (view.page + 1) + ' / ' + view.pages);
-  ui.buttons([
-    { label: '上一页', disabled: view.page === 0, onClick: () => select(view.page - 1) },
-    { label: '下一页', disabled: view.page + 1 >= view.pages, onClick: () => select(view.page + 1) },
-  ]);
-}
-
 async function submit(ui, name, args, success, feedback) {
   if (!await ui.action(name, ...args)) return;
   success?.();
@@ -80,10 +60,10 @@ async function submit(ui, name, args, success, feedback) {
   if (feedback) ui.float?.(feedback);
 }
 
-async function clearProduction(ui, action, kind, index, pageKey, page, label) {
+async function clearProduction(ui, action, kind, index, label) {
   if (!await ui.action(action, kind, index)) return;
   ui.local.id = null;
-  ui.local[pageKey] = page;
+  delete ui.local.positionedSourceId;
   ui.refresh();
   ui.float?.('已清空' + label);
 }
@@ -143,7 +123,7 @@ function purchaseFacility(ui, kind) {
     dlg.row('金币 · 持有 / 所需', compact(dlg.w.coins) + ' / ' + compact(quote.cost));
     dlg.row('购买后数量', compact(BigInt(dlg.w.facilities[kind].length) + 1n));
     dialogButtons(dlg, '确认购买', () => submit(dlg, 'buyFacility', [kind], () => {
-      ui.local['facilityPage' + kind] = Math.floor(dlg.w.facilities[kind].length / facilityPageSize);
+      ui.local.focusPurchasedKind = kind;
     }), !quote.affordable);
   });
 }
@@ -262,8 +242,7 @@ function facilityCard(ui, kind, index, facility) {
     style: 'production',
     cornerAction: item ? {
       label: '清空' + facilityName,
-      onClick: () => clearProduction(ui, 'clearFacility', kind, index,
-        'facilityPage' + kind, Math.floor(index / facilityPageSize), facilityName),
+      onClick: () => clearProduction(ui, 'clearFacility', kind, index, facilityName),
     } : undefined,
   });
 }
@@ -281,6 +260,16 @@ function sourceSummary(ui, kind, id, note) {
   });
 }
 
+function productionFocusIndex(local, kind, purchasedIndex, sourceId, sourceIndex) {
+  if (local.focusPurchasedKind === kind) {
+    delete local.focusPurchasedKind;
+    return purchasedIndex;
+  }
+  if (sourceIndex < 0 || local.positionedSourceId === sourceId) return -1;
+  local.positionedSourceId = sourceId;
+  return sourceIndex;
+}
+
 export function renderProduction(ui) {
   const tab = productionTabs.includes(ui.local.tab) ? ui.local.tab : productionTabs[0];
   const kind = facilityKinds[productionTabs.indexOf(tab)];
@@ -288,6 +277,7 @@ export function renderProduction(ui) {
   ui.tabs(productionTabs, tab, (value) => {
     ui.local.tab = value;
     ui.local.id = null;
+    delete ui.local.positionedSourceId;
     ui.refresh();
   }, { sticky: true, style: 'segmented' });
   const quote = facilityOffer(ui.w, kind);
@@ -305,24 +295,15 @@ export function renderProduction(ui) {
   }
   const list = ui.w.facilities[kind];
   const focus = catalog.items[ui.local.id]?.kind === kind ? ui.local.id : null;
-  const focusIndex = focus ? list.findIndex((facility) => facility.recipe === focus || facility.batch?.id === focus) : -1;
-  if (focusIndex < 0) sourceSummary(ui, kind, focus, '在' + facilityNames[kind] + '中安排生产');
+  const sourceIndex = focus ? list.findIndex((facility) => facility.recipe === focus || facility.batch?.id === focus) : -1;
+  if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + facilityNames[kind] + '中安排生产');
   if (!list.length) {
     const instruction = kind === 'C' ? '购地后即可播种。' : '购买' + facilityNames[kind] + '后即可安排养殖。';
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
     return;
   }
-  const pageKey = 'facilityPage' + kind;
-  const page = focusIndex < 0 ? ui.local[pageKey] : Math.floor(focusIndex / facilityPageSize);
-  const view = visibleItems(list, page, facilityPageSize);
-  for (const [index, facility] of view.entries.entries()) {
-    facilityCard(ui, kind, index + view.offset, facility);
-  }
-  paginate(ui, view, (page) => {
-    ui.local.id = null;
-    ui.local[pageKey] = page;
-    ui.refresh();
-  });
+  const focusIndex = productionFocusIndex(ui.local, kind, list.length - 1, focus, sourceIndex);
+  ui.scrollList(list, (cell, facility, index) => facilityCard(cell, kind, index, facility), { focusIndex });
 }
 
 function workshopRecipes(ui, kind, source) {
@@ -376,7 +357,7 @@ function purchaseStation(ui, kind) {
     dlg.row('现有工位', compact(dlg.w.stations[kind].length));
     dialogButtons(dlg, '确认购买', () => submit(dlg, 'buyStation', [kind], () => {
       ui.local['workshopSource' + kind] = sources[0];
-      ui.local['stationPage' + kind] = Math.floor(dlg.w.stations[kind].length / stationPageSize);
+      ui.local.focusPurchasedKind = kind;
     }), !quote.affordable);
   });
 }
@@ -476,7 +457,7 @@ function stationDetails(ui, kind, index) {
   });
 }
 
-function stationCard(ui, kind, index, station, source, page) {
+function stationCard(ui, kind, index, station, source) {
   const active = station.batch;
   const id = active?.id ?? station.recipe;
   const item = catalog.items[id];
@@ -522,8 +503,7 @@ function stationCard(ui, kind, index, station, source, page) {
     style: 'production',
     cornerAction: item ? {
       label: '清空' + stationNames[kind],
-      onClick: () => clearProduction(ui, 'clearStation', kind, index,
-        'stationPage' + kind, page, stationNames[kind]),
+      onClick: () => clearProduction(ui, 'clearStation', kind, index, stationNames[kind]),
     } : undefined,
   });
 }
@@ -535,7 +515,6 @@ export function renderWorkshop(ui) {
   const sourceKey = 'workshopSource' + kind;
   const focus = catalog.items[local.id]?.kind?.[0] === kind ? local.id : null;
   const source = !focus && sources.includes(local[sourceKey]) ? local[sourceKey] : sources[0];
-  const pageKey = 'stationPage' + kind;
   const scrolls = local.workshopScrolls ??= {};
   if (local.activeWorkshopTab !== tab) {
     local.activeWorkshopTab = tab;
@@ -548,12 +527,13 @@ export function renderWorkshop(ui) {
     scrolls[tab] = local.scroll;
     local.tab = value;
     local.id = null;
+    delete local.positionedSourceId;
     ui.refresh();
   }, { keepScroll: true, sticky: true, style: 'segmented' });
   ui.tabs(sources, source, (value) => {
     local[sourceKey] = value;
     local.id = null;
-    local[pageKey] = 0;
+    delete local.positionedSourceId;
     local.scroll = 0;
     ui.refresh();
   }, { style: 'filter' });
@@ -563,18 +543,12 @@ export function renderWorkshop(ui) {
     const next = catalog.items[station.recipe];
     return current?.sources.includes(source) || next?.sources.includes(source);
   });
-  const focusIndex = focus ? list.findIndex(({ station }) => station.recipe === focus || station.batch?.id === focus) : -1;
-  if (focusIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方');
-  const page = focusIndex < 0 ? local[pageKey] : Math.floor(focusIndex / stationPageSize);
-  const view = visibleItems(list, page, stationPageSize);
-  for (const { station, index } of view.entries) stationCard(ui, kind, index, station, source, view.page);
-  if (!list.length) ui.text('没有符合筛选条件的工位。', { muted: true });
-  paginate(ui, view, (page) => {
-    local.id = null;
-    local[pageKey] = page;
-    local.scroll = 0;
-    ui.refresh();
-  });
+  const sourceIndex = focus ? list.findIndex(({ station }) => station.recipe === focus || station.batch?.id === focus) : -1;
+  if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方');
+  if (list.length) {
+    const focusIndex = productionFocusIndex(local, kind, list.length - 1, focus, sourceIndex);
+    ui.scrollList(list, (cell, { station, index }) => stationCard(cell, kind, index, station, source), { focusIndex });
+  } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
   if (quote) ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
     style: 'production', tone: 'gold', disabled: quote.atLimit,

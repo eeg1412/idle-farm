@@ -151,9 +151,9 @@ function showOffline() {
       ui.heading(title);
       const entries = Object.entries(amounts);
       if (!entries.length) ui.text('无', { muted: true });
-      for (const [id, amount] of entries) {
-        ui.row(catalog.items[id].name, (amount > 0n ? '+' : '') + compact(amount), { icon: id });
-      }
+      else ui.scrollList(entries, (cell, [id, amount]) => {
+        cell.row(catalog.items[id].name, (amount > 0n ? '+' : '') + compact(amount), { icon: id });
+      });
     }
     ui.button('知道了', ui.close, { tone: 'gold' });
   }, { center: true, available: (current) => current?.pendingOffline?.id === report.id, onClose: () => {

@@ -53,6 +53,51 @@ export function productionDurationMs(world, id) {
   return item ? Math.ceil(item.durationMs * 10000 / rate(world, id)) : null;
 }
 
+function greatestCommonDivisor(a, b) {
+  while (b !== 0n) [a, b] = [b, a % b];
+  return a;
+}
+
+export function forecastHourlyProduction(world) {
+  const totals = new Map();
+  const addRate = (id, duration, produced, consumed) => {
+    const total = totals.get(id) ?? { duration: 1n, produced: 0n, consumed: 0n };
+    // Keep an exact common denominator until all lines have been counted.
+    const divisor = greatestCommonDivisor(total.duration, duration);
+    const totalScale = duration / divisor;
+    const batchScale = total.duration / divisor;
+    totals.set(id, {
+      duration: total.duration * totalScale,
+      produced: total.produced * totalScale + produced * batchScale,
+      consumed: total.consumed * totalScale + consumed * batchScale,
+    });
+  };
+
+  for (const [kind, facilities] of Object.entries(world.facilities)) {
+    for (const { recipe, level } of facilities) {
+      if (!recipe) continue;
+      const duration = BigInt(productionDurationMs(world, recipe));
+      addRate(recipe, duration, facilityOutput(world, kind, recipe, BigInt(level)), 0n);
+    }
+  }
+  for (const { recipe } of Object.values(world.stations).flat()) {
+    if (!recipe) continue;
+    const item = catalog.items[recipe];
+    const duration = BigInt(productionDurationMs(world, recipe));
+    addRate(recipe, duration, BigInt(item.output), 0n);
+    for (const [id, amount] of Object.entries(item.inputs ?? {})) {
+      addRate(id, duration, 0n, BigInt(amount));
+    }
+  }
+
+  const roundHourlyHundredths = (amount, duration) => (amount * 360_000_000n + duration / 2n) / duration;
+  return Array.from(totals, ([id, total]) => {
+    const produced = roundHourlyHundredths(total.produced, total.duration);
+    const consumed = roundHourlyHundredths(total.consumed, total.duration);
+    return { id, produced, consumed, net: produced - consumed };
+  });
+}
+
 function makeBatch(world, id, amount) {
   return { id, amount: String(amount), start: world.clockMs, end: world.clockMs + productionDurationMs(world, id) };
 }

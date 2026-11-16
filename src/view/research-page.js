@@ -1,5 +1,5 @@
 import { catalog, quantity } from '../game/world.js';
-import { qualityOffer, researchOffer, techDefinitions, techLevelLimit, techOffer } from '../game/advancement.js';
+import { qualityOffer, researchOffer, techDefinitions, techLevelLimit, techOffer, unitPrice } from '../game/advancement.js';
 import { compact } from './numbers.js';
 
 const tabs = ['品种配方', '品质', '经营改良'];
@@ -114,6 +114,7 @@ function researchDetails(ui, id) {
 
   ui.detailRows([
     { label: '解锁', value: item.name, icon: id },
+    { label: '单价（金币）', value: compact(unitPrice(ui.w, id)) },
     { label: itemKind(item) === '原料' ? '基础周期' : '基础耗时', value: duration(item.durationMs) },
   ], { variant: 'label' });
   if (node?.requires.length) {

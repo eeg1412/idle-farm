@@ -28,6 +28,7 @@ const pages = {
   图鉴: renderCatalog, 任务: renderTasks, 设置: renderSettings, 出售牧场: renderFarmSale,
 };
 const tabs = ['牧场', '工坊', '仓库', '研究', '经营'];
+const defaultDialogSampleEveryMs = 3000;
 const tabIcons = ['nav-ranch', 'nav-workshop', 'nav-warehouse', 'nav-research', 'nav-management'];
 const drawnIcons = {
   'settings-gear': { kind: 'gear' },
@@ -222,6 +223,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let pendingRender = false;
   let modal;
   let pendingModal;
+  let nextDialogSampleAt = 0;
+  let updateDialogSampleProgress;
   let notices;
   let floating;
   let point;
@@ -243,6 +246,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let lastProgressClock;
   let syncPlotVisibility;
   let plotSharedLoad;
+  let scrollImages;
+  let listRow;
   const progressBars = new Set();
   const countdowns = new Set();
   const activePlots = new Set();
@@ -278,9 +283,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function bindCountdownText(label, readValue, align, readTone) {
     if (!readValue) return;
     const epoch = navigationEpoch;
+    const row = listRow;
     let lastColor;
     const update = (clock) => {
       if (label.destroyed || epoch !== navigationEpoch) return false;
+      if (row && !row.visible) return true;
       const next = number(readValue(clock));
       if (label.text !== next) {
         label.text = next;
@@ -494,7 +501,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     activePlots.delete(plot);
   }
 
-  function drawImage(parent, id, x, y, w, h, crop = false) {
+  function drawImage(parent, id, x, y, w, h, crop = false, trackViewport = true) {
     if (!id || w < 1 || h < 1) return;
     if (drawnIcons[id]) { drawPixelIcon(parent, drawnIcons[id], x, y, w, h); return; }
     const hero = heroKeys.has(id);
@@ -505,6 +512,29 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const livestockScene = id.startsWith('scene-') && data.items[id.slice(6)]?.kind === 'L';
     const version = livestockChoice ? '&v=4' : livestockScene ? '&v=4' : '';
     const url = path(directory + id + '.webp?game=1' + version);
+    if (trackViewport && scrollImages) {
+      const layer = new Container();
+      layer.eventMode = 'none';
+      parent.addChild(layer);
+      scrollImages.push({
+        layer, bounds: new Rectangle(x, y, w, h),
+        mount() {
+          const texture = textures.get(url);
+          if (texture) {
+            mountImage(layer, texture, x, y, w, h, crop, scene);
+            return;
+          }
+          const placeholder = hero || scene ? panel(layer, x, y, w, h, 0xd8e5c7, null, 0) : undefined;
+          if (failedImages.has(url)) return;
+          loadImage(url).then((asset) => {
+            if (!asset || layer.destroyed) return;
+            placeholder?.destroy();
+            mountImage(layer, asset, x, y, w, h, crop, scene);
+          });
+        },
+      });
+      return;
+    }
     const texture = textures.get(url);
     if (!texture) {
       if (hero || scene) panel(parent, x, y, w, h, 0xd8e5c7, null, 0);
@@ -513,6 +543,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
       return;
     }
+    mountImage(parent, texture, x, y, w, h, crop, scene);
+  }
+
+  function mountImage(parent, texture, x, y, w, h, crop, scene) {
     const sprite = new Sprite({ texture, roundPixels: true });
     sprite.eventMode = 'none';
     const factor = (crop ? Math.max : Math.min)(w / texture.width, h / texture.height);
@@ -590,8 +624,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       panel(parent, x + 1.5, y + 1, width - 3, height - 5, { color: palette.cream, alpha: 0 },
         green ? null : 0xfff5db, 12);
     }
-    const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : label === '返回' || label === '上一页'
-      ? 'chevron-left' : label === '下一页' ? 'chevron-right' : undefined);
+    const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : label === '返回' ? 'chevron-left' : undefined);
     if (iconOnly) {
       drawImage(parent, iconOnly, x + (width - 24) / 2, y + (height - 24) / 2, 24, 24);
       g.label = label;
@@ -613,6 +646,23 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!disabled) hitAt(g, parent, x, y, width, height, fn);
   }
 
+  function sampleDialog(now) {
+    if (!modal?.sample || pendingModal || modal.closing || !world || status?.busy || document.hidden ||
+        now < nextDialogSampleAt) return false;
+    modal.sampledValue = modal.sample(world);
+    nextDialogSampleAt = now + (modal.sampleEveryMs ?? defaultDialogSampleEveryMs);
+    return true;
+  }
+
+  function activateDialog(dialog) {
+    if (modal === dialog) return;
+    if (modal?.sample) delete modal.sampledValue;
+    modal = dialog;
+    nextDialogSampleAt = 0;
+    updateDialogSampleProgress = undefined;
+    if (modal?.sample) sampleDialog(performance.now());
+  }
+
   function setDialog(title, draw, options = false) {
     coast = null;
     const info = typeof options === 'object'
@@ -629,7 +679,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     if (building) { pendingModal = info; requestRender(); }
     else {
-      modal = info;
+      activateDialog(info);
       focusIndex = -1;
       recordRoute();
       redraw();
@@ -638,8 +688,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function dismissDialog() {
     coast = null;
-    modal = undefined;
     pendingModal = undefined;
+    activateDialog(undefined);
     focusIndex = -1;
     recordRoute(true);
     redraw();
@@ -658,7 +708,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     }
     if (availableDialog(shown?.parentDialog)) {
-      modal = shown.parentDialog;
+      activateDialog(shown.parentDialog);
       focusIndex = -1;
       recordRoute(true);
       redraw();
@@ -699,8 +749,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     restoreViewState(local, context.local);
     pageParent = context.parent;
     linkedEntryParent = context.linkedEntryParent;
-    modal = availableDialog(context.modal) ? context.modal : undefined;
     pendingModal = undefined;
+    activateDialog(availableDialog(context.modal) ? context.modal : undefined);
     focusIndex = -1;
     if (changedPage) onNavigate?.(current);
     return true;
@@ -740,12 +790,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (options.tab !== undefined) { locals[page].tab = options.tab; locals[page].scroll = 0; }
     if (options.id !== undefined) {
       locals[page].id = options.id;
+      delete locals[page].positionedSourceId;
       locals[page].scroll = 0;
       if (page === '研究') locals[page].openResearchItem = true;
     }
     else if (page === '研究' && options.tab !== undefined) delete locals[page].linkedResearchItem;
-    modal = undefined;
     pendingModal = undefined;
+    activateDialog(undefined);
     focusIndex = -1;
     recordRoute();
     redraw();
@@ -811,6 +862,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       linkedEntryParent = undefined;
       const local = locals[page];
       local.tab = tab;
+      delete local.positionedSourceId;
       if (page === '图鉴') {
         local.catalogId = id;
         local.showUses = tab === '用途';
@@ -826,9 +878,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         delete local.linkedResearchItem;
       }
       if (entry.scroll !== undefined) local.scroll = entry.scroll;
-      modal = availableDialog(entry.modal) ? entry.modal : undefined;
+      pendingModal = undefined;
+      activateDialog(availableDialog(entry.modal) ? entry.modal : undefined);
     }
-    pendingModal = undefined;
     focusIndex = -1;
     if (!initial) redraw();
     applyingRoute = false;
@@ -887,6 +939,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
   }
 
+  function withinScrollViewport(top, bottom, scroll, viewport, left, right) {
+    const upper = Math.max(top, scroll);
+    const lower = Math.min(bottom, scroll + viewport.height);
+    if (upper >= lower) return false;
+    const { pinned } = viewport;
+    const pinnedTop = pinned && Math.max(scroll, pinned.top);
+    return !pinned || upper < pinnedTop || lower > pinnedTop + pinned.height ||
+      left < pinned.left || right > pinned.right;
+  }
+
   function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
     let cursor = y;
     const dialogContent = Boolean(options.captureFooter);
@@ -912,9 +974,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       let visibleScroll = 0;
       function paint(scroll) {
         visibleScroll = scroll;
-        const viewportHeight = options.viewport?.height ?? availableHeight;
-        const first = columns * Math.max(0, Math.floor((scroll - top) / step));
-        const end = Math.min(items.length, columns * Math.ceil((scroll + viewportHeight - top) / step));
+        const viewport = options.viewport ?? { height: availableHeight };
+        const first = columns * Math.max(0, Math.floor((scroll - top - height) / step) + 1);
+        const end = Math.min(items.length, columns * Math.ceil((scroll + viewport.height - top) / step));
         for (const [index, tile] of rendered) {
           if (index >= first && index < end) continue;
           tile.layer.destroy({ children: true });
@@ -965,8 +1027,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           return true;
         };
       }
-      options.observeScroll?.(paint);
-      paint(local.scroll ?? 0);
+      if (options.observeScroll) options.observeScroll(paint);
+      else paint(local.scroll ?? 0);
       cursor += countRows * step - gap + rowGap;
     }
     const ui = {
@@ -979,7 +1041,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const treeHeight = Math.max(120, availableHeight - cursor - 5);
         mountResearchTree({
           ...options, parent, x, y: cursor, width, height: treeHeight,
-          drawImage, textNode, transitionNode, buttonAt, inkGraphics, requestRender, textScale: scale(),
+          // The tree manages its own viewport as its content moves and zooms.
+          drawImage: (layer, id, left, top, w, h) => drawImage(layer, id, left, top, w, h, false, false),
+          textNode, transitionNode, buttonAt, inkGraphics, requestRender, textScale: scale(),
           isWaiting: () => waiting || Boolean(modal),
           markGesture(active) {
             treeGesture = active;
@@ -1058,6 +1122,48 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           { size: fontSize * scale(), color: color ?? (muted ? palette.muted : palette.ink) });
         cursor += t.height + rowGap;
       },
+      sampleProgress(label) {
+        if (modal !== local || !local.sample) return;
+        const top = cursor;
+        const radius = 6;
+        const indent = radius * 2 + 6;
+        const caption = textNode(parent, label, x + indent, top, width - indent,
+          { size: 12 * scale(), color: palette.muted, wrap: false });
+        const height = Math.max(caption.height, radius * 2);
+        const cx = x + radius;
+        const cy = top + height / 2;
+        caption.y = cy - caption.height / 2;
+        const track = inkGraphics().circle(cx, cy, radius).fill(palette.line)
+          .stroke({ color: palette.border, width: 1 });
+        const fill = inkGraphics();
+        parent.addChild(track, fill);
+        cursor += height + 4;
+
+        const cycleMs = local.sampleEveryMs ?? defaultDialogSampleEveryMs;
+        const startAngle = -Math.PI / 2;
+        const { observeScroll, viewport } = options;
+        let visible = !observeScroll || !viewport;
+        let previous = -1;
+        const update = (now) => {
+          if (!visible || modal !== local || pendingModal || local.closing || fill.destroyed) return;
+          const fraction = nextDialogSampleAt && cycleMs > 0
+            ? clamp(1 - (nextDialogSampleAt - now) / cycleMs, 0, 1) : 0;
+          const percent = Math.round(fraction * 100);
+          if (percent === previous) return;
+          previous = percent;
+          fill.clear();
+          if (percent === 100) fill.circle(cx, cy, radius).fill(palette.green);
+          else if (percent > 0) fill.moveTo(cx, cy).lineTo(cx, cy - radius)
+            .arc(cx, cy, radius, startAngle, startAngle + Math.PI * 2 * percent / 100)
+            .lineTo(cx, cy).fill(palette.green);
+        };
+        updateDialogSampleProgress = update;
+        if (observeScroll && viewport) observeScroll((scroll) => {
+          visible = withinScrollViewport(top, top + height, scroll, viewport, x, x + width);
+          if (visible && !document.hidden) update(performance.now());
+        });
+        else update(performance.now());
+      },
       row(label, value, options = {}) {
         const metric = options.style === 'metric';
         const comparison = options.style === 'comparison';
@@ -1078,11 +1184,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             { size, weight: '750', wrap: false });
           const amount = textNode(parent, valueStr, nameX, start, room,
             { size, weight: '800', wrap: false, color: options.tone === 'danger' ? palette.red : palette.ink });
-          // Reserve the longest ordinary minute display so ticking seconds never reflows the row.
-          const measure = textNode(parent, '999 分 59 秒', 0, 0, room, { size, wrap: false });
           const nameWidth = name.width;
-          const baselineWidth = measure.width;
-          measure.destroy();
+          let baselineWidth = 0;
+          if (options.valueAtClock) {
+            // Reserve the longest ordinary minute display so ticking seconds never reflows the row.
+            const measure = textNode(parent, '999 分 59 秒', 0, 0, room, { size, wrap: false });
+            baselineWidth = measure.width;
+            measure.destroy();
+          }
           const height = Math.max(32, Math.ceil(size * 1.36) + 4, icon);
           const align = () => {
             amount.scale.set(1);
@@ -1094,6 +1203,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           };
           align();
           bindCountdownText(amount, options.valueAtClock, align, options.toneAtClock);
+          if (options.divider) parent.addChild(
+            inkGraphics().rect(x, start + height, width, 1).fill({ color: palette.line, alpha: 0.7 }));
           cursor += height + (compactRow ? 3 : rowGap);
           return;
         }
@@ -1402,12 +1513,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (!source && (!batch || batch.end <= batch.start)) return;
         const target = source ? { ...source } : undefined;
         const epoch = navigationEpoch;
+        const row = listRow;
         const fill = inkGraphics();
         fill.label = 'batch-progress-fill';
         parent.addChild(fill);
         let previous = -1;
         const update = (clock) => {
           if (fill.destroyed || epoch !== navigationEpoch) return false;
+          if (row && !row.visible) return true;
           const active = currentBatch(target, batch);
           const filled = active && active.end > active.start
             ? width * clamp((clock - active.start) / (active.end - active.start), 0, 1) : 0;
@@ -1594,26 +1707,42 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         caption.y = top + (height - caption.height) / 2;
         cursor += height + rowGap;
       },
-      grid(items, draw, { equalHeight = false } = {}) {
-        const columns = width < 280 || scale() > 1.45 ? 1 : 2;
+      scrollList(items, draw, { columns = 1, focusIndex = -1 } = {}) {
+        const equalHeight = columns === 'auto';
+        const count = equalHeight ? (width < 280 || scale() > 1.45 ? 1 : 2) : columns;
         const gap = 8;
-        const cellWidth = (width - (columns - 1) * gap) / columns;
-        for (let index = 0; index < items.length; index += columns) {
+        const cellWidth = (width - (count - 1) * gap) / count;
+        const rows = [];
+        const outerRow = listRow;
+        for (let index = 0; index < items.length; index += count) {
           const top = cursor;
+          const layer = new Container();
+          parent.addChild(layer);
+          listRow = layer;
           const tileSurfaces = equalHeight ? [] : undefined;
           let next = top;
-          items.slice(index, index + columns).forEach((entry, column) => {
-            const cell = layoutUI(parent, x + column * (cellWidth + gap), top, cellWidth, local, availableHeight,
-              0, undefined, { tileSurfaces });
-            draw(cell, entry);
+          items.slice(index, index + count).forEach((entry, column) => {
+            const cell = layoutUI(layer, x + column * (cellWidth + gap), top, cellWidth, local, availableHeight,
+              0, undefined, { tileSurfaces, registerPlot: options.registerPlot });
+            draw(cell, entry, index + column);
             next = Math.max(next, cell.bottom);
           });
           if (tileSurfaces?.length) {
             const height = Math.max(...tileSurfaces.map((tile) => tile.height));
             for (const tile of tileSurfaces) tile.surface(height);
           }
+          rows.push({ layer, top, bottom: next });
+          if (focusIndex >= index && focusIndex < index + count) {
+            local.scroll = Math.max(0, top - (options.viewport?.pinned?.height ?? 0));
+          }
           cursor = next;
         }
+        listRow = outerRow;
+        options.observeScroll?.((scroll) => {
+          for (const { layer, top, bottom } of rows) {
+            layer.visible = withinScrollViewport(top, bottom, scroll, options.viewport, x, x + width);
+          }
+        });
       },
       indexRows(items, onSelect) {
         const height = Math.max(48, Math.ceil(28 * 1.36 * scale() + 7));
@@ -1834,6 +1963,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     parent.addChild(body, mask);
     body.mask = mask;
     let pinned;
+    const viewport = { height };
     const pinTabs = (top, choices, style, size) => {
       const layer = new Container();
       parent.addChild(layer);
@@ -1843,18 +1973,22 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const backdrop = panel(layer, x, 0, width, group.bottom, palette.paper, null, 0);
       layer.setChildIndex(backdrop, 0);
       pinned = { layer, top, left: x, right: x + width, height: group.bottom };
+      viewport.pinned = pinned;
       return group.bottom;
     };
     const scrollObservers = [];
     const plots = [];
-    const viewport = { height };
+    const images = [];
     const ui = layoutUI(body, x + 2, 0, width - 4, state, height, bleed ? bleed + 2 : 0, pinTabs,
       {
         captureFooter, viewport,
         observeScroll: (observe) => scrollObservers.push(observe),
         registerPlot: state === locals[current] ? (plot) => plots.push(plot) : undefined,
       });
-    draw(ui);
+    const previousImages = scrollImages;
+    scrollImages = images;
+    try { draw(ui); }
+    finally { scrollImages = previousImages; }
     const footerBlocks = captureFooter ? ui.footerBlocks : [];
     const footerTop = footerBlocks[0]?.top;
     if (footerBlocks.length) {
@@ -1869,6 +2003,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       parent.addChild(footer);
       for (const block of footerBlocks) footer.addChild(block.layer);
     }
+    const bodyImages = [];
+    for (const image of images) {
+      // Fixed dialog-footer and sticky controls were moved out of the scroll body.
+      let ancestor = image.layer.parent;
+      while (ancestor && ancestor !== body) ancestor = ancestor.parent;
+      if (!ancestor) {
+        image.mount();
+        continue;
+      }
+      const { left, top, right, bottom } = image.bounds;
+      image.start = body.toLocal({ x: left, y: top }, image.layer);
+      image.end = body.toLocal({ x: right, y: bottom }, image.layer);
+      bodyImages.push(image);
+    }
+    scrollObservers.push((scroll) => {
+      for (const image of bodyImages) {
+        const { layer, start, end, mount } = image;
+        layer.visible = withinScrollViewport(start.y, end.y, scroll, viewport, start.x, end.x);
+        if (layer.visible && mount) {
+          image.mount = undefined;
+          mount();
+        }
+      }
+    });
     const contentBottom = footerTop ?? ui.bottom;
     const max = Math.max(0, contentBottom + 5 - height);
     state.scroll = clamp(state.scroll ?? 0, 0, max);
@@ -2070,6 +2228,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     clip.clear().rect(x, y, width, height).fill(0xffffff);
     progressBars.clear();
     countdowns.clear();
+    updateDialogSampleProgress = undefined;
     for (const plot of activePlots) unmountPlot(plot);
     syncPlotVisibility = undefined;
     visiblePlotIds.clear();
@@ -2172,8 +2331,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     root.addChild(feedbackLayer);
     drawFeedback();
     building = false;
-    if (pendingModal) { modal = pendingModal; pendingModal = undefined; recordRoute(); requestRender(); }
-    else rememberContext();
+    if (pendingModal) {
+      const next = pendingModal;
+      pendingModal = undefined;
+      activateDialog(next);
+      recordRoute();
+      requestRender();
+    } else rememberContext();
     syncPlotVisibility?.();
   }
 
@@ -2325,6 +2489,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (notices || floating) drawFeedback();
     const now = performance.now();
     const clock = world && !status?.busy && !document.hidden ? updateBatchDisplays(now) : undefined;
+    if (sampleDialog(now)) requestRender();
+    if (clock !== undefined) updateDialogSampleProgress?.(now);
     if (coast) {
       if (scrollTarget?.state !== coast.state) coast = null;
       else {
@@ -2364,8 +2530,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function resetSession() {
     navigationEpoch += 1;
-    modal = undefined;
     pendingModal = undefined;
+    activateDialog(undefined);
     pageParent = undefined;
     linkedEntryParent = undefined;
     current = '牧场';

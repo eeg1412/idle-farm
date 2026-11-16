@@ -568,11 +568,11 @@ test('catalog tiles in a row grow together for longer copy', () => {
   const game = setup();
   game.draw(390, 844);
   game.view.dialog('图鉴', (ui) => {
-    ui.grid([
+    ui.scrollList([
       { id: 'C01', title: '小麦' },
       { id: 'PT50', title: '紫苏双鱼牛汁千层御膳礼盒', description: '尚未研发' },
     ], (cell, item) => cell.tile(item.id, item.title, () => {}, { description: item.description }),
-    { equalHeight: true });
+    { columns: 'auto' });
   });
   const tiles = game.nodes().filter((node) => node.label === 'catalog-tile');
   assert.equal(tiles.length, 2);
