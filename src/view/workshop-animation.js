@@ -58,7 +58,6 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
   scene.mask = stageMask;
   const conveyorLayer = layer(scene, 'workshop-conveyor-layer');
   const machineLayer = layer(scene, 'workshop-machine-layer');
-  const chimneyLayer = layer(scene, 'workshop-chimney-layer');
   const smokeLayer = layer(scene, 'workshop-smoke-layer');
   const movingSurface = layer(conveyorLayer, 'workshop-moving-surfaces');
   const canonicalItems = layer(conveyorLayer, 'workshop-canonical-items');
@@ -90,9 +89,20 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
   const product = itemSprite(outputItems, textures.get(id), layout.output.size);
   product.visible = false;
   bitmap(machineLayer, textures.get(textureKey('machine')), layout.machine.placement);
-  const chimney = bitmap(chimneyLayer, textures.get(textureKey('chimney')),
-    { x: 0, y: 0, width: layout.chimney.size[0], height: layout.chimney.size[1] });
-  chimney.anchor.set(...layout.chimney.anchor);
+  const gearLayer = layer(machineLayer, 'workshop-gear-layer');
+  const gearTexture = textures.get(textureKey('gear'));
+  const gears = layout.gear.mounts.map(({ position: [x, y], size }) => {
+    const sprite = bitmap(gearLayer, gearTexture, { x, y, width: size, height: size });
+    sprite.anchor.set(...layout.gear.anchor);
+    return sprite;
+  });
+  const chimneyLayer = layer(machineLayer, 'workshop-chimney-layer');
+  const chimneyTexture = textures.get(textureKey('chimney'));
+  const [chimneyWidth, chimneyHeight] = layout.chimney.size;
+  layout.chimney.mounts.forEach(({ position: [x, y] }) => {
+    const sprite = bitmap(chimneyLayer, chimneyTexture, { x, y, width: chimneyWidth, height: chimneyHeight });
+    sprite.anchor.set(...layout.chimney.anchor);
+  });
   const smoke = Array.from({ length: layout.smoke.capacity }, () => {
     const sprite = itemSprite(smokeLayer, textures.get(textureKey('smoke:0')), layout.smoke.startSize);
     sprite.visible = false;
@@ -145,12 +155,12 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
       product.alpha = 1;
     }
     machineLayer.position.set(...frame.machineOffset);
-    chimneyLayer.position.set(...frame.chimney.position);
+    gears.forEach((gear, index) => { gear.rotation = frame.gearAngles[index]; });
     smoke.forEach((puff, index) => {
       const particle = frame.smoke[index];
       const { sprite } = puff;
-      sprite.visible = particle.visible;
-      if (!sprite.visible) return;
+      sprite.visible = Boolean(particle);
+      if (!particle) return;
       if (puff.textureIndex !== particle.textureIndex) {
         sprite.texture = textures.get(textureKey('smoke:' + particle.textureIndex));
         puff.textureIndex = particle.textureIndex;

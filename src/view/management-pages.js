@@ -250,7 +250,8 @@ function showHourlyProduction(ui) {
 }
 
 export function renderWarehouse(ui) {
-  ui.image('warehouse', Math.round(ui.width * 0.35));
+  const obtained = entries.filter(([id]) => Object.hasOwn(ui.w.inventory, id));
+  if (obtained.length) ui.image('warehouse', Math.round(ui.width * 0.35));
   ui.button('查看产出／支出图表', () => showHourlyProduction(ui));
   ui.local.source ??= '全部';
   ui.local.type ??= '全部';
@@ -264,17 +265,19 @@ export function renderWarehouse(ui) {
     ui.local.scroll = 0;
     ui.refresh();
   }, { style: 'filter' });
-  const obtained = entries.filter(([id]) => Object.hasOwn(ui.w.inventory, id));
   const filtered = obtained.filter(([, item]) =>
     (ui.local.source === '全部' || item.sources.includes(ui.local.source)) &&
     (ui.local.type === '全部' || ui.local.type === typeOf(item)));
   if (!filtered.length) {
-    ui.text('库存 0', { muted: true });
     if (!obtained.length) {
+      ui.image('warehouse-empty-v1', Math.min(ui.width, 120), { center: true });
+      ui.text('库存 0', { muted: true, align: 'center' });
       ui.buttons([
         { label: '前往田地', onClick: () => ui.go('牧场', { tab: '田地' }) },
         { label: '前往工坊', onClick: () => ui.go('工坊') },
       ]);
+    } else {
+      ui.text('库存 0', { muted: true });
     }
     return;
   }
@@ -430,9 +433,9 @@ const taskArt = {
   firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
   recipeCollection: 'nav-research', qualityCollection: 'nav-research', qualityMaster: 'nav-research',
   newFarm: 'sale-retain', itemCollection: 'nav-catalog',
-  firstUpgrade: 'scene-wheat', firstSeed: 'nav-research', firstSwitch: 'scene-wheat', bulkSale: 'nav-warehouse',
+  firstUpgrade: 'scene-wheat', firstSeed: 'nav-research', firstSwitch: 'scene-wheat',
   reserveStock: 'nav-warehouse', addProcessor: 'task-process', addRefinery: 'task-product',
-  stationPriority: 'task-process', stationUpgrade: 'task-process', firstQuality: 'nav-research',
+  stationUpgrade: 'task-process', firstQuality: 'nav-research',
   recipeTrio: 'nav-research', fieldLevel10: 'scene-wheat', codex20: 'nav-catalog',
   livestockUpgrade: 'scene-hen', fishUpgrade: 'scene-fish', firstTech: 'tech-farm', delegationTech: 'sale-retain',
   collection100: 'nav-catalog', collection200: 'nav-catalog', collection300: 'nav-catalog', collection400: 'nav-catalog',
@@ -453,7 +456,7 @@ export function renderTasks(ui) {
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
   ui.image('tasks-banner', 101);
-  ui.text('每项任务完成后自动发放一次奖励，周回不重复领取。', { muted: true });
+  ui.text('任务完成后自动发奖，每项只发一次。', { muted: true });
   const goals = active ? guide : [
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
     ...long.filter((goal) => !featuredGoals.includes(goal.id)),
@@ -461,11 +464,13 @@ export function renderTasks(ui) {
   ui.scrollList(goals, (cell, goal) => {
     cell.card((entry) => entry.feature(taskArt[goal.id], (card) => {
       card.heading(goal.name);
+      const required = compact(goal.required);
+      card.text(goal.condition.replace('{目标}', required));
       const researchPoints = goal.rewardResearchPoints ?? 0n;
       const reward = '奖励 ' + compact(goal.rewardCoins) + ' 金币' +
         (researchPoints > 0n ? ' + ' + compact(researchPoints) + ' 高级研发点' : '');
       card.text(reward + (goal.rewarded ? ' · 已到账' : ''), { muted: !goal.rewarded });
-      const progress = compact(goal.current) + ' / ' + compact(goal.required);
+      const progress = compact(goal.current) + ' / ' + required;
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
       const tab = earnForLand ? undefined : goal.tab;
