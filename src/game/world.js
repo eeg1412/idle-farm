@@ -5,16 +5,20 @@ import { newPrestigeLedger, prestigeLedgerOffer, recordProductionContribution, s
 export { catalog, unitPrice };
 
 const facilityTypes = {
-  C: { buy: 'cropBuy', upgrade: 'cropUpgrade', factor: 1n, free: 2 },
-  L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', factor: 10n, free: 0 },
-  F: { buy: 'fishBuy', upgrade: 'fishUpgrade', factor: 10n, free: 0 },
+  C: { buy: 'cropBuy', upgrade: 'cropUpgrade', buyBase: 600n, upgradeA: 300n, free: 2 },
+  L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', buyBase: 6000n, upgradeA: 3000n, free: 0 },
+  F: { buy: 'fishBuy', upgrade: 'fishUpgrade', buyBase: 6000n, upgradeA: 3000n, free: 0 },
 };
-const stationTypes = { I: { base: 75n, limit: 48 }, P: { base: 95n, limit: 32 } };
-const startingCoins = 60n;
+const facilityGrowth = 5n;
+const stationTypes = {
+  I: { base: 750n, growth: 25n, upgradeA: 750n, limit: 48 },
+  P: { base: 950n, growth: 25n, upgradeA: 950n, limit: 32 },
+};
+const startingCoins = 600n;
 const facilityLimit = 40;
 
 const emptyFacility = () => ({ level: '1', recipe: null, batch: null });
-const emptyStation = (order) => ({ order, recipe: null, priority: false, batch: null });
+const emptyStation = (order) => ({ order, level: '1', recipe: null, priority: false, batch: null });
 const ceilDiv = (value, divisor) => (value + divisor - 1n) / divisor;
 
 function asNatural(value) {
@@ -28,24 +32,53 @@ function discounted(world, amount, key) {
   return ceilDiv(amount * BigInt(10000 - discount(world, key)), 10000n);
 }
 
-function geometric(base, bought) {
-  const count = BigInt(bought);
-  return ceilDiv(base * 6n ** count, 5n ** count);
+function geometric(base, growth, bought) {
+  return base * growth ** BigInt(bought);
+}
+
+// Cumulative upgrade weight S'(k) = k(k+1)(2k+1)/6 + floor(k^6/24000) for k = level - 1.
+function upgradeWeight(level) {
+  const k = level - 1n;
+  return k * (k + 1n) * (2n * k + 1n) / 6n + k ** 6n / 24000n;
 }
 
 function facilityUpgradeTotal(world, type, level) {
-  const k = level - 1n;
-  const squares = k * (k + 1n) * (2n * k + 1n) / 6n;
-  const x = k > 14n ? k - 14n : 0n;
-  const longTerm = 5000n * x ** 7n / (x * x + 1024n);
-  return discounted(world, type.factor * (30n * squares + longTerm), type.upgrade);
+  return discounted(world, type.upgradeA * upgradeWeight(level), type.upgrade);
 }
 
 function facilityOutput(world, kind, id, level) {
   const item = catalog.items[id];
   if (!item) return null;
   const k = level - 1n;
-  return BigInt(item.output) + k + k * k / 64n + facilityYieldBonus(world, kind);
+  const multiplier = 1n + k + k * k / 64n;
+  return BigInt(item.output) * multiplier * (10000n + facilityYieldBonus(world, kind)) / 10000n;
+}
+
+// Station upgrades are never discounted and take effect from the next batch.
+function stationUpgradeTotal(type, level) {
+  return type.upgradeA * upgradeWeight(level);
+}
+
+function stationOutput(id, level) {
+  const item = catalog.items[id];
+  return item ? BigInt(item.output) * BigInt(level) : null;
+}
+
+// Resolve a step request into a positive count; 'max' finds the most affordable steps (at least one).
+function upgradeSteps(world, steps, costFor) {
+  if (steps !== 'max') return asNatural(steps);
+  let lower = 0n;
+  let upper = 1n;
+  while (costFor(upper) <= world.coins) {
+    lower = upper;
+    upper *= 2n;
+  }
+  while (upper - lower > 1n) {
+    const middle = (lower + upper) / 2n;
+    if (costFor(middle) <= world.coins) lower = middle;
+    else upper = middle;
+  }
+  return lower || 1n;
 }
 
 export function productionDurationMs(world, id) {
@@ -80,13 +113,14 @@ export function forecastHourlyProduction(world) {
       addRate(recipe, duration, facilityOutput(world, kind, recipe, BigInt(level)), 0n);
     }
   }
-  for (const { recipe } of Object.values(world.stations).flat()) {
+  for (const { recipe, level = '1' } of Object.values(world.stations).flat()) {
     if (!recipe) continue;
     const item = catalog.items[recipe];
     const duration = BigInt(productionDurationMs(world, recipe));
-    addRate(recipe, duration, BigInt(item.output), 0n);
+    const stationLevel = BigInt(level);
+    addRate(recipe, duration, BigInt(item.output) * stationLevel, 0n);
     for (const [id, amount] of Object.entries(item.inputs ?? {})) {
-      addRate(id, duration, 0n, BigInt(amount));
+      addRate(id, duration, 0n, BigInt(amount) * stationLevel);
     }
   }
 
@@ -113,7 +147,7 @@ export function newWorld(now) {
     researchPoints: 0n, productionValue: 0n, completedRuns: 0, firstCompletedRunAtMs: null,
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
-    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n },
+    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n, batchSales: 0n },
     guideSkipped: false, taskRewards: [], settings: { textScale: 1, music: 70, sound: 75, pickerIconsOnly: false },
   };
   settleProduction(world);
@@ -127,9 +161,11 @@ export function availableToProduce(world, id) {
   return available > 0n ? available : 0n;
 }
 
-export function stationRequirements(world, id) {
+// A station at level L consumes every recipe input x L per batch.
+export function stationRequirements(world, id, level = 1n) {
+  const scale = BigInt(level);
   return Object.entries(catalog.items[id]?.inputs ?? {}).map(([key, amount]) => ({
-    id: key, owned: availableToProduce(world, key), needed: BigInt(amount),
+    id: key, owned: availableToProduce(world, key), needed: BigInt(amount) * scale,
   }));
 }
 
@@ -157,14 +193,15 @@ function startProduction(world, stations, onStart) {
   }
   for (const station of stations) {
     if (station.batch || !station.recipe) continue;
-    const materials = stationRequirements(world, station.recipe);
+    const level = station.level ?? '1';
+    const materials = stationRequirements(world, station.recipe, level);
     if (materials.some(({ owned, needed }) => owned < needed)) continue;
     const inputs = {};
     for (const { id, needed } of materials) {
       world.inventory[id] = quantity(world, id) - needed;
       inputs[id] = needed;
     }
-    station.batch = { ...makeBatch(world, station.recipe, catalog.items[station.recipe].output), inputs };
+    station.batch = { ...makeBatch(world, station.recipe, stationOutput(station.recipe, level)), inputs };
     onStart?.(station);
   }
 }
@@ -254,7 +291,7 @@ export function facilityOffer(world, kind, index = null, steps = 1n) {
   if (index === null) {
     const count = facilities.length;
     const atLimit = count >= facilityLimit;
-    const cost = discounted(world, geometric(60n, Math.max(0, count - type.free)) * type.factor, type.buy);
+    const cost = discounted(world, geometric(type.buyBase, facilityGrowth, Math.max(0, count - type.free)), type.buy);
     return { cost, count, limit: facilityLimit, atLimit, affordable: !atLimit && world.coins >= cost,
       target: null, currentOutput: null, output: null, durationMs: null };
   }
@@ -264,21 +301,7 @@ export function facilityOffer(world, kind, index = null, steps = 1n) {
   const level = BigInt(facility.level);
   const startingCost = facilityUpgradeTotal(world, type, level);
   const costFor = (count) => facilityUpgradeTotal(world, type, level + count) - startingCost;
-  let count = asNatural(steps);
-  if (steps === 'max') {
-    let lower = 0n;
-    let upper = 1n;
-    while (costFor(upper) <= world.coins) {
-      lower = upper;
-      upper *= 2n;
-    }
-    while (upper - lower > 1n) {
-      const middle = (lower + upper) / 2n;
-      if (costFor(middle) <= world.coins) lower = middle;
-      else upper = middle;
-    }
-    count = lower || 1n;
-  }
+  const count = upgradeSteps(world, steps, costFor);
   if (!count) return null;
   const target = level + count;
   const cost = costFor(count);
@@ -290,11 +313,39 @@ export function facilityOffer(world, kind, index = null, steps = 1n) {
 
 export function stationOffer(world, kind) {
   if (!Object.hasOwn(stationTypes, kind)) return null;
-  const { base, limit } = stationTypes[kind];
+  const { base, growth, limit } = stationTypes[kind];
   const count = world.stations[kind].length;
   const atLimit = count >= limit;
-  const cost = geometric(base, Math.max(0, count - 1));
+  const cost = geometric(base, growth, Math.max(0, count - 1));
   return { cost, count, limit, atLimit, affordable: !atLimit && world.coins >= cost };
+}
+
+// Same shape as a single-facility facilityOffer quote; steps is a positive BigInt or 'max'.
+export function stationUpgradeOffer(world, kind, index, steps = 1n) {
+  if (!Object.hasOwn(stationTypes, kind) || !Number.isInteger(index)) return null;
+  const type = stationTypes[kind];
+  const station = world.stations[kind][index];
+  if (!station) return null;
+  const level = BigInt(station.level ?? '1');
+  const startingCost = stationUpgradeTotal(type, level);
+  const costFor = (count) => stationUpgradeTotal(type, level + count) - startingCost;
+  const count = upgradeSteps(world, steps, costFor);
+  if (!count) return null;
+  const target = level + count;
+  const cost = costFor(count);
+  return { cost, affordable: world.coins >= cost, target,
+    currentOutput: stationOutput(station.recipe, level),
+    output: stationOutput(station.recipe, target),
+    durationMs: productionDurationMs(world, station.recipe) };
+}
+
+// Only the level changes; a running batch keeps its paid inputs and its output.
+export function upgradeStation(world, kind, index, steps) {
+  const quote = stationUpgradeOffer(world, kind, index, steps);
+  if (!quote?.affordable) return false;
+  world.coins -= quote.cost;
+  world.stations[kind][index].level = String(quote.target);
+  return true;
 }
 
 export function buyFacility(world, kind) {
@@ -444,6 +495,7 @@ export function sellBatch(world, selections) {
     world.stats.revenue += gain;
     world.stats.lifetimeRevenue += gain;
   }
+  if (quotes.length >= 2) world.stats.batchSales = (world.stats.batchSales ?? 0n) + 1n;
   return true;
 }
 

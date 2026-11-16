@@ -2,7 +2,7 @@ import catalog from '../content/game-data.json' with { type: 'json' };
 import { techLevelLimit } from '../game/advancement.js';
 import { taskCoinRewards } from '../game/objectives.js';
 import { newWorld, updateWorldWallTime } from '../game/world.js';
-import { migratePrestigeLedger, prestigeLedgerVersion } from '../game/prestige-ledger.js';
+import { migratePrestigeLedger, prestigeLedgerVersion, previousPrestigeLedgerVersion } from '../game/prestige-ledger.js';
 import { catalog as legacyCatalog, farmSaleOffer as legacyFarmSaleOffer, workshopDurationMs } from '../game/state.js';
 import { decode as decodeLegacy } from './save.js';
 
@@ -233,6 +233,8 @@ function recordStats(value, completedRuns, convert) {
     lifetimeRevenue: legacyRevenue ? recordedRevenue : convert(stats.lifetimeRevenue, 'stats.lifetimeRevenue'),
     boughtL: convert(stats.boughtL, 'stats.boughtL'),
     boughtF: convert(stats.boughtF, 'stats.boughtF'),
+    // Records before LT-2026-11-v3 have no batch-sale history.
+    batchSales: convert(Object.hasOwn(stats, 'batchSales') ? stats.batchSales : '0', 'stats.batchSales'),
   };
 }
 
@@ -240,11 +242,14 @@ function stationBatches(stations, convert) {
   object(stations, 'stations');
   return Object.fromEntries(stationKinds.map((kind) => {
     valid(Array.isArray(stations[kind]), `stations.${kind}`);
-    return [kind, stations[kind].map((slot) => {
-      if (slot.batch === null) return slot;
+    return [kind, stations[kind].map((slot, index) => {
+      object(slot, `stations.${kind}.${index}`);
+      // Station levels stay decimal strings in memory and in records; older records start at level 1.
+      const level = Object.hasOwn(slot, 'level') ? slot.level : '1';
+      if (slot.batch === null) return { ...slot, level };
       const batch = object(slot.batch, `${kind}.batch`);
       const inputs = Object.hasOwn(batch, 'inputs') ? batch.inputs : null;
-      return { ...slot, batch: { ...batch, inputs: inputs === null ? null :
+      return { ...slot, level, batch: { ...batch, inputs: inputs === null ? null :
         quantityMap(inputs, `${kind}.batch.inputs`, (value, field) => convert(value, field, 1n)) } };
     })];
   }));
@@ -263,9 +268,11 @@ function offlineAmounts(summary, convert, convertSigned) {
 }
 
 // A versioned record must contain every ledger field. Only an absent version is legacy.
+// LT-2026-11-v2 records are accepted here and migrated to v3 in the same read draft.
 function ledgerAmounts(world, convert) {
   if (!Object.hasOwn(world, 'prestigeLedgerVersion')) return {};
-  valid(world.prestigeLedgerVersion === prestigeLedgerVersion, 'prestigeLedgerVersion');
+  valid(world.prestigeLedgerVersion === prestigeLedgerVersion ||
+    world.prestigeLedgerVersion === previousPrestigeLedgerVersion, 'prestigeLedgerVersion');
   valid(typeof world.legacyResearchPointsSettled === 'boolean', 'legacyResearchPointsSettled');
   const pending = convert(world.pendingLegacyResearchPoints, 'pendingLegacyResearchPoints');
   valid(!world.legacyResearchPointsSettled || BigInt(pending) === 0n, 'pendingLegacyResearchPoints');
@@ -358,6 +365,7 @@ function validateFacilityLists(world, key, kinds) {
       if (key === 'facilities') decimal(slot.level, `${field}.level`, 1n);
       if (key === 'facilities' && kind === 'C') validatePlanting(world, slot, field);
       if (key === 'stations') {
+        decimal(slot.level ?? '1', `${field}.level`, 1n);
         valid(typeof slot.priority === 'boolean', `${field}.priority`);
         if (slot.order !== undefined) integer(slot.order, `${field}.order`);
       }
@@ -430,6 +438,7 @@ function migrateLegacy(record) {
     const batchId = station.output ?? station.recipe;
     const duration = batchId && workshopDurationMs(legacyCatalog.items[batchId]?.durationMs, old.workshopSpeedLevel);
     stations[kind] = [{
+      level: '1',
       recipe: station.recipe ?? null,
       priority: false,
       order: index,

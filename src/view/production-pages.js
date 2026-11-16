@@ -1,5 +1,5 @@
 import {
-  catalog, facilityOffer, productionDurationMs, quantity, stationOffer, stationRequirements,
+  catalog, facilityOffer, productionDurationMs, quantity, stationOffer, stationRequirements, stationUpgradeOffer,
 } from '../game/world.js';
 import { unitPrice } from '../game/advancement.js';
 import { objectives } from '../game/objectives.js';
@@ -362,6 +362,41 @@ function purchaseStation(ui, kind) {
   });
 }
 
+function stationOutput(world, kind, index) {
+  return stationUpgradeOffer(world, kind, index, 1n)?.currentOutput;
+}
+
+function improveStation(ui, kind, index) {
+  let selected = upgradeOptions[0];
+  ui.dialog('升级' + stationNames[kind], (dlg) => {
+    const station = dlg.w.stations[kind][index];
+    if (!station) return;
+    const quote = stationUpgradeOffer(dlg.w, kind, index, selected.steps);
+    if (!quote) return;
+    const id = station.recipe ?? station.batch?.id;
+    const item = catalog.items[id];
+    if (item) dlg.item(id, item.name, item.sources.join(' · '));
+    dlg.buttons(upgradeOptions.map((option) => ({
+      label: option.label,
+      tone: option === selected ? 'gold' : 'plain',
+      onClick: () => {
+        selected = option;
+        dlg.refresh();
+      },
+    })), { style: 'production' });
+    dlg.row('等级', { from: compact(station.level), to: compact(quote.target) }, { style: 'comparison' });
+    dlg.row('每批产出' + (item ? item.name : ''), {
+      from: compact(quote.currentOutput) + ' 件', to: compact(quote.output) + ' 件',
+    }, { style: 'comparison', icon: item ? id : undefined });
+    dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
+    dlg.text(station.batch
+      ? '升级从下一批起生效，本批产出与已扣材料不变。每批材料投入随等级同步增加。'
+      : '升级从下一批起生效。每批材料投入随等级同步增加。', { muted: true });
+    dialogButtons(dlg, '确认升级', () => submit(dlg, 'upgradeStation', [kind, index, selected.steps], null,
+      '升至 ' + compact(quote.target) + ' 级'), !quote.affordable, 'production');
+  }, { variant: 'facility-upgrade' });
+}
+
 function sourceButton(ui, id) {
   ui.button('查看来源 · ' + itemName(id), () => {
     ui.close();
@@ -369,9 +404,9 @@ function sourceButton(ui, id) {
   });
 }
 
-function requirementRows(ui, recipe, { withLinks = false, style } = {}) {
+function requirementRows(ui, recipe, { withLinks = false, style, level = '1' } = {}) {
   if (!recipe) return [];
-  const requirements = stationRequirements(ui.w, recipe);
+  const requirements = stationRequirements(ui.w, recipe, BigInt(level));
   if (!requirements.length) return requirements;
   ui.materialTable(requirements.map((row) => ({ ...row, label: itemName(row.id) })), { style });
   if (withLinks) for (const { id, owned, needed } of requirements) {
@@ -392,7 +427,7 @@ function stationBadge(world, station) {
   let label = '等待安排';
   if (station.batch) label = '生产中';
   else if (station.recipe) {
-    const requirements = stationRequirements(world, station.recipe);
+    const requirements = stationRequirements(world, station.recipe, BigInt(station.level ?? '1'));
     const waiting = requirements.filter(({ owned, needed }) => owned < needed);
     label = waiting.length && waiting.every(({ id, needed }) => quantity(world, id) >= needed)
       ? '材料已预留' : '等待材料';
@@ -425,29 +460,34 @@ function stationDetails(ui, kind, index) {
     const active = station.batch;
     const id = active?.id ?? station.recipe;
     const item = catalog.items[id];
+    const output = stationOutput(dlg.w, kind, index);
     dlg.badges([stationBadge(dlg.w, station)], { style: 'production' });
+    dlg.row('等级', compact(station.level) + ' 级');
     if (item) {
       dlg.item(id, item.name, item.sources.join(' · '));
       dlg.row('当前库存', compact(quantity(dlg.w, id)));
-      dlg.row(active ? '本批产出' : '每批产出', compact(active?.amount ?? item.output) + ' 件');
+      dlg.row(active ? '本批产出' : '每批产出', compact(active?.amount ?? output) + ' 件');
+      if (active && output != null && output !== active.amount) dlg.row('下批产出', compact(output) + ' 件');
       stationProgress(dlg, active, kind, index);
       const next = catalog.items[station.recipe];
       if (next) {
         dlg.row('下批配方', next.name);
         dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, station.recipe)));
+        const level = BigInt(station.level);
         const materialValue = Object.entries(next.inputs).reduce(
-          (sum, [material, amount]) => sum + unitPrice(dlg.w, material) * BigInt(amount), 0n,
+          (sum, [material, amount]) => sum + unitPrice(dlg.w, material) * BigInt(amount) * level, 0n,
         );
-        const valueAdded = unitPrice(dlg.w, station.recipe) * BigInt(next.output) - materialValue;
+        const valueAdded = unitPrice(dlg.w, station.recipe) * (output ?? BigInt(next.output) * level) - materialValue;
         dlg.row('直接机会增值', compact(valueAdded) + ' 金币');
         if (valueAdded < 0n) {
           dlg.text('当前成品售价低于材料直售价值；研发和任务仍可能需要此产物。', { muted: true });
         }
         dlg.text('材料', { muted: true });
-        const requirements = requirementRows(dlg, station.recipe, { withLinks: true });
+        const requirements = requirementRows(dlg, station.recipe, { withLinks: true, level: station.level });
         reserveButtons(dlg, requirements);
       }
     } else stationProgress(dlg, active, kind, index);
+    dlg.button('升级' + stationNames[kind], () => improveStation(dlg, kind, index), confirm);
     dlg.row('用料优先级', station.priority ? '优先' : '普通');
     dlg.button(station.priority ? '设为普通' : '设为优先', async () => {
       if (!await dlg.action('setStationPriority', kind, index, !station.priority)) return;
@@ -462,13 +502,18 @@ function stationCard(ui, kind, index, station, source) {
   const id = active?.id ?? station.recipe;
   const item = catalog.items[id];
   const badge = stationBadge(ui.w, station);
+  const level = { label: compact(station.level) + ' 级' };
   const openDetails = () => stationDetails(ui, kind, index);
+  const upgrade = { label: '升级', onClick: () => improveStation(ui, kind, index) };
   ui.card((body) => {
     if (!item) {
       body.feature(emptyStationArt[kind], (copy) => {
         copy.heading('空' + stationNames[kind], { style: 'production' });
-        copy.badges([badge], { style: 'production' });
-        copy.button('选择配方', () => chooseRecipe(ui, kind, index, source), { tone: 'gold', style: 'production' });
+        copy.badges([level, badge], { style: 'production' });
+        copy.buttons([
+          { label: '选择配方', tone: 'gold', onClick: () => chooseRecipe(ui, kind, index, source) },
+          upgrade,
+        ], { style: 'production' });
       }, {
         ratio: 0.35, style: 'workshop', align: 'center', onClick: openDetails,
         animationOnly: Boolean(id),
@@ -481,11 +526,12 @@ function stationCard(ui, kind, index, station, source) {
       copy.heading(item.name, { style: 'production' });
       copy.badges([
         { label: complexity },
+        level,
         badge,
       ], { style: 'production' });
       copy.stats([
         { label: '当前库存', value: compact(quantity(ui.w, id)) },
-        { label: active ? '本批产出' : '每批产出', value: compact(active?.amount ?? item.output) + ' 件' },
+        { label: active ? '本批产出' : '每批产出', value: compact(active?.amount ?? stationOutput(ui.w, kind, index)) + ' 件' },
       ], { style: 'workshop' });
     }, {
       ratio: 0.35, style: 'workshop', artAspect: 1, onClick: openDetails,
@@ -494,8 +540,11 @@ function stationCard(ui, kind, index, station, source) {
     });
     stationProgress(body, active, kind, index);
     body.text('材料', { muted: true });
-    const requirements = requirementRows(body, station.recipe, { style: 'workshop' });
-    const actions = [{ label: '更换配方', tone: 'gold', onClick: () => chooseRecipe(ui, kind, index, source) }];
+    const requirements = requirementRows(body, station.recipe, { style: 'workshop', level: station.level });
+    const actions = [
+      { label: '更换配方', tone: 'gold', onClick: () => chooseRecipe(ui, kind, index, source) },
+      { ...upgrade, tone: 'gold' },
+    ];
     if (requirements.length) actions.push({ label: '查看来源', tone: 'gold', onClick: () => openSources(ui, requirements) });
     body.buttons(actions, { style: 'production' });
     reserveButtons(body, requirements);

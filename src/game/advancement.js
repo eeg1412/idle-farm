@@ -7,20 +7,20 @@ const appraisalPerLevel = 200;
 const workshopPerLevel = 200;
 const processingPerLevel = 50;
 const cyclePerLevel = 100;
-const cropReferences = ['C02', 'C04', 'C08', 'C11', 'C17', 'C22', 'C28', 'C35', 'C42', 'C50'];
+const yieldPerLevel = 200;
 
 export const techDefinitions = [
   { key: 'recipeDiscount', name: '配方笔记', source: '通用', description: '种子与配方的实物研发成本每级降低 1%' },
   { key: 'qualityDiscount', name: '品质手册', source: '通用', description: '品质提升的实物成本每级降低 1%' },
   { key: 'cropBuy', name: '土地议价', source: '农业', description: '农田购买价格每级降低 1%' },
   { key: 'cropUpgrade', name: '田地改造', source: '农业', description: '农田升级价格每级降低 1%' },
-  { key: 'cropYield', name: '丰收栽培', source: '农业', description: '农田每批收成每级增加 2 件' },
+  { key: 'cropYield', name: '丰收栽培', source: '农业', description: '农田每批收成每级增加 2%，满级翻倍' },
   { key: 'appraisal', name: '经营评估', source: '通用', description: '后续生产事件的研发点权益倍率每级增加 0.02，仅在出售牧场时领取' },
   { key: 'workshopSpeed', name: '工坊提速', source: '通用', description: '工坊生产每级提速 2%' },
-  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限从 8 小时起，前 40 级每级增加 24 分钟，后 10 级每级增加 72 分钟' },
+  { key: 'delegation', name: '代管时长', source: '通用', description: '离线结算上限从 12 小时起，前 20 级每级增加 36 分钟，后 30 级每级增加 48 分钟' },
   { key: 'livestockBuy', name: '畜牧场议价', source: '畜牧', description: '畜牧场购买价格每级降低 1%', item: 'L01' },
   { key: 'livestockUpgrade', name: '畜牧场改造', source: '畜牧', description: '畜牧场升级价格每级降低 1%', item: 'L01' },
-  { key: 'livestockYield', name: '畜群培育', source: '畜牧', description: '畜牧场每批产出每级增加 2 件', item: 'L01' },
+  { key: 'livestockYield', name: '畜群培育', source: '畜牧', description: '畜牧场每批产出每级增加 2%，满级翻倍', item: 'L01' },
   { key: 'livestockResearch', name: '畜牧研发手册', source: '畜牧', description: '牲畜与畜牧加工配方的实物研发成本每级降低 1%', item: 'L01' },
   { key: 'livestockQuality', name: '畜牧品质手册', source: '畜牧', description: '畜牧原料与中间产物的实物品质成本每级降低 1%', item: 'L01' },
   { key: 'livestockProcessing', name: '畜牧加工提速', source: '畜牧', description: '畜牧中间产物生产每级提速 0.5%', item: 'L01' },
@@ -28,7 +28,7 @@ export const techDefinitions = [
   { key: 'livestockRefining', name: '畜牧精制专精', source: '畜牧', description: '含畜牧原料来源的商品精制每级提速 0.5%', item: 'PL01', prerequisite: 'livestockProcessing' },
   { key: 'fishBuy', name: '鱼池议价', source: '水产', description: '鱼池购买价格每级降低 1%', item: 'F01' },
   { key: 'fishUpgrade', name: '鱼池改造', source: '水产', description: '鱼池升级价格每级降低 1%', item: 'F01' },
-  { key: 'fishYield', name: '鱼群培育', source: '水产', description: '鱼池每批产出每级增加 2 件', item: 'F01' },
+  { key: 'fishYield', name: '鱼群培育', source: '水产', description: '鱼池每批产出每级增加 2%，满级翻倍', item: 'F01' },
   { key: 'fishResearch', name: '水产研发手册', source: '水产', description: '鱼类与水产加工配方的实物研发成本每级降低 1%', item: 'F01' },
   { key: 'fishQuality', name: '水产品质手册', source: '水产', description: '水产原料与中间产物的实物品质成本每级降低 1%', item: 'F01' },
   { key: 'fishProcessing', name: '水产加工提速', source: '水产', description: '水产中间产物生产每级提速 0.5%', item: 'F01' },
@@ -68,9 +68,9 @@ const qualityKeys = { L: 'livestockQuality', IL: 'livestockQuality', F: 'fishQua
 const researchKeys = { L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch' };
 const extraQualityInputs = { C: { I01: '1' }, L: { C01: '1' }, F: { I01: '1' } };
 const effectDefinitions = {
-  cropYield: ['每批额外产出', 0, 2, '件'],
-  livestockYield: ['每批额外产出', 0, 2, '件'],
-  fishYield: ['每批额外产出', 0, 2, '件'],
+  cropYield: ['增产', 0, yieldPerLevel, '%', 100],
+  livestockYield: ['增产', 0, yieldPerLevel, '%', 100],
+  fishYield: ['增产', 0, yieldPerLevel, '%', 100],
   appraisal: ['经营评估倍率', 10000, appraisalPerLevel, '倍', 10000],
   workshopSpeed: ['生产提速', 0, workshopPerLevel, '%', 100],
   livestockProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
@@ -88,10 +88,11 @@ const canPay = (world, coins, costs) => world.coins >= coins && costs.every(([id
 export const discount = (world, key) => discountPerLevel * techLevel(world, key);
 export const appraisalLevel = (world) => techLevel(world, 'appraisal');
 export const appraisalMultiplierBasisPoints = (world) => 10000 + appraisalPerLevel * appraisalLevel(world);
-const delegationMinutes = (level) => 480 + 24 * Math.min(level, 40) + 72 * Math.max(level - 40, 0);
+const delegationMinutes = (level) => 720 + 36 * Math.min(level, 20) + 48 * Math.max(level - 20, 0);
 export const delegationMilliseconds = (world) => 60000 * delegationMinutes(techLevel(world, 'delegation'));
 export const delegationHours = (world) => delegationMilliseconds(world) / 3600000;
-export const facilityYieldBonus = (world, kind) => 2n * BigInt(techLevel(world, yieldKeys[kind]));
+// Yield technology is a multiplicative bonus in basis points: output × (10000 + bonus) / 10000.
+export const facilityYieldBonus = (world, kind) => BigInt(yieldPerLevel * techLevel(world, yieldKeys[kind]));
 
 export function rate(world, id) {
   const item = catalog.items[id];
@@ -149,20 +150,23 @@ export function unitPrice(world, id) {
   return item ? priceAt(item, BigInt(world.quality[id] ?? '1')) : 0n;
 }
 
-function qualityCoinFactor(item, id) {
-  if (item.kind === 'L' || item.kind === 'F') {
-    const ref = cropReferences[Number(id.slice(1)) - 1];
-    return 10n * (20n + 4n * BigInt(catalog.items[ref].price));
-  }
-  return 20n + 4n * BigInt(item.price);
+// Exact single-line value rate U = price × output × 1000 / durationMs, kept as a rational.
+function qualityCoinRate(item) {
+  return { numerator: BigInt(item.price) * BigInt(item.output) * 1000n, denominator: BigInt(item.durationMs) };
+}
+
+// Cumulative quality coefficient: Qc(q) = 200 × [Σ_{i<q} i² + ⌊(q−1)⁶/24000⌋], Qc(1) = 0.
+function qualityCoinCoefficient(level) {
+  const j = level - 1n;
+  return 200n * (j * level * (2n * level - 1n) / 6n + j ** 6n / 24000n);
+}
+
+function qualityCoins({ numerator, denominator }, level) {
+  return (qualityCoinCoefficient(level) * numerator + denominator - 1n) / denominator;
 }
 
 function qualitySum(level) {
   return level * (level + 1n) / 2n - 1n;
-}
-
-function qualitySquareSum(level) {
-  return level * (level + 1n) * (2n * level + 1n) / 6n - 1n;
 }
 
 function affordableTarget(current, quote) {
@@ -191,8 +195,8 @@ export function qualityOffer(world, id, steps = 1n) {
   const coefficients = Object.fromEntries(Object.entries(extraQualityInputs[item.kind] ?? item.inputs)
     .map(([material, amount]) => [material, BigInt(amount)]));
   coefficients[id] = (coefficients[id] ?? 0n) + 2n;
-  const factor = qualityCoinFactor(item, id);
-  const currentSquareSum = qualitySquareSum(current);
+  const coinRate = qualityCoinRate(item);
+  const currentCoins = qualityCoins(coinRate, current);
   const currentSum = qualitySum(current);
   const materials = Object.entries(coefficients).map(([material, coefficient]) => ({
     id: material, coefficient, levelCost: material === id ? 1n : 0n,
@@ -200,7 +204,7 @@ export function qualityOffer(world, id, steps = 1n) {
 
   const quote = (target) => {
     const sum = qualitySum(target);
-    const coins = factor * (qualitySquareSum(target) - currentSquareSum);
+    const coins = qualityCoins(coinRate, target) - currentCoins;
     const costs = materials.map(({ id: material, coefficient, levelCost }) => [material,
       discounted(coefficient * sum + levelCost * (target - 1n), reduction) -
         discounted(coefficient * currentSum + levelCost * (current - 1n), reduction),

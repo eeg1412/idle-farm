@@ -4,13 +4,14 @@ import { applyLongTermBalance, summarizeGeneratedBalance } from './long-term-bal
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
-const [catalogue, researchTable, stockTable, legacyJson, cropUses, baselineJson] = await Promise.all([
+const [catalogue, researchTable, stockTable, legacyJson, cropUses, baselineJson, balanceSpec] = await Promise.all([
   read('docs/expansion/05-catalog.md'),
   read('docs/expansion/06-research.md'),
   read('docs/expansion/02-livestock-fish.md'),
   read('src/content/catalog.json'),
   read('docs/expansion/08-crop-uses.md'),
   read('src/content/balance-baseline-v114.json'),
+  read('docs/expansion/07-balance-validation.md'),
 ]);
 
 const levelFor = productLevels(cropUses);
@@ -57,6 +58,40 @@ function amounts(text, label) {
   }
   return parsed;
 }
+
+// Exactly one table directly under `heading`, with the frozen header.
+function specTable(markdown, heading, header) {
+  const lines = markdown.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trim() === heading);
+  if (start === -1) fail(`07缺少「${heading}」`);
+  const end = lines.findIndex((line, index) => index > start && /^#{1,3} /.test(line));
+  const section = lines.slice(start + 1, end === -1 ? undefined : end).map((line) => line.trim());
+  const top = section.findIndex((line) => line.replace(/\s+/g, ' ') === header);
+  if (top === -1) fail(`07「${heading}」缺少表头 ${header}`);
+  if (!/^\|(\s*:?-{3,}:?\s*\|)+$/.test(section[top + 1] ?? '')) fail(`07「${heading}」表格分隔行无效`);
+  const columns = header.split('|').length - 2;
+  const rows = [];
+  for (const line of section.slice(top + 2)) {
+    if (!line.startsWith('|')) break;
+    const fields = line.split('|').slice(1, -1).map((field) => field.trim().replace(/^`(.*)`$/, '$1'));
+    if (!line.endsWith('|') || fields.length !== columns) fail(`07「${heading}」行无效：${line}`);
+    rows.push(fields);
+  }
+  if (!rows.length) fail(`07「${heading}」表格为空`);
+  return rows;
+}
+
+const anchorRows = specTable(balanceSpec, '### 7.7 研发总价锚点', '| U锚点 | 基准值B |');
+if (anchorRows.length !== 6) fail(`07研发总价锚点应为6行：${anchorRows.length}`);
+const researchAnchors = anchorRows.map(([u, b]) => ({ u: BigInt(positiveInteger(u, '研发U锚点')), b: BigInt(positiveInteger(b, '研发基准值B')) }));
+const researchOverrides = {};
+for (const [id, coins, materials] of specTable(balanceSpec, '### 7.8 研发引导覆盖', '| ID | 金币 | 材料 |')) {
+  if (!idPattern.test(id) || Object.hasOwn(researchOverrides, id)) fail(`07研发引导覆盖ID无效：${id}`);
+  const costs = amounts(materials, `07研发引导覆盖${id}`);
+  if (!Object.keys(costs).length) fail(`07研发引导覆盖${id}缺少材料`);
+  researchOverrides[id] = { coins: positiveInteger(coins, `07研发引导覆盖${id}金币`), costs };
+}
+const researchPolicy = { researchAnchors, researchOverrides };
 
 const stock = new Map();
 for (const [id, subject, name, seconds, output, price] of readRows(stockTable, '养殖表', 6, (id) => /^[LF]/.test(id))) {
@@ -153,11 +188,15 @@ while (pending.size) {
   if (pending.size === previous) fail(`研发前置无法解锁：${[...pending].join('、')}`);
 }
 
-// Detail tables retain their historical inputs. The formal LT policy overlays
-// prices from one immutable original snapshot, never game-data.json. Research
-// coins/costs/requires are copied from that snapshot without LT repricing.
+// Detail tables retain their historical inputs; only topology, cycles, output,
+// research prerequisites and research material kinds are used (checked against
+// the immutable 1.14 snapshot, never game-data.json). LT-2026-11-v3 then prices
+// raw goods by cycle (5κt³/144·out) and recipes by markup plus work value, and
+// regenerates every research node's coins and material quantities from its
+// unit value U using the 07 §7.7 anchors; 07 §7.8 guide overrides replace the
+// quantities of the listed entry nodes. See docs/expansion/07.
 const baseline = JSON.parse(baselineJson);
-const balanced = applyLongTermBalance({ initial, items, research }, baseline);
+const balanced = applyLongTermBalance({ initial, items, research }, baseline, researchPolicy);
 const output = `${JSON.stringify(balanced, null, 2)}\n`;
 const destination = new URL('src/content/game-data.json', root);
 if (process.argv.includes('--check')) {
@@ -168,5 +207,5 @@ if (process.argv.includes('--check')) {
 } else {
   await writeFile(destination, output);
   console.log(`已生成 ${balanced.balanceVersion}：${Object.keys(balanced.items).length} 个品项，${Object.keys(balanced.research).length} 个研发节点。`);
-  console.log(JSON.stringify(summarizeGeneratedBalance(balanced, baseline), null, 2));
+  console.log(JSON.stringify(summarizeGeneratedBalance(balanced, baseline, researchPolicy), null, 2));
 }

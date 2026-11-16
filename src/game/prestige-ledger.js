@@ -1,8 +1,11 @@
-export const prestigeLedgerVersion = 'LT-2026-11-v2';
+export const prestigeLedgerVersion = 'LT-2026-11-v3';
+export const previousPrestigeLedgerVersion = 'LT-2026-11-v2';
 
-const activityScale = 30000000n;
-const creditPerPoint = 10000000n;
+const activityScale = 49n;
+const creditPerPoint = 500000000n;
 const legacyPointScale = 25n;
+// LT-2026-11-v3 rescaled every coin amount by ten; carried amounts follow once.
+const coinScaleV3 = 10n;
 
 export function integerSquareRoot(value) {
   if (typeof value !== 'bigint' || value < 0n) throw new RangeError('Expected a nonnegative integer');
@@ -31,18 +34,37 @@ export function legacyResearchPointsReward(productionValue, multiplierBasisPoint
   return base * BigInt(multiplierBasisPoints) / 10000n;
 }
 
-// Return a migration draft; reading or encoding an old world must not mutate it.
-export function migratePrestigeLedger(world) {
-  if (world.prestigeLedgerVersion === prestigeLedgerVersion) return world;
-  if (world.prestigeLedgerVersion !== undefined) throw new RangeError('Unknown prestige ledger version');
+// Unversioned → LT-2026-11-v2: freeze the legacy reward and scale unspent RP once.
+function migrateUnversionedLedger(world) {
   const multiplierBasisPoints = 10000 + 200 * (world.tech?.appraisal ?? 0);
   return {
     ...world,
     ...newPrestigeLedger(),
+    prestigeLedgerVersion: previousPrestigeLedgerVersion,
     researchPoints: world.researchPoints * legacyPointScale,
     pendingLegacyResearchPoints: legacyResearchPointsReward(world.productionValue, multiplierBasisPoints) * legacyPointScale,
     legacyResearchPointsSettled: false,
   };
+}
+
+// LT-2026-11-v2 → v3: coins, run production value and lifetime T follow the ×10 coin scale once.
+// Unspent RP, the credit remainder and any unclaimed legacy RP are kept unchanged.
+function migrateV2Ledger(world) {
+  return {
+    ...world,
+    prestigeLedgerVersion,
+    coins: world.coins * coinScaleV3,
+    productionValue: world.productionValue * coinScaleV3,
+    lifetimeProductionValue: world.lifetimeProductionValue * coinScaleV3,
+  };
+}
+
+// Return a migration draft; reading or encoding an old world must not mutate it.
+export function migratePrestigeLedger(world) {
+  if (world.prestigeLedgerVersion === prestigeLedgerVersion) return world;
+  if (world.prestigeLedgerVersion === previousPrestigeLedgerVersion) return migrateV2Ledger(world);
+  if (world.prestigeLedgerVersion !== undefined) throw new RangeError('Unknown prestige ledger version');
+  return migrateV2Ledger(migrateUnversionedLedger(world));
 }
 
 export function recordProductionContribution(world, deltaValue, multiplierBasisPoints) {

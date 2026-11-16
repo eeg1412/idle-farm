@@ -430,6 +430,19 @@ const taskArt = {
   firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
   recipeCollection: 'nav-research', qualityCollection: 'nav-research', qualityMaster: 'nav-research',
   newFarm: 'sale-retain', itemCollection: 'nav-catalog',
+  firstUpgrade: 'scene-wheat', firstSeed: 'nav-research', firstSwitch: 'scene-wheat', bulkSale: 'nav-warehouse',
+  reserveStock: 'nav-warehouse', addProcessor: 'task-process', addRefinery: 'task-product',
+  stationPriority: 'task-process', stationUpgrade: 'task-process', firstQuality: 'nav-research',
+  recipeTrio: 'nav-research', fieldLevel10: 'scene-wheat', codex20: 'nav-catalog',
+  livestockUpgrade: 'scene-hen', fishUpgrade: 'scene-fish', firstTech: 'tech-farm', delegationTech: 'sale-retain',
+  collection100: 'nav-catalog', collection200: 'nav-catalog', collection300: 'nav-catalog', collection400: 'nav-catalog',
+  quality25: 'nav-research', quality50: 'nav-research', quality200: 'nav-research', quality400: 'nav-research',
+  facilityLevel50: 'scene-wheat', facilityLevel100: 'scene-wheat', facilityLevel200: 'scene-wheat',
+  facilityLevel400: 'scene-wheat', stationLevel10: 'task-process', stationLevel50: 'task-process',
+  stationLevel100: 'task-process', stationLevel200: 'task-process', techLevel25: 'tech-farm',
+  techLevel100: 'tech-farm', techLevel300: 'tech-farm', techLevel600: 'tech-farm', techLevel900: 'tech-farm',
+  techLevel1200: 'tech-farm', runs5: 'sale-reset', runs20: 'sale-reset', runs50: 'sale-reset', runs100: 'sale-reset',
+  livestockTop: 'scene-L10', fishTop: 'scene-F10',
 };
 const featuredGoals = ['buildLivestock', 'collectFish', 'firstLivestockProcessing', 'firstMixedProduct'];
 const taskItems = { firstHarvest: 'C01', firstFlour: 'I01', breadRecipe: 'P01', firstBread: 'P01',
@@ -440,7 +453,7 @@ export function renderTasks(ui) {
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
   ui.image('tasks-banner', 101);
-  ui.text('每项任务完成后自动发放一次金币，周回不重复领取。', { muted: true });
+  ui.text('每项任务完成后自动发放一次奖励，周回不重复领取。', { muted: true });
   const goals = active ? guide : [
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
     ...long.filter((goal) => !featuredGoals.includes(goal.id)),
@@ -448,8 +461,10 @@ export function renderTasks(ui) {
   ui.scrollList(goals, (cell, goal) => {
     cell.card((entry) => entry.feature(taskArt[goal.id], (card) => {
       card.heading(goal.name);
-      card.text('奖励 ' + compact(goal.rewardCoins) + ' 金币' + (goal.rewarded ? ' · 已到账' : ''),
-        { muted: !goal.rewarded });
+      const researchPoints = goal.rewardResearchPoints ?? 0n;
+      const reward = '奖励 ' + compact(goal.rewardCoins) + ' 金币' +
+        (researchPoints > 0n ? ' + ' + compact(researchPoints) + ' 高级研发点' : '');
+      card.text(reward + (goal.rewarded ? ' · 已到账' : ''), { muted: !goal.rewarded });
       const progress = compact(goal.current) + ' / ' + compact(goal.required);
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
@@ -466,10 +481,10 @@ export function renderTasks(ui) {
 const instructions = [
   ['田地', '新牧场先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
   ['畜牧和鱼池', '购买畜牧场或鱼池，再安排已研发的牲畜或鱼。更换对象立即开始新周期。'],
-  ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工，每批产出 1 件。'],
+  ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出件数等于工位等级，材料投入按等级同步增加；升级工位从下一批起生效。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。已研发品项可继续升级品质。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。'],
-  ['出售牧场', '生产积累高级研发点，确认出售牧场时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个，需重新安排配方，原优先生产与未完成批次清空。'],
+  ['出售牧场', '生产积累高级研发点，确认出售牧场时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留研发、品质、经营改良和任务进度。工坊重置为加工位、精制位各 1 个（均为 1 级），需重新安排配方，原优先生产与未完成批次清空。'],
 ];
 
 function showInstructions(ui) {

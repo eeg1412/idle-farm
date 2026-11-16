@@ -1,7 +1,7 @@
 import { AccessibilitySystem, Application, extensions } from 'pixi.js';
 import {
   advanceWorld, newWorld, settleProduction, catalog,
-  buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, arrangeStation, clearStation,
+  buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   setStationPriority, reserve, sell, sellBatch, sellFarm,
 } from './game/world.js';
 import { research, upgradeQuality, upgradeTech, qualityOffer } from './game/advancement.js';
@@ -58,8 +58,8 @@ function updateSettings(draft, partial) {
 }
 
 const actions = {
-  buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, arrangeStation, clearStation, setStationPriority,
-  reserve, sell, sellBatch, sellFarm, research, upgradeQuality, upgradeTech, updateSettings,
+  buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
+  setStationPriority, reserve, sell, sellBatch, sellFarm, research, upgradeQuality, upgradeTech, updateSettings,
 };
 
 if (__DEV_TEST_MODE__) {
@@ -127,7 +127,10 @@ function completedGuide(before, after) {
 }
 
 function taskRewardText(rewards) {
-  return rewards?.coins > 0n ? '任务奖励 +' + compact(rewards.coins) + ' 金币' : '';
+  const parts = [];
+  if (rewards?.coins > 0n) parts.push('+' + compact(rewards.coins) + ' 金币');
+  if (rewards?.researchPoints > 0n) parts.push('+' + compact(rewards.researchPoints) + ' 高级研发点');
+  return parts.length ? '任务奖励 ' + parts.join(' ') : '';
 }
 
 function progressToast(before, after, rewards) {
@@ -271,7 +274,7 @@ function feedback(name, args, before, after, quality) {
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - before.stats.revenue) + ' 金币', sound: 'sell' };
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
-  if (name === 'upgradeFacility') return { float: '已升级', sound: 'success' };
+  if (name === 'upgradeFacility' || name === 'upgradeStation') return { float: '已升级', sound: 'success' };
   if (name === 'reserve') return { float: '已保存保留量' };
   return {};
 }
