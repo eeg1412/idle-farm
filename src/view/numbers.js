@@ -12,12 +12,12 @@ function suffixFor(group) {
   return suffix;
 }
 
-export function compact(amount, decimalPlaces = 2) {
+export function compact(amount, decimalPlaces = 2, abbreviationThreshold = 10000n) {
   const value = BigInt(amount);
   const sign = value < 0n ? '-' : '';
   const absolute = value < 0n ? -value : value;
   const digits = absolute.toString();
-  if (absolute < 10000n) return sign + digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (absolute < abbreviationThreshold) return sign + digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   const group = Math.floor((digits.length - 1) / 3);
   const headLength = digits.length - group * 3;

@@ -1,5 +1,6 @@
 import { Container, Graphics, Rectangle, Sprite, Text, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
+import { researchHourMs } from '../game/advancement.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import { compact } from './numbers.js';
 import { gameHistory } from './navigation.js';
@@ -52,8 +53,9 @@ for (const [id, item] of Object.entries(data.items)) {
 }
 const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalog', 'facility-field', 'facility-empty-field',
   'facility-hen', 'facility-empty-barn', 'facility-fish', 'facility-empty-pond', 'facility-mill',
-  'facility-kitchen', 'coin', 'research-point', 'clock', 'task-barn', 'task-fish', 'task-process', 'task-product',
+  'facility-kitchen', 'coin', 'research-point', 'research-point-basic', 'market-up', 'market-down', 'clock', 'task-barn', 'task-fish', 'task-process', 'task-product',
   'sale-retain', 'sale-reset', 'tech-water', 'tech-farm', 'tech-livestock', 'tech-workshop',
+  'tech-market-forecast', 'tech-market-manipulation', 'tech-market-promotion', 'tech-premium-sales', 'tech-basic-research-rate',
   'facility-buffalo', 'facility-mallard', 'facility-goat', 'facility-goose', 'facility-pig',
   'facility-rabbit', 'facility-sheep', 'facility-muscovy', 'facility-cattle',
   'facility-carp', 'facility-sea-bass', 'facility-trout', 'facility-mandarin-fish', 'facility-salmon',
@@ -90,7 +92,7 @@ function restoreViewState(target, saved) {
 }
 // Fields no page draws statically: the projected clock moves them every frame, and the save
 // revision changes on every commit (including the 5-second autosave) without any visible effect.
-const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs', 'revision']);
+const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs', 'revision', 'basicResearchElapsedMs', 'basicResearchWeightedMs']);
 // Texture LRU limits for page icons and facility scenes. Animation textures are never evicted.
 const iconCacheLimit = 200;
 const sceneCacheLimit = 40;
@@ -1085,7 +1087,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (!result?.ok) { if (result?.message) toast(result.message); return false; }
       if (result.float) float(result.float);
       if (result.toast) toast(result.toast);
-      return true;
+      return result.qualityDraw ?? true;
     } finally {
       waiting = false;
       redraw();
@@ -1118,6 +1120,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const pinnedTop = pinned && Math.max(scroll, pinned.top);
     return !pinned || upper < pinnedTop || lower > pinnedTop + pinned.height ||
       left < pinned.left || right > pinned.right;
+  }
+
+  function marketLabel(parent, value, x, y, width, rate, options = {}) {
+    if (!rate) return textNode(parent, value, x, y, width, options);
+    const size = options.size ?? 16;
+    const color = rate > 0 ? palette.green : palette.red;
+    const icon = rate > 0 ? 'market-up' : 'market-down';
+    const mark = '×' + ((100 + rate) / 100);
+    const markSize = Math.min(width < 94 ? 11 : 15, size);
+    const iconSize = Math.min(width < 94 ? 13 : 19, size + 2);
+    const markWidth = Math.ceil(mark.length * markSize * 0.66);
+    const title = textNode(parent, value, x, y, Math.max(12, width - iconSize - markWidth - 7),
+      { ...options, color });
+    const left = Math.min(x + width - iconSize - markWidth - 3, title.x + title.width + 5);
+    const markTop = y + Math.max(0, (Math.min(title.height, Math.ceil(size * 1.36)) - iconSize) / 2);
+    drawImage(parent, icon, left, markTop, iconSize, iconSize);
+    textNode(parent, mark, left + iconSize + 2, y + Math.max(0, (size - markSize) * 0.68), markWidth,
+      { size: markSize, color, weight: '800', wrap: false });
+    return title;
   }
 
   function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
@@ -1167,12 +1188,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             rendered.set(index, tile);
           }
           tile.outline.clear();
-          if (focusIndex === focus && selected === index) {
+          if (onSelect && focusIndex === focus && selected === index) {
             tile.outline.roundRect(left, at, cellWidth, height, 9).stroke({ color: palette.green, width: 2 });
           }
         }
       }
-      if (!waiting) {
+      if (onSelect && !waiting) {
         hitAt(hit, parent, x, top, width, countRows * step - gap, (event) => {
           let index = selected;
           if (event) {
@@ -1224,12 +1245,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         });
         cursor += treeHeight;
       },
-      heading(value, { aside, asideNoWrap = false, style, size = style === 'production' ? 27 : 22 } = {}) {
+      heading(value, { aside, asideNoWrap = false, style, size = style === 'production' ? 27 : 22, marketRate } = {}) {
         const clearance = options.headingClearance;
         const headingWidth = clearance && cursor < clearance.bottom
           ? Math.max(1, Math.min(width, clearance.right - x)) : width;
         if (aside == null) {
-          const t = textNode(parent, value, x, cursor + 2, headingWidth, { size: size * scale(), weight: '800' });
+          const t = marketLabel(parent, value, x, cursor + 2, headingWidth, marketRate, { size: size * scale(), weight: '800' });
           cursor += t.height + 11;
           return;
         }
@@ -1383,7 +1404,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const aWidth = scale() > 1.45 || value == null ? width :
           Math.floor(width * (options.compact ? 0.68 : metric ? 0.65 : 0.53));
         const nameX = x + (options.valueIcon ? 0 : icon) + (options.pill ? 6 : 0);
-        const a = textNode(parent, label, nameX, cursor + 2, x + aWidth - nameX - (value == null && options.onClick ? 20 : 0),
+        const a = marketLabel(parent, label, nameX, cursor + 2,
+          x + aWidth - nameX - (value == null && options.onClick ? 20 : 0), options.marketRate,
           { size, weight: '750' });
         const amountSize = (metric || comparison ? 20 : compactRow ? 17 : 15) * scale();
         const sameLine = value != null && scale() <= 1.45 && valueStr.length * amountSize * 0.55 <= width - aWidth;
@@ -1396,7 +1418,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           ? transitionNode(parent, transition.from, transition.to, valueLeft, valueTop, valueWidth,
             { size: amountSize, color: options.tone === 'danger' ? palette.red : palette.ink,
               arrowColor: comparison ? 0xce8918 : options.tone === 'danger' ? palette.red : palette.ink })
-          : textNode(parent, valueStr, valueLeft, valueTop, valueWidth,
+          : marketLabel(parent, valueStr, valueLeft, valueTop, valueWidth, options.valueMarketRate,
             { size: amountSize, align: 'right', weight: '800', color: options.tone === 'danger' ? palette.red : palette.ink });
         if (icon && options.valueIcon) drawImage(parent, options.icon, x + width - icon - (options.onClick ? 20 : 0),
           b?.y ?? cursor, icon - 3, icon - 3);
@@ -1416,9 +1438,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += height + (compactRow ? 3 : rowGap);
       },
       detailRows(entries, { variant = 'label' } = {}) {
-        const draw = (group) => entries.forEach(({ label, value, icon, tone, onClick }) => {
+        const draw = (group) => entries.forEach(({ label, value, icon, tone, marketRate, onClick }) => {
           group.row(label, value, {
-            icon, tone, compact: true, divider: variant === 'label', onClick,
+            icon, tone, marketRate, compact: true, divider: variant === 'label', onClick,
             valueIcon: variant === 'label' && value != null, pill: variant === 'pill' && scale() <= 1.2,
           });
         });
@@ -1519,11 +1541,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         cursor += h + rowGap;
       },
-      item(id, title, description) {
+      item(id, title, description, { marketRate } = {}) {
         const icon = hasIcon(id) ? 60 : 0;
         if (icon) drawImage(parent, id, x, cursor, 52, 52);
-        const label = textNode(parent, title ?? data.items[id]?.name ?? '', x + icon, cursor,
-          width - icon, { size: 18 * scale(), weight: '800' });
+        const label = marketLabel(parent, title ?? data.items[id]?.name ?? '', x + icon, cursor,
+          width - icon, marketRate, { size: 18 * scale(), weight: '800' });
         const extra = description == null ? 0 : textNode(parent, description, x + icon, cursor + label.height + 2,
           width - icon, { size: 13 * scale(), color: palette.muted }).height + 2;
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
@@ -1582,11 +1604,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const top = cursor;
           let height = 0;
           const cells = [];
-          entries.slice(index, index + count).forEach(({ label, value }, column) => {
+          entries.slice(index, index + count).forEach(({ label, value, icon }, column) => {
             const layer = new Container();
             const left = x + column * (cellWidth + gap);
             parent.addChild(layer);
-            const a = textNode(layer, label, left + 4, top + 4, cellWidth - 8,
+            const iconSize = hasIcon(icon) ? 20 : 0;
+            if (iconSize) drawImage(layer, icon, left + 5, top + 3, iconSize, iconSize);
+            const a = textNode(layer, label, left + 4 + iconSize, top + 4, cellWidth - 8 - iconSize,
               { size: (style === 'workshop' ? 14 : 13) * scale(), align: 'center', color: palette.ink });
             const b = textNode(layer, value, left + 4, a.y + a.height, cellWidth - 8,
               { size: (style === 'workshop' ? 22 : 17) * scale(), align: 'center', weight: '800' });
@@ -1682,6 +1706,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           toneAtClock: () => currentBatch(target) ? options.tone ?? 'plain' : inactiveTone,
         });
       },
+      researchProgress() {
+        ui.row('距下次发放', undefined, {
+          compact: true, noWrap: true, icon: 'clock',
+          valueAtClock: (clock) => {
+            const elapsed = world.basicResearchElapsedMs + Math.floor(Math.max(0, clock - world.clockMs));
+            const seconds = Math.ceil((researchHourMs - elapsed % researchHourMs) / 1000);
+            return Math.floor(seconds / 60) + ' 分 ' + seconds % 60 + ' 秒';
+          },
+        });
+      },
       batchProgress(batch, source) {
         const top = cursor;
         const track = panel(parent, x, top, width, 8, palette.line, null, 4);
@@ -1718,9 +1752,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (!rows.length) return;
         if (title) ui.heading(title, { size: 21 });
         if (width < 195 || scale() > 1.5) {
-          for (const { id, label, owned, needed, onClick } of rows) {
+          for (const { id, label, owned, needed, marketRate, onClick } of rows) {
             ui.row(label ?? data.items[id]?.name ?? '', number(owned) + ' / ' + number(needed), {
-              icon: id, tone: owned < needed ? 'danger' : 'plain',
+              icon: id, marketRate, tone: owned < needed ? 'danger' : 'plain',
             });
             if (onClick) ui.button('查看来源', onClick);
           }
@@ -1740,12 +1774,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         });
         const headerHeight = Math.ceil((featured ? 29 : 23) * scale());
         cursor += headerHeight;
-        for (const { id, label, owned, needed, onClick } of rows) {
+        for (const { id, label, owned, needed, marketRate, onClick } of rows) {
           line.moveTo(x, cursor).lineTo(x + width, cursor);
           const icon = hasIcon(id) ? (featured ? 38 : 27) : 0;
           if (icon) drawImage(parent, id, x + 3, cursor + 5, icon - 4, icon - 4);
-          const a = textNode(parent, label ?? data.items[id]?.name ?? '', x + icon + 4, cursor + 4,
-            nameWidth - icon - 7, { size: (featured ? 17 : 14) * scale(), weight: '750' });
+          const a = marketLabel(parent, label ?? data.items[id]?.name ?? '', x + icon + 4, cursor + 4,
+            nameWidth - icon - 7, marketRate, { size: (featured ? 17 : 14) * scale(), weight: '750' });
           const b = textNode(parent, owned, x + nameWidth, cursor + 4, amountWidth - 6,
             { size: (featured ? 18 : 14) * scale(), align: 'right', color: owned < needed ? palette.red : palette.ink, weight: '800' });
           const c = textNode(parent, needed, x + nameWidth + amountWidth, cursor + 4, amountWidth - 6,
@@ -1942,7 +1976,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (title.width > span - 66) title.style.fontSize *= (span - 66) / title.width;
           textNode(layer, status, left + 47, top + height - 5 - Math.ceil(13 * scale() * 1.36), span - 66,
             { size: 13 * scale(), color: palette.muted });
-          directionIcon(layer, 'right', left + span - 20, top + (height - 18) / 2, 15, 18,
+          if (onSelect) directionIcon(layer, 'right', left + span - 20, top + (height - 18) / 2, 15, 18,
             { color: palette.green });
         });
       },
@@ -1953,15 +1987,28 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const limit = iconsOnly ? 8 : largeType ? 2 : 4;
         const columns = clamp(Math.floor((width + 7) / (minimum + 7)), 1, limit);
         const lineHeight = Math.ceil(font * 1.2);
-        const height = iconsOnly ? 49 : 47 + lineHeight * 3;
+        const hasMarket = items.some((item) => item.marketRate);
+        const marketHeight = hasMarket ? 19 : 0;
+        const height = (iconsOnly ? 49 : 47 + lineHeight * 3) + marketHeight;
         scrollChoices(items, onSelect, columns, height, (layer, item, left, top, span) => {
           const card = panel(layer, left, top, span, height,
             item.selected ? palette.selection : palette.card, item.selected ? palette.green : palette.line, 11);
           card.label = 'picker-choice:' + item.id;
           drawImage(layer, item.icon ?? item.id, left + (span - 32) / 2, top + (iconsOnly ? 8 : 6), 32, 32);
+          if (item.marketRate) {
+            const rate = item.marketRate;
+            const color = rate > 0 ? palette.green : palette.red;
+            const rateIcon = rate > 0 ? 'market-up' : 'market-down';
+            const mark = '×' + ((100 + rate) / 100);
+            const marketY = top + height - 19;
+            drawImage(layer, rateIcon, left + (span - 41) / 2, marketY, 15, 15);
+            textNode(layer, mark, left + (span - 41) / 2 + 16, marketY, 28,
+              { size: 12, color, weight: '800', wrap: false });
+          }
           if (iconsOnly) return;
           const title = textNode(layer, item.label, left + 5, top + 42, span - 10,
-            { size: font, align: 'center', weight: '800' });
+            { size: font, align: 'center', weight: '800', color: item.marketRate > 0 ? palette.green :
+              item.marketRate < 0 ? palette.red : palette.ink });
           title.style.lineHeight = lineHeight;
           while (title.height > lineHeight * 2 && title.style.fontSize > 9) {
             title.style.fontSize -= 1;
@@ -1969,7 +2016,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           }
           title.x = left + (span - title.width) / 2;
           title.y = top + 40 + (lineHeight * 2 - title.height) / 2;
-          textNode(layer, item.duration, left + 4, top + height - lineHeight - 4, span - 8,
+          textNode(layer, item.duration, left + 4, top + height - marketHeight - lineHeight - 4, span - 8,
             { size: Math.max(10, font - 2), align: 'center', color: palette.muted, wrap: false });
         });
       },
@@ -2490,9 +2537,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function cachedResearchReadyTabs(world) {
-    const { coins, researchPoints, unlocked, inventory, quality, tech } = world;
+    const { accountSeed, basicResearchPoints, coins, researchPoints, unlocked, inventory, tech } = world;
     // Committed and projected worlds expose these inputs as read-only snapshots.
-    const inputs = { coins, researchPoints, unlocked, inventory, quality, tech };
+    const inputs = { accountSeed, basicResearchPoints, coins, researchPoints, unlocked, inventory, tech };
     if (!sameState(lastResearchReady?.inputs, inputs)) {
       lastResearchReady = { inputs, tabs: researchReadyTabs(world) };
     }

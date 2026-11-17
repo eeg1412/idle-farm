@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { researchOffer, techDefinitions, techLevelLimit, techOffer } from '../src/game/advancement.js';
+import { researchOffer, techDefinitions, techOffer } from '../src/game/advancement.js';
 import { grantDevelopmentTools } from '../src/game/development-tools.js';
 import { advanceWorld, arrangeStation, catalog, newWorld } from '../src/game/world.js';
 
@@ -17,10 +17,10 @@ test('development tools unlock every item and complete every technology without 
   assert.deepEqual(new Set(world.unlocked), new Set(Object.keys(catalog.items)));
   assert.equal(world.unlocked.length, new Set(world.unlocked).size);
   for (const id of Object.keys(catalog.research)) assert.equal(researchOffer(world, id), null);
-  for (const { key } of techDefinitions) {
+  for (const { key, maxLevel } of techDefinitions) {
     const offer = techOffer(world, key);
     assert.equal(offer.maxed, true, key);
-    assert.equal(offer.level, techLevelLimit, key);
+    assert.equal(offer.level, maxLevel, key);
     assert.equal(offer.eligible, false, key);
   }
 });

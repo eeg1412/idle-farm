@@ -1,11 +1,9 @@
-export const prestigeLedgerVersion = 'LT-2026-11-v3';
-export const previousPrestigeLedgerVersion = 'LT-2026-11-v2';
+import { coinScale } from './coin-scale.js';
+
+export const prestigeLedgerVersion = 'LT-2026-11-v7';
 
 const activityScale = 49n;
-const creditPerPoint = 500000000n;
-const legacyPointScale = 25n;
-// LT-2026-11-v3 rescaled every coin amount by ten; carried amounts follow once.
-const coinScaleV3 = 10n;
+const creditPerPoint = integerSquareRoot(1_000_000n ** 2n * coinScale);
 
 export function integerSquareRoot(value) {
   if (typeof value !== 'bigint' || value < 0n) throw new RangeError('Expected a nonnegative integer');
@@ -24,69 +22,16 @@ export function newPrestigeLedger() {
     prestigeLedgerVersion,
     lifetimeProductionValue: 0n,
     prestigeCredit: 0n,
-    pendingLegacyResearchPoints: 0n,
-    legacyResearchPointsSettled: true,
   };
 }
 
-export function legacyResearchPointsReward(productionValue, multiplierBasisPoints) {
-  const base = BigInt((1n + productionValue / 1000n).toString(2).length) - 1n;
-  return base * BigInt(multiplierBasisPoints) / 10000n;
-}
-
-// Unversioned → LT-2026-11-v2: freeze the legacy reward and scale unspent RP once.
-function migrateUnversionedLedger(world) {
-  const multiplierBasisPoints = 10000 + 200 * (world.tech?.appraisal ?? 0);
-  return {
-    ...world,
-    ...newPrestigeLedger(),
-    prestigeLedgerVersion: previousPrestigeLedgerVersion,
-    researchPoints: world.researchPoints * legacyPointScale,
-    pendingLegacyResearchPoints: legacyResearchPointsReward(world.productionValue, multiplierBasisPoints) * legacyPointScale,
-    legacyResearchPointsSettled: false,
-  };
-}
-
-// LT-2026-11-v2 → v3: coins, run production value and lifetime T follow the ×10 coin scale once.
-// Unspent RP, the credit remainder and any unclaimed legacy RP are kept unchanged.
-function migrateV2Ledger(world) {
-  return {
-    ...world,
-    prestigeLedgerVersion,
-    coins: world.coins * coinScaleV3,
-    productionValue: world.productionValue * coinScaleV3,
-    lifetimeProductionValue: world.lifetimeProductionValue * coinScaleV3,
-  };
-}
-
-// Return a migration draft; reading or encoding an old world must not mutate it.
-export function migratePrestigeLedger(world) {
-  if (world.prestigeLedgerVersion === prestigeLedgerVersion) return world;
-  if (world.prestigeLedgerVersion === previousPrestigeLedgerVersion) return migrateV2Ledger(world);
-  if (world.prestigeLedgerVersion !== undefined) throw new RangeError('Unknown prestige ledger version');
-  return migrateV2Ledger(migrateUnversionedLedger(world));
-}
-
-export function recordProductionContribution(world, deltaValue, multiplierBasisPoints) {
-  const ledger = migratePrestigeLedger(world);
-  if (ledger !== world) Object.assign(world, ledger);
-  const previous = integerSquareRoot(activityScale * world.lifetimeProductionValue);
-  world.lifetimeProductionValue += deltaValue;
-  const current = integerSquareRoot(activityScale * world.lifetimeProductionValue);
-  world.prestigeCredit += (current - previous) * BigInt(multiplierBasisPoints);
-}
-
-// Equivalent to calling recordProductionContribution per deposit while the multiplier stays fixed:
-// the per-deposit square-root differences telescope, so one credit at flush is exactly equal.
-// The ledger migrates lazily on the first contribution, as recordProductionContribution does.
+// Under a fixed appraisal multiplier, the per-deposit differences between square roots telescope.
 export function productionContributionBatch(world) {
   let startRoot = null;
   let multiplier = 0n;
   return {
     add(deltaValue, multiplierBasisPoints) {
       if (startRoot === null) {
-        const ledger = migratePrestigeLedger(world);
-        if (ledger !== world) Object.assign(world, ledger);
         startRoot = integerSquareRoot(activityScale * world.lifetimeProductionValue);
         multiplier = BigInt(multiplierBasisPoints);
       }
@@ -102,29 +47,18 @@ export function productionContributionBatch(world) {
 }
 
 export function prestigeLedgerOffer(world) {
-  const ledger = migratePrestigeLedger(world);
-  const newResearchPoints = ledger.prestigeCredit / creditPerPoint;
-  const legacyResearchPoints = ledger.legacyResearchPointsSettled ? 0n : ledger.pendingLegacyResearchPoints;
   return {
-    prestigeLedgerVersion: ledger.prestigeLedgerVersion,
-    lifetimeProductionValue: ledger.lifetimeProductionValue,
-    prestigeCredit: ledger.prestigeCredit,
-    pendingLegacyResearchPoints: ledger.pendingLegacyResearchPoints,
-    legacyResearchPointsSettled: ledger.legacyResearchPointsSettled,
-    newResearchPoints,
-    legacyResearchPoints,
-    reward: newResearchPoints + legacyResearchPoints,
+    prestigeLedgerVersion: world.prestigeLedgerVersion,
+    lifetimeProductionValue: world.lifetimeProductionValue,
+    prestigeCredit: world.prestigeCredit,
+    reward: world.prestigeCredit / creditPerPoint,
   };
 }
 
 // Called only by the existing successful farm sale, before its normal reset.
 export function settlePrestigeLedger(world) {
-  const ledger = migratePrestigeLedger(world);
-  if (ledger !== world) Object.assign(world, ledger);
   const { reward } = prestigeLedgerOffer(world);
   world.researchPoints += reward;
   world.prestigeCredit %= creditPerPoint;
-  world.pendingLegacyResearchPoints = 0n;
-  world.legacyResearchPointsSettled = true;
   return reward;
 }

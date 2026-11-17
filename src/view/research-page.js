@@ -1,12 +1,16 @@
 import { catalog, quantity } from '../game/world.js';
-import { qualityOffer, researchOffer, techDefinitions, techLevelLimit, techOffer, unitPrice } from '../game/advancement.js';
+import { basicResearchHourlyRate, researchOffer, techDefinitions, techOffer, unitPrice } from '../game/advancement.js';
+import { qualityDrawCost, qualityDrawOffer } from '../game/quality.js';
 import { hoursLabel } from './management-pages.js';
 import { compact } from './numbers.js';
 
-const tabs = ['品种配方', '品质', '经营改良'];
+const recipeTab = '品种配方';
+const qualityTab = '品质';
+const techTab = '经营改良';
+const tabs = [recipeTab, qualityTab, techTab];
 const sources = ['全部', '农业', '畜牧', '水产'];
 const kinds = ['全部', '原料', '中间产物', '商品'];
-const techSources = ['全部', '通用', ...sources.slice(1)];
+const techSources = ['全部', '通用', ...sources.slice(1), '市场'];
 // Crop uses include new recipes made with previously available ingredients.
 const cropUseRanges = {
   纺织与染料: [['C', 51, 52], ['C', 57, 61], ['I', 101, 102], ['I', 109, 117],
@@ -19,7 +23,6 @@ const cropUseRanges = {
 const cropUses = ['全部用途', ...Object.keys(cropUseRanges)];
 const catalogItems = Object.entries(catalog.items);
 const recipeResearch = Object.entries(catalog.research);
-const qualitySteps = [['+1', 1n], ['+10', 10n], ['+100', 100n], ['最高可升', 'max']];
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
 const livestockArt = {
   L01: 'facility-hen',
@@ -45,6 +48,11 @@ const techArt = {
   workshopSpeed: 'tech-workshop',
   fishBuy: 'facility-fish',
   fishUpgrade: 'facility-empty-pond',
+  basicResearchRate: 'tech-basic-research-rate',
+  marketManipulation: 'tech-market-manipulation',
+  marketForecast: 'tech-market-forecast',
+  marketPromotion: 'tech-market-promotion',
+  premiumSales: 'tech-premium-sales',
 };
 
 function itemKind(item) {
@@ -151,55 +159,51 @@ function showResearch(ui, id) {
   ui.dialog(researchName(catalog.items[id]), (dialog) => researchDetails(dialog, id));
 }
 
-function qualityDetails(ui, id, local) {
-  const item = catalog.items[id];
-  const selected = local.step ?? 1n;
-  const offer = qualityOffer(ui.w, id, selected);
-  if (!offer) return;
-  const { current, target, currentPrice, nextPrice, priceDelta, coins, costs } = offer;
-  ui.feature(id === 'F01' ? 'scene-fish' : id, (content) => {
-    content.heading(item.name, { size: 30 });
-    content.detailRows([
-      { label: '品质', value: { from: compact(current), to: compact(target) } },
-      { label: '单价（金币）', value: { from: compact(currentPrice), to: compact(nextPrice) } },
-      { label: '本次每件涨价', value: compact(priceDelta) + ' 金币' },
-    ], { variant: 'pill' });
-  }, { ratio: 0.36, surface: item.kind === 'F' ? 'water' : undefined, align: 'center', style: 'research' });
-  ui.buttons(qualitySteps.map(([label, step]) => ({
-    label, tone: step === selected ? 'gold' : 'plain',
-    onClick: () => { local.step = step; ui.refresh(); },
-  })), { style: 'production' });
-  if (priceDelta === 0n) ui.text('本次升级单价不变，没有现金售价提升。', { muted: true });
-  showMaterials(ui, costs, coins, '升级所需材料');
-  if (offer.researchPoints > 0n) {
-    ui.heading('高级研发点', { size: 21 });
-    ui.materialTable([{ id: 'research-point', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.researchPoints }],
-      { style: 'research' });
-  }
+function showQualityDrawResults(ui, result) {
+  ui.dialog('品质抽取结果', (dialog) => {
+    dialog.row('完成抽取', compact(result.count) + ' 次');
+    dialog.scrollList(Object.entries(result.gains).sort(([a], [b]) => a.localeCompare(b)), (row, [id, gain]) => {
+      row.row(catalog.items[id].name, '+' + compact(gain) + ' 级', { icon: id });
+    });
+  });
+}
+
+function renderQuality(ui) {
+  ui.stats([{ label: '普通研发点', value: ui.w.basicResearchPoints, icon: 'research-point-basic' }]);
+  ui.researchProgress();
+  ui.text(`每小时发放 ${basicResearchHourlyRate(ui.w)} 普通研发点。每抽消耗 ${qualityDrawCost} 点，随机提升一个已研发品项的品质。`,
+    { muted: true });
+  const single = qualityDrawOffer(ui.w, 'single');
+  const all = qualityDrawOffer(ui.w, 'all');
   ui.buttons([
-    {
-      label: '确认升级', tone: 'gold', disabled: !offer.affordable,
-      onClick: () => ui.action('upgradeQuality', id, target - current),
-    },
+    { label: '抽取一次', tone: 'gold', disabled: !single.affordable, onClick: () => submit(single) },
+    { label: `全部抽取（${compact(all.count)} 次）`, disabled: !all.affordable, onClick: () => submit(all) },
   ], { style: 'production', size: 'large' });
-  showMaterialSources(ui, costs);
+
+  async function submit(offer) {
+    const result = await ui.action('drawQuality', offer.mode, offer);
+    if (result) showQualityDrawResults(ui, result);
+  }
+  const unlocked = new Set(ui.w.unlocked);
+  ui.heading('已研发品项品质');
+  ui.indexRows(catalogItems.filter(([id]) => unlocked.has(id)).map(([id, item]) => ({
+    icon: id, label: item.name, status: '品质 ' + compact(ui.w.quality[id] ?? 1n) + ' 级',
+  })));
 }
 
-function showQuality(ui, id) {
-  const local = { step: 1n };
-  ui.dialog(catalog.items[id].name, (dialog) => qualityDetails(dialog, id, local));
-}
-
-function techEffect(offer) {
+function techEffect(offer, key) {
   const transition = (current, next) => offer.maxed ? current : { from: current, to: next };
   const { label, current, next, unit } = offer.effect;
-  const prefix = label === '费用降低' ? '降低' : label === '生产提速' ? '提速' : '';
+  const prefix = label.endsWith('费用降低') ? '降低' : label === '生产提速' ? '提速' : '';
   const effect = (value) => {
     if (unit === '分钟') {
       const hours = Math.floor(value / 60);
       const minutes = value % 60;
       return (hours ? `${hours}小时` : '') + (minutes ? `${minutes}分钟` : '');
     }
+    if (key === 'marketForecast') return value ? '可查看' : '未解锁';
+    if (key === 'premiumSales') return `${value.toFixed(2)} ${unit}`;
+    if (unit === '次' || unit === '点') return `${value} ${unit}`;
     return `${prefix}${value}${unit}`;
   };
   return { label, value: transition(effect(current), effect(next)) };
@@ -207,21 +211,21 @@ function techEffect(offer) {
 
 function techRequirements(ui, definition) {
   const rows = [];
-  if (definition.prerequisite) {
+  if (definition.prerequisite && (ui.w.tech[definition.prerequisite] ?? 0) < definition.prerequisiteLevel) {
     const prerequisite = techByKey[definition.prerequisite];
     rows.push({
-      label: `${prerequisite.name} ${techLevelLimit} 级`,
+      label: `${prerequisite.name} ${definition.prerequisiteLevel} 级`,
       icon: techIcon(prerequisite),
-      value: techOffer(ui.w, prerequisite.key).maxed ? '已达成' : '未达成',
+      value: '未达成',
       onClick: () => showTech(ui, prerequisite),
     });
   }
-  if (definition.item) {
+  if (definition.item && !ui.w.unlocked.includes(definition.item)) {
     const item = catalog.items[definition.item];
     rows.push({
       label: `已研发${researchName(item)}`,
       icon: researchIcon(definition.item),
-      value: ui.w.unlocked.includes(definition.item) ? '已达成' : '未达成',
+      value: '未达成',
       onClick: () => showResearch(ui, definition.item),
     });
   }
@@ -235,23 +239,18 @@ function techDetails(ui, definition) {
   if (!offer) return;
   ui.feature(techIcon(definition), (content) => {
     content.heading(definition.name, { size: 30 });
-    const level = offer.maxed ? { label: `${techLevelLimit} 级 · 已满级` }
+    const level = offer.maxed ? { label: `${offer.maxLevel} 级 · 已满级` }
       : { from: compact(offer.level), to: compact(offer.level + 1) + ' 级' };
     content.badges([level], { style: 'production' });
-    content.detailRows([techEffect(offer)], { variant: 'stack' });
+    content.detailRows([techEffect(offer, definition.key)], { variant: 'stack' });
   }, {
     ratio: 0.42,
     surface: definition.source === '水产' ? 'water' : undefined,
     align: 'center',
     style: 'research',
   });
-  ui.text(definition.description, { muted: true });
-  if (definition.key === 'appraisal') {
-    ui.text('升级只提高之后生产的点数收益，已有收益保持原倍率；出售牧场时领取。', { muted: true });
-  }
   techRequirements(ui, definition);
   if (offer.maxed) return;
-  ui.heading('高级研发点', { size: 21 });
   ui.materialTable([{ id: 'research-point', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.cost }],
     { style: 'research' });
   ui.buttons([
@@ -277,21 +276,9 @@ function researchNodes(w) {
   }));
 }
 
-function qualityNodes(w) {
-  const unlocked = new Set(w.unlocked);
-  return catalogItems.filter(([id]) => unlocked.has(id)).map(([id, item]) => {
-    const offer = qualityOffer(w, id);
-    return {
-      id, label: item.name, icon: id, requires: [],
-      status: `品质 ${compact(offer.current)}`, tone: offer.affordable ? 'ready' : 'neutral',
-      nextLabel: `品质 ${compact(offer.target)}`,
-    };
-  });
-}
-
 function techNodes(w) {
   return techDefinitions.map((definition) => {
-    const { key, name, prerequisite } = definition;
+    const { key, name, prerequisite, source } = definition;
     const offer = techOffer(w, key);
     const level = `${compact(offer.level)} 级`;
     let status = `${level} · 点数不足`;
@@ -306,13 +293,15 @@ function techNodes(w) {
       tone = 'ready';
     }
     return {
-      id: key, label: name, icon: techIcon(definition), status, tone,
+      id: key, label: name, icon: techIcon(definition), status, tone, group: source,
       requires: prerequisite ? [prerequisite] : [],
     };
   });
 }
 
-function showNodeFinder(ui, nodes, view, efficiency, quality) {
+function showNodeFinder(ui, nodes, view, active) {
+  const efficiency = active === techTab;
+  const recipes = active === recipeTab;
   ui.dialog('查找节点', (dialog) => {
     const local = dialog.local;
     const source = local.source ?? sources[0];
@@ -330,11 +319,11 @@ function showNodeFinder(ui, nodes, view, efficiency, quality) {
     dialog.tabs(efficiency ? techSources : sources, source, (value) => select('source', value), { style: 'filter' });
     if (showCropUses) dialog.tabs(cropUses, cropUse, (value) => select('cropUse', value), { style: 'filter' });
     if (!efficiency) dialog.tabs(kinds, kind, (value) => select('kind', value), { style: 'filter' });
-    if (!efficiency && !quality) dialog.tabs(['全部状态', '已研发', '可研发'], status,
+    if (recipes) dialog.tabs(['全部状态', '已研发', '可研发'], status,
       (value) => select('status', value), { style: 'filter' });
     const matches = nodes.filter((node) => {
       const { id } = node;
-      if (!efficiency && !quality && status !== '全部状态' && node.status !== status) return false;
+      if (recipes && status !== '全部状态' && node.status !== status) return false;
       if (efficiency) return source === sources[0] || techByKey[id].source === source;
       const item = catalog.items[id];
       const matchesSource = source === sources[0] || item.sources.includes(source);
@@ -358,21 +347,14 @@ export function researchReadyTabs(world) {
     if (unlocked.has(id) || !node.requires.every((required) => unlocked.has(required))) return false;
     const offer = researchOffer(world, id, unlocked);
     return offer?.eligible && offer.affordable;
-  })) readyTabs.add(tabs[0]);
+  })) readyTabs.add(recipeTab);
 
-  for (const id of unlocked) {
-    // Each level adds at least 5 of its own item before discount. With up to 50% off,
-    // subtracting the two rounded cumulative costs leaves a cost of at least 2.
-    if (quantity(world, id) >= 2n && qualityOffer(world, id, 1n)?.affordable) {
-      readyTabs.add(tabs[1]);
-      break;
-    }
-  }
+  if (qualityDrawOffer(world).affordable) readyTabs.add(qualityTab);
 
   if (techDefinitions.some(({ key }) => {
     const offer = techOffer(world, key);
     return offer?.eligible && offer.affordable;
-  })) readyTabs.add(tabs[2]);
+  })) readyTabs.add(techTab);
   return readyTabs;
 }
 
@@ -380,9 +362,9 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
   const local = ui.local;
   const { id, openResearchItem } = local;
   const linked = id && catalog.items[id];
-  const requested = tabs.includes(local.tab) ? local.tab : tabs[0];
-  const active = linked && (requested === tabs[2] || (requested === tabs[1] && !ui.w.unlocked.includes(id)))
-    ? tabs[0] : requested;
+  const requested = tabs.includes(local.tab) ? local.tab : recipeTab;
+  const active = linked && (requested === techTab ||
+    (requested === qualityTab && !ui.w.unlocked.includes(id))) ? recipeTab : requested;
   local.tab = active;
   local.activeResearchTab = active;
   const panels = local.researchPanels ?? (local.researchPanels = {});
@@ -397,21 +379,20 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
     delete local.linkedResearchItem;
     ui.refresh();
   }, { keepScroll: true, sticky: true, style: 'segmented', indicatorTabs: readyTabs });
-  const efficiency = active === tabs[2];
-  const quality = active === tabs[1];
-  if (efficiency || quality) {
-    ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point' });
+  const efficiency = active === techTab;
+  const quality = active === qualityTab;
+  if (quality) {
+    renderQuality(ui);
+    return;
   }
-  const nodes = efficiency ? techNodes(ui.w) : quality ? qualityNodes(ui.w) : researchNodes(ui.w);
-  const select = (key) => {
-    if (efficiency) showTech(ui, techByKey[key]);
-    else if (quality) showQuality(ui, key);
-    else showResearch(ui, key);
-  };
+  if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point' });
+  const nodes = efficiency ? techNodes(ui.w) : researchNodes(ui.w);
+  const select = (key) => efficiency ? showTech(ui, techByKey[key]) : showResearch(ui, key);
   if (linked && openResearchItem) {
     view.focus = id;
     select(id);
   }
-  ui.tree({ nodes, view, mode: quality ? 'quality' : 'map',
-    onSelect: select, onFind: () => showNodeFinder(ui, nodes, view, efficiency, quality) });
+  ui.tree({ nodes, view,
+    groups: efficiency ? techSources.slice(1) : undefined,
+    onSelect: select, onFind: () => showNodeFinder(ui, nodes, view, active) });
 }

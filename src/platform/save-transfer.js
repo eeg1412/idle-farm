@@ -1,10 +1,12 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
+import { worldSchemaVersion } from '../game/world.js';
 import { decodeWorldRecord, encodeWorldRecord } from './world-save.js';
 
 const format = 'idle-farm-save';
-const formatVersion = 1;
-const schemaVersion = 2;
-const gameVersion = catalog.version ?? '1.14';
+const formatVersion = 2;
+const gameVersion = catalog.version;
+const balanceVersion = catalog.balanceVersion;
+export const saveFormatMessage = '存档格式与当前游戏不匹配。';
 
 export function saveTransferError(message, cause, code) {
   const error = new Error(message, { cause });
@@ -25,9 +27,8 @@ export function createSaveTransfer({ development = false, browser = window } = {
     if (!packet || typeof packet !== 'object' || Array.isArray(packet) || packet.format !== format) {
       throw saveTransferError('这不是放置农场导出的存档文件，请重新选择。', undefined, 'import-invalid-format');
     }
-    if (packet.formatVersion !== formatVersion || packet.gameVersion !== gameVersion ||
-        packet.schemaVersion !== schemaVersion) {
-      throw saveTransferError('存档版本不一致，只能导入当前版本的存档。', undefined, 'import-version-mismatch');
+    if (packet.formatVersion !== formatVersion || packet.schemaVersion !== worldSchemaVersion) {
+      throw saveTransferError(saveFormatMessage, undefined, 'import-version-mismatch');
     }
     if (packet.environment !== environment) {
       throw saveTransferError('存档环境不一致，开发存档与正式存档不能互相导入。', undefined, 'import-environment-mismatch');
@@ -35,21 +36,25 @@ export function createSaveTransfer({ development = false, browser = window } = {
     if (!packet.record || typeof packet.record !== 'object' || Array.isArray(packet.record)) {
       throw saveTransferError('存档数据不完整或已损坏，无法导入。', undefined, 'import-corrupt-record');
     }
-    if (packet.record.schemaVersion !== schemaVersion) {
-      throw saveTransferError('存档版本不一致，只能导入当前版本的存档。', undefined, 'import-version-mismatch');
+    try {
+      return { packet, world: decodeWorldRecord(packet.record) };
+    } catch (cause) {
+      if (cause.code === 'unsupported-version') {
+        throw saveTransferError(saveFormatMessage, cause, 'import-version-mismatch');
+      }
+      throw saveTransferError('存档数据不完整或已损坏，无法导入。', cause, 'import-corrupt-record');
     }
-    try { return decodeWorldRecord(packet.record); }
-    catch (cause) { throw saveTransferError('存档数据不完整或已损坏，无法导入。', cause, 'import-corrupt-record'); }
   }
 
   function inspectSave(text) {
     if (typeof text !== 'string' || !text.trim()) {
       throw saveTransferError('存档内容为空，请重新选择文件或粘贴完整存档。', undefined, 'import-empty');
     }
-    const world = decode(text);
+    const { packet, world } = decode(text);
     const candidate = {
       world,
-      version: gameVersion,
+      version: typeof packet.gameVersion === 'string' && packet.gameVersion ? packet.gameVersion : '未标注',
+      balanceVersion: typeof packet.balanceVersion === 'string' ? packet.balanceVersion : '',
       summary: {
         coins: world.coins, researchPoints: world.researchPoints,
         facilities: Object.values(world.facilities).reduce((total, entries) => total + entries.length, 0),
@@ -64,14 +69,14 @@ export function createSaveTransfer({ development = false, browser = window } = {
   function resolveCandidate(candidate) {
     const text = candidate && candidates.get(candidate);
     if (!text) throw saveTransferError('请重新读取存档后再确认导入。');
-    return decode(text);
+    return decode(text).world;
   }
 
   function exportWorld(world) {
     let text;
     try {
       text = JSON.stringify({
-        format, formatVersion, gameVersion, schemaVersion, environment,
+        format, formatVersion, gameVersion, balanceVersion, schemaVersion: worldSchemaVersion, environment,
         record: encodeWorldRecord(world),
       });
     } catch (cause) { throw saveTransferError('暂时无法整理存档，请稍后重试。', cause); }

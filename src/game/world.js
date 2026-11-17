@@ -1,20 +1,27 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
-import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBonus, rate, unitPrice } from './advancement.js';
+import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBasis, rate, unitPrice } from './advancement.js';
+import { coinScale } from './coin-scale.js';
+import { localCalendarDay, marketUnitPrice, synchronizeMarket } from './market.js';
+import { accrueBasicResearch } from './quality.js';
 import { newPrestigeLedger, prestigeLedgerOffer, productionContributionBatch, settlePrestigeLedger } from './prestige-ledger.js';
 
-export { catalog, unitPrice };
+export { catalog, marketUnitPrice, unitPrice };
+export const worldSchemaVersion = 3;
+export const startingCoins = 600n * coinScale;
 
+const facilityBuyBase = 600n * coinScale;
+const facilityUpgradeBase = 300n * coinScale;
 const facilityTypes = {
-  C: { buy: 'cropBuy', upgrade: 'cropUpgrade', buyBase: 600n, upgradeA: 300n, free: 2 },
-  L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', buyBase: 600n, upgradeA: 300n, free: 0 },
-  F: { buy: 'fishBuy', upgrade: 'fishUpgrade', buyBase: 600n, upgradeA: 300n, free: 0 },
+  C: { buy: 'cropBuy', upgrade: 'cropUpgrade', free: 2 },
+  L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', free: 0 },
+  F: { buy: 'fishBuy', upgrade: 'fishUpgrade', free: 0 },
 };
 const facilityGrowth = 5n;
 const stationTypes = {
-  I: { base: 750n, growth: 25n, upgradeA: 750n, limit: 48 },
-  P: { base: 950n, growth: 25n, upgradeA: 950n, limit: 32 },
+  I: { base: 750n * coinScale, limit: 48 },
+  P: { base: 950n * coinScale, limit: 32 },
 };
-const startingCoins = 600n;
+const stationGrowth = 25n;
 const facilityLimit = 40;
 
 const emptyFacility = () => ({ level: '1', recipe: null, batch: null });
@@ -43,20 +50,27 @@ function upgradeWeight(level) {
 }
 
 function facilityUpgradeTotal(world, type, level) {
-  return discounted(world, type.upgradeA * upgradeWeight(level), type.upgrade);
+  return discounted(world, facilityUpgradeBase * upgradeWeight(level), type.upgrade);
+}
+
+function multiplyFacilityYield(base, yieldBasis, level) {
+  return base * stationMultiplier(level) * BigInt(yieldBasis) / 10000n;
+}
+
+const catalogOutput = (id) => Object.hasOwn(catalog.items, id) ? BigInt(catalog.items[id].output) : null;
+
+export function facilitySnapshotOutput(batch, level) {
+  return multiplyFacilityYield(BigInt(batch.yieldBase), batch.facilityYieldBasis, level);
 }
 
 function facilityOutput(world, kind, id, level) {
-  const item = catalog.items[id];
-  if (!item) return null;
-  const k = level - 1n;
-  const multiplier = 1n + k + k * k / 64n;
-  return BigInt(item.output) * multiplier * (10000n + facilityYieldBonus(world, kind)) / 10000n;
+  const base = catalogOutput(id);
+  return base === null ? null : multiplyFacilityYield(base, facilityYieldBasis(world, kind), level);
 }
 
 // Station upgrades are never discounted and take effect from the next batch.
 function stationUpgradeTotal(type, level) {
-  return type.upgradeA * upgradeWeight(level);
+  return type.base * upgradeWeight(level);
 }
 
 // Per-batch station multiplier W(L) = 1 + j + floor(j^2/64), j = L - 1; scales output and every input alike.
@@ -66,8 +80,8 @@ export function stationMultiplier(level) {
 }
 
 function stationOutput(id, level) {
-  const item = catalog.items[id];
-  return item ? BigInt(item.output) * stationMultiplier(level) : null;
+  const base = catalogOutput(id);
+  return base === null ? null : base * stationMultiplier(level);
 }
 
 // Resolve a step request into a positive count; 'max' finds the most affordable steps (at least one).
@@ -124,7 +138,7 @@ export function forecastHourlyProduction(world) {
     const item = catalog.items[recipe];
     const duration = BigInt(productionDurationMs(world, recipe));
     const scale = stationMultiplier(level);
-    addRate(recipe, duration, BigInt(item.output) * scale, 0n);
+    addRate(recipe, duration, stationOutput(recipe, level), 0n);
     for (const [id, amount] of Object.entries(item.inputs ?? {})) {
       addRate(id, duration, 0n, BigInt(amount) * scale);
     }
@@ -146,15 +160,16 @@ function startingFacilities(recipe) {
   return { C: Array.from({ length: facilityTypes.C.free }, () => ({ ...emptyFacility(), recipe })), L: [], F: [] };
 }
 
-export function newWorld(now) {
+export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0')) {
   const world = {
-    schemaVersion: 2, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
+    schemaVersion: worldSchemaVersion, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
-    researchPoints: 0n, productionValue: 0n, completedRuns: 0, firstCompletedRunAtMs: null,
+    researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
+    accountSeed, qualityDraws: 0n, market: null, productionValue: 0n, completedRuns: 0,
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
-    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n, batchSales: 0n },
-    guideSkipped: false, taskRewards: [], settings: { textScale: 1, music: 70, sound: 75, pickerIconsOnly: false },
+    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n },
+    taskRewards: [], settings: { music: 70, sound: 75, pickerIconsOnly: false },
   };
   settleProduction(world);
   return world;
@@ -177,15 +192,15 @@ export function stationRequirements(world, id, level = 1n) {
 
 function orderedStations(world) {
   const stations = [...world.stations.I, ...world.stations.P];
-  let nextOrder = Math.max(-1, ...stations.map((station) => station.order ?? -1)) + 1;
-  for (const station of stations) station.order ??= nextOrder++;
   return stations.sort((a, b) => Number(b.priority) - Number(a.priority) || a.order - b.order);
 }
 
 // Caller guarantees the facility is idle and has a recipe.
 function startFacility(world, kind, facility, onStart) {
-  const count = facilityOutput(world, kind, facility.recipe, BigInt(facility.level));
-  facility.batch = makeBatch(world, facility.recipe, count);
+  const base = catalogOutput(facility.recipe);
+  const yieldBasis = facilityYieldBasis(world, kind);
+  const count = multiplyFacilityYield(base, yieldBasis, facility.level);
+  facility.batch = { ...makeBatch(world, facility.recipe, count), yieldBase: String(base), facilityYieldBasis: yieldBasis };
   if (kind === 'C' && (!facility.planting || facility.planting.id !== facility.batch.id)) {
     facility.planting = {
       id: facility.batch.id, start: facility.batch.start,
@@ -197,7 +212,7 @@ function startFacility(world, kind, facility, onStart) {
 
 // Caller guarantees the station is idle and has a recipe; returns false (no mutation) when short of inputs.
 function startStation(world, station, onStart) {
-  const level = station.level ?? '1';
+  const level = station.level;
   const materials = stationRequirements(world, station.recipe, level);
   if (materials.some(({ owned, needed }) => owned < needed)) return false;
   const inputs = {};
@@ -291,7 +306,6 @@ function deposit(world, batch, contributions) {
   const count = BigInt(batch.amount);
   world.inventory[id] = quantity(world, id) + count;
   const value = count * unitPrice(world, id);
-  // Freeze any legacy contribution before this new completion enters the run total.
   // Within one advance the appraisal multiplier is fixed, so the credit is batched and flushed once.
   contributions.add(value, appraisalMultiplierBasisPoints(world));
   world.productionValue += value;
@@ -327,6 +341,7 @@ function popEvent(heap) {
 
 export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {}) {
   if (!Number.isSafeInteger(targetMs) || targetMs < world.clockMs) return;
+  const elapsed = targetMs - world.clockMs;
   const stations = orderedStations(world);
   const heap = [];
   const enqueue = (entry) => pushEvent(heap, entry);
@@ -358,16 +373,15 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {})
     contributions.flush();
   }
   world.clockMs = targetMs;
+  accrueBasicResearch(world, elapsed);
 }
 
 export function updateWorldWallTime(world, now) {
   if (!Number.isSafeInteger(now)) return 0;
-  if (world.completedRuns > 0 && world.firstCompletedRunAtMs === null) {
-    world.firstCompletedRunAtMs = world.wallAnchorMs;
-  }
   const elapsed = Math.max(0, Math.min(delegationMilliseconds(world), now - world.wallAnchorMs));
   advanceWorld(world, world.clockMs + elapsed);
   world.wallAnchorMs = Math.max(world.wallAnchorMs, now);
+  synchronizeMarket(world, localCalendarDay(now));
   return elapsed;
 }
 
@@ -378,9 +392,9 @@ export function facilityOffer(world, kind, index = null, steps = 1n) {
   if (index === null) {
     const count = facilities.length;
     const atLimit = count >= facilityLimit;
-    const cost = discounted(world, geometric(type.buyBase, facilityGrowth, Math.max(0, count - type.free)), type.buy);
+    const cost = discounted(world, geometric(facilityBuyBase, facilityGrowth, Math.max(0, count - type.free)), type.buy);
     return { cost, count, limit: facilityLimit, atLimit, affordable: !atLimit && world.coins >= cost,
-      target: null, currentOutput: null, output: null, durationMs: null };
+      target: null, currentOutput: null, output: null, currentNextOutput: null, nextOutput: null, durationMs: null };
   }
   if (!Number.isInteger(index)) return null;
   const facility = facilities[index];
@@ -392,18 +406,21 @@ export function facilityOffer(world, kind, index = null, steps = 1n) {
   if (!count) return null;
   const target = level + count;
   const cost = costFor(count);
+  const currentNextOutput = facilityOutput(world, kind, facility.recipe, level);
+  const nextOutput = facilityOutput(world, kind, facility.recipe, target);
   return { cost, affordable: world.coins >= cost, target,
-    currentOutput: facilityOutput(world, kind, facility.recipe, level),
-    output: facilityOutput(world, kind, facility.recipe, target),
+    currentOutput: facility.batch ? BigInt(facility.batch.amount) : currentNextOutput,
+    output: facility.batch ? facilitySnapshotOutput(facility.batch, target) : nextOutput,
+    currentNextOutput, nextOutput,
     durationMs: productionDurationMs(world, facility.recipe) };
 }
 
 export function stationOffer(world, kind) {
   if (!Object.hasOwn(stationTypes, kind)) return null;
-  const { base, growth, limit } = stationTypes[kind];
+  const { base, limit } = stationTypes[kind];
   const count = world.stations[kind].length;
   const atLimit = count >= limit;
-  const cost = geometric(base, growth, Math.max(0, count - 1));
+  const cost = geometric(base, stationGrowth, Math.max(0, count - 1));
   return { cost, count, limit, atLimit, affordable: !atLimit && world.coins >= cost };
 }
 
@@ -413,7 +430,7 @@ export function stationUpgradeOffer(world, kind, index, steps = 1n) {
   const type = stationTypes[kind];
   const station = world.stations[kind][index];
   if (!station) return null;
-  const level = BigInt(station.level ?? '1');
+  const level = BigInt(station.level);
   const startingCost = stationUpgradeTotal(type, level);
   const costFor = (count) => stationUpgradeTotal(type, level + count) - startingCost;
   const count = upgradeSteps(world, steps, costFor);
@@ -453,7 +470,7 @@ export function upgradeFacility(world, kind, index, steps) {
   facility.level = String(quote.target);
   if (facility.batch) {
     // Apply the upgraded yield to this harvest without restarting its growth clock.
-    facility.batch.amount = String(facilityOutput(world, kind, facility.batch.id, quote.target));
+    facility.batch.amount = String(quote.output);
   }
   return true;
 }
@@ -462,17 +479,8 @@ export function assignFacility(world, kind, index, id) {
   if (!Object.hasOwn(facilityTypes, kind) || !Number.isInteger(index)) return false;
   const facility = world.facilities[kind][index];
   if (!facility || catalog.items[id]?.kind !== kind || !world.unlocked.includes(id)) return false;
-  const changed = facility.recipe !== id;
   if (facility.batch?.id !== id) facility.batch = null;
   facility.recipe = id;
-  if (kind === 'C') {
-    if (changed) {
-      facility.planting = { id, start: world.clockMs, duration: productionDurationMs(world, id) };
-    } else if (!facility.planting) {
-      // A pre-session plot already assigned this crop has no provable first planting date.
-      facility.planting = { id, start: null, duration: null };
-    }
-  }
   settleProduction(world);
   return true;
 }
@@ -501,12 +509,7 @@ export function arrangeStation(world, kind, index, id) {
   if (!Object.hasOwn(stationTypes, kind) || !Number.isInteger(index)) return false;
   const station = world.stations[kind][index];
   if (!station || catalog.items[id]?.kind[0] !== kind || !world.unlocked.includes(id)) return false;
-  if (station.batch && station.batch.id !== id) {
-    for (const [material, count] of Object.entries(station.batch.inputs ?? {})) {
-      world.inventory[material] = quantity(world, material) + count;
-    }
-    station.batch = null;
-  }
+  if (station.batch && station.batch.id !== id) cancelStationBatch(world, station);
   station.recipe = id;
   settleProduction(world);
   return true;
@@ -516,14 +519,18 @@ export function clearStation(world, kind, index) {
   if (!Object.hasOwn(stationTypes, kind) || !Number.isInteger(index)) return false;
   const station = world.stations[kind][index];
   if (!station || (!station.recipe && !station.batch)) return false;
-  for (const [material, count] of Object.entries(station.batch?.inputs ?? {})) {
-    world.inventory[material] = quantity(world, material) + count;
-  }
+  if (station.batch) cancelStationBatch(world, station);
   station.recipe = null;
-  station.batch = null;
   station.priority = false;
   settleProduction(world);
   return true;
+}
+
+function cancelStationBatch(world, station) {
+  for (const [material, count] of Object.entries(station.batch.inputs)) {
+    world.inventory[material] = quantity(world, material) + count;
+  }
+  station.batch = null;
 }
 
 export function setStationPriority(world, kind, index, priority) {
@@ -549,7 +556,7 @@ export function tradeOffer(world, id, percent) {
   const inventory = quantity(world, id);
   const count = inventory * BigInt(percent) / 100n;
   const remaining = inventory - count;
-  const price = unitPrice(world, id);
+  const price = marketUnitPrice(world, id);
   const gain = count * price;
   const reserved = world.reserves[id] ?? 0n;
   const held = inventory < reserved ? inventory : reserved;
@@ -558,7 +565,8 @@ export function tradeOffer(world, id, percent) {
 }
 
 function quoteMatches(actual, expected) {
-  return actual.id === expected.id && actual.percent === expected.percent && actual.count === expected.count &&
+  return actual.id === expected?.id && actual.percent === expected.percent && actual.inventory === expected.inventory &&
+    actual.count === expected.count && actual.remaining === expected.remaining && actual.price === expected.price &&
     actual.gain === expected.gain && actual.reserveAffected === expected.reserveAffected;
 }
 
@@ -570,7 +578,7 @@ export function sellBatch(world, selections) {
     if (!selection) return false;
     const { id, percent, expectedQuote } = selection;
     const actual = tradeOffer(world, id, percent);
-    if (!actual || ids.has(id) || expectedQuote && !quoteMatches(actual, expectedQuote)) return false;
+    if (!actual || ids.has(id) || (expectedQuote !== undefined && !quoteMatches(actual, expectedQuote))) return false;
     ids.add(id);
     if (actual.affordable) quotes.push(actual);
   }
@@ -582,7 +590,6 @@ export function sellBatch(world, selections) {
     world.stats.revenue += gain;
     world.stats.lifetimeRevenue += gain;
   }
-  if (quotes.length >= 2) world.stats.batchSales = (world.stats.batchSales ?? 0n) + 1n;
   return true;
 }
 
@@ -606,11 +613,10 @@ export function sellFarm(world, expectedOffer) {
   const actual = farmSaleOffer(world);
   const check = ['completedRuns', 'productionValue', 'multiplierBasisPoints', 'reward',
     'stationCount', 'plotCount', 'livestockCount', 'pondCount', 'prestigeLedgerVersion',
-    'lifetimeProductionValue', 'prestigeCredit', 'pendingLegacyResearchPoints', 'legacyResearchPointsSettled'];
+    'lifetimeProductionValue', 'prestigeCredit'];
   if (!expectedOffer || check.some((key) => actual[key] !== expectedOffer[key])) return false;
   settlePrestigeLedger(world);
   world.completedRuns += 1;
-  world.firstCompletedRunAtMs ??= world.wallAnchorMs;
   world.coins = startingCoins;
   world.productionValue = 0n;
   world.stats.revenue = 0n;

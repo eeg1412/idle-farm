@@ -17,7 +17,7 @@ const tones = {
   neutral: { fill: 0xeceddd, text: 0x4d5941, marker: 0xa2aa8d, rim: 0xc4bd9f },
 };
 
-function atlasLayout(nodes, cardWidth, columnGap, rowGap) {
+function dependencyPlaces(nodes) {
   const byId = new Map(nodes.map((node, order) => [node.id, {
     node, key: node.id, order, before: [], after: [],
   }]));
@@ -29,7 +29,11 @@ function atlasLayout(nodes, cardWidth, columnGap, rowGap) {
       prerequisite.after.push(place);
     }
   }
+  return byId;
+}
 
+function atlasLayout(nodes, cardWidth, columnGap, rowGap) {
+  const byId = dependencyPlaces(nodes);
   const places = [];
   const pending = new Map(Array.from(byId.values(), (place) => [place, place.before.length]));
   const ready = Array.from(pending.keys()).filter((place) => !pending.get(place));
@@ -62,7 +66,32 @@ function atlasLayout(nodes, cardWidth, columnGap, rowGap) {
   };
 }
 
-function qualityLayout(nodes, cardWidth, columnGap, rowGap) {
+function groupedLayout(nodes, groups, columns, cardWidth, columnGap, rowGap) {
+  const byId = dependencyPlaces(nodes);
+  const places = [];
+  const headings = [];
+  const rowStep = cardHeight + rowGap;
+  let y = 0;
+  let width = cardWidth;
+  for (const group of groups) {
+    const members = [...byId.values()].filter(({ node }) => node.group === group);
+    if (!members.length) continue;
+    headings.push({ label: group, y });
+    y += 26;
+    const count = Math.min(columns, members.length);
+    width = Math.max(width, count * (cardWidth + columnGap) - columnGap);
+    members.forEach((place, index) => {
+      place.x = index % columns * (cardWidth + columnGap);
+      place.y = y + Math.floor(index / columns) * rowStep;
+      places.push(place);
+    });
+    y += Math.ceil(members.length / columns) * rowStep - 14;
+  }
+  const edges = places.flatMap((from) => from.after.map((to) => ({ from, to })));
+  return { places, byId, edges, headings, width, height: Math.max(1, y - rowGap + 14) };
+}
+
+function comparisonLayout(nodes, cardWidth, columnGap, rowGap) {
   const rowStep = cardHeight + rowGap;
   const places = [];
   const edges = [];
@@ -73,7 +102,7 @@ function qualityLayout(nodes, cardWidth, columnGap, rowGap) {
     byId.set(node.id, current);
     if (!node.nextLabel) return;
     const next = {
-      node: { ...node, label: node.nextLabel, status: node.nextStatus ?? '升级品质' },
+      node: { ...node, label: node.nextLabel, status: node.nextStatus },
       key: node.id + ':next', x: cardWidth + columnGap, y: current.y,
     };
     places.push(next);
@@ -124,10 +153,10 @@ function arrowDown(graphics, x, y, color, alpha = 1) {
   return graphics.poly([x, y, x - 3.8, y - 6, x + 3.8, y - 6]).fill({ color, alpha });
 }
 
-function drawLocalEdge(layer, { from, to }, cardWidth, quality, inkGraphics) {
+function drawLocalEdge(layer, { from, to }, cardWidth, comparison, inkGraphics) {
   const shape = inkGraphics();
   shape.label = `research-map-edge:${from.key}:${to.key}`;
-  if (quality) {
+  if (comparison) {
     const y = from.y + cardHeight / 2;
     shape.moveTo(from.x + cardWidth, y).lineTo(to.x - 5, y)
       .stroke({ color: afterColor, width: 1.5, alpha: 0.8 });
@@ -254,15 +283,17 @@ function drawCard(parent, place, cardWidth, { inkGraphics, drawImage, textNode }
 }
 
 export function mountResearchTree({ parent, x, y, width, height, nodes, view, drawImage, textNode, buttonAt,
-  transitionNode, inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, mode, textScale = 1 }) {
-  const quality = mode === 'quality' || (mode === undefined && nodes.some((node) => node.nextLabel));
+  transitionNode, inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, comparison, groups, textScale = 1 }) {
   const compact = height < 210;
   const plotTop = compact ? 50 : 77;
   const plot = { x: 7, y: plotTop, width: width - 14, height: Math.max(1, height - plotTop - 8) };
-  const cardWidth = quality ? clamp(Math.floor((plot.width - 48) / 2), 84, 144) : 110;
-  const columnGap = quality ? 34 : 42;
-  const rowGap = quality ? 20 : 44;
-  const graph = quality ? qualityLayout(nodes, cardWidth, columnGap, rowGap) : atlasLayout(nodes, cardWidth, columnGap, rowGap);
+  const cardWidth = comparison ? clamp(Math.floor((plot.width - 48) / 2), 84, 144) : 110;
+  const columnGap = comparison ? 34 : groups ? 24 : 42;
+  const rowGap = comparison ? 20 : 44;
+  const columns = Math.max(1, Math.floor((plot.width - 20 + columnGap) / (cardWidth + columnGap)));
+  const graph = comparison ? comparisonLayout(nodes, cardWidth, columnGap, rowGap) : groups
+    ? groupedLayout(nodes, groups, columns, cardWidth, columnGap, rowGap)
+    : atlasLayout(nodes, cardWidth, columnGap, rowGap);
   const viewport = new Container({ label: 'research-map' });
   viewport.position.set(x, y);
   viewport.eventMode = 'static';
@@ -275,6 +306,11 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   content.eventMode = 'none';
   const edgeLayer = new Container({ label: 'research-map-edges' });
   content.addChild(edgeLayer);
+  for (const { label, y } of graph.headings ?? []) {
+    textNode(content, label, 0, y, graph.width, {
+      size: 16 * Math.min(textScale, 1.25), color: ink, weight: '800',
+    }).label = `research-map-group:${label}`;
+  }
   const clip = inkGraphics().roundRect(plot.x, plot.y, plot.width, plot.height, 9).fill(0xffffff);
   viewport.addChild(content, clip);
   content.mask = clip;
@@ -282,7 +318,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const center = { x: plot.x + plot.width / 2, y: plot.y + plot.height / 2 };
   const fit = Math.min(1, Math.max(1, plot.width - 14) / graph.width,
     Math.max(1, plot.height - 14) / graph.height);
-  const minZoom = quality ? 0.54 : fit;
+  const minZoom = comparison ? 0.54 : fit;
   const normalZoom = clamp((plot.width - 22) / (2 * cardWidth + columnGap), 0.67, 1);
   const drawing = { inkGraphics, drawImage, textNode };
   const tiles = new Map();
@@ -309,7 +345,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     view.overview = false;
     view.node = place.node.id;
     view.scale = normalZoom;
-    view.x = center.x - (quality ? graph.width / 2 : place.x + cardWidth / 2) * view.scale;
+    view.x = center.x - (comparison ? graph.width / 2 : place.x + cardWidth / 2) * view.scale;
     view.y = center.y - (place.y + cardHeight / 2) * view.scale;
   }
 
@@ -321,10 +357,10 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   }
 
   function paintEdges(visible, selected, detail) {
-    const highlighted = detail !== 'marker' && !quality && selected;
+    const highlighted = detail !== 'marker' && !comparison && selected;
     const local = detail !== 'marker' && !highlighted ? graph.edges.filter(({ from, to }) =>
       visible.has(from) && visible.has(to) &&
-      (quality || (from.x === to.x && to.y - from.y === cardHeight + rowGap))) : [];
+      (comparison || (from.x === to.x && to.y - from.y === cardHeight + rowGap))) : [];
     const signature = highlighted ? selected.key : local.map(({ from, to }) => `${from.key}:${to.key}`).join(',');
     if (connections === signature) return;
     connections = signature;
@@ -333,7 +369,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
       drawConnections(edgeLayer, selected, selected.before, true, cardWidth, columnGap, rowGap, inkGraphics);
       drawConnections(edgeLayer, selected, selected.after, false, cardWidth, columnGap, rowGap, inkGraphics);
     } else {
-      for (const edge of local) drawLocalEdge(edgeLayer, edge, cardWidth, quality, inkGraphics);
+      for (const edge of local) drawLocalEdge(edgeLayer, edge, cardWidth, comparison, inkGraphics);
     }
   }
 
@@ -344,13 +380,14 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     content.scale.set(view.scale);
     const detail = view.scale >= 0.66 ? 'full' : view.scale >= 0.34 ? 'icon' : 'marker';
     if (nodes.length && !compact) {
-      const label = quality ? '品质对照' : detail === 'marker'
-        ? `绿块已完成 · 金块可研发 · 共 ${nodes.length} 项` : '前置在上 · 棕线前置 · 绿线后续';
+      const label = comparison ? comparison[0] : detail === 'marker'
+        ? `绿块已完成 · 金块${groups ? '可升级' : '可研发'} · 共 ${nodes.length} 项`
+        : groups ? '棕线前置 · 绿线后续' : '前置在上 · 棕线前置 · 绿线后续';
       if (legendLabel !== label) {
         legend?.destroy({ children: true });
         legendLabel = label;
-        legend = quality
-          ? transitionNode(viewport, '当前品质', '下一品质', plot.x, plotTop - 25, plot.width,
+        legend = comparison
+          ? transitionNode(viewport, comparison[0], comparison[1], plot.x, plotTop - 25, plot.width,
             { size: 12 * Math.min(textScale, 1.2), color: muted, align: 'center' })
           : fitCaption(viewport, label, plot.x, plotTop - 25, plot.width, 20,
             12 * Math.min(textScale, 1.2), muted, textNode);
@@ -409,8 +446,8 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const railWidth = width - 2 * inset;
   const keyWidth = clamp(Math.floor(railWidth * 0.14), 30, 41);
   const viewWidth = clamp(Math.floor(railWidth * 0.18), 38, 54);
-  const buttonCount = quality ? 4 : 5;
-  const searchWidth = railWidth - 2 * keyWidth - (quality ? 1 : 2) * viewWidth - (buttonCount - 1) * gap;
+  const buttonCount = comparison ? 4 : 5;
+  const searchWidth = railWidth - 2 * keyWidth - (comparison ? 1 : 2) * viewWidth - (buttonCount - 1) * gap;
   const toolbar = { style: 'research-map' };
   const top = 8;
   let toolX = inset;
@@ -420,7 +457,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   }
 
   control('查找节点', searchWidth, onFind);
-  if (!quality) control('全图', viewWidth, () => { overview(); paint(); });
+  if (!comparison) control('全图', viewWidth, () => { overview(); paint(); });
   control('起点', viewWidth, () => { start(); paint(); });
   control('－', keyWidth, () => zoomAt(view.scale / 1.32, center));
   control('＋', keyWidth, () => zoomAt(view.scale * 1.32, center));

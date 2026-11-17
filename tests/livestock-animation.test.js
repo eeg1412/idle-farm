@@ -6,6 +6,7 @@ import {
   livestockFrameSize, livestockIdleFrames, livestockSpecies, minLivestockAnimationMs,
   mountLivestockAnimation, sampleLivestockAnimation,
 } from '../src/view/livestock-animation.js';
+import { livestockLayout } from '../src/view/livestock-layout.js';
 
 const batch = (id, duration, start = 0) => ({ id, start, end: start + duration });
 const sample = (value, clock, extra = {}) => sampleLivestockAnimation({ batch: value, clock, now: clock, ...extra });
@@ -13,8 +14,10 @@ const shadowBounds = (shadow) => {
   const { minX, minY, maxX, maxY } = shadow.getLocalBounds();
   return [minX, minY, maxX, maxY];
 };
-const expectedShadowBounds = ({ x, y, radiusX, radiusY }) =>
-  [x - radiusX, y - radiusY, x + radiusX, y + radiusY];
+const expectedShadowBounds = ({ x, y, radiusX, radiusY }, animal) => [
+  animal.x + (x - radiusX) * animal.scale.x, animal.y + (y - radiusY) * animal.scale.y,
+  animal.x + (x + radiusX) * animal.scale.x, animal.y + (y + radiusY) * animal.scale.y,
+];
 const closeTo = (actual, expected, message) => assert.ok(Math.abs(actual - expected) < 1e-9, message);
 const visibleProductBounds = (product, id) => {
   const bounds = livestockSpecies[id].product.bounds;
@@ -27,29 +30,31 @@ const visibleProductBounds = (product, id) => {
 };
 
 function mountFixture(t, id = 'L06', options = {}) {
-  const makeTexture = (size) => new Texture({ source: new TextureSource({ width: size, height: size }) });
+  const makeTexture = (width, height = width) => new Texture({ source: new TextureSource({ width, height }) });
   const textures = {
     barn: makeTexture(livestockFrameSize),
     stages: Array.from({ length: livestockSpecies[id].stages }, () =>
       Array.from({ length: livestockIdleFrames }, () => makeTexture(livestockFrameSize))),
     product: makeTexture(96),
+    feed: makeTexture(...livestockSpecies[id].feedTexture.size),
   };
   const parent = new Container();
   const value = batch(id, 108_000, options.start ?? 0);
   const animation = mountLivestockAnimation(parent, textures, { x: 5, y: 7, width: 130, height: 138 }, value,
     options.animationStart ?? value.start, options.previousHarvestAt);
   const scene = animation.container.children[0];
+  const group = scene.children[1];
   t.after(() => {
     animation.destroy();
-    for (const texture of [textures.barn, ...textures.stages.flat(), textures.product]) texture.destroy(true);
+    for (const texture of [textures.barn, textures.feed, ...textures.stages.flat(), textures.product]) texture.destroy(true);
     parent.destroy();
   });
   return {
-    textures, parent, value, animation, scene,
-    shadow: scene.children.find((child) => child.label === 'livestock-shadow'),
-    productShadow: scene.children.find((child) => child.label === 'livestock-product-shadow'),
-    animal: scene.children.find((child) => child.label === 'livestock-animal'),
-    product: scene.children.find((child) => child.label === 'livestock-product'),
+    textures, parent, value, animation, scene, group,
+    shadow: group.children.find((child) => child.label === 'livestock-shadow'),
+    productShadow: group.children.find((child) => child.label === 'livestock-product-shadow'),
+    animal: group.children.find((child) => child.label === 'livestock-animal'),
+    product: group.children.find((child) => child.label === 'livestock-product'),
   };
 }
 
@@ -131,25 +136,29 @@ test('short real batches share a continuous minimum display cycle', () => {
   assert.equal(sample(original, minLivestockAnimationMs).stage, 0);
 });
 
-test('idle frames loop independently and reduced motion uses fixed poses with immediate transitions', () => {
+test('idle frames loop independently of production stage and harvest fades', () => {
   const value = batch('L06', 108_000);
   for (let frame = 0; frame < livestockIdleFrames; frame += 1) {
     assert.equal(sample(value, 1000, { now: frame * 300 }).idleFrame, frame);
   }
   assert.equal(sample(value, 1000, { now: livestockIdleFrames * 300 }).idleFrame, 0);
-  assert.deepEqual(sample(value, 105_150, { reducedMotion: true }), {
-    stage: 2, idleFrame: 0, animalAlpha: 0, productAlpha: 1,
+  assert.deepEqual(sample(value, 105_150, { now: 300 }), {
+    stage: 2, idleFrame: 1, animalAlpha: 0.5, productAlpha: 0.5,
   });
-  assert.equal(sample(value, value.end + 150, { reducedMotion: true }).productAlpha, 0);
+  assert.deepEqual(sample(value, value.end + 150, { now: 600 }), {
+    stage: 0, idleFrame: 2, animalAlpha: 1, productAlpha: 0.5,
+  });
 });
 
 test('mounted animation layers a programmatic shadow beneath the fixed animal frames', (t) => {
-  const { animation, scene, shadow, productShadow, animal, product, textures } = mountFixture(t);
+  const { animation, scene, group, shadow, productShadow, animal, product, textures } = mountFixture(t);
   assert.equal(animation.container.label, 'livestock-animation');
   assert.equal(animation.container.eventMode, 'none');
   assert.equal(scene.scale.x, 138 / livestockFrameSize);
-  assert.deepEqual(scene.children.map((child) => child.label), [
-    'livestock-barn', 'livestock-shadow', 'livestock-product-shadow', 'livestock-animal', 'livestock-product',
+  assert.deepEqual(scene.children.map((child) => child.label), ['livestock-barn', 'livestock-group-0']);
+  assert.deepEqual(group.children.map((child) => child.label), [
+    'livestock-shadow', 'livestock-product-shadow', 'livestock-feed-shadow', 'livestock-feed',
+    'livestock-animal', 'livestock-product',
   ]);
   assert.ok(shadow instanceof Graphics);
   assert.equal(shadow.eventMode, 'none');
@@ -158,17 +167,17 @@ test('mounted animation layers a programmatic shadow beneath the fixed animal fr
   assert.equal(productShadow.eventMode, 'none');
   assert.equal(productShadow.context.fillStyle.alpha, 0.36);
   assert.equal(productShadow.alpha, 0);
-  assert.deepEqual(shadowBounds(shadow), expectedShadowBounds(livestockSpecies.L06.grounding[0]));
+  assert.deepEqual(shadowBounds(shadow), expectedShadowBounds(livestockSpecies.L06.grounding[0], animal));
   assert.deepEqual([animal.x, animal.y, animal.scale.x, animal.scale.y, animal.pivot.x, animal.pivot.y],
-    [0, 0, 1, 1, 0, 0]);
+    [22, 2, 1, 1, 0, 0]);
   assert.equal(product.texture, textures.product);
   assert.equal(product.scale.x, product.scale.y);
   const visible = visibleProductBounds(product, 'L06');
   const matureGrounding = livestockSpecies.L06.grounding.at(-1);
   closeTo(Math.max(visible.width, visible.height), 72);
-  closeTo(visible.centerX, matureGrounding.x);
-  closeTo(visible.bottom, matureGrounding.y);
-  for (const texture of [textures.barn, ...textures.stages.flat(), textures.product]) {
+  closeTo(visible.centerX, 160);
+  closeTo(visible.bottom, animal.y + matureGrounding.y);
+  for (const texture of [textures.barn, textures.feed, ...textures.stages.flat(), textures.product]) {
     assert.equal(texture.source.scaleMode, 'nearest');
   }
 });
@@ -180,18 +189,18 @@ test('stage footprints stay fixed throughout every idle frame without moving the
   const productGeometry = productShadow.context.instructions[0];
   for (let stage = 0; stage < livestockSpecies.L06.stages; stage += 1) {
     const clock = stage * 36_000;
-    animation.update({ clock, now: 0, reducedMotion: false });
+    animation.update({ clock, now: 0 });
     const geometry = shadow.context.instructions[0];
     for (let frame = 0; frame < livestockIdleFrames; frame += 1) {
-      animation.update({ clock, now: frame * 300, reducedMotion: false });
+      animation.update({ clock, now: frame * 300 });
       assert.equal(animal.texture, textures.stages[stage][frame]);
       assert.equal(shadow.context.instructions[0], geometry);
       assert.equal(productShadow.context.instructions[0], productGeometry);
       assert.deepEqual([product.x, product.y, product.scale.x, product.scale.y], productTransform);
-      assert.deepEqual(shadowBounds(shadow), expectedShadowBounds(livestockSpecies.L06.grounding[stage]));
+      assert.deepEqual(shadowBounds(shadow), expectedShadowBounds(livestockSpecies.L06.grounding[stage], animal));
       assert.deepEqual([shadow.x, shadow.y, shadow.scale.x, shadow.scale.y], [0, 0, 1, 1]);
       assert.deepEqual([animal.x, animal.y, animal.scale.x, animal.scale.y, animal.pivot.x, animal.pivot.y],
-        [0, 0, 1, 1, 0, 0]);
+        [22, 2, 1, 1, 0, 0]);
       assert.deepEqual([scene.x, scene.y, scene.scale.x, scene.scale.y], sceneTransform);
     }
   }
@@ -202,7 +211,7 @@ test('shadow opacity follows the meat animal fade while attached-product animals
     const { animation, shadow, productShadow, animal, product } = mountFixture(t, id);
     const slaughter = livestockSpecies[id].slaughter;
     for (const [clock, fade] of [[105_000, 0], [105_150, 0.5], [105_300, 1], [108_150, 0]]) {
-      animation.update({ clock, now: 600, reducedMotion: false });
+      animation.update({ clock, now: 600 });
       assert.equal(animal.alpha, slaughter ? 1 - fade : 1);
       assert.equal(shadow.alpha, animal.alpha);
       assert.equal(product.alpha, clock === 108_150 ? 0.5 : fade);
@@ -211,28 +220,30 @@ test('shadow opacity follows the meat animal fade while attached-product animals
   }
 });
 
-test('reduced motion keeps the correct stage footprint with static poses and immediate fades', (t) => {
+test('the stage footprint changes at harvest while the product footprint stays fixed across idle frames', (t) => {
   for (const id of ['L01', 'L06']) {
     const { animation, shadow, productShadow, animal, product, textures } = mountFixture(t, id);
     const stage = livestockSpecies[id].stages - 1;
-    animation.update({ clock: 105_150, now: 900, reducedMotion: true });
-    assert.equal(animal.texture, textures.stages[stage][0]);
-    assert.deepEqual(shadowBounds(shadow), expectedShadowBounds(livestockSpecies[id].grounding[stage]));
-    assert.equal(shadow.alpha, livestockSpecies[id].slaughter ? 0 : 1);
-    assert.equal(productShadow.alpha, 1);
+    animation.update({ clock: 105_150, now: 900 });
+    assert.equal(animal.texture, textures.stages[stage][3]);
+    shadowBounds(shadow).forEach((value, index) => closeTo(value,
+      expectedShadowBounds(livestockSpecies[id].grounding[stage], animal)[index], id));
+    assert.equal(shadow.alpha, livestockSpecies[id].slaughter ? 0.5 : 1);
+    assert.equal(productShadow.alpha, 0.5);
     assert.equal(productShadow.alpha, product.alpha);
     const geometry = shadow.context.instructions[0];
     const productGeometry = productShadow.context.instructions[0];
     const productTransform = [product.x, product.y, product.scale.x, product.scale.y];
-    animation.update({ clock: 105_150, now: 3_000, reducedMotion: true });
-    assert.equal(animal.texture, textures.stages[stage][0]);
+    animation.update({ clock: 105_150, now: 3_000 });
+    assert.equal(animal.texture, textures.stages[stage][2]);
     assert.equal(shadow.context.instructions[0], geometry);
     assert.equal(productShadow.context.instructions[0], productGeometry);
-    animation.update({ clock: 108_150, now: 3_000, reducedMotion: true });
-    assert.equal(animal.texture, textures.stages[0][0]);
-    assert.deepEqual(shadowBounds(shadow), expectedShadowBounds(livestockSpecies[id].grounding[0]));
+    animation.update({ clock: 108_150, now: 3_000 });
+    assert.equal(animal.texture, textures.stages[0][2]);
+    shadowBounds(shadow).forEach((value, index) => closeTo(value,
+      expectedShadowBounds(livestockSpecies[id].grounding[0], animal)[index], id));
     assert.equal(shadow.alpha, 1);
-    assert.equal(productShadow.alpha, 0);
+    assert.equal(productShadow.alpha, 0.5);
     assert.equal(productShadow.context.instructions[0], productGeometry);
     assert.deepEqual([product.x, product.y, product.scale.x, product.scale.y], productTransform);
   }
@@ -241,13 +252,13 @@ test('reduced motion keeps the correct stage footprint with static poses and imm
 test('mounted animation swaps real frame textures and destroys graphics without shared textures', (t) => {
   const { animation, parent, textures, shadow, productShadow, animal, product } = mountFixture(t);
 
-  animation.update({ clock: 36_000, now: 300, reducedMotion: false });
+  animation.update({ clock: 36_000, now: 300 });
   assert.equal(animal.texture, textures.stages[1][1]);
-  animation.update({ clock: 105_150, now: 600, reducedMotion: false });
+  animation.update({ clock: 105_150, now: 600 });
   assert.equal(animal.texture, textures.stages[2][2]);
   assert.equal(animal.alpha, 0.5);
   assert.equal(product.alpha, 0.5);
-  animation.update({ clock: 105_150, now: 900, reducedMotion: true });
+  animation.update({ clock: 105_150, now: 1200 });
   assert.equal(animal.texture, textures.stages[2][0]);
 
   animation.destroy();
@@ -256,27 +267,33 @@ test('mounted animation swaps real frame textures and destroys graphics without 
   assert.equal(animation.container.destroyed, true);
   assert.equal(shadow.destroyed, true);
   assert.equal(productShadow.destroyed, true);
-  for (const texture of [textures.barn, ...textures.stages.flat(), textures.product]) {
+  for (const texture of [textures.barn, textures.feed, ...textures.stages.flat(), textures.product]) {
     assert.equal(texture.destroyed, false);
   }
 });
 
 test('all canonical products sit on their own shallow ground shadows using visible content bounds', (t) => {
   for (const [id, species] of Object.entries(livestockSpecies)) {
-    const { animation, product, productShadow } = mountFixture(t, id);
-    animation.update({ clock: 105_300, now: 600, reducedMotion: false });
+    const { animation, animal, product, productShadow, scene } = mountFixture(t, id);
+    animation.update({ clock: 105_300, now: 600 });
     const visible = visibleProductBounds(product, id);
     const matureGrounding = species.grounding.at(-1);
     const [left, top, right, bottom] = shadowBounds(productShadow);
-    closeTo(Math.max(visible.width, visible.height), 72, id);
-    closeTo(visible.bottom, matureGrounding.y, id);
+    const { productSize, placements } = livestockLayout(id);
+    assert.equal(scene.children.length, 1 + placements.length, id);
+    const { depth, x } = placements[0];
+    closeTo(Math.max(visible.width, visible.height), productSize * depth, id);
+    closeTo(visible.bottom, animal.y + matureGrounding.y * animal.scale.y + (species.slaughter ? 0 : 3 * depth), id);
     closeTo((left + right) / 2, visible.centerX, id);
-    closeTo((top + bottom) / 2, visible.bottom, id);
+    closeTo((top + bottom) / 2, visible.bottom - visible.height * 0.035, id);
     assert.ok(right > left && bottom > top && bottom - top <= 14 + 1e-9, id);
     assert.equal(productShadow.alpha, product.alpha, id);
-    if (species.slaughter) closeTo(visible.centerX, matureGrounding.x, id);
+    if (species.slaughter) closeTo(visible.centerX, x, id);
     else {
-      assert.ok(visible.centerX > matureGrounding.x, id);
+      const feed = species.feeding.at(-1);
+      const stance = animal.x + matureGrounding.x * animal.scale.x;
+      assert.equal(Math.sign(visible.centerX - stance), -(Math.sign(feed.x - 138) || 1), id);
+      assert.ok(visible.centerX - visible.width / 2 >= 16 - 1e-9, id);
       assert.ok(visible.centerX + visible.width / 2 <= livestockFrameSize - 16 + 1e-9, id);
     }
   }
@@ -290,13 +307,13 @@ test('meat products remain at mature feet through harvest and replacement batch 
     const matureGrounding = species.grounding.at(-1);
     const productGeometry = original.productShadow.context.instructions[0];
     for (const clock of [105_150, 107_999, 108_000, 108_150, 108_300]) {
-      original.animation.update({ clock, now: clock, reducedMotion: false });
+      original.animation.update({ clock, now: clock });
       const visible = visibleProductBounds(original.product, id);
-      closeTo(visible.centerX, matureGrounding.x, id);
-      closeTo(visible.bottom, matureGrounding.y, id);
+      closeTo(visible.centerX, livestockLayout(id).placements[0].x, id);
+      closeTo(visible.bottom, original.animal.y + matureGrounding.y * original.animal.scale.y, id);
       assert.equal(original.productShadow.context.instructions[0], productGeometry, id);
       if (clock >= 108_000) {
-        replacement.animation.update({ clock, now: clock, reducedMotion: false });
+        replacement.animation.update({ clock, now: clock });
         assert.deepEqual(visibleProductBounds(replacement.product, id), visible, id);
         assert.equal(replacement.product.alpha, original.product.alpha, id);
         assert.equal(replacement.productShadow.alpha, original.productShadow.alpha, id);

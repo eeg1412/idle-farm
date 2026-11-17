@@ -613,24 +613,24 @@
           "anchors": [
             [
               116,
-              730
+              735
             ],
             [
               364,
-              730
+              736
             ],
             [
               610,
-              730
+              735
             ],
             [
               858,
-              730
+              735
             ]
           ],
           "canvas": [
             -110,
-            -196,
+            -201,
             244,
             220
           ],
@@ -663,7 +663,8 @@
               "width": 276,
               "height": 1254
             }
-          ]
+          ],
+          "anchorMethod": "L08 mature front-hoof registration r1: the lowest retained planted front-hoof pixels in source frames 0–3 are y734, 735, 734, 734 (source alpha >=200). Register the same lower sole boundary at y735, 736, 735, 735 with one relative 244x220 source canvas and the existing stage scale. The source window tops are y534, 535, 534, 534. The drawn head and mouth are retained."
         }
       ]
     },
@@ -705,31 +706,32 @@
           "anchors": [
             [
               113,
-              475
+              481
             ],
             [
               367,
-              475
+              481
             ],
             [
               621,
-              475
+              481
             ],
             [
               875,
-              475
+              481
             ]
           ],
           "canvas": [
             -99,
-            -163,
+            -169,
             222,
             184
           ],
           "mouth": [
             207,
             482
-          ]
+          ],
+          "anchorMethod": "L09 growing foreground webbed foot registration r1: the lowest retained foreground webbed foot pixels in all four original poses are at y480 (source alpha >=200). The common anatomical sole boundary is y481. The relative source canvas top -169 preserves the absolute window top y312 and the common 222x184 canvas and stage scale. The drawn head and mouth are retained."
         },
         {
           "anchors": [
@@ -831,31 +833,32 @@
           "anchors": [
             [
               107,
-              767
+              771
             ],
             [
               364,
-              767
+              771
             ],
             [
               619,
-              767
+              771
             ],
             [
               875,
-              767
+              771
             ]
           ],
           "canvas": [
             -107,
-            -186,
+            -190,
             248,
             212
           ],
           "mouth": [
             210,
             779
-          ]
+          ],
+          "anchorMethod": "L10 mature supporting front-hoof registration r1: the lowest retained supporting front-hoof pixels in all four original poses are at y770 (source alpha >=200). The common anatomical sole boundary is y771. The relative source canvas top -190 preserves the absolute window top y581 and the common 248x212 canvas and stage scale. The drawn head and mouth are retained."
         }
       ]
     }

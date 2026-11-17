@@ -4,15 +4,17 @@ import {
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   setStationPriority, reserve, sell, sellBatch, sellFarm,
 } from './game/world.js';
-import { research, upgradeQuality, upgradeTech, qualityOffer } from './game/advancement.js';
+import { research, researchHourMs, upgradeTech } from './game/advancement.js';
+import { localCalendarDay, resetMarket, synchronizeMarket } from './game/market.js';
+import { drawQuality } from './game/quality.js';
 import { objectives, settleTaskRewards } from './game/objectives.js';
 import { viewportLayout } from './platform/layout.js';
 import {
   openWorldSave, readWorldSave, writeWorldSave, restoreWorldSave, settleOfflineWorld, acknowledgeOffline,
-  replaceWorldSave,
+  replaceWorldSave, initializeAccountSeed,
 } from './platform/world-save.js';
 import { createSaveQueue } from './platform/save-queue.js';
-import { createSaveTransfer, saveTransferError } from './platform/save-transfer.js';
+import { createSaveTransfer, saveFormatMessage, saveTransferError } from './platform/save-transfer.js';
 import { compact } from './view/numbers.js';
 import { createGameView } from './view/canvas-ui.js';
 import { createFarmAudio } from './platform/farm-audio.js';
@@ -59,7 +61,7 @@ function updateSettings(draft, partial) {
 
 const actions = {
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
-  setStationPriority, reserve, sell, sellBatch, sellFarm, research, upgradeQuality, upgradeTech, updateSettings,
+  setStationPriority, reserve, sell, sellBatch, sellFarm, research, drawQuality, upgradeTech, resetMarket, updateSettings,
 };
 
 if (__DEV_TEST_MODE__) {
@@ -71,7 +73,7 @@ const px = (value) => Number.parseFloat(value) || 0;
 const copySlots = (groups) => Object.fromEntries(Object.entries(groups).map(([kind, slots]) =>
   [kind, slots.map((slot) => ({ ...slot }))]));
 // Display-only projection copy. foreground/advanceWorld assign top-level scalars (clock, wall
-// anchor, production value, ledger), replace slot batch/planting objects, set station order,
+// anchor, production value, ledger), replace slot batch/planting objects,
 // and write inventory and stats.produced entries; everything else is shared and only read by the view.
 function projectWorld(source) {
   return {
@@ -89,7 +91,7 @@ function paint() {
   if (live) {
     const now = performance.now();
     display = projectWorld(world);
-    foreground(display, false, now);
+    advanceForeground(display, false, now);
     // The projection stores whole milliseconds; keep the remaining frame phase in its anchor.
     anchor = frontAnchor + (display.clockMs - world.clockMs);
   }
@@ -106,7 +108,8 @@ function paint() {
     }
   }
   // Reproject at the actual production boundary, even between regular snapshots.
-  nextDisplayAt = anchor + Math.min(displayRefreshMs, nextEnd - display.clockMs);
+  nextDisplayAt = anchor + Math.min(displayRefreshMs, nextEnd - display.clockMs,
+    researchHourMs - display.basicResearchElapsedMs);
 }
 function resize() {
   const css = getComputedStyle(canvas);
@@ -119,12 +122,18 @@ function resize() {
   view.resize(layout);
 }
 
-function foreground(draft, deferFinalStarts = false, anchor = performance.now(), wallAt = Date.now()) {
+function advanceForeground(draft, deferFinalStarts, anchor) {
   anchor = Math.max(anchor, frontAnchor);
   const elapsed = Math.max(0, Math.floor(anchor - frontAnchor));
   advanceWorld(draft, draft.clockMs + elapsed, { deferFinalStarts });
-  draft.wallAnchorMs = Math.max(draft.wallAnchorMs, wallAt);
   return anchor;
+}
+
+function foreground(draft, deferFinalStarts = false, anchor = performance.now(), wallAt = Date.now()) {
+  const advanced = advanceForeground(draft, deferFinalStarts, anchor);
+  draft.wallAnchorMs = Math.max(draft.wallAnchorMs, wallAt);
+  synchronizeMarket(draft, localCalendarDay(wallAt));
+  return advanced;
 }
 
 async function commit(draft, anchor, options) {
@@ -256,13 +265,15 @@ async function initialize(recovery) {
   status = { busy: true, title: '正在整理收获' };
   paint();
   try {
-    if (!db) db = await openWorldSave(__DEV_TEST_MODE__ ? 'idle-farm-development' : undefined);
+    if (!db) db = await openWorldSave({ development: __DEV_TEST_MODE__ });
     const previous = recovery ? await restoreWorldSave(db, {
       corruptRevision: recovery.corruptRevision, backupRevision: recovery.revision,
     }) : await readWorldSave(db);
     const now = Date.now();
     const anchor = performance.now();
-    await settleOffline(previous ?? newWorld(now), now, anchor);
+    const base = previous ?? newWorld(now, null);
+    initializeAccountSeed(base);
+    await settleOffline(base, now, anchor);
   } catch (error) {
     if (error.code === 'revision-conflict') { staleSave(); return; }
     world = null;
@@ -273,8 +284,9 @@ async function initialize(recovery) {
       try { backup = await readWorldSave(db, 'previous'); }
       catch (failure) { backupError = failure; }
     }
-    status = error.code === 'unsupported-version' || backupError?.code === 'unsupported-version'
-      ? { title: '请使用更新版本', message: '这份经营记录需要更新的游戏版本。' }
+    const versionError = backupError ?? error;
+    status = versionError.code === 'unsupported-version'
+      ? { title: '这份经营记录无法读取', message: saveFormatMessage }
       : corrupted && (!backupError || backupError.code === 'corrupt-previous') ? { title: '这份经营记录无法读取',
         message: backup ? '备份之后的经营进度可能会丢失。' : '没有可用的上次经营记录。',
         recovery: backup ? { revision: backup.revision, wallAnchorMs: backup.wallAnchorMs, corruptRevision: error.revision } : null,
@@ -284,12 +296,13 @@ async function initialize(recovery) {
   }
 }
 
-function feedback(name, args, revenueBefore, after, quality) {
+function feedback(name, args, revenueBefore, after, actionResult) {
   if (__DEV_TEST_MODE__ && name === 'grantDevelopmentTools') {
     return { toast: '开发测试模式：已解锁全部科技，并追加 1T 金币', sound: 'success' };
   }
   if (name === 'research') return { toast: '已研发：' + catalog.items[args[0]].name, sound: 'research' };
-  if (name === 'upgradeQuality') return { float: '品质升至 ' + compact(quality.target) + ' 级', sound: 'success' };
+  if (name === 'drawQuality') return { sound: 'success', qualityDraw: actionResult };
+  if (name === 'resetMarket') return { toast: '今日行情已重置', sound: 'success' };
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
@@ -312,12 +325,12 @@ function dispatch(name, ...args) {
       const anchor = foreground(draft, true, anchorAt, wallAt);
       // Feedback reads only the revenue before the action; a BigInt needs no copy.
       const revenueBefore = draft.stats.revenue;
-      const quality = name === 'upgradeQuality' ? qualityOffer(draft, ...args) : null;
-      if (actions[name](draft, ...args) === false) {
+      const actionResult = actions[name](draft, ...args);
+      if (actionResult === false) {
         settleProduction(draft);
         const rewards = await commit(draft, anchor);
         paint();
-        const message = ['sell', 'sellBatch', 'sellFarm'].includes(name)
+        const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
         const toast = progressToast(before, draft, rewards);
         return { ok: false, message: toast ? message + ' · ' + toast : message };
@@ -330,7 +343,7 @@ function dispatch(name, ...args) {
         view.resetSession();
       }
       paint();
-      const result = feedback(name, args, revenueBefore, draft, quality);
+      const result = feedback(name, args, revenueBefore, draft, actionResult);
       result.toast = [result.toast, progressToast(before, draft, rewards)].filter(Boolean).join(' · ');
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };
@@ -396,16 +409,13 @@ function importSave(candidate) {
     }
     try {
       const draft = transfer.resolveCandidate(candidate);
-      const now = Date.now();
-      if (draft.firstCompletedRunAtMs !== null && draft.firstCompletedRunAtMs > now) {
-        throw saveTransferError('存档中的经营日期晚于当前时间，请核对设备时间后再导入。');
-      }
       // Import the saved progress as-is; time since the export earns no extra production.
-      draft.wallAnchorMs = now;
-      const rewards = settleTaskRewards(draft);
+      draft.wallAnchorMs = Date.now();
+      initializeAccountSeed(draft);
+      synchronizeMarket(draft, localCalendarDay(draft.wallAnchorMs));
       const next = await replaceWorldSave(db, draft, world.revision);
       activateReplacement(next);
-      return { ok: true, message: ['存档已导入', taskRewardText(rewards)].filter(Boolean).join(' · ') };
+      return { ok: true, message: '存档已导入' };
     } catch (error) {
       return { ok: false, message: transferFailure(error, '暂时无法导入存档，请稍后重试。') };
     }
@@ -419,7 +429,9 @@ function clearSave() {
       return { ok: false, message: '经营记录已变化，请重新确认。' };
     }
     try {
-      const draft = newWorld(Date.now());
+      const draft = newWorld(Date.now(), null);
+      initializeAccountSeed(draft);
+      synchronizeMarket(draft, localCalendarDay(draft.wallAnchorMs));
       settleTaskRewards(draft);
       const next = await replaceWorldSave(db, draft, world.revision, { clearBackup: true });
       activateReplacement(next);
@@ -446,7 +458,9 @@ const view = createGameView(app, dispatch, () => {
   return enqueueCurrent(async () => {
     if (status !== confirmation) return;
     try {
-      const draft = newWorld(Date.now());
+      const draft = newWorld(Date.now(), null);
+      initializeAccountSeed(draft);
+      synchronizeMarket(draft, localCalendarDay(draft.wallAnchorMs));
       const anchor = performance.now();
       await commit(draft, anchor, { replaceCorrupt: true, corruptRevision: confirmation.corruptRevision });
       status = undefined;

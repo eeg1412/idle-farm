@@ -1,6 +1,6 @@
 # 新作物（C）工作流
 
-共通规则、选 g、研发声明、图标与场景、分工见 [SKILL.md](../SKILL.md)。美术细则只看 [farm-crops](../../farm-crops/SKILL.md) 及其 [交付清单](../../farm-crops/references/delivery.md)。
+共通规则、研发声明、图标与场景、分工见 [SKILL.md](../SKILL.md)。美术细则只看 [farm-crops](../../farm-crops/SKILL.md) 及其 [交付清单](../../farm-crops/references/delivery.md)。
 
 ## 0. 输入决定（目录所有者，写进任务卡后冻结）
 
@@ -8,9 +8,8 @@
 | --- | --- |
 | ID | 当前最大 C 编号 +1（现为 C69） |
 | 名称 | 不与已有物品重名 |
-| g | 12–300 正整数，按 SKILL.md「选 g」定时期 |
-| 产量 | 固定 `2`；生产秒 = g |
-| 研发前置／耗材 | 一个更低 g 的作物 + 一个同时期 I/P，耗材种类同前置 |
+| 基础周期下界秒 s | 1–43,200 整秒，参照同期品项及 [工时公式](../../../../docs/expansion/07-balance-validation.md) |
+| 研发前置／耗材 | 一个基础周期更短的作物 + 一个同时期 I/P，耗材种类同前置 |
 | 体型 | `small`/`medium`/`large`（素材所有者登记 `crop-layout.json`） |
 | 采收类型 | `wholePlant` 或 `retainedPlant` + 实际采收部分；以审图为准 |
 | 农业用途（可选） | 纺织与染料／药草／酿造，或无 |
@@ -18,17 +17,16 @@
 ## 1. 式样（目录所有者）
 
 1. `docs/expansion/05-catalog.md`「## 原料」表，在最后一个 C 行（当前 C68）之后、L01 之前插入：
-   `| C69 | <名称> | <g> | 2 | — | — |`
+   `| C69 | <名称> | <s> | — |`
 2. `docs/expansion/06-research.md`「## 种子、牲畜与鱼类」表，在 C68 行之后插入：
-   `| C69 | <名称> | <作物ID>、<I/P ID> | 10 | 1×<作物ID> + 1×<I/P ID> |`
-   前置作物 g < 本作物 g；前置配方的 e 不高于本作物 u。
+   `| C69 | <名称> | <作物ID>、<I/P ID> | <耗材ID>、<耗材ID> |`
 3. 属于农业用途时在 `08-crop-uses.md` 用途表补作物名；不改「图标格序」。
 4. 计数文字：README、08 第 8 行总数、07 §7.1/§7.5 与新增 ID 记录、01「525项」。
 5. `scripts/catalog-rules.mjs`：`kindCounts.C` +1。
 
 ## 2. 生成（目录所有者，需任务卡授权）
 
-`npm run content:generate`，不加 `--check`。记录 C69 的 price 与 research；核对摘要 `priceOrderViolations` 为空、`cappedNodes` 未新增已有 ID。
+`npm run content:generate`。核对原料周期等于 s，批量与 U 档相符，研发前置及耗材种类与 06 一致。记录对已有产线和任务上限的影响。
 
 ## 3. 美术（作物素材所有者，按 farm-crops；在第 2 步之后导出）
 
@@ -52,7 +50,7 @@
 
 ## 完成清单
 
-- [ ] 05 行（价格 `—`）、06 行、kindCounts、计数文字与 07 记录；08 不改图标格序。
-- [ ] 生成器写出 `game-data.json`：产量 2，durationMs = g×1000。
+- [ ] 05 周期与配方、06 前置及耗材 ID；02／03／04／08 按品类同步；更新计数。
+- [ ] 生成器写出目录及动态任务上限，运行周期和基础批量符合 07。
 - [ ] 图标 overrides、场景源图、四期单株（+bare）、crop-layout/harvest/visuals/runtime 登记。
 - [ ] 审图结论；用途筛选（如需）；差异说明。

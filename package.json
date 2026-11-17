@@ -22,6 +22,7 @@
     "art:fish": "node scripts/export-fish-animation.mjs",
     "content:generate": "node scripts/generate-game-data.mjs",
     "content:check": "node scripts/compile-content.mjs --check && node scripts/generate-game-data.mjs --check",
+    "balance:check": "node scripts/check-time-cost-balance.mjs",
     "publish:cloudflare": "npx wrangler pages deploy ./dist --project-name idle-farm"
   },
   "dependencies": {

@@ -24,9 +24,9 @@
 这是用户明确要求的开发专用额外行为，不改变正式版玩法与正常研发规则。
 
 - 仅 `npm run dev` 对应的 Vite `serve`、`mode: development` 启用。在 `/#/settings` 设置页连续点击页头标题「设置」11 下，第 11 下通过现有动作与存档事务发放。离开设置页或点击其他控件时清除未完成的点击计数。
-- 发放内容为全部品种与配方解锁、24项永久科技达到50级，以及追加1T金币，即 `1_000_000_000_000n`。使用advancement共享techLevelLimit，金币按BigInt运算并按现有规则序列化；品质等级没有上限，不属于「全部科技满级」。
+- 发放内容为全部品种与配方解锁、26 项经营改良达到各自上限，以及追加1T金币，即 `1_000_000_000_000n`。使用 `techDefinitions[].maxLevel`，金币按BigInt运算并按现有规则序列化；品质等级没有上限，不属于「全部科技满级」。
 - 发放不得冒充正常经营事件，不增加生产、出售、售货收入或其他累计经营统计。成功反馈应在保存事务提交后出现；失败不得留下部分发放结果。
-- 开发环境使用独立 IndexedDB 数据库 `idle-farm-development`，正式环境继续使用兼容旧档的 `tianjian-workshop`。开发测试获得的金币与科技不得写入正式存档。
+- 开发环境使用独立 IndexedDB 数据库 `idle-farm-v7-development`，正式环境使用 `idle-farm-v7`。开发测试获得的金币与科技不得写入正式存档。
 - 开关必须由 Vite 命令类型与模式在编译时决定，不能仅依赖运行时页面、URL 参数、浏览器存储或 `NODE_ENV`。所有 `vite build`，包括 `vite build --mode development`，都必须移除标题触发器和发放模块；构建产物及 `npm run preview` 中不能启用该功能。
 - 本功能的开发不构成运行测试或预览的授权。仍遵守本页的验证限制，全部模块完成后由主管执行最终编译。
 
@@ -46,7 +46,7 @@
 2. 全目录按 `assets/plot/crop-layout.json` 显式分大、中、小。C02–C68 使用每期独立单株图片，运行对每个根位创建一个 Sprite，不能把多棵树烘焙成一张整田前景替代逐株绘制。四期共用同一组固定根位，中、大型按真实田垄边界推导投影消失点和完整列族，与9条原垄逐排求交，列在田面边界自然进入／退出，铺到可种两端；禁止固定两列窄带或跨排筛掉整排。根脚贴合背景，近大远小，远端按可用高度保留完整树冠。小麦原图、密度与尺寸保留。图层为天空、田地、后排逐株精灵、洒水器、水滴与飞溅、前排逐株精灵，前排可遮喷水。320图、根位叠图和130×138素材合成只用于审摆位，不能作为运行前景。
 3. 唯一正式转换逻辑为 `node scripts/export-crop-animation.mjs`，Python旧入口仅以标准库转发Node，不再默认导出整田图，也不因缺Pillow阻断。C02–C68从已有 `assets/plot/crops/<ID>/{sown,seedling,growing,mature}.png` 分别导出一株；持久派生PNG在 `assets/plot/plants/<ID>/`，发布 `public/art/plot/plants/<ID>/<phase>.webp`，质量70、保留透明。`crop-visuals.json` 每ID登记 mode/size、roots（含x/y/row/column/scale/maxHeight）及每期 path/width/height/anchorX/anchorY/baseScale/source。loader加载四张独立单株，runtime逐根实例化，只在阶段切换时改各株texture/pivot/scale，根位固定；不在runtime测bbox。旧C02+整田图集仅保留历史，不能作为活跃交付。C01仍从已认可wheat-0..3.png原稿使用fieldAtlas整幅例外，仅绘完整前景，不水平截麦穗、不虚构单株目录。
 4. 作物另按 `crop-harvest.json` 显式分 `wholePlant`（整株采收）和 `retainedPlant`（保留植株采果、花或叶），与大小分类独立。整株采收保持原四期，显示周期取实际生长时长与5秒较大值，成熟末尾逐株层同步300ms淡出、留空30ms再种子。保留植株首次换种仍四期，后续展示周期只在成年采后状态与成熟状态间变化，成年植株底层不随采收消失。必须审现有真实单株能否作为成年采后状态；幼树不能放大冒充成年无果树。需补画时使用内置绘图工具从成熟单株精确编辑，保留独立源图、来源和实际根脚／尺度。短真实批次的经济收获与展示循环独立，不新增经营事件。减弱动态设置已删除。
-   C设施可选 `planting:{id,start,duration}` 保存首次换种的模拟起点与首批实际时长。同品种、升级和自动续批保留，换种重置；已知首轮使用 `max(duration,5000)` 后进入成年采收循环。旧档缺此历史时兼容补 `{id:recipe,start:null,duration:null}`，表示无法证明首轮日期，直接显示成年采收周期，不按汇总生产统计倒推。存档版本、经济产量和任务计数不变。
+   C设施可选 `planting:{id,start,duration}` 保存首次换种的模拟起点与首批实际时长。同品种、升级和自动续批保留，换种重置；已知首轮使用 `max(duration,5000)` 后进入成年采收循环。已安排作物的地块直接保存播种起点和首批时长。存档版本、经济产量和任务计数不变。
 5. PixiJS只为可见活跃种植卡创建动画，最近邻绘制。C02–C68按需加载该品种四张单株，四张齐全才创建逐株实例；C01仅加载原fieldAtlas。天空、田地和洒水器共用。滚出、弹窗、换页、后台卸载，加载中／资源失败／资料缺失时保留动画区域，不显示回退图标、静态设施图或程序占位；所有WebP排除启动预缓存。
 6. 正式构建的 `npm run art:check` 要覆盖目录中每一个作物 ID。发布前核对所有图集的尺寸、透明度、四帧完整性和 ID 对应，检查典型作物的种植位置及切换；在线检查按用户授权和 [验收步骤](verification.md) 执行。
 
@@ -102,9 +102,9 @@
 
 - 每个主页面及二级页面对应 [v1.14 界面参考](ui-references/v1.14/README.md) 的指定参考图。按对应图的页头、横幅、筛选、正文、主要按钮和底栏顺序实装。通用组件负责颜色、边框、点击区域和响应式排版。
 - 渲染、主循环、离线结算、存档、纹理与构建脚本的改动遵守 [性能规约](performance.md)：禁止按时钟整页重建、热路径深拷贝、每帧重建 Text/Graphics、离线逐事件全槽扫描和无上限纹理缓存；性能改动须附等价论证。
-- 田地、畜牧和鱼池用各自的设施画面及操作布局。工坊独立展示配方、库存、批次和材料。研究以科技树展示研发、品质与经营改良，交互和节点结构以 [研究界面](ui/pages/research.md) 为准。仓库、图鉴、任务、设置及出售牧场按各页参考图的分区和阅读顺序组织。
+- 田地、畜牧和鱼池用各自的设施画面及操作布局。工坊独立展示配方、库存、批次和材料。研究以科技树展示品种配方与经营改良，品质页提供抽取和只读品质列表，交互和节点结构以 [研究界面](ui/pages/research.md) 为准。仓库、图鉴、任务、设置及出售牧场按各页参考图的分区和阅读顺序组织。
 
 ## 内容
 
-格式1.14的稳定目录、生产拓扑、原始售价和原研发明细来自扩展式样的[生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)及[显式等级](expansion/08-crop-uses.md)。LT-2026-11-v2先按[正式算法](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者通过 `node scripts/generate-game-data.mjs` 进行正式内容生成；oldPrice只读不可变src/content/balance-baseline-v114.json，禁止用新输出充旧输入。输出game-data.json的格式version仍为1.14、balanceVersion为LT-2026-11-v2；运行基价以该结果为唯一来源，523项research coins/costs/requires逐项保留原值。旧明细价格只作历史输入。生成输出说明不等于独立验证，所有检查/模拟/测试仍遵守前述授权限制。
+现行输入来自[目录及生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)和[显式等级](expansion/08-crop-uses.md)。先按[工时与研发公式](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者运行 `npm run content:generate`。生成器保留稳定 ID、配方拓扑、研发前置及耗材种类，重算批量、周期、基价、研发金币及耗材数量，以及目录相关的任务金币上限。`src/content/game-data.json` 的格式为 1.14，经济版本为 LT-2026-11-v10。`src/content/balance-baseline-v114.json` 保留历史快照。运行验证按前述授权要求执行。
 

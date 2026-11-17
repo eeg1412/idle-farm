@@ -111,14 +111,10 @@ function smoothstep(progress) {
 export function samplePlotAnimation({ batch, clock, animationStart = batch.start, plantingSession, harvestMode }) {
   const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
   if (harvestMode === 'retainedPlant') {
-    const knownFirstPlanting = plantingSession?.id === batch.id && Number.isFinite(plantingSession.start)
-      && Number.isFinite(plantingSession.duration) && plantingSession.duration > 0;
-    const firstDuration = knownFirstPlanting ? Math.max(plantingSession.duration, minPlotAnimationMs) : 0;
-    const firstElapsed = knownFirstPlanting ? Math.max(0, clock - plantingSession.start) : Infinity;
+    const firstDuration = Math.max(plantingSession.duration, minPlotAnimationMs);
+    const firstElapsed = Math.max(0, clock - plantingSession.start);
     if (firstElapsed >= firstDuration) {
-      // Unknown old sessions are already established plants. They never invent
-      // a historical sowing time or replay seedling growth after loading.
-      const repeatStart = knownFirstPlanting ? plantingSession.start + firstDuration : animationStart;
+      const repeatStart = plantingSession.start + firstDuration;
       const phase = Math.max(0, clock - repeatStart) % duration;
       const appears = smoothstep((phase - duration / 2) / harvestFadeMs);
       const disappears = smoothstep((phase - (duration - harvestGapMs - harvestFadeMs)) / harvestFadeMs);

@@ -280,12 +280,22 @@
       "generatedWith": "built-in image_gen",
       "referenceFrames": [
         {
-          "path": "assets/livestock/animals/L08/mature-0.png",
-          "sha256": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8"
+          "path": "assets/livestock/choice-input-archive/v7/L08/mature-0.png",
+          "sha256": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8",
+          "archiveOf": "assets/livestock/animals/L08/mature-0.png",
+          "originalInputPath": "assets/livestock/animals/L08/mature-0.png",
+          "inputHash": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8",
+          "archivedAt": "2026-11-16",
+          "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L08 front-hoof sole."
         },
         {
-          "path": "assets/livestock/animals/L08/mature-3.png",
-          "sha256": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644"
+          "path": "assets/livestock/choice-input-archive/v7/L08/mature-3.png",
+          "sha256": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644",
+          "archiveOf": "assets/livestock/animals/L08/mature-3.png",
+          "originalInputPath": "assets/livestock/animals/L08/mature-3.png",
+          "inputHash": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644",
+          "archivedAt": "2026-11-16",
+          "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L08 front-hoof sole."
         }
       ],
       "promptFile": "assets/livestock/choice-prompts-v7.md"
@@ -346,12 +356,22 @@
       "generatedWith": "built-in image_gen",
       "referenceFrames": [
         {
-          "path": "assets/livestock/animals/L10/mature-0.png",
-          "sha256": "f11d385216e3fff0525be532a13c2e1d36a38857f85d904e83ef98bbc850dacf"
+          "path": "assets/livestock/choice-input-archive/v7/L10/mature-0.png",
+          "sha256": "f11d385216e3fff0525be532a13c2e1d36a38857f85d904e83ef98bbc850dacf",
+          "archiveOf": "assets/livestock/animals/L10/mature-0.png",
+          "originalInputPath": "assets/livestock/animals/L10/mature-0.png",
+          "inputHash": "f11d385216e3fff0525be532a13c2e1d36a38857f85d904e83ef98bbc850dacf",
+          "archivedAt": "2026-11-16",
+          "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L10 front-hoof sole."
         },
         {
-          "path": "assets/livestock/animals/L10/mature-3.png",
-          "sha256": "1c762dd10c6af9c533f653667d2e37b1e35680c80b801acac0ef4da6bb640ddd"
+          "path": "assets/livestock/choice-input-archive/v7/L10/mature-3.png",
+          "sha256": "1c762dd10c6af9c533f653667d2e37b1e35680c80b801acac0ef4da6bb640ddd",
+          "archiveOf": "assets/livestock/animals/L10/mature-3.png",
+          "originalInputPath": "assets/livestock/animals/L10/mature-3.png",
+          "inputHash": "1c762dd10c6af9c533f653667d2e37b1e35680c80b801acac0ef4da6bb640ddd",
+          "archivedAt": "2026-11-16",
+          "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L10 front-hoof sole."
         }
       ],
       "promptFile": "assets/livestock/choice-prompts-v7.md"

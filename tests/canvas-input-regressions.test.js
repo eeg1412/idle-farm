@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Assets, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Texture, TextureSource } from 'pixi.js';
 import 'pixi.js/events';
-import { advanceWorld, arrangeStation, buyFacility, catalog, newWorld } from '../src/game/world.js';
+import { advanceWorld, arrangeStation, assignFacility, buyFacility, catalog, newWorld } from '../src/game/world.js';
+import { techDefinitions } from '../src/game/advancement.js';
 import { createGameView } from '../src/view/canvas-ui.js';
 import { viewportLayout } from '../src/platform/layout.js';
 import { livestockSpecies, minLivestockAnimationMs } from '../src/view/livestock-animation.js';
@@ -32,11 +33,21 @@ function setup(dispatch, browser) {
   const boundary = new EventBoundary(stage);
   const pages = [];
   const world = newWorld();
-  const app = { stage, canvas, ticker: { add(fn) { ticks.push(fn); } } };
+  const app = { stage, canvas, renderer: { resolution: 1 }, ticker: { add(fn) { ticks.push(fn); } } };
   const view = createGameView(app, async (name, ...args) => dispatch?.(world, name, ...args) ?? { ok: true },
     () => {}, () => {}, (page) => pages.push(page), browser);
   const zero = { left: 0, right: 0, top: 0, bottom: 0 };
-  const draw = (width, height, timing) => view.render(viewportLayout(width, height, zero), world, undefined, timing);
+  let layout;
+  let viewportWidth;
+  let viewportHeight;
+  const draw = (width, height, timing) => {
+    if (width !== viewportWidth || height !== viewportHeight) {
+      layout = viewportLayout(width, height, zero);
+      viewportWidth = width;
+      viewportHeight = height;
+    }
+    view.render(layout, structuredClone(world), undefined, timing);
+  };
   const flush = () => frames.splice(0).forEach((fn) => fn());
   function point(type, x, y, pointerType = 'mouse', pointerId = 1) {
     function updateTransform(node) {
@@ -65,6 +76,7 @@ function setup(dispatch, browser) {
     Object.assign(event, { type: 'wheel', deltaY, deltaMode: 0, nativeEvent });
     event.global.set(x, y);
     boundary.mapEvent(event);
+    canvas.dispatchEvent(nativeEvent);
     window.dispatchEvent(nativeEvent);
     return nativeEvent.defaultPrevented;
   }
@@ -106,24 +118,42 @@ function tapText(game, label, pointerType = 'mouse') {
   game.flush();
 }
 
+function tapControl(game, label) {
+  const node = game.nodes().findLast((entry) => entry.label === label && entry.hitArea);
+  assert.ok(node, label);
+  const { x, y, width, height } = node.hitArea;
+  const center = node.toGlobal({ x: x + width / 2, y: y + height / 2 });
+  game.point('pointerdown', center.x, center.y);
+  game.point('pointerup', center.x, center.y);
+  game.flush();
+}
+
 function livestockAssetFixture(t, rejectAnimation = false) {
   const requested = [];
+  const productIds = new Set(Object.values(livestockSpecies).map(({ product }) => product.icon));
+  const { path: feedPath, size: feedSize } = livestockSpecies.L01.feedTexture;
   t.mock.method(Assets, 'load', (url) => {
     requested.push(url);
     const pathname = new URL(url).pathname;
-    if (!pathname.startsWith('/art/livestock/')) return new Promise(() => {});
-    if (rejectAnimation) return Promise.reject(new Error('animation art unavailable'));
-    const id = pathname.match(/\/animals\/(L\d+)\.webp$/)?.[1];
-    const rows = livestockSpecies[id]?.stages ?? 1;
-    const width = pathname.includes('/animals/') ? 1280 : pathname.includes('/products/') ? 128 : 320;
-    const height = pathname.includes('/animals/') ? 320 * rows : width;
+    const animal = pathname.match(/^\/art\/livestock\/animals\/(L\d+)\.webp$/)?.[1];
+    const product = pathname.match(/^\/wiki\/icons\/(L\d+)\.webp$/)?.[1];
+    const feed = pathname === new URL(feedPath, 'https://game.example/').pathname;
+    if (!animal && !productIds.has(product) && !feed && pathname !== '/art/livestock/barn.webp') {
+      return new Promise(() => {});
+    }
+    if (rejectAnimation && animal) return Promise.reject(new Error('animation art unavailable'));
+    const [width, height] = animal ? [1280, 320 * livestockSpecies[animal].stages]
+      : feed ? feedSize : product ? [96, 96] : [320, 320];
     return Promise.resolve(new Texture({ source: new TextureSource({ width, height }) }));
   });
   return requested;
 }
 
 const livestockFacility = (id, start = 0, duration = catalog.items[id].durationMs) => ({
-  level: '1', recipe: id, batch: { id, start, end: start + duration, amount: catalog.items[id].output },
+  level: '1', recipe: id, batch: {
+    id, start, end: start + duration, amount: catalog.items[id].output,
+    yieldBase: catalog.items[id].output, facilityYieldBasis: 10000,
+  },
 });
 
 test('every livestock species mounts its own atlas and uses the correct adult or mature row', async (t) => {
@@ -137,9 +167,10 @@ test('every livestock species mounts its own atlas and uses the correct adult or
     game.flush();
     assert.ok(game.nodes().some((node) => node.label === 'livestock-animation'), id);
     assert.ok(requested.some((url) => url.includes(`/art/livestock/animals/${id}.webp`)), id);
-    assert.ok(requested.some((url) => url.includes(`/art/livestock/products/${id}.webp`)), id);
+    assert.ok(requested.some((url) => url.includes(`/wiki/icons/${species.product.icon}.webp`)), id);
     game.world.clockMs = Math.ceil(game.world.facilities.L[0].batch.end * 2 / 3);
     game.draw(390, 844);
+    game.tick();
     const animal = game.nodes().find((node) => node.label === 'livestock-animal');
     assert.equal(animal.texture.frame.y, species.slaughter ? 640 : 0, id);
     assert.equal(animal.texture.frame.width, 320, id);
@@ -173,6 +204,7 @@ test('livestock choice icons load as contained animals while warehouse output ke
   game.view.dismiss();
   const beforeWarehouse = requested.length;
   game.world.inventory.L02 = 3n;
+  game.draw(390, 844);
   game.view.go('仓库');
   const warehouseRequests = requested.slice(beforeWarehouse);
   assert.ok(warehouseRequests.some((url) => url.includes('/wiki/icons/L02.webp')));
@@ -237,6 +269,7 @@ test('short livestock batches keep their display phase and switching species sta
   game.world.facilities.L[0] = livestockFacility('L06', start, realDuration);
   game.world.clockMs = start + 150;
   game.draw(390, 844);
+  game.tick();
   assert.equal(product().alpha, 0.5);
   assert.equal(game.nodes().find((node) => node.label === 'livestock-animal').alpha, 0.5);
 
@@ -248,9 +281,9 @@ test('short livestock batches keep their display phase and switching species sta
   assert.equal(game.nodes().find((node) => node.label === 'livestock-animal').alpha, 1);
 });
 
-test('livestock failure keeps the static facility while reduced motion freezes idle frames', async (t) => {
+test('livestock asset failure leaves the active animation region empty without a static fallback', async (t) => {
   const failed = setup();
-  livestockAssetFixture(t, true);
+  const requested = livestockAssetFixture(t, true);
   failed.world.facilities.L = [livestockFacility('L06')];
   failed.view.go('牧场', { tab: '畜牧' });
   failed.draw(390, 844);
@@ -258,23 +291,8 @@ test('livestock failure keeps the static facility while reduced motion freezes i
   failed.flush();
   assert.ok(failed.nodes().some((node) => node.text === '黑猪'));
   assert.ok(failed.nodes().every((node) => node.label !== 'livestock-animation'));
-
-  const game = setup();
-  livestockAssetFixture(t);
-  game.world.settings.reducedMotion = true;
-  game.world.facilities.L = [livestockFacility('L01')];
-  game.view.go('牧场', { tab: '畜牧' });
-  game.draw(390, 844);
-  await new Promise(setImmediate);
-  game.flush();
-  const animal = game.nodes().find((node) => node.label === 'livestock-animal');
-  assert.ok(animal);
-  const initial = animal.texture;
-  game.tick();
-  assert.equal(animal.texture, initial);
-  game.world.clockMs = game.world.facilities.L[0].batch.end - 3000;
-  game.draw(390, 844);
-  assert.equal(game.nodes().find((node) => node.label === 'livestock-product').alpha, 1);
+  assert.ok(requested.some((url) => url.includes('/art/livestock/animals/L06.webp')));
+  assert.ok(requested.every((url) => !url.includes('/art/scene-L06.webp')));
 });
 
 test('development settings title grants only on the eleventh real mouse or touch tap', async () => {
@@ -357,8 +375,9 @@ test('browser navigation restores game pages, research tabs, and nested dialogs 
   };
   const game = setup(undefined, browser);
   game.draw(390, 844);
-  assert.ok(game.nodes().some((node) => node.text === '查找节点'));
+  assert.ok(game.nodes().some((node) => node.text === '普通研发点'));
   assert.ok(game.nodes().every((node) => node.text !== '高级研发点'));
+  assert.ok(game.nodes().some((node) => node.text === '已研发品项品质'));
   game.view.go('研究', { tab: '经营改良' });
   assert.equal(browser.location.hash, '#/research?tab=efficiency');
   game.view.go('仓库');
@@ -373,9 +392,12 @@ test('browser navigation restores game pages, research tabs, and nested dialogs 
   assert.equal(browser.location.hash, '#/warehouse');
   browser.history.back();
   assert.equal(browser.location.hash, '#/research?tab=efficiency');
+  assert.ok(game.nodes().some((node) => node.text === '高级研发点'));
   browser.history.back();
-  assert.ok(game.nodes().some((node) => node.text === '查找节点'));
+  assert.equal(browser.location.hash, '#/research?tab=quality');
+  assert.ok(game.nodes().some((node) => node.text === '普通研发点'));
   assert.ok(game.nodes().every((node) => node.text !== '高级研发点'));
+  assert.ok(game.nodes().some((node) => node.text === '已研发品项品质'));
   browser.history.forward();
   browser.history.forward();
   browser.history.forward();
@@ -403,20 +425,21 @@ test('production batch fills advance between snapshots and stop at their display
   t.mock.method(performance, 'now', () => now);
   const game = setup();
   game.world.inventory.C01 = 100n;
+  assert.ok(assignFacility(game.world, 'C', 0, 'C01'));
   assert.ok(arrangeStation(game.world, 'I', 0, 'I01'));
   const crop = game.world.facilities.C[0].batch;
   const duration = crop.end - crop.start;
-  const draw = () => game.draw(390, 844, { anchor: now, maxElapsed: 1000 });
+  const draw = () => game.draw(390, 844, { anchor: now });
   const get = (label) => game.nodes().find((node) => node.label === label);
   const fraction = () => get('batch-progress-fill').width / get('batch-progress-track').width;
-  const expectFraction = (expected) => assert.ok(Math.abs(fraction() - expected) < 0.001);
+  const expectFraction = (expected) => assert.ok(Math.abs(fraction() - expected) <= 1 / get('batch-progress-track').width);
 
   draw();
   const fill = get('batch-progress-fill');
   for (const elapsed of [100, 200]) {
     now = 1000 + elapsed;
     game.tick();
-    assert.equal(get('batch-progress-fill'), fill);
+    assert.ok(get('batch-progress-fill') === fill, 'ticker should update the original progress fill');
     expectFraction(elapsed / duration);
   }
   game.view.pauseProgress();
@@ -428,16 +451,8 @@ test('production batch fills advance between snapshots and stop at their display
   draw();
   now += 1500;
   game.tick();
-  expectFraction(1300 / duration);
+  expectFraction(1800 / duration);
 
-  game.world.settings.reducedMotion = true;
-  advanceWorld(game.world, 1600);
-  draw();
-  now += 250;
-  game.tick();
-  expectFraction(1600 / duration);
-
-  game.world.settings.reducedMotion = false;
   advanceWorld(game.world, crop.end - 200);
   draw();
   now += 250;
@@ -454,13 +469,13 @@ test('production batch fills advance between snapshots and stop at their display
   now += 100;
   game.tick();
   assert.ok(fraction() > initial);
-  assert.equal(get('batch-progress-fill'), workshopFill);
+  assert.ok(get('batch-progress-fill') === workshopFill, 'ticker should update the original workshop fill');
 });
 
 test('research map pans on both axes and pinches without opening a node', async () => {
   const game = setup();
   game.draw(390, 844);
-  game.view.go('研究', { tab: '品种与配方' });
+  game.view.go('研究', { tab: '品种配方' });
   const find = (label) => game.nodes().find((node) => node.label === label);
   const initial = find('research-map-content');
   assert.ok(initial);
@@ -468,7 +483,7 @@ test('research map pans on both axes and pinches without opening a node', async 
   game.point('pointerdown', 210, 430, 'touch');
   game.point('pointermove', 134, 390, 'touch');
   game.draw(390, 844);
-  assert.equal(find('research-map-content'), initial);
+  assert.ok(find('research-map-content') === initial, 'a pan should move the original map');
   assert.ok(initial.x < x && initial.y < y, 'pan should move horizontally and vertically');
   game.point('pointerup', 134, 390, 'touch');
   game.flush();
@@ -482,7 +497,7 @@ test('research map pans on both axes and pinches without opening a node', async 
   game.point('pointerup', 150, 400, 'touch');
   await Promise.resolve();
   game.flush();
-  assert.ok(game.nodes().every((node) => node.text !== '关闭'));
+  assert.ok(!find('关闭'));
 
   const beforeWheel = find('research-map-content').scale.x;
   assert.ok(game.wheel(190, 420, 80));
@@ -498,7 +513,7 @@ test('research map pans on both axes and pinches without opening a node', async 
   game.point('pointerup', center.x, center.y, 'touch');
   await Promise.resolve();
   game.flush();
-  assert.ok(game.nodes().some((node) => node.text === '关闭'));
+  assert.ok(find('关闭'));
 
   function scaleControl(label) {
     const button = find('research-map').children.find((node) => node.text === label);
@@ -525,7 +540,7 @@ test('workshop keeps the same progress track and card height after running out o
   advanceWorld(game.world, game.world.stations.I[0].batch.end);
   game.draw(390, 844);
   assert.deepEqual(measure(), active);
-  assert.equal(match('batch-progress-fill'), undefined);
+  assert.equal(match('batch-progress-fill').width, 0);
   assert.ok(game.nodes().some((node) => node.text === '暂停'));
 });
 
@@ -552,13 +567,13 @@ test('management and settings open from separate controls and landscape margins 
   game.point('pointerup', center.x, center.y);
   game.flush();
   assert.deepEqual(game.pages, ['设置']);
-  tap('‹ 返回');
+  tapControl(game, '返回');
   assert.deepEqual(game.pages, ['设置', '牧场']);
   tap('经营');
   assert.equal(game.pages.at(-1), '经营');
   tap('任务');
   assert.equal(game.pages.at(-1), '任务');
-  tap('‹ 返回');
+  tapControl(game, '返回');
   assert.equal(game.pages.at(-1), '经营');
   tap('图鉴');
   assert.equal(game.pages.at(-1), '图鉴');
@@ -584,11 +599,10 @@ test('replacement choice cards fit the viewport and icon mode omits labels and c
   const items = Array.from({ length: 20 }, (_, index) => ({
     id: 'option-' + index, label: '可用品项 ' + index, duration: '37 秒', icon: 'C01',
   }));
-  for (const [width, textScale, iconsOnly, expectedColumns] of [
-    [320, 1, false, 2], [390, 1, false, 3], [480, 1, false, 4], [390, 2, false, 2], [390, 1, true, 6],
+  for (const [width, iconsOnly, expectedColumns] of [
+    [320, false, 2], [390, false, 3], [480, false, 4], [390, true, 6],
   ]) {
     const game = setup();
-    game.world.settings.textScale = textScale;
     game.draw(width, 844);
     game.view.dialog('选择作物', (ui) => ui.choiceGrid(items, () => {}, { iconsOnly }));
     const tiles = game.nodes().filter((node) => node.label?.startsWith('picker-choice:'));
@@ -601,7 +615,7 @@ test('replacement choice cards fit the viewport and icon mode omits labels and c
 test('research atlas fits the complete catalogue and keeps direct prerequisites above all dependents', async () => {
   const game = setup();
   game.draw(390, 844);
-  game.view.go('研究', { tab: '品种与配方' });
+  game.view.go('研究', { tab: '品种配方' });
   const find = (label) => game.nodes().find((entry) => entry.label === label);
   const tap = async (node) => {
     assert.ok(node);
@@ -630,7 +644,7 @@ test('research atlas fits the complete catalogue and keeps direct prerequisites 
   const target = restored.get('C02');
   const { x, y } = target.position;
   await tap(target);
-  assert.ok(game.nodes().some((node) => node.text === '关闭'));
+  assert.ok(find('关闭'));
   await game.view.close();
   game.flush();
   assert.deepEqual({ x: map().get('C02').x, y: map().get('C02').y }, { x, y });
@@ -652,6 +666,7 @@ test('slider keyboard supports arrows and exact endpoints', () => {
   game.view.dialog('出售', (ui) => {
     ui.slider(current, (next) => { current = next; ui.refresh(); }, { bubble: true });
   }, { variant: 'warehouse-sale' });
+  game.key('Tab'); // The fixed sheet header's close control comes first.
   game.key('Tab');
   for (const key of ['ArrowRight', 'End', 'ArrowLeft', 'Home']) {
     game.key(key);
@@ -678,9 +693,8 @@ test('narrow portrait purchase uses Pixi taps and applies exactly one real purch
   assert.equal(game.world.coins, 0n);
 });
 
-test('320 px and 200% text leave space for the research point value', () => {
+test('320 px shows the research point value and opens its exact balance', () => {
   const game = setup();
-  game.world.settings.textScale = 2;
   game.world.researchPoints = 123n * 10n ** 118n;
   game.draw(320, 760);
   game.view.go('研究', { tab: '经营改良' });
@@ -688,7 +702,26 @@ test('320 px and 200% text leave space for the research point value', () => {
   assert.ok(summary);
   assert.ok(summary.style.wordWrapWidth >= 288);
   assert.ok(summary.x + summary.width <= 320);
-  assert.ok(game.nodes().some((node) => node.text === '查看完整数值'));
+  tapText(game, '1.23BJ');
+  assert.ok(game.nodes().some((node) => node.label === '关闭'));
+});
+
+test('narrow portrait puts every improvement category on a new row and wraps its cards inside the map', () => {
+  const game = setup();
+  game.draw(320, 760);
+  game.view.go('研究', { tab: '经营改良' });
+  tapText(game, '全图');
+  const nodes = game.nodes();
+  const groups = ['通用', '农业', '畜牧', '水产', '市场'];
+  const headings = groups.map((label) => nodes.find((node) => node.label === `research-map-group:${label}`));
+  assert.deepEqual(headings.map((node) => node.text), groups);
+  for (const [index, group] of groups.entries()) {
+    const cards = techDefinitions.filter(({ source }) => source === group)
+      .map(({ key }) => nodes.find((node) => node.label === `research-map-node:${key}`));
+    assert.ok(cards.every(({ y }) => y > headings[index].y && y < (headings[index + 1]?.y ?? Infinity)));
+    assert.equal(cards[0].x, 0);
+    assert.ok(new Set(cards.map(({ y }) => y)).size > 1, group);
+  }
 });
 
 test('content scroll coasts after release and the draggable thumb stays against the right edge', (t) => {

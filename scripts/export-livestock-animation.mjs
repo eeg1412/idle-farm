@@ -316,7 +316,7 @@ async function overviewProduct(id, species) {
     left: Math.round(x - (bounds.x + bounds.width / 2) * scale), top: Math.round(ground.y - (bounds.y + bounds.height) * scale) };
 }
 
-async function feedingScene(id, species, animal, stageIndex = species.stages.length - 1) {
+async function feedingScene(id, species, animal, stageIndex = species.stages.length - 1, background = barn) {
   const positions = livestockLayout(id);
   const layers = [];
   for (const placement of positions.placements) {
@@ -332,7 +332,7 @@ async function feedingScene(id, species, animal, stageIndex = species.stages.len
     layers.push({ input: await sharp(animal).resize(Math.round(size * factor), Math.round(size * factor), { kernel: 'nearest' }).png().toBuffer(),
       left: Math.round(left), top: Math.round(top) });
   }
-  return sharp(barn).composite(layers).png().toBuffer();
+  return sharp(background).composite(layers).png().toBuffer();
 }
 
 for (const [id, species] of Object.entries(layout.species)) {
@@ -401,8 +401,16 @@ for (const [id, species] of Object.entries(layout.species)) {
   const retainedItemIcon = await exists(itemIcon);
   const facilityScene = resolve('public/art', `scene-${id}.webp`);
   const retainedFacilityScene = await exists(facilityScene);
+  const previousScene = selective ? previousManifest.species[id].facilityScene : undefined;
   if (!retainedFacilityScene || refreshScenes) {
-    const scene = await feedingScene(id, species, await readFile(resolve(sourceRoot, 'animals', id, `${adult.name}-0.png`)));
+    const stageIndex = species.stages.length - 1;
+    // Preserve the published V8 fallback's compositing inputs during a one-species repair.
+    const animal = selective
+      ? await sharp(resolve(publicRoot, 'animals', `${id}.webp`))
+        .extract({ left: 0, top: stageIndex * size, width: size, height: size }).png().toBuffer()
+      : await readFile(resolve(sourceRoot, 'animals', id, `${adult.name}-0.png`));
+    const background = selective ? await readFile(resolve(publicRoot, 'barn.webp')) : barn;
+    const scene = await feedingScene(id, species, animal, stageIndex, background);
     await saveVersions(scene, resolve('assets/source/art', `scene-${id}.png`), facilityScene);
   }
   const facilityOriginal = await readFile(resolve('assets/source/art', `scene-${id}.png`));
@@ -421,10 +429,12 @@ for (const [id, species] of Object.entries(layout.species)) {
     grounding: species.stages.map((stage) => stage.grounding),
     footprints: species.stages.map((stage) => stage.footprint),
     itemIcon: { path: `public/wiki/icons/${id}.webp`, retained: retainedItemIcon },
-    facilityScene: { path: `public/art/scene-${id}.webp`, source: `assets/source/art/scene-${id}.png`, animation: 'feeding',
+    facilityScene: retainedFacilityScene && !refreshScenes && previousScene ? previousScene : {
+      path: `public/art/scene-${id}.webp`, source: `assets/source/art/scene-${id}.png`, animation: 'feeding',
       sourceSha256: createHash('sha256').update(facilityOriginal).digest('hex'),
       sha256: createHash('sha256').update(facilityPublished).digest('hex'), feedTexture,
-      feedLayers: 'shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures', retained: retainedFacilityScene && !refreshScenes,
+      feedLayers: previousScene?.feedLayers ?? 'shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures',
+      retained: retainedFacilityScene && !refreshScenes,
       refreshed: retainedFacilityScene && refreshScenes } };
   console.log(JSON.stringify({ id, canonicalProduct: productAsset.canonicalPath, productBounds: productAsset.bounds,
     grounding: species.stages.map(({ name, grounding }) => ({ stage: name, ...grounding })) }));

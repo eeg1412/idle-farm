@@ -1,6 +1,6 @@
 # 新鱼类（F）工作流
 
-共通规则、选 g、研发声明、图标与场景、分工见 [SKILL.md](../SKILL.md)。美术细则只看 [farm-fish](../../farm-fish/SKILL.md) 及其 [交付清单](../../farm-fish/references/delivery.md)。鱼种与仓库渔获同名。
+共通规则、研发声明、图标与场景、分工见 [SKILL.md](../SKILL.md)。美术细则只看 [farm-fish](../../farm-fish/SKILL.md) 及其 [交付清单](../../farm-fish/references/delivery.md)。鱼种与仓库渔获同名。
 
 ## 0. 输入决定（目录所有者，冻结后下发）
 
@@ -8,23 +8,21 @@
 | --- | --- |
 | ID | 当前最大 F 编号 +1（现为 F11） |
 | 鱼种名 | 不与已有物品重名；对象与产物同名 |
-| g | 正整数 ≤300；现有 28、38、50、66、90、116、148、192、244、300，只能插入或并列 |
-| 生产秒 t | 正整数 ≤14,400；按邻档单调插值（现有 300、480、720、1080、1800、2700、3600、5400、9000、14400） |
-| 每批产量 | 固定 `1` |
+| 基础周期下界秒 s | 1–43,200 整秒，参照同期品项及 [工时公式](../../../../docs/expansion/07-balance-validation.md) |
 | 展示 | `habitat`：`river`／`sea`；`size`：`small`(3)/`medium`(2)/`large`(1) |
-| 研发前置／耗材 | 上一档（g 更低）鱼 + `I01`，耗材种类同前置 |
+| 研发前置／耗材 | 上一档（基础周期更短）鱼 + `I01`，耗材种类同前置 |
 
 ## 1. 式样（目录所有者）
 
-1. `docs/expansion/02-livestock-fish.md`「## 水产业」7 列养殖表，F10 行后追加 `| F11 | <鱼种> | <鱼种> | <g> | 1 | — | <t> |`。
+1. `docs/expansion/02-livestock-fish.md`「## 水产业」对象表，F10 后追加 `| F11 | <鱼种> | <鱼种> |`。
 2. 同页「### 鱼池背景分类」把 F11 加到 `river` 或 `sea` 行。
-3. `docs/expansion/05-catalog.md`「## 原料」表，F10 行后追加 `| F11 | <鱼种> | <g> | 1 | — | — |`，与 02 逐字一致。
-4. `docs/expansion/06-research.md`，F10 行后追加 `| F11 | <鱼种> | <上一档F>、I01 | 10 | 1×<上一档F> + 1×I01 |`。
+3. `docs/expansion/05-catalog.md`「## 原料」表在 F10 后追加 `| F11 | <鱼种> | <s> | — |`，产物名与 02 一致。
+4. `docs/expansion/06-research.md` 在 F10 后追加 `| F11 | <鱼种> | <上一档F>、I01 | <上一档F>、I01 |`。
 5. 计数文字：02 首段「10 种鱼」、README、08 第 8 行总数、07 §7.1/§7.5 与新增 ID 记录、01。`kindCounts.F` +1。
 
 ## 2. 生成（需授权）
 
-`npm run content:generate`。核对 F11：`durationMs`＝t×1000，`output`＝"1"，`subject`＝鱼种；`priceOrderViolations` 为空。
+`npm run content:generate`。核对原料周期等于 s，批量与 U 档相符，研发前置及耗材种类与 06 一致。记录对已有产线和任务上限的影响。
 
 ## 3. 美术（水产素材所有者，按 farm-fish；在第 2 步之后导出）
 
@@ -48,7 +46,7 @@
 
 ## 完成清单
 
-- [ ] 02 养殖表、背景分类、05 行（逐字一致，售价 `—`，产量 1，t ≤14,400）；06 行；kindCounts；计数文字与 07 记录。
-- [ ] 生成器写出 `game-data.json`。
+- [ ] 05 周期与配方、06 前置及耗材 ID；02／03／04／08 按品类同步；更新计数。
+- [ ] 生成器写出目录及动态任务上限，运行周期和基础批量符合 07。
 - [ ] 渔获图 overrides、选择图、场景源图、三期 idle、layout/atlas/fish-visuals。
 - [ ] 审图结论；差异说明。

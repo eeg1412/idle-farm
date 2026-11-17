@@ -1,7 +1,7 @@
 import {
   catalog, facilityOffer, productionDurationMs, quantity, stationMultiplier, stationOffer, stationRequirements, stationUpgradeOffer,
 } from '../game/world.js';
-import { unitPrice } from '../game/advancement.js';
+import { marketRate, marketUnitPrice } from '../game/market.js';
 import { activeGuideTask } from '../game/objectives.js';
 import { hoursLabel, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
@@ -40,7 +40,7 @@ function facilityImage(kind, id) {
 
 function facilityPreview(ui, kind, id, note) {
   ui.feature(facilityImage(kind, id), (copy) => {
-    copy.heading(assignedName(id), { size: 18 });
+    copy.heading(assignedName(id), { size: 18, marketRate: marketRate(ui.w, id) });
     if (note) copy.text(note, { fontSize: 13, muted: true });
   }, { ratio: 0.23, artAspect: facilityArtAspects[kind], align: 'center' });
 }
@@ -109,6 +109,7 @@ function chooseFacility(ui, kind, index) {
         id,
         icon: kind === 'L' ? 'livestock-' + id : kind === 'F' ? 'fish-' + id : id,
         label: assignedName(id),
+        ...(marketRate(dlg.w, id) && { marketRate: marketRate(dlg.w, id) }),
         duration: remainingTime(productionDurationMs(dlg.w, id)),
         selected: id === facility.recipe && (!facility.batch || facility.batch.id === id),
       })), ({ id }) => submit(dlg, 'assignFacility', [kind, index, id], null, '已' + label));
@@ -153,10 +154,17 @@ function improveFacility(ui, kind, index) {
     const target = compact(quote.target);
     dlg.row('等级', { from: level, to: target }, { style: 'comparison' });
     if (quote.output != null) {
+      const outputId = facility.batch?.id ?? facility.recipe;
       const current = quote.currentOutput ?? facility.batch?.amount;
       const from = current == null ? undefined : compact(current);
       const to = compact(quote.output);
-      dlg.row('每批' + itemName(facility.recipe), from == null ? to : { from, to }, {
+      dlg.row((facility.batch ? '本批' : '每批') + itemName(outputId), from == null ? to : { from, to }, {
+        style: 'comparison', icon: outputId,
+      });
+    }
+    if (facility.batch && quote.nextOutput != null &&
+      (facility.batch.id !== facility.recipe || quote.nextOutput !== quote.output || quote.currentNextOutput !== quote.currentOutput)) {
+      dlg.row('下批产出', { from: compact(quote.currentNextOutput), to: compact(quote.nextOutput) }, {
         style: 'comparison', icon: facility.recipe,
       });
     }
@@ -175,7 +183,8 @@ function facilityDetails(ui, kind, index) {
     if (id) facilityPreview(dlg, kind, id);
     dlg.row('等级', compact(facility.level) + ' 级');
     if (id) {
-      dlg.row('产出品项', itemName(id));
+      const todayRate = marketRate(dlg.w, id);
+      dlg.row('产出品项', itemName(id), todayRate ? { valueMarketRate: todayRate } : undefined);
       dlg.row('仓库库存', compact(quantity(dlg.w, id)) + ' 份');
       if (facility.batch) {
         dlg.row('本批产出', compact(facility.batch.amount) + ' 份');
@@ -184,7 +193,11 @@ function facilityDetails(ui, kind, index) {
       if (facility.recipe && facility.recipe !== facility.batch?.id) {
         dlg.row('下批安排', assignedName(facility.recipe));
       }
-      if (facility.recipe) dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, facility.recipe)));
+      if (facility.recipe) {
+        const output = facilityOffer(dlg.w, kind, index, 1n)?.currentNextOutput;
+        if (output != null && output !== facility.batch?.amount) dlg.row('下批产出', compact(output) + ' 份');
+        dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, facility.recipe)));
+      }
     }
     if (!id) {
       const quote = facilityOffer(dlg.w, kind, index, 1n);
@@ -226,11 +239,12 @@ function facilityCard(ui, kind, index, facility) {
     ];
     body.feature(facilityImage(kind, id), (copy) => {
       const level = compact(facility.level) + ' 级';
-      copy.heading(assignedName(id), { style: 'production', aside: crop ? level : undefined });
-      if (!crop) copy.badges([{ label: level }], { style: 'production' });
+      const todayRate = marketRate(ui.w, id);
+      copy.heading(assignedName(id), { style: 'production', aside: crop && !todayRate ? level : undefined, marketRate: todayRate });
+      if (!crop || todayRate) copy.badges([{ label: level }], { style: 'production' });
       const amount = active?.amount ?? getUpgradeQuote()?.currentOutput;
       if (amount != null) {
-        copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', { style: 'metric', icon: id });
+        copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', { style: 'metric', icon: id, marketRate: crop ? 0 : todayRate });
       }
       if (active) {
         const reference = { type: 'facility', kind, index };
@@ -263,7 +277,11 @@ function sourceSummary(ui, kind, id, note, { buttonTone = 'gold' } = {}) {
   if (item?.kind?.[0] !== kind) return;
   ui.card((card) => {
     const body = card ?? ui;
-    if (kind === 'I' || kind === 'P') body.item(id, item.name, note);
+    if (kind === 'I' || kind === 'P') {
+      const todayRate = marketRate(ui.w, id);
+      if (todayRate) body.item(id, item.name, note, { marketRate: todayRate });
+      else body.item(id, item.name, note);
+    }
     else facilityPreview(body, kind, id, note);
     if (!ui.w.unlocked.includes(id)) {
       body.button('查看研发条件', () => body.go('研究', { tab: '品种配方', id }), { tone: buttonTone });
@@ -336,8 +354,7 @@ function chooseRecipe(ui, kind, index, source) {
       dlg.refresh();
     }, { sticky: true, style: 'filter' });
     if (station.batch) {
-      const refund = station.batch.inputs == null ? '早期记录缺少材料明细，本批材料无法退回。' : '已扣材料退回仓库。';
-      dlg.text('改用其他配方会中止本批。' + refund, { muted: true });
+      dlg.text('改用其他配方会中止本批，已扣材料退回仓库。', { muted: true });
     }
     if (!choices.length) {
       dlg.text('暂无已研发的配方。');
@@ -350,6 +367,7 @@ function chooseRecipe(ui, kind, index, source) {
         id,
         icon: id,
         label: itemName(id),
+        ...(marketRate(dlg.w, id) && { marketRate: marketRate(dlg.w, id) }),
         duration: remainingTime(productionDurationMs(dlg.w, id)),
         selected: id === station.recipe && (!station.batch || station.batch.id === id),
       })), ({ id }) => submit(dlg, 'arrangeStation', [kind, index, id], null,
@@ -381,7 +399,7 @@ function improveStation(ui, kind, index) {
     if (!quote) return;
     const id = station.recipe ?? station.batch?.id;
     const item = catalog.items[id];
-    if (item) dlg.item(id, item.name, item.sources.join(' · '));
+    if (item) dlg.item(id, item.name, item.sources.join(' · '), { marketRate: marketRate(dlg.w, id) });
     dlg.buttons(upgradeOptions.map((option) => ({
       label: option.label,
       tone: option === selected ? 'gold' : 'plain',
@@ -391,7 +409,7 @@ function improveStation(ui, kind, index) {
       },
     })), { style: 'production' });
     dlg.row('等级', { from: compact(station.level), to: compact(quote.target) }, { style: 'comparison' });
-    // An empty station (or a legacy batch without a recipe) has no next-batch output to compare.
+    // An empty station has no next-batch output to compare.
     if (quote.currentOutput != null && quote.output != null) {
       dlg.row('每批产出' + (item ? item.name : ''), {
         from: compact(quote.currentOutput) + ' 件', to: compact(quote.output) + ' 件',
@@ -417,7 +435,7 @@ function requirementRows(ui, recipe, { withLinks = false, style, level = '1' } =
   if (!recipe) return [];
   const requirements = stationRequirements(ui.w, recipe, BigInt(level));
   if (!requirements.length) return requirements;
-  ui.materialTable(requirements.map((row) => ({ ...row, label: itemName(row.id) })), { style });
+  ui.materialTable(requirements.map((row) => ({ ...row, label: itemName(row.id), marketRate: marketRate(ui.w, row.id) })), { style });
   if (withLinks) for (const { id, owned, needed } of requirements) {
     if (owned < needed) sourceButton(ui, id);
   }
@@ -436,7 +454,7 @@ function stationBadge(world, station) {
   let label = '等待安排';
   if (station.batch) label = '生产中';
   else if (station.recipe) {
-    const requirements = stationRequirements(world, station.recipe, BigInt(station.level ?? '1'));
+    const requirements = stationRequirements(world, station.recipe, BigInt(station.level));
     const waiting = requirements.filter(({ owned, needed }) => owned < needed);
     label = waiting.length && waiting.every(({ id, needed }) => quantity(world, id) >= needed)
       ? '材料已预留' : '等待材料';
@@ -474,7 +492,7 @@ function stationDetails(ui, kind, index) {
     dlg.badges([stationBadge(dlg.w, station)], { style: 'production' });
     dlg.row('等级', compact(station.level) + ' 级');
     if (item) {
-      dlg.item(id, item.name, item.sources.join(' · '));
+      dlg.item(id, item.name, item.sources.join(' · '), { marketRate: marketRate(dlg.w, id) });
       dlg.row('当前库存', compact(quantity(dlg.w, id)));
       dlg.row(active ? '本批产出' : '每批产出', compact(active?.amount ?? output) + ' 件');
       if (active && output != null && output !== active.amount) dlg.row('下批产出', compact(output) + ' 件');
@@ -485,9 +503,9 @@ function stationDetails(ui, kind, index) {
         dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, station.recipe)));
         const level = stationMultiplier(station.level);
         const materialValue = Object.entries(next.inputs).reduce(
-          (sum, [material, amount]) => sum + unitPrice(dlg.w, material) * BigInt(amount) * level, 0n,
+          (sum, [material, amount]) => sum + marketUnitPrice(dlg.w, material) * BigInt(amount) * level, 0n,
         );
-        const valueAdded = unitPrice(dlg.w, station.recipe) * (output ?? BigInt(next.output) * level) - materialValue;
+        const valueAdded = marketUnitPrice(dlg.w, station.recipe) * output - materialValue;
         dlg.row('直接机会增值', compact(valueAdded) + ' 金币');
         if (valueAdded < 0n) {
           dlg.text('当前成品售价低于材料直售价值；研发和任务仍可能需要此产物。', { muted: true });
@@ -546,7 +564,7 @@ function stationCard(ui, kind, index, station, source) {
     }
     const complexity = kind === 'P' ? ['单类', '双类', '三类'][item.sources.length - 1] : item.sources[0];
     body.feature(id, (copy) => {
-      copy.heading(item.name, { style: 'production' });
+      copy.heading(item.name, { style: 'production', marketRate: marketRate(ui.w, id) });
       copy.badges([
         { label: complexity },
         level,

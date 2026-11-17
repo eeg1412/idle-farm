@@ -1,4 +1,8 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
+import generatedCoinCaps from '../content/task-coin-caps.json' with { type: 'json' };
+import { techDefinitions, techTotalLevels } from './advancement.js';
+import { coinScale } from './coin-scale.js';
+import { qualityDrawTaskTargets } from './quality-tasks.js';
 
 const destination = (target, tab) => tab ? { target, tab } : { target };
 const field = destination('牧场', '田地');
@@ -11,8 +15,8 @@ const research = destination('研究');
 const codex = destination('图鉴');
 const farmSale = destination('出售牧场');
 
-// LT-2026-11-v4 reward table (economy balance pass 2, section 5.3); the original task IDs are unchanged.
-export const taskCoinRewards = Object.freeze({
+// The base rewards also cap the recalculated amounts after applying coinScale.
+const baseCoinRewards = {
   firstHarvest: 340n,
   firstFlour: 390n,
   breadRecipe: 460n,
@@ -26,10 +30,9 @@ export const taskCoinRewards = Object.freeze({
   addProcessor: 2_700n,
   addRefinery: 2_900n,
   stationUpgrade: 3_100n,
-  firstQuality: 3_500n,
-  recipeTrio: 20_000n,
-  fieldLevel10: 48_000n,
-  codex20: 130_000n,
+  recipeTrio: 2_900n,
+  fieldLevel10: 46_000n,
+  codex20: 80_000n,
   livestockIntro: 14_000n,
   buildLivestock: 3_500n,
   collectLivestock: 3_500n,
@@ -46,20 +49,14 @@ export const taskCoinRewards = Object.freeze({
   delegationTech: 10_000_000_000n,
   moreFields: 730_000_000n,
   farmIncome: 43_000_000_000n,
-  recipeCollection: 22_000_000n,
-  qualityCollection: 610_000n,
+  recipeCollection: 14_000_000n,
   milleCrepe: 460_000_000_000_000n,
   itemCollection: 2_800_000_000_000_000n,
-  qualityMaster: 19_000_000_000n,
   threeSectorGift: 2_700_000_000_000_000n,
-  collection100: 13_000_000_000n,
+  collection100: 1_100_000_000n,
   collection200: 290_000_000_000n,
   collection300: 5_000_000_000_000n,
   collection400: 69_000_000_000_000n,
-  quality25: 6_400_000n,
-  quality50: 300_000_000n,
-  quality200: 1_200_000_000_000n,
-  quality400: 84_000_000_000_000n,
   facilityLevel50: 92_000_000n,
   facilityLevel100: 5_900_000_000n,
   facilityLevel200: 380_000_000_000n,
@@ -80,15 +77,16 @@ export const taskCoinRewards = Object.freeze({
   runs100: 3_700_000_000_000_000n,
   livestockTop: 45_000_000_000_000n,
   fishTop: 62_000_000_000_000n,
-});
+};
 
 // Fixed research-point rewards. They are committed with the task settlement and never
 // enter T/credit or the appraisal multiplier.
 export const taskResearchPointRewards = Object.freeze({
+  firstSale: 1n,
   collection200: 500n,
   collection300: 2_000n,
   collection400: 6_000n,
-  itemCollection: 20_000n,
+  itemCollection: 19_451n,
   runs5: 200n,
   runs20: 1_000n,
   runs50: 3_000n,
@@ -97,11 +95,11 @@ export const taskResearchPointRewards = Object.freeze({
 
 // Lifetime production value T (prestige ledger) each gated task needs before it counts as done.
 export const taskProductionGates = Object.freeze({
-  newFarm: 130_000_000_000n,
-  runs5: 2_000_000_000_000_000n,
-  runs20: 200_000_000_000_000_000n,
-  runs50: 8_000_000_000_000_000_000n,
-  runs100: 70_000_000_000_000_000_000n,
+  newFarm: 520_000n * coinScale,
+  runs5: 8_000_000_000n * coinScale,
+  runs20: 800_000_000_000n * coinScale,
+  runs50: 32_000_000_000_000n * coinScale,
+  runs100: 280_000_000_000_000n * coinScale,
 });
 
 const produced = (world, id) => world.stats.produced[id] ?? 0n;
@@ -111,7 +109,7 @@ const maxLevel = (list) => list.reduce((highest, entry) => {
   const level = BigInt(entry.level ?? '1');
   return level > highest ? level : highest;
 }, 1n);
-const techTotal = (world) => BigInt(Object.values(world.tech).reduce((total, level) => total + level, 0));
+const techTotal = (world) => BigInt(techDefinitions.reduce((total, { key }) => total + (world.tech[key] ?? 0), 0));
 const allStations = (world) => [...world.stations.I, ...world.stations.P];
 const allFacilities = (world) => [...world.facilities.C, ...world.facilities.L, ...world.facilities.F];
 const unlockedCount = (world) => BigInt(world.unlocked.length);
@@ -120,25 +118,18 @@ const sumProduced = (world, predicate) => Object.entries(world.stats.produced)
   .filter(([id]) => predicate(catalog.items[id]))
   .reduce((total, [, count]) => total + count, 0n);
 
-function highestQuality(world) {
-  let highest = 1n;
-  for (const value of Object.values(world.quality)) {
-    const level = BigInt(value);
-    if (level > highest) highest = level;
-  }
-  return highest;
-}
+const qualityDraws = (world) => world.qualityDraws;
+const qualityTask = (id) => [id, `品质抽取 ${qualityDrawTaskTargets[id]} 次`, '累计完成 {目标} 次品质抽取',
+  research, qualityDraws, qualityDrawTaskTargets[id]];
 
 const plotCondition = '累计购买至少 {目标} 块额外田地';
 const fieldLevelCondition = '将任意一块田地升到 {目标} 级';
 const stationLevelCondition = '将任意加工位或精制位升到 {目标} 级';
-const qualityCondition = '将任一物品的品质升到 {目标} 级';
 const recipeCondition = '研发至少 {目标} 种精制配方';
 const codexCondition = '解锁至少 {目标} 种图鉴物品';
 const facilityLevelCondition = '将任意田地、畜牧场或鱼池升到 {目标} 级';
 const techCondition = '永久科技的总等级达到 {目标} 级';
 const runCondition = '累计出售牧场至少 {目标} 次';
-const qualityCollectionLevel = 5n;
 
 // Tuples are [id, name, condition, destination, count(world), required = 1n, branch].
 const mainGuide = [
@@ -157,7 +148,6 @@ const mainGuide = [
   ['addProcessor', '添置加工位', '让工坊拥有至少 {目标} 个加工位', processing, (world) => BigInt(world.stations.I.length), 2n],
   ['addRefinery', '添置精制位', '让工坊拥有至少 {目标} 个精制位', refining, (world) => BigInt(world.stations.P.length), 2n],
   ['stationUpgrade', '升级工位', stationLevelCondition, processing, (world) => maxLevel(allStations(world)), 2n],
-  ['firstQuality', '提升品质', qualityCondition, research, highestQuality, 2n],
   ['recipeTrio', '扩充配方', recipeCondition, research, (world) => countWhere(world.unlocked, (id) => id.startsWith('P')), 3n],
   ['fieldLevel10', '田地十级', fieldLevelCondition, field, (world) => maxLevel(world.facilities.C), 10n],
   ['codex20', '图鉴收录', codexCondition, codex, unlockedCount, 20n],
@@ -193,23 +183,22 @@ const introductionBranches = [
 const longTerm = [
   ['moreFields', '农地扩建', '当前拥有至少 {目标} 块额外田地', field,
     (world) => BigInt(Math.max(0, world.facilities.C.length - 2)), 10n],
-  ['farmIncome', '经营收入', '累计出货收入达到 {目标} 金币', warehouse, (world) => world.stats.lifetimeRevenue, 1_000_000_000_000n],
+  ['farmIncome', '经营收入', '累计出货收入达到 {目标} 金币', warehouse, (world) => world.stats.lifetimeRevenue, 1_000_000_000_000n * coinScale],
   ['recipeCollection', '工坊配方集', recipeCondition, research,
     (world) => countWhere(world.unlocked, (id) => id.startsWith('P')), 25n],
-  ['qualityCollection', '品质进阶', `让至少 {目标} 种物品的品质达到 ${qualityCollectionLevel} 级`, research,
-    (world) => countWhere(Object.values(world.quality), (level) => BigInt(level) >= qualityCollectionLevel), 10n],
+  qualityTask('qualityCollection'),
   ['milleCrepe', '南岛珍果千层', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'P150')],
   ['itemCollection', '完整图鉴', '解锁图鉴中的全部 {目标} 种物品', codex, unlockedCount, BigInt(Object.keys(catalog.items).length)],
-  ['qualityMaster', '百级名品', qualityCondition, research, highestQuality, 100n],
+  qualityTask('qualityMaster'),
   ['threeSectorGift', '紫苏双鱼牛汁千层御膳礼盒', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PT50')],
   ['collection100', '图鉴百种', codexCondition, codex, unlockedCount, 100n],
   ['collection200', '图鉴两百种', codexCondition, codex, unlockedCount, 200n],
   ['collection300', '图鉴三百种', codexCondition, codex, unlockedCount, 300n],
   ['collection400', '图鉴四百种', codexCondition, codex, unlockedCount, 400n],
-  ['quality25', '品质二十五', qualityCondition, research, highestQuality, 25n],
-  ['quality50', '品质五十', qualityCondition, research, highestQuality, 50n],
-  ['quality200', '品质两百', qualityCondition, research, highestQuality, 200n],
-  ['quality400', '品质四百', qualityCondition, research, highestQuality, 400n],
+  qualityTask('quality25'),
+  qualityTask('quality50'),
+  qualityTask('quality200'),
+  qualityTask('quality400'),
   ['facilityLevel50', '设施五十级', facilityLevelCondition, field, (world) => maxLevel(allFacilities(world)), 50n],
   ['facilityLevel100', '设施百级', facilityLevelCondition, field, (world) => maxLevel(allFacilities(world)), 100n],
   ['facilityLevel200', '设施两百级', facilityLevelCondition, field, (world) => maxLevel(allFacilities(world)), 200n],
@@ -223,7 +212,7 @@ const longTerm = [
   ['techLevel300', '科技累计300级', techCondition, research, techTotal, 300n],
   ['techLevel600', '科技累计600级', techCondition, research, techTotal, 600n],
   ['techLevel900', '科技累计900级', techCondition, research, techTotal, 900n],
-  ['techLevel1200', '科技全满', techCondition, research, techTotal, 1200n],
+  ['techLevel1200', '科技全满', techCondition, research, techTotal, BigInt(techTotalLevels)],
   ['runs5', '五次交接', runCondition, farmSale, runs, 5n],
   ['runs20', '二十次交接', runCondition, farmSale, runs, 20n],
   ['runs50', '五十次交接', runCondition, farmSale, runs, 50n],
@@ -232,13 +221,38 @@ const longTerm = [
   ['fishTop', '鲟鱼鱼池', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
 ];
 
+function floorTwoSignificantDigits(value) {
+  const places = value.toString().length - 2;
+  if (places <= 0) return value;
+  const scale = 10n ** BigInt(places);
+  return value / scale * scale;
+}
+
+const coinCaps = { ...generatedCoinCaps, firstTech: 1250n * coinScale, delegationTech: 2500n * coinScale };
+for (const [id, gate] of Object.entries(taskProductionGates)) coinCaps[id] = gate / 100n;
+for (const [id, , , , , required] of longTerm) {
+  if (id.startsWith('techLevel')) coinCaps[id] = 1250n * required * coinScale;
+}
+export const taskCoinRewards = Object.freeze(Object.fromEntries(Object.entries({
+  ...baseCoinRewards, ...Object.fromEntries(Object.entries(qualityDrawTaskTargets).map(([id, target]) => [id, 100n * target])),
+}).map(([id, baseReward]) => {
+  const reward = baseReward * coinScale;
+  if (Object.hasOwn(qualityDrawTaskTargets, id)) return [id, BigInt(generatedCoinCaps[id])];
+  if (!Object.hasOwn(coinCaps, id)) return [id, reward];
+  const capped = floorTwoSignificantDigits(BigInt(coinCaps[id]));
+  return [id, capped < reward ? capped : reward];
+})));
+
 function progress(world, [id, name, condition, location, count, required = 1n, branch]) {
   const current = count(world);
   const gate = taskProductionGates[id] ?? null;
   const gateMet = gate === null || (world.lifetimeProductionValue ?? 0n) >= gate;
-  return { id, name, condition, ...location, current, required, gate, gateMet, done: current >= required && gateMet,
+  const rewarded = world.taskRewards?.includes(id) ?? false;
+  const completedLegacy = rewarded && (Object.hasOwn(qualityDrawTaskTargets, id) || id === 'techLevel1200');
+  return { id, name, condition, ...location, current: completedLegacy && current < required ? required : current,
+    required, gate, gateMet, done: completedLegacy || current >= required && gateMet,
     rewardCoins: taskCoinRewards[id], rewardResearchPoints: taskResearchPointRewards[id] ?? 0n,
-    rewarded: world.taskRewards?.includes(id) ?? false, ...(branch && { branch }) };
+    rewarded, ...(branch && { branch }) };
 }
 
 export function objectives(world) {
