@@ -1,5 +1,6 @@
 import {
-  catalog, facilityOffer, productionDurationMs, quantity, stationMultiplier, stationOffer, stationRequirements, stationUpgradeOffer,
+  batchUpgradeOffer, catalog, facilityOffer, productionDurationMs, quantity, stationMultiplier, stationOffer,
+  stationRequirements, stationUpgradeOffer, unitPrice,
 } from '../game/world.js';
 import { marketRate, marketUnitPrice } from '../game/market.js';
 import { activeGuideTask } from '../game/objectives.js';
@@ -22,6 +23,7 @@ const upgradeOptions = [
   { label: '+1', steps: 1n }, { label: '+10', steps: 10n },
   { label: '+100', steps: 100n }, { label: '最高可升', steps: 'max' },
 ];
+const batchUpgradeSteps = [1n, 5n, 10n];
 
 const confirm = { tone: 'gold' };
 
@@ -40,7 +42,11 @@ function facilityImage(kind, id) {
 
 function facilityPreview(ui, kind, id, note) {
   ui.feature(facilityImage(kind, id), (copy) => {
-    copy.heading(assignedName(id), { size: 18, marketRate: marketRate(ui.w, id) });
+    const name = assignedName(id);
+    const product = itemName(id);
+    const rate = marketRate(ui.w, id);
+    copy.heading(name, { size: 18, marketRate: name === product ? rate : 0 });
+    if (note && name !== product && rate) copy.row(product, undefined, { marketRate: rate });
     if (note) copy.text(note, { fontSize: 13, muted: true });
   }, { ratio: 0.23, artAspect: facilityArtAspects[kind], align: 'center' });
 }
@@ -61,11 +67,12 @@ async function submit(ui, name, args, success, feedback) {
   if (feedback) ui.float?.(feedback);
 }
 
-async function clearProduction(ui, action, kind, index, label) {
+async function clearProduction(ui, action, kind, index, label, panel) {
   if (!await ui.action(action, kind, index)) return;
   ui.local.id = null;
   delete ui.local.positionedSourceId;
-  ui.refresh();
+  if (panel) panel.close();
+  else ui.refresh();
   ui.float?.('已清空' + label);
 }
 
@@ -87,6 +94,220 @@ function replacementChoices(dialog, items, onSelect) {
   dialog.choiceGrid(items, onSelect, { iconsOnly });
 }
 
+function isWorkshop(kind) {
+  return Object.hasOwn(stationNames, kind);
+}
+
+function emptySlotName(kind) {
+  if (kind === 'C') return '空地';
+  return '空' + (stationNames[kind] ?? facilityNames[kind]);
+}
+
+function selectionIcon(kind, id) {
+  if (kind === 'L') return 'livestock-' + id;
+  if (kind === 'F') return 'fish-' + id;
+  return id;
+}
+
+function productionChoice(world, kind, id) {
+  const rate = marketRate(world, id);
+  return {
+    id, icon: selectionIcon(kind, id), label: isWorkshop(kind) ? itemName(id) : assignedName(id),
+    ...(rate && { marketRate: rate }), duration: remainingTime(productionDurationMs(world, id)),
+  };
+}
+
+function assignmentLabel(kind, occupied) {
+  if (isWorkshop(kind)) return occupied ? '更换配方' : '选择配方';
+  if (kind === 'C') return occupied ? '换种' : '播种';
+  return occupied ? '更换品种' : '安排养殖';
+}
+
+function batchOutput(world, kind, index, slot, id) {
+  const workshop = isWorkshop(kind);
+  const active = slot.batch;
+  const amount = active?.amount ?? (workshop ? stationUpgradeOffer(world, kind, index, 1n)
+    : facilityOffer(world, kind, index, 1n))?.currentOutput;
+  if (amount == null) return null;
+  return {
+    label: active ? '本批' : '下批',
+    amount: compact(amount) + (workshop ? ' 件' : ' 份'),
+    total: BigInt(amount) * unitPrice(world, id),
+  };
+}
+
+function batchImpact(dialog, kind, cancelled) {
+  if (!cancelled) return;
+  dialog.text(isWorkshop(kind)
+    ? '将中止 ' + cancelled + ' 个未完成批次，已扣材料退回仓库。'
+    : '将中止 ' + cancelled + ' 个未完成批次，这些批次没有收成。', { muted: true });
+}
+
+function batchReplace(ui, kind, targets, source, action) {
+  const workshop = isWorkshop(kind);
+  const title = workshop ? '批量选择配方' : kind === 'C' ? '批量选择作物' : kind === 'L' ? '批量选择牲畜' : '批量选择鱼种';
+  let filter = source;
+  let chosen;
+  ui.dialog(title, (dlg) => {
+    const slots = workshop ? dlg.w.stations[kind] : dlg.w.facilities[kind];
+    if (chosen) {
+      const { icon, label, marketRate: rate } = productionChoice(dlg.w, kind, chosen);
+      dlg.item(icon, label, '应用至 ' + targets.length + ' 处', { marketRate: rate });
+      batchImpact(dlg, kind, targets.filter((index) => slots[index]?.batch && slots[index].batch.id !== chosen).length);
+      dialogButtons(dlg, '确认' + action, () => submit(dlg, 'assignProductionBatch', [kind, targets, chosen], null, '已应用至 ' + targets.length + ' 处'));
+      return;
+    }
+    if (workshop) dlg.tabs(sources, filter, (value) => {
+      filter = value;
+      dlg.local.scroll = 0;
+      dlg.local.indexKeyboard = 0;
+      dlg.refresh();
+    }, { sticky: true, style: 'filter' });
+    const choices = workshop ? workshopRecipes(dlg, kind, filter)
+      : dlg.w.unlocked.filter((id) => catalog.items[id]?.kind === kind);
+    if (!choices.length) {
+      dlg.text('暂无符合条件的已研发' + (workshop ? '配方' : '品种') + '。', { muted: true });
+      dlg.button('前往研究', () => {
+        dlg.close();
+        dlg.go('研究', { tab: '品种配方' });
+      }, confirm);
+      return;
+    }
+    replacementChoices(dlg, choices.map((id) => ({
+      ...productionChoice(dlg.w, kind, id),
+      selected: targets.every((index) => slots[index]?.recipe === id && (!slots[index].batch || slots[index].batch.id === id)),
+    })), ({ id }) => {
+      chosen = id;
+      dlg.local.scroll = 0;
+      dlg.refresh();
+    });
+  });
+}
+
+function batchClear(ui, kind, targets) {
+  const workshop = isWorkshop(kind);
+  ui.dialog('批量清空', (dlg) => {
+    const slots = workshop ? dlg.w.stations[kind] : dlg.w.facilities[kind];
+    const occupied = targets.map((index) => slots[index]).filter((slot) => slot?.recipe || slot?.batch || slot?.planting);
+    dlg.row('待清空数量', String(occupied.length));
+    batchImpact(dlg, kind, occupied.filter((slot) => slot.batch).length);
+    dialogButtons(dlg, '确认清空', () => submit(dlg, 'clearProductionBatch', [kind, targets], null, '已批量清空'), !occupied.length);
+  });
+}
+
+function batchUpgrade(ui, kind, targets) {
+  let steps = batchUpgradeSteps[0];
+  ui.dialog('批量升级', (dlg) => {
+    const quote = batchUpgradeOffer(dlg.w, kind, targets, steps);
+    dlg.row('升级数量', String(targets.length));
+    dlg.buttons(batchUpgradeSteps.map((step) => ({
+      label: '+' + step,
+      tone: step === steps ? 'gold' : 'plain',
+      onClick: () => {
+        steps = step;
+        dlg.refresh();
+      },
+    })), { style: 'production' });
+    if (quote) dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
+    dlg.text(isWorkshop(kind) ? '升级从下一批生效，每批材料投入同步增加。'
+      : '升级后按新等级计算产出，进行中的批次收获时间不变。', { muted: true });
+    dialogButtons(dlg, '确认升级', () => submit(dlg, 'upgradeProductionBatch', [kind, targets, steps, quote?.cost], null, '已批量升级'), !quote?.affordable);
+  });
+}
+
+function manageProduction(ui, kind, scope, source) {
+  const workshop = isWorkshop(kind);
+  const place = stationNames[kind] ?? facilityNames[kind];
+  const filterLabel = workshop && source !== sources[0] ? ' · ' + source : '';
+  const selected = new Set();
+  ui.dialog('批量管理 · ' + place + filterLabel, (dlg) => {
+    const list = scope(dlg.w);
+    const checked = list.filter(({ index }) => selected.has(index));
+    const targets = checked.map(({ index }) => index);
+    const canClear = checked.some(({ slot }) => slot.recipe || slot.batch || slot.planting);
+    const replaceLabel = assignmentLabel(kind, canClear);
+    dlg.row('已选', targets.length + ' / ' + list.length);
+    dlg.buttons([
+      { label: '全选', disabled: targets.length === list.length, onClick: () => {
+        for (const { index } of list) selected.add(index);
+        dlg.refresh();
+      } },
+      { label: '取消选择', disabled: !targets.length, onClick: () => {
+        selected.clear();
+        dlg.refresh();
+      } },
+    ]);
+    dlg.selectionGrid(list.map(({ slot, index }) => {
+      const id = slot.batch?.id ?? slot.recipe;
+      const output = id ? batchOutput(dlg.w, kind, index, slot, id) : null;
+      const slotLabel = '#' + (index + 1) + ' · ' + compact(slot.level) + ' 级';
+      return {
+        id: index,
+        icon: id ?? (emptyStationArt[kind] ?? emptyFacilityArt[kind]),
+        label: id ? itemName(id) : emptySlotName(kind),
+        detail: output ? slotLabel + '\n' + output.label + ' ' + output.amount + '\n总价 ' + compact(output.total) : slotLabel,
+        marketRate: marketRate(dlg.w, id), selected: selected.has(index),
+      };
+    }), ({ id }) => {
+      if (selected.has(id)) selected.delete(id);
+      else selected.add(id);
+      dlg.refresh();
+    });
+    dlg.buttons([
+      { label: replaceLabel, disabled: !targets.length, onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
+      { label: '清空', disabled: !canClear, onClick: () => batchClear(dlg, kind, targets) },
+      { label: '升级', tone: 'gold', disabled: !targets.length, onClick: () => batchUpgrade(dlg, kind, targets) },
+    ], { style: 'production' });
+  });
+}
+
+function productionLayout(ui, kind, list, scope, source) {
+  const zoomedOut = Boolean(ui.local.compactProduction);
+  function zoom(value) {
+    ui.local.compactProduction = value;
+    ui.refresh();
+  }
+  ui.buttons([
+    { label: '批量管理', tone: 'gold', disabled: !list.length, onClick: () => manageProduction(ui, kind, scope, source) },
+    { label: '缩小', disabled: zoomedOut, onClick: () => zoom(true) },
+    { label: '放大', disabled: !zoomedOut, onClick: () => zoom(false) },
+  ], { style: 'production' });
+  return zoomedOut;
+}
+
+function compactProductionCard(ui, kind, index, slot, source) {
+  const workshop = isWorkshop(kind);
+  const id = slot.batch?.id ?? slot.recipe;
+  const openDetails = () => workshop ? stationDetails(ui, kind, index, true) : facilityDetails(ui, kind, index, true);
+  const choose = workshop ? () => chooseRecipe(ui, kind, index, source) : () => chooseFacility(ui, kind, index);
+  const improve = workshop ? () => improveStation(ui, kind, index) : () => improveFacility(ui, kind, index);
+  const offer = workshop ? stationUpgradeOffer : facilityOffer;
+  ui.card((body) => {
+    body.row(id ? itemName(id) : emptySlotName(kind), undefined, {
+      compact: true, icon: id ?? (emptyStationArt[kind] ?? emptyFacilityArt[kind]),
+      marketRate: marketRate(ui.w, id), onClick: openDetails,
+    });
+    const level = compact(slot.level) + ' 级';
+    const status = workshop ? stationBadge(ui.w, slot) : null;
+    const textOptions = { fontSize: 13, muted: true };
+    if (status?.tone === 'blocked') {
+      body.text(level + ' · ', { ...textOptions, suffix: { value: status.label, tone: 'danger' } });
+    } else body.text(status ? level + ' · ' + status.label : level, textOptions);
+    const output = id ? batchOutput(ui.w, kind, index, slot, id) : null;
+    if (output) body.text(output.label + ' ' + output.amount + ' · 总价 ' + compact(output.total), { fontSize: 13 });
+    if (slot.batch) body.countdown(workshop ? '剩余' : '距收获', {
+      type: workshop ? 'station' : 'facility', kind, index,
+    }, { format: remainingTime, compact: true });
+  }, {
+    padding: 7, style: 'production',
+    footer: (actions) => actions.buttons([
+      { label: assignmentLabel(kind, Boolean(id)), tone: id ? 'plain' : 'green', onClick: choose },
+      { label: '升级', tone: 'gold', onClick: improve,
+        indicatorWhenVisible: () => offer(ui.w, kind, index, 1n)?.affordable ?? false },
+    ]),
+  });
+}
+
 function chooseFacility(ui, kind, index) {
   const crop = kind === 'C';
   const title = crop ? '选择作物' : kind === 'L' ? '选择牲畜' : '选择鱼种';
@@ -106,11 +327,7 @@ function chooseFacility(ui, kind, index) {
       }, confirm);
     } else {
       replacementChoices(dlg, choices.map((id) => ({
-        id,
-        icon: kind === 'L' ? 'livestock-' + id : kind === 'F' ? 'fish-' + id : id,
-        label: assignedName(id),
-        ...(marketRate(dlg.w, id) && { marketRate: marketRate(dlg.w, id) }),
-        duration: remainingTime(productionDurationMs(dlg.w, id)),
+        ...productionChoice(dlg.w, kind, id),
         selected: id === facility.recipe && (!facility.batch || facility.batch.id === id),
       })), ({ id }) => submit(dlg, 'assignFacility', [kind, index, id], null, '已' + label));
     }
@@ -175,7 +392,7 @@ function improveFacility(ui, kind, index) {
   }, { variant: 'facility-upgrade' });
 }
 
-function facilityDetails(ui, kind, index) {
+function facilityDetails(ui, kind, index, compactMode = false) {
   ui.dialog(facilityNames[kind] + '详情', (dlg) => {
     const facility = dlg.w.facilities[kind][index];
     if (!facility) return;
@@ -184,14 +401,15 @@ function facilityDetails(ui, kind, index) {
     dlg.row('等级', compact(facility.level) + ' 级');
     if (id) {
       const todayRate = marketRate(dlg.w, id);
-      dlg.row('产出品项', itemName(id), todayRate ? { valueMarketRate: todayRate } : undefined);
+      dlg.row('产出品项', itemName(id), todayRate && assignedName(id) !== itemName(id) ? { valueMarketRate: todayRate } : undefined);
       dlg.row('仓库库存', compact(quantity(dlg.w, id)) + ' 份');
       if (facility.batch) {
         dlg.row('本批产出', compact(facility.batch.amount) + ' 份');
         dlg.countdown('距收获', { type: 'facility', kind, index }, { format: remainingTime });
       }
       if (facility.recipe && facility.recipe !== facility.batch?.id) {
-        dlg.row('下批安排', assignedName(facility.recipe));
+        const nextName = assignedName(facility.recipe);
+        dlg.row('下批安排', nextName, { valueMarketRate: nextName === itemName(facility.recipe) ? marketRate(dlg.w, facility.recipe) : 0 });
       }
       if (facility.recipe) {
         const output = facilityOffer(dlg.w, kind, index, 1n)?.currentNextOutput;
@@ -199,7 +417,10 @@ function facilityDetails(ui, kind, index) {
         dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, facility.recipe)));
       }
     }
-    if (!id) {
+    if (compactMode && id) {
+      const label = facilityNames[kind];
+      dlg.button('清空' + label, () => clearProduction(ui, 'clearFacility', kind, index, label, dlg));
+    } else if (!id) {
       const quote = facilityOffer(dlg.w, kind, index, 1n);
       dlg.button('升级', () => improveFacility(dlg, kind, index), {
         ...confirm, indicator: quote?.affordable ?? false,
@@ -240,11 +461,15 @@ function facilityCard(ui, kind, index, facility) {
     body.feature(facilityImage(kind, id), (copy) => {
       const level = compact(facility.level) + ' 级';
       const todayRate = marketRate(ui.w, id);
-      copy.heading(assignedName(id), { style: 'production', aside: crop && !todayRate ? level : undefined, marketRate: todayRate });
+      const name = assignedName(id);
+      copy.heading(name, { style: 'production', aside: crop && !todayRate ? level : undefined, marketRate: name === item.name ? todayRate : 0 });
       if (!crop || todayRate) copy.badges([{ label: level }], { style: 'production' });
       const amount = active?.amount ?? getUpgradeQuote()?.currentOutput;
       if (amount != null) {
-        copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', { style: 'metric', icon: id, marketRate: crop ? 0 : todayRate });
+        copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', {
+          style: 'metric', icon: id, marketRate: name === item.name ? 0 : todayRate,
+        });
+        copy.row('总价', compact(BigInt(amount) * unitPrice(ui.w, id)), { style: 'metric' });
       }
       if (active) {
         const reference = { type: 'facility', kind, index };
@@ -299,6 +524,10 @@ function productionFocusIndex(local, kind, purchasedIndex, sourceId, sourceIndex
   return sourceIndex;
 }
 
+function facilitySlots(world, kind) {
+  return world.facilities[kind].map((slot, index) => ({ slot, index }));
+}
+
 export function renderProduction(ui) {
   const tab = productionTabs.includes(ui.local.tab) ? ui.local.tab : productionTabs[0];
   const kind = facilityKinds[productionTabs.indexOf(tab)];
@@ -321,9 +550,11 @@ export function renderProduction(ui) {
         () => ui.go(earnForLand ? '仓库' : '任务'));
     }
   }
-  const list = ui.w.facilities[kind];
+  const scope = (world) => facilitySlots(world, kind);
+  const list = scope(ui.w);
+  const compactMode = productionLayout(ui, kind, list, scope);
   const focus = catalog.items[ui.local.id]?.kind === kind ? ui.local.id : null;
-  const sourceIndex = focus ? list.findIndex((facility) => facility.recipe === focus || facility.batch?.id === focus) : -1;
+  const sourceIndex = focus ? list.findIndex(({ slot }) => slot.recipe === focus || slot.batch?.id === focus) : -1;
   if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + facilityNames[kind] + '中安排生产');
   if (!list.length) {
     const instruction = kind === 'C' ? '购地后即可播种。' : '购买' + facilityNames[kind] + '后即可安排养殖。';
@@ -331,7 +562,10 @@ export function renderProduction(ui) {
     return;
   }
   const focusIndex = productionFocusIndex(ui.local, kind, list.length - 1, focus, sourceIndex);
-  ui.scrollList(list, (cell, facility, index) => facilityCard(cell, kind, index, facility), { focusIndex });
+  ui.scrollList(list, (cell, { slot, index }) => {
+    if (compactMode) compactProductionCard(cell, kind, index, slot);
+    else facilityCard(cell, kind, index, slot);
+  }, { columns: compactMode ? 'auto' : 1, focusIndex });
 }
 
 function workshopRecipes(ui, kind, source) {
@@ -364,11 +598,7 @@ function chooseRecipe(ui, kind, index, source) {
       }, confirm);
     } else {
       replacementChoices(dlg, choices.map((id) => ({
-        id,
-        icon: id,
-        label: itemName(id),
-        ...(marketRate(dlg.w, id) && { marketRate: marketRate(dlg.w, id) }),
-        duration: remainingTime(productionDurationMs(dlg.w, id)),
+        ...productionChoice(dlg.w, kind, id),
         selected: id === station.recipe && (!station.batch || station.batch.id === id),
       })), ({ id }) => submit(dlg, 'arrangeStation', [kind, index, id], null,
         station.batch ? '已切换配方' : '已安排配方'));
@@ -480,7 +710,7 @@ function openSources(ui, requirements) {
   });
 }
 
-function stationDetails(ui, kind, index) {
+function stationDetails(ui, kind, index, compactMode = false) {
   ui.dialog(stationNames[kind] + '详情', (dlg) => {
     const station = dlg.w.stations[kind][index];
     if (!station) return;
@@ -499,7 +729,7 @@ function stationDetails(ui, kind, index) {
       stationProgress(dlg, active, kind, index);
       const next = catalog.items[station.recipe];
       if (next) {
-        dlg.row('下批配方', next.name);
+        dlg.row('下批配方', next.name, { valueMarketRate: marketRate(dlg.w, station.recipe) });
         dlg.row('下批耗时', remainingTime(productionDurationMs(dlg.w, station.recipe)));
         const level = stationMultiplier(station.level);
         const materialValue = Object.entries(next.inputs).reduce(
@@ -512,6 +742,9 @@ function stationDetails(ui, kind, index) {
         }
         dlg.text('材料', { muted: true });
         const requirements = requirementRows(dlg, station.recipe, { withLinks: true, level: station.level });
+        if (compactMode && requirements.length && requirements.every(({ owned, needed }) => owned >= needed)) {
+          dlg.button('查看来源', () => openSources(dlg, requirements));
+        }
         reserveButtons(dlg, requirements);
       }
     } else stationProgress(dlg, active, kind, index);
@@ -530,6 +763,10 @@ function stationDetails(ui, kind, index) {
         indicator: quote?.affordable ?? false,
       },
     ], { style: 'production' });
+    if (compactMode && id) {
+      const label = stationNames[kind];
+      dlg.button('清空' + label, () => clearProduction(ui, 'clearStation', kind, index, label, dlg));
+    }
   });
 }
 
@@ -599,6 +836,15 @@ function stationCard(ui, kind, index, station, source) {
   });
 }
 
+function workshopSlots(world, kind, source) {
+  return world.stations[kind].map((slot, index) => ({ slot, index })).filter(({ slot }) => {
+    if (source === sources[0] || (!slot.recipe && !slot.batch)) return true;
+    const current = catalog.items[slot.batch?.id];
+    const next = catalog.items[slot.recipe];
+    return current?.sources.includes(source) || next?.sources.includes(source);
+  });
+}
+
 export function renderWorkshop(ui) {
   const local = ui.local;
   const tab = workshopTabs.includes(local.tab) ? local.tab : workshopTabs[0];
@@ -628,17 +874,17 @@ export function renderWorkshop(ui) {
     local.scroll = 0;
     ui.refresh();
   }, { style: 'filter' });
-  const list = ui.w.stations[kind].map((station, index) => ({ station, index })).filter(({ station }) => {
-    if (source === sources[0] || (!station.recipe && !station.batch)) return true;
-    const current = catalog.items[station.batch?.id];
-    const next = catalog.items[station.recipe];
-    return current?.sources.includes(source) || next?.sources.includes(source);
-  });
-  const sourceIndex = focus ? list.findIndex(({ station }) => station.recipe === focus || station.batch?.id === focus) : -1;
+  const scope = (world) => workshopSlots(world, kind, source);
+  const list = scope(ui.w);
+  const compactMode = productionLayout(ui, kind, list, scope, source);
+  const sourceIndex = focus ? list.findIndex(({ slot }) => slot.recipe === focus || slot.batch?.id === focus) : -1;
   if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方', { buttonTone: 'plain' });
   if (list.length) {
     const focusIndex = productionFocusIndex(local, kind, list.length - 1, focus, sourceIndex);
-    ui.scrollList(list, (cell, { station, index }) => stationCard(cell, kind, index, station, source), { focusIndex });
+    ui.scrollList(list, (cell, { slot, index }) => {
+      if (compactMode) compactProductionCard(cell, kind, index, slot, source);
+      else stationCard(cell, kind, index, slot, source);
+    }, { columns: compactMode ? 'auto' : 1, focusIndex });
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
   if (quote) ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {

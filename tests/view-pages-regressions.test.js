@@ -3,11 +3,11 @@ import test from 'node:test';
 import economyScale from '../src/content/economy-scale.json' with { type: 'json' };
 import {
   advanceWorld, arrangeStation, assignFacility, catalog, farmSaleOffer, newWorld, productionDurationMs, reserve, sell, sellFarm,
-  upgradeStation,
+  batchUpgradeOffer, tradeOffer, unitPrice, upgradeStation,
 } from '../src/game/world.js';
 import { upgradeTech } from '../src/game/advancement.js';
 import { qualityDrawOffer } from '../src/game/quality.js';
-import { hoursLabel, renderTasks, renderWarehouse } from '../src/view/management-pages.js';
+import { hoursLabel, renderFarmSale, renderTasks, renderWarehouse } from '../src/view/management-pages.js';
 import { renderProduction, renderWorkshop } from '../src/view/production-pages.js';
 import { renderResearch, researchReadyTabs } from '../src/view/research-page.js';
 import { compact } from '../src/view/numbers.js';
@@ -50,6 +50,21 @@ function pageFixture(w, local = {}) {
   return { ui, calls, find, click, dialog };
 }
 
+test('farm sale preview and confirmation use plain description lists', () => {
+  const world = newWorld(0);
+  world.lifetimeProductionValue = 100_000_000n;
+  const page = pageFixture(world);
+  renderFarmSale(page.ui);
+  page.click('出售牧场');
+  for (const view of [page, page.dialog('确认出售牧场')]) {
+    const lists = view.calls.filter(([name]) => name === 'detailRows').map(([, [rows]]) => rows);
+    assert.equal(lists.length, 4);
+    assert.ok(lists.flat().every(({ label, icon }) => label && !icon));
+    assert.ok(lists[3].some(({ label }) => label.startsWith('首次经营交接另奖')));
+    assert.equal(view.find('text', (label) => label.startsWith('点数在确认出售时领取')), undefined);
+  }
+});
+
 test('warehouse shows permanent filters, current quality and price, and exact stock', () => {
   const world = newWorld(0);
   const amount = 10n ** 120n + 9n;
@@ -64,6 +79,7 @@ test('warehouse shows permanent filters, current quality and price, and exact st
   assert.ok(view.find('row', (label, value) => label === '单价' && value.endsWith(' 金币')));
   view.click('详情');
   const details = view.dialog('小麦');
+  assert.ok(details.find('item', (id, label) => id === 'C01' && label === '小麦'));
   assert.ok(details.find('fullNumber', (value) => value === amount));
   assert.ok(details.find('fullNumber', (value) => value === 17n));
 });
@@ -85,6 +101,59 @@ test('warehouse keeps sold-out items until the next run starts', () => {
   const nextRun = pageFixture(world);
   renderWarehouse(nextRun.ui);
   assert.equal(nextRun.find('feature', (id) => id === 'C01'), undefined);
+});
+
+test('warehouse batch management selects visible stock and quotes the same percentage per item', async () => {
+  const world = newWorld(0);
+  world.inventory = { C01: 5n, C02: 1n, C03: 0n, I01: 7n };
+  world.reserves.C01 = 4n;
+  world.productionValue = 100_000n;
+  world.market = { day: '2026-11-17', used: 0, sequence: 0, rates: { C01: -50 } };
+  const view = pageFixture(world, { type: '原料' });
+  renderWarehouse(view.ui);
+  view.click('批量管理');
+  let management = view.dialog('批量管理');
+  const [cards] = management.find('selectionGrid', () => true);
+  assert.deepEqual(cards.map(({ id, marketRate }) => [id, marketRate]), [['C01', -50], ['C02', 0]]);
+  assert.ok(!management.find('slider', () => true));
+  management.click('全选');
+  management = view.dialog('批量管理');
+  assert.ok(management.find('selectionGrid', (items) => items.every((item) => item.selected)));
+  management.click('批量出售');
+  let sale = management.dialog('批量出售');
+  sale.click('50%');
+  sale = management.dialog('批量出售');
+  const expected = ['C01', 'C02'].map((id) => tradeOffer(world, id, 50));
+  assert.ok(sale.find('row', (label, value) => label === '出售数量' && value === 2n));
+  assert.ok(sale.find('row', (label, value) => label === '预计得款' && value === compact(expected[0].gain) + ' 金币'));
+  assert.ok(sale.find('text', (message) => message.includes('动用保留库存 1')));
+  sale.ui.isActive = () => true;
+  sale.ui.action = (...args) => { sale.calls.push(['action', args]); return true; };
+  await sale.click('确认出售');
+  assert.deepEqual(sale.find('action', () => true), ['sellBatch', expected.map((expectedQuote) => ({
+    id: expectedQuote.id, percent: 50, expectedQuote,
+  }))]);
+});
+
+test('farm batch upgrades quote all chosen plots and only submit after confirmation', async () => {
+  const world = newWorld(0);
+  world.coins = 10n ** 12n;
+  const view = pageFixture(world);
+  renderProduction(view.ui);
+  view.click('批量管理');
+  let management = view.dialog('批量管理 · 田地');
+  assert.ok(management.find('selectionGrid', (items) => items.length === 2 && items.every((item) => !item.selected)));
+  management.click('全选');
+  management = view.dialog('批量管理 · 田地');
+  management.click('升级');
+  let dialog = management.dialog('批量升级');
+  dialog.click('+5');
+  dialog = management.dialog('批量升级');
+  const expected = batchUpgradeOffer(world, 'C', [0, 1], 5n);
+  assert.ok(dialog.find('materialTable', (rows) => rows[0].needed === expected.cost));
+  dialog.ui.action = (...args) => { dialog.calls.push(['action', args]); return true; };
+  await dialog.click('确认升级');
+  assert.deepEqual(dialog.find('action', () => true), ['upgradeProductionBatch', 'C', [0, 1], 5n, expected.cost]);
 });
 
 test('warehouse hourly chart truncates all rates and abbreviates from a thousand', () => {
@@ -365,9 +434,9 @@ test('research keeps the recipe and tech camera state and separates both point b
   assert.equal(redraw('品质'), undefined);
   assert.ok(view.find('researchProgress', () => true));
   assert.deepEqual(view.find('indexRows', () => true)[0].map(({ icon }) => icon).sort(), [...world.unlocked].sort());
-  assert.deepEqual(view.find('stats', () => true)[0], [
-    { label: '普通研发点', value: 101n, icon: 'research-point-basic' },
-  ]);
+  assert.deepEqual(view.find('balance', (label) => label === '普通研发点'),
+    ['普通研发点', 101n, { variant: 'efficiency', icon: 'research-point-basic' }]);
+  assert.equal(points(), undefined);
   const improvement = redraw('经营改良');
   assert.notEqual(improvement.view, recipes.view);
   assert.deepEqual(improvement.nodes.find(({ id }) => id === 'fishCycle').requires, ['fishYield']);
@@ -376,6 +445,27 @@ test('research keeps the recipe and tech camera state and separates both point b
   assert.ok(improvement.nodes.every(({ group }) => improvement.groups.includes(group)));
   assert.deepEqual(points(), ['高级研发点', world.researchPoints, { variant: 'efficiency', icon: 'research-point' }]);
   assert.equal(redraw('品种配方').view.zoom, 0.72);
+});
+
+test('research details show the quality unit price and the value of one base batch', () => {
+  const world = newWorld(0);
+  world.quality.C01 = '3';
+  world.productionValue = 100_000n;
+  world.market = { day: '2026-11-17', used: 0, sequence: 0, rates: { C01: 200 } };
+  const view = pageFixture(world, { tab: '品种配方' });
+  renderResearch(view.ui);
+  const [tree] = view.find('tree', () => true);
+  for (const id of ['C01', 'I01', 'P01']) {
+    const item = catalog.items[id];
+    tree.onSelect(id);
+    const { find } = view.dialog(item.subject ?? item.name);
+    const [rows] = find('detailRows', (group) => group.some(({ label }) => label === '单价'));
+    const price = unitPrice(world, id);
+    assert.deepEqual(rows.filter(({ label }) => label.includes('价')), [
+      { label: '单价', value: compact(price) },
+      { label: '每批总价', value: compact(price * BigInt(item.output)) },
+    ]);
+  }
 });
 
 test('research exposes the same market nodes in the full tree and finder filter', () => {
@@ -492,8 +582,12 @@ test('production details show facility yield technology and station upgrades sta
   assert.ok(arrangeStation(world, 'I', 0, 'I01'));
   assert.ok(upgradeTech(world, 'cropYield'));
   assert.ok(upgradeStation(world, 'I', 0, 1n));
+  world.quality.C01 = '4';
+  world.productionValue = 100_000n;
+  world.market = { day: '2026-11-17', sequence: 0, used: 0, rates: { C01: 200 } };
   const farm = pageFixture(world, { tab: '田地' });
   renderProduction(farm.ui);
+  assert.ok(farm.find('row', (label, value) => label === '总价' && value === compact(50n * unitPrice(world, 'C01'))));
   farm.find('feature', (id, _, options) => id === 'scene-C01' && options.plotAnimation)[2].onClick();
   const field = farm.dialog('田地详情');
   assert.ok(field.find('row', (label, value) => label === '本批产出' && value === '50 份'));

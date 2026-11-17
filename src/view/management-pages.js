@@ -76,6 +76,12 @@ function matchesFilters(local, item) {
     (local.type !== '商品' || local.complexity === '全部' || local.complexity === complexityOf(item));
 }
 
+function warehouseEntries(world, { type = '全部', source = '全部' } = {}) {
+  return entries.filter(([id, item]) => Object.hasOwn(world.inventory, id) &&
+    (type === '全部' || type === typeOf(item)) &&
+    (source === '全部' || item.sources.includes(source)));
+}
+
 function showSource(ui, id) {
   const item = catalog.items[id];
   if (!item) return;
@@ -134,6 +140,97 @@ function salePanel(ui, id) {
   }, { variant: 'warehouse-sale' });
 }
 
+function batchSalePanel(ui, filters) {
+  const selected = new Set();
+  ui.dialog('批量管理', (panel) => {
+    const quotes = warehouseEntries(panel.w, filters)
+      .filter(([id]) => quantity(panel.w, id) > 0n)
+      .map(([id]) => tradeOffer(panel.w, id, 100));
+    const available = new Set(quotes.map(({ id }) => id));
+    for (const id of selected) {
+      if (!available.has(id)) selected.delete(id);
+    }
+    panel.row('已选品项', selected.size + ' / ' + quotes.length, { compact: true, noWrap: true });
+    panel.buttons([
+      { label: '全选', disabled: selected.size === quotes.length, onClick: () => {
+        for (const id of available) selected.add(id);
+        panel.refresh();
+      } },
+      { label: '取消选择', disabled: selected.size === 0, onClick: () => {
+        selected.clear();
+        panel.refresh();
+      } },
+    ]);
+    if (quotes.length) {
+      panel.selectionGrid(quotes.map(({ id, inventory, price, gain }) => ({
+        id, icon: id, label: catalog.items[id].name,
+        detail: '库存 ' + compact(inventory) + ' 件\n单价 ' + compact(price) + '\n总价 ' + compact(gain),
+        marketRate: marketRate(panel.w, id), selected: selected.has(id),
+      })), ({ id }) => {
+        if (selected.has(id)) selected.delete(id);
+        else selected.add(id);
+        panel.refresh();
+      });
+    } else panel.text('当前筛选无可出售库存。', { muted: true });
+    panel.button('批量出售', () => confirmBatchSale(panel, [...selected]), {
+      tone: 'gold', disabled: selected.size === 0,
+    });
+  });
+}
+
+function confirmBatchSale(ui, ids) {
+  const state = { percent: 0, pending: false, revised: false };
+  ui.dialog('批量出售', (panel) => {
+    const quotes = ids.map((id) => tradeOffer(panel.w, id, state.percent));
+    const total = { count: 0n, gain: 0n, reserveAffected: 0n };
+    for (const quote of quotes) {
+      total.count += quote.count;
+      total.gain += quote.gain;
+      total.reserveAffected += quote.reserveAffected;
+    }
+    const setPercent = (percent) => {
+      if (state.pending) return;
+      state.percent = percent;
+      state.revised = false;
+      panel.refresh();
+    };
+    panel.row('已选品项', ids.length, { compact: true, noWrap: true });
+    if (state.revised) panel.text('库存或报价可能已变化，请核对后重新确认。');
+    panel.slider(state.percent, setPercent, { bubble: true });
+    panel.buttons([25, 50, 75, 100].map((percent) => ({
+      label: percent + '%', tone: state.percent === percent ? 'green' : 'plain', disabled: state.pending,
+      onClick: () => setPercent(percent),
+    })), { style: 'filter' });
+    panel.row('出售数量', total.count, { compact: true, divider: true, noWrap: true });
+    panel.row('预计得款', compact(total.gain) + ' 金币', { compact: true, divider: true, noWrap: true });
+    if (total.reserveAffected > 0n) {
+      panel.text('本次将动用保留库存 ' + compact(total.reserveAffected) + ' 件。');
+    }
+    panel.buttons([
+      { label: '取消', onClick: () => panel.close(), disabled: state.pending },
+      {
+        label: '确认出售', tone: 'gold', disabled: total.count === 0n || state.pending,
+        onClick: async () => {
+          if (state.pending) return;
+          state.pending = true;
+          const selections = quotes.map((expectedQuote) => ({
+            id: expectedQuote.id, percent: expectedQuote.percent, expectedQuote,
+          }));
+          const sold = await panel.action('sellBatch', selections);
+          state.pending = false;
+          if (!panel.isActive()) return;
+          if (sold) panel.close();
+          else {
+            state.revised = true;
+            panel.local.scroll = 0;
+            panel.refresh();
+          }
+        },
+      },
+    ]);
+  });
+}
+
 export function reservePanel(ui, id) {
   const state = { digits: (ui.w.reserves[id] ?? 0n).toString(), pending: false };
   const set = (value) => {
@@ -143,7 +240,7 @@ export function reservePanel(ui, id) {
   };
   const normalize = (value) => value.replace(/[０-９]/g, (digit) => String(digit.charCodeAt(0) - 0xff10));
   ui.dialog('加工保留量', (panel) => {
-    panel.item(id, catalog.items[id].name);
+    panel.item(id, catalog.items[id].name, undefined, { marketRate: marketRate(panel.w, id) });
     panel.text('工位开批后，库存仍须达到此数量。');
     panel.row('当前库存', quantity(panel.w, id));
     panel.text('保留数量');
@@ -200,7 +297,7 @@ function warehouseDetail(ui, id) {
     for (const [label, value] of [
       ['库存', amount],
       ['品质（级）', BigInt(panel.w.quality[id] ?? 1)],
-      ['单价（金币）', marketUnitPrice(panel.w, id)],
+      ['单价', marketUnitPrice(panel.w, id)],
       ['加工保留量', panel.w.reserves[id] ?? 0n],
     ]) {
       panel.text(label);
@@ -290,7 +387,7 @@ function showMarket(ui) {
 }
 
 export function renderWarehouse(ui) {
-  const obtained = entries.filter(([id]) => Object.hasOwn(ui.w.inventory, id));
+  const obtained = warehouseEntries(ui.w);
   if (obtained.length) ui.image('warehouse', Math.round(ui.width * 0.35));
   if (marketIsActive(ui.w)) {
     ui.buttons([
@@ -310,9 +407,19 @@ export function renderWarehouse(ui) {
     ui.local.scroll = 0;
     ui.refresh();
   }, { style: 'filter' });
-  const filtered = obtained.filter(([, item]) =>
-    (ui.local.source === '全部' || item.sources.includes(ui.local.source)) &&
-    (ui.local.type === '全部' || ui.local.type === typeOf(item)));
+  const filters = { type: ui.local.type, source: ui.local.source };
+  const filtered = filters.type === '全部' && filters.source === '全部' ? obtained : warehouseEntries(ui.w, filters);
+  const compactView = Boolean(ui.local.compactWarehouse);
+  const setCompact = (value) => {
+    ui.local.compactWarehouse = value;
+    ui.refresh();
+  };
+  ui.buttons([
+    { label: '批量管理', tone: 'gold', onClick: () => batchSalePanel(ui, filters),
+      disabled: !filtered.some(([id]) => quantity(ui.w, id) > 0n) },
+    { label: '缩小', onClick: () => setCompact(true), disabled: compactView },
+    { label: '放大', onClick: () => setCompact(false), disabled: !compactView },
+  ]);
   if (!filtered.length) {
     if (!obtained.length) {
       ui.image('warehouse-empty-v1', Math.min(ui.width, 120), { center: true });
@@ -328,20 +435,33 @@ export function renderWarehouse(ui) {
   }
   ui.scrollList(filtered, (cell, [id, item]) => {
     const amount = quantity(ui.w, id);
+    const quality = compact(ui.w.quality[id] ?? 1n) + ' 级';
+    const price = compact(marketUnitPrice(ui.w, id)) + ' 金币';
+    const rate = marketRate(ui.w, id);
     const open = () => warehouseDetail(ui, id);
+    const drawActions = (row) => row.buttons([
+      { label: '详情', onClick: open },
+      { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold', disabled: amount <= 0n },
+    ], { style: 'production' });
+    if (compactView) {
+      cell.card((row) => {
+        row.row(item.name, null, { icon: id, marketRate: rate, compact: true });
+        row.row('库存', amount, { compact: true, noWrap: true });
+        row.row('品质', quality, { compact: true, noWrap: true });
+        row.row('单价', price, { compact: true, noWrap: true });
+      }, { padding: 6, gap: 4, footer: drawActions });
+      return;
+    }
     cell.card((row) => {
       row.feature(id, (card) => {
-        card.heading(item.name, { marketRate: marketRate(ui.w, id) });
+        card.heading(item.name, { marketRate: rate });
         card.row('库存', amount, { style: 'metric', compact: true, divider: true, noWrap: true });
-        card.row('品质', compact(ui.w.quality[id] ?? 1n) + ' 级', { compact: true });
-        card.row('单价', compact(marketUnitPrice(ui.w, id)) + ' 金币', { compact: true });
+        card.row('品质', quality, { compact: true });
+        card.row('单价', price, { compact: true });
       }, { ratio: 0.28, onClick: open });
-      row.buttons([
-        { label: '详情', onClick: open },
-        { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold', disabled: amount <= 0n },
-      ], { style: 'production' });
+      drawActions(row);
     }, { padding: 8, gap: 6 });
-  });
+  }, { columns: compactView ? 'auto' : 1 });
 }
 
 function catalogViewSnapshot(local) {
@@ -829,21 +949,20 @@ function farmDetails(ui, offer) {
     ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true }), { padding: 8, gap: 6 });
   }
   ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
-  ui.text('点数在确认出售时领取。评估只影响之后的生产，不重算已有收益；不足一点的收益跨轮保留。', { muted: true });
-  const newRun = [{ icon: 'facility-field', label: '2 块小麦田、基础 ' + compact(startingCoins) + ' 金币' }];
+  const newRun = [{ label: '2 块小麦田、基础 ' + compact(startingCoins) + ' 金币' }];
   if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm') &&
     (ui.w.lifetimeProductionValue ?? 0n) >= taskProductionGates.newFarm) {
-    newRun.push({ icon: 'coin', label: '首次经营交接另奖 ' + compact(taskCoinRewards.newFarm) + ' 金币（仅一次）' });
+    newRun.push({ label: '首次经营交接另奖 ' + compact(taskCoinRewards.newFarm) + ' 金币（仅一次）' });
   }
   const changes = [
-    ['保留', [{ icon: 'sale-retain', label: '已研发品项、品质、普通研发点、经营改良、任务进度' }]],
+    ['保留', [{ label: '已研发品项、品质、普通研发点、经营改良、任务进度' }]],
     ['清空', [
-      { icon: 'sale-reset', label: '田地、畜牧场、鱼池' },
-      { icon: 'nav-warehouse', label: '库存、金币' },
+      { label: '田地、畜牧场、鱼池' },
+      { label: '库存、金币' },
     ]],
     ['工坊重置', [
-      { icon: 'nav-workshop', label: '现有 ' + compact(offer.stationCount) + ' 个工位重置为加工位、精制位各 1 个' },
-      { icon: 'operation-switch', label: '原配方、优先生产和未完成批次清空' },
+      { label: '现有 ' + compact(offer.stationCount) + ' 个工位重置为加工位、精制位各 1 个' },
+      { label: '原配方、优先生产和未完成批次清空' },
     ]],
     ['新一轮', newRun],
   ];

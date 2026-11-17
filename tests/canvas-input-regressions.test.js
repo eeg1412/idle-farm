@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Assets, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Texture, TextureSource } from 'pixi.js';
 import 'pixi.js/events';
-import { advanceWorld, arrangeStation, assignFacility, buyFacility, catalog, newWorld } from '../src/game/world.js';
+import { advanceWorld, arrangeStation, assignFacility, buyFacility, buyStation, catalog, newWorld } from '../src/game/world.js';
 import { techDefinitions } from '../src/game/advancement.js';
 import { createGameView } from '../src/view/canvas-ui.js';
 import { viewportLayout } from '../src/platform/layout.js';
@@ -595,6 +595,78 @@ test('catalog tiles in a row grow together for longer copy', () => {
   assert.equal(tiles[0].hitArea.height, tiles[1].hitArea.height);
 });
 
+test('compact card edges and bottom actions align by row in the farm, workshop and warehouse', async () => {
+  const game = setup();
+  game.world.coins = 10_000n;
+  assert.ok(assignFacility(game.world, 'C', 0, 'C01'));
+  assert.ok(buyStation(game.world, 'I'));
+  game.world.inventory = { C01: 40n, P169: 6n };
+  assert.ok(arrangeStation(game.world, 'I', 0, 'I01'));
+  game.world.productionValue = 100_000n;
+  game.world.market = { day: '2026-11-17', sequence: 0, used: 0, rates: { P169: 200 } };
+  game.draw(390, 844);
+  for (const page of ['牧场', '工坊', '仓库']) {
+    game.view.go(page);
+    game.flush();
+    tapText(game, '缩小');
+    const cards = game.nodes().filter((node) => node.label === 'scroll-list-card')
+      .map((node) => node.getLocalBounds());
+    assert.equal(cards.length, 2, page);
+    assert.equal(cards[0].minY, cards[1].minY, page);
+    assert.equal(cards[0].maxY, cards[1].maxY, page);
+    assert.ok(cards[0].maxX < cards[1].minX, page);
+    const footers = game.nodes().filter((node) => node.label === 'scroll-list-card-footer')
+      .map((node) => node.getBounds());
+    assert.equal(footers.length, 2, page);
+    assert.equal(footers[0].maxY, footers[1].maxY, page);
+    if (page === '工坊') {
+      tapText(game, '选择配方', 'touch');
+      assert.ok(game.nodes().some((node) => node.label === '关闭'));
+      await game.view.close();
+      game.flush();
+    }
+  }
+});
+
+test('compact workshop colors only the existing stopped statuses red', () => {
+  const game = setup();
+  const world = game.world;
+  world.coins = 1_000_000_000n;
+  for (let i = 0; i < 3; i += 1) assert.ok(buyStation(world, 'I'));
+  world.unlocked.push('I03');
+  world.inventory.C01 = 2n;
+  assert.ok(arrangeStation(world, 'I', 0, 'I01'));
+  world.inventory.C01 = 2n;
+  world.reserves.C01 = 2n;
+  assert.ok(arrangeStation(world, 'I', 1, 'I01'));
+  assert.ok(arrangeStation(world, 'I', 2, 'I03'));
+  game.draw(390, 844);
+  game.view.go('工坊');
+  game.flush();
+  tapText(game, '缩小');
+  const label = (value) => game.nodes().find((node) => node.text === value);
+  for (const reason of ['材料已预留', '等待材料', '等待安排']) {
+    assert.equal(label(reason)?.style.fill, 0xa03221, reason);
+  }
+  assert.equal(label('1 级 · 生产中')?.style.fill, 0x625d4c);
+  assert.equal(label('1 级 · ')?.style.fill, 0x625d4c);
+});
+
+test('farm sale retention background grows to contain wrapped text', () => {
+  const game = setup();
+  game.draw(320, 760);
+  game.view.go('出售牧场');
+  game.flush();
+  const label = game.nodes().find((node) => node.text === '已研发品项、品质、普通研发点、经营改良、任务进度');
+  assert.ok(label);
+  const background = label.parent.children.find((node) => node.label === 'detail-row-background');
+  assert.ok(background);
+  const textBounds = label.getBounds();
+  const rowBounds = background.getBounds();
+  assert.ok(rowBounds.height > 34);
+  assert.ok(rowBounds.minY <= textBounds.minY && rowBounds.maxY >= textBounds.maxY);
+});
+
 test('replacement choice cards fit the viewport and icon mode omits labels and cycle text', () => {
   const items = Array.from({ length: 20 }, (_, index) => ({
     id: 'option-' + index, label: '可用品项 ' + index, duration: '37 秒', icon: 'C01',
@@ -610,6 +682,82 @@ test('replacement choice cards fit the viewport and icon mode omits labels and c
     assert.equal(tiles.filter((tile) => tile.getLocalBounds().minY === top).length, expectedColumns);
     assert.equal(game.nodes().some((node) => node.text === '37 秒'), !iconsOnly);
   }
+});
+
+test('replacement choices keep duration close below the name and wrapped market mark', () => {
+  const game = setup();
+  game.draw(320, 760);
+  game.view.dialog('选择作物', (ui) => ui.choiceGrid([
+    { id: 'C02', label: '甘蔗', duration: '16 秒', marketRate: 40 },
+    { id: 'C01', label: '小麦', duration: '12 秒' },
+    { id: 'PT50', label: '紫苏双鱼牛汁千层御膳礼盒', duration: '60 秒', marketRate: -90 },
+  ], () => {}));
+  const bounds = (value) => game.nodes().find((node) => node.text === value).getBounds();
+  for (const [mark, duration] of [['×1.4', '16 秒'], ['×0.1', '60 秒']]) {
+    const gap = bounds(duration).minY - bounds(mark).maxY;
+    assert.ok(gap >= 0 && gap <= 8, `${duration}: ${gap}`);
+  }
+});
+
+test('replacement rows fit their own content, center the cards, and retain pointer targeting', async (t) => {
+  const game = setup();
+  const texture = new Texture({ source: new TextureSource({ width: 96, height: 96 }) });
+  t.mock.method(Assets, 'load', async () => texture);
+  const selected = [];
+  game.draw(320, 760);
+  game.view.dialog('选择作物', (ui) => ui.choiceGrid([
+    { id: 'C02', label: '甘蔗', duration: '16 秒', marketRate: 40 },
+    { id: 'C01', label: '小麦', duration: '12 秒' },
+    { id: 'PT50', label: '紫苏双鱼牛汁千层御膳礼盒', duration: '60 秒', marketRate: -90 },
+    { id: 'C03', label: '稻谷', duration: '20 秒' },
+  ], ({ id }) => selected.push(id)));
+  await new Promise(setImmediate);
+  game.flush();
+  const bounds = (label) => {
+    const node = game.nodes().find((entry) => entry.label === label);
+    assert.ok(node, label);
+    return node.getBounds();
+  };
+  const first = bounds('picker-choice:C02');
+  const second = bounds('picker-choice:PT50');
+  assert.ok(first.height < second.height);
+  assert.equal(first.height, bounds('picker-choice:C01').height);
+  assert.equal(second.height, bounds('picker-choice:C03').height);
+  for (const id of ['C02', 'C01', 'PT50', 'C03']) {
+    const card = bounds('picker-choice:' + id);
+    const content = bounds('picker-content:' + id);
+    assert.ok(Math.abs((content.minY - card.minY) - (card.maxY - content.maxY)) <= 2, id);
+  }
+  tapText(game, '稻谷', 'touch');
+  assert.deepEqual(selected, ['C03']);
+});
+
+test('batch tiles toggle by touch and put market rates beside names or below long names', () => {
+  const game = setup();
+  game.draw(320, 760);
+  const items = [
+    { id: 'C01', label: '小麦', detail: '单价 150', marketRate: 10, selected: false },
+    { id: 'PT50', label: '紫苏双鱼牛汁千层御膳礼盒', detail: '总价 200', marketRate: -90, selected: false },
+  ];
+  const toggled = [];
+  game.view.dialog('批量管理', (ui) => ui.selectionGrid(items, (item) => {
+    item.selected = !item.selected;
+    toggled.push(item.selected);
+    ui.refresh();
+  }));
+  const text = (label) => {
+    const node = game.nodes().find((entry) => entry.text === label);
+    assert.ok(node, label);
+    return node;
+  };
+  const bounds = (label) => text(label).getBounds();
+  assert.ok(bounds('×1.1').minX > bounds('小麦').maxX);
+  assert.ok(bounds('×1.1').minY < bounds('小麦').maxY);
+  assert.ok(bounds('×0.1').minY >= bounds(items[1].label).maxY);
+  assert.ok(bounds('总价 200').minY > bounds('×0.1').maxY);
+  tapText(game, '小麦', 'touch');
+  tapText(game, '小麦', 'touch');
+  assert.deepEqual(toggled, [true, false]);
 });
 
 test('research atlas fits the complete catalogue and keeps direct prerequisites above all dependents', async () => {

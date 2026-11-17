@@ -1,4 +1,4 @@
-import { Container, Graphics, Rectangle, Sprite, Text, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
+import { Container, Graphics, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
@@ -70,6 +70,20 @@ const path = (name) => new URL(name, document.baseURI).href;
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id);
+const marketLabelGap = 4;
+const marketRateText = (rate) => '×' + ((100 + rate) / 100);
+const marketMarkSize = (size) => Math.min(15, size);
+function marketMarkLayout(span, size, amount) {
+  const iconSize = Math.min(19, size + 2);
+  const naturalWidth = iconSize + 2 + amount.width;
+  const fit = Math.min(1, span / naturalWidth);
+  return { iconSize, fit, width: naturalWidth * fit, height: Math.max(iconSize, amount.height) * fit };
+}
+
+function marketLabelFits(span, title, titleWidth, markWidth) {
+  return titleWidth + marketLabelGap + markWidth <= span && !title.includes('\n');
+}
+
 function copyViewState(value, seen = new Map()) {
   if (typeof value === 'function') return undefined;
   if (!value || typeof value !== 'object') return value;
@@ -116,12 +130,16 @@ const inkGraphics = () => {
   return graphics;
 };
 
-function panel(parent, x, y, width, height, fill, outline, radius = 9) {
-  const g = inkGraphics();
+function paintPanel(g, x, y, width, height, fill, outline, radius) {
   if (radius) g.roundRect(x, y, width, height, Math.min(radius, width / 2, height / 2));
   else g.rect(x, y, width, height);
   g.fill(fill);
   if (outline) g.stroke({ color: outline, width: 1.1 });
+}
+
+function panel(parent, x, y, width, height, fill, outline, radius = 9) {
+  const g = inkGraphics();
+  paintPanel(g, x, y, width, height, fill, outline, radius);
   parent.addChild(g);
   return g;
 }
@@ -183,8 +201,7 @@ function drawPixelIcon(parent, icon, x, y, width, height) {
       }
       art.poly(points).fill(icon.color ?? palette.ink);
     }
-    parent.addChild(art);
-    return;
+    return parent.addChild(art);
   }
   const columns = icon.rows[0].length;
   const unit = Math.max(1, Math.floor(Math.min(width / columns, height / icon.rows.length)));
@@ -197,16 +214,20 @@ function drawPixelIcon(parent, icon, x, y, width, height) {
     }));
     art.fill(color);
   }
-  parent.addChild(art);
+  return parent.addChild(art);
 }
 
-function textNode(parent, value, x, y, width, options = {}) {
-  const { size = 16, color = palette.ink, align = 'left', weight = '600', wrap = true } = options;
-  const label = new Text({ text: number(value), style: {
+function textStyle(width, { size = 16, color = palette.ink, align = 'left', weight = '600', wrap = true }) {
+  return {
     fontFamily: 'system-ui, "PingFang SC", "Microsoft YaHei", sans-serif',
     fontSize: size, fontWeight: weight, fill: color, align, wordWrap: wrap,
     wordWrapWidth: Math.max(8, width), breakWords: wrap, lineHeight: Math.ceil(size * 1.36),
-  } });
+  };
+}
+
+function textNode(parent, value, x, y, width, options = {}) {
+  const { align = 'left' } = options;
+  const label = new Text({ text: number(value), style: textStyle(width, options) });
   label.eventMode = 'none';
   const shift = align === 'right' ? Math.max(0, width - label.width) :
     align === 'center' ? Math.max(0, (width - label.width) / 2) : 0;
@@ -719,20 +740,23 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function hitAt(g, parent, x, y, width, height, fn) {
     g.eventMode = 'static';
     g.cursor = 'pointer';
-    g.hitArea = new Rectangle(x, y, width, height);
+    const hitArea = new Rectangle(x, y, width, height);
+    g.hitArea = hitArea;
     const run = (event) => {
       if (blockTap || waiting) return;
       if (developmentToolsEnabled) settingsTitleClicks = 0;
       if (event) point = root.toLocal(event.global);
-      else point = root.toLocal(parent.toGlobal({ x: x + width / 2, y: y + height / 2 }));
+      else point = root.toLocal(parent.toGlobal({ x: x + width / 2, y: y + hitArea.height / 2 }));
       fn(event);
     };
     g.on('pointertap', run);
-    controls.push({ run, parent, x, y, width, height });
+    const control = { run, parent, x, y, width, height };
+    controls.push(control);
+    return control;
   }
 
   function directionIcon(parent, direction, x, y, width, height, { arrow = false, color = palette.ink } = {}) {
-    drawPixelIcon(parent, { kind: arrow ? 'arrow' : 'chevron', direction, color }, x, y, width, height);
+    return drawPixelIcon(parent, { kind: arrow ? 'arrow' : 'chevron', direction, color }, x, y, width, height);
   }
 
   function transitionNode(parent, from, to, x, y, width,
@@ -1122,23 +1146,50 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       left < pinned.left || right > pinned.right;
   }
 
-  function marketLabel(parent, value, x, y, width, rate, options = {}) {
-    if (!rate) return textNode(parent, value, x, y, width, options);
-    const size = options.size ?? 16;
+  function marketMark(parent, width, rate, size, trackViewport) {
+    const layer = new Container();
+    layer.eventMode = 'none';
+    parent.addChild(layer);
     const color = rate > 0 ? palette.green : palette.red;
     const icon = rate > 0 ? 'market-up' : 'market-down';
-    const mark = '×' + ((100 + rate) / 100);
-    const markSize = Math.min(width < 94 ? 11 : 15, size);
-    const iconSize = Math.min(width < 94 ? 13 : 19, size + 2);
-    const markWidth = Math.ceil(mark.length * markSize * 0.66);
-    const title = textNode(parent, value, x, y, Math.max(12, width - iconSize - markWidth - 7),
-      { ...options, color });
-    const left = Math.min(x + width - iconSize - markWidth - 3, title.x + title.width + 5);
-    const markTop = y + Math.max(0, (Math.min(title.height, Math.ceil(size * 1.36)) - iconSize) / 2);
-    drawImage(parent, icon, left, markTop, iconSize, iconSize);
-    textNode(parent, mark, left + iconSize + 2, y + Math.max(0, (size - markSize) * 0.68), markWidth,
+    const markSize = marketMarkSize(size);
+    const amount = textNode(layer, marketRateText(rate), 0, 0, width,
       { size: markSize, color, weight: '800', wrap: false });
-    return title;
+    // Reserve space for the icon while its texture loads.
+    const bounds = marketMarkLayout(width, markSize, amount);
+    const { iconSize, fit } = bounds;
+    amount.x = iconSize + 2;
+    drawImage(layer, icon, 0, Math.max(0, (amount.height - iconSize) / 2), iconSize, iconSize, false, trackViewport);
+    layer.scale.set(fit);
+    return { layer, width: bounds.width, height: bounds.height };
+  }
+
+  function marketLabel(parent, value, x, y, width, rate, options = {}) {
+    if (!rate) return textNode(parent, value, x, y, width, options);
+    const { size = 16, align = 'left', trackViewport = true } = options;
+    const span = Math.max(1, width);
+    const layer = new Container();
+    layer.eventMode = 'none';
+    layer.position.set(x, y);
+    parent.addChild(layer);
+    const color = rate > 0 ? palette.green : palette.red;
+    const title = textNode(layer, value, 0, 0, span, { ...options, align: 'left', color, wrap: false });
+    const mark = marketMark(layer, span, rate, size, trackViewport);
+    const inset = (blockWidth) => align === 'center' ? (span - blockWidth) / 2 : align === 'right' ? span - blockWidth : 0;
+    if (marketLabelFits(span, title.text, title.width, mark.width)) {
+      const inlineWidth = title.width + marketLabelGap + mark.width;
+      const height = Math.max(title.height, mark.height);
+      title.position.set(inset(inlineWidth), (height - title.height) / 2);
+      mark.layer.position.set(title.x + title.width + marketLabelGap, (height - mark.height) / 2);
+    } else {
+      title.style.wordWrap = options.wrap !== false;
+      title.style.breakWords = options.wrap !== false;
+      title.style.align = align;
+      if (title.width > span) title.scale.set(span / title.width);
+      title.x = inset(title.width);
+      mark.layer.position.set(inset(mark.width), title.height + 1);
+    }
+    return layer;
   }
 
   function layoutUI(parent, x, y, width, local, availableHeight, fullBleed = 0, pinTabs, options = {}) {
@@ -1148,13 +1199,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     let trailingButtons = [];
     const rowGap = 7;
     const resetScroll = () => { local.scroll = 0; redraw(); };
-    function scrollChoices(items, onSelect, columns, height, draw) {
+    const choiceGap = (columns) => columns > 1 ? 7 : 4;
+    const choiceCellWidth = (columns) => (width + choiceGap(columns)) / columns - choiceGap(columns);
+    function scrollChoices(items, onSelect, columns, heights, draw, { toggle = false } = {}) {
       if (!items.length) return;
       const top = cursor;
-      const gap = columns > 1 ? 7 : 4;
-      const step = height + gap;
-      const cellWidth = (width + gap) / columns - gap;
-      const countRows = Math.ceil(items.length / columns);
+      const gap = choiceGap(columns);
+      const cellWidth = choiceCellWidth(columns);
+      const rows = [];
+      let nextTop = top;
+      for (let index = 0; index < items.length; index += columns) {
+        const height = typeof heights === 'number' ? heights : heights[rows.length];
+        rows.push({ top: nextTop, bottom: nextTop + height, height });
+        nextTop += height + gap;
+      }
+      const listHeight = rows.at(-1).bottom - top;
       const list = new Container();
       list.eventMode = 'none';
       parent.addChild(list);
@@ -1164,11 +1223,24 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const focus = controls.length;
       let selected = clamp(local.indexKeyboard ?? 0, 0, items.length - 1);
       let visibleScroll = 0;
+      function firstRowAfter(y) {
+        let first = 0;
+        let end = rows.length;
+        while (first < end) {
+          const middle = (first + end) >>> 1;
+          if (rows[middle].bottom <= y) first = middle + 1;
+          else end = middle;
+        }
+        return first;
+      }
       function paint(scroll) {
         visibleScroll = scroll;
         const viewport = options.viewport ?? { height: availableHeight };
-        const first = columns * Math.max(0, Math.floor((scroll - top - height) / step) + 1);
-        const end = Math.min(items.length, columns * Math.ceil((scroll + viewport.height - top) / step));
+        const firstRow = firstRowAfter(scroll);
+        let endRow = firstRow;
+        while (endRow < rows.length && rows[endRow].top < scroll + viewport.height) endRow += 1;
+        const first = columns * firstRow;
+        const end = Math.min(items.length, columns * endRow);
         for (const [index, tile] of rendered) {
           if (index >= first && index < end) continue;
           tile.layer.destroy({ children: true });
@@ -1176,12 +1248,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         for (let index = first; index < end; index += 1) {
           const left = x + (index % columns) * (cellWidth + gap);
-          const at = top + Math.floor(index / columns) * step;
+          const { top: at, height } = rows[Math.floor(index / columns)];
           let tile = rendered.get(index);
           if (!tile) {
             const layer = new Container();
             list.addChild(layer);
-            draw(layer, items[index], left, at, cellWidth);
+            draw(layer, items[index], left, at, cellWidth, height);
             const outline = inkGraphics();
             layer.addChild(outline);
             tile = { layer, outline };
@@ -1194,34 +1266,48 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
       }
       if (onSelect && !waiting) {
-        hitAt(hit, parent, x, top, width, countRows * step - gap, (event) => {
+        const control = hitAt(hit, parent, x, top, width, listHeight, (event) => {
           let index = selected;
           if (event) {
             const position = parent.toLocal(event.global);
-            const row = Math.floor((position.y - top) / step);
+            const row = firstRowAfter(position.y);
             const column = Math.floor((position.x - x) / (cellWidth + gap));
-            if (position.y - top - row * step >= height || position.x - x - column * (cellWidth + gap) >= cellWidth) return;
+            if (!rows[row] || position.y < rows[row].top || column < 0 || column >= columns ||
+                position.x - x - column * (cellWidth + gap) >= cellWidth) return;
             index = row * columns + column;
           }
           const item = items[index];
-          if (item && !item.selected) onSelect(item);
+          if (item && (toggle || !item.selected)) onSelect(item);
         });
-        controls[focus].height = height;
-        controls[focus].key = (key) => {
+        control.height = rows[0].height;
+        control.key = (key) => {
           const stepByKey = { ArrowDown: columns, ArrowUp: -columns, ArrowLeft: -1, ArrowRight: 1 };
           if (!Object.hasOwn(stepByKey, key)) return false;
           selected = clamp(selected + stepByKey[key], 0, items.length - 1);
           local.indexKeyboard = selected;
-          const rowTop = top + Math.floor(selected / columns) * step;
+          const rowIndex = Math.floor(selected / columns);
+          const row = rows[rowIndex];
           const viewportHeight = options.viewport?.height ?? availableHeight;
-          if (rowTop < visibleScroll || rowTop + height > visibleScroll + viewportHeight) changeScroll(rowTop - step);
-          else paint(visibleScroll);
+          if (row.top < visibleScroll || row.bottom > visibleScroll + viewportHeight) {
+            const previousTop = rows[rowIndex - 1]?.top ?? top - row.height - gap;
+            changeScroll(Math.max(previousTop, Math.min(row.top, row.bottom - viewportHeight)));
+          } else paint(visibleScroll);
           return true;
         };
       }
       if (options.observeScroll) options.observeScroll(paint);
       else paint(local.scroll ?? 0);
-      cursor += countRows * step - gap + rowGap;
+      cursor += listHeight + rowGap;
+    }
+    function choiceTitle(layer, item, left, top, span, height, size, align = 'left') {
+      const title = marketLabel(layer, item.label, left, top, span, item.marketRate,
+        { size, align, weight: '800', trackViewport: false });
+      const fit = Math.min(1, height / title.height);
+      if (fit < 1) {
+        if (align === 'center') title.x = left + (title.x - left) * fit + span * (1 - fit) / 2;
+        title.scale.set(fit);
+      }
+      return title;
     }
     const ui = {
       w: world, local, width, height: availableHeight, refresh, back, action, float, toast,
@@ -1266,9 +1352,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             info.style.fontSize = preferredSize * available / info.width;
             info.style.lineHeight = Math.ceil(info.style.fontSize * 1.36);
           }
-          const title = textNode(parent, value, x, cursor + 2,
+          const title = marketLabel(parent, value, x, cursor + 2,
             beside ? Math.max(1, headingWidth - info.width - 25) : headingWidth,
-            { size: size * scale(), weight: '800' });
+            marketRate, { size: size * scale(), weight: '800' });
           info.position.set(x + headingWidth - info.width - 7,
             beside ? title.y + Math.max(0, (title.height - info.height) / 2) : title.y + title.height + 7);
           const badge = panel(parent, info.x - 6, info.y - 2, info.width + 13, info.height + 4,
@@ -1278,8 +1364,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           return;
         }
         const room = scale() <= 1.45 && headingWidth > 160 ? Math.min(105, Math.floor(headingWidth * 0.39)) : 0;
-        const title = textNode(parent, value, x, cursor + 2, headingWidth - room,
-          { size: size * scale(), weight: '800' });
+        const title = marketLabel(parent, value, x, cursor + 2, headingWidth - room,
+          marketRate, { size: size * scale(), weight: '800' });
         const info = textNode(parent, aside, room ? x + headingWidth - room : x,
           room ? cursor + 5 : title.y + title.height, room ? room - 8 : headingWidth,
           { size: (style === 'production' ? 18 : 16) * scale(), align: room ? 'right' : 'left', weight: '800' });
@@ -1309,10 +1395,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (label && !beside) ui.button(label, fn, { tone: 'gold', ...options });
       },
       text(value, options = {}) {
-        const { fontSize = 15, muted = false, color, align } = options;
-        const t = textNode(parent, value, x, cursor, width,
-          { size: fontSize * scale(), color: color ?? (muted ? palette.muted : palette.ink), align });
-        cursor += t.height + rowGap;
+        const { fontSize = 15, muted = false, color, align, suffix } = options;
+        const style = { size: fontSize * scale(), color: color ?? (muted ? palette.muted : palette.ink) };
+        if (!suffix) {
+          const t = textNode(parent, value, x, cursor, width, { ...style, align });
+          cursor += t.height + rowGap;
+          return;
+        }
+        const prefix = textNode(parent, value, x, cursor, width, { ...style, wrap: false });
+        const tail = textNode(parent, suffix.value, x, cursor, width,
+          { ...style, color: suffix.tone === 'danger' ? palette.red : style.color, wrap: false });
+        const naturalWidth = prefix.width + tail.width;
+        const fit = Math.min(1, width / naturalWidth);
+        prefix.scale.set(fit);
+        tail.scale.set(fit);
+        const inset = width - naturalWidth * fit;
+        if (align === 'right') prefix.x += inset;
+        else if (align === 'center') prefix.x += inset / 2;
+        tail.x = prefix.x + prefix.width;
+        cursor += Math.max(prefix.height, tail.height) + rowGap;
       },
       sampleProgress(label) {
         if (modal !== local || !local.sample) return;
@@ -1362,15 +1463,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const comparison = options.style === 'comparison';
         const compactRow = options.compact || metric || comparison;
         const start = cursor;
+        const background = options.pill ? parent.addChild(inkGraphics()) : null;
+        if (background) background.label = 'detail-row-background';
+        const minimumHeight = background ? 33 : compactRow ? 32 : 0;
         const icon = options.icon && (hasIcon(options.icon) || sceneKeys.has(options.icon)) ? (compactRow ? 29 : 28) : 0;
         if (icon && !options.valueIcon) drawImage(parent, options.icon, x, cursor + 1, icon - 3, icon - 3);
-        if (options.pill) panel(parent, x, cursor, width, 33, palette.pale, null, 9);
         const size = (compactRow ? 16 : 15) * scale();
         if (options.valueAtClock) value = options.valueAtClock(progressClock(performance.now()));
         const transition = value && typeof value === 'object' && value.from != null && value.to != null ? value :
           options.from != null && options.to != null ? { from: options.from, to: options.to } : undefined;
         const valueStr = transition ? number(transition.from) + ' ' + number(transition.to) : number(value);
-        if ((options.noWrap || label === '距收获') && value != null) {
+        if ((options.noWrap || label === '距收获') && value != null && !options.marketRate && !options.valueMarketRate) {
           const nameX = x + icon + (options.pill ? 6 : 0);
           const room = Math.max(1, x + width - nameX - 2);
           const name = textNode(parent, label, nameX, start, room,
@@ -1385,7 +1488,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             baselineWidth = measure.width;
             measure.destroy();
           }
-          const height = Math.max(32, Math.ceil(size * 1.36) + 4, icon);
+          const height = Math.max(32, minimumHeight, Math.ceil(size * 1.36) + 4, icon);
           const align = () => {
             amount.scale.set(1);
             const fit = Math.min(1, room / (nameWidth + Math.max(amount.width, baselineWidth) + 6));
@@ -1396,6 +1499,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           };
           align();
           bindCountdownText(amount, options.valueAtClock, align, options.toneAtClock);
+          if (background) paintPanel(background, x, start, width, height, palette.pale, null, 9);
           if (options.divider) parent.addChild(
             inkGraphics().rect(x, start + height, width, 1).fill({ color: palette.line, alpha: 0.7 }));
           cursor += height + (compactRow ? 3 : rowGap);
@@ -1426,8 +1530,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const markerY = b ? b.y + (b.height - 16) / 2 : cursor + 3;
           directionIcon(parent, 'right', x + width - 17, markerY, 16, 16);
         }
-        const height = Math.max(compactRow ? 32 : 0, options.onClick ? 48 : 0,
+        const height = Math.max(minimumHeight, options.onClick ? 48 : 0,
           (b ? b.y + b.height : start) - start + 2, a.height + 4, icon);
+        if (background) paintPanel(background, x, start, width, height, palette.pale, null, 9);
         if (options.divider || metric || comparison) parent.addChild(
           inkGraphics().rect(x, start + height, width, 1).fill({ color: palette.line, alpha: 0.7 }));
         if (options.onClick && !waiting) {
@@ -1818,35 +1923,55 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           parent.setChildIndex(bg, parent.getChildIndex(title));
           if (onClick && !waiting) hitAt(bg, parent, x, top, width, rowHeight, onClick);
         };
-        if (options.tileSurfaces) options.tileSurfaces.push({ height, surface });
+        if (options.rowSurfaces) options.rowSurfaces.push({ height, surface });
         else surface(height);
         drawImage(parent, id, artX, top + 8, size, size);
         cursor += height + rowGap;
       },
-      card(draw, { padding = 10, gap = 9, style, onClick, cornerAction } = {}) {
+      card(draw, { padding = 10, gap = 9, style, onClick, cornerAction, footer } = {}) {
+        const top = cursor;
         const layer = new Container();
         parent.addChild(layer);
         const cornerSize = 30;
         const cornerX = x + width - padding - cornerSize;
-        const cornerY = cursor + Math.max(1, padding - 3);
-        const child = layoutUI(layer, x + padding, cursor + padding,
-          width - padding * 2 - (onClick ? 24 : 0), local, availableHeight, 0, undefined,
+        const cornerY = top + Math.max(1, padding - 3);
+        const contentWidth = width - padding * 2 - (onClick ? 24 : 0);
+        const child = layoutUI(layer, x + padding, top + padding, contentWidth, local, availableHeight, 0, undefined,
           { registerPlot: options.registerPlot, headingClearance: cornerAction
             ? { right: cornerX - 6, bottom: cornerY + cornerSize } : undefined });
         draw(child);
-        const h = child.bottom - cursor + Math.max(2, padding - 5);
+        let bottom = child.bottom;
+        let footerLayer;
+        if (footer) {
+          footerLayer = layer.addChild(new Container());
+          footerLayer.label = 'scroll-list-card-footer';
+          const actions = layoutUI(footerLayer, x + padding, bottom, contentWidth, local, availableHeight);
+          footer(actions);
+          bottom = actions.bottom;
+        }
+        const height = bottom - top + Math.max(2, padding - 5);
         const focused = onClick && controls.length === focusIndex;
         const radius = style === 'subtle' ? 10 : 15;
-        const g = panel(layer, x, cursor, width, h, palette.card,
-          focused ? palette.green : style === 'subtle' ? palette.line : palette.border, radius);
-        layer.setChildIndex(g, 0);
-        const shadow = panel(layer, x, cursor + 3, width, h, { color: 0x886643, alpha: 0.10 }, null, radius);
-        layer.setChildIndex(shadow, 0);
-        if (onClick) {
-          directionIcon(layer, 'right', x + width - padding - 18, cursor + (h - 22) / 2, 18, 22,
-            { color: palette.green });
-          if (!waiting) hitAt(g, layer, x, cursor, width, h, onClick);
-        }
+        const outline = focused ? palette.green : style === 'subtle' ? palette.line : palette.border;
+        const shadow = layer.addChildAt(inkGraphics(), 0);
+        const bg = layer.addChildAt(inkGraphics(), 1);
+        const arrow = onClick ? directionIcon(layer, 'right',
+          x + width - padding - 18, top + (height - 22) / 2, 18, 22, { color: palette.green }) : undefined;
+        const control = onClick && !waiting ? hitAt(bg, layer, x, top, width, height, onClick) : undefined;
+        const surface = (rowHeight) => {
+          paintPanel(bg, x, top, width, rowHeight, palette.card, outline, radius);
+          paintPanel(shadow, x, top + 3, width, rowHeight, { color: 0x886643, alpha: 0.10 }, null, radius);
+          if (footerLayer) footerLayer.y = rowHeight - height;
+          if (arrow) arrow.y = (rowHeight - height) / 2;
+          if (control) {
+            bg.hitArea.height = rowHeight;
+            control.height = rowHeight;
+          }
+        };
+        if (options.rowSurfaces) {
+          bg.label = 'scroll-list-card';
+          options.rowSurfaces.push({ height, surface });
+        } else surface(height);
         if (cornerAction) {
           const hit = inkGraphics();
           hit.label = cornerAction.label;
@@ -1861,7 +1986,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
               cornerAction.onClick?.();
             });
         }
-        cursor += h + gap;
+        cursor += height + gap;
       },
       split(left, right, { ratio = 0.64, divider = false } = {}) {
         if (width < 265 || scale() > 1.45) {
@@ -1935,17 +2060,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           parent.addChild(layer);
           const row = { layer, top, outerRow, observeIndicators: Boolean(options.observeScroll) };
           listRow = row;
-          const tileSurfaces = equalHeight ? [] : undefined;
+          const rowSurfaces = equalHeight ? [] : undefined;
           let next = top;
           items.slice(index, index + count).forEach((entry, column) => {
             const cell = layoutUI(layer, x + column * (cellWidth + gap), top, cellWidth, local, availableHeight,
-              0, undefined, { tileSurfaces, registerPlot: options.registerPlot });
+              0, undefined, { rowSurfaces, registerPlot: options.registerPlot });
             draw(cell, entry, index + column);
             next = Math.max(next, cell.bottom);
           });
-          if (tileSurfaces?.length) {
-            const height = Math.max(...tileSurfaces.map((tile) => tile.height));
-            for (const tile of tileSurfaces) tile.surface(height);
+          if (rowSurfaces?.length) {
+            const height = Math.max(...rowSurfaces.map((entry) => entry.height));
+            for (const entry of rowSurfaces) entry.surface(height);
           }
           row.bottom = next;
           rows.push(row);
@@ -1986,39 +2111,90 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const minimum = iconsOnly ? 48 : largeType ? 131 : 99;
         const limit = iconsOnly ? 8 : largeType ? 2 : 4;
         const columns = clamp(Math.floor((width + 7) / (minimum + 7)), 1, limit);
-        const lineHeight = Math.ceil(font * 1.2);
-        const hasMarket = items.some((item) => item.marketRate);
-        const marketHeight = hasMarket ? 19 : 0;
-        const height = (iconsOnly ? 49 : 47 + lineHeight * 3) + marketHeight;
-        scrollChoices(items, onSelect, columns, height, (layer, item, left, top, span) => {
+        const hasMarket = iconsOnly && items.some((item) => item.marketRate);
+        const padding = 6;
+        const iconSize = 32;
+        const titleGap = 2;
+        const durationGap = 3;
+        const titleOptions = { size: font, align: 'center', weight: '800', trackViewport: false };
+        const durationOptions = { size: Math.max(10, font - 2), align: 'center', color: palette.muted, wrap: false };
+        const cellWidth = choiceCellWidth(columns);
+        const titleWidth = Math.max(1, cellWidth - 10);
+        const durationWidth = cellWidth - 8;
+        let heights = 49 + (hasMarket ? 19 : 0);
+        if (!iconsOnly) {
+          const style = new TextStyle(textStyle(titleWidth, titleOptions));
+          const unwrapped = new TextStyle(textStyle(titleWidth, { ...titleOptions, align: 'left', wrap: false }));
+          const markSize = marketMarkSize(font);
+          const markStyle = new TextStyle(textStyle(titleWidth, { size: markSize, weight: '800', wrap: false }));
+          const durationStyle = new TextStyle(textStyle(durationWidth, durationOptions));
+          heights = [];
+          for (const [index, { label, marketRate, duration }] of items.entries()) {
+            const name = number(label);
+            const title = CanvasTextMetrics.measureText(name, style);
+            let titleHeight = title.height;
+            if (marketRate) {
+              const amount = CanvasTextMetrics.measureText(marketRateText(marketRate), markStyle);
+              const mark = marketMarkLayout(titleWidth, markSize, amount);
+              const plain = CanvasTextMetrics.measureText(name, unwrapped);
+              titleHeight = marketLabelFits(titleWidth, name, plain.width, mark.width)
+                ? Math.max(plain.height, mark.height)
+                : title.height * Math.min(1, titleWidth / title.width) + 1 + mark.height;
+            }
+            const cycle = CanvasTextMetrics.measureText(number(duration), durationStyle);
+            const height = Math.ceil(padding * 2 + iconSize + titleGap + titleHeight + durationGap + cycle.height);
+            const row = Math.floor(index / columns);
+            heights[row] = Math.max(heights[row] ?? 0, height);
+          }
+        }
+        scrollChoices(items, onSelect, columns, heights, (layer, item, left, top, span, height) => {
           const card = panel(layer, left, top, span, height,
             item.selected ? palette.selection : palette.card, item.selected ? palette.green : palette.line, 11);
           card.label = 'picker-choice:' + item.id;
-          drawImage(layer, item.icon ?? item.id, left + (span - 32) / 2, top + (iconsOnly ? 8 : 6), 32, 32);
-          if (item.marketRate) {
-            const rate = item.marketRate;
-            const color = rate > 0 ? palette.green : palette.red;
-            const rateIcon = rate > 0 ? 'market-up' : 'market-down';
-            const mark = '×' + ((100 + rate) / 100);
-            const marketY = top + height - 19;
-            drawImage(layer, rateIcon, left + (span - 41) / 2, marketY, 15, 15);
-            textNode(layer, mark, left + (span - 41) / 2 + 16, marketY, 28,
-              { size: 12, color, weight: '800', wrap: false });
+          if (iconsOnly) {
+            drawImage(layer, item.icon ?? item.id, left + (span - iconSize) / 2, top + 8, iconSize, iconSize, false, false);
+            if (item.marketRate) {
+              const mark = marketMark(layer, span - 8, item.marketRate, 12, false);
+              mark.layer.position.set(left + (span - mark.width) / 2, top + 44);
+            }
+            return;
           }
-          if (iconsOnly) return;
-          const title = textNode(layer, item.label, left + 5, top + 42, span - 10,
-            { size: font, align: 'center', weight: '800', color: item.marketRate > 0 ? palette.green :
-              item.marketRate < 0 ? palette.red : palette.ink });
-          title.style.lineHeight = lineHeight;
-          while (title.height > lineHeight * 2 && title.style.fontSize > 9) {
-            title.style.fontSize -= 1;
-            title.style.lineHeight = Math.ceil(title.style.fontSize * 1.2);
-          }
-          title.x = left + (span - title.width) / 2;
-          title.y = top + 40 + (lineHeight * 2 - title.height) / 2;
-          textNode(layer, item.duration, left + 4, top + height - marketHeight - lineHeight - 4, span - 8,
-            { size: Math.max(10, font - 2), align: 'center', color: palette.muted, wrap: false });
+          const content = new Container({ label: 'picker-content:' + item.id });
+          content.eventMode = 'none';
+          layer.addChild(content);
+          drawImage(content, item.icon ?? item.id, (span - iconSize) / 2, 0, iconSize, iconSize, false, false);
+          const title = marketLabel(content, item.label, 5, iconSize + titleGap, titleWidth, item.marketRate, titleOptions);
+          const duration = textNode(content, item.duration, 4, title.y + title.height + durationGap, durationWidth, durationOptions);
+          content.position.set(left, top + (height - duration.y - duration.height) / 2);
         });
+      },
+      selectionGrid(items, onSelect) {
+        const columns = width >= 374 ? 3 : width >= 206 ? 2 : 1;
+        const titleSize = 14 * scale();
+        const titleHeight = Math.ceil(titleSize * 1.36) * 2 + 1;
+        const detailSize = 12 * scale();
+        const detailLines = items.some(({ detail }) => detail?.split('\n').length >= 3) ? 3 : 2;
+        const height = 43 + titleHeight + Math.ceil(detailSize * 1.36) * detailLines + 7;
+        scrollChoices(items, onSelect, columns, height, (layer, item, left, top, span) => {
+          const card = panel(layer, left, top, span, height,
+            item.selected ? palette.selection : palette.card, item.selected ? palette.green : palette.line, 9);
+          card.label = 'selection-choice:' + item.id;
+          drawImage(layer, item.icon ?? item.id, left + 8, top + 5, 32, 32, false, false);
+          const checkX = left + span - 27;
+          const checkY = top + 8;
+          panel(layer, checkX, checkY, 18, 18, item.selected ? palette.green : palette.cream,
+            item.selected ? palette.green : palette.border, 4);
+          if (item.selected) layer.addChild(inkGraphics().moveTo(checkX + 4, checkY + 9)
+            .lineTo(checkX + 8, checkY + 13).lineTo(checkX + 14, checkY + 5)
+            .stroke({ color: palette.cream, width: 2, cap: 'round', join: 'round' }));
+          const title = choiceTitle(layer, item, left + 8, top + 39, span - 16, titleHeight, titleSize);
+          if (item.detail != null) {
+            const detail = textNode(layer, item.detail, left + 8, title.y + title.height + 3, span - 16,
+              { size: detailSize, color: palette.muted });
+            const fit = Math.min(1, (span - 16) / detail.width, (top + height - 6 - detail.y) / detail.height);
+            detail.scale.set(fit);
+          }
+        }, { toggle: true });
       },
       slider(value, onChange, { min = 0, max = 100, step = 1, label = '', bubble = false, onCommit } = {}) {
         if (label) ui.row(label, value + '%');

@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { kindCounts, productLevels } from './catalog-rules.mjs';
+import { assertCatalogDurationSpacing } from './lib/catalog-duration-spacing.mjs';
 import { applyLongTermBalance, balanceDetails, summarizeGeneratedBalance, taskCoinCaps } from './long-term-balance.mjs';
 
 const args = new Set(process.argv.slice(2));
@@ -155,6 +156,7 @@ if (Object.keys(research).length + initial.length !== Object.keys(items).length)
 
 const { coinScale } = JSON.parse(scaleJson) ?? {};
 const result = applyLongTermBalance({ initial, items, research }, baseline, coinScale);
+assertCatalogDurationSpacing(result.balanced.items);
 const destinations = [
   ['src/content/game-data.json', result.balanced],
   ['src/content/task-coin-caps.json', taskCoinCaps(result)],

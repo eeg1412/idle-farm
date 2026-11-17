@@ -443,12 +443,60 @@ export function stationUpgradeOffer(world, kind, index, steps = 1n) {
     durationMs: productionDurationMs(world, station.recipe) };
 }
 
+function productionSelection(world, kind, indices) {
+  const station = Object.hasOwn(stationTypes, kind);
+  if (!station && !Object.hasOwn(facilityTypes, kind)) return null;
+  if (!Array.isArray(indices) || !indices.length) return null;
+  const group = station ? world.stations[kind] : world.facilities[kind];
+  const slots = [];
+  const seen = new Set();
+  for (const index of indices) {
+    if (!Number.isInteger(index) || !group[index] || seen.has(index)) return null;
+    seen.add(index);
+    slots.push(group[index]);
+  }
+  return { slots, station };
+}
+
+function productionUpgradeBatchQuote(world, kind, indices, steps) {
+  const count = asNatural(steps);
+  if (count !== 1n && count !== 5n && count !== 10n) return null;
+  const selection = productionSelection(world, kind, indices);
+  if (!selection) return null;
+  const offer = selection.station ? stationUpgradeOffer : facilityOffer;
+  const upgrades = indices.map((index) => offer(world, kind, index, count));
+  const cost = upgrades.reduce((sum, quote) => sum + quote.cost, 0n);
+  return { ...selection, upgrades, cost, affordable: world.coins >= cost };
+}
+
+export function batchUpgradeOffer(world, kind, indices, steps) {
+  const quote = productionUpgradeBatchQuote(world, kind, indices, steps);
+  return quote && { cost: quote.cost, affordable: quote.affordable };
+}
+
+function applyProductionUpgrade(slot, quote, station) {
+  slot.level = String(quote.target);
+  if (!station && slot.batch) {
+    // Apply the upgraded yield to this harvest without restarting its growth clock.
+    slot.batch.amount = String(quote.output);
+  }
+}
+
+export function upgradeProductionBatch(world, kind, indices, steps, expectedCost) {
+  const quote = productionUpgradeBatchQuote(world, kind, indices, steps);
+  if (!quote?.affordable || quote.cost !== expectedCost) return false;
+  world.coins -= quote.cost;
+  quote.slots.forEach((slot, index) => applyProductionUpgrade(slot, quote.upgrades[index], quote.station));
+  settleProduction(world);
+  return true;
+}
+
 // Only the level changes; a running batch keeps its paid inputs and its output.
 export function upgradeStation(world, kind, index, steps) {
   const quote = stationUpgradeOffer(world, kind, index, steps);
   if (!quote?.affordable) return false;
   world.coins -= quote.cost;
-  world.stations[kind][index].level = String(quote.target);
+  applyProductionUpgrade(world.stations[kind][index], quote, true);
   return true;
 }
 
@@ -465,35 +513,53 @@ export function buyFacility(world, kind) {
 export function upgradeFacility(world, kind, index, steps) {
   const quote = facilityOffer(world, kind, index, steps);
   if (!quote?.affordable || quote.target === null) return false;
-  const facility = world.facilities[kind][index];
   world.coins -= quote.cost;
-  facility.level = String(quote.target);
-  if (facility.batch) {
-    // Apply the upgraded yield to this harvest without restarting its growth clock.
-    facility.batch.amount = String(quote.output);
+  applyProductionUpgrade(world.facilities[kind][index], quote, false);
+  return true;
+}
+
+export function assignProductionBatch(world, kind, indices, id) {
+  const selection = productionSelection(world, kind, indices);
+  if (!selection) return false;
+  const itemKind = catalog.items[id]?.kind;
+  if ((selection.station ? itemKind?.[0] : itemKind) !== kind || !world.unlocked.includes(id)) return false;
+  for (const slot of selection.slots) {
+    if (slot.batch && slot.batch.id !== id) {
+      if (selection.station) cancelStationBatch(world, slot);
+      else slot.batch = null;
+    }
+    slot.recipe = id;
   }
+  settleProduction(world);
+  return true;
+}
+
+export function clearProductionBatch(world, kind, indices) {
+  const selection = productionSelection(world, kind, indices);
+  if (!selection) return false;
+  const { slots, station } = selection;
+  const configured = slots.filter((slot) => slot.recipe || slot.batch || (!station && slot.planting));
+  if (!configured.length) return false;
+  for (const slot of configured) {
+    slot.recipe = null;
+    if (station) {
+      if (slot.batch) cancelStationBatch(world, slot);
+      slot.priority = false;
+    } else {
+      slot.batch = null;
+      delete slot.planting;
+    }
+  }
+  settleProduction(world);
   return true;
 }
 
 export function assignFacility(world, kind, index, id) {
-  if (!Object.hasOwn(facilityTypes, kind) || !Number.isInteger(index)) return false;
-  const facility = world.facilities[kind][index];
-  if (!facility || catalog.items[id]?.kind !== kind || !world.unlocked.includes(id)) return false;
-  if (facility.batch?.id !== id) facility.batch = null;
-  facility.recipe = id;
-  settleProduction(world);
-  return true;
+  return Object.hasOwn(facilityTypes, kind) && assignProductionBatch(world, kind, [index], id);
 }
 
 export function clearFacility(world, kind, index) {
-  if (!Object.hasOwn(facilityTypes, kind) || !Number.isInteger(index)) return false;
-  const facility = world.facilities[kind][index];
-  if (!facility || (!facility.recipe && !facility.batch && !facility.planting)) return false;
-  facility.recipe = null;
-  facility.batch = null;
-  delete facility.planting;
-  settleProduction(world);
-  return true;
+  return Object.hasOwn(facilityTypes, kind) && clearProductionBatch(world, kind, [index]);
 }
 
 export function buyStation(world, kind) {
@@ -506,24 +572,11 @@ export function buyStation(world, kind) {
 }
 
 export function arrangeStation(world, kind, index, id) {
-  if (!Object.hasOwn(stationTypes, kind) || !Number.isInteger(index)) return false;
-  const station = world.stations[kind][index];
-  if (!station || catalog.items[id]?.kind[0] !== kind || !world.unlocked.includes(id)) return false;
-  if (station.batch && station.batch.id !== id) cancelStationBatch(world, station);
-  station.recipe = id;
-  settleProduction(world);
-  return true;
+  return Object.hasOwn(stationTypes, kind) && assignProductionBatch(world, kind, [index], id);
 }
 
 export function clearStation(world, kind, index) {
-  if (!Object.hasOwn(stationTypes, kind) || !Number.isInteger(index)) return false;
-  const station = world.stations[kind][index];
-  if (!station || (!station.recipe && !station.batch)) return false;
-  if (station.batch) cancelStationBatch(world, station);
-  station.recipe = null;
-  station.priority = false;
-  settleProduction(world);
-  return true;
+  return Object.hasOwn(stationTypes, kind) && clearProductionBatch(world, kind, [index]);
 }
 
 function cancelStationBatch(world, station) {

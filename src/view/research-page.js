@@ -114,6 +114,7 @@ function researchStatus(w, id, offer, unlocked = null) {
 
 function researchDetails(ui, id) {
   const item = catalog.items[id];
+  const price = unitPrice(ui.w, id);
   const node = catalog.research[id];
   const offer = researchOffer(ui.w, id);
   const { status, tone } = researchStatus(ui.w, id, offer);
@@ -125,7 +126,8 @@ function researchDetails(ui, id) {
 
   ui.detailRows([
     { label: '解锁', value: item.name, icon: id },
-    { label: '单价（金币）', value: compact(unitPrice(ui.w, id)) },
+    { label: '单价', value: compact(price) },
+    { label: '每批总价', value: compact(price * BigInt(item.output)) },
     { label: itemKind(item) === '原料' ? '基础周期' : '基础耗时', value: duration(item.durationMs) },
   ], { variant: 'label' });
   if (node?.requires.length) {
@@ -169,7 +171,7 @@ function showQualityDrawResults(ui, result) {
 }
 
 function renderQuality(ui) {
-  ui.stats([{ label: '普通研发点', value: ui.w.basicResearchPoints, icon: 'research-point-basic' }]);
+  ui.balance('普通研发点', ui.w.basicResearchPoints, { variant: 'efficiency', icon: 'research-point-basic' });
   ui.researchProgress();
   ui.text(`每小时发放 ${basicResearchHourlyRate(ui.w)} 普通研发点。每抽消耗 ${qualityDrawCost} 点，随机提升一个已研发品项的品质。`,
     { muted: true });

@@ -2,6 +2,7 @@ import { AccessibilitySystem, Application, extensions } from 'pixi.js';
 import {
   advanceWorld, newWorld, settleProduction, catalog,
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
+  assignProductionBatch, clearProductionBatch, upgradeProductionBatch,
   setStationPriority, reserve, sell, sellBatch, sellFarm,
 } from './game/world.js';
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
@@ -59,8 +60,10 @@ function updateSettings(draft, partial) {
   return true;
 }
 
+const productionBatchActions = { assignProductionBatch, clearProductionBatch, upgradeProductionBatch };
 const actions = {
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
+  ...productionBatchActions,
   setStationPriority, reserve, sell, sellBatch, sellFarm, research, drawQuality, upgradeTech, resetMarket, updateSettings,
 };
 
@@ -308,7 +311,11 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
-  if (name === 'upgradeFacility' || name === 'upgradeStation') return { float: '已升级', sound: 'success' };
+  if (name === 'upgradeFacility' || name === 'upgradeStation' || name === 'upgradeProductionBatch') {
+    return { float: '已升级', sound: 'success' };
+  }
+  if (name === 'assignProductionBatch') return { float: '已安排' };
+  if (name === 'clearProductionBatch') return { float: '已清空' };
   if (name === 'reserve') return { float: '已保存保留量' };
   return {};
 }
@@ -330,12 +337,12 @@ function dispatch(name, ...args) {
         settleProduction(draft);
         const rewards = await commit(draft, anchor);
         paint();
-        const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality'].includes(name)
+        const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
         const toast = progressToast(before, draft, rewards);
         return { ok: false, message: toast ? message + ' · ' + toast : message };
       }
-      settleProduction(draft);
+      if (!Object.hasOwn(productionBatchActions, name)) settleProduction(draft);
       const rewards = await commit(draft, anchor);
       if (name === 'sellFarm') {
         worldEpoch += 1;
