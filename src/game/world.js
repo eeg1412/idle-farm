@@ -15,6 +15,7 @@ const facilityTypes = {
   C: { buy: 'cropBuy', upgrade: 'cropUpgrade', free: 2 },
   L: { buy: 'livestockBuy', upgrade: 'livestockUpgrade', free: 0 },
   F: { buy: 'fishBuy', upgrade: 'fishUpgrade', free: 0 },
+  M: { buy: 'miningBuy', upgrade: 'miningUpgrade', free: 0 },
 };
 const facilityGrowth = 5n;
 const stationTypes = {
@@ -157,7 +158,7 @@ function makeBatch(world, id, amount) {
 }
 
 function startingFacilities(recipe) {
-  return { C: Array.from({ length: facilityTypes.C.free }, () => ({ ...emptyFacility(), recipe })), L: [], F: [] };
+  return { C: Array.from({ length: facilityTypes.C.free }, () => ({ ...emptyFacility(), recipe })), L: [], F: [], M: [] };
 }
 
 export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0')) {
@@ -168,7 +169,7 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     accountSeed, qualityDraws: 0n, market: null, productionValue: 0n, completedRuns: 0,
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
-    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n },
+    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
     taskRewards: [], settings: { music: 70, sound: 75, pickerIconsOnly: false },
   };
   settleProduction(world);
@@ -206,6 +207,10 @@ function startFacility(world, kind, facility, onStart) {
       id: facility.batch.id, start: facility.batch.start,
       duration: facility.batch.end - facility.batch.start,
     };
+  }
+  if (kind === 'M' && (!facility.mining || facility.mining.id !== facility.batch.id)) {
+    facility.mining = { id: facility.batch.id, startedAt: facility.batch.start,
+      durationMs: facility.batch.end - facility.batch.start };
   }
   onStart?.(facility);
 }
@@ -505,7 +510,7 @@ export function buyFacility(world, kind) {
   if (!quote?.affordable) return false;
   world.coins -= quote.cost;
   world.facilities[kind].push(emptyFacility());
-  const counter = { C: 'plots', L: 'boughtL', F: 'boughtF' }[kind];
+  const counter = { C: 'plots', L: 'boughtL', F: 'boughtF', M: 'boughtM' }[kind];
   world.stats[counter] += 1n;
   return true;
 }
@@ -524,6 +529,7 @@ export function assignProductionBatch(world, kind, indices, id) {
   const itemKind = catalog.items[id]?.kind;
   if ((selection.station ? itemKind?.[0] : itemKind) !== kind || !world.unlocked.includes(id)) return false;
   for (const slot of selection.slots) {
+    if (kind === 'M' && slot.recipe !== id) delete slot.mining;
     if (slot.batch && slot.batch.id !== id) {
       if (selection.station) cancelStationBatch(world, slot);
       else slot.batch = null;
@@ -538,7 +544,7 @@ export function clearProductionBatch(world, kind, indices) {
   const selection = productionSelection(world, kind, indices);
   if (!selection) return false;
   const { slots, station } = selection;
-  const configured = slots.filter((slot) => slot.recipe || slot.batch || (!station && slot.planting));
+  const configured = slots.filter((slot) => slot.recipe || slot.batch || (!station && (slot.planting || slot.mining)));
   if (!configured.length) return false;
   for (const slot of configured) {
     slot.recipe = null;
@@ -548,6 +554,7 @@ export function clearProductionBatch(world, kind, indices) {
     } else {
       slot.batch = null;
       delete slot.planting;
+      delete slot.mining;
     }
   }
   settleProduction(world);
@@ -658,6 +665,7 @@ export function farmSaleOffer(world) {
     stationCount: world.stations.I.length + world.stations.P.length,
     plotCount: world.facilities.C.length, livestockCount: world.facilities.L.length,
     pondCount: world.facilities.F.length,
+    mineCount: world.facilities.M.length,
     ...prestigeLedgerOffer(world),
   };
 }
@@ -665,7 +673,7 @@ export function farmSaleOffer(world) {
 export function sellFarm(world, expectedOffer) {
   const actual = farmSaleOffer(world);
   const check = ['completedRuns', 'productionValue', 'multiplierBasisPoints', 'reward',
-    'stationCount', 'plotCount', 'livestockCount', 'pondCount', 'prestigeLedgerVersion',
+    'stationCount', 'plotCount', 'livestockCount', 'pondCount', 'mineCount', 'prestigeLedgerVersion',
     'lifetimeProductionValue', 'prestigeCredit'];
   if (!expectedOffer || check.some((key) => actual[key] !== expectedOffer[key])) return false;
   settlePrestigeLedger(world);

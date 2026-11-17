@@ -5,9 +5,9 @@ import { compact } from './numbers.js';
 
 const entries = Object.entries(catalog.items);
 const typeTabs = ['全部', '原料', '中间产物', '商品'];
-const sourceTabs = ['全部', '农业', '畜牧', '水产'];
-const complexityTabs = ['全部', '单类', '双类', '三类'];
-const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池' };
+const sourceTabs = ['全部', '农业', '畜牧', '水产', '矿业'];
+const complexityTabs = ['全部', '单类', '双类', '三类', '四类'];
+const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池', M: '矿洞' };
 
 const managementEntries = [
   { page: '任务', icon: 'task-product', description: '查看任务进度' },
@@ -31,7 +31,7 @@ function typeOf(item) {
 }
 
 function typeLabel(item) {
-  return { C: '作物', L: '畜牧原料', F: '水产原料' }[item.kind] ?? typeOf(item);
+  return { C: '作物', L: '畜牧原料', F: '水产原料', M: '矿产原料' }[item.kind] ?? typeOf(item);
 }
 
 function complexityOf(item) {
@@ -517,7 +517,7 @@ function renderCatalogDetail(ui, id) {
   }, { padding: 8, gap: 7 });
   const materials = Object.entries(item.inputs);
   if (!materials.length) {
-    ui.card((card) => card.row('获取方式', { C: '农田收获', L: '畜牧场养殖', F: '鱼池养殖' }[item.kind]));
+    ui.card((card) => card.row('获取方式', { C: '农田收获', L: '畜牧场养殖', F: '鱼池养殖', M: '矿洞开采' }[item.kind]));
   } else {
     const needed = materials.reduce((sum, [, amount]) => sum + BigInt(amount), 0n);
     ui.card((card) => {
@@ -595,6 +595,8 @@ const taskArt = {
   milleCrepe: 'task-product', threeSectorGift: 'task-product',
   livestockIntro: 'scene-hen', buildLivestock: 'scene-hen', collectLivestock: 'scene-hen',
   fishIntro: 'scene-fish', buildFish: 'scene-fish', collectFish: 'scene-fish',
+  miningIntro: 'mining-tab', buildMine: 'mining-tab', collectMining: 'mining-tab',
+  miningUpgrade: 'mining-tab', miningTop: 'mining-tab', miningProduct: 'mining-tab',
   firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
   recipeCollection: 'nav-research', qualityCollection: 'nav-research', qualityMaster: 'nav-research',
   newFarm: 'sale-retain', itemCollection: 'nav-catalog',
@@ -614,7 +616,7 @@ const taskArt = {
 };
 const featuredGoals = ['buildLivestock', 'collectFish', 'firstLivestockProcessing', 'firstMixedProduct'];
 const taskItems = { firstHarvest: 'C01', firstFlour: 'I01', breadRecipe: 'P01', firstBread: 'P01',
-  milleCrepe: 'P150', threeSectorGift: 'PT50' };
+  milleCrepe: 'P150', threeSectorGift: 'PT50', miningTop: 'M10', miningProduct: 'PM14' };
 
 export function renderTasks(ui) {
   const { guide, active, long } = objectives(ui.w);
@@ -655,7 +657,7 @@ export function renderTasks(ui) {
 
 const instructions = [
   ['田地', '新牧场先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
-  ['畜牧和鱼池', '购买畜牧场或鱼池，再安排已研发的牲畜或鱼。更换对象立即开始新周期。'],
+  ['畜牧、鱼池和矿洞', '购买设施，再安排已研发的牲畜、鱼或矿种。更换对象立即开始新周期。'],
   ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出随工位等级增长（1+j+⌊j²/64⌋ 倍），材料投入同比放大；升级工位从下一批起生效。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。每累计一小时有效时间发放普通研发点。消耗 100 普通研发点随机提升一个已研发品项的品质。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。行情生效时，按当天倍率出货。'],
@@ -780,7 +782,7 @@ function confirmImportSave(ui, candidate) {
       card.row('源存档版本', candidate.version);
       card.row('金币', summary.coins, { compact: true, icon: 'coin' });
       card.row('高级研发点', summary.researchPoints, { compact: true });
-      card.row('设施总数', compact(summary.facilities));
+      card.row('设施总数（含矿洞）', compact(summary.facilities));
       card.row('已研发品项', compact(summary.unlocked));
       card.row('已出售牧场', compact(summary.completedRuns) + ' 次');
     }, { padding: 12, gap: 8 });
@@ -957,7 +959,7 @@ function farmDetails(ui, offer) {
   const changes = [
     ['保留', [{ label: '已研发品项、品质、普通研发点、经营改良、任务进度' }]],
     ['清空', [
-      { label: '田地、畜牧场、鱼池' },
+      { label: '田地、畜牧场、鱼池、矿洞（' + compact(offer.mineCount ?? 0) + ' 座）' },
       { label: '库存、金币' },
     ]],
     ['工坊重置', [

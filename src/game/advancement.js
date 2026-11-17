@@ -35,6 +35,13 @@ export const techDefinitions = [
   { key: 'fishProcessing', budget: 100_000n, name: '水产加工提速', source: '水产', item: 'F01' },
   { key: 'fishCycle', budget: 230_000n, baseCost: 50n, name: '水产周期改良', source: '水产', item: 'F05', prerequisite: 'fishYield', prerequisiteLevel: 20 },
   { key: 'fishRefining', budget: 230_000n, name: '水产精制专精', source: '水产', item: 'PF01', prerequisite: 'fishProcessing', prerequisiteLevel: 20 },
+  { key: 'miningBuy', budget: 125_000n, name: '矿洞议价', source: '矿业', item: 'M01' },
+  { key: 'miningUpgrade', budget: 125_000n, name: '矿洞改造', source: '矿业', item: 'M01' },
+  { key: 'miningYield', budget: 420_000n, baseCost: 150n, name: '矿产增收', source: '矿业', item: 'M01' },
+  { key: 'miningResearch', budget: 125_000n, name: '矿业研发手册', source: '矿业', item: 'M01' },
+  { key: 'miningProcessing', budget: 100_000n, name: '矿业加工提速', source: '矿业', item: 'M01' },
+  { key: 'miningCycle', budget: 230_000n, baseCost: 50n, name: '开采周期改良', source: '矿业', item: 'M05', prerequisite: 'miningYield', prerequisiteLevel: 20 },
+  { key: 'miningRefining', budget: 230_000n, name: '矿业精制专精', source: '矿业', item: 'PM01', prerequisite: 'miningProcessing', prerequisiteLevel: 20 },
   { key: 'basicResearchRate', name: '普通研发点倍率', source: '通用', budget: 200_000n },
   { key: 'marketForecast', name: '市场预测', source: '市场', costs: [60n] },
   { key: 'marketManipulation', name: '市场操纵', source: '市场', costs: [50n, 450n, 2_500n] },
@@ -71,24 +78,30 @@ function techCostCurve({ key, budget, baseCost = 25n }) {
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
 export const techMaxLevels = Object.fromEntries(techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
 export const techTotalLevels = techDefinitions.reduce((sum, { maxLevel }) => sum + maxLevel, 0);
-const yieldKeys = { C: 'cropYield', L: 'livestockYield', F: 'fishYield' };
-const researchKeys = { L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch' };
+const yieldKeys = { C: 'cropYield', L: 'livestockYield', F: 'fishYield', M: 'miningYield' };
+const researchKeys = { L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch',
+  M: 'miningResearch', IM: 'miningResearch' };
 const researchMaterialDiscount = ['研发材料费用降低', 0, discountPerLevel, '%', 100];
 const effectDefinitions = {
   recipeDiscount: researchMaterialDiscount,
   livestockResearch: researchMaterialDiscount,
   fishResearch: researchMaterialDiscount,
+  miningResearch: researchMaterialDiscount,
   cropYield: ['增产', 0, yieldPerLevel, '%', 100],
   livestockYield: ['增产', 0, yieldPerLevel, '%', 100],
   fishYield: ['增产', 0, yieldPerLevel, '%', 100],
+  miningYield: ['增产', 0, yieldPerLevel, '%', 100],
   appraisal: ['经营评估倍率', 10000, appraisalPerLevel, '倍', 10000],
   workshopSpeed: ['生产提速', 0, workshopPerLevel, '%', 100],
   livestockProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
   fishProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
+  miningProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
   livestockCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
   fishCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
+  miningCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
   livestockRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   fishRefining: ['生产提速', 0, processingPerLevel, '%', 100],
+  miningRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   basicResearchRate: ['每小时普通研发点', 100, 4, '点'],
   marketManipulation: ['每日重置次数', 0, 1, '次'],
   marketForecast: ['明日首次行情', 0, 1, ''],
@@ -125,15 +138,19 @@ export function rate(world, id) {
   if (!item || item.kind === 'C') return 10000;
   if (item.kind === 'L') return 10000 + cyclePerLevel * techLevel(world, 'livestockCycle');
   if (item.kind === 'F') return 10000 + cyclePerLevel * techLevel(world, 'fishCycle');
+  if (item.kind === 'M') return 10000 + cyclePerLevel * techLevel(world, 'miningCycle');
 
   const base = 10000 + workshopPerLevel * techLevel(world, 'workshopSpeed');
   if (item.kind === 'IL') return base + processingPerLevel * techLevel(world, 'livestockProcessing');
   if (item.kind === 'IF') return base + processingPerLevel * techLevel(world, 'fishProcessing');
+  if (item.kind === 'IM') return base + processingPerLevel * techLevel(world, 'miningProcessing');
   if (item.kind === 'I') return base;
 
   const livestock = item.sources.includes('畜牧') ? techLevel(world, 'livestockRefining') : 0;
   const fish = item.sources.includes('水产') ? techLevel(world, 'fishRefining') : 0;
-  return base + processingPerLevel * (livestock + fish);
+  const mining = item.sources.includes('矿业') ? techLevel(world, 'miningRefining') : 0;
+  // Three industry sources may now coexist; keep the existing combined speed ceiling.
+  return Math.min(25000, base + processingPerLevel * (livestock + fish + mining));
 }
 
 function discounted(amount, reduction) {

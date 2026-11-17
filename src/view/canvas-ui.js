@@ -14,6 +14,8 @@ import {
   fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, minFishAnimationMs, mountFishAnimation,
 } from './fish-animation.js';
 import { mountWorkshopAnimation, syncWorkshopMotion, workshopIconIds, workshopTextureSources } from './workshop-animation.js';
+import miningVisuals from '../content/mining-visuals.json' with { type: 'json' };
+import { mountMiningAnimation } from './mining-animation.js';
 import { renderResearch, researchReadyTabs } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import {
@@ -43,16 +45,18 @@ const drawnIcons = {
     ['arrow-' + direction, { kind: 'arrow', direction }],
   ])),
 };
-const heroKeys = new Set(['fields', 'livestock', 'fish', 'workshop', 'warehouse', 'research',
+const heroKeys = new Set(['fields', 'livestock', 'fish', 'mining', 'workshop', 'warehouse', 'research',
   'tasks-banner', 'catalog-banner', 'sale-banner', 'settings-banner']);
 const sceneKeys = new Set(['scene-wheat', 'scene-empty-field', 'scene-hen', 'scene-empty-barn',
   'scene-fish', 'scene-empty-pond', 'scene-composite-gift']);
 for (const [id, item] of Object.entries(data.items)) {
-  if (['C', 'L', 'F'].includes(item.kind)) {
+  if (['C', 'L', 'F', 'M'].includes(item.kind)) {
     sceneKeys.add('scene-' + id);
   }
 }
 const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalog', 'facility-field', 'facility-empty-field',
+  'mining-tab', 'facility-empty-mine', 'mining-buy', 'mining-upgrade', 'mining-yield',
+  'mining-research', 'mining-processing', 'mining-cycle', 'mining-refining',
   'facility-hen', 'facility-empty-barn', 'facility-fish', 'facility-empty-pond', 'facility-mill',
   'facility-kitchen', 'coin', 'research-point', 'research-point-basic', 'market-up', 'market-down', 'clock', 'task-barn', 'task-fish', 'task-process', 'task-product',
   'sale-retain', 'sale-reset', 'tech-water', 'tech-farm', 'tech-livestock', 'tech-workshop',
@@ -322,6 +326,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const livestockBatches = new Map();
   const fishTextures = new Map();
   const fishBatches = new Map();
+  const miningTextures = new Map();
   const workshopTextures = new Map();
   const workshopMotionStates = new Map();
   const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
@@ -610,6 +615,31 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     });
   }
 
+  // Shared animation textures are pinned; only visible mines initiate loads.
+  function loadMiningTextures(id) {
+    const item = miningVisuals.items?.[id];
+    if (!item?.icon || !miningVisuals.background?.path || !miningVisuals.foreground?.path ||
+        !miningVisuals.foreground.rect || !miningVisuals.cart?.path || !miningVisuals.cart.cargo ||
+        !miningVisuals.track?.inside || !miningVisuals.track?.station || !miningVisuals.sceneSize) return;
+    const existing = miningTextures.get(id);
+    if (existing) return existing.textures;
+    const entry = {};
+    miningTextures.set(id, entry);
+    const sources = { background: miningVisuals.background.path, foreground: miningVisuals.foreground.path,
+      cart: miningVisuals.cart.path, icon: item.icon };
+    Promise.all(Object.entries(sources).map(async ([key, source]) => [key,
+      await loadAnimationImage(path('./' + source.replace(/^(?:public\/|\.\/)/, '') + '?game=1')),
+    ])).then((assets) => {
+      if (assets.some(([, texture]) => !texture)) return;
+      const loaded = Object.fromEntries(assets);
+      if (loaded.background.width !== miningVisuals.background.width ||
+          loaded.background.height !== miningVisuals.background.height ||
+          loaded.cart.width !== miningVisuals.cart.width || loaded.cart.height !== miningVisuals.cart.height) return;
+      entry.textures = loaded;
+      if (visiblePlotIds.has('mining:' + id)) requestRender();
+    });
+  }
+
   function unmountPlot(plot) {
     if (!plot.animation) return;
     plot.animation.destroy();
@@ -687,7 +717,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const livestockChoice = id.startsWith('livestock-') && data.items[id.slice(10)]?.kind === 'L';
     const livestockScene = id.startsWith('scene-') && data.items[id.slice(6)]?.kind === 'L';
     const version = livestockChoice ? '&v=4' : livestockScene ? '&v=4' : '';
-    const url = path(directory + id + '.webp?game=1' + version);
+    const source = id === 'mining' ? miningVisuals.background?.path : undefined;
+    const url = source ? path('./' + source.replace(/^public\//, '') + '?game=1')
+      : path(directory + id + '.webp?game=1' + version);
     touchImage(url, scene ? 'scene' : hero ? undefined : 'icon');
     if (trackViewport && scrollImages) {
       const layer = new Container();
@@ -1660,11 +1692,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
       },
       feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover,
-        plotAnimation, livestockAnimation, fishAnimation, workshopAnimation, animationOnly = false } = {}) {
+        plotAnimation, livestockAnimation, fishAnimation, miningAnimation, workshopAnimation, animationOnly = false } = {}) {
         const top = cursor;
         const workshop = Boolean(workshopAnimation?.id);
         const strip = workshop ? options.workshopStrip : undefined;
-        const scene = workshop || sceneKeys.has(id);
+        const scene = workshop || Boolean(miningAnimation) || sceneKeys.has(id);
         const stacked = workshop || width < 210 || scale() > 1.6;
         const artWidth = workshop ? strip?.width ?? width
           : stacked ? Math.min(width, 135) : Math.floor(width * clamp(ratio, 0.16, 0.48));
@@ -1694,7 +1726,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const crop = cover || scene || heroKeys.has(id);
         const imageWidth = artWidth - inset * 2;
         const imageHeight = artHeight - inset * 2;
-        const animation = workshop ? workshopAnimation : fishAnimation ?? livestockAnimation ?? plotAnimation;
+        const animation = workshop ? workshopAnimation : miningAnimation ?? fishAnimation ?? livestockAnimation ?? plotAnimation;
         // Animation cards never request fallback images, even before mounting is possible.
         if (animation && options.registerPlot) {
           const art = new Container();
@@ -1710,7 +1742,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             art.mask = mask;
           }
           options.registerPlot({ art, box: new Rectangle(0, 0, imageWidth, imageHeight),
-            type: workshop ? 'workshop' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
+            type: workshop ? 'workshop' : miningAnimation ? 'mining' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
         } else if (!animationOnly && !animation) {
           drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
@@ -2332,6 +2364,31 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           top >= pinnedTop && bottom <= pinnedTop + pinned.height;
         if (left >= right || top >= bottom || covered) {
           unmountPlot(plot);
+          continue;
+        }
+        if (plot.type === 'mining') {
+          const { batch, session, index } = plot;
+          visiblePlotIds.add('mining:' + batch.id);
+          const mineTextures = loadMiningTextures(batch.id);
+          if (!mineTextures || plot.animation) continue;
+          const retained = {
+            key: 'mining:' + index + ':' + batch.id + ':' + (session?.startedAt ?? batch.start),
+            textures: mineTextures,
+            signature: { session: session ?? { startedAt: batch.start, durationMs: batch.end - batch.start },
+              width: plot.box.width, height: plot.box.height },
+          };
+          const now = performance.now();
+          const frame = { clock: progressClock(now), now };
+          if (adoptAnimation(plot, retained)) {
+            plot.animation.update(frame);
+            continue;
+          }
+          plot.animation = mountMiningAnimation(animationHolder(plot), mineTextures, plot.box,
+            miningVisuals, batch, session, () => world?.facilities.M?.[index]?.batch);
+          plot.retained = retained;
+          plot.animation.update(frame);
+          activePlots.add(plot);
+          markDirty();
           continue;
         }
         if (plot.type === 'workshop') {
@@ -3038,8 +3095,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (activePlots.size && world &&
         !document.hidden && !modal && !pendingModal && !status?.busy) {
       const animationFrame = { clock: clock ?? progressClock(now), now };
-      for (const plot of activePlots) plot.animation.update(animationFrame);
-      markDirty();
+      let animated = false;
+      for (const plot of activePlots) if (plot.animation.update(animationFrame) !== false) animated = true;
+      if (animated) markDirty();
     }
     if (coast) markDirty();
     updateScrollThumb(now);

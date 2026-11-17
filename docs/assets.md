@@ -10,7 +10,7 @@
 | 裁切用图标表 | `assets/source/items/<起始ID>-<结束ID>.png` | 透明方形 PNG，固定 5 行 × 5 列，每格一件 |
 | 发布图 | `public/wiki/icons/<物品ID>.webp` | 每品项一张，96×96，WebP 有损编码质量 70，Alpha 质量 100。发布站点与页面仅使用 WebP |
 
-当前共 525 项，对应 21 张图标表。原有 12 张保留原顺序，畜牧水产 6 张按扩展式样书中新增品项的表格顺序从左到右、从上到下排列。先定稿品项和配方并通过内容校验，再根据稳定 ID 绘制。原图保存于 `assets/source/items/raw/`。仅在原图能完整隔离出 25 个主体时，把图标重新居中到规则网格。出现粘连、缺图、越过画布边缘或类别误画时，先返工并重新检查。
+当前共 565 项；原 525 项保留 21 张历史图标表，矿业新增 40 项使用两张独立透明网格原稿和逐 ID overrides。原有 12 张保留原顺序，畜牧水产 6 张按扩展式样书中新增品项的表格顺序从左到右、从上到下排列。先定稿品项和配方并通过内容校验，再根据稳定 ID 绘制。原图保存于 `assets/source/items/raw/`。仅在原图能完整隔离出 25 个主体时，把图标重新居中到规则网格。出现粘连、缺图、越过画布边缘或类别误画时，先返工并重新检查。
 
 - 作物和养殖产出展示收获原态。牲畜条目画可交易的蛋、奶或肉，水产条目画对应渔获。
 - 中间产物展示粉、浆、切料、冻坯、面团及无装饰的开口备料容器。
@@ -23,7 +23,7 @@ python3 scripts/export-item-icons.py
 python3 scripts/export-item-icons.py --check
 ```
 
-导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。新增图标的 525 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
+导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。现行 565 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
 
 发布图目录 `public/wiki/icons/` 是游戏运行时的物品图标来源，仓库、产物栏、牧场与鱼池动画、导出脚本和素材检查均引用该路径。路径中的 `wiki` 为历史名称：早期独立配方 Wiki 已删除，该目录与其中图标保留不动。
 
@@ -134,6 +134,14 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 第 2 版效果配置复用烟囱与烟团纹理。工坊齿轮新增 `public/art/workshop/gear-v1.webp`（96×96 透明，旋转锚点 0.5,0.5），空仓图标采用 `public/ui-icons/warehouse-empty-v1.webp`（160×160 透明）。[源图、绘制提示和导出记录](art-reviews/2026-11-16-workshop-warehouse-assets.md)。
 
 ## 资源加载
+
+### 矿业
+
+矿业40个物品均使用新绘像素原画、逐格传入ID与准确名称。M01–M10、IM01–IM16、PM01–PM14的96×96透明canonical图标位于`public/wiki/icons/`，持久源图通过`assets/source/items/overrides.json`登记；原25格图集保留历史顺序，不插入重排。矿业原稿、提示词、裁切/尺寸/哈希登记及PNG位于`assets/mining/`，转换入口为`scripts/export-mining-art.mjs`。
+
+矿洞背景整幅生成，包含洞口和轨道；矿车透明单独生成，货载消费各M物品图标。背景、矿车和洞口前景的真实锚点与遮挡在`src/content/mining-visuals.json`登记，不烘焙成固定矿种整景。10张`scene-M<ID>`仅用于非动画详情/素材交付，不作为运行加载回退。矿洞导航、空设施与7项经营科技图标也单独真实绘制并发布透明WebP。页面WebP质量70，Alpha质量100，PNG原图不进dist。
+
+静态关键帧使用与Pixi相同的布局/时序输入合成；审图报告见本轮`docs/art-reviews/`，逐一分开记录原画、发布资源、合成分镜、实际运行与用户认可。素材存在或自动资源门通过不代表视觉或运行通过。
 
 - PixiJS 游戏的牧场、工坊、仓库和图鉴列表连续滚动。列表只绘制进入视口的内容，并在其进入视口时按需请求对应图标和场景图。图片请求按资源 URL 合并并发请求，失败时保留名称及布局。物品图与界面图分别来自 `public/wiki/icons/` 和 `public/ui-icons/`。动画挂载和卸载遵循各场景的既有规则。
 - Service Worker 的安装清单排除所有 WebP 图片；游戏图片（`art/`、`ui-icons/`、`wiki/icons/` 下带 `?game=1` 的请求）在首次加载后按需缓存。除游戏首页外的导航走浏览器常规请求。未来添加游戏 WebP 时也应从预缓存清单排除，只预缓存启动壳和必需依赖。原图不进入 `dist/`。

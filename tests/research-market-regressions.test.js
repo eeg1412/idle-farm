@@ -86,7 +86,7 @@ test('old records keep previous receipts and qualities while market and ordinary
   ]) assert.throws(() => decodeWorldRecord({ ...old, ...change }), { code: 'corrupt-transfer' });
 });
 
-test('full technology pays at 1124 only once and preserves an older receipt', () => {
+test('full technology pays at 1474 only once and preserves an older receipt', () => {
   const fullTechId = 'techLevel1200';
   const world = newWorld(wall, seed);
   world.tech = Object.fromEntries(techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));

@@ -76,7 +76,7 @@ const px = (value) => Number.parseFloat(value) || 0;
 const copySlots = (groups) => Object.fromEntries(Object.entries(groups).map(([kind, slots]) =>
   [kind, slots.map((slot) => ({ ...slot }))]));
 // Display-only projection copy. foreground/advanceWorld assign top-level scalars (clock, wall
-// anchor, production value, ledger), replace slot batch/planting objects,
+// anchor, production value, ledger), replace slot batch/planting/mining objects,
 // and write inventory and stats.produced entries; everything else is shared and only read by the view.
 function projectWorld(source) {
   return {
@@ -309,7 +309,7 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
-  if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池' })[args[0]], sound: 'success' };
+  if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池', M: '购买矿洞' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
   if (name === 'upgradeFacility' || name === 'upgradeStation' || name === 'upgradeProductionBatch') {
     return { float: '已升级', sound: 'success' };

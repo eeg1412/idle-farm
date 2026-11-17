@@ -24,7 +24,7 @@
 这是用户明确要求的开发专用额外行为，不改变正式版玩法与正常研发规则。
 
 - 仅 `npm run dev` 对应的 Vite `serve`、`mode: development` 启用。在 `/#/settings` 设置页连续点击页头标题「设置」11 下，第 11 下通过现有动作与存档事务发放。离开设置页或点击其他控件时清除未完成的点击计数。
-- 发放内容为全部品种与配方解锁、26 项经营改良达到各自上限，以及追加1T金币，即 `1_000_000_000_000n`。使用 `techDefinitions[].maxLevel`，金币按BigInt运算并按现有规则序列化；品质等级没有上限，不属于「全部科技满级」。
+- 发放内容为全部品种与配方解锁、33 项经营改良达到各自上限，以及追加1T金币，即 `1_000_000_000_000n`。使用 `techDefinitions[].maxLevel`，金币按BigInt运算并按现有规则序列化；品质等级没有上限，不属于「全部科技满级」。
 - 发放不得冒充正常经营事件，不增加生产、出售、售货收入或其他累计经营统计。成功反馈应在保存事务提交后出现；失败不得留下部分发放结果。
 - 开发环境使用独立 IndexedDB 数据库 `idle-farm-v7-development`，正式环境使用 `idle-farm-v7`。开发测试获得的金币与科技不得写入正式存档。
 - 开关必须由 Vite 命令类型与模式在编译时决定，不能仅依赖运行时页面、URL 参数、浏览器存储或 `NODE_ENV`。所有 `vite build`，包括 `vite build --mode development`，都必须移除标题触发器和发放模块；构建产物及 `npm run preview` 中不能启用该功能。
@@ -106,5 +106,7 @@
 
 ## 内容
 
-现行输入来自[目录及生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)和[显式等级](expansion/08-crop-uses.md)。先按[工时与研发公式](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者运行 `npm run content:generate`。生成器保留稳定 ID、配方拓扑、研发前置及耗材种类，重算批量、周期、基价、研发金币及耗材数量，以及目录相关的任务金币上限。`src/content/game-data.json` 的格式为 1.14，经济版本为 LT-2026-11-v10。`src/content/balance-baseline-v114.json` 保留历史快照。运行验证按前述授权要求执行。
+矿业按[矿业任务卡](tasks/2026-11-17-mining.md)执行新增内容工作流：先在05/06声明M／IM／PM及配方/研发，08声明PM等级，再扩展生成器对新类别和真实来源的支持，统一生成565项目录与任务金币上限。40新品的基础周期与全目录其他品项必须严格相差超过10秒，固定525旧品之间的历史豁免不得扩大。随后按冻结ID生成图标/背景/矿车，独立子代理审原画、WebP及同运行布局合成分镜，最后才接入完整视图并由PM统一编译。新增周期、批量与价格造成的旧品派生变化记录为LT-2026-11-v11经济差异，旧生产/研发拓扑不变。
+
+现行输入来自[目录及生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)和[显式等级](expansion/08-crop-uses.md)。先按[工时与研发公式](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者运行 `npm run content:generate`。生成器保留稳定 ID、配方拓扑、研发前置及耗材种类，重算批量、周期、基价、研发金币及耗材数量，以及目录相关的任务金币上限。`src/content/game-data.json` 的格式为 1.14，经济版本为 LT-2026-11-v11。`src/content/balance-baseline-v114.json` 保留历史快照。运行验证按前述授权要求执行。
 

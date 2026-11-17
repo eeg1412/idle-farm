@@ -2,10 +2,10 @@
 
 | 模块 | 职责 |
 | --- | --- |
-| `src/content/game-data.json` | 525 项品类、产出、配方和 523 项研发 |
+| `src/content/game-data.json` | 565 项品类、产出、配方和 563 项研发 |
 | `src/content/livestock-visuals.json` | 由畜牧布局生成的全部牲畜视觉登记，显式分类与阶段，不进入经营状态 |
-| `src/game/world.js` | 三类设施及两类工位、事件调度、库存与保留量、报价与周回 |
-| `src/game/advancement.js` | 品种与配方研发、品质计价、26 项经营改良及叠加规则 |
+| `src/game/world.js` | 四类设施及两类工位、事件调度、库存与保留量、报价与周回 |
+| `src/game/advancement.js` | 品种与配方研发、品质计价、33 项经营改良及叠加规则 |
 | `src/game/quality.js` | 普通点整小时加权发放、抽取报价与事务 |
 | `src/game/market.js` | 有效自然日、三轮行情、市场科技效果、倍率校验、重置与预测、成交计价 |
 | `src/game/development-tools.js` | 仅开发服务器动态加载的科技与金币发放动作，正式构建排除 |
@@ -14,9 +14,12 @@
 | `src/platform/layout.js` | 竖屏响应式布局与横屏最大宽度 |
 | `src/platform/farm-audio.js` | 游戏音乐、操作音效和音量 |
 | `src/view/canvas-ui.js` | PixiJS 页面与 Dialog、响应式排版、滚动、键盘焦点和按需贴图 |
-| `src/view/production-pages.js` | 田地、畜牧、鱼池、加工与精制 |
+| `src/view/production-pages.js` | 田地、畜牧、鱼池、矿洞、加工与精制 |
 | `src/view/livestock-animation.js` | 全部牲畜的阶段、idle 换帧、9 秒保底和产品淡入淡出，按视觉登记分类，接收显示时钟而不改变经营数据 |
 | `src/view/research-page.js` | 品种与配方、品质、经营改良 |
+| `src/view/mining-animation.js`、`src/view/mining-layout.js` | 矿车共用时序/布局、分层遮挡、5.3秒展示保底；不产生经营事件 |
+| `src/content/mining-visuals.json` | 矿洞原画路径、轨道/车轮/货载锚点与源登记 |
+| `scripts/export-mining-art.mjs`、`scripts/compose-mining-keyframes.mjs` | 矿业素材转换、复用运行时序与布局的关键帧交付 |
 | `src/view/research-tree.js` | 研究节点布局、可见范围和拖动缩放 |
 | `src/view/management-pages.js` | 仓库、图鉴、任务、设置、出售牧场 |
 | `src/main.js` | 时间推进、交互提交、离线汇总和存档边界 |

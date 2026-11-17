@@ -10,9 +10,9 @@ const developmentDatabaseName = 'idle-farm-v7-development';
 const storeName = 'records';
 const decimalPattern = /^(0|[1-9]\d*)$/;
 const signedDecimalPattern = /^(0|-?[1-9]\d*)$/;
-const facilityKinds = ['C', 'L', 'F'];
+const facilityKinds = ['C', 'L', 'F', 'M'];
 const stationKinds = ['I', 'P'];
-const limits = { C: 40, L: 40, F: 40, I: 48, P: 32 };
+const limits = { C: 40, L: 40, F: 40, M: 40, I: 48, P: 32 };
 const seedPattern = /^[0-9a-f]{32}$/;
 
 export class WorldSaveError extends Error {
@@ -257,6 +257,7 @@ function recordStats(value, convert) {
     lifetimeRevenue: convert(stats.lifetimeRevenue, 'stats.lifetimeRevenue'),
     boughtL: convert(stats.boughtL, 'stats.boughtL'),
     boughtF: convert(stats.boughtF, 'stats.boughtF'),
+    boughtM: convert(Object.hasOwn(stats, 'boughtM') ? stats.boughtM : '0', 'stats.boughtM'),
   };
 }
 
@@ -333,7 +334,7 @@ function amounts(world, convert, convertSigned) {
     unlocked: world.unlocked,
     quality: world.quality,
     tech: world.tech,
-    facilities: world.facilities,
+    facilities: facilityRecords(world),
     settings: { music, sound, pickerIconsOnly },
     taskRewards: taskRewardIds(world),
     coins: convert(world.coins, 'coins'),
@@ -353,6 +354,22 @@ function amounts(world, convert, convertSigned) {
     stations: stationBatches(world.stations, convert),
     ...(pendingOffline && { pendingOffline }),
   };
+}
+
+function facilityRecords(world) {
+  const facilities = object(world.facilities, 'facilities');
+  const mines = Object.hasOwn(facilities, 'M') ? facilities.M : [];
+  valid(Array.isArray(mines), 'facilities.M');
+  return { ...facilities, M: mines.map((slot, index) => {
+    object(slot, `facilities.M.${index}`);
+    const recorded = Object.hasOwn(slot, 'mining');
+    // Old active mines resume the current saved batch's phase, never the import time.
+    const source = recorded ? slot.mining : slot.batch && slot.recipe === slot.batch.id
+      ? { id: slot.batch.id, startedAt: slot.batch.start, durationMs: slot.batch.end - slot.batch.start } : undefined;
+    if (source === undefined) return { ...slot };
+    const mining = object(source, `facilities.M.${index}.mining`);
+    return { ...slot, mining: { id: mining.id, startedAt: mining.startedAt, durationMs: mining.durationMs } };
+  }) };
 }
 
 function taskRewardIds(world) {
@@ -393,6 +410,16 @@ function validateFacilityLists(world, key, kinds) {
       if (slot.recipe !== null) validateRecipe(slot.recipe, kind, `${field}.recipe`);
       const level = decimal(slot.level, `${field}.level`, 1n);
       if (key === 'facilities' && kind === 'C') validatePlanting(world, slot, field);
+      if (key === 'facilities' && kind === 'M') {
+        if (slot.recipe === null) valid(!Object.hasOwn(slot, 'mining'), `${field}.mining`);
+        else if (Object.hasOwn(slot, 'mining')) {
+          const mining = object(slot.mining, `${field}.mining`);
+          valid(mining.id === slot.recipe, `${field}.mining.id`);
+          valid(integer(mining.startedAt, `${field}.mining.startedAt`) <= world.clockMs, `${field}.mining.startedAt`);
+          valid(integer(mining.durationMs, `${field}.mining.durationMs`) > 0, `${field}.mining.durationMs`);
+          valid(Number.isSafeInteger(mining.startedAt + mining.durationMs), `${field}.mining.durationMs`);
+        }
+      }
       if (key === 'stations') {
         valid(typeof slot.priority === 'boolean', `${field}.priority`);
         integer(slot.order, `${field}.order`);

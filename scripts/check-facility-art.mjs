@@ -7,6 +7,7 @@ import cropVisuals from '../src/content/crop-visuals.json' with { type: 'json' }
 import cropHarvest from '../src/content/crop-harvest.json' with { type: 'json' };
 import fishVisuals from '../src/content/fish-visuals.json' with { type: 'json' };
 import fishHabitats from '../src/content/fish-habitats.json' with { type: 'json' };
+import miningVisuals from '../src/content/mining-visuals.json' with { type: 'json' };
 import { fishRegistration, fishSizeLayouts } from '../src/view/fish-layout.js';
 
 const locate = (file) => new URL('../' + file, import.meta.url);
@@ -127,7 +128,7 @@ function noBakedGroundShadow(pixels, width, height, groundY, label, mouthBounds)
   }
 }
 
-const rawKinds = new Set(['C', 'L', 'F']);
+const rawKinds = new Set(['C', 'L', 'F', 'M']);
 const ids = Object.entries(catalog.items).filter(([, item]) => rawKinds.has(item.kind)).map(([id]) => id);
 const results = await Promise.all(ids.map(async (id) => {
   try {
@@ -783,3 +784,51 @@ for (const id of fish) {
   }
 }
 console.log(`已覆盖 ${fish.length} 种鱼类、${fishFrameCount} 张独立 idle 帧、三期完整图集、显式体型及只数、河海分类/背景来源与半透明水域、固定身体注册点/共享尺度画布、透明活鱼选择图、同ID回退及原画来源；画风、水面站位与真实循环仍需实际审阅。`);
+// Mining selection scenes do not authorize runtime fallbacks.
+const mining = ids.filter((id) => catalog.items[id].kind === 'M');
+const miningManifest = JSON.parse(await readFile(locate('assets/mining/registration.json'), 'utf8'));
+const miningItems = Object.entries(catalog.items).filter(([,item]) => ['M','IM','PM'].includes(item.kind)).map(([id])=>id);
+sameIDs(mining, Object.keys(miningVisuals.items), '矿业设施运行登记');
+sameIDs(miningItems, Object.keys(miningManifest.items), '矿业物品原画登记');
+if (miningVisuals.sceneSize !== 320 || miningManifest.generatedWith !== 'built-in image_gen' ||
+    miningManifest.promptFile !== 'assets/mining/prompts.md') throw new Error('矿业必须保留内置生成原画及提示词来源。');
+await readFile(locate(miningManifest.promptFile));
+for (const source of Object.values(miningManifest.sources)) {
+  if (source.generatedWith !== 'built-in image_gen' || digest(await readFile(locate(source.path))) !== source.sha256) {
+    throw new Error('矿业原画来源登记过期：' + source.path);
+  }
+}
+for (const id of miningItems) {
+  const record = miningManifest.items[id];
+  const source = await imageFile(record.png, 96, 96, true);
+  const published = await imageFile('public/wiki/icons/' + id + '.webp', 96, 96, true);
+  if (record.name !== catalog.items[id].name || record.path !== 'public/wiki/icons/' + id + '.webp' ||
+      digest(source) !== record.pngSha256 || digest(published) !== record.sha256 ||
+      !miningManifest.sources[record.source]) throw new Error('矿业物品身份或源图登记不符：' + id);
+}
+for (const key of ['background','foreground','cart']) {
+  const definition = miningVisuals[key], record = miningManifest.scene[key];
+  const width = key === 'cart' ? definition.width : 320, height = key === 'cart' ? definition.height : 320;
+  const source = await imageFile(record.png, width, height, key !== 'background');
+  const published = await imageFile('public/' + definition.path, width, height, key !== 'background');
+  if (record.path !== 'public/' + definition.path || digest(source) !== record.pngSha256 ||
+      digest(published) !== record.sha256) throw new Error('矿洞分层原画登记过期：' + key);
+}
+const expectedMiningUI = ['mining-tab','facility-empty-mine','mining-buy','mining-upgrade','mining-yield','mining-research','mining-processing','mining-cycle','mining-refining'];
+sameIDs(expectedMiningUI, Object.keys(miningManifest.ui), '矿业界面图标');
+for (const name of expectedMiningUI) {
+  const record = miningManifest.ui[name];
+  const source = await imageFile(record.png, 96, 96, true);
+  const published = await imageFile('public/ui-icons/' + name + '.webp', 96, 96, true);
+  if (digest(source) !== record.pngSha256 || digest(published) !== record.sha256) throw new Error('矿业界面图标登记过期：' + name);
+}
+for (const id of mining) {
+  const record = miningManifest.scene[id];
+  const source = await imageFile(record.png, 320, 320);
+  const published = await imageFile('public/art/scene-' + id + '.webp', 320, 320);
+  if (miningVisuals.items[id].scene !== 'art/scene-' + id + '.webp' ||
+      miningVisuals.items[id].icon !== 'wiki/icons/' + id + '.webp' ||
+      digest(source) !== record.pngSha256 || digest(published) !== record.sha256 ||
+      record.icon !== 'public/wiki/icons/' + id + '.webp') throw new Error('矿业选择场景未复用同ID物品：' + id);
+}
+console.log('已覆盖矿业全目录物品、9界面图标、10选择场景和矿洞/矿车/洞口分层来源；视觉与真实矿车循环另行审阅。');

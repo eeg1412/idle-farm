@@ -8,6 +8,7 @@ const destination = (target, tab) => tab ? { target, tab } : { target };
 const field = destination('牧场', '田地');
 const livestock = destination('牧场', '畜牧');
 const fish = destination('牧场', '鱼池');
+const mining = destination('牧场', '矿洞');
 const processing = destination('工坊', '加工');
 const refining = destination('工坊', '精制');
 const warehouse = destination('仓库');
@@ -43,6 +44,11 @@ const baseCoinRewards = {
   fishUpgrade: 4_500n,
   firstLivestockProcessing: 20_000n,
   firstFishProcessing: 25_000n,
+  miningIntro: 18_000n,
+  buildMine: 4_500n,
+  collectMining: 4_500n,
+  miningUpgrade: 4_500n,
+  firstMiningProcessing: 25_000n,
   firstMixedProduct: 70_000n,
   newFarm: 20_000_000_000n,
   firstTech: 10_000_000_000n,
@@ -77,6 +83,8 @@ const baseCoinRewards = {
   runs100: 3_700_000_000_000_000n,
   livestockTop: 45_000_000_000_000n,
   fishTop: 62_000_000_000_000n,
+  miningTop: 62_000_000_000_000n,
+  miningProduct: 2_700_000_000_000_000n,
 };
 
 // Fixed research-point rewards. They are committed with the task settlement and never
@@ -111,7 +119,7 @@ const maxLevel = (list) => list.reduce((highest, entry) => {
 }, 1n);
 const techTotal = (world) => BigInt(techDefinitions.reduce((total, { key }) => total + (world.tech[key] ?? 0), 0));
 const allStations = (world) => [...world.stations.I, ...world.stations.P];
-const allFacilities = (world) => [...world.facilities.C, ...world.facilities.L, ...world.facilities.F];
+const allFacilities = (world) => Object.values(world.facilities).flat();
 const unlockedCount = (world) => BigInt(world.unlocked.length);
 const runs = (world) => BigInt(world.completedRuns);
 const sumProduced = (world, predicate) => Object.entries(world.stats.produced)
@@ -127,7 +135,7 @@ const fieldLevelCondition = '将任意一块田地升到 {目标} 级';
 const stationLevelCondition = '将任意加工位或精制位升到 {目标} 级';
 const recipeCondition = '研发至少 {目标} 种精制配方';
 const codexCondition = '解锁至少 {目标} 种图鉴物品';
-const facilityLevelCondition = '将任意田地、畜牧场或鱼池升到 {目标} 级';
+const facilityLevelCondition = '将任意田地、畜牧场、鱼池或矿洞升到 {目标} 级';
 const techCondition = '永久科技的总等级达到 {目标} 级';
 const runCondition = '累计出售牧场至少 {目标} 次';
 
@@ -156,6 +164,7 @@ const mainGuide = [
 // Displayed after the first sale. Tasks moved here keep their IDs, conditions and receipts.
 const buyLivestockCondition = '累计购买至少 {目标} 座畜牧场';
 const buyFishCondition = '累计购买至少 {目标} 座鱼池';
+const buyMineCondition = '累计购买至少 {目标} 座矿洞';
 const introductionBranches = [
   ['livestockIntro', '建造第一座畜牧场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
   ['buildLivestock', '建造畜牧场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
@@ -172,6 +181,14 @@ const introductionBranches = [
   ['fishUpgrade', '鱼池升级', '将任意一座鱼池升到 {目标} 级', fish, (world) => maxLevel(world.facilities.F), 5n, '水产'],
   ['firstFishProcessing', '加工水产原料', '加工并入库至少 {目标} 份水产中间产物', processing,
     (world) => sumProduced(world, (item) => item?.kind === 'IF'), 1n, '水产'],
+  ['miningIntro', '建造第一座矿洞', buyMineCondition, mining, (world) => world.stats.boughtM, 1n, '矿业'],
+  ['buildMine', '建造矿洞', buyMineCondition, mining, (world) => world.stats.boughtM, 1n, '矿业'],
+  ['collectMining', '矿产入库', '开采并入库至少 {目标} 份矿产', mining,
+    (world) => sumProduced(world, (item) => item?.kind === 'M'), 1n, '矿业'],
+  ['miningUpgrade', '矿洞升级', '将任意一座矿洞升到 {目标} 级', mining,
+    (world) => maxLevel(world.facilities.M), 5n, '矿业'],
+  ['firstMiningProcessing', '加工矿业原料', '加工并入库至少 {目标} 份矿业中间产物', processing,
+    (world) => sumProduced(world, (item) => item?.kind === 'IM'), 1n, '矿业'],
   ['firstMixedProduct', '制作复合商品', '精制并入库至少 {目标} 份双类或三类商品', refining,
     (world) => sumProduced(world, (item) => item?.kind === 'PD' || item?.kind === 'PT'), 1n, '复合'],
   ['newFarm', '经营交接', runCondition, farmSale, runs, 1n, '经营'],
@@ -219,6 +236,8 @@ const longTerm = [
   ['runs100', '百次交接', runCondition, farmSale, runs, 100n],
   ['livestockTop', '牛肉牧场', '解锁肉用黄牛品种', research, (world) => learned(world, 'L10')],
   ['fishTop', '鲟鱼鱼池', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
+  ['miningTop', '宝石矿洞', '解锁宝石原矿', research, (world) => learned(world, 'M10')],
+  ['miningProduct', '锡衬铜盘鲈鱼片', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PM14')],
 ];
 
 function floorTwoSignificantDigits(value) {

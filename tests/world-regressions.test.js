@@ -225,8 +225,8 @@ test('a station switch coinciding with completions starts the new recipe after t
   assert.equal(world.stations.I[0].batch.start, completedAt);
 });
 
-test('LT-2026-11-v10 uses the same batch formula for every item', () => {
-  assert.equal(catalog.balanceVersion, 'LT-2026-11-v10');
+test('LT-2026-11-v11 uses the same batch formula for every item', () => {
+  assert.equal(catalog.balanceVersion, 'LT-2026-11-v11');
   const usage = new Map();
   for (const item of Object.values(catalog.items)) {
     for (const [id, count] of Object.entries(item.inputs)) {
@@ -455,7 +455,7 @@ test('scaled task rewards use the lower of each base reward and the rounded cap'
   assert.equal(taskCoinRewards.fieldLevel10, 46_000n * coinScale);
   assert.equal(taskCoinRewards.firstTech, roundCap(1_250n * coinScale));
   assert.equal(taskCoinRewards.delegationTech, roundCap(2_500n * coinScale));
-  assert.equal(taskCoinRewards.techLevel1200, roundCap(1_250n * 1_124n * coinScale));
+  assert.equal(taskCoinRewards.techLevel1200, roundCap(1_250n * 1_474n * coinScale));
 });
 
 test('农地扩建 counts the extra fields currently owned, not lifetime purchases', () => {

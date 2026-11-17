@@ -1,5 +1,5 @@
 const routes = {
-  牧场: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼池: 'fish' }],
+  牧场: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼池: 'fish', 矿洞: 'mining' }],
   工坊: ['workshop', { 加工: 'processing', 精制: 'refining' }],
   仓库: ['warehouse', {}],
   研究: ['research', { 品种配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],

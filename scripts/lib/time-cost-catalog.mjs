@@ -23,7 +23,7 @@ const compare = (a, b) => a.n * b.d - b.n * a.d;
 const sumFractions = (values) => values.reduce(add, fraction(0n));
 const rate = ({ n, d }) => fraction(3n * d + n, 3n * d);
 
-const idPattern = /^(?:C|I[LF]?|L|F|P[LFDT]?)\d{2,3}$/;
+const idPattern = /^(?:C|I[LFM]?|L|F|M|P[LFDTM]?)\d{2,3}$/;
 function tableRows(markdown, width) {
   const rows = markdown.split(/\r?\n/).map((line) => line.split('|').slice(1, -1).map((part) => part.trim()))
     .filter(([id]) => idPattern.test(id ?? ''));

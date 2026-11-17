@@ -1,0 +1,7082 @@
+{
+  "sceneSize": 320,
+  "duration": 9000,
+  "algorithm": "src/view/mining-layout.js",
+  "sha256": {
+    "background": "cf9983c916a5d187b6473f0ce4f5a8d3577fa57aa07811f7306eefa64fa61aaf",
+    "foreground": "e4a7c8e6151b41e9eb6d40529b50d6aa9b2a78b93354e8a1b86221af43d9582b",
+    "cart": "7226c715a327c9f76a1f2351cb47c1ecb4bd56ee49fbd2271659f8f28e8f0895",
+    "visuals": "d62120eaec1e47723f4d6d92a429eb2f33df0d8efabf4b31585830a4e636b48e",
+    "algorithm": "64d66ce9bf3889628e7e89692e014d4d7098fb5b1db3f7fa126390ffe1b61b6c",
+    "M01-icon": "003fee17a53d379ee847b281839ad4d428839843e81bd84370e360d3151f877a",
+    "M02-icon": "3ed2f168bb4ac30c77cff8ac70c35989212ea438ff0e29b14d359bc67c8831fa",
+    "M03-icon": "af34873acf213334262807e2a06d0b95eb674adea317f266e2706d7e73ace7c4",
+    "M04-icon": "1c98f07de98209474f5d6276b0b773e120cd2a3186c89601b4be717b5a9ee5b5",
+    "M05-icon": "8bd7cafc0e46b34f684472de0a578fd3a4ec6c85237e59d3c1228e865411c401",
+    "M06-icon": "a551b01f8f591b0d21f1780eadc0422bb69136293d92bc07a9fe9617771c6acb",
+    "M07-icon": "96f7c96002c2429994fd6cb85e71472a030e17f33cffdd4ed0aa8fde4267fe9c",
+    "M08-icon": "5d9195433f13b58decd27cdb56736596feb12735d48f5989b0372e4e26bbe609",
+    "M09-icon": "9d07a507bbdc4a661e52f1ca239584f6ee62a3c3b9cc72b0cc2dfe0f97ea80b6",
+    "M10-icon": "d587f6e6af259fdab3ef54a7cf44e0f68dabbd2dfaf0b7afa8ddeb299396683f",
+    "M01-fast-icon": "003fee17a53d379ee847b281839ad4d428839843e81bd84370e360d3151f877a",
+    "M01-speed-change-icon": "003fee17a53d379ee847b281839ad4d428839843e81bd84370e360d3151f877a"
+  },
+  "rows": [
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M01",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M02",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M02",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M02",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M02",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M02",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M02",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M02",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M02",
+      "scenario": "M02",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M02",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M03",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M03",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M03",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M03",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M03",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M03",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M03",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M03",
+      "scenario": "M03",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M03",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M04",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M04",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M04",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M04",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M04",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M04",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M04",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M04",
+      "scenario": "M04",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M04",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M05",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M05",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M05",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M05",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M05",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M05",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M05",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M05",
+      "scenario": "M05",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M05",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M06",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M06",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M06",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M06",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M06",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M06",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M06",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M06",
+      "scenario": "M06",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M06",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M07",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M07",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M07",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M07",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M07",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M07",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M07",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M07",
+      "scenario": "M07",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M07",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M08",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M08",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M08",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M08",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M08",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M08",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M08",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M08",
+      "scenario": "M08",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M08",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M09",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M09",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M09",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M09",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M09",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M09",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M09",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M09",
+      "scenario": "M09",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M09",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M10",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M10",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M10",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "inside-wait",
+      "clock": 4500,
+      "batch": {
+        "id": "M10",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 4500,
+        "phase": 4500,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "outbound-start",
+      "clock": 7000,
+      "batch": {
+        "id": "M10",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 7000,
+        "phase": 7000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "outbound-middle",
+      "clock": 8000,
+      "batch": {
+        "id": "M10",
+        "start": 0,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 8000,
+        "phase": 8000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "loaded-station",
+      "clock": 9000,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "cargo-half-150ms",
+      "clock": 9150,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "empty-cart-300ms",
+      "clock": 9300,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "return-start-1300ms",
+      "clock": 10300,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "return-middle",
+      "clock": 11300,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "return-inside",
+      "clock": 12300,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "next-outbound",
+      "clock": 17000,
+      "batch": {
+        "id": "M10",
+        "start": 9000,
+        "end": 18000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 17000,
+        "phase": 8000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M10",
+      "scenario": "M10",
+      "name": "cross-cycle-loaded",
+      "clock": 18000,
+      "batch": {
+        "id": "M10",
+        "start": 18000,
+        "end": 27000
+      },
+      "sample": {
+        "duration": 9000,
+        "elapsed": 18000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "first-entry-start",
+      "clock": 0,
+      "batch": {
+        "id": "M01",
+        "start": 0,
+        "end": 1000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 0,
+        "phase": 0,
+        "first": true,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "first-entry-middle",
+      "clock": 1000,
+      "batch": {
+        "id": "M01",
+        "start": 1000,
+        "end": 2000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 1000,
+        "phase": 1000,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "first-entry"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "fully-inside",
+      "clock": 2000,
+      "batch": {
+        "id": "M01",
+        "start": 2000,
+        "end": 3000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 2000,
+        "phase": 2000,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "inside-wait",
+      "clock": 2650,
+      "batch": {
+        "id": "M01",
+        "start": 2000,
+        "end": 3000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 2650,
+        "phase": 2650,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "outbound-start",
+      "clock": 3300,
+      "batch": {
+        "id": "M01",
+        "start": 3000,
+        "end": 4000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 3300,
+        "phase": 3300,
+        "first": true,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "outbound-middle",
+      "clock": 4300,
+      "batch": {
+        "id": "M01",
+        "start": 4000,
+        "end": 5000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 4300,
+        "phase": 4300,
+        "first": true,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "loaded-station",
+      "clock": 5300,
+      "batch": {
+        "id": "M01",
+        "start": 5000,
+        "end": 6000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 5300,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "cargo-half-150ms",
+      "clock": 5450,
+      "batch": {
+        "id": "M01",
+        "start": 5000,
+        "end": 6000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 5450,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "empty-cart-300ms",
+      "clock": 5600,
+      "batch": {
+        "id": "M01",
+        "start": 5000,
+        "end": 6000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 5600,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "return-start-1300ms",
+      "clock": 6600,
+      "batch": {
+        "id": "M01",
+        "start": 6000,
+        "end": 7000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 6600,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "return-middle",
+      "clock": 7600,
+      "batch": {
+        "id": "M01",
+        "start": 7000,
+        "end": 8000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 7600,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "return-inside",
+      "clock": 8600,
+      "batch": {
+        "id": "M01",
+        "start": 8000,
+        "end": 9000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 8600,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "next-outbound",
+      "clock": 9600,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 10000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 9600,
+        "phase": 4300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-fast",
+      "name": "cross-cycle-loaded",
+      "clock": 10600,
+      "batch": {
+        "id": "M01",
+        "start": 10000,
+        "end": 11000
+      },
+      "sample": {
+        "duration": 5300,
+        "elapsed": 10600,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-1",
+      "clock": 9000,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 9000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-2",
+      "clock": 9150,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 9150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-3",
+      "clock": 9300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 9300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-4",
+      "clock": 10300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 10300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-5",
+      "clock": 11300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 11300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-6",
+      "clock": 12300,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 12300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-7",
+      "clock": 13000,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 13000,
+        "phase": 4000,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-8",
+      "clock": 14000,
+      "batch": {
+        "id": "M01",
+        "start": 9000,
+        "end": 15000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 14000,
+        "phase": 5000,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 1,
+        "stage": "outbound"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-9",
+      "clock": 15000,
+      "batch": {
+        "id": "M01",
+        "start": 15000,
+        "end": 21000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 15000,
+        "phase": 0,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 1,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 1
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-10",
+      "clock": 15150,
+      "batch": {
+        "id": "M01",
+        "start": 15000,
+        "end": 21000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 15150,
+        "phase": 150,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0.5,
+        "stage": "unload"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0.5
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-11",
+      "clock": 15300,
+      "batch": {
+        "id": "M01",
+        "start": 15000,
+        "end": 21000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 15300,
+        "phase": 300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "station"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-12",
+      "clock": 16300,
+      "batch": {
+        "id": "M01",
+        "start": 15000,
+        "end": 21000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 16300,
+        "phase": 1300,
+        "first": false,
+        "position": 1,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 201,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 220,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-13",
+      "clock": 17300,
+      "batch": {
+        "id": "M01",
+        "start": 15000,
+        "end": 21000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 17300,
+        "phase": 2300,
+        "first": false,
+        "position": 0.5,
+        "cargoAlpha": 0,
+        "stage": "return"
+      },
+      "frame": {
+        "cart": {
+          "x": 111.5,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 130.5,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    },
+    {
+      "id": "M01",
+      "scenario": "M01-speed-change",
+      "name": "speed-14",
+      "clock": 18300,
+      "batch": {
+        "id": "M01",
+        "start": 15000,
+        "end": 21000
+      },
+      "sample": {
+        "duration": 6000,
+        "elapsed": 18300,
+        "phase": 3300,
+        "first": false,
+        "position": 0,
+        "cargoAlpha": 0,
+        "stage": "inside"
+      },
+      "frame": {
+        "cart": {
+          "x": 22,
+          "y": 177,
+          "width": 96,
+          "height": 64
+        },
+        "cargo": {
+          "x": 41,
+          "y": 144,
+          "width": 58,
+          "height": 48,
+          "alpha": 0
+        },
+        "foreground": {
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 320
+        },
+        "scale": 1
+      }
+    }
+  ]
+}

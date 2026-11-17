@@ -8,7 +8,7 @@ const arguments_ = new Set(process.argv.slice(2));
 const show = (group, result) => console.log(group + ' ' +
   JSON.stringify(result, (_, value) => typeof value === 'bigint' ? value.toString() : value));
 
-assert.equal(catalogue.balanceVersion, 'LT-2026-11-v10');
+assert.equal(catalogue.balanceVersion, 'LT-2026-11-v11');
 const { coinScale } = economyScale;
 assert(Number.isSafeInteger(coinScale) && coinScale > 0, 'coinScale 必须为正安全整数');
 const sources = await loadCatalogueInputs();

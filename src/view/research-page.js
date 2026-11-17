@@ -8,7 +8,7 @@ const recipeTab = '品种配方';
 const qualityTab = '品质';
 const techTab = '经营改良';
 const tabs = [recipeTab, qualityTab, techTab];
-const sources = ['全部', '农业', '畜牧', '水产'];
+const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
 const kinds = ['全部', '原料', '中间产物', '商品'];
 const techSources = ['全部', '通用', ...sources.slice(1), '市场'];
 // Crop uses include new recipes made with previously available ingredients.
@@ -41,8 +41,12 @@ const techSourceArt = {
   农业: 'tech-farm',
   畜牧: 'tech-livestock',
   水产: 'tech-water',
+  矿业: 'mining-tab',
 };
 const techArt = {
+  miningBuy: 'mining-buy', miningUpgrade: 'mining-upgrade', miningYield: 'mining-yield',
+  miningResearch: 'mining-research', miningProcessing: 'mining-processing',
+  miningCycle: 'mining-cycle', miningRefining: 'mining-refining',
   appraisal: 'sale-retain',
   delegation: 'clock',
   workshopSpeed: 'tech-workshop',

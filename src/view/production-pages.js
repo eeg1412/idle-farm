@@ -7,16 +7,16 @@ import { activeGuideTask } from '../game/objectives.js';
 import { hoursLabel, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
-const productionTabs = ['田地', '畜牧', '鱼池'];
+const productionTabs = ['田地', '畜牧', '鱼池', '矿洞'];
 const workshopTabs = ['加工', '精制'];
-const sources = ['全部', '农业', '畜牧', '水产'];
-const facilityKinds = ['C', 'L', 'F'];
-const facilityNames = { C: '田地', L: '畜牧场', F: '鱼池' };
-const facilityHeroes = { C: 'fields', L: 'livestock', F: 'fish' };
-const facilityHeroHeights = { C: 0.45, L: 0.45, F: 0.45 };
-const facilityArtAspects = { C: 1.06, L: 1.11, F: 1.20 };
-const emptyFacilityArt = { C: 'scene-empty-field', L: 'scene-empty-barn', F: 'scene-empty-pond' };
-const purchaseLabels = { C: '购地', L: '购买畜牧场', F: '购买鱼池' };
+const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
+const facilityKinds = ['C', 'L', 'F', 'M'];
+const facilityNames = { C: '田地', L: '畜牧场', F: '鱼池', M: '矿洞' };
+const facilityHeroes = { C: 'fields', L: 'livestock', F: 'fish', M: 'mining' };
+const facilityHeroHeights = { C: 0.45, L: 0.45, F: 0.45, M: 0.45 };
+const facilityArtAspects = { C: 1.06, L: 1.11, F: 1.20, M: 1 };
+const emptyFacilityArt = { C: 'scene-empty-field', L: 'scene-empty-barn', F: 'scene-empty-pond', M: 'facility-empty-mine' };
+const purchaseLabels = { C: '购地', L: '购买畜牧场', F: '购买鱼池', M: '购买矿洞' };
 const stationNames = { I: '加工位', P: '精制位' };
 const emptyStationArt = { I: 'facility-mill', P: 'facility-kitchen' };
 const upgradeOptions = [
@@ -120,6 +120,7 @@ function productionChoice(world, kind, id) {
 function assignmentLabel(kind, occupied) {
   if (isWorkshop(kind)) return occupied ? '更换配方' : '选择配方';
   if (kind === 'C') return occupied ? '换种' : '播种';
+  if (kind === 'M') return occupied ? '更换矿种' : '开采';
   return occupied ? '更换品种' : '安排养殖';
 }
 
@@ -145,7 +146,7 @@ function batchImpact(dialog, kind, cancelled) {
 
 function batchReplace(ui, kind, targets, source, action) {
   const workshop = isWorkshop(kind);
-  const title = workshop ? '批量选择配方' : kind === 'C' ? '批量选择作物' : kind === 'L' ? '批量选择牲畜' : '批量选择鱼种';
+  const title = workshop ? '批量选择配方' : kind === 'C' ? '批量选择作物' : kind === 'L' ? '批量选择牲畜' : kind === 'M' ? '批量选择矿种' : '批量选择鱼种';
   let filter = source;
   let chosen;
   ui.dialog(title, (dlg) => {
@@ -310,9 +311,9 @@ function compactProductionCard(ui, kind, index, slot, source) {
 
 function chooseFacility(ui, kind, index) {
   const crop = kind === 'C';
-  const title = crop ? '选择作物' : kind === 'L' ? '选择牲畜' : '选择鱼种';
-  const assignLabel = crop ? '播种' : '安排养殖';
-  const replaceLabel = crop ? '换种' : '更换';
+  const title = crop ? '选择作物' : kind === 'L' ? '选择牲畜' : kind === 'M' ? '选择矿种' : '选择鱼种';
+  const assignLabel = assignmentLabel(kind, false);
+  const replaceLabel = assignmentLabel(kind, true);
   ui.dialog(title, (dlg) => {
     const facility = dlg.w.facilities[kind][index];
     if (!facility) return;
@@ -440,7 +441,7 @@ function facilityCard(ui, kind, index, facility) {
     if (!item) {
       body.feature(facilityImage(kind), (copy) => {
         copy.heading(crop ? '空地' : '空' + facilityName, { style: 'production' });
-        copy.button(crop ? '播种' : '安排养殖', () => chooseFacility(ui, kind, index), {
+        copy.button(assignmentLabel(kind, false), () => chooseFacility(ui, kind, index), {
           tone: 'green', style: 'production',
         });
       }, {
@@ -452,7 +453,7 @@ function facilityCard(ui, kind, index, facility) {
     let upgradeQuote;
     const getUpgradeQuote = () => upgradeQuote ??= facilityOffer(ui.w, kind, index, 1n);
     const actions = [
-      { label: crop ? '换种' : '更换', onClick: () => chooseFacility(ui, kind, index) },
+      { label: assignmentLabel(kind, true), onClick: () => chooseFacility(ui, kind, index) },
       {
         label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index),
         indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false,
@@ -486,6 +487,7 @@ function facilityCard(ui, kind, index, facility) {
       plotAnimation: crop && active ? { batch: active, index } : undefined,
       livestockAnimation: kind === 'L' && active ? { batch: active, index } : undefined,
       fishAnimation: kind === 'F' && active ? { batch: active, index } : undefined,
+      miningAnimation: kind === 'M' && active ? { batch: active, index, session: facility.mining } : undefined,
     });
     if (kind === 'L') body.buttons(actions, { style: 'production' });
   }, {
@@ -539,7 +541,7 @@ export function renderProduction(ui) {
     ui.refresh();
   }, { sticky: true, style: 'segmented' });
   const quote = facilityOffer(ui.w, kind);
-  ui.titleBar(kind === 'C' ? '种植地块' : kind === 'L' ? '养殖场地' : '养殖鱼池', purchaseLabels[kind], () => purchaseFacility(ui, kind), {
+  ui.titleBar(kind === 'C' ? '种植地块' : kind === 'L' ? '养殖场地' : kind === 'M' ? '开采矿洞' : '养殖鱼池', purchaseLabels[kind], () => purchaseFacility(ui, kind), {
     style: 'production', tone: 'green', disabled: quote?.atLimit,
   });
   if (kind === 'C') {
@@ -557,7 +559,7 @@ export function renderProduction(ui) {
   const sourceIndex = focus ? list.findIndex(({ slot }) => slot.recipe === focus || slot.batch?.id === focus) : -1;
   if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + facilityNames[kind] + '中安排生产');
   if (!list.length) {
-    const instruction = kind === 'C' ? '购地后即可播种。' : '购买' + facilityNames[kind] + '后即可安排养殖。';
+    const instruction = kind === 'C' ? '购地后即可播种。' : '购买' + facilityNames[kind] + (kind === 'M' ? '后即可开采。' : '后即可安排养殖。');
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
     return;
   }

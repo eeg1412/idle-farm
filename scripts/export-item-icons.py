@@ -231,7 +231,11 @@ def main():
     parser.add_argument("--source-dir", type=Path, default=SOURCE, help="Directory containing the 5×5 PNGs")
     parser.add_argument("--output-dir", type=Path, default=OUTPUT, help="Directory for the individual WebP files")
     parser.add_argument("--sheet", action="append", metavar="ID-ID", help="Process only the named source sheet; repeatable")
+    parser.add_argument("--appended-only", action="store_true",
+                        help="Export catalogue additions (including M/IM/PM mining IDs) from overrides without rewriting the frozen 525 atlas items")
     args = parser.parse_args()
+    if args.appended_only and (args.sheet or args.normalize_to):
+        parser.error("--appended-only cannot be combined with --sheet or --normalize-to")
     if args.normalize_to and args.normalize_to.resolve() == args.source_dir.resolve():
         parser.error("--normalize-to must be separate from --source-dir")
     try:
@@ -239,7 +243,7 @@ def main():
         appended = [] if args.sheet else appended_ids()
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    selected = list(dict.fromkeys(args.sheet)) if args.sheet else list(groups)
+    selected = [] if args.appended_only else (list(dict.fromkeys(args.sheet)) if args.sheet else list(groups))
     unknown = [name for name in selected if name not in groups]
     if unknown:
         parser.error("unknown source sheets: " + ", ".join(unknown))
@@ -261,8 +265,9 @@ def main():
     if failures:
         raise SystemExit("\n".join(failures))
     apply_icon_overrides(sprites, appended)
-    if not args.sheet and len(sprites) != ATLAS_ITEMS + len(appended):
-        raise SystemExit(f"expected {ATLAS_ITEMS} atlas icons plus {len(appended)} appended icons, got {len(sprites)}")
+    atlas_count = 0 if args.appended_only else ATLAS_ITEMS
+    if not args.sheet and len(sprites) != atlas_count + len(appended):
+        raise SystemExit(f"expected {atlas_count} atlas icons plus {len(appended)} appended icons, got {len(sprites)}")
     if args.validate_source or args.normalize_to:
         return
 
@@ -277,10 +282,10 @@ def main():
                 raise SystemExit(f"{path.name}: invalid WebP format, dimensions or alpha channel")
             if ImageChops.difference(output.getchannel("A"), icon.getchannel("A")).getbbox():
                 raise SystemExit(f"{path.name}: changed transparency mask")
-    if not args.sheet and {p.stem for p in args.output_dir.glob("*.webp")} != set(sprites):
+    if not args.sheet and not args.appended_only and {p.stem for p in args.output_dir.glob("*.webp")} != set(sprites):
         raise SystemExit("Exported icon IDs differ from the catalog")
     if args.output_dir.resolve() == OUTPUT.resolve():
-        update_workshop_bottoms(sprites, args.check, bool(args.sheet))
+        update_workshop_bottoms(sprites, args.check, bool(args.sheet or args.appended_only))
     print(f"{len(sprites)} verified transparent WebP icons at {SIZE}×{SIZE}")
 
 

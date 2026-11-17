@@ -21,9 +21,9 @@ const [catalogue, researchTable, stockTable, legacyJson, cropUses, baselineJson,
 
 const levelFor = productLevels(cropUses);
 const baseline = JSON.parse(baselineJson);
-const sectorByKind = { C: '农业', I: '农业', L: '畜牧', IL: '畜牧', F: '水产', IF: '水产' };
-const sectorOrder = ['农业', '畜牧', '水产'];
-const idPattern = /^(C|IL|IF|I|L|F|PL|PF|PD|PT|P)(\d{2,3})$/;
+const sectorByKind = { C: '农业', I: '农业', L: '畜牧', IL: '畜牧', F: '水产', IF: '水产', M: '矿业', IM: '矿业' };
+const sectorOrder = ['农业', '畜牧', '水产', '矿业'];
+const idPattern = /^(C|IL|IF|IM|I|L|F|M|PL|PF|PD|PT|PM|P)(\d{2,3})$/;
 
 function fail(message) {
   throw new Error(message);
@@ -95,7 +95,7 @@ for (const [id, name, seconds, recipe] of readRows(catalogue, '物品表', '| ID
   const minimumSeconds = integerNumber(seconds, `${id}基础周期下界`);
   const inputs = amounts(recipe, `${id}配方`);
   const hasInputs = Object.keys(inputs).length > 0;
-  if (/^[CLF]$/.test(kind) ? hasInputs : !hasInputs) fail(`${id}的生产配方不符合品类`);
+  if (/^[CLFM]$/.test(kind) ? hasInputs : !hasInputs) fail(`${id}的生产配方不符合品类`);
   const animal = stock.get(id);
   if ((kind === 'L' || kind === 'F') && (!animal || animal.name !== name)) fail(`${id}的物品表与养殖表不一致`);
   items[id] = { name, ...(animal ? { subject: animal.subject } : {}), minimumSeconds, inputs, kind };
@@ -119,22 +119,39 @@ for (const [id, item] of Object.entries(items)) {
     if (duplicate) fail(`${id}与${duplicate}的配方投入重复`);
     recipeIdsByInputs.set(signature, id);
   }
-  const ingredientSectors = new Set();
   for (const key of Object.keys(item.inputs)) {
     const input = items[key];
     if (!input) fail(`${id}使用了未知材料 ${key}`);
     if (item.kind.startsWith('P') && !input.kind.startsWith('I')) fail(`${id}的商品配方只能使用中间产物：${key}`);
     if (!sectorByKind[input.kind]) fail(`${id}使用了成品 ${key}`);
-    if (item.kind.startsWith('I') && (sectorByKind[input.kind] !== sectorByKind[item.kind] || (input.kind.startsWith('I') && Number(idPattern.exec(key)[2]) >= Number(idPattern.exec(id)[2])))) {
+    const miningInput = input.kind === 'M' || (input.kind === 'IM' && Number(idPattern.exec(key)[2]) < Number(idPattern.exec(id)[2])) || ['I', 'IL', 'IF'].includes(input.kind);
+    if (item.kind === 'IM' ? !miningInput : item.kind.startsWith('I') && (sectorByKind[input.kind] !== sectorByKind[item.kind] || (input.kind.startsWith('I') && Number(idPattern.exec(key)[2]) >= Number(idPattern.exec(id)[2])))) {
       fail(`${id}的中间产物配方违反同来源或依赖顺序：${key}`);
     }
-    ingredientSectors.add(sectorByKind[input.kind]);
   }
-  item.sources = item.kind.startsWith('P') ? sectorOrder.filter((sector) => ingredientSectors.has(sector)) : [sectorByKind[item.kind]];
+}
+
+// Carry all upstream industries through IM, rather than treating every IM as pure mining.
+const resolvingSources = new Set();
+function resolveSources(id) {
+  const item = items[id];
+  if (item.sources) return item.sources;
+  if (resolvingSources.has(id)) fail(`生产来源依赖成环：${id}`);
+  resolvingSources.add(id);
+  const inputs = Object.keys(item.inputs);
+  const sectors = new Set(inputs.flatMap(resolveSources));
+  item.sources = inputs.length ? sectorOrder.filter((sector) => sectors.has(sector)) : [sectorByKind[item.kind]];
+  resolvingSources.delete(id);
+  if (item.kind === 'IM' && !sectors.has('矿业')) fail(`${id}的矿业中间产物缺少矿业投入`);
+  return item.sources;
+}
+for (const [id, item] of Object.entries(items)) {
+  resolveSources(id);
   if (item.kind.startsWith('P')) {
     const expectedSources = { P: ['农业'], PL: ['畜牧'], PF: ['水产'] }[item.kind];
-    const expectedCount = expectedSources?.length ?? (item.kind === 'PD' ? 2 : 3);
+    const expectedCount = expectedSources?.length ?? (item.kind === 'PD' ? 2 : item.kind === 'PT' ? 3 : item.sources.length);
     if (item.sources.length !== expectedCount || (expectedSources && expectedSources[0] !== item.sources[0])) fail(`${id}的来源类别不符合品类`);
+    if (item.kind === 'PM' ? !item.sources.includes('矿业') : item.sources.includes('矿业')) fail(`${id}的矿业来源与商品品类不符`);
     item.level = levelFor(item.kind, Number(idPattern.exec(id)[2]), item.sources.length);
   }
 }

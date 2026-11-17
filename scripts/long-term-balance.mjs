@@ -1,6 +1,6 @@
 import { qualityDrawTaskTargets } from '../src/game/quality-tasks.js';
 
-export const balanceVersion = 'LT-2026-11-v10';
+export const balanceVersion = 'LT-2026-11-v11';
 
 const maxCycle = 43200n;
 const minimumRatio = fraction(11n, 10n);
@@ -95,7 +95,7 @@ function preserveStructure(catalogue, baseline) {
   }
   for (const [id, item] of Object.entries(catalogue.items)) {
     if (catalogue.initial.includes(id) === Object.hasOwn(catalogue.research, id)) fail(`${id} 的研发覆盖无效`);
-    if (!Object.hasOwn(baseline.items, id) && !(rank(id) > snapshotMax[item.kind])) {
+    if (!Object.hasOwn(baseline.items, id) && !(rank(id) > (snapshotMax[item.kind] ?? 0))) {
       fail(`${id} 须追加在 ${item.kind} 类快照末尾`);
     }
   }
@@ -260,6 +260,8 @@ export function taskCoinCaps({ balanced, scale }) {
     collection400: halfCheapest(allCosts, 400 - balanced.initial.length),
     livestockTop: BigInt(balanced.research.L10.coins) / 2n,
     fishTop: BigInt(balanced.research.F10.coins) / 2n,
+    miningTop: BigInt(balanced.research.M10.coins) / 2n,
+    miningProduct: BigInt(balanced.research.PM14.coins) / 2n,
     ...Object.fromEntries(Object.entries(qualityDrawTaskTargets).map(([id, target]) => [id, 100n * scale * target])),
   };
   for (const [id, cap] of Object.entries(caps)) {

@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 EXPANSION = ROOT / 'docs/expansion'
 CONTENT = ROOT / 'src/content'
-ID = re.compile(r'(C|L|F|IL|IF|I|PL|PF|PD|PT|P)(\d{2,3})')
-SECTOR = {'C': '农业', 'I': '农业', 'L': '畜牧', 'IL': '畜牧', 'F': '水产', 'IF': '水产'}
+ID = re.compile(r'(C|L|F|M|IL|IF|IM|I|PL|PF|PD|PT|PM|P)(\d{2,3})')
+SECTOR = {'C': '农业', 'I': '农业', 'L': '畜牧', 'IL': '畜牧', 'F': '水产', 'IF': '水产', 'M': '矿业', 'IM': '矿业'}
 
 
 def table_rows(filename, header, select=lambda key: True):
@@ -62,7 +62,7 @@ def validate():
     assert type(scale) in (int, float) and 0 < scale <= 2**53 - 1 and scale == floor(scale), 'coinScale 必须为正安全整数'
     scale = int(scale)
     assert game['version'] == snapshot['version'] == '1.14'
-    assert game['balanceVersion'] == 'LT-2026-11-v10'
+    assert game['balanceVersion'] == 'LT-2026-11-v11'
     assert game['initial'] == snapshot['initial'] == ['C01', 'I01']
     items, research = game['items'], game['research']
     catalogue_rows = unique_rows(table_rows('05-catalog.md', '| ID | 名称 | 基础周期下界秒 | 每批投入 |'))
@@ -79,6 +79,14 @@ def validate():
     uses = Counter()
     signatures = set()
     minimum = {}
+    def source_sectors(key, visiting=frozenset()):
+        assert key not in visiting, ('生产来源成环', key)
+        kind = ID.fullmatch(key)[1]
+        dependencies = inputs_for(catalogue_rows[key][2])
+        if not dependencies:
+            return {SECTOR[kind]}
+        return set().union(*(source_sectors(dep, visiting | {key}) for dep in dependencies))
+
     for key, (name, seconds, text) in catalogue_rows.items():
         item = items[key]
         kind, number = ID.fullmatch(key).groups()
@@ -94,21 +102,41 @@ def validate():
             signature = tuple(sorted(inputs.items()))
             assert signature not in signatures, (key, signature)
             signatures.add(signature)
-        if kind in ('C', 'L', 'F'):
+        if kind in ('C', 'L', 'F', 'M'):
             assert not inputs and item['sources'] == [SECTOR[kind]], key
         elif kind.startswith('I'):
-            assert inputs and item['sources'] == [SECTOR[kind]], key
+            assert inputs and set(item['sources']) == source_sectors(key), key
+            assert '矿业' in item['sources'] if kind == 'IM' else item['sources'] == [SECTOR[kind]], key
             for dependency in inputs:
                 dependency_kind, dependency_number = ID.fullmatch(dependency).groups()
-                assert dependency_kind == kind[1:] or (kind == 'I' and dependency_kind == 'C') or (
-                    dependency_kind == kind and int(dependency_number) < int(number)), (key, dependency)
+                if kind == 'IM':
+                    assert dependency_kind in ('M', 'I', 'IL', 'IF') or (
+                        dependency_kind == 'IM' and int(dependency_number) < int(number)), (key, dependency)
+                else:
+                    assert dependency_kind == kind[1:] or (kind == 'I' and dependency_kind == 'C') or (
+                        dependency_kind == kind and int(dependency_number) < int(number)), (key, dependency)
         else:
             assert inputs and all(items[dependency]['kind'].startswith('I') for dependency in inputs), key
-            sectors = {SECTOR[items[dependency]['kind']] for dependency in inputs}
-            expected = {'P': {'农业'}, 'PL': {'畜牧'}, 'PF': {'水产'}, 'PT': set(SECTOR.values())}
+            sectors = source_sectors(key)
+            expected = {'P': {'农业'}, 'PL': {'畜牧'}, 'PF': {'水产'}, 'PT': {'农业', '畜牧', '水产'}}
             assert sectors == set(item['sources']), key
-            assert len(sectors) == 2 if kind == 'PD' else sectors == expected[kind], key
+            if kind == 'PM':
+                assert '矿业' in sectors, key
+                assert 0 <= item['level'] - len(sectors) <= 27 and (item['level'] - len(sectors)) % 3 == 0, key
+            else:
+                assert '矿业' not in sectors, key
+                assert len(sectors) == 2 if kind == 'PD' else sectors == expected[kind], key
         uses.update({dependency: int(amount) for dependency, amount in inputs.items()})
+
+    # Frozen 525-ID exemption: only pairs of original items may share nearby durations.
+    original_max = {'C': 68, 'L': 10, 'F': 10, 'I': 127, 'IL': 10, 'IF': 10,
+                    'P': 180, 'PL': 20, 'PF': 20, 'PD': 20, 'PT': 50}
+    original_ids = {f'{kind}{rank:02}' for kind, count in original_max.items() for rank in range(1, count + 1)}
+    by_duration = sorted(items, key=lambda key: items[key]['durationMs'])
+    for first, second in zip(by_duration, by_duration[1:]):
+        if first in original_ids and second in original_ids:
+            continue
+        assert items[second]['durationMs'] - items[first]['durationMs'] > 10000, ('新增品项周期冲突', first, second)
     for key, original in snapshot['items'].items():
         item = items[key]
         assert all(item.get(field) == original.get(field) for field in ('inputs', 'kind', 'sources', 'level')), key
@@ -195,7 +223,8 @@ def validate():
     }
     for task, threshold in (('codex20', 20), *((f'collection{n}', n) for n in (100, 200, 300, 400))):
         expected_caps[task] = sum(unlock_quotes[:threshold - len(game['initial'])]) // 2
-    for task, key in zip(('milleCrepe', 'threeSectorGift', 'livestockTop', 'fishTop'), ('P150', 'PT50', 'L10', 'F10')):
+    for task, key in zip(('milleCrepe', 'threeSectorGift', 'livestockTop', 'fishTop', 'miningTop', 'miningProduct'),
+                         ('P150', 'PT50', 'L10', 'F10', 'M10', 'PM14')):
         expected_caps[task] = coins[key] // 2
     for task, target in (
         ('qualityCollection', 6), ('quality25', 30), ('quality50', 120),
