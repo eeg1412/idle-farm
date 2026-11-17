@@ -1,12 +1,12 @@
 import data from '../content/game-data.json' with { type: 'json' };
 import visuals from '../content/workshop-visuals.json' with { type: 'json' };
-import effects from '../content/workshop-effects.json' with { type: 'json' };
 
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
-const modulo = (value, period) => ((value % period) + period) % period;
+const positive = (value) => Number.isFinite(value) && value > 0;
+const finitePair = (pair) => Array.isArray(pair) && pair.length === 2 && pair.every(Number.isFinite);
+const sizePair = (pair) => finitePair(pair) && pair.every(positive);
 const machineKey = (kind) => kind === 'P' ? 'refining' : 'processing';
 const textureKey = (key) => 'workshop:' + key;
-const finitePair = (pair) => Array.isArray(pair) && pair.length === 2 && pair.every(Number.isFinite);
 
 export function workshopIconIds(id) {
   if (!data.items[id]) return [];
@@ -14,35 +14,27 @@ export function workshopIconIds(id) {
 }
 
 export function workshopTextureSources(kind, config = visuals) {
+  const { stage, background, conveyor, effects } = config ?? {};
   const machine = config?.machines?.[machineKey(kind)];
-  const tread = config?.conveyor?.tread;
-  const { chimney, gear, mounts, smoke } = effects;
-  if (!machine?.path || !tread?.path || !Array.isArray(machine.size) || machine.size.length !== 2
-      || !Array.isArray(tread.size) || tread.size.length !== 2
-      || !Array.isArray(tread.logicalSize) || tread.logicalSize.length !== 2
-      || ![...machine.size, ...tread.size, ...tread.logicalSize].every((value) => Number.isFinite(value) && value > 0)
-      || ![machine.placement?.x, machine.placement?.y, machine.placement?.width, machine.placement?.height,
-        machine.bodyEdges?.left, machine.bodyEdges?.right, machine.bodyEdges?.top, machine.bodyEdges?.bottom,
-        machine.occlusionCover?.inputX, machine.occlusionCover?.outputX].every(Number.isFinite)) return [];
-  const effectTextures = [chimney, gear, ...(smoke?.textures ?? [])];
-  if (smoke?.textures?.length !== 3 || mounts?.chimneys?.length !== 2 || !mounts?.gears?.length
-      || !effectTextures.every((asset) => asset?.path && Array.isArray(asset.size)
-        && asset.size.length === 2 && asset.size.every((value) => Number.isFinite(value) && value > 0))
-      || !finitePair(chimney.logicalSize) || !finitePair(chimney.anchor) || !finitePair(gear.anchor)
-      || !mounts.chimneys.every(({ offset, phaseMs, driftDirection }) => finitePair(offset)
-        && Number.isFinite(phaseMs) && (driftDirection === -1 || driftDirection === 1))
-      || !mounts.gears.every(({ offset, size, periodMs, direction, angle }) => finitePair(offset)
-        && [size, periodMs].every((value) => Number.isFinite(value) && value > 0)
-        && (direction === -1 || direction === 1) && Number.isFinite(angle))
-      || ![smoke.intervalMs, smoke.lifetimeMs, smoke.startSize, smoke.endSize].every((value) => Number.isFinite(value) && value > 0)
-      || ![smoke.maxAlpha, smoke.rise, smoke.drift, smoke.sway].every(Number.isFinite)) return [];
-  return [
-    { key: textureKey('machine'), ...machine },
-    { key: textureKey('tread'), ...tread },
-    { key: textureKey('chimney'), ...chimney },
-    { key: textureKey('gear'), ...gear },
-    ...smoke.textures.map((asset, index) => ({ key: textureKey('smoke:' + index), ...asset })),
-  ];
+  const { base, tread } = conveyor ?? {};
+  const { gear, chimney, smoke } = effects ?? {};
+  const sources = { background, machine, base, tread, gear, chimney, smoke };
+  const { x, y, width, height } = machine?.placement ?? {};
+  if (!Object.values(sources).every((asset) => asset?.path && sizePair(asset.size))
+      || ![stage?.width, stage?.height, width, height, tread.logicalWidth, conveyor.speed, conveyor.inputSize,
+        conveyor.inputSpacing, conveyor.packetSpacing, conveyor.outputSize, conveyor.underlap, gear.diameter,
+        gear.periodMs, smoke.intervalMs, smoke.lifetimeMs, smoke.startSize, smoke.endSize].every(positive)
+      || ![x, y, base.y, tread.y, conveyor.contactY,
+        smoke.maxAlpha, smoke.rise, smoke.drift, smoke.sway].every(Number.isFinite)
+      || !Number.isInteger(conveyor.maxPerEvent) || conveyor.maxPerEvent < 2
+      || !finitePair(gear.position)
+      || !finitePair(chimney.position) || !finitePair(chimney.mouth) || !sizePair(chimney.logicalSize)) return [];
+  const [frameX, frameY, frameWidth, frameHeight] = tread.frame ?? [];
+  if (![frameX, frameY, frameWidth, frameHeight].every(Number.isInteger)
+      || frameX < 0 || frameY < 0 || frameWidth < 1 || frameHeight < 1
+      || frameX + frameWidth > tread.size[0] || frameY + frameHeight > tread.size[1]
+      || conveyor.contactY < tread.y || conveyor.contactY >= tread.y + frameHeight) return [];
+  return Object.entries(sources).map(([key, asset]) => ({ ...asset, key: textureKey(key) }));
 }
 
 function randomSequence(key) {
@@ -66,168 +58,143 @@ export function workshopMaterialOrder(materials, recipeId, cycle) {
 
 export function workshopInputEvent(stream, serial) {
   if (serial < 0 || !stream.materials.length) return [];
-  const eventCount = stream.materials.length;
-  const cycle = Math.floor(serial / eventCount);
-  const eventIndex = modulo(serial, eventCount);
+  const cycle = Math.floor(serial / stream.materials.length);
+  const eventIndex = serial % stream.materials.length;
   const order = workshopMaterialOrder(stream.materials, stream.recipeId, cycle);
-  const groups = randomSequence(stream.recipeId + ':group:' + serial);
-  const count = 1 + Math.floor(groups() * stream.maxPerEvent);
-  return Array.from({ length: count }, (_, packetIndex) => {
-    // The main packet walks the full shuffled bag; extra packets may repeat any
-    // actual material, including single-material recipes. These are visuals only.
-    const id = packetIndex === 0 ? order[eventIndex] : order[Math.floor(groups() * order.length)];
-    const random = randomSequence(stream.recipeId + ':packet:' + serial + ':' + packetIndex + ':' + id);
-    const area = stream.spawnArea;
-    return { id, event: serial, cycle, packet: packetIndex,
-      origin: [area.minX, area.minY + random() * (area.maxY - area.minY)] };
+  const random = randomSequence(stream.recipeId + ':group:' + serial);
+  const count = 2 + Math.floor(random() * (stream.maxPerEvent - 1));
+  return Array.from({ length: count }, (_, packet) => {
+    const id = order[(eventIndex + packet) % order.length];
+    return { id, event: serial, cycle, packet,
+      origin: [stream.spawnX - packet * stream.packetSpacing, stream.contactY] };
   });
-}
-
-function route(points) {
-  const distinct = points.filter((point, index) => index === 0 || point[0] !== points[index - 1][0]
-    || point[1] !== points[index - 1][1]);
-  let length = 0;
-  const segments = distinct.slice(1).map((end, index) => {
-    const start = distinct[index];
-    const distance = Math.hypot(end[0] - start[0], end[1] - start[1]);
-    const segment = { start, end, offset: length, length: distance };
-    length += distance;
-    return segment;
-  });
-  return { points: distinct, segments, length };
-}
-
-function positionOn(path, distance) {
-  const at = clamp(distance, 0, path.length);
-  const segment = path.segments.find((part) => at <= part.offset + part.length)
-    ?? path.segments[path.segments.length - 1];
-  const fraction = clamp((at - segment.offset) / segment.length, 0, 1);
-  return [segment.start[0] + (segment.end[0] - segment.start[0]) * fraction,
-    segment.start[1] + (segment.end[1] - segment.start[1]) * fraction];
 }
 
 export function workshopSceneLayout(id, kind, config = visuals) {
   const item = data.items[id];
-  if (!item) return undefined;
+  if (!item || !workshopTextureSources(kind, config).length) return undefined;
+  const { stage, conveyor, effects } = config;
   const machine = config.machines[machineKey(kind)];
-  const edges = machine.bodyEdges;
-  const settings = config.conveyor.layout;
-  const centerY = config.stage.height / 2;
-  const centerX = (edges.left + edges.right) / 2;
-  const mountPosition = ([x, y]) => [centerX + x, centerY + y];
-  const chimneys = effects.mounts.chimneys.map(({ offset, ...source }) => ({
-    ...source, position: mountPosition(offset),
-  }));
-  const gears = effects.mounts.gears.map(({ offset, ...gear }) => ({
-    ...gear, position: mountPosition(offset),
-  }));
-  const capacityPerEmitter = Math.ceil(effects.smoke.lifetimeMs / effects.smoke.intervalMs);
-  const inputSize = settings.inputSize;
-  const inputCover = Math.max(machine.occlusionCover.inputX, edges.left + inputSize / 2 + 2);
-  const outputCover = Math.min(machine.occlusionCover.outputX, edges.right - settings.outputSize / 2 - 2);
-  const half = inputSize / 2;
-  const stream = {
-    recipeId: id, materials: Object.keys(item.inputs ?? {}), size: inputSize,
-    spacing: settings.inputSpacing, maxPerEvent: settings.maxPerEvent, coverX: inputCover,
-    spawnArea: { minX: -half, maxX: -half,
-      minY: half, maxY: config.stage.height - half },
-  };
-  stream.eventSlots = stream.materials.length
-    ? Math.ceil((stream.coverX - stream.spawnArea.minX) / stream.spacing) + 1 : 0;
-  stream.capacity = stream.eventSlots * stream.maxPerEvent;
-  const first = workshopInputEvent(stream, 0);
-  const delayMs = first.length
-    ? Math.min(...first.map((packet) => (inputCover - packet.origin[0]) / config.conveyor.speed)) : 0;
+  const left = machine.placement.x;
+  const right = left + machine.placement.width;
+  const inputMaskEnd = left + conveyor.underlap;
+  const outputMaskStart = right - conveyor.underlap;
+  const inputHalf = conveyor.inputSize / 2;
+  const outputHalf = conveyor.outputSize / 2;
+  const coverX = inputMaskEnd + inputHalf;
+  const materials = Object.keys(item.inputs ?? {});
+  const groupTail = (conveyor.maxPerEvent - 1) * conveyor.packetSpacing;
+  const eventSlots = materials.length ? Math.ceil((coverX + inputHalf + groupTail) / conveyor.inputSpacing) : 0;
+
   function surface(fromX, toX) {
-    return { direction: 'E',
-      polygon: [fromX, 0, toX, 0, toX, config.stage.height, fromX, config.stage.height],
-      bounds: { x: fromX, y: 0, width: toX - fromX, height: config.stage.height } };
+    return {
+      base: { x: fromX, y: conveyor.base.y, width: toX - fromX, height: conveyor.base.size[1] },
+      bounds: { x: fromX, y: conveyor.tread.y, width: toX - fromX, height: conveyor.tread.frame[3] },
+    };
   }
+
   return {
-    stage: config.stage, machine,
-    chimney: { mounts: chimneys, anchor: effects.chimney.anchor, size: effects.chimney.logicalSize },
-    gear: { mounts: gears, anchor: effects.gear.anchor },
-    smoke: { ...effects.smoke, emitters: chimneys, recipeId: id,
-      capacityPerEmitter, capacity: capacityPerEmitter * chimneys.length },
-    surfaceRegions: [surface(0, edges.left + settings.surfaceUnderlap),
-      surface(edges.right - settings.surfaceUnderlap, config.stage.width)],
-    inputStream: stream,
-    itemMasks: {
-      input: { x: 0, y: 0, width: centerX, height: config.stage.height },
-      output: { x: centerX, y: 0, width: config.stage.width - centerX, height: config.stage.height },
+    stage, machine, treadFrame: conveyor.tread.frame, gear: effects.gear, chimney: effects.chimney,
+    smoke: { ...effects.smoke, mouth: effects.chimney.mouth, recipeId: id,
+      capacity: Math.ceil(effects.smoke.lifetimeMs / effects.smoke.intervalMs) },
+    surfaceRegions: [surface(0, inputMaskEnd), surface(outputMaskStart, stage.width)],
+    inputStream: {
+      recipeId: id, materials, size: conveyor.inputSize,
+      spacing: conveyor.inputSpacing, packetSpacing: conveyor.packetSpacing,
+      maxPerEvent: conveyor.maxPerEvent, coverX, spawnX: -inputHalf, contactY: conveyor.contactY,
+      eventSlots, capacity: eventSlots * conveyor.maxPerEvent,
     },
-    output: { id, size: settings.outputSize, delayMs,
-      path: route([[outputCover, centerY], [edges.right, centerY],
-        [config.stage.width + settings.outputSize / 2, centerY]]) },
-    surfaceSpeed: config.conveyor.speed, surfacePeriod: config.conveyor.tread.period,
+    itemMasks: {
+      input: { x: 0, y: 0, width: inputMaskEnd, height: stage.height },
+      output: { x: outputMaskStart, y: 0, width: stage.width - outputMaskStart, height: stage.height },
+    },
+    output: { id, size: conveyor.outputSize, startX: outputMaskStart - outputHalf,
+      endX: stage.width + outputHalf, y: conveyor.contactY },
+    surfaceSpeed: conveyor.speed, surfacePeriod: conveyor.tread.logicalWidth,
   };
+}
+
+// Read activity from the existing station snapshots. An expired batch can still
+// be attached to the last snapshot, so the animation waits for a rollover.
+export function syncWorkshopMotion(motion, station, clock) {
+  const id = station?.batch?.id ?? station?.recipe;
+  if (!id || id !== motion.id) return false;
+  const previous = motion.batch;
+  const batch = station.batch;
+  const next = batch?.id === id && batch.end > batch.start ? batch : undefined;
+  const sameBatch = previous && next && previous.start === next.start && previous.end === next.end;
+  const lastClock = motion.lastClock ?? next?.start ?? clock;
+  const observedClock = Math.max(lastClock, clock);
+  motion.clock ??= 0;
+  if (previous) motion.clock += Math.max(0, Math.min(clock, previous.end) - Math.max(lastClock, previous.start));
+  if (!sameBatch) {
+    if (next) {
+      const from = Math.max(next.start, Math.min(lastClock, previous?.end ?? next.start));
+      motion.clock += Math.max(0, Math.min(observedClock, next.end) - from);
+    }
+    if (previous && clock >= previous.end && (!next || next.start >= previous.end)) {
+      motion.outputStart = previous.end;
+    }
+    motion.batch = next && { start: next.start, end: next.end };
+  }
+  motion.lastClock = observedClock;
+  return Boolean(next && clock >= next.start && clock < next.end);
 }
 
 function machineOffsetAt(clock) {
-  return [Math.sin(clock / 41) * 1.5, Math.sin(clock / 29) * 0.9];
+  return [Math.sin(clock / 43) * 1.2, Math.sin(clock / 31) * 0.65];
 }
 
-function smokeFrame(smoke, clock, active) {
-  if (!active) return [];
+function smokeFrame(smoke, clock) {
+  const latest = Math.floor(clock / smoke.intervalMs);
   return Array.from({ length: smoke.capacity }, (_, index) => {
-    const emitterIndex = Math.floor(index / smoke.capacityPerEmitter);
-    const { position, phaseMs, driftDirection } = smoke.emitters[emitterIndex];
-    const latest = Math.floor((clock - phaseMs) / smoke.intervalMs);
-    const serial = latest - index % smoke.capacityPerEmitter;
-    if (serial < 0) return undefined;
-    const born = phaseMs + serial * smoke.intervalMs;
-    const age = clock - born;
-    if (age < 0 || age >= smoke.lifetimeMs) return undefined;
-    const progress = age / smoke.lifetimeMs;
-    const random = randomSequence(smoke.recipeId + ':smoke:' + emitterIndex + ':' + serial);
+    const serial = latest - index;
+    const born = serial * smoke.intervalMs;
+    const progress = (clock - born) / smoke.lifetimeMs;
+    if (serial < 0 || progress >= 1) return undefined;
+    const random = randomSequence(smoke.recipeId + ':smoke:' + serial);
     const phase = random() * Math.PI * 2;
     const driftScale = 0.75 + random() * 0.5;
     const riseScale = 0.85 + random() * 0.3;
-    const birthOffset = machineOffsetAt(born);
+    const [dx, dy] = machineOffsetAt(born);
     const sway = Math.sin(progress * Math.PI * 2 + phase) * Math.sin(progress * Math.PI);
     return {
-      textureIndex: modulo(serial + emitterIndex, smoke.textures.length),
-      position: [position[0] + birthOffset[0] + driftDirection * smoke.drift * progress * driftScale + smoke.sway * sway,
-        position[1] + birthOffset[1] - smoke.rise * progress * riseScale],
+      position: [smoke.mouth[0] + dx + smoke.drift * progress * driftScale + smoke.sway * sway,
+        smoke.mouth[1] + dy - smoke.rise * progress * riseScale],
       size: smoke.startSize + (smoke.endSize - smoke.startSize) * progress,
-      alpha: clamp(smoke.maxAlpha, 0, 0.6) * Math.min(1, progress / 0.12)
-        * Math.min(1, (1 - progress) / 0.55),
+      alpha: smoke.maxAlpha * Math.min(1, progress / 0.16, (1 - progress) / 0.64),
     };
   });
 }
 
-// Event membership and each packet's random height are stable for the recipe /
-// event seed. Every packet starts fully outside the left edge and rolls right.
-export function workshopMotionFrame(layout, clock, { started = true, running = true } = {}) {
+export function workshopMotionFrame(layout, clock, { started = true, running = true, outputElapsed } = {}) {
   const travel = clock * layout.surfaceSpeed;
-  const displacement = modulo(travel, layout.surfacePeriod);
+  const displacement = travel % layout.surfacePeriod;
   const stream = layout.inputStream;
   const latest = Math.floor(travel / stream.spacing);
   const inputs = [];
-  for (let eventOffset = 0; eventOffset < stream.eventSlots; eventOffset += 1) {
-    const serial = latest - eventOffset;
-    const packets = workshopInputEvent(stream, serial);
-    const distance = travel - serial * stream.spacing;
-    for (let index = 0; index < stream.maxPerEvent; index += 1) {
-      const packet = packets[index];
-      const position = packet ? [packet.origin[0] + distance, packet.origin[1]] : [0, 0];
-      inputs.push({ id: packet?.id ?? stream.materials[0], event: serial,
-        cycle: packet?.cycle, packet: index, origin: packet?.origin,
-        visible: Boolean(running && started && packet && position[0] <= stream.coverX), position });
+  if (running && started) {
+    for (let eventOffset = 0; eventOffset < stream.eventSlots; eventOffset += 1) {
+      const serial = latest - eventOffset;
+      const distance = travel - serial * stream.spacing;
+      const packets = workshopInputEvent(stream, serial);
+      for (let index = 0; index < stream.maxPerEvent; index += 1) {
+        const packet = packets[index];
+        const x = packet ? packet.origin[0] + distance : 0;
+        inputs.push({ ...packet, visible: Boolean(packet && x > stream.spawnX && x < stream.coverX),
+          position: [x, packet?.origin[1] ?? 0] });
+      }
     }
   }
-  const outputElapsed = clock - layout.output.delayMs;
-  const distance = modulo(Math.max(0, outputElapsed) * layout.surfaceSpeed,
-    layout.output.path.length + layout.output.size * 2);
-  const machineOffset = running ? machineOffsetAt(clock) : [0, 0];
+  const { startX, endX, y } = layout.output;
+  const outputX = startX + (outputElapsed ?? 0) * layout.surfaceSpeed;
   return {
     surfaceOffsets: layout.surfaceRegions.map(({ bounds }) => [displacement - bounds.x, 0]),
     inputs,
-    output: { visible: Boolean(running && started && outputElapsed >= 0 && distance < layout.output.path.length),
-      position: positionOn(layout.output.path, distance), alpha: 1 },
-    machineOffset,
-    gearAngles: layout.gear.mounts.map(({ angle, direction, periodMs }) =>
-      angle + direction * Math.PI * 2 * modulo(clock, periodMs) / periodMs),
-    smoke: smokeFrame(layout.smoke, clock, running && started),
+    output: { visible: outputElapsed >= 0 && outputX < endX,
+      position: [clamp(outputX, startX, endX), y], alpha: 1 },
+    machineOffset: machineOffsetAt(clock),
+    gearAngle: Math.PI * 2 * (clock % layout.gear.periodMs) / layout.gear.periodMs,
+    smoke: running && started ? smokeFrame(layout.smoke, clock) : [],
   };
 }

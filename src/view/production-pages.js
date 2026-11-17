@@ -815,9 +815,7 @@ function stationCard(ui, kind, index, station, source) {
         },
       ], { style: 'workshop' });
     }, {
-      ratio: 0.35, style: 'workshop', artAspect: 1, onClick: openDetails,
-      animationOnly: true,
-      workshopAnimation: { kind, index, id },
+      onClick: openDetails, workshopAnimation: { kind, index, id },
     });
     stationProgress(body, active, kind, index);
     body.text('材料', { muted: true });
@@ -829,8 +827,10 @@ function stationCard(ui, kind, index, station, source) {
     reserveButtons(body, requirements);
   }, {
     style: 'production',
+    bleedWorkshopArt: Boolean(item),
     cornerAction: item ? {
       label: '清空' + stationNames[kind],
+      outline: kind === 'I' ? 0xffffff : undefined,
       onClick: () => clearProduction(ui, 'clearStation', kind, index, stationNames[kind]),
     } : undefined,
   });

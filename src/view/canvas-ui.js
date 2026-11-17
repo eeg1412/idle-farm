@@ -2,6 +2,7 @@ import { Container, Graphics, Rectangle, Sprite, Text, TextStyle, CanvasTextMetr
 import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
+import workshopVisuals from '../content/workshop-visuals.json' with { type: 'json' };
 import { compact } from './numbers.js';
 import { gameHistory } from './navigation.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
@@ -12,7 +13,7 @@ import {
 import {
   fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, minFishAnimationMs, mountFishAnimation,
 } from './fish-animation.js';
-import { mountWorkshopAnimation, workshopIconIds, workshopTextureSources } from './workshop-animation.js';
+import { mountWorkshopAnimation, syncWorkshopMotion, workshopIconIds, workshopTextureSources } from './workshop-animation.js';
 import { renderResearch, researchReadyTabs } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import {
@@ -176,8 +177,11 @@ function drawPixelIcon(parent, icon, x, y, width, height) {
     } else if (icon.kind === 'close') {
       const outline = [-6, -10, 0, -4, 6, -10, 10, -6, 4, 0, 10, 6,
         6, 10, 0, 4, -6, 10, -10, 6, -4, 0, -10, -6];
+      const stroke = icon.outline
+        ? { color: icon.outline, width: 2.2 * unit, join: 'round', alignment: 0 }
+        : { color: 0x102315, width: 0.7 * unit, join: 'round' };
       art.poly(outline.map((value, index) => (index % 2 ? cy : cx) + value * unit))
-        .fill(palette.ink).stroke({ color: 0x102315, width: 0.7 * unit, join: 'round' });
+        .fill(palette.ink).stroke(stroke);
     } else if (icon.kind === 'grid') {
       for (const dx of [-8, 2]) for (const dy of [-8, 2]) {
         art.roundRect(cx + dx * unit, cy + dy * unit, 6 * unit, 6 * unit, unit).fill(palette.ink);
@@ -1658,22 +1662,27 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover,
         plotAnimation, livestockAnimation, fishAnimation, workshopAnimation, animationOnly = false } = {}) {
         const top = cursor;
-        const scene = sceneKeys.has(id);
-        const stacked = width < 210 || scale() > 1.6;
-        const artWidth = stacked ? Math.min(width, 135) : Math.floor(width * clamp(ratio, 0.16, 0.48));
-        const artHeight = Math.round(artWidth * (artAspect ?? (style === 'facility' || style === 'workshop' ? 1.08 : 1)));
-        const artX = stacked ? x + (width - artWidth) / 2 : x;
+        const workshop = Boolean(workshopAnimation?.id);
+        const strip = workshop ? options.workshopStrip : undefined;
+        const scene = workshop || sceneKeys.has(id);
+        const stacked = workshop || width < 210 || scale() > 1.6;
+        const artWidth = workshop ? strip?.width ?? width
+          : stacked ? Math.min(width, 135) : Math.floor(width * clamp(ratio, 0.16, 0.48));
+        const artHeight = workshop ? artWidth / workshopVisuals.stage.width * workshopVisuals.stage.height
+          : Math.round(artWidth * (artAspect ?? (style === 'facility' || style === 'workshop' ? 1.08 : 1)));
+        const artX = strip?.x ?? (stacked ? x + (width - artWidth) / 2 : x);
+        const artTop = strip?.top ?? top;
         const drawX = stacked ? x : x + artWidth + 16;
-        const drawY = stacked ? top + artHeight + 8 : top;
+        const drawY = stacked ? artTop + artHeight + 8 : top;
         const copy = new Container();
         parent.addChild(copy);
         const child = layoutUI(copy, drawX, drawY, width - (drawX - x), local, availableHeight,
           0, undefined, { headingClearance: options.headingClearance });
         draw(child);
         const copyHeight = child.bottom - top - rowGap;
-        const height = Math.max(artHeight, copyHeight);
+        const height = Math.max(artTop + artHeight - top, copyHeight);
         if (!stacked && (align === 'center' || style === 'upgrade')) copy.y = (height - copyHeight) / 2;
-        const artY = stacked ? top : top + (height - artHeight) / 2;
+        const artY = stacked ? artTop : top + (height - artHeight) / 2;
         if (surface !== 'none' && !scene) panel(parent, artX, artY, artWidth, artHeight,
           surface === 'water' ? 0xc0ddd9 : palette.pale, null, 8);
         if (onClick && !waiting) {
@@ -1685,15 +1694,23 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const crop = cover || scene || heroKeys.has(id);
         const imageWidth = artWidth - inset * 2;
         const imageHeight = artHeight - inset * 2;
-        const animation = workshopAnimation?.id ? workshopAnimation : fishAnimation ?? livestockAnimation ?? plotAnimation;
+        const animation = workshop ? workshopAnimation : fishAnimation ?? livestockAnimation ?? plotAnimation;
         // Animation cards never request fallback images, even before mounting is possible.
         if (animation && options.registerPlot) {
           const art = new Container();
           art.eventMode = 'none';
           art.position.set(artX + inset, artY + inset);
           parent.addChild(art);
+          if (strip) {
+            const { radius } = strip;
+            // The scene's rectangular mask clips the lower edge before the rounded corners below it.
+            const mask = inkGraphics().roundRect(0, 0, imageWidth, imageHeight + radius, radius).fill(0xffffff);
+            mask.position.copyFrom(art.position);
+            parent.addChild(mask);
+            art.mask = mask;
+          }
           options.registerPlot({ art, box: new Rectangle(0, 0, imageWidth, imageHeight),
-            type: workshopAnimation?.id ? 'workshop' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
+            type: workshop ? 'workshop' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
         } else if (!animationOnly && !animation) {
           drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
@@ -1928,17 +1945,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         drawImage(parent, id, artX, top + 8, size, size);
         cursor += height + rowGap;
       },
-      card(draw, { padding = 10, gap = 9, style, onClick, cornerAction, footer } = {}) {
+      card(draw, { padding = 10, gap = 9, style, onClick, cornerAction, footer, bleedWorkshopArt = false } = {}) {
         const top = cursor;
         const layer = new Container();
         parent.addChild(layer);
+        const radius = style === 'subtle' ? 10 : 15;
         const cornerSize = 30;
         const cornerX = x + width - padding - cornerSize;
         const cornerY = top + Math.max(1, padding - 3);
         const contentWidth = width - padding * 2 - (onClick ? 24 : 0);
         const child = layoutUI(layer, x + padding, top + padding, contentWidth, local, availableHeight, 0, undefined,
           { registerPlot: options.registerPlot, headingClearance: cornerAction
-            ? { right: cornerX - 6, bottom: cornerY + cornerSize } : undefined });
+            ? { right: cornerX - 6, bottom: cornerY + cornerSize } : undefined,
+          workshopStrip: bleedWorkshopArt ? { x, top, width, radius } : undefined });
         draw(child);
         let bottom = child.bottom;
         let footerLayer;
@@ -1951,16 +1970,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         const height = bottom - top + Math.max(2, padding - 5);
         const focused = onClick && controls.length === focusIndex;
-        const radius = style === 'subtle' ? 10 : 15;
         const outline = focused ? palette.green : style === 'subtle' ? palette.line : palette.border;
         const shadow = layer.addChildAt(inkGraphics(), 0);
         const bg = layer.addChildAt(inkGraphics(), 1);
+        const border = bleedWorkshopArt ? layer.addChild(inkGraphics()) : undefined;
+        if (border) border.label = 'workshop-card-outline';
         const arrow = onClick ? directionIcon(layer, 'right',
           x + width - padding - 18, top + (height - 22) / 2, 18, 22, { color: palette.green }) : undefined;
         const control = onClick && !waiting ? hitAt(bg, layer, x, top, width, height, onClick) : undefined;
         const surface = (rowHeight) => {
-          paintPanel(bg, x, top, width, rowHeight, palette.card, outline, radius);
+          paintPanel(bg, x, top, width, rowHeight, palette.card, border ? null : outline, radius);
           paintPanel(shadow, x, top + 3, width, rowHeight, { color: 0x886643, alpha: 0.10 }, null, radius);
+          border?.roundRect(x, top, width, rowHeight, radius).stroke({ color: outline, width: 1.1 });
           if (footerLayer) footerLayer.y = rowHeight - height;
           if (arrow) arrow.y = (rowHeight - height) / 2;
           if (control) {
@@ -1980,7 +2001,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             hit.roundRect(cornerX, cornerY, cornerSize, cornerSize, 4)
               .stroke({ color: palette.green, width: 1.5 });
           }
-          drawPixelIcon(layer, { kind: 'close' }, cornerX + 5, cornerY + 5, 20, 20);
+          drawPixelIcon(layer, { kind: 'close', outline: cornerAction.outline }, cornerX + 5, cornerY + 5, 20, 20);
           if (!waiting) hitAt(hit, layer, cornerX, cornerY, cornerSize, cornerSize, (event) => {
               event?.stopPropagation();
               cornerAction.onClick?.();
@@ -3141,6 +3162,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       for (const [key, phase] of workshopMotionStates) {
         const station = nextWorld?.stations[phase.kind]?.[phase.index];
         if ((station?.batch?.id ?? station?.recipe) !== phase.id) workshopMotionStates.delete(key);
+        else syncWorkshopMotion(phase, station, nextWorld.clockMs);
       }
       // Rebuild only when something a page draws statically may differ. When just the clock
       // moved, countdowns, progress bars and animations follow `world` frame by frame. A new

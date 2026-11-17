@@ -7,6 +7,7 @@ import { techDefinitions } from '../src/game/advancement.js';
 import { createGameView } from '../src/view/canvas-ui.js';
 import { viewportLayout } from '../src/platform/layout.js';
 import { livestockSpecies, minLivestockAnimationMs } from '../src/view/livestock-animation.js';
+import { workshopTextureSources } from '../src/view/workshop-animation.js';
 
 function setup(dispatch, browser) {
   const canvas = new EventTarget();
@@ -522,6 +523,49 @@ test('research map pans on both axes and pinches without opening a node', async 
     game.point('pointerdown', center.x, center.y);
     game.point('pointerup', center.x, center.y);
   }
+});
+
+test('workshop art fills the card width with rounded top corners and leaves the clear action clickable', async (t) => {
+  const actions = [];
+  const game = setup((_world, ...args) => {
+    actions.push(args);
+    return { ok: true };
+  });
+  const sizes = new Map(workshopTextureSources('I').map(({ path, size }) => [new URL(path, 'https://game.example/').pathname, size]));
+  t.mock.method(Assets, 'load', async (url) => {
+    const [width, height] = sizes.get(new URL(url).pathname) ?? [96, 96];
+    return new Texture({ source: new TextureSource({ width, height }) });
+  });
+  game.world.inventory.C01 = 2n;
+  assert.ok(arrangeStation(game.world, 'I', 0, 'I01'));
+  game.view.go('工坊');
+  game.draw(390, 844);
+  await new Promise(setImmediate);
+  game.flush();
+  const scene = game.nodes().find((node) => node.label === 'workshop-front');
+  assert.ok(scene);
+  assert.ok(scene.mask);
+  const top = scene.toGlobal({ x: 0, y: 0 });
+  const bottom = scene.toGlobal({ x: 400, y: 144 });
+  const width = bottom.x - top.x;
+  const height = bottom.y - top.y;
+  const cardOutline = game.nodes().find((node) => node.label === 'workshop-card-outline');
+  const card = cardOutline.getBounds();
+  const roundedMask = scene.parent.parent.mask;
+  const clear = game.nodes().find((node) => node.label === '清空加工位');
+  const cross = clear.parent.getChildAt(clear.parent.getChildIndex(clear) + 1);
+  const title = game.nodes().find((node) => node.text === '面粉').getBounds();
+  assert.ok(width > 320 && Math.abs(height / width - 144 / 400) < 0.01);
+  assert.ok(Math.abs(top.x - card.minX) < 1 && Math.abs(top.y - card.minY) < 1);
+  assert.ok(Math.abs(bottom.x - card.maxX) < 1);
+  assert.ok(roundedMask.containsPoint({ x: width / 2, y: 0.5 }));
+  assert.ok(!roundedMask.containsPoint({ x: 0.5, y: 0.5 }));
+  assert.ok(bottom.y < title.minY);
+  assert.ok(scene.children.some((node) => node.label === 'workshop-conveyor-layer'));
+  assert.equal(cross.context.instructions.find(({ action }) => action === 'stroke')?.data.style.color, 0xffffff);
+  tapControl(game, '清空加工位');
+  await Promise.resolve();
+  assert.deepEqual(actions, [['clearStation', 'I', 0]]);
 });
 
 test('workshop keeps the same progress track and card height after running out of materials', () => {

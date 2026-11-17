@@ -1,105 +1,70 @@
 {
-  "version": 6,
-  "stage": {
-    "width": 320,
-    "height": 320
+  "version": 8,
+  "stage": { "width": 400, "height": 144 },
+  "background": {
+    "path": "./art/workshop/front/background.webp",
+    "size": [400, 144]
   },
   "machines": {
     "processing": {
-      "path": "./art/workshop/processing-machine-wood-v6.webp",
-      "size": [
-        165,
-        632
-      ],
-      "logicalSize": [
-        105.51558752997602,
-        404.15667466027173
-      ],
-      "placement": {
-        "x": 107.24220623501199,
-        "y": -41.91846522781775,
-        "width": 105.51558752997602,
-        "height": 404.15667466027173
-      },
-      "bodyEdges": {
-        "left": 109.16067146282974,
-        "right": 210.83932853717027,
-        "top": -40,
-        "bottom": 360
-      },
-      "occlusionCover": {
-        "inputX": 155.16067146282973,
-        "outputX": 160.83932853717027
-      },
-      "sourceBounds": {
-        "left": 450,
-        "right": 768,
-        "top": 20,
-        "bottom": 1271
-      },
-      "sourceRotationDegrees": 0
+      "path": "./art/workshop/front/processing.webp",
+      "size": [136, 108],
+      "placement": { "x": 132, "y": 32, "width": 136, "height": 108 }
     },
     "refining": {
-      "path": "./art/workshop/refining-machine-wood-v6.webp",
-      "size": [
-        158,
-        634
-      ],
-      "logicalSize": [
-        100.71713147410358,
-        404.1434262948207
-      ],
-      "placement": {
-        "x": 109.80079681274901,
-        "y": -41.91235059760956,
-        "width": 100.71713147410358,
-        "height": 404.1434262948207
-      },
-      "bodyEdges": {
-        "left": 112.03187250996015,
-        "right": 207.96812749003985,
-        "top": -40,
-        "bottom": 360
-      },
-      "occlusionCover": {
-        "inputX": 158.03187250996015,
-        "outputX": 157.96812749003985
-      },
-      "sourceBounds": {
-        "left": 459,
-        "right": 760,
-        "top": 16,
-        "bottom": 1271
-      },
-      "sourceRotationDegrees": 0
+      "path": "./art/workshop/front/refining.webp",
+      "size": [136, 108],
+      "placement": { "x": 132, "y": 34, "width": 136, "height": 108 }
     }
   },
   "conveyor": {
-    "speed": 0.04,
+    "speed": 0.064,
+    "base": {
+      "path": "./art/workshop/front/belt-base.webp",
+      "size": [128, 32],
+      "y": 104
+    },
     "tread": {
-      "path": "./art/workshop/belt-surface-wood-v6.webp",
-      "size": [
-        104,
-        52
-      ],
-      "logicalSize": [
-        32,
-        16
-      ],
-      "period": 32,
-      "direction": "E"
+      "path": "./art/workshop/front/tread.webp",
+      "size": [32, 12],
+      "frame": [1, 1, 31, 11],
+      "logicalWidth": 64,
+      "y": 97
     },
-    "layout": {
-      "inputSize": 88,
-      "outputSize": 96,
-      "inputSpacing": 96,
-      "maxPerEvent": 3,
-      "surfaceUnderlap": 3
+    "underlap": 20,
+    "inputSize": 49,
+    "inputSpacing": 113,
+    "packetSpacing": 28,
+    "maxPerEvent": 3,
+    "contactY": 99,
+    "outputSize": 54
+  },
+  "effects": {
+    "gear": {
+      "path": "./art/workshop/front/gear.webp",
+      "size": [64, 64],
+      "position": [200, 98],
+      "diameter": 52,
+      "periodMs": 2000
     },
-    "layerOrder": [
-      "movingBorderlessSurface",
-      "canonicalItems",
-      "solidMachineBody"
-    ]
+    "chimney": {
+      "path": "./art/workshop/front/chimney.webp",
+      "size": [40, 52],
+      "logicalSize": [24, 31],
+      "position": [232, 51],
+      "mouth": [232, 20]
+    },
+    "smoke": {
+      "path": "./art/workshop/front/smoke.webp",
+      "size": [64, 64],
+      "intervalMs": 330,
+      "lifetimeMs": 1500,
+      "startSize": 17,
+      "endSize": 47,
+      "maxAlpha": 0.58,
+      "rise": 17,
+      "drift": 18,
+      "sway": 5
+    }
   }
 }

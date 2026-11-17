@@ -109,7 +109,11 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 共享背景、同种图集与选择图按需加载；滚出、弹窗、切页、后台卸载动画，加载中或失败不显示同ID场景或其他回退图标。成熟鱼淡出后再淡入鱼苗，固定鱼塘不参与淡变；本轮 9 秒保底与 300ms 参数为实现选择。WebP 不进入启动预缓存，已访问图沿现有离线图片缓存复用。
 
-### 工坊木质机器与木板履带
+### 工坊正视动画
+
+当前工坊使用 [正视动画素材](art-reviews/2026-11-17-workshop-front.md)，尺寸和拼接位置在 `src/content/workshop-visuals.json` 登记。物料使用仓库同款图标，导出时记录可见底边以对齐履带。
+
+### 历史素材：工坊木质机器与木板履带
 
 2026-11-16按用户要求用内置image_gen独立重画三份木质原稿，替换旧金属机身／橡胶带面，不能用滤色或程序图形代替新绘图。真实输入及提示词在 `assets/workshop/prompts-wood-v6.md`，原稿在同目录 `raw/`，裁切来源和等比尺度在 `registration-wood-v6.json`。
 
@@ -119,9 +123,9 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 | 木质精制机 | `public/art/workshop/refining-machine-wood-v6.webp`，158×634透明 | `assets/workshop/png/refining-machine-wood-v6.png` |
 | 无边木板履带 | `public/art/workshop/belt-surface-wood-v6.webp`，104×52不透明 | `assets/workshop/png/belt-surface-wood-v6.png` |
 
-`export-wood-v6.mjs`仅进行源图裁切、等比最近邻与WebP70／Alpha100转换，生成 `workshop-visuals-wood-v6-candidate.json`；活跃入口为 `src/content/workshop-visuals.json`。机器按真实源轮廓等比放大到可见400高、Y=-40..360，由既有320²区域mask裁切；木板从新原稿相邻缝中心314..418裁出一个真实104px周期，逻辑宽与滚动period均32。运行只请求machine／tread，背景与旧金属资源保留历史，不回退加载。静态原稿／成品与实际130px组合、滚动、遮挡和用户认可分别记录，后两者未取得验证授权不能宣称通过。
+`export-wood-v6.mjs` 对源图裁切、等比最近邻缩放并转换为 WebP，生成 `workshop-visuals-wood-v6-candidate.json`。
 
-### 工坊独立烟囱与烟雾
+### 历史素材：工坊独立烟囱与烟雾
 
 烟囱和烟雾在木质机身之上分层，不修改wood-v6机身原画。`assets/workshop/raw/chimney-smoke-v1.png`由内置image_gen真实生成透明2×2网格，烟囱顶口与三烟团分别裁出。实际提示词、输入与裁切／开口中心登记在同目录 `prompts-chimney-smoke-v1.md`、`registration-chimney-smoke-v1.json`，纯素材转换入口为 `export-chimney-smoke-v1.mjs`。
 

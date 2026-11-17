@@ -10,6 +10,7 @@ from PIL import Image, ImageChops
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/source/items"
 OUTPUT = ROOT / "public/wiki/icons"
+WORKSHOP_BOTTOMS = ROOT / "src/content/workshop-item-bottoms.json"
 EXPANSION_CATALOG = ROOT / "docs/expansion/05-catalog.md"
 CROP_SPEC = ROOT / "docs/expansion/08-crop-uses.md"
 SNAPSHOT = ROOT / "src/content/balance-baseline-v114.json"
@@ -205,6 +206,21 @@ def apply_icon_overrides(sprites, appended=()):
             sprites[item_id] = source.convert("RGBA").copy()
 
 
+def update_workshop_bottoms(sprites, check, partial):
+    current = json.loads(WORKSHOP_BOTTOMS.read_text(encoding="utf-8")) if WORKSHOP_BOTTOMS.is_file() else {}
+    bottoms = current.copy() if partial else {}
+    for item_id, icon in sprites.items():
+        bounds = icon.getchannel("A").point([0] * 128 + [255] * 128).getbbox()
+        if bounds is None:
+            raise SystemExit(f"{item_id}: icon has no solid pixels to rest on the conveyor")
+        bottoms[item_id] = bounds[3]
+    if check:
+        if bottoms != current:
+            raise SystemExit(f"{WORKSHOP_BOTTOMS.name}: regenerate with scripts/export-item-icons.py")
+    else:
+        WORKSHOP_BOTTOMS.write_text(json.dumps(bottoms, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     modes = parser.add_mutually_exclusive_group()
@@ -263,6 +279,8 @@ def main():
                 raise SystemExit(f"{path.name}: changed transparency mask")
     if not args.sheet and {p.stem for p in args.output_dir.glob("*.webp")} != set(sprites):
         raise SystemExit("Exported icon IDs differ from the catalog")
+    if args.output_dir.resolve() == OUTPUT.resolve():
+        update_workshop_bottoms(sprites, args.check, bool(args.sheet))
     print(f"{len(sprites)} verified transparent WebP icons at {SIZE}×{SIZE}")
 
 
