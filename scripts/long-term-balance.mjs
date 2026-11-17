@@ -1,6 +1,6 @@
 import { qualityDrawTaskTargets } from '../src/game/quality-tasks.js';
 
-export const balanceVersion = 'LT-2026-11-v11';
+export const balanceVersion = 'LT-2026-11-v12';
 
 const maxCycle = 43200n;
 const minimumRatio = fraction(11n, 10n);

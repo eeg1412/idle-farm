@@ -55,8 +55,8 @@ test('farm sale preview and confirmation use plain description lists', () => {
   world.lifetimeProductionValue = 100_000_000n;
   const page = pageFixture(world);
   renderFarmSale(page.ui);
-  page.click('出售牧场');
-  for (const view of [page, page.dialog('确认出售牧场')]) {
+  page.click('出售庄园');
+  for (const view of [page, page.dialog('确认出售庄园')]) {
     const lists = view.calls.filter(([name]) => name === 'detailRows').map(([, [rows]]) => rows);
     assert.equal(lists.length, 4);
     assert.ok(lists.flat().every(({ label, icon }) => label && !icon));
@@ -70,6 +70,9 @@ test('warehouse shows permanent filters, current quality and price, and exact st
   const amount = 10n ** 120n + 9n;
   const view = pageFixture(world);
   renderWarehouse(view.ui);
+  assert.deepEqual(view.calls[0], ['image', ['warehouse', Math.round(view.ui.width * 0.35)]]);
+  assert.ok(view.find('image', (id, _, options) => id === 'warehouse-empty-v1' && options?.center));
+  assert.ok(view.find('text', (label, options) => label === '库存 0' && options.align === 'center'));
   assert.ok(view.find('tabs', (tabs) => tabs.includes('中间产物')));
 
   world.inventory.C01 = amount;
@@ -276,7 +279,7 @@ test('the expansion guide sends a player who needs more coins to sell stock', ()
   world.coins += 1n;
   renderTasks(tasks.ui);
   tasks.click('前往田地');
-  assert.ok(tasks.find('go', (target, { tab }) => target === '牧场' && tab === '田地'));
+  assert.ok(tasks.find('go', (target, { tab }) => target === '庄园' && tab === '田地'));
 });
 
 test('a claimed full-technology card shows completion and receipt without a revised reward', () => {
@@ -337,7 +340,7 @@ test('all active livestock main cards request animation while details remain sta
     assert.equal(options.plotAnimation, undefined);
     assert.deepEqual(options.livestockAnimation, { batch, index: 0 }, id);
     options.onClick();
-    const details = view.dialog('畜牧场详情');
+    const details = view.dialog('养殖场详情');
     assert.equal(details.find('feature', () => true)[2].livestockAnimation, undefined);
 
     world.facilities.L[0].batch = null;
@@ -359,7 +362,7 @@ test('livestock choices identify the animal while details and upgrades show thei
   const [scene, , options] = view.find('feature', (_, __, settings) => settings.style === 'facility');
   assert.equal(scene, 'scene-L01');
   options.onClick();
-  const details = view.dialog('畜牧场详情');
+  const details = view.dialog('养殖场详情');
   assert.ok(details.find('feature', (art) => art === 'scene-L01'));
   assert.ok(details.find('row', (label, value) => label === '产出品项' && value === catalog.items.L01.name));
 
@@ -371,7 +374,7 @@ test('livestock choices identify the animal while details and upgrades show thei
   ]);
 
   view.click('升级');
-  const upgrade = view.dialog('升级畜牧场');
+  const upgrade = view.dialog('升级养殖场');
   assert.ok(upgrade.find('feature', (art) => art === 'scene-L10'));
   assert.ok(upgrade.find('row', (label, _, settings) => label.startsWith('本批') && settings.icon === 'L01'));
   assert.ok(upgrade.find('row', (label, _, settings) => label === '下批产出' && settings.icon === 'L10'));

@@ -21,6 +21,7 @@
     "height": 64,
     "anchorX": 48,
     "anchorY": 60,
+    "visibleLeftX": 5,
     "cargo": {
       "x": 48,
       "y": 15,
@@ -29,6 +30,10 @@
       "anchorX": 0.5,
       "anchorY": 1
     }
+  },
+  "opening": {
+    "left": 28,
+    "right": 108
   },
   "track": {
     "inside": {

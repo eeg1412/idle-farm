@@ -11,12 +11,12 @@ const productionTabs = ['田地', '畜牧', '鱼池', '矿洞'];
 const workshopTabs = ['加工', '精制'];
 const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
 const facilityKinds = ['C', 'L', 'F', 'M'];
-const facilityNames = { C: '田地', L: '畜牧场', F: '鱼池', M: '矿洞' };
+const facilityNames = { C: '田地', L: '养殖场', F: '鱼池', M: '矿洞' };
 const facilityHeroes = { C: 'fields', L: 'livestock', F: 'fish', M: 'mining' };
 const facilityHeroHeights = { C: 0.45, L: 0.45, F: 0.45, M: 0.45 };
 const facilityArtAspects = { C: 1.06, L: 1.11, F: 1.20, M: 1 };
 const emptyFacilityArt = { C: 'scene-empty-field', L: 'scene-empty-barn', F: 'scene-empty-pond', M: 'facility-empty-mine' };
-const purchaseLabels = { C: '购地', L: '购买畜牧场', F: '购买鱼池', M: '购买矿洞' };
+const purchaseLabels = { C: '购地', L: '购买养殖场', F: '购买鱼池', M: '购买矿洞' };
 const stationNames = { I: '加工位', P: '精制位' };
 const emptyStationArt = { I: 'facility-mill', P: 'facility-kitchen' };
 const upgradeOptions = [
@@ -163,7 +163,7 @@ function batchReplace(ui, kind, targets, source, action) {
       dlg.local.scroll = 0;
       dlg.local.indexKeyboard = 0;
       dlg.refresh();
-    }, { sticky: true, style: 'filter' });
+    }, { sticky: true, style: 'filter', compact: true });
     const choices = workshop ? workshopRecipes(dlg, kind, filter)
       : dlg.w.unlocked.filter((id) => catalog.items[id]?.kind === kind);
     if (!choices.length) {
@@ -588,7 +588,7 @@ function chooseRecipe(ui, kind, index, source) {
       dlg.local.scroll = 0;
       dlg.local.indexKeyboard = 0;
       dlg.refresh();
-    }, { sticky: true, style: 'filter' });
+    }, { sticky: true, style: 'filter', compact: true });
     if (station.batch) {
       dlg.text('改用其他配方会中止本批，已扣材料退回仓库。', { muted: true });
     }
@@ -875,7 +875,7 @@ export function renderWorkshop(ui) {
     delete local.positionedSourceId;
     local.scroll = 0;
     ui.refresh();
-  }, { style: 'filter' });
+  }, { style: 'filter', compact: true });
   const scope = (world) => workshopSlots(world, kind, source);
   const list = scope(ui.w);
   const compactMode = productionLayout(ui, kind, list, scope, source);

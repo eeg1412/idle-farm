@@ -24,13 +24,13 @@ export function mountMiningAnimation(parent, textures, box, visuals, batch, sess
   const background = sprite(textures.background, 'mining-background');
   background.width = visuals.sceneSize;
   background.height = visuals.sceneSize;
-  const cart = sprite(textures.cart, 'mining-cart');
-  const cargo = sprite(textures.icon, 'mining-canonical-cargo');
-  const foreground = sprite(textures.foreground, 'mining-mouth-occlusion');
+  const foreground = sprite(textures.foreground, 'mining-mouth-art');
   const rect = visuals.foreground.rect;
   foreground.position.set(rect.x, rect.y);
   foreground.width = rect.width;
   foreground.height = rect.height;
+  const cart = sprite(textures.cart, 'mining-cart');
+  const cargo = sprite(textures.icon, 'mining-canonical-cargo');
   parent.addChild(container);
   let previousPosition;
   let previousCargoAlpha;
@@ -45,6 +45,7 @@ export function mountMiningAnimation(parent, textures, box, visuals, batch, sess
       cart.position.set(frame.cart.x, frame.cart.y);
       cart.width = frame.cart.width;
       cart.height = frame.cart.height;
+      cart.alpha = frame.cart.alpha;
       const icon = miningCargoRect(frame.cargo, textures.icon.width, textures.icon.height);
       cargo.position.set(icon.x, icon.y);
       cargo.width = icon.width;

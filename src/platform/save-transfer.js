@@ -25,7 +25,7 @@ export function createSaveTransfer({ development = false, browser = window } = {
     try { packet = JSON.parse(text.replace(/^\uFEFF/, '')); }
     catch (cause) { throw saveTransferError('存档内容无法读取，请选择完整的存档文件。', cause, 'import-invalid-json'); }
     if (!packet || typeof packet !== 'object' || Array.isArray(packet) || packet.format !== format) {
-      throw saveTransferError('这不是放置农场导出的存档文件，请重新选择。', undefined, 'import-invalid-format');
+      throw saveTransferError('这不是放置庄园导出的存档文件，请重新选择。', undefined, 'import-invalid-format');
     }
     if (packet.formatVersion !== formatVersion || packet.schemaVersion !== worldSchemaVersion) {
       throw saveTransferError(saveFormatMessage, undefined, 'import-version-mismatch');
@@ -123,7 +123,7 @@ export function createSaveTransfer({ development = false, browser = window } = {
     try {
       [handle] = await browser.showOpenFilePicker({
         multiple: false,
-        types: [{ description: '放置农场存档', accept: { 'application/json': ['.json'] } }],
+        types: [{ description: '放置庄园存档', accept: { 'application/json': ['.json'] } }],
       });
     } catch (cause) {
       // 空结果只表示未取得文件，不据此判定用户取消了选择。

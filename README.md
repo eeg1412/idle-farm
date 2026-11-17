@@ -1,6 +1,6 @@
-﻿# 放置农场 · idle farm
+﻿# 放置庄园 · Idle Manor
 
-面向公开 ChatGPT Sites 的 PixiJS 生产线管理游戏。v1.14 游戏在单个 PixiJS 画布内运行，包含种植、畜牧、水产、矿业、工坊、交易、研发、品质、经营改良、任务和周回。经营记录保存在浏览器的 IndexedDB。正式玩法与发布范围见 [游戏式样书](docs/game-design.md)；当前经济式样为 [LT-2026-11-v11](docs/expansion/README.md)，按含料工时定价，使用独立 v7 存档。
+面向公开 ChatGPT Sites 的 PixiJS 生产线管理游戏。v1.14 游戏在单个 PixiJS 画布内运行，包含种植、畜牧、水产、矿业、工坊、交易、研发、品质、经营改良、任务和周回。经营记录保存在浏览器的 IndexedDB。正式玩法与发布范围见 [游戏式样书](docs/game-design.md)；当前经济式样为 [LT-2026-11-v12](docs/expansion/README.md)，按含料工时定价，使用独立 v7 存档。
 
 项目仓库：[eeg1412/idle-farm](https://github.com/eeg1412/idle-farm)。
 

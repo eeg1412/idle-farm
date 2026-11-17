@@ -225,8 +225,8 @@ test('a station switch coinciding with completions starts the new recipe after t
   assert.equal(world.stations.I[0].batch.start, completedAt);
 });
 
-test('LT-2026-11-v11 uses the same batch formula for every item', () => {
-  assert.equal(catalog.balanceVersion, 'LT-2026-11-v11');
+test('LT-2026-11-v12 uses the same batch formula for every item', () => {
+  assert.equal(catalog.balanceVersion, 'LT-2026-11-v12');
   const usage = new Map();
   for (const item of Object.values(catalog.items)) {
     for (const [id, count] of Object.entries(item.inputs)) {

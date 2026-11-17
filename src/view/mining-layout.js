@@ -44,19 +44,23 @@ export function sampleMiningAnimation({ session, batch, clock }) {
 
 export function miningFrame(visuals, sample) {
   const { inside, station } = visuals.track;
+  const { left, right } = visuals.opening;
   const t = sample.position;
   const scale = (inside.scale ?? 1) + ((station.scale ?? 1) - (inside.scale ?? 1)) * t;
   const anchorX = inside.x + (station.x - inside.x) * t;
   const anchorY = inside.y + (station.y - inside.y) * t;
+  const cartX = anchorX - visuals.cart.anchorX * scale;
+  const leadingEdgeX = cartX + visuals.cart.visibleLeftX * scale;
+  const cartAlpha = smoothstep((leadingEdgeX - left) / (right - left));
   const cart = {
-    x: anchorX - visuals.cart.anchorX * scale,
+    x: cartX,
     y: anchorY - visuals.cart.anchorY * scale,
-    width: visuals.cart.width * scale, height: visuals.cart.height * scale,
+    width: visuals.cart.width * scale, height: visuals.cart.height * scale, alpha: cartAlpha,
   };
   const box = visuals.cart.cargo;
   const cargo = { x: cart.x + (box.x - box.width * (box.anchorX ?? 0)) * scale,
     y: cart.y + (box.y - box.height * (box.anchorY ?? 0)) * scale,
-    width: box.width * scale, height: box.height * scale, alpha: sample.cargoAlpha };
+    width: box.width * scale, height: box.height * scale, alpha: sample.cargoAlpha * cartAlpha };
   return { cart, cargo, foreground: visuals.foreground.rect, scale };
 }
 

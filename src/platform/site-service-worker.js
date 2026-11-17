@@ -41,7 +41,7 @@ async function navigate(request) {
     return await fetch(request);
   } catch {
     const shell = await caches.open(cacheName).then((cache) => cache.match(home.href)).catch(() => undefined);
-    return shell ?? new Response('暂时无法打开放置农场，请联网后重试。', {
+    return shell ?? new Response('暂时无法打开放置庄园，请联网后重试。', {
       status: 503, headers: { 'content-type': 'text/plain; charset=utf-8' },
     });
   }

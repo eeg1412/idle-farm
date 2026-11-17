@@ -71,7 +71,7 @@ export function createFarm(app, dispatch) {
 
   function openFarmSale() {
     saleOrigin = current;
-    navigate('出售牧场');
+    navigate('出售庄园');
   }
 
   function redraw() {
@@ -90,16 +90,16 @@ export function createFarm(app, dispatch) {
     const top = inset.top;
     const bottom = height - inset.bottom;
     box(0, 0, width, top + 82, palette.green);
-    if (current === '出售牧场') {
+    if (current === '出售庄园') {
       button('返回', left, top + 18, 64, salePending ? null : () => {
         if (confirmingSale) {
           confirmingSale = false;
           redraw();
         } else navigate(saleOrigin);
       });
-      label('出售牧场', left + 80, top + 22, 24, palette.cream);
+      label('出售庄园', left + 80, top + 22, 24, palette.cream);
     } else {
-      label('放置农场', left, top + 13, 27, palette.cream);
+      label('放置庄园', left, top + 13, 27, palette.cream);
     }
     if (!model) {
       label(notice || '正在准备田地', left, top + 104);
@@ -108,7 +108,7 @@ export function createFarm(app, dispatch) {
     const row = top + 94;
     const widthIn = right - left;
     const half = (widthIn - 8) / 2;
-    if (current === '出售牧场') {
+    if (current === '出售庄园') {
       const offer = farmSaleOffer(model);
       label(confirmingSale ? '本轮可获得高级研发点' : '预计获得高级研发点', left, row + 8, 17);
       label(compact(offer.reward), right, row + 33, 24, palette.ink, true);
@@ -135,7 +135,7 @@ export function createFarm(app, dispatch) {
           else redraw();
         }, true);
       } else {
-        button('出售牧场', left, bottom - 58, widthIn, () => {
+        button('出售庄园', left, bottom - 58, widthIn, () => {
           confirmingSale = true;
           redraw();
         }, true);
@@ -144,7 +144,7 @@ export function createFarm(app, dispatch) {
     }
     label('金币  ' + compact(model.coins), left, top + 50, 15, palette.cream);
     button('任务', right - 146, top + 20, 64, () => navigate('任务'), current === '任务');
-    button('出售牧场', right - 77, top + 20, 77, openFarmSale);
+    button('出售庄园', right - 77, top + 20, 77, openFarmSale);
     const navWidth = (widthIn - 12) / 4;
     pages.forEach((page, index) =>
       button(page, left + index * (navWidth + 4), bottom - 59, navWidth, () => navigate(page), current === page));
@@ -330,10 +330,10 @@ export function createFarm(app, dispatch) {
     } else if (event.key === 'Escape') {
       if (salePending) return;
       if (recipePicker) closeRecipePicker();
-      else if (current === '出售牧场' && confirmingSale) {
+      else if (current === '出售庄园' && confirmingSale) {
         confirmingSale = false;
         redraw();
-      } else if (current === '出售牧场') navigate(saleOrigin);
+      } else if (current === '出售庄园') navigate(saleOrigin);
       else navigate('田地');
     }
   });

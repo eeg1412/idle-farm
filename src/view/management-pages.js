@@ -12,7 +12,7 @@ const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池', M: '矿洞' };
 const managementEntries = [
   { page: '任务', icon: 'task-product', description: '查看任务进度' },
   { page: '图鉴', icon: 'nav-catalog', description: '查阅物品、配方与来源' },
-  { page: '出售牧场', icon: 'sale-reset', description: '预览出售收益与新一轮配置' },
+  { page: '出售庄园', icon: 'sale-reset', description: '预览出售收益与新一轮配置' },
 ];
 
 export function renderManagement(ui) {
@@ -64,7 +64,7 @@ function showFilters(ui) {
     ui.refresh();
   };
   ui.tabs(typeTabs, local.type, (value) => select('type', value), { sticky: true, style: 'framed' });
-  ui.tabs(sourceTabs, local.source, (value) => select('source', value), { style: 'framed' });
+  ui.tabs(sourceTabs, local.source, (value) => select('source', value), { style: 'framed', compact: true });
   if (local.type === '商品') {
     ui.tabs(complexityTabs, local.complexity, (value) => select('complexity', value), { style: 'framed' });
   }
@@ -85,7 +85,7 @@ function warehouseEntries(world, { type = '全部', source = '全部' } = {}) {
 function showSource(ui, id) {
   const item = catalog.items[id];
   if (!item) return;
-  if (facilityTabs[item.kind]) ui.go('牧场', { tab: facilityTabs[item.kind], id });
+  if (facilityTabs[item.kind]) ui.go('庄园', { tab: facilityTabs[item.kind], id });
   else ui.go('工坊', { tab: typeOf(item) === '商品' ? '精制' : '加工', id });
 }
 
@@ -387,8 +387,8 @@ function showMarket(ui) {
 }
 
 export function renderWarehouse(ui) {
+  ui.image('warehouse', Math.round(ui.width * 0.35));
   const obtained = warehouseEntries(ui.w);
-  if (obtained.length) ui.image('warehouse', Math.round(ui.width * 0.35));
   if (marketIsActive(ui.w)) {
     ui.buttons([
       { label: '查看产出／支出图表', onClick: () => showHourlyProduction(ui) },
@@ -406,7 +406,7 @@ export function renderWarehouse(ui) {
     ui.local.source = source;
     ui.local.scroll = 0;
     ui.refresh();
-  }, { style: 'filter' });
+  }, { style: 'filter', compact: true });
   const filters = { type: ui.local.type, source: ui.local.source };
   const filtered = filters.type === '全部' && filters.source === '全部' ? obtained : warehouseEntries(ui.w, filters);
   const compactView = Boolean(ui.local.compactWarehouse);
@@ -425,7 +425,7 @@ export function renderWarehouse(ui) {
       ui.image('warehouse-empty-v1', Math.min(ui.width, 120), { center: true });
       ui.text('库存 0', { muted: true, align: 'center' });
       ui.buttons([
-        { label: '前往田地', onClick: () => ui.go('牧场', { tab: '田地' }) },
+        { label: '前往田地', onClick: () => ui.go('庄园', { tab: '田地' }) },
         { label: '前往工坊', onClick: () => ui.go('工坊') },
       ]);
     } else {
@@ -517,7 +517,7 @@ function renderCatalogDetail(ui, id) {
   }, { padding: 8, gap: 7 });
   const materials = Object.entries(item.inputs);
   if (!materials.length) {
-    ui.card((card) => card.row('获取方式', { C: '农田收获', L: '畜牧场养殖', F: '鱼池养殖', M: '矿洞开采' }[item.kind]));
+    ui.card((card) => card.row('获取方式', { C: '农田收获', L: '养殖场产出', F: '鱼池养殖', M: '矿洞开采' }[item.kind]));
   } else {
     const needed = materials.reduce((sum, [, amount]) => sum + BigInt(amount), 0n);
     ui.card((card) => {
@@ -646,7 +646,7 @@ export function renderTasks(ui) {
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
       const tab = earnForLand ? undefined : goal.tab;
-      const destination = target === '牧场' ? (tab === '畜牧' ? '畜牧场' : tab ?? target) : target;
+      const destination = target === '庄园' ? (tab === '畜牧' ? '养殖场' : tab ?? target) : target;
       card.titleBar(progress, goal.done ? '已完成' : earnForLand ? '前往出货' : '前往' + destination,
         () => ui.go(target, { tab, id: goal.itemId ?? taskItems[goal.id] }), {
           compact: true, disabled: goal.done, tone: goal.done ? 'plain' : 'gold',
@@ -656,12 +656,12 @@ export function renderTasks(ui) {
 }
 
 const instructions = [
-  ['田地', '新牧场先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
+  ['田地', '新庄园先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
   ['畜牧、鱼池和矿洞', '购买设施，再安排已研发的牲畜、鱼或矿种。更换对象立即开始新周期。'],
   ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出随工位等级增长（1+j+⌊j²/64⌋ 倍），材料投入同比放大；升级工位从下一批起生效。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。每累计一小时有效时间发放普通研发点。消耗 100 普通研发点随机提升一个已研发品项的品质。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。行情生效时，按当天倍率出货。'],
-  ['出售牧场', '首次出货任务奖励 1 点高级研发点。生产积累的高级研发点在出售牧场时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留已研发品项、品质、普通研发点、经营改良和任务进度。工坊重置为加工位、精制位各 1 个（均为 1 级），需重新安排配方，原优先生产与未完成批次清空。'],
+  ['出售庄园', '首次出货任务奖励 1 点高级研发点。生产积累的高级研发点在出售庄园时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留已研发品项、品质、普通研发点、经营改良和任务进度。工坊重置为加工位、精制位各 1 个（均为 1 级），需重新安排配方，原优先生产与未完成批次清空。'],
 ];
 
 function showInstructions(ui) {
@@ -761,7 +761,7 @@ async function replaceSave(panel, state, operation, candidate) {
       if (operation === 'importSave') state.failed = true;
       state.message = result?.message || fallback;
     }
-    else panel.toast(result.message || (operation === 'importSave' ? '存档已导入' : '存档已清除，新牧场已准备好'));
+    else panel.toast(result.message || (operation === 'importSave' ? '存档已导入' : '存档已清除，新庄园已准备好'));
   } catch (error) {
     if (operation === 'importSave') state.failed = true;
     state.message = saveMessage(error, fallback);
@@ -784,7 +784,7 @@ function confirmImportSave(ui, candidate) {
       card.row('高级研发点', summary.researchPoints, { compact: true });
       card.row('设施总数（含矿洞）', compact(summary.facilities));
       card.row('已研发品项', compact(summary.unlocked));
-      card.row('已出售牧场', compact(summary.completedRuns) + ' 次');
+      card.row('已出售庄园', compact(summary.completedRuns) + ' 次');
     }, { padding: 12, gap: 8 });
     panel.text('不会补算存档导出后的离线收获。', { muted: true });
     panel.buttons([
@@ -877,13 +877,13 @@ function showClearSave(ui) {
   const state = { pending: false, message: '' };
   ui.dialog('确认清除存档', (panel) => {
     if (state.message) panel.text(state.message);
-    panel.text('清除后将从新牧场重新开始。');
+    panel.text('清除后将从新庄园重新开始。');
     panel.card((card) => {
       card.titleBar('全部重新开始');
       card.detailRows([
         { icon: 'coin', label: '金币、库存和全部设施' },
         { icon: 'nav-research', label: '品种、配方、品质和永久科技' },
-        { icon: 'task-product', label: '任务进度、经营记录和出售牧场次数' },
+        { icon: 'task-product', label: '任务进度、经营记录和出售庄园次数' },
       ], { variant: 'pill' });
     }, { padding: 12, gap: 8 });
     panel.text('需要保留进度时，请先导出存档。');
@@ -959,7 +959,7 @@ function farmDetails(ui, offer) {
   const changes = [
     ['保留', [{ label: '已研发品项、品质、普通研发点、经营改良、任务进度' }]],
     ['清空', [
-      { label: '田地、畜牧场、鱼池、矿洞（' + compact(offer.mineCount ?? 0) + ' 座）' },
+      { label: '田地、养殖场、鱼池、矿洞（' + compact(offer.mineCount ?? 0) + ' 座）' },
       { label: '库存、金币' },
     ]],
     ['工坊重置', [
@@ -979,9 +979,9 @@ function farmDetails(ui, offer) {
 export function renderFarmSale(ui) {
   ui.image('sale-banner', 80);
   farmDetails(ui, farmSaleOffer(ui.w));
-  ui.button('出售牧场', () => {
+  ui.button('出售庄园', () => {
     const state = { pending: false, revised: false };
-    ui.dialog('确认出售牧场', (panel) => {
+    ui.dialog('确认出售庄园', (panel) => {
       const offer = farmSaleOffer(panel.w);
       farmDetails(panel, offer);
       if (!offer.reward) panel.text('本次出售可获得 0 点高级研发点。');
@@ -998,7 +998,7 @@ export function renderFarmSale(ui) {
             state.pending = false;
             if (sold) {
               panel.close();
-              panel.go('牧场');
+              panel.go('庄园');
             } else {
               state.revised = true;
               panel.refresh();

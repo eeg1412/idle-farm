@@ -322,7 +322,8 @@ function showNodeFinder(ui, nodes, view, active) {
       local.scroll = 0;
       dialog.refresh();
     };
-    dialog.tabs(efficiency ? techSources : sources, source, (value) => select('source', value), { style: 'filter' });
+    dialog.tabs(efficiency ? techSources : sources, source, (value) => select('source', value),
+      { style: 'filter', compact: true });
     if (showCropUses) dialog.tabs(cropUses, cropUse, (value) => select('cropUse', value), { style: 'filter' });
     if (!efficiency) dialog.tabs(kinds, kind, (value) => select('kind', value), { style: 'filter' });
     if (recipes) dialog.tabs(['全部状态', '已研发', '可研发'], status,

@@ -150,6 +150,33 @@ test('idle frames loop independently of production stage and harvest fades', () 
   });
 });
 
+test('mounted animals start on different idle frames and keep staggered timing after remount', (t) => {
+  const idleFrames = ({ scene, textures }) => scene.children.slice(1).map((group) => {
+    const animal = group.children.find((child) => child.label === 'livestock-animal');
+    return textures.stages[0].indexOf(animal.texture);
+  });
+  const timeline = [
+    [0, [0, 1, 2]], [99, [0, 1, 2]], [100, [0, 1, 3]],
+    [199, [0, 1, 3]], [200, [0, 2, 3]], [299, [0, 2, 3]],
+    [300, [1, 2, 3]], [1_200, [0, 1, 2]],
+  ];
+  for (const [id, count] of [['L01', 3], ['L05', 2], ['L06', 1]]) {
+    const fixture = mountFixture(t, id);
+    assert.deepEqual(idleFrames(fixture), [0, 1, 2].slice(0, count), id);
+    for (const [now, frames] of timeline) {
+      fixture.animation.update({ clock: 1_000, now });
+      assert.deepEqual(idleFrames(fixture), frames.slice(0, count), `${id} at ${now}ms`);
+    }
+    fixture.animation.update({ clock: 1_000, now: 1_400 });
+    const beforeRemount = idleFrames(fixture);
+    fixture.animation.destroy();
+
+    const remounted = mountFixture(t, id);
+    remounted.animation.update({ clock: 1_000, now: 1_400 });
+    assert.deepEqual(idleFrames(remounted), beforeRemount, id);
+  }
+});
+
 test('mounted animation layers a programmatic shadow beneath the fixed animal frames', (t) => {
   const { animation, scene, group, shadow, productShadow, animal, product, textures } = mountFixture(t);
   assert.equal(animation.container.label, 'livestock-animation');

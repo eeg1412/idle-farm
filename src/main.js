@@ -294,7 +294,7 @@ async function initialize(recovery) {
         message: backup ? '备份之后的经营进度可能会丢失。' : '没有可用的上次经营记录。',
         recovery: backup ? { revision: backup.revision, wallAnchorMs: backup.wallAnchorMs, corruptRevision: error.revision } : null,
         corruptRevision: error.revision, recoverable: Boolean(backup), replaceable: !backup }
-        : { title: '暂时无法打开牧场', retry: retryInitialization };
+        : { title: '暂时无法打开庄园', retry: retryInitialization };
     paint();
   }
 }
@@ -309,7 +309,7 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
-  if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买畜牧场', F: '购买鱼池', M: '购买矿洞' })[args[0]], sound: 'success' };
+  if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼池', M: '购买矿洞' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
   if (name === 'upgradeFacility' || name === 'upgradeStation' || name === 'upgradeProductionBatch') {
     return { float: '已升级', sound: 'success' };
@@ -442,7 +442,7 @@ function clearSave() {
       settleTaskRewards(draft);
       const next = await replaceWorldSave(db, draft, world.revision, { clearBackup: true });
       activateReplacement(next);
-      return { ok: true, message: '存档已清除，新牧场已准备好' };
+      return { ok: true, message: '存档已清除，新庄园已准备好' };
     } catch (error) {
       return { ok: false, message: transferFailure(error, '暂时无法清除存档，请稍后重试。') };
     }

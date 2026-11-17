@@ -21,7 +21,7 @@
 | `src/content/mining-visuals.json` | 矿洞原画路径、轨道/车轮/货载锚点与源登记 |
 | `scripts/export-mining-art.mjs`、`scripts/compose-mining-keyframes.mjs` | 矿业素材转换、复用运行时序与布局的关键帧交付 |
 | `src/view/research-tree.js` | 研究节点布局、可见范围和拖动缩放 |
-| `src/view/management-pages.js` | 仓库、图鉴、任务、设置、出售牧场 |
+| `src/view/management-pages.js` | 仓库、图鉴、任务、设置、出售庄园 |
 | `src/main.js` | 时间推进、交互提交、离线汇总和存档边界 |
 | `scripts/generate-game-data.mjs` | 将 1.14 式样表转换为运行数据 |
 | `scripts/export-livestock-animation.mjs` | 按多来源布局裁切牲畜原画，导出固定脚位图集、透明牲畜选择图及运行视觉登记 |

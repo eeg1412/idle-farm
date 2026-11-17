@@ -8,6 +8,8 @@ export const minLivestockAnimationMs = 9000;
 export const livestockSpecies = livestockVisuals;
 
 const idleFrameMs = 300;
+// Spread the three possible placements across the loop, including between frame ticks.
+const idlePlacementStepMs = idleFrameMs * livestockIdleFrames / 3;
 const harvestLeadMs = 3000;
 const transitionMs = 300;
 const animalRoot = { x: 138, y: 270 };
@@ -15,6 +17,10 @@ const animalRoot = { x: 138, y: 270 };
 function smoothstep(progress) {
   const bounded = Math.max(0, Math.min(1, progress));
   return bounded * bounded * (3 - 2 * bounded);
+}
+
+function idleFrameAt(now, offsetMs = 0) {
+  return Math.floor((Math.max(0, now) + offsetMs) / idleFrameMs) % livestockIdleFrames;
 }
 
 // The shared feed image is a separate ground layer in front of each stage's
@@ -51,7 +57,7 @@ export function sampleLivestockAnimation({
 
   return {
     stage: Math.floor(phase * species.stages / duration),
-    idleFrame: Math.floor(Math.max(0, now) / idleFrameMs) % livestockIdleFrames,
+    idleFrame: idleFrameAt(now),
     animalAlpha: species.slaughter ? 1 - productAppeared : 1,
     productAlpha,
   };
@@ -107,7 +113,8 @@ export function mountLivestockAnimation(
     feedShadow.position.set(left, top);
     group.addChild(feedShadow);
     const feed = addSprite(group, textures.feed, 'livestock-feed');
-    const animal = addSprite(group, textures.stages[0][0], 'livestock-animal');
+    const idleOffsetMs = index * idlePlacementStepMs;
+    const animal = addSprite(group, textures.stages[0][idleFrameAt(0, idleOffsetMs)], 'livestock-animal');
     animal.scale.set(animalScale);
     animal.position.set(left, top);
 
@@ -145,7 +152,7 @@ export function mountLivestockAnimation(
       productGround.y - (bounds.y + bounds.height) * productScale,
     );
     product.alpha = 0;
-    return { animal, shadow, feed, feedShadow, product, productShadow, animalScale, left, top };
+    return { animal, shadow, feed, feedShadow, product, productShadow, animalScale, left, top, idleOffsetMs };
   });
 
   let groundStage;
@@ -167,11 +174,13 @@ export function mountLivestockAnimation(
 
   return {
     container,
-    update({ clock, now }) {
+    update({ clock, now = clock }) {
       const sample = sampleLivestockAnimation({ batch, animationStart, clock, now, previousHarvestAt });
-      const texture = textures.stages[sample.stage][sample.idleFrame];
+      const stageTextures = textures.stages[sample.stage];
       updateGroundLayers(sample.stage);
-      for (const { animal, shadow, product, productShadow } of animals) {
+      for (const { animal, shadow, product, productShadow, idleOffsetMs } of animals) {
+        const frame = idleOffsetMs === 0 ? sample.idleFrame : idleFrameAt(now, idleOffsetMs);
+        const texture = stageTextures[frame];
         if (animal.texture !== texture) animal.texture = texture;
         animal.alpha = sample.animalAlpha;
         shadow.alpha = sample.animalAlpha;

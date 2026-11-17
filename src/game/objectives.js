@@ -5,16 +5,16 @@ import { coinScale } from './coin-scale.js';
 import { qualityDrawTaskTargets } from './quality-tasks.js';
 
 const destination = (target, tab) => tab ? { target, tab } : { target };
-const field = destination('牧场', '田地');
-const livestock = destination('牧场', '畜牧');
-const fish = destination('牧场', '鱼池');
-const mining = destination('牧场', '矿洞');
+const field = destination('庄园', '田地');
+const livestock = destination('庄园', '畜牧');
+const fish = destination('庄园', '鱼池');
+const mining = destination('庄园', '矿洞');
 const processing = destination('工坊', '加工');
 const refining = destination('工坊', '精制');
 const warehouse = destination('仓库');
 const research = destination('研究');
 const codex = destination('图鉴');
-const farmSale = destination('出售牧场');
+const farmSale = destination('出售庄园');
 
 // The base rewards also cap the recalculated amounts after applying coinScale.
 const baseCoinRewards = {
@@ -135,9 +135,9 @@ const fieldLevelCondition = '将任意一块田地升到 {目标} 级';
 const stationLevelCondition = '将任意加工位或精制位升到 {目标} 级';
 const recipeCondition = '研发至少 {目标} 种精制配方';
 const codexCondition = '解锁至少 {目标} 种图鉴物品';
-const facilityLevelCondition = '将任意田地、畜牧场、鱼池或矿洞升到 {目标} 级';
+const facilityLevelCondition = '将任意田地、养殖场、鱼池或矿洞升到 {目标} 级';
 const techCondition = '永久科技的总等级达到 {目标} 级';
-const runCondition = '累计出售牧场至少 {目标} 次';
+const runCondition = '累计出售庄园至少 {目标} 次';
 
 // Tuples are [id, name, condition, destination, count(world), required = 1n, branch].
 const mainGuide = [
@@ -162,15 +162,15 @@ const mainGuide = [
 ];
 
 // Displayed after the first sale. Tasks moved here keep their IDs, conditions and receipts.
-const buyLivestockCondition = '累计购买至少 {目标} 座畜牧场';
+const buyLivestockCondition = '累计购买至少 {目标} 座养殖场';
 const buyFishCondition = '累计购买至少 {目标} 座鱼池';
 const buyMineCondition = '累计购买至少 {目标} 座矿洞';
 const introductionBranches = [
-  ['livestockIntro', '建造第一座畜牧场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
-  ['buildLivestock', '建造畜牧场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
+  ['livestockIntro', '建造第一座养殖场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
+  ['buildLivestock', '建造养殖场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
   ['collectLivestock', '畜牧产物入库', '生产并入库至少 {目标} 份畜牧产物', livestock,
     (world) => sumProduced(world, (item) => item?.kind === 'L'), 1n, '畜牧'],
-  ['livestockUpgrade', '畜牧场升级', '将任意一座畜牧场升到 {目标} 级', livestock,
+  ['livestockUpgrade', '养殖场升级', '将任意一座养殖场升到 {目标} 级', livestock,
     (world) => maxLevel(world.facilities.L), 5n, '畜牧'],
   ['firstLivestockProcessing', '加工畜牧原料', '加工并入库至少 {目标} 份畜牧中间产物', processing,
     (world) => sumProduced(world, (item) => item?.kind === 'IL'), 1n, '畜牧'],
@@ -234,7 +234,7 @@ const longTerm = [
   ['runs20', '二十次交接', runCondition, farmSale, runs, 20n],
   ['runs50', '五十次交接', runCondition, farmSale, runs, 50n],
   ['runs100', '百次交接', runCondition, farmSale, runs, 100n],
-  ['livestockTop', '牛肉牧场', '解锁肉用黄牛品种', research, (world) => learned(world, 'L10')],
+  ['livestockTop', '牛肉庄园', '解锁肉用黄牛品种', research, (world) => learned(world, 'L10')],
   ['fishTop', '鲟鱼鱼池', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
   ['miningTop', '宝石矿洞', '解锁宝石原矿', research, (world) => learned(world, 'M10')],
   ['miningProduct', '锡衬铜盘鲈鱼片', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PM14')],

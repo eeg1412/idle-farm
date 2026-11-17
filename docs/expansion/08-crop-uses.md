@@ -1,6 +1,6 @@
 ﻿# 农业扩展 · 纤维、药草与酿造
 
-本页保留 1.14 农业扩展分类。商品等级与图标格序沿用下表。LT-2026-11-v11 运行周期、批量、售价与研发报价以 [工时公式](07-balance-validation.md)生成的 `src/content/game-data.json` 为准。
+本页保留 1.14 农业扩展分类。商品等级与图标格序沿用下表。LT-2026-11-v12 运行周期、批量、售价与研发报价以 [工时公式](07-balance-validation.md)生成的 `src/content/game-data.json` 为准。
 
 
 [返回目录](README.md) · [完整配方与数值](05-catalog.md) · [完整研发条件](06-research.md) · [研究界面](../ui/pages/research.md)

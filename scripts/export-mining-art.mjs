@@ -80,8 +80,8 @@ for(const [index,name]of uiNames.entries()){
 }
 const background=await sharp(file(registry.sources['background-v1'].path)).resize(320,320,{kernel:'nearest'}).png().toBuffer();
 registry.scene.background=await writeImage('assets/mining/png/background.png','public/art/mining/background.webp',background);
-// The left cave interior and near post occlude a departing/returning cart. This alpha mask
-// only selects untouched original background pixels; it does not draw replacement art.
+// Keep the original cave interior and near post as a separate layer below the moving cart.
+// This alpha mask only selects untouched original background pixels.
 const pixels=await sharp(background).ensureAlpha().raw().toBuffer();
 for(let y=0;y<320;y++)for(let x=0;x<320;x++){
  const edge=y<104?135:y<124?137:y<229?134:y<245?133:0;
@@ -93,8 +93,23 @@ const cartSprite=await isolated(registry.sources['cart-v1'].path,{left:0,top:0,w
 const cartCut=await sharp(cartSprite.png).extract({left:cartSprite.contentBounds.x,top:cartSprite.contentBounds.y,width:cartSprite.contentBounds.width,height:cartSprite.contentBounds.height}).png().toBuffer();
 const cartM=await sharp(cartCut).metadata(); const cartTop=60-cartM.height;
 const cart=await sharp({create:{width:96,height:64,channels:4,background:'#00000000'}}).composite([{input:cartCut,left:4,top:cartTop}]).png().toBuffer();
-registry.scene.cart={...await writeImage('assets/mining/png/cart.png','public/art/mining/cart.webp',cart),source:'cart-v1',sourceBounds:cartSprite.sourceBounds,width:96,height:64,anchorX:48,anchorY:60,cargo:{x:48,y:15,width:58,height:48,anchorX:0.5,anchorY:1}};
-const visuals={version:1,sceneSize:320,background:{path:'art/mining/background.webp',width:320,height:320},foreground:{path:'art/mining/foreground.webp',rect:{x:0,y:0,width:320,height:320}},cart:{path:'art/mining/cart.webp',width:96,height:64,anchorX:48,anchorY:60,cargo:registry.scene.cart.cargo},track:{inside:{x:70,y:237},station:{x:249,y:237}},items:{}};
+const cartGeometry = { width: 96, height: 64, anchorX: 48, anchorY: 60 };
+const cargoGeometry = { x: 48, y: 15, width: 58, height: 48, anchorX: 0.5, anchorY: 1 };
+registry.scene.cart = {
+  ...await writeImage('assets/mining/png/cart.png', 'public/art/mining/cart.webp', cart),
+  source: 'cart-v1', sourceBounds: cartSprite.sourceBounds, ...cartGeometry, cargo: cargoGeometry,
+};
+const visuals = {
+  version: 1,
+  sceneSize: 320,
+  background: { path: 'art/mining/background.webp', width: 320, height: 320 },
+  foreground: { path: 'art/mining/foreground.webp', rect: { x: 0, y: 0, width: 320, height: 320 } },
+  cart: { path: 'art/mining/cart.webp', ...cartGeometry, visibleLeftX: 5, cargo: cargoGeometry },
+  // The opening's inside edges are measured at the height of the cart, below the arch.
+  opening: { left: 28, right: 108 },
+  track: { inside: { x: 70, y: 237 }, station: { x: 249, y: 237 } },
+  items: {},
+};
 for(const id of idsA.slice(0,10)){
  const icon=registry.items[id],cargo=await sharp(file(icon.path)).resize(58,48,{fit:'contain',background:'#00000000',kernel:'nearest'}).png().toBuffer();
  const scene=await sharp(background).composite([{input:cart,left:201,top:177},{input:cargo,left:220,top:144},{input:foreground,left:0,top:0}]).png().toBuffer();

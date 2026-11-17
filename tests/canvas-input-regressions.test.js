@@ -162,7 +162,7 @@ test('every livestock species mounts its own atlas and uses the correct adult or
     const game = setup();
     const requested = livestockAssetFixture(t);
     game.world.facilities.L = [livestockFacility(id)];
-    game.view.go('牧场', { tab: '畜牧' });
+    game.view.go('庄园', { tab: '畜牧' });
     game.draw(390, 844);
     await new Promise(setImmediate);
     game.flush();
@@ -189,7 +189,7 @@ test('livestock choice icons load as contained animals while warehouse output ke
   });
   game.world.unlocked.push('L06');
   game.world.facilities.L = [livestockFacility('L06')];
-  game.view.go('牧场', { tab: '畜牧' });
+  game.view.go('庄园', { tab: '畜牧' });
   game.draw(390, 844);
   tapText(game, '更换');
   await new Promise(setImmediate);
@@ -216,7 +216,7 @@ test('livestock animation loads only visible species and keeps Pixi hits and lif
   const game = setup();
   const requested = livestockAssetFixture(t);
   game.world.facilities.L = Array.from({ length: 6 }, (_, index) => livestockFacility(index === 5 ? 'L06' : 'L01'));
-  game.view.go('牧场', { tab: '畜牧' });
+  game.view.go('庄园', { tab: '畜牧' });
   game.draw(390, 844);
   await new Promise(setImmediate);
   game.flush();
@@ -232,7 +232,7 @@ test('livestock animation loads only visible species and keeps Pixi hits and lif
   game.point('pointerdown', point.x, point.y, 'touch');
   game.point('pointerup', point.x, point.y, 'touch');
   game.flush();
-  assert.ok(game.nodes().some((node) => node.text === '畜牧场详情'));
+  assert.ok(game.nodes().some((node) => node.text === '养殖场详情'));
   assert.equal(animations().length, 0);
   assert.equal(first.destroyed, true);
   game.view.dismiss();
@@ -260,7 +260,7 @@ test('short livestock batches keep their display phase and switching species sta
   livestockAssetFixture(t);
   const realDuration = minLivestockAnimationMs / 9;
   game.world.facilities.L = [livestockFacility('L06', 0, realDuration)];
-  game.view.go('牧场', { tab: '畜牧' });
+  game.view.go('庄园', { tab: '畜牧' });
   game.draw(390, 844);
   await new Promise(setImmediate);
   game.flush();
@@ -286,7 +286,7 @@ test('livestock asset failure leaves the active animation region empty without a
   const failed = setup();
   const requested = livestockAssetFixture(t, true);
   failed.world.facilities.L = [livestockFacility('L06')];
-  failed.view.go('牧场', { tab: '畜牧' });
+  failed.view.go('庄园', { tab: '畜牧' });
   failed.draw(390, 844);
   await new Promise(setImmediate);
   failed.flush();
@@ -331,7 +331,7 @@ test('development title sequence resets after another setting control or page na
       game.flush();
       assert.deepEqual(calls, ['updateSettings']);
     } else if (interruption === 'page navigation') {
-      game.view.go('牧场');
+      game.view.go('庄园');
       game.view.go('设置');
     } else {
       browser.location.hash = '#/farm';
@@ -612,9 +612,12 @@ test('management and settings open from separate controls and landscape margins 
   game.flush();
   assert.deepEqual(game.pages, ['设置']);
   tapControl(game, '返回');
-  assert.deepEqual(game.pages, ['设置', '牧场']);
+  assert.deepEqual(game.pages, ['设置', '庄园']);
   tap('经营');
   assert.equal(game.pages.at(-1), '经营');
+  tap('庄园');
+  assert.equal(game.pages.at(-1), '庄园');
+  tap('经营');
   tap('任务');
   assert.equal(game.pages.at(-1), '任务');
   tapControl(game, '返回');
@@ -649,7 +652,7 @@ test('compact card edges and bottom actions align by row in the farm, workshop a
   game.world.productionValue = 100_000n;
   game.world.market = { day: '2026-11-17', sequence: 0, used: 0, rates: { P169: 200 } };
   game.draw(390, 844);
-  for (const page of ['牧场', '工坊', '仓库']) {
+  for (const page of ['庄园', '工坊', '仓库']) {
     game.view.go(page);
     game.flush();
     tapText(game, '缩小');
@@ -699,7 +702,7 @@ test('compact workshop colors only the existing stopped statuses red', () => {
 test('farm sale retention background grows to contain wrapped text', () => {
   const game = setup();
   game.draw(320, 760);
-  game.view.go('出售牧场');
+  game.view.go('出售庄园');
   game.flush();
   const label = game.nodes().find((node) => node.text === '已研发品项、品质、普通研发点、经营改良、任务进度');
   assert.ok(label);

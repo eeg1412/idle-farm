@@ -28,10 +28,10 @@ const palette = {
   cream: 0xfffdf7, red: 0xa03221, dark: 0x223524, gray: 0xede5d7, line: 0xe3d0b3,
 };
 const pages = {
-  牧场: renderProduction, 工坊: renderWorkshop, 仓库: renderWarehouse, 研究: renderResearch, 经营: renderManagement,
-  图鉴: renderCatalog, 任务: renderTasks, 设置: renderSettings, 出售牧场: renderFarmSale,
+  庄园: renderProduction, 工坊: renderWorkshop, 仓库: renderWarehouse, 研究: renderResearch, 经营: renderManagement,
+  图鉴: renderCatalog, 任务: renderTasks, 设置: renderSettings, 出售庄园: renderFarmSale,
 };
-const tabs = ['牧场', '工坊', '仓库', '研究', '经营'];
+const tabs = ['庄园', '工坊', '仓库', '研究', '经营'];
 const noResearchReadyTabs = new Set();
 const defaultDialogSampleEveryMs = 3000;
 const tabIcons = ['nav-ranch', 'nav-workshop', 'nav-warehouse', 'nav-research', 'nav-management'];
@@ -268,7 +268,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const clip = inkGraphics();
   app.stage.addChild(root, clip);
   root.mask = clip;
-  let current = '牧场';
+  let current = '庄园';
   let pageParent;
   let linkedEntryParent;
   let navigationEpoch = 0;
@@ -618,8 +618,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   // Shared animation textures are pinned; only visible mines initiate loads.
   function loadMiningTextures(id) {
     const item = miningVisuals.items?.[id];
+    const { left, right } = miningVisuals.opening ?? {};
     if (!item?.icon || !miningVisuals.background?.path || !miningVisuals.foreground?.path ||
         !miningVisuals.foreground.rect || !miningVisuals.cart?.path || !miningVisuals.cart.cargo ||
+        !Number.isFinite(miningVisuals.cart.visibleLeftX) ||
+        !Number.isFinite(left) || !Number.isFinite(right) || right <= left ||
         !miningVisuals.track?.inside || !miningVisuals.track?.station || !miningVisuals.sceneSize) return;
     const existing = miningTextures.get(id);
     if (existing) return existing.textures;
@@ -857,9 +860,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
       const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? 22 : 0;
       const baseSize = options.emphasis ? 23 : 18;
-      const size = Math.min(baseSize * scale(), (width - icon - trailing - 10) / Math.max(2, Array.from(String(label)).length));
-      const caption = textNode(parent, label, x + 4 + icon, y + 2, width - 8 - icon - trailing,
-        { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink, weight: '750' });
+      const captionWidth = width - 8 - icon - trailing;
+      const size = options.compactLabel ? 15 * scale() : Math.min(baseSize * scale(),
+        (captionWidth - 2) / Math.max(2, Array.from(String(label)).length));
+      const caption = textNode(parent, label, x + 4 + icon, y + 2, captionWidth,
+        { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink,
+          weight: '750', wrap: !options.compactLabel });
+      if (options.compactLabel && caption.width > captionWidth) caption.scale.set(captionWidth / caption.width);
       caption.y = y + (height - caption.height) / 2;
       if (icon) drawImage(parent, options.icon, Math.max(x + 5, caption.x - icon), y + (height - 18) / 2, 18, 18);
       if (trailing) drawImage(parent, options.trailingIcon, x + width - trailing - 3, y + (height - 18) / 2, 18, 18);
@@ -990,7 +997,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function defaultParent(page) {
-    const parent = page === '图鉴' || page === '出售牧场' ? '经营' : '牧场';
+    const parent = page === '图鉴' || page === '出售庄园' ? '经营' : '庄园';
     return {
       page: parent, local: copyViewState(locals[parent]), modal: undefined,
       parent: undefined, epoch: navigationEpoch,
@@ -1606,17 +1613,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         buttonAt(parent, left, cursor, height, height, label, fn, { ...options, iconOnly: icon });
         cursor += height + rowGap;
       },
-      buttons(list, { style, size } = {}) {
+      buttons(list, { style, size, compact = false } = {}) {
         if (dialogContent) list = list.filter((item) => item.label !== '关闭' &&
           !(list.length === 1 && item.label === '返回'));
         if (!list.length) return;
         const segmented = style === 'segmented' || style === 'framed';
         const filter = style === 'filter';
-        const count = width >= 240 && scale() <= 1.6 ? 4 :
+        const gap = segmented || compact ? 2 : 6;
+        const count = compact ? Math.max(1, Math.floor((width + gap) / (36 + gap))) :
+          width >= 240 && scale() <= 1.6 ? 4 :
           ((width >= 180 && segmented) || (width >= 225 && style === 'production')) && scale() <= 1.6 ? 3 : 2;
-        const perLine = Math.min(count, list.length);
-        const height = Math.max(size === 'large' ? 53 : filter ? 43 : 48, Math.ceil(26 * scale()));
-        const gap = segmented ? 2 : 6;
+        const rowCount = Math.ceil(list.length / count);
+        const perLine = compact ? Math.ceil(list.length / rowCount) : Math.min(count, list.length);
+        const height = Math.max(size === 'large' ? 53 : filter ? (compact ? 44 : 43) : 48, Math.ceil(26 * scale()));
         for (let i = 0; i < list.length; i += perLine) {
           const part = list.slice(i, i + perLine);
           const buttonWidth = (width - (part.length - 1) * gap) / part.length;
@@ -1625,19 +1634,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             panel(parent, x, cursor, width, height, palette.pale, palette.border, height / 2);
           }
           part.forEach((item, pos) => buttonAt(parent, x + pos * (buttonWidth + gap), cursor,
-            buttonWidth, height, item.label, item.onClick, { emphasis: segmented || style === 'production', segment: segmented, ...item }));
+            buttonWidth, height, item.label, item.onClick, {
+              emphasis: segmented || style === 'production', segment: segmented, compactLabel: compact, ...item,
+            }));
           cursor += height + rowGap;
         }
       },
-      tabs(values, selected, onSelect, { keepScroll = false, sticky = false, style, size, indicatorTabs } = {}) {
+      tabs(values, selected, onSelect, { keepScroll = false, sticky = false, style, size, compact, indicatorTabs } = {}) {
         const choices = values.map((label) => ({
           label, onClick: () => { onSelect(label); if (!keepScroll && local.scroll) resetScroll(); },
           tone: label === selected ? 'green' : 'plain',
           indicator: indicatorTabs?.has(label),
         }));
-        if (sticky && pinTabs) {
-          cursor += pinTabs(cursor, choices, style, size);
-        } else ui.buttons(choices, { style, size });
+        const buttonOptions = { style, size, compact };
+        if (sticky && pinTabs) cursor += pinTabs(cursor, choices, buttonOptions);
+        else ui.buttons(choices, buttonOptions);
       },
       badges(entries, { style } = {}) {
         const gap = 6;
@@ -2485,12 +2496,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     body.mask = mask;
     let pinned;
     const viewport = { height };
-    const pinTabs = (top, choices, style, size) => {
+    const pinTabs = (top, choices, buttonOptions) => {
       const layer = new Container();
       parent.addChild(layer);
       layer.mask = mask;
       const group = layoutUI(layer, x + 2, 4, width - 4, state, height);
-      group.buttons(choices, { style, size });
+      group.buttons(choices, buttonOptions);
       const backdrop = panel(layer, x, 0, width, group.bottom, palette.paper, null, 0);
       layer.setChildIndex(backdrop, 0);
       pinned = { layer, top, left: x, right: x + width, height: group.bottom };
@@ -2672,7 +2683,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
 
     const titleWidth = w < 330 ? 103 : 123;
-    const title = textNode(parent, '放置农场', x + 3, y, titleWidth, {
+    const title = textNode(parent, '放置庄园', x + 3, y, titleWidth, {
       size: Math.min((titleWidth - 5) / 4, 26 * scale()), weight: '850',
     });
     title.y = y + (height - title.height) / 2;
@@ -2836,7 +2847,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (hasTabs) bottomBar(root, left, bottom + 2, w, readyTabs);
     } else {
       const ui = layoutUI(root, left, top + 20, w, {}, Math.max(40, bottom - top));
-      ui.heading(status?.title ?? '正在准备牧场');
+      ui.heading(status?.title ?? '正在准备庄园');
       if (status?.message) ui.text(status.message);
       if (status?.recoverable) {
         if (status.confirmRestore) {
@@ -3142,10 +3153,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     activateDialog(undefined);
     pageParent = undefined;
     linkedEntryParent = undefined;
-    current = '牧场';
+    current = '庄园';
     lastResearchReady = undefined;
     for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
-    locals.牧场.tab = '田地';
+    locals.庄园.tab = '田地';
     shortPlotStarts.clear();
     livestockBatches.clear();
     fishBatches.clear();

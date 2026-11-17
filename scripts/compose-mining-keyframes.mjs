@@ -16,11 +16,12 @@ const cart = await fs.readFile(source(visuals.cart.path));
 const duration = 9000;
 const session = { id: 'M01', startedAt: 0, durationMs: duration };
 const batch = { id: 'M01', start: 0, end: duration };
+// Sample the travel poses while the cart is crossing the opening's fade range.
 const times = [
-  ['first-entry-start', 0], ['first-entry-middle', 1000], ['fully-inside', 2000],
-  ['inside-wait', 4500], ['outbound-start', 7000], ['outbound-middle', 8000],
+  ['first-entry-start', 0], ['first-entry-middle', 1400], ['fully-inside', 2000],
+  ['inside-wait', 4500], ['outbound-start', 7000], ['outbound-middle', 7600],
   ['loaded-station', 9000], ['cargo-half-150ms', 9150], ['empty-cart-300ms', 9300],
-  ['return-start-1300ms', 10300], ['return-middle', 11300], ['return-inside', 12300],
+  ['return-start-1300ms', 10300], ['return-middle', 11700], ['return-inside', 12300],
   ['next-outbound', 17000], ['cross-cycle-loaded', 18000],
 ];
 
@@ -51,11 +52,11 @@ const scenarios = Object.entries(visuals.items).map(([id, item]) => ({ id, item,
     return { id, start, end: start + duration };
   } }));
 scenarios.push({ id: 'M01', item: visuals.items.M01, prefix: 'M01-fast', actualDuration: 1000,
-  times: [0, 1000, 2000, 2650, 3300, 4300, 5300, 5450, 5600, 6600, 7600, 8600, 9600, 10600]
+  times: [0, 1400, 2000, 2650, 3300, 3900, 5300, 5450, 5600, 6600, 8000, 8600, 9600, 10600]
     .map((clock, index) => [times[index][0], clock]),
   getBatch: (clock) => { const start = Math.floor(clock / 1000) * 1000; return { id: 'M01', start, end: start + 1000 }; } });
 scenarios.push({ id: 'M01', item: visuals.items.M01, prefix: 'M01-speed-change', actualDuration: 9000,
-  times: [9000, 9150, 9300, 10300, 11300, 12300, 13000, 14000, 15000, 15150, 15300, 16300, 17300, 18300]
+  times: [9000, 9150, 9300, 10300, 11700, 12300, 13000, 13600, 15000, 15150, 15300, 16300, 17700, 18300]
     .map((clock, index) => [`speed-${index + 1}`, clock]),
   getBatch: (clock) => { const start = 9000 + Math.floor((clock - 9000) / 6000) * 6000;
     return { id: 'M01', start, end: start + 6000 }; } });
@@ -68,10 +69,10 @@ for (const { id, item, prefix, times: scenarioTimes, actualDuration, getBatch } 
     const activeBatch = getBatch(clock);
     const sample = sampleMiningAnimation({ session: { ...session, id, durationMs: actualDuration }, batch: activeBatch, clock });
     const frame = miningFrame(visuals, sample);
-    const layers = [await layer(cart, frame.cart)];
+    const layers = [await layer(foreground, frame.foreground)];
+    if (frame.cart.alpha > 0) layers.push(await layer(cart, frame.cart, frame.cart.alpha));
     if (frame.cargo.alpha > 0) layers.push(await layer(icon,
       miningCargoRect(frame.cargo, metadata.width, metadata.height), frame.cargo.alpha));
-    layers.push(await layer(foreground, frame.foreground));
     const png = await sharp(background).composite(layers.filter(Boolean)).png().toBuffer();
     for (const size of [320, 130]) {
       await sharp(png).resize(size, size, { kernel: 'nearest' }).png()

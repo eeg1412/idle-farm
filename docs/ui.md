@@ -1,8 +1,8 @@
-# 《放置农场》UI 文档索引
+# 《放置庄园》UI 文档索引
 
 [v1.14 畜牧与水产界面参考图](ui-references/v1.14/README.md) · [v1.14 经营与交互规则](expansion/01-operations.md)
 
-首次进入显示牧场的田地页。共 9 页，牧场、工坊、仓库、研究和经营使用底栏，任务、图鉴、设置和出售牧场通过页内入口进入。按当前任务读取对应文件。经营数值与前置见[游戏式样书](game-design.md)，已实现范围见[架构说明](architecture.md)。
+首次进入显示庄园的田地页。共 9 页，庄园、工坊、仓库、研究和经营使用底栏，任务、图鉴、设置和出售庄园通过页内入口进入。按当前任务读取对应文件。经营数值与前置见[游戏式样书](game-design.md)，已实现范围见[架构说明](architecture.md)。
 
 ## 通用规则
 
@@ -18,7 +18,7 @@
 
 | 页面 | 读取 |
 | --- | --- |
-| 牧场 | [牧场与设施](ui/pages/fields.md) |
+| 庄园 | [庄园与设施](ui/pages/fields.md) |
 | 工坊 | [加工与精制](ui/pages/workshop.md) |
 | 仓库 | [库存与出货](ui/pages/warehouse.md) |
 | 研究 | [种子、配方、品质与经营改良](ui/pages/research.md) |
@@ -26,4 +26,4 @@
 | 任务 | [入门与长期任务](ui/pages/tasks.md) |
 | 图鉴 | [图鉴与收集](ui/pages/catalog.md) |
 | 设置 | [声音、显示与说明](ui/pages/settings.md) |
-| 出售牧场 | [出售预览与确认](ui/pages/sell-farm.md) |
+| 出售庄园 | [出售预览与确认](ui/pages/sell-farm.md) |

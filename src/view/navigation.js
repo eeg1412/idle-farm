@@ -1,5 +1,5 @@
 const routes = {
-  牧场: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼池: 'fish', 矿洞: 'mining' }],
+  庄园: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼池: 'fish', 矿洞: 'mining' }],
   工坊: ['workshop', { 加工: 'processing', 精制: 'refining' }],
   仓库: ['warehouse', {}],
   研究: ['research', { 品种配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],
@@ -7,11 +7,11 @@ const routes = {
   图鉴: ['catalog', { 用途: 'uses' }],
   任务: ['tasks', {}],
   设置: ['settings', {}],
-  出售牧场: ['farm-sale', {}],
+  出售庄园: ['farm-sale', {}],
 };
 
 export function gameHash(route) {
-  const [slug, tabs] = Object.hasOwn(routes, route.page) ? routes[route.page] : routes.牧场;
+  const [slug, tabs] = Object.hasOwn(routes, route.page) ? routes[route.page] : routes.庄园;
   const params = new URLSearchParams();
   if (Object.hasOwn(tabs, route.tab)) params.set('tab', tabs[route.tab]);
   if (route.id) params.set('item', route.id);
@@ -22,7 +22,7 @@ export function gameHash(route) {
 
 export function parseGameHash(hash) {
   const [slug, query] = hash.replace(/^#\/?/, '').split('?');
-  const [page, [, tabs]] = Object.entries(routes).find(([, [path]]) => path === slug) ?? ['牧场', routes.牧场];
+  const [page, [, tabs]] = Object.entries(routes).find(([, [path]]) => path === slug) ?? ['庄园', routes.庄园];
   const params = new URLSearchParams(query);
   return {
     page,
