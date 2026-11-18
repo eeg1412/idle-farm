@@ -15,7 +15,7 @@ description: 新增或修改《放置农场》的作物、牲畜、鱼类、中�
 | 牲畜（含其仓库产物） | `L` | [new-livestock.md](references/new-livestock.md) | farm-livestock → farm-art-review |
 | 鱼类（渔获与鱼同名） | `F` | [new-fish.md](references/new-fish.md) | farm-fish → farm-art-review |
 | 中间产物 | `I` 农业／`IL` 畜牧／`IF` 水产 | [new-intermediate.md](references/new-intermediate.md) | 物品图标（`docs/assets.md`）→ farm-art-review |
-| 商品 | `P`／`PL`／`PF`／`PD`／`PT` | [new-product.md](references/new-product.md) | 物品图标（`docs/assets.md`）→ farm-art-review |
+| 商品 | `P`／`PL`／`PF`／`PD`／`PT`／`PM` | [new-product.md](references/new-product.md) | 零售包装物品图标（`docs/assets.md`）→ farm-art-review |
 
 一次新增多类（如新鱼 + 鱼汁 + 鱼汁商品）时按依赖顺序串联：原料 → 中间产物 → 商品。式样与生成只开一次，由同一个目录所有者一次写完全部行再生成。
 

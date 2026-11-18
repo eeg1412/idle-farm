@@ -4,7 +4,7 @@ import {
 } from '../game/world.js';
 import { marketRate, marketUnitPrice } from '../game/market.js';
 import { activeGuideTask } from '../game/objectives.js';
-import { hoursLabel, reservePanel } from './management-pages.js';
+import { hoursLabel, productComplexity, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
 const productionTabs = ['田地', '畜牧', '鱼池', '矿洞'];
@@ -804,7 +804,7 @@ function stationCard(ui, kind, index, station, source) {
       stationProgress(body, active, kind, index);
       return;
     }
-    const complexity = kind === 'P' ? ['单类', '双类', '三类'][item.sources.length - 1] : item.sources[0];
+    const complexity = kind === 'P' ? productComplexity(item) : item.sources[0];
     body.feature(id, (copy) => {
       copy.heading(item.name, { style: 'production', marketRate: marketRate(ui.w, id) });
       copy.badges([

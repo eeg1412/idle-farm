@@ -62,7 +62,7 @@ def validate():
     assert type(scale) in (int, float) and 0 < scale <= 2**53 - 1 and scale == floor(scale), 'coinScale 必须为正安全整数'
     scale = int(scale)
     assert game['version'] == snapshot['version'] == '1.14'
-    assert game['balanceVersion'] == 'LT-2026-11-v12'
+    assert game['balanceVersion'] == 'LT-2026-11-v13'
     assert game['initial'] == snapshot['initial'] == ['C01', 'I01']
     items, research = game['items'], game['research']
     catalogue_rows = unique_rows(table_rows('05-catalog.md', '| ID | 名称 | 基础周期下界秒 | 每批投入 |'))

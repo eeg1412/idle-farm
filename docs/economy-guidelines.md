@@ -1,6 +1,6 @@
 # 经济与数值准则
 
-适用于品项目录、生产、研发、品质、行情、经营改良、任务与存档。按 [AGENTS.md](../AGENTS.md)、[经营式样](expansion/01-operations.md)、[工时公式](expansion/07-balance-validation.md) 和[游戏式样](game-design.md)核对。本准则汇集 LT-2026-11-v12 的检查项目。历次规划与变更见 [LT-v7 历史方案](reviews/2026-11-16-time-cost-balance.md)及其历史对照。
+适用于品项目录、生产、研发、品质、行情、经营改良、任务与存档。按 [AGENTS.md](../AGENTS.md)、[经营式样](expansion/01-operations.md)、[工时公式](expansion/07-balance-validation.md) 和[游戏式样](game-design.md)核对。本准则汇集 LT-2026-11-v13 的检查项目。历次规划与变更见 [LT-v7 历史方案](reviews/2026-11-16-time-cost-balance.md)及其历史对照。
 
 ## 1. 金币与原料
 

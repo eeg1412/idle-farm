@@ -110,5 +110,5 @@
 
 矿业按[矿业任务卡](tasks/2026-11-17-mining.md)执行新增内容工作流：先在05/06声明M／IM／PM及配方/研发，08声明PM等级，再扩展生成器对新类别和真实来源的支持，统一生成565项目录与任务金币上限。40新品的基础周期与全目录其他品项必须严格相差超过10秒，固定525旧品之间的历史豁免不得扩大。随后按冻结ID生成图标/背景/矿车，独立子代理审原画、WebP及同运行布局合成分镜，最后才接入完整视图并由PM统一编译。新增周期、批量与价格造成的旧品派生变化记录为LT-2026-11-v11经济差异，旧生产/研发拓扑不变。
 
-现行输入来自[目录及生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)和[显式等级](expansion/08-crop-uses.md)。先按[工时与研发公式](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者运行 `npm run content:generate`。生成器保留稳定 ID、配方拓扑、研发前置及耗材种类，重算批量、周期、基价、研发金币及耗材数量，以及目录相关的任务金币上限。`src/content/game-data.json` 的格式为 1.14，经济版本为 LT-2026-11-v12。`src/content/balance-baseline-v114.json` 保留历史快照。运行验证按前述授权要求执行。
+现行输入来自[目录及生产配方](expansion/05-catalog.md)、[研发条件](expansion/06-research.md)、[养殖对象](expansion/02-livestock-fish.md)和[显式等级](expansion/08-crop-uses.md)。先按[工时与研发公式](expansion/07-balance-validation.md)修订式样，再由唯一生成所有者运行 `npm run content:generate`。生成器保留稳定 ID、配方拓扑、研发前置及耗材种类，重算批量、周期、基价、研发金币及耗材数量，以及目录相关的任务金币上限。`src/content/game-data.json` 的格式为 1.14，经济版本为 LT-2026-11-v13。`src/content/balance-baseline-v114.json` 保留历史快照。运行验证按前述授权要求执行。
 

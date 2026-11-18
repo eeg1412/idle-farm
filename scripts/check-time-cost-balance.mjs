@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import catalogue from '../src/content/game-data.json' with { type: 'json' };
 import economyScale from '../src/content/economy-scale.json' with { type: 'json' };
-import { applyLongTermBalance } from './long-term-balance.mjs';
+import { applyLongTermBalance, balanceVersion } from './long-term-balance.mjs';
 import { loadCatalogueInputs, verifyCatalogue, verifyCatalogueAppend, verifyMinimumPrice } from './lib/time-cost-catalog.mjs';
 
 const arguments_ = new Set(process.argv.slice(2));
 const show = (group, result) => console.log(group + ' ' +
   JSON.stringify(result, (_, value) => typeof value === 'bigint' ? value.toString() : value));
 
-assert.equal(catalogue.balanceVersion, 'LT-2026-11-v12');
+assert.equal(catalogue.balanceVersion, balanceVersion);
 const { coinScale } = economyScale;
 assert(Number.isSafeInteger(coinScale) && coinScale > 0, 'coinScale 必须为正安全整数');
 const sources = await loadCatalogueInputs();

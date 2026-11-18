@@ -35,7 +35,7 @@ function typeLabel(item) {
   return { C: '作物', L: '畜牧原料', F: '水产原料', M: '矿产原料' }[item.kind] ?? typeOf(item);
 }
 
-function complexityOf(item) {
+export function productComplexity(item) {
   return complexityTabs[item.sources.length] ?? '全部';
 }
 
@@ -74,7 +74,7 @@ function showFilters(ui) {
 function matchesFilters(local, item) {
   return (local.type === '全部' || local.type === typeOf(item)) &&
     (local.source === '全部' || item.sources.includes(local.source)) &&
-    (local.type !== '商品' || local.complexity === '全部' || local.complexity === complexityOf(item));
+    (local.type !== '商品' || local.complexity === '全部' || local.complexity === productComplexity(item));
 }
 
 function warehouseEntries(world, { type = '全部', source = '全部' } = {}) {
@@ -509,7 +509,7 @@ function renderCatalogDetail(ui, id) {
     header.feature(artwork, (card) => {
       card.heading(item.name);
       if (item.level) {
-        card.badges([{ label: complexityOf(item) }, { label: compact(item.level) + ' 级', tone: 'gold' }]);
+        card.badges([{ label: productComplexity(item) }, { label: compact(item.level) + ' 级', tone: 'gold' }]);
       } else {
         card.text(typeLabel(item) + ' · ' + item.sources.join(' · '));
       }

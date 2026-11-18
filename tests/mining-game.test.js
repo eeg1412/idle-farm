@@ -174,7 +174,7 @@ test('mining tech keeps the seven water-sector budgets, prerequisites and combin
 });
 
 test('mining research uses one material handbook and enters the unchanged global quality draw pool', () => {
-  assert.equal(miningIds.length, 40);
+  assert.equal(miningIds.length, 49);
   const world = fundedWorld();
   world.unlocked = world.unlocked.filter((id) => id !== 'IM13');
   for (const [id, amount] of Object.entries(catalog.research.IM13.costs)) world.inventory[id] = BigInt(amount);
@@ -231,6 +231,13 @@ test('mine tasks follow successful operations once and farm handoff clears mines
   for (const id of ['miningIntro', 'buildMine', 'collectMining', 'miningUpgrade', 'miningTop']) {
     assert.ok(reward.ids.includes(id));
   }
+  assert.deepEqual(settleTaskRewards(world).ids, []);
+  const recipe = 'PM21';
+  for (const { id, needed } of stationRequirements(world, recipe, 1n)) world.inventory[id] = needed;
+  assert.ok(arrangeStation(world, 'P', 0, recipe));
+  assert.deepEqual(settleTaskRewards(world).ids, []);
+  advanceWorld(world, world.stations.P[0].batch.end);
+  assert.deepEqual(settleTaskRewards(world).ids, ['firstMixedProduct']);
   assert.deepEqual(settleTaskRewards(world).ids, []);
   const history = structuredClone(world.stats);
   const receipt = [...world.taskRewards];

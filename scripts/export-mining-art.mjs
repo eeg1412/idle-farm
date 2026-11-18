@@ -9,13 +9,40 @@ const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const quality = { quality: 70, alphaQuality: 100, effort: 6 };
 const idsA = [...Array.from({length:10},(_,i)=>'M'+String(i+1).padStart(2,'0')), ...Array.from({length:15},(_,i)=>'IM'+String(i+1).padStart(2,'0'))];
 const idsB = ['IM16', ...Array.from({length:14},(_,i)=>'PM'+String(i+1).padStart(2,'0'))];
+const idsC = ['PM15','PM16','PM17','PM18','PM19','PM20','PM21','PM22','PM23'];
+const expansionSource = 'items-C-v2';
+const expansionSources = {
+ 'items-C-v1': {
+  promptFile:'assets/mining/prompts-items-C-v1.md',
+  references:['PM09','PM10','PM11','PM13'].map(id=>'assets/source/items/overrides/'+id+'.png'),
+  status:'superseded',
+ },
+ 'items-C-v2-draft': {
+  promptFile:'assets/mining/prompts-items-C-v2.md',
+  references:['assets/source/items/overrides/PM09.png'],
+  status:'draft',
+ },
+ [expansionSource]: {
+  promptFile:'assets/mining/prompts-items-C-v2.md',
+  references:['assets/mining/raw/items-C-v2-draft.png'],
+ },
+};
+const expansionOnly = process.argv.includes('--pm-expansion-only');
 const uiNames = ['mining-tab','facility-empty-mine','mining-buy','mining-upgrade','mining-yield','mining-research','mining-processing','mining-cycle','mining-refining'];
 const catalog = JSON.parse(await readFile(file('src/content/game-data.json'),'utf8'));
-const registry = {version:1, generatedWith:'built-in image_gen', promptFile:'assets/mining/prompts.md', conversion:'isolated alpha crop; nearest-neighbor resize; WebP quality70 alpha100', sources:{}, items:{}, ui:{}, scene:{}};
+const registryPath = file('assets/mining/registration.json');
+const registry = expansionOnly
+ ? JSON.parse(await readFile(registryPath,'utf8'))
+ : {version:1, generatedWith:'built-in image_gen', promptFile:'assets/mining/prompts.md', conversion:'isolated alpha crop; nearest-neighbor resize; WebP quality70 alpha100', sources:{}, items:{}, ui:{}, scene:{}};
+const expansionIds = Object.keys(catalog.items).filter(id=>idsC.includes(id));
+if (expansionIds.join() !== idsC.join()) throw new Error('PM15–PM23 must match the generated catalogue order.');
 for (const dir of ['assets/mining/png','assets/mining/source-icons','assets/source/items/overrides','public/wiki/icons','public/ui-icons','public/art/mining']) await mkdir(file(dir),{recursive:true});
-for (const key of ['items-A-v1','items-B-v1','background-v1','cart-v1','ui-v1']) {
+const sources = expansionOnly ? Object.keys(expansionSources) : [
+ 'items-A-v1','items-B-v1','background-v1','cart-v1','ui-v1',...Object.keys(expansionSources),
+];
+for (const key of sources) {
  const path='assets/mining/raw/'+key+'.png'; const bytes=await readFile(file(path)); const m=await sharp(bytes).metadata();
- registry.sources[key]={path,sha256:hash(bytes),width:m.width,height:m.height,generatedWith:'built-in image_gen'};
+ registry.sources[key]={path,sha256:hash(bytes),width:m.width,height:m.height,generatedWith:'built-in image_gen',...expansionSources[key]};
 }
 async function writeImage(pngPath,webpPath,png) {
  await writeFile(file(pngPath),png);
@@ -46,11 +73,18 @@ async function isolated(source,cell,target=82,canvas=96) {
  const png=await sharp({create:{width:canvas,height:canvas,channels:4,background:'#00000000'}}).composite([{input:cut,left:Math.floor((canvas-m.width)/2),top:Math.floor((canvas-m.height)/2)}]).png().toBuffer();
  return {png,sourceBounds:{left:cell.left+trim.left,top:cell.top+trim.top,width:trim.width,height:trim.height},contentBounds:{x:Math.floor((canvas-m.width)/2),y:Math.floor((canvas-m.height)/2),width:m.width,height:m.height}};
 }
-for(const [key,ids,yCuts] of [['items-A-v1',idsA,[0,251,502,752,1003,1254]],['items-B-v1',idsB,[0,265,530,815]]]) {
- const xCuts=[0,251,502,752,1003,1254];
+const legacyXCuts = [0,251,502,752,1003,1254];
+const expansionSheet = [expansionSource,expansionIds,[0,408,818,1254],[0,418,828,1254]];
+const itemSheets = expansionOnly ? [expansionSheet] : [
+ ['items-A-v1',idsA,legacyXCuts,[0,251,502,752,1003,1254]],
+ ['items-B-v1',idsB,legacyXCuts,[0,265,530,815]],
+ expansionSheet,
+];
+for(const [key,ids,xCuts,yCuts] of itemSheets) {
+ const columns=xCuts.length-1;
  for(const [index,id] of ids.entries()){
   if(!catalog.items[id])throw new Error('Wait for formal catalogue '+id);
-  const row=Math.floor(index/5),col=index%5;
+  const row=Math.floor(index/columns),col=index%columns;
   const right = (key === 'items-B-v1' && row === 2 && col === 3) || (key === 'items-A-v1' && row === 4 && col === 3) ? 990 : xCuts[col+1];
   const cell={left:xCuts[col],top:yCuts[row],width:right-xCuts[col],height:yCuts[row+1]-yCuts[row]};
   const sprite=await isolated(registry.sources[key].path,cell);
@@ -58,19 +92,32 @@ for(const [key,ids,yCuts] of [['items-A-v1',idsA,[0,251,502,752,1003,1254]],['it
   registry.items[id]={name:catalog.items[id].name,source:key,cell,index,sourceBounds:sprite.sourceBounds,contentBounds:sprite.contentBounds,...output};
  }
 }
+const exportedIds = itemSheets.flatMap(([,ids])=>ids);
 const overrides=JSON.parse(await readFile(file('assets/source/items/overrides.json'),'utf8'));
-for(const id of [...idsA,...idsB])overrides[id]='overrides/'+id+'.png';
+for(const id of exportedIds)overrides[id]='overrides/'+id+'.png';
 await writeFile(file('assets/source/items/overrides.json'),JSON.stringify(overrides,null,2)+'\n');
-// Ownership is limited to appending this mining batch; preserve every pre-existing bottom.
+// Recompute grounding only for the item IDs exported by this invocation.
 const bottomsPath='src/content/workshop-item-bottoms.json';
 const bottoms=JSON.parse(await readFile(file(bottomsPath),'utf8'));
-for(const id of [...idsA,...idsB]) {
+for(const id of exportedIds) {
  const {data,info}=await sharp(file(registry.items[id].png)).ensureAlpha().raw().toBuffer({resolveWithObject:true});
  let bottom=0;
  for(let y=0;y<info.height;y++)for(let x=0;x<info.width;x++)if(data[(y*info.width+x)*4+3]>=128)bottom=Math.max(bottom,y+1);
  bottoms[id]=bottom;
 }
 await writeFile(file(bottomsPath),JSON.stringify(bottoms,null,2)+'\n');
+const expansionReview = expansionIds.map((id,index)=>({
+ input:file(registry.items[id].path),
+ left:(index%3)*110+7,
+ top:Math.floor(index/3)*110+7,
+}));
+await sharp({create:{width:330,height:330,channels:4,background:'#344343'}})
+ .composite(expansionReview).png().toFile(file(`assets/mining/png/${expansionSource}-review.png`));
+if(expansionOnly){
+ await writeFile(registryPath,JSON.stringify(registry,null,2)+'\n');
+ console.log('Converted PM15–PM23 item icons and updated mining and conveyor registration.');
+ process.exit(0);
+}
 const uiX=[0,421,842,1263],uiY=[0,415,831,1246];
 for(const [index,name]of uiNames.entries()){
  const row=Math.floor(index/3),col=index%3,cell={left:uiX[col],top:uiY[row],width:uiX[col+1]-uiX[col],height:uiY[row+1]-uiY[row]};
@@ -117,7 +164,7 @@ for(const id of idsA.slice(0,10)){
  visuals.items[id]={icon:'wiki/icons/'+id+'.webp',scene:'art/scene-'+id+'.webp'};
 }
 await writeFile(file('src/content/mining-visuals.json'),JSON.stringify(visuals,null,2)+'\n');
-await writeFile(file('assets/mining/registration.json'),JSON.stringify(registry,null,2)+'\n');
+await writeFile(registryPath,JSON.stringify(registry,null,2)+'\n');
 // Contact sheets are composed only from the deliverable images, for visual inspection.
 for(let start=0;start<40;start+=10){
  const ids=[...idsA,...idsB].slice(start,start+10),inputs=[];
@@ -129,4 +176,4 @@ await sharp({create:{width:330,height:330,channels:4,background:'#344343'}}).com
 const sceneInputs=[];
 for(const [i,id]of idsA.slice(0,10).entries())sceneInputs.push({input:await sharp(file('public/art/scene-'+id+'.webp')).resize(130,130,{kernel:'nearest'}).png().toBuffer(),left:(i%5)*130,top:Math.floor(i/5)*130});
 await sharp({create:{width:650,height:260,channels:4,background:'#344343'}}).composite(sceneInputs).png().toFile(file('assets/mining/png/scenes-130-review.png'));
-console.log('Converted 40 canonical item icons, 9 UI icons, layered mine art, 10 selection scenes and source registration. No checks, tests or build invoked.');
+console.log(`Converted ${exportedIds.length} canonical item icons, 9 UI icons, layered mine art, 10 selection scenes and source registration. No checks, tests or build invoked.`);

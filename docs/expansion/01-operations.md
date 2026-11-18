@@ -2,7 +2,7 @@
 
 [返回目录](README.md) · [LT-v7 历史方案](../reviews/2026-11-16-time-cost-balance.md)
 
-本页使用 LT-2026-11-v12。全局金币倍率 `m` 由 `src/content/economy-scale.json` 决定，当前为 5。基础批量、周期、品质 1 单价及研发报价均由同一工时模型生成。金额与件数使用 BigInt。目录公式见[第 7 节](07-balance-validation.md)。
+本页使用 LT-2026-11-v13。全局金币倍率 `m` 由 `src/content/economy-scale.json` 决定，当前为 5。基础批量、周期、品质 1 单价及研发报价均由同一工时模型生成。金额与件数使用 BigInt。目录公式见[第 7 节](07-balance-validation.md)。
 
 ## 1.1 经营设施与养殖
 
@@ -186,7 +186,7 @@ W与设施M(k)同式，成本随等级按六次方项增长。以下工位金额
 | `techLevel*` | 1,250×要求累计级数。全满任务沿用 `techLevel1200`，当前要求 1,494 级，`m=5` 时按取整规则发 9,300,000 金币 |
 | `newFarm`、`runs5/20/50/100` | 分别达到最低累计产值 T 520,000／8,000,000,000／800,000,000,000／32,000,000,000,000／280,000,000,000,000，且满足原交接次数。金币上限为 T 门槛的 1% |
 | `recipeTrio`、`recipeCollection` | 符合任务范围的最低 3／25 项精制研发金币合计的一半 |
-| `codex20`、`collection100/200/300/400`、`itemCollection` | 扣去初始两项后的所需数，取最便宜对应数量研发金币合计的一半 |
+| `codex20`、`collection100/200/300/400`、`itemCollection` | 扣去初始两项后的所需数，取最便宜对应数量研发金币合计的一半。`itemCollection` 随完整目录，当前目标 574 项 |
 | `milleCrepe`、`threeSectorGift`、`livestockTop`、`fishTop`、`miningTop`、`miningProduct` | 对应品项研发金币的一半 |
 | 六项长期品质任务 | 累计成功抽取 6／30／120／360／1,080／3,240 次，直接奖励 `100×m×抽数` 金 |
 

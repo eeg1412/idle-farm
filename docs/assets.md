@@ -10,11 +10,11 @@
 | 裁切用图标表 | `assets/source/items/<起始ID>-<结束ID>.png` | 透明方形 PNG，固定 5 行 × 5 列，每格一件 |
 | 发布图 | `public/wiki/icons/<物品ID>.webp` | 每品项一张，96×96，WebP 有损编码质量 70，Alpha 质量 100。发布站点与页面仅使用 WebP |
 
-当前共 565 项；原 525 项保留 21 张历史图标表，矿业新增 40 项使用两张独立透明网格原稿和逐 ID overrides。原有 12 张保留原顺序，畜牧水产 6 张按扩展式样书中新增品项的表格顺序从左到右、从上到下排列。先定稿品项和配方并通过内容校验，再根据稳定 ID 绘制。原图保存于 `assets/source/items/raw/`。仅在原图能完整隔离出 25 个主体时，把图标重新居中到规则网格。出现粘连、缺图、越过画布边缘或类别误画时，先返工并重新检查。
+当前共 574 项；原 525 项保留 21 张历史图标表。矿业使用透明网格原稿与逐品项覆盖图。原有 12 张保留原顺序，畜牧水产 6 张按扩展式样书中新增品项的表格顺序从左到右、从上到下排列。先定稿品项和配方并通过内容校验，再根据稳定 ID 绘制。原图保存于 `assets/source/items/raw/`。仅在原图能完整隔离出 25 个主体时，把图标重新居中到规则网格。出现粘连、缺图、越过画布边缘或类别误画时，先返工并重新检查。
 
 - 作物和养殖产出展示收获原态。牲畜条目画可交易的蛋、奶或肉，水产条目画对应渔获。
 - 中间产物展示粉、浆、切料、冻坯、面团及无装饰的开口备料容器。
-- 商品必须逐件带包装，按形态使用纸套、开窗盒、封口杯、礼袋或礼盒。通过透明窗口或掀开的盒盖露出内容，包装仍可辨识。
+- 所有商品必须是逐件包装的零售成品。名称写明袋装、瓶装、罐装、盒装、礼盒等实际包装。图标在 96×96 下仍要清楚呈现外包装和封口，内容可由透明瓶身、封闭观察窗或包装上的图样辨识。盘、碗、餐用陶盅等器皿只能作为包装内的内容或配件。裸露料理和单纯摆盘不通过审图。
 - 校正后的每个图案最多占单格宽高的 64%，相邻主体之间至少保留约三分之一格的透明带。规则网格通过检查后裁成 96×96，使用最近邻缩放，保留透明背景。每个 WebP 必须对应唯一品项 ID。
 
 ```sh
@@ -23,7 +23,7 @@ python3 scripts/export-item-icons.py
 python3 scripts/export-item-icons.py --check
 ```
 
-导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。现行 565 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
+导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。现行 574 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
 
 发布图目录 `public/wiki/icons/` 是游戏运行时的物品图标来源，仓库、产物栏、畜牧与鱼池动画、导出脚本和素材检查均引用该路径。路径中的 `wiki` 为历史名称：早期独立配方 Wiki 已删除，该目录与其中图标保留不动。
 
@@ -137,7 +137,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 ### 矿业
 
-矿业40个物品均使用新绘像素原画、逐格传入ID与准确名称。M01–M10、IM01–IM16、PM01–PM14的96×96透明canonical图标位于`public/wiki/icons/`，持久源图通过`assets/source/items/overrides.json`登记；原25格图集保留历史顺序，不插入重排。矿业原稿、提示词、裁切/尺寸/哈希登记及PNG位于`assets/mining/`，转换入口为`scripts/export-mining-art.mjs`。
+矿业 49 个物品使用新绘像素原画，逐格传入 ID 与准确名称。M01–M10、IM01–IM16、PM01–PM23 的 96×96 透明图标位于`public/wiki/icons/`，持久源图通过`assets/source/items/overrides.json`登记；原25格图集保留历史顺序，不插入重排。矿业原稿、提示词、裁切/尺寸/哈希登记及PNG位于`assets/mining/`，转换入口为`scripts/export-mining-art.mjs`。
 
 矿洞背景整幅生成，包含洞口和轨道。矿车透明单独生成，货载复用各M物品图标。`src/content/mining-visuals.json` 登记洞口原画层、内缘坐标、矿车轮脚锚点及车体可见左缘。运行时将洞口置于车体和货载下方，按洞口内缘做进出洞淡变。10张`scene-M<ID>`仅用于非动画详情/素材交付，不作为运行加载回退。矿洞导航、空设施与7项经营科技图标也单独真实绘制并发布透明WebP。页面WebP质量70，Alpha质量100，PNG原图不进dist。
 

@@ -1,4 +1,4 @@
-export const kindCounts = { C: 68, L: 10, F: 10, M: 10, I: 127, IL: 10, IF: 10, IM: 16, P: 180, PL: 20, PF: 20, PD: 20, PT: 50, PM: 14 };
+export const kindCounts = { C: 68, L: 10, F: 10, M: 10, I: 127, IL: 10, IF: 10, IM: 16, P: 180, PL: 20, PF: 20, PD: 20, PT: 50, PM: 23 };
 
 // Frozen original series lengths: ranks up to these keep the derived level
 // bands 3·(⌈rank·10/length⌉−1)+sourceCount, so appending never shifts them.

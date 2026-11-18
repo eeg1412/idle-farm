@@ -2,7 +2,7 @@
 
 | 模块 | 职责 |
 | --- | --- |
-| `src/content/game-data.json` | 565 项品类、产出、配方和 563 项研发 |
+| `src/content/game-data.json` | 574 项品类、产出、配方和 572 项研发 |
 | `src/content/livestock-visuals.json` | 由畜牧布局生成的全部牲畜视觉登记，显式分类与阶段，不进入经营状态 |
 | `src/game/world.js` | 四类设施及两类工位、事件调度、库存与保留量、报价与周回 |
 | `src/game/advancement.js` | 品种与配方研发、品质计价、35 项经营改良及叠加规则 |

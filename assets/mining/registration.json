@@ -38,6 +38,44 @@
       "width": 1263,
       "height": 1246,
       "generatedWith": "built-in image_gen"
+    },
+    "items-C-v1": {
+      "path": "assets/mining/raw/items-C-v1.png",
+      "sha256": "2ccc0582bebabbeb190476b9355af6caad862c9860911b5a226809ab63e639c4",
+      "width": 2172,
+      "height": 724,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-items-C-v1.md",
+      "references": [
+        "assets/source/items/overrides/PM09.png",
+        "assets/source/items/overrides/PM10.png",
+        "assets/source/items/overrides/PM11.png",
+        "assets/source/items/overrides/PM13.png"
+      ],
+      "status": "superseded"
+    },
+    "items-C-v2-draft": {
+      "path": "assets/mining/raw/items-C-v2-draft.png",
+      "sha256": "5095647d181acae6573ce863add5bc182c03245c8d2219cd839b4f793c313f83",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-items-C-v2.md",
+      "references": [
+        "assets/source/items/overrides/PM09.png"
+      ],
+      "status": "draft"
+    },
+    "items-C-v2": {
+      "path": "assets/mining/raw/items-C-v2.png",
+      "sha256": "c7f5b60a7b58d82109fcba76a15964619689c93cf504cc8543a19867cb5816be",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-items-C-v2.md",
+      "references": [
+        "assets/mining/raw/items-C-v2-draft.png"
+      ]
     }
   },
   "items": {
@@ -1120,6 +1158,249 @@
       "path": "public/wiki/icons/PM14.webp",
       "pngSha256": "0945b71349f97e6fe5fd9c4c3d7a7a6ed05fe9a4b45e7a37cec3ba5521bdb251",
       "sha256": "5cd18fee4f244ddea17e58fc79cd658bb338cc07373109ace64e16a9360b8ecd"
+    },
+    "PM15": {
+      "name": "罐装芝麻奶酪抹酱",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 408,
+        "height": 418
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 121,
+        "top": 26,
+        "width": 190,
+        "height": 370
+      },
+      "contentBounds": {
+        "x": 27,
+        "y": 7,
+        "width": 42,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM15.png",
+      "path": "public/wiki/icons/PM15.webp",
+      "pngSha256": "b466f26d415bbc5dfc4698ef302f475e39f3297536d56171f6d1f0bed700d251",
+      "sha256": "c7ee6e82b62e6e11d40a0a01998b2bdfccf81dfbba0aebd1c8f2b6a161a84bc2"
+    },
+    "PM16": {
+      "name": "罐装番茄牛肉浓汤",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 408,
+        "top": 0,
+        "width": 410,
+        "height": 418
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 479,
+        "top": 47,
+        "width": 296,
+        "height": 346
+      },
+      "contentBounds": {
+        "x": 13,
+        "y": 7,
+        "width": 70,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM16.png",
+      "path": "public/wiki/icons/PM16.webp",
+      "pngSha256": "946d2fdde4521160d04ee24f30945fa2d9e0d2a8ddae13fb7e12d33b30321657",
+      "sha256": "e5e3c10975fe31e35532f25116a112b518cceae7f0ce1028f9b4075ffd278ad1"
+    },
+    "PM17": {
+      "name": "袋装紫苏鲤鱼饭团",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 818,
+        "top": 0,
+        "width": 436,
+        "height": 418
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 836,
+        "top": 28,
+        "width": 398,
+        "height": 365
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 75
+      },
+      "png": "assets/source/items/overrides/PM17.png",
+      "path": "public/wiki/icons/PM17.webp",
+      "pngSha256": "504f171f92e5f4d56fc81ebfe2d9152e1d5b8bb64e06bb3a9848bd85e3604a9f",
+      "sha256": "a2f195f4a765ea7feb8327690f5baeee8b0c93247cbd0ad66b6bd55f06223e50"
+    },
+    "PM18": {
+      "name": "瓶装葱香鲈鱼酱",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 0,
+        "top": 418,
+        "width": 408,
+        "height": 410
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 92,
+        "top": 456,
+        "width": 247,
+        "height": 333
+      },
+      "contentBounds": {
+        "x": 17,
+        "y": 7,
+        "width": 61,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM18.png",
+      "path": "public/wiki/icons/PM18.webp",
+      "pngSha256": "5b351f1b3aa09b9b9438e3dd1f91daf73281bf83061fdc5f7d58951b9d1ffb8f",
+      "sha256": "68719e4b1d55970e7dc80a3dd2c9125bfb4a0d5371fd3477475efa3e1539463f"
+    },
+    "PM19": {
+      "name": "盒装真鲷鹅蛋羹",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 408,
+        "top": 418,
+        "width": 410,
+        "height": 410
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 456,
+        "top": 449,
+        "width": 327,
+        "height": 336
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 7,
+        "width": 80,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM19.png",
+      "path": "public/wiki/icons/PM19.webp",
+      "pngSha256": "1840b1ac2e625d1b41a65f8507690d92449f552e6818c4bb84ca8bb7706c0ca7",
+      "sha256": "c4698dcafe13b2cd91f65f52a922f7d2fbef61a5ccef248a4fc7b9a23ab4830d"
+    },
+    "PM20": {
+      "name": "罐装鸭肉银鲑双拼",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 818,
+        "top": 418,
+        "width": 436,
+        "height": 410
+      },
+      "index": 5,
+      "sourceBounds": {
+        "left": 853,
+        "top": 499,
+        "width": 366,
+        "height": 261
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 19,
+        "width": 82,
+        "height": 58
+      },
+      "png": "assets/source/items/overrides/PM20.png",
+      "path": "public/wiki/icons/PM20.webp",
+      "pngSha256": "18229d4311a960f125c8635feaf047fe80b5a9af31eaff8a5035a28c34df4069",
+      "sha256": "efbd475e1ea71f54dd6f8ff681389340fd21fdeabfa478ca619efca2c31841d5"
+    },
+    "PM21": {
+      "name": "罐装鱼羊鲜汤",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 0,
+        "top": 828,
+        "width": 408,
+        "height": 426
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 46,
+        "top": 861,
+        "width": 316,
+        "height": 356
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 7,
+        "width": 73,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM21.png",
+      "path": "public/wiki/icons/PM21.webp",
+      "pngSha256": "2a6dfc82faf2dbdccbe5819fa3b2b1661556776db2ca0e4eb2ee1eb08d2de63a",
+      "sha256": "23cefaaf794303b867e997d1663c336df993b176ff17e39eb877ea34343eace5"
+    },
+    "PM22": {
+      "name": "盒装紫苏鳗鱼蛋黄饭",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 408,
+        "top": 828,
+        "width": 410,
+        "height": 426
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 411,
+        "top": 881,
+        "width": 394,
+        "height": 326
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 14,
+        "width": 82,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/PM22.png",
+      "path": "public/wiki/icons/PM22.webp",
+      "pngSha256": "d9a437cfa0f38a94f5164c26b5e3abfafc6c8a168ae433f2c4e14a119331eaa0",
+      "sha256": "90afe2003a0d5684c9004e2a6a38f4c643efa7b25ac7aca7fdca1d27e99e4c7e"
+    },
+    "PM23": {
+      "name": "盒装虹鳟奶酪玉米派",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 818,
+        "top": 828,
+        "width": 436,
+        "height": 426
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 838,
+        "top": 865,
+        "width": 394,
+        "height": 343
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 12,
+        "width": 82,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/PM23.png",
+      "path": "public/wiki/icons/PM23.webp",
+      "pngSha256": "1fb66b66a8719e80931feb8a135f06fe5bbb5132706e74ffb8eb73ffccdc1324",
+      "sha256": "8ee880fba6b2a88151ff38312b649260883af9ffa2cb530ce2baf89f4b34a535"
     }
   },
   "ui": {
