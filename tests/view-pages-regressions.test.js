@@ -241,8 +241,8 @@ test('workshop replacement explains immediate changes and shows the new recipe w
   assert.ok(chooser.find('text', (label) => label.includes('已扣材料退回仓库')));
   assert.ok(chooser.find('text', (label) => label.includes('改用其他配方会中止本批')));
   assert.deepEqual(chooser.find('choiceGrid', () => true)[0], [
-    { id: 'I01', icon: 'I01', label: '面粉', duration: '14 秒', selected: false },
-    { id: 'I03', icon: 'I03', label: '草莓果酱', duration: '39 秒', selected: true },
+    { id: 'I01', icon: 'I01', label: '面粉', duration: '14 秒', selected: false, assignmentSummary: '已安排 0 条' },
+    { id: 'I03', icon: 'I03', label: '草莓果酱', duration: '39 秒', selected: true, assignmentSummary: '已安排 1 条' },
   ]);
 
   assert.ok(arrangeStation(world, 'I', 0, 'I01'));
@@ -258,6 +258,9 @@ test('workshop replacement explains immediate changes and shows the new recipe w
   assert.equal(countdown[2].inactiveTone, 'danger');
   assert.deepEqual(waiting.find('batchProgress', () => true), [null, reference]);
   assert.equal(waiting.find('heading', (label) => label === '草莓果酱'), undefined);
+  waiting.click('更换配方');
+  const [choices] = waiting.dialog('选择配方').find('choiceGrid', () => true);
+  assert.equal(choices.find(({ id }) => id === 'I01').assignmentSummary, '已安排 1 条');
 });
 
 test('the task page routes land expansion by available coins without duplicating guidance on the field page', () => {
@@ -502,11 +505,11 @@ test('technology details use dedicated art, short effects and only unmet require
   };
   for (const [id, icon, label, from, to] of [
     ['marketForecast', 'tech-market-forecast', '明日首次行情', '未解锁', '可查看'],
-    ['marketManipulation', 'tech-market-manipulation', '每日重置次数', '0 次', '1 次'],
-    ['marketPromotion', 'tech-market-promotion', '上涨方向概率', '50%', '51%'],
-    ['premiumSales', 'tech-premium-sales', '最高售价倍率', '1.90 倍', '2.01 倍'],
-    ['merchantRestock', 'tech-merchant-restock', '每日手动进货次数', '0 次', '1 次'],
-    ['merchantBargaining', 'tech-merchant-bargaining', '商人售价倍率', '2.00 倍', '1.95 倍'],
+    ['marketManipulation', 'tech-market-manipulation', '每日行情重置次数', '0 次', '1 次'],
+    ['marketPromotion', 'tech-market-promotion', '价格波动时的涨价概率', '50%', '51%'],
+    ['premiumSales', 'tech-premium-sales', '新行情最高售价倍率', '1.90 倍', '2.01 倍'],
+    ['merchantRestock', 'tech-merchant-restock', '行脚商每日手动换货次数', '0 次', '1 次'],
+    ['merchantBargaining', 'tech-merchant-bargaining', '行脚商售价相对仓库价', '2.00 倍', '1.95 倍'],
     ['basicResearchRate', 'tech-basic-research-rate', '每小时普通研发点', '100 点', '104 点'],
   ]) {
     const details = open(id);
@@ -517,9 +520,30 @@ test('technology details use dedicated art, short effects and only unmet require
   }
   const delegation = open('delegation');
   assert.deepEqual(delegation.find('detailRows', () => true)[0], [
-    { label: '离线结算上限', value: { from: '6小时', to: '6小时36分钟' } },
+    { label: '离线结算上限', value: { from: '6 小时', to: '6 小时 36 分' } },
   ]);
   assert.equal(delegation.find('text', () => true), undefined);
+
+  const landPurchase = open('cropBuy');
+  assert.deepEqual(landPurchase.find('detailRows', () => true)[0], [
+    { label: '购地费用降幅', value: { from: '0%', to: '1%' } },
+  ]);
+  assert.deepEqual(landPurchase.find('badges', () => true)[0], [{ from: '0 级', to: '1 级' }]);
+  assert.deepEqual(open('cropUpgrade').find('detailRows', () => true)[0], [
+    { label: '地块升级费用降幅', value: { from: '0%', to: '1%' } },
+  ]);
+  assert.deepEqual(open('workshopSpeed').find('detailRows', () => true)[0], [
+    { label: '工坊加工与精制速度加成', value: { from: '0%', to: '2%' } },
+  ]);
+  view.ui.w.tech.cropUpgrade = 50;
+  assert.deepEqual(open('cropUpgrade').find('detailRows', () => true)[0], [
+    { label: '地块升级费用降幅', value: '50%' },
+  ]);
+  view.ui.w.tech.marketForecast = 1;
+  assert.deepEqual(open('marketForecast').find('detailRows', () => true)[0], [
+    { label: '明日首次行情', value: '可查看' },
+  ]);
+
   view.ui.w.tech.fishYield = 20;
   const fishCycle = open('fishCycle');
   assert.deepEqual(fishCycle.find('detailRows', () => true)[0].map(({ label, value }) => [label, value]), [

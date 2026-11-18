@@ -2275,21 +2275,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const padding = 6;
         const iconSize = 32;
         const titleGap = 2;
-        const durationGap = 3;
+        const detailGap = 3;
         const titleOptions = { size: font, align: 'center', weight: '800', trackViewport: false };
-        const durationOptions = { size: Math.max(10, font - 2), align: 'center', color: palette.muted, wrap: false };
+        const detailOptions = { size: Math.max(10, font - 2), align: 'center', color: palette.muted, wrap: false };
         const cellWidth = choiceCellWidth(columns);
         const titleWidth = Math.max(1, cellWidth - 10);
-        const durationWidth = cellWidth - 8;
+        const detailWidth = cellWidth - 8;
         let heights = 49 + (hasMarket ? 19 : 0);
         if (!iconsOnly) {
           const style = new TextStyle(textStyle(titleWidth, titleOptions));
           const unwrapped = new TextStyle(textStyle(titleWidth, { ...titleOptions, align: 'left', wrap: false }));
           const markSize = marketMarkSize(font);
           const markStyle = new TextStyle(textStyle(titleWidth, { size: markSize, weight: '800', wrap: false }));
-          const durationStyle = new TextStyle(textStyle(durationWidth, durationOptions));
+          const detailStyle = new TextStyle(textStyle(detailWidth, detailOptions));
           heights = [];
-          for (const [index, { label, marketRate, duration }] of items.entries()) {
+          for (const [index, { label, marketRate, duration, assignmentSummary }] of items.entries()) {
             const name = number(label);
             const title = CanvasTextMetrics.measureText(name, style);
             let titleHeight = title.height;
@@ -2301,8 +2301,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
                 ? Math.max(plain.height, mark.height)
                 : title.height * Math.min(1, titleWidth / title.width) + 1 + mark.height;
             }
-            const cycle = CanvasTextMetrics.measureText(number(duration), durationStyle);
-            const height = Math.ceil(padding * 2 + iconSize + titleGap + titleHeight + durationGap + cycle.height);
+            const cycle = CanvasTextMetrics.measureText(number(duration), detailStyle);
+            const assignmentHeight = assignmentSummary
+              ? detailGap + CanvasTextMetrics.measureText(assignmentSummary, detailStyle).height : 0;
+            const height = Math.ceil(padding * 2 + iconSize + titleGap + titleHeight + detailGap + cycle.height + assignmentHeight);
             const row = Math.floor(index / columns);
             heights[row] = Math.max(heights[row] ?? 0, height);
           }
@@ -2324,8 +2326,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           layer.addChild(content);
           drawImage(content, item.icon ?? item.id, (span - iconSize) / 2, 0, iconSize, iconSize, false, false);
           const title = marketLabel(content, item.label, 5, iconSize + titleGap, titleWidth, item.marketRate, titleOptions);
-          const duration = textNode(content, item.duration, 4, title.y + title.height + durationGap, durationWidth, durationOptions);
-          content.position.set(left, top + (height - duration.y - duration.height) / 2);
+          const duration = textNode(content, item.duration, 4, title.y + title.height + detailGap, detailWidth, detailOptions);
+          const last = item.assignmentSummary
+            ? textNode(content, item.assignmentSummary, 4, duration.y + duration.height + detailGap, detailWidth, detailOptions)
+            : duration;
+          content.position.set(left, top + (height - last.y - last.height) / 2);
         });
       },
       selectionGrid(items, onSelect) {

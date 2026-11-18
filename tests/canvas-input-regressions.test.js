@@ -882,6 +882,7 @@ test('compact card edges and bottom actions align by row in the farm, workshop a
     if (page === '工坊') {
       tapText(game, '选择配方', 'touch');
       assert.ok(game.nodes().some((node) => node.label === '关闭'));
+      assert.ok(game.nodes().some((node) => node.text === '已安排 1 条'));
       await game.view.close();
       game.flush();
     }
@@ -927,9 +928,9 @@ test('farm sale retention background grows to contain wrapped text', () => {
   assert.ok(rowBounds.minY <= textBounds.minY && rowBounds.maxY >= textBounds.maxY);
 });
 
-test('replacement choice cards fit the viewport and icon mode omits labels and cycle text', () => {
+test('replacement choice cards fit the viewport and icon mode omits all choice text', () => {
   const items = Array.from({ length: 20 }, (_, index) => ({
-    id: 'option-' + index, label: '可用品项 ' + index, duration: '37 秒', icon: 'C01',
+    id: 'option-' + index, label: '可用品项 ' + index, duration: '37 秒', icon: 'C01', assignmentSummary: '已安排 48 条',
   }));
   for (const [width, iconsOnly, expectedColumns] of [
     [320, false, 2], [390, false, 3], [480, false, 4], [390, true, 6],
@@ -940,7 +941,9 @@ test('replacement choice cards fit the viewport and icon mode omits labels and c
     const tiles = game.nodes().filter((node) => node.label?.startsWith('picker-choice:'));
     const top = tiles[0].getLocalBounds().minY;
     assert.equal(tiles.filter((tile) => tile.getLocalBounds().minY === top).length, expectedColumns);
-    assert.equal(game.nodes().some((node) => node.text === '37 秒'), !iconsOnly);
+    for (const label of ['可用品项 0', '37 秒', '已安排 48 条']) {
+      assert.equal(game.nodes().some((node) => node.text === label), !iconsOnly, label);
+    }
   }
 });
 
@@ -966,10 +969,10 @@ test('replacement rows fit their own content, center the cards, and retain point
   const selected = [];
   game.draw(320, 760);
   game.view.dialog('选择作物', (ui) => ui.choiceGrid([
-    { id: 'C02', label: '甘蔗', duration: '16 秒', marketRate: 40 },
-    { id: 'C01', label: '小麦', duration: '12 秒' },
-    { id: 'PT50', label: '紫苏双鱼牛汁千层御膳礼盒', duration: '60 秒', marketRate: -90 },
-    { id: 'C03', label: '稻谷', duration: '20 秒' },
+    { id: 'C02', label: '甘蔗', duration: '16 秒', marketRate: 40, assignmentSummary: '已安排 0 条' },
+    { id: 'C01', label: '小麦', duration: '12 秒', assignmentSummary: '已安排 2 条' },
+    { id: 'PT50', label: '紫苏双鱼牛汁千层御膳礼盒', duration: '60 秒', marketRate: -90, assignmentSummary: '已安排 48 条' },
+    { id: 'C03', label: '稻谷', duration: '20 秒', assignmentSummary: '已安排 1 条' },
   ], ({ id }) => selected.push(id)));
   await new Promise(setImmediate);
   game.flush();
@@ -988,7 +991,11 @@ test('replacement rows fit their own content, center the cards, and retain point
     const content = bounds('picker-content:' + id);
     assert.ok(Math.abs((content.minY - card.minY) - (card.maxY - content.maxY)) <= 2, id);
   }
-  tapText(game, '稻谷', 'touch');
+  const summary = game.nodes().find((node) => node.text === '已安排 48 条').getBounds();
+  const duration = game.nodes().find((node) => node.text === '60 秒').getBounds();
+  assert.ok(summary.minY >= duration.maxY && summary.maxY < second.maxY);
+  assert.ok(summary.minX >= second.minX && summary.maxX <= second.maxX);
+  tapText(game, '已安排 1 条', 'touch');
   assert.deepEqual(selected, ['C03']);
 });
 

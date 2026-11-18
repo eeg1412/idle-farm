@@ -60,6 +60,43 @@ const techArt = {
   merchantRestock: 'tech-merchant-restock',
   merchantBargaining: 'tech-merchant-bargaining',
 };
+const techEffectLabels = {
+  recipeDiscount: '作物、通用加工与精制研发材料减免',
+  appraisal: '后续产出折算高级研发点的倍率',
+  workshopSpeed: '工坊加工与精制速度加成',
+  delegation: '离线结算上限',
+  basicResearchRate: '每小时普通研发点',
+  cropBuy: '购地费用降幅',
+  cropUpgrade: '地块升级费用降幅',
+  cropYield: '田地每批产量加成',
+  livestockBuy: '养殖场购置费用降幅',
+  livestockUpgrade: '养殖场升级费用降幅',
+  livestockYield: '养殖场每批产量加成',
+  livestockResearch: '畜牧品种与加工配方研发材料减免',
+  livestockProcessing: '畜牧中间产物加工速度加成',
+  livestockCycle: '养殖场生产速度加成',
+  livestockRefining: '畜牧来源商品精制速度加成',
+  fishBuy: '鱼池购置费用降幅',
+  fishUpgrade: '鱼池升级费用降幅',
+  fishYield: '鱼池每批产量加成',
+  fishResearch: '鱼种与水产加工配方研发材料减免',
+  fishProcessing: '水产中间产物加工速度加成',
+  fishCycle: '鱼池养殖速度加成',
+  fishRefining: '水产来源商品精制速度加成',
+  miningBuy: '矿洞购置费用降幅',
+  miningUpgrade: '矿洞升级费用降幅',
+  miningYield: '矿洞每批产量加成',
+  miningResearch: '矿种与矿业加工配方研发材料减免',
+  miningProcessing: '矿业中间产物加工速度加成',
+  miningCycle: '矿洞开采速度加成',
+  miningRefining: '矿业来源商品精制速度加成',
+  marketForecast: '明日首次行情',
+  marketManipulation: '每日行情重置次数',
+  marketPromotion: '价格波动时的涨价概率',
+  premiumSales: '新行情最高售价倍率',
+  merchantRestock: '行脚商每日手动换货次数',
+  merchantBargaining: '行脚商售价相对仓库价',
+};
 
 function itemKind(item) {
   if (item.kind.startsWith('P')) return '商品';
@@ -200,21 +237,15 @@ function renderQuality(ui) {
 }
 
 function techEffect(offer, key) {
-  const transition = (current, next) => offer.maxed ? current : { from: current, to: next };
   const { label, current, next, unit } = offer.effect;
-  const prefix = label.endsWith('费用降低') ? '降低' : label === '生产提速' ? '提速' : '';
-  const effect = (value) => {
-    if (unit === '分钟') {
-      const hours = Math.floor(value / 60);
-      const minutes = value % 60;
-      return (hours ? `${hours}小时` : '') + (minutes ? `${minutes}分钟` : '');
-    }
+  const format = (value) => {
+    if (unit === '分钟') return hoursLabel(value * 60);
     if (key === 'marketForecast') return value ? '可查看' : '未解锁';
     if (key === 'premiumSales' || key === 'merchantBargaining') return `${value.toFixed(2)} ${unit}`;
-    if (unit === '次' || unit === '点') return `${value} ${unit}`;
-    return `${prefix}${value}${unit}`;
+    return unit === '%' ? `${value}%` : `${value} ${unit}`;
   };
-  return { label, value: transition(effect(current), effect(next)) };
+  const from = format(current);
+  return { label: techEffectLabels[key] ?? label, value: offer.maxed ? from : { from, to: format(next) } };
 }
 
 function techRequirements(ui, definition) {
@@ -248,15 +279,15 @@ function techDetails(ui, definition) {
   ui.feature(techIcon(definition), (content) => {
     content.heading(definition.name, { size: 30 });
     const level = offer.maxed ? { label: `${offer.maxLevel} 级 · 已满级` }
-      : { from: compact(offer.level), to: compact(offer.level + 1) + ' 级' };
+      : { from: `${compact(offer.level)} 级`, to: `${compact(offer.level + 1)} 级` };
     content.badges([level], { style: 'production' });
-    content.detailRows([techEffect(offer, definition.key)], { variant: 'stack' });
   }, {
     ratio: 0.42,
     surface: definition.source === '水产' ? 'water' : undefined,
     align: 'center',
     style: 'research',
   });
+  ui.detailRows([techEffect(offer, definition.key)], { variant: 'stack' });
   techRequirements(ui, definition);
   if (offer.maxed) return;
   ui.materialTable([{ id: 'research-point', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.cost }],

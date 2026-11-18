@@ -80,7 +80,7 @@ function dialogButtons(ui, label, action, disabled = false, style) {
   ], { style });
 }
 
-function replacementChoices(dialog, items, onSelect) {
+function replacementChoices(dialog, kind, choices, isSelected, onSelect) {
   const iconsOnly = dialog.w.settings.pickerIconsOnly;
   dialog.iconButton(iconsOnly ? 'view-list' : 'view-grid', iconsOnly ? '切换为详细显示' : '切换为仅图标', async () => {
     if (!await dialog.action('updateSettings', { pickerIconsOnly: !iconsOnly })) return;
@@ -88,6 +88,19 @@ function replacementChoices(dialog, items, onSelect) {
     dialog.local.indexKeyboard = 0;
     dialog.refresh();
   }, { align: 'right' });
+  let assignments;
+  if (!iconsOnly) {
+    assignments = new Map();
+    const slots = isWorkshop(kind) ? dialog.w.stations[kind] : dialog.w.facilities[kind];
+    for (const { recipe } of slots) {
+      if (recipe) assignments.set(recipe, (assignments.get(recipe) ?? 0) + 1);
+    }
+  }
+  const items = choices.map((id) => ({
+    ...productionChoice(dialog.w, kind, id),
+    selected: isSelected(id),
+    ...(assignments && { assignmentSummary: '已安排 ' + compact(assignments.get(id) ?? 0) + ' 条' }),
+  }));
   dialog.choiceGrid(items, onSelect, { iconsOnly });
 }
 
@@ -171,10 +184,8 @@ function batchReplace(ui, kind, targets, source, action) {
       }, confirm);
       return;
     }
-    replacementChoices(dlg, choices.map((id) => ({
-      ...productionChoice(dlg.w, kind, id),
-      selected: targets.every((index) => slots[index]?.recipe === id && (!slots[index].batch || slots[index].batch.id === id)),
-    })), ({ id }) => {
+    replacementChoices(dlg, kind, choices, (id) =>
+      targets.every((index) => slots[index]?.recipe === id && (!slots[index].batch || slots[index].batch.id === id)), ({ id }) => {
       chosen = id;
       dlg.local.scroll = 0;
       dlg.refresh();
@@ -324,10 +335,8 @@ function chooseFacility(ui, kind, index) {
         dlg.go('研究', { tab: '品种配方' });
       }, confirm);
     } else {
-      replacementChoices(dlg, choices.map((id) => ({
-        ...productionChoice(dlg.w, kind, id),
-        selected: id === facility.recipe && (!facility.batch || facility.batch.id === id),
-      })), ({ id }) => submit(dlg, 'assignFacility', [kind, index, id], null, '已' + label));
+      replacementChoices(dlg, kind, choices, (id) => id === facility.recipe && (!facility.batch || facility.batch.id === id),
+        ({ id }) => submit(dlg, 'assignFacility', [kind, index, id], null, '已' + label));
     }
   });
 }
@@ -547,7 +556,7 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
   }
   const quote = facilityOffer(ui.w, kind);
   if (quote) ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
-    style: 'production', tone: 'gold', disabled: quote.atLimit,
+    style: 'production', tone: 'gold', disabled: quote.atLimit, indicator: quote.affordable,
   });
 }
 
@@ -580,11 +589,8 @@ function chooseRecipe(ui, kind, index, source) {
         dlg.go('研究', { tab: '品种配方' });
       }, confirm);
     } else {
-      replacementChoices(dlg, choices.map((id) => ({
-        ...productionChoice(dlg.w, kind, id),
-        selected: id === station.recipe && (!station.batch || station.batch.id === id),
-      })), ({ id }) => submit(dlg, 'arrangeStation', [kind, index, id], null,
-        station.batch ? '已切换配方' : '已安排配方'));
+      replacementChoices(dlg, kind, choices, (id) => id === station.recipe && (!station.batch || station.batch.id === id),
+        ({ id }) => submit(dlg, 'arrangeStation', [kind, index, id], null, station.batch ? '已切换配方' : '已安排配方'));
     }
   });
 }
@@ -855,6 +861,6 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
   if (quote) ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
-    style: 'production', tone: 'gold', disabled: quote.atLimit,
+    style: 'production', tone: 'gold', disabled: quote.atLimit, indicator: quote.affordable,
   });
 }
