@@ -1,0 +1,19 @@
+放置庄园右上角菜单图标（nav-menu）
+生成日期 2026-11-18。内置 image_gen 全新生成一枚透明独立图标，启用透明背景，未提供参考图。
+
+Use case: ui-mockup
+Asset type: one isolated transparent raster pixel-art menu icon for the upper-right button of a cozy farm-management game.
+Subject and framing: exactly three dark forest-green, single-width horizontal bars stacked vertically. All three are straight, identical in width and thickness, left/right aligned and equally spaced. Use gently stepped pixel corners. Center the single icon on a square, genuinely transparent alpha canvas with generous clear margins; give the stack a compact, near-square silhouette with each bar about one fifth of the stack's total height.
+Style: sharply defined hand-pixeled game UI sprite with chunky, disciplined pixels. Main color deep forest green, with a very subtle single-pixel lighter forest-green strip along each bar's top if needed. Designed for immediate legibility at 26 × 26 pixels on a cream button.
+Constraints: exactly three independent bars and clear transparent gaps between them. Include no button fill, backdrop, border, cast shadow, outline frame, text, symbols, decorative elements, mockup, checkerboard or other texture behind the icon.
+
+来源与导出
+- 生成任务文件名 exec-e35fb4fb-fb4d-47ab-a9db-e21d2e10483d.png，原样保存为本目录的 raw/nav-menu.png，1254×1254 RGBA。
+- 从原图裁切左上 (312, 348)、右下 (942, 978)，按 Pillow 的右下不含边界约定取得 630×630，再以最近邻缩放至 96×96。裁切不修改图元，不重绘，不重新生成 Alpha。结果保存为本目录的 nav-menu.png。
+- 将 96×96 PNG 用 Pillow 转为 public/ui-icons/nav-menu.webp。编码参数为 quality=70、alpha_quality=100、method=6。
+- SHA-256，原图 2426ec12bc35e22443f866e5e0a30c12988f940929ec80d78fb168f66980b9a2，裁切底稿 89e9103a24ccd0f5967b1c04b09500a2d1b7ffe7b510d57e058ce68320713ca8，WebP 11b4adea1e884bdae550635cceee2ed2c6a9069f21fba04a9c6a0eea05100e79。
+
+素材审阅
+- 原图含三条对齐的森林绿色像素横线，端部带阶梯切角，透明间距完整。
+- 独立 WebP 在 #fff6da 奶油色底上缩到 26×26，实际像素尺寸和最近邻放大图均可辨认三条横线及各线间距。
+- 游戏运行与用户验收待确认。

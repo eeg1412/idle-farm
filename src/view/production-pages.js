@@ -3,14 +3,11 @@ import {
   stationRequirements, stationUpgradeOffer, unitPrice,
 } from '../game/world.js';
 import { marketRate, marketUnitPrice } from '../game/market.js';
-import { activeGuideTask } from '../game/objectives.js';
 import { hoursLabel, productComplexity, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
-const productionTabs = ['田地', '畜牧', '鱼池', '矿洞'];
-const workshopTabs = ['加工', '精制'];
 const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
-const facilityKinds = ['C', 'L', 'F', 'M'];
+const facilityTabs = { 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M' };
 const facilityNames = { C: '田地', L: '养殖场', F: '鱼池', M: '矿洞' };
 const facilityHeroes = { C: 'fields', L: 'livestock', F: 'fish', M: 'mining' };
 const facilityHeroHeights = { C: 0.45, L: 0.45, F: 0.45, M: 0.45 };
@@ -530,28 +527,8 @@ function facilitySlots(world, kind) {
   return world.facilities[kind].map((slot, index) => ({ slot, index }));
 }
 
-export function renderProduction(ui) {
-  const tab = productionTabs.includes(ui.local.tab) ? ui.local.tab : productionTabs[0];
-  const kind = facilityKinds[productionTabs.indexOf(tab)];
-  ui.image(facilityHeroes[kind], Math.round(ui.width * facilityHeroHeights[kind]), { title: facilityNames[kind] });
-  ui.tabs(productionTabs, tab, (value) => {
-    ui.local.tab = value;
-    ui.local.id = null;
-    delete ui.local.positionedSourceId;
-    ui.refresh();
-  }, { sticky: true, style: 'segmented' });
-  const quote = facilityOffer(ui.w, kind);
-  ui.titleBar(kind === 'C' ? '种植地块' : kind === 'L' ? '养殖场地' : kind === 'M' ? '开采矿洞' : '养殖鱼池', undefined, undefined, {
-    style: 'production',
-  });
-  if (kind === 'C') {
-    const objective = activeGuideTask(ui.w);
-    if (objective) {
-      const earnForLand = objective.id === 'firstPlot' && ui.w.coins < quote.cost;
-      ui.button(earnForLand ? '扩建田地 · 前往出货' : '任务 · ' + objective.name,
-        () => ui.go(earnForLand ? '仓库' : '任务'));
-    }
-  }
+export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
+  ui.image(facilityHeroes[kind], Math.round(ui.width * facilityHeroHeights[kind]), { maxHeight: 205 });
   const scope = (world) => facilitySlots(world, kind);
   const list = scope(ui.w);
   const compactMode = productionLayout(ui, kind, list, scope);
@@ -568,6 +545,7 @@ export function renderProduction(ui) {
     const instruction = kind === 'C' ? '购地后即可播种。' : '购买' + facilityNames[kind] + (kind === 'M' ? '后即可开采。' : '后即可安排养殖。');
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
   }
+  const quote = facilityOffer(ui.w, kind);
   if (quote) ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
     style: 'production', tone: 'gold', disabled: quote.atLimit,
   });
@@ -850,28 +828,12 @@ function workshopSlots(world, kind, source) {
   });
 }
 
-export function renderWorkshop(ui) {
+export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I') {
   const local = ui.local;
-  const tab = workshopTabs.includes(local.tab) ? local.tab : workshopTabs[0];
-  const kind = tab === '精制' ? 'P' : 'I';
   const sourceKey = 'workshopSource' + kind;
   const focus = catalog.items[local.id]?.kind?.[0] === kind ? local.id : null;
   const source = !focus && sources.includes(local[sourceKey]) ? local[sourceKey] : sources[0];
-  const scrolls = local.workshopScrolls ??= {};
-  if (local.activeWorkshopTab !== tab) {
-    local.activeWorkshopTab = tab;
-    local.scroll = focus ? 0 : scrolls[tab] ?? 0;
-  }
-  local.onScrollChange = (scroll) => { scrolls[tab] = scroll; };
   ui.image('workshop', Math.round(ui.width * 0.35));
-  ui.tabs(workshopTabs, tab, (value) => {
-    if (value === tab) return;
-    scrolls[tab] = local.scroll;
-    local.tab = value;
-    local.id = null;
-    delete local.positionedSourceId;
-    ui.refresh();
-  }, { keepScroll: true, sticky: true, style: 'segmented' });
   ui.tabs(sources, source, (value) => {
     local[sourceKey] = value;
     local.id = null;

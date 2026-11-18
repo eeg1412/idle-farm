@@ -1,0 +1,22 @@
+放置庄园菜单入口图标（menu-*）
+生成日期 2026-11-18。内置 image_gen 全新生成透明 5 列 × 3 行原画，启用透明背景，未提供参考图。
+
+Use case: ui-mockup
+Asset type: transparent sprite sheet of exactly 15 NEW unique inventory icons for the menu of a cozy farming and estate-management pixel-art game. Landscape canvas, strict 5 columns by 3 rows, exactly one independently isolated icon centered in each of 15 equal cells. Every cell is occupied. Broad clear alpha gaps between icons, with substantial empty transparent margins on the outer sides. Every icon is contained within the central 55–60% of its own cell horizontally and vertically; shapes never approach or touch another cell. Genuinely transparent RGBA background including between and inside assets. Invisible grid only.
+Visual style: classic top-down/isometric 16-bit farming sim, hand-pixeled art, hard clean stepped pixel edges, coherent earthy palette, sturdy silhouette, one simple primary subject plus at most one strong secondary detail per icon. Warm amber, ochre, red-brown wood, wheat gold and forest green with blue for water. Crisp dark brown or green selective outlines, small clustered highlights, no gradients or realistic textures. Every design optimized for 32×32 display, strong blocky forms and visible distinct motifs. Use consistent apparent size, lighting and pixel scale. Standalone graphics, no circular backplates or tile backgrounds.
+EXACT contents by row, left to right:
+Row 1: (1) UNFOLDED PARCHMENT MAP showing a dark winding path and two clumps of green, folds visible; (2) small GOLDEN WHEAT FIELD with dark brown soil furrows and three bold standing wheat stalks; (3) RED ROOF LIVESTOCK BARN accompanied by a white woolly sheep; (4) one vivid BLUE FISH over a small pair of blue wave strokes; (5) dark arched ROCK MINE PORTAL with a rail minecart visibly coming out.
+Row 2: (1) big circular SPOKED WOODEN WATER WHEEL with two small blue splash pixels at foot; (2) glowing squat COPPER REFINING FURNACE with a bright amber inlet and one short chunky chimney; (3) broad WOOD WAREHOUSE with one large visible stack of cargo crates against the side; (4) distinct MERCHANT COVERED WAGON with a mustard canvas canopy, a big dark wheel and a colorful hanging fabric strip; (5) CLOSED NAVY BOOK with a prominent LIGHT BLUE ROUND MAGNIFYING GLASS leaning against it.
+Row 3: (1) CLOSED OLIVE-GREEN LEDGER with a few large gold coins stacked at the lower right; (2) OPEN CREAM ILLUSTRATED CATALOG BOOK with large leaf illustration and a red ribbon bookmark, no magnifier or coins; (3) standing WOODEN BULLETIN BOARD with one cream checklist sheet bearing three tiny dark check marks, no lettering; (4) two stylized HANDS SHAKING with one big GOLD COIN above, clear handleless, bookless silhouette; (5) a single FOREST-GREEN COG GEAR with an obvious transparent center hole and six or eight coarse teeth.
+No title, letters, text, numerals, grid strokes, colored backdrops, opaque canvas, sticker backgrounds, labels, badges, cast shadows, guide marks, screenshot framing, mattes, cards, rectangles outside a design, or decorations between icons. Show five icons on each of the three rows in precise order.
+
+来源与导出
+- 生成任务文件名 exec-d3ffadae-159d-40c3-95bb-91f46b15bf6d.png，原样保存为 raw/menu-entries.png，1619×971 RGBA。SHA-256 293fb6fa69172073d25a00df368dd303369430087830c4ffdf62470843096b44。
+- 布局从左到右、从上到下。首行是 menu-map、menu-field、menu-livestock、menu-fish、menu-mine。第二行是 menu-processing、menu-refining、menu-warehouse、menu-merchant、menu-research。第三行是 menu-operations、menu-catalog、menu-tasks、menu-farm-sale、menu-settings。
+- 从仓库根目录运行 python3 assets/source/ui-icons/export-menu-entries.py。依原图行列位置裁切，对每格使用 Alpha ≥ 16 的前景边界，四周保留 2 个原图像素，并清理 Alpha < 12 的极低透明杂边。以最近邻等比缩放到 88×88 容纳框，居中到 96×96 透明画布。
+- 15 张独立 WebP 落在 public/ui-icons/，编码参数为 quality=70、alpha_quality=100、method=6。标准 5×3 底稿为 480×288 RGBA 的 menu-entries.png。其 SHA-256 为 5b619a4c3679f9643c83b94379eb99754de434c4f331d8823c1e1a248a9f3a1b。
+
+素材审阅
+- 原画实际包含 15 个独立图元，主体与对应入口一致。背景透明，保持暖色像素边缘。
+- 独立 WebP 在 #fff6da 奶油底上缩至 32×32 审阅。磨坊水轮与精制铜炉、畜牧红顶棚与仓库堆箱、研究蓝书放大镜与经营绿账簿金币及翻开式图鉴均容易区分。地图的路径、售价的握手与金币、任务单勾选符号与齿轮中心孔可见。
+- 游戏运行与用户验收待确认。

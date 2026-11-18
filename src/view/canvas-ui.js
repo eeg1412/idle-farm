@@ -1,10 +1,12 @@
 import { Container, Graphics, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
+import { activeGuideTask } from '../game/objectives.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import workshopVisuals from '../content/workshop-visuals.json' with { type: 'json' };
 import { compact } from './numbers.js';
-import { gameHistory } from './navigation.js';
+import { gameHistory, pageForRoute, routeForPage } from './navigation.js';
+import { mountEstateMap } from './estate-map.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
 import { minPlotAnimationMs, mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
 import {
@@ -28,16 +30,29 @@ const palette = {
   green: 0x297b34, leaf: 0x56a940, selection: 0xdcebd2, gold: 0xffce45, pale: 0xf6e9d0,
   cream: 0xfffdf7, red: 0xa03221, dark: 0x223524, gray: 0xede5d7, line: 0xe3d0b3,
 };
+const homePage = '庄园';
 const pages = {
-  庄园: renderProduction, 工坊: renderWorkshop, 仓库: renderWarehouse, 研究: renderResearch, 经营: renderManagement,
-  图鉴: renderCatalog, 任务: renderTasks, 设置: renderSettings, 出售庄园: renderFarmSale, 行脚商: renderMerchant,
+  [homePage]: null,
+  田地: (ui) => renderProduction(ui, 'C'), 畜牧: (ui) => renderProduction(ui, 'L'),
+  鱼池: (ui) => renderProduction(ui, 'F'), 矿洞: (ui) => renderProduction(ui, 'M'),
+  加工: (ui) => renderWorkshop(ui, 'I'), 精制: (ui) => renderWorkshop(ui, 'P'),
+  仓库: renderWarehouse, 行脚商: renderMerchant, 研究: renderResearch, 经营: renderManagement,
+  图鉴: renderCatalog, 任务: renderTasks, 出售庄园: renderFarmSale, 设置: renderSettings,
 };
-const tabs = ['庄园', '工坊', '仓库', '研究', '经营'];
+const menuPages = Object.keys(pages);
+const menuIcons = {
+  [homePage]: 'menu-map', 田地: 'menu-field', 畜牧: 'menu-livestock', 鱼池: 'menu-fish', 矿洞: 'menu-mine',
+  加工: 'menu-processing', 精制: 'menu-refining', 仓库: 'menu-warehouse', 行脚商: 'menu-merchant',
+  研究: 'menu-research', 经营: 'menu-operations', 图鉴: 'menu-catalog', 任务: 'menu-tasks',
+  出售庄园: 'menu-farm-sale', 设置: 'menu-settings',
+};
+const estateDestinations = {
+  field: '田地', livestock: '畜牧', fish: '鱼池', mine: '矿洞', processing: '加工', refining: '精制',
+  warehouse: '仓库', research: '研究', operations: '经营', tasks: '任务',
+};
 const noResearchReadyTabs = new Set();
 const defaultDialogSampleEveryMs = 3000;
-const tabIcons = ['nav-ranch', 'nav-workshop', 'nav-warehouse', 'nav-research', 'nav-management'];
 const drawnIcons = {
-  'settings-gear': { kind: 'gear' },
   'view-grid': { kind: 'grid' },
   'view-list': { kind: 'list' },
   close: { kind: 'close' },
@@ -55,7 +70,9 @@ for (const [id, item] of Object.entries(data.items)) {
     sceneKeys.add('scene-' + id);
   }
 }
-const uiIconKeys = new Set([...tabIcons, ...Object.keys(drawnIcons), 'nav-catalog', 'facility-field', 'facility-empty-field',
+const uiIconKeys = new Set([...Object.keys(drawnIcons), 'nav-menu', 'nav-workshop', 'nav-warehouse', 'nav-research',
+  ...Object.values(menuIcons),
+  'nav-catalog', 'facility-field', 'facility-empty-field',
   'mining-tab', 'facility-empty-mine', 'mining-buy', 'mining-upgrade', 'mining-yield',
   'mining-research', 'mining-processing', 'mining-cycle', 'mining-refining',
   'facility-hen', 'facility-empty-barn', 'facility-fish', 'facility-empty-pond', 'facility-mill',
@@ -165,22 +182,7 @@ function drawPixelIcon(parent, icon, x, y, width, height) {
     const cx = x + width / 2;
     const cy = y + height / 2;
     const unit = size / 24;
-    if (icon.kind === 'gear') {
-      const points = [];
-      for (let tooth = 0; tooth < 8; tooth += 1) {
-        for (const [turn, radius] of [[-0.45, 8.2], [-0.26, 11], [0.26, 11], [0.45, 8.2]]) {
-          const angle = (tooth + turn) * Math.PI / 4;
-          points.push(cx + Math.cos(angle) * radius * unit, cy + Math.sin(angle) * radius * unit);
-        }
-      }
-      art.poly(points).fill(0x668d6c).stroke({ color: 0x234c34, width: 1.6 * unit, join: 'round' });
-      art.circle(cx, cy, 6.6 * unit).fill(0xabc49b).stroke({ color: 0x426c49, width: unit });
-      art.circle(cx, cy, 3.5 * unit).fill(palette.pale).stroke({ color: 0x234c34, width: 1.8 * unit });
-      const highlightRadius = 5.3 * unit;
-      const highlightStart = Math.PI * 1.1;
-      art.moveTo(cx + Math.cos(highlightStart) * highlightRadius, cy + Math.sin(highlightStart) * highlightRadius)
-        .arc(cx, cy, highlightRadius, highlightStart, Math.PI * 1.7).stroke({ color: 0xd5e1bb, width: unit });
-    } else if (icon.kind === 'close') {
+    if (icon.kind === 'close') {
       const outline = [-6, -10, 0, -4, 6, -10, 10, -6, 4, 0, 10, 6,
         6, 10, 0, 4, -6, 10, -10, 6, -4, 0, -10, -6];
       const stroke = icon.outline
@@ -270,7 +272,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const clip = inkGraphics();
   app.stage.addChild(root, clip);
   root.mask = clip;
-  let current = '庄园';
+  let current = homePage;
   let pageParent;
   let linkedEntryParent;
   let navigationEpoch = 0;
@@ -283,6 +285,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let status;
   let waiting = false;
   let pendingRender = false;
+  let navigationMenu;
   let modal;
   let pendingModal;
   let nextDialogSampleAt = 0;
@@ -306,6 +309,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let noticeNode;
   let floatNode;
   let drawn;
+  let estateMap;
   let lastResearchReady;
   // Any change to the stage sets this; the stage is rendered only on dirty frames (plus a slow
   // safety refresh), never skipped when something may have changed.
@@ -899,6 +903,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function activateDialog(dialog) {
+    if (dialog) navigationMenu = undefined;
     if (modal === dialog) return;
     if (modal?.sample) delete modal.sampledValue;
     if (modal?.flow === 'merchant-refresh') {
@@ -1046,6 +1051,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function restoreContext(context) {
     if (!context || context.epoch !== navigationEpoch || !Object.hasOwn(pages, context.page)) return false;
+    navigationMenu = undefined;
     const changedPage = current !== context.page;
     prepareMerchantNavigation(context.page, context.local.tab);
     current = context.page;
@@ -1064,27 +1070,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function defaultParent(page) {
-    const parent = page === '行脚商' ? '仓库' : page === '图鉴' || page === '出售庄园' ? '经营' : '庄园';
+    const parent = page === '行脚商' ? '仓库' : page === '图鉴' || page === '出售庄园' ? '经营' : homePage;
     return {
       page: parent, local: copyViewState(locals[parent]), modal: undefined,
       parent: undefined, epoch: navigationEpoch,
     };
   }
 
-  function go(page, options = {}, sourceDialog) {
+  function go(destination, options = {}, sourceDialog) {
+    const page = pageForRoute(destination, options.tab);
+    const tab = page === destination ? options.tab : undefined;
     if (!Object.hasOwn(pages, page)) return;
+    navigationMenu = undefined;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
     rememberContext();
     const changedPage = page !== current;
-    const directedEntry = options.id !== undefined || options.tab !== undefined;
+    const directedEntry = options.id !== undefined || tab !== undefined;
     const source = availableDialog(sourceDialog) && sourceDialog.ownerPage !== current
       ? { ...sourceDialog.pageContext, modal: sourceDialog }
       : captureContext(availableDialog(sourceDialog) ? sourceDialog : modal);
-    if (options.root) pageParent = undefined;
+    if (page === homePage) pageParent = undefined;
     else if (changedPage || directedEntry) pageParent = source;
     linkedEntryParent = page === '研究' && options.id !== undefined ? pageParent : undefined;
-    if (changedPage || options.tab !== undefined) prepareMerchantNavigation(page, options.tab);
+    if (changedPage || tab !== undefined) prepareMerchantNavigation(page, tab);
     if (changedPage) {
       current = page;
       onNavigate?.(current);
@@ -1095,14 +1104,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       locals[page].catalogTrail = [];
       locals[page].showUses = false;
     }
-    if (options.tab !== undefined) { locals[page].tab = options.tab; locals[page].scroll = 0; }
+    if (tab !== undefined) { locals[page].tab = tab; locals[page].scroll = 0; }
     if (options.id !== undefined) {
       locals[page].id = options.id;
       delete locals[page].positionedSourceId;
       locals[page].scroll = 0;
       if (page === '研究') locals[page].openResearchItem = true;
     }
-    else if (page === '研究' && options.tab !== undefined) delete locals[page].linkedResearchItem;
+    else if (page === '研究' && tab !== undefined) delete locals[page].linkedResearchItem;
     pendingModal = undefined;
     activateDialog(undefined);
     focusIndex = -1;
@@ -1115,11 +1124,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
     if (modal) { closeDialog(); return; }
+    if (navigationMenu) { closeNavigationMenu(); return; }
     if (locals[current].onBack?.()) return;
-    if (!restoreContext(pageParent)) {
-      if (tabs.includes(current) && !pageParent) return;
-      restoreContext(defaultParent(current));
-    }
+    if (current === homePage) return;
+    if (!restoreContext(pageParent)) restoreContext(defaultParent(current));
     focusIndex = -1;
     recordRoute(true);
     redraw();
@@ -1139,7 +1147,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const local = locals[current];
     const tab = current === '图鉴' ? (local.showUses || local.tab === '用途' ? '用途' : undefined) : local.tab;
     return {
-      page: current, tab,
+      ...routeForPage(current, tab),
       id: (current === '图鉴' ? local.id ?? local.catalogId : local.id ?? local.linkedResearchItem) || undefined,
       dialog: modal?.routeKey,
     };
@@ -1158,9 +1166,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function restoreRoute(initial = false) {
     if (!navigation) return;
+    navigationMenu = undefined;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     const entry = navigation.read();
-    const { page, tab, id } = entry.route;
+    const { page: destination, tab: routeTab, id } = entry.route;
+    const page = pageForRoute(destination, routeTab);
+    const tab = page === destination ? routeTab : undefined;
     applyingRoute = true;
     coast = null;
     if (!restoreContext(entry.context)) {
@@ -1168,7 +1179,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       prepareMerchantNavigation(page, tab);
       if (changedPage) onNavigate?.(page);
       current = page;
-      pageParent = tabs.includes(page) ? undefined : defaultParent(page);
+      pageParent = page === homePage ? undefined : defaultParent(page);
       linkedEntryParent = undefined;
       const local = locals[page];
       local.tab = tab;
@@ -1757,22 +1768,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         if (height) cursor += height + rowGap;
       },
-      image(id, size = 56, { title, center = false } = {}) {
+      image(id, size = 56, { maxHeight = 162, center = false } = {}) {
         const hero = heroKeys.has(id);
         const bleed = hero ? fullBleed : 0;
-        const h = hero ? Math.max(id === 'research' ? 54 : 66, Math.min(title ? 205 : 162, size)) : size;
+        const h = hero ? Math.max(id === 'research' ? 54 : 66, Math.min(maxHeight, size)) : size;
         const span = hero ? width + bleed * 2 : Math.min(width, size);
         const left = center && !hero ? x + Math.round((width - span) / 2) : x - bleed;
         drawImage(parent, id, left, cursor, span, h, hero);
-        if (title) {
-          const band = Math.min(57, h / 2);
-          const base = cursor + h - band;
-          panel(parent, left, base, span, band, { color: palette.dark, alpha: 0.65 }, null, 0);
-          const caption = textNode(parent, title, x + 18, base, width - 18,
-            { size: Math.min(32, 27 * scale()), weight: '800', color: palette.cream });
-          caption.y = base + (band - caption.height) / 2;
-          parent.addChild(inkGraphics().roundRect(x + 4, base + 12, 4, band - 24, 2).fill(palette.gold));
-        }
         cursor += h + rowGap;
       },
       item(id, title, description, { marketRate } = {}) {
@@ -2658,8 +2660,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
       }
     });
-    const contentBottom = footerTop ?? ui.bottom;
-    const max = Math.max(0, contentBottom + 5 - height);
+    setupScrollTarget(parent, body, state, x - bleed, x + width + bleed, y, height,
+      (footerTop ?? ui.bottom) + 5, pinned, scrollObservers);
+    if (plots.length) {
+      syncPlotVisibility = observePlots(plots, scrollTarget);
+      scrollObservers.push(syncPlotVisibility);
+    }
+  }
+
+  function setupScrollTarget(parent, body, state, x, right, y, height, contentHeight, pinned, scrollObservers) {
+    const max = Math.max(0, contentHeight - height);
     state.scroll = clamp(state.scroll ?? 0, 0, max);
     state.onScrollChange?.(state.scroll);
     for (const observe of scrollObservers) observe(state.scroll);
@@ -2667,11 +2677,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (state === locals[current]) rememberContext();
     body.y = y - state.scroll;
     if (pinned) pinned.layer.y = y + Math.max(0, pinned.top - state.scroll);
-    scrollTarget = { body, state, max, x: x - bleed, right: x + width + bleed, y, height, pinned, scrollObservers };
-    if (plots.length) {
-      syncPlotVisibility = observePlots(plots, scrollTarget);
-      scrollObservers.push(syncPlotVisibility);
-    }
+    scrollTarget = { body, state, max, x, right, y, height, pinned, scrollObservers };
     if (max > 0) {
       const thumbH = Math.max(22, height * height / (height + max));
       const trackX = scrollTarget.right;
@@ -2700,6 +2706,38 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       thumb.y = y + scrollTarget.thumbRange * (state.scroll / max);
       updateScrollThumb(performance.now());
     }
+  }
+
+  function estateArea(parent, researchReady) {
+    const { width, height } = frame;
+    const body = new Container();
+    body.label = 'estate-map';
+    const mask = inkGraphics().rect(0, 0, width, height).fill(0xffffff);
+    parent.addChild(body, mask);
+    body.mask = mask;
+    const firstControl = controls.length;
+    estateMap = mountEstateMap(body, {
+      width,
+      insetTop: layout.inset.top,
+      onOpen: (id) => {
+        if (!Object.hasOwn(estateDestinations, id)) return;
+        const page = estateDestinations[id];
+        delete locals[page].id;
+        delete locals[page].positionedSourceId;
+        delete locals[page].linkedResearchItem;
+        go(page);
+      },
+      bind: (target, x, y, w, h, run) => hitAt(target, body, x, y, w, h, run),
+      getImage: (url) => textures.get(url),
+      loadImage: loadAnimationImage,
+      markDirty,
+      researchReady,
+      guideTaskName: activeGuideTask(world)?.name,
+      focusedIndex: focusIndex - firstControl,
+    });
+    const map = estateMap;
+    setupScrollTarget(parent, body, locals[homePage], 0, width, 0, height, map.height, undefined,
+      [(scroll) => map.setViewport(scroll, height)]);
   }
 
   function changeScroll(value, active = true) {
@@ -2738,87 +2776,131 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     void action('grantDevelopmentTools');
   }
 
-  function topBar(parent, content, x, y, w) {
-    if (developmentToolsEnabled) developmentTitleTarget = undefined;
-    const height = 59;
-    const settingsWidth = 36;
-    const balanceHeight = 36;
-    const balanceTop = y + 12;
-    panel(parent, 0, 0, frame.width, y + height, palette.paper, null, 0);
-    parent.addChild(inkGraphics().rect(0, y + height - 1, frame.width, 1).fill(palette.line));
-
-    const showSettings = current !== '设置' && Boolean(content);
-    const right = x + w - (showSettings ? settingsWidth + 7 : 0);
-    if (showSettings) {
-      const left = x + w - settingsWidth;
-      const focused = !waiting && controls.length === focusIndex;
-      const gear = panel(parent, left, balanceTop, settingsWidth, balanceHeight,
-        palette.pale, focused ? palette.green : palette.border, 11);
-      gear.label = 'settings-button';
-      drawImage(parent, 'settings-gear', left + 5, balanceTop + 5, 26, 26);
-      if (!waiting) hitAt(gear, parent, left - 6, balanceTop - 6, settingsWidth + 12, balanceHeight + 12, () => go('设置'));
-    }
-
-    if (!tabs.includes(current) || pageParent) {
-      const backWidth = 48;
-      buttonAt(parent, x, y + 8, backWidth, 43, '返回', back, { iconOnly: 'chevron-left' });
-      const titleRoom = Math.max(1, w - (backWidth + 7) * 2);
-      const titleX = x + (w - titleRoom) / 2;
-      const title = textNode(parent, current, titleX, y, titleRoom, {
-        size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
-      });
-      title.y = y + (height - title.height) / 2;
-      if (developmentToolsEnabled && current === '设置' && content && !waiting && !status?.busy && !modal && !pendingModal) {
-        const titleHit = inkGraphics();
-        parent.addChild(titleHit);
-        titleHit.label = 'development-settings-title';
-        const hitWidth = Math.max(48, title.width + 8);
-        titleHit.eventMode = 'static';
-        titleHit.hitArea = new Rectangle(title.x + (title.width - hitWidth) / 2, y + 5, hitWidth, 49);
-        titleHit.on('pointertap', handleDevelopmentTitleTap);
-        developmentTitleTarget = titleHit;
-      }
-      return;
-    }
-
-    const titleWidth = w < 330 ? 103 : 123;
-    const title = textNode(parent, '放置庄园', x + 3, y, titleWidth, {
-      size: Math.min((titleWidth - 5) / 4, 26 * scale()), weight: '850',
-    });
-    title.y = y + (height - title.height) / 2;
-    if (!content) return;
-
-    const coinX = x + titleWidth + 8;
-    const coinWidth = right - coinX;
-    if (coinWidth < 34) return;
-    const coinSurface = panel(parent, coinX, balanceTop, coinWidth, balanceHeight, palette.pale, palette.line, 18);
-    drawImage(parent, 'coin', coinX + 7, y + 17, 25, 25);
-    const amount = compactLabel(parent, content.coins, coinX + 36, y, coinWidth - 42,
-      { size: w < 330 ? 18 : 22, weight: '800' });
-    amount.y = y + (height - amount.height) / 2;
-    if (!waiting) hitAt(coinSurface, parent, coinX, y + 7, coinWidth, 46, () => showExactNumber('金币', content.coins));
+  function closeNavigationMenu() {
+    if (!navigationMenu) return;
+    focusIndex = navigationMenu.buttonIndex;
+    navigationMenu = undefined;
+    coast = null;
+    redraw();
   }
 
-  function bottomBar(parent, x, y, w, readyTabs) {
-    const height = frame.height - y;
-    panel(parent, 0, y, frame.width, height + 24, palette.cream, palette.border, 17);
-    const segment = w / tabs.length;
-    tabs.forEach((page, index) => {
-      const at = x + segment * index;
-      if (page === current) panel(parent, at + 5, y + 46, segment - 10, 25, palette.selection, null, 15);
-      if (!waiting) {
-        const hit = inkGraphics();
-        parent.addChild(hit);
-        hitAt(hit, parent, at, y + 2, segment, 73, () => go(page, { root: true }));
-      }
-      const artWidth = Math.min(55, segment - 8);
-      drawImage(parent, tabIcons[index], at + (segment - artWidth) / 2, y + 3, artWidth, 44);
-      const caption = textNode(parent, page, at, y + 46, segment, {
-        size: Math.min(22, 17 * scale(), (segment - 8) / 2), align: 'center', weight: '850',
-      });
-      caption.y = y + 46 + (25 - caption.height) / 2;
-      if (page === '研究' && readyTabs.size) drawIndicator(parent, at + segment, y);
+  function navigationMenuButton(parent, right, top) {
+    const layer = new Container();
+    parent.addChild(layer);
+    const size = 36;
+    const left = right - size;
+    const buttonIndex = controls.length;
+    const focused = !waiting && (navigationMenu ? navigationMenu.focusIndex === 0 : focusIndex === buttonIndex);
+    const button = panel(layer, left, top, size, size,
+      navigationMenu ? palette.selection : palette.pale, focused ? palette.green : palette.border, 11);
+    button.label = 'navigation-menu-button';
+    drawImage(layer, 'nav-menu', left + 5, top + 5, 26, 26);
+    const control = waiting ? undefined : hitAt(button, layer, left - 6, top - 6, size + 12, size + 12, () => {
+      if (navigationMenu) { closeNavigationMenu(); return; }
+      coast = null;
+      navigationMenu = { buttonIndex, scroll: 0, focusIndex: 0 };
+      focusIndex = -1;
+      redraw();
     });
+    return { layer, control, right, y: top + size + 8 };
+  }
+
+  function drawNavigationMenu(parent, { layer: trigger, control, right, y }) {
+    // Give the overlay the only hit targets and keyboard controls while it is open.
+    const layer = new Container();
+    layer.label = 'navigation-menu';
+    parent.addChild(layer);
+    const outside = new Container();
+    outside.eventMode = 'static';
+    outside.hitArea = root.hitArea;
+    outside.on('pointertap', (event) => {
+      if (event.isPrimary && event.button === 0 && !blockTap) closeNavigationMenu();
+    });
+    layer.addChild(outside);
+    controls = [control];
+
+    const width = Math.min(288, Math.max(1, right - layout.inset.left - 8));
+    const x = right - width;
+    const columns = width >= 270 ? 3 : width >= 152 ? 2 : 1;
+    const padding = 6;
+    const rowHeight = 64;
+    const contentHeight = Math.ceil(menuPages.length / columns) * rowHeight + padding * 2;
+    const height = Math.max(1, Math.min(contentHeight, frame.height - layout.inset.bottom - 8 - y));
+    panel(layer, x, y, width, height, palette.card, palette.border, 11);
+
+    const viewport = new Container();
+    viewport.eventMode = 'static';
+    viewport.hitArea = new Rectangle(x, y, width, height);
+    const body = new Container();
+    const mask = inkGraphics().rect(x, y, width, height).fill(0xffffff);
+    layer.addChild(viewport);
+    viewport.addChild(body, mask);
+    body.mask = mask;
+    const columnWidth = Math.max(1, (width - padding * 2 - (height < contentHeight ? 6 : 0)) / columns);
+    const iconSize = Math.min(32, Math.max(1, columnWidth - 8));
+    const labelSize = Math.min(14, Math.max(6, (columnWidth - 8) / 4));
+    for (const [index, page] of menuPages.entries()) {
+      const icon = menuIcons[page];
+      const tile = new Container();
+      tile.label = icon;
+      tile.position.set(x + padding + (index % columns) * columnWidth,
+        padding + Math.floor(index / columns) * rowHeight);
+      body.addChild(tile);
+      const focused = navigationMenu.focusIndex === controls.length;
+      const surface = panel(tile, 2, 2, Math.max(1, columnWidth - 4), rowHeight - 4,
+        focused ? palette.selection : palette.card, focused ? palette.green : palette.line, 8);
+      drawImage(tile, icon, (columnWidth - iconSize) / 2, 6, iconSize, iconSize, false, false);
+      textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
+        size: labelSize, align: 'center', weight: '750', wrap: false,
+      });
+      hitAt(surface, tile, 0, 0, columnWidth, rowHeight, () => go(page));
+    }
+    setupScrollTarget(layer, body, navigationMenu, x, right, y, height, contentHeight, undefined, []);
+    layer.addChild(trigger);
+  }
+
+  function homeHud(parent, content, { left, top, right }) {
+    const coinX = left + 8;
+    const menuRight = frame.width - right - 8;
+    const balanceHeight = 36;
+    const balanceTop = top + 12;
+    const coinWidth = Math.min(158, menuRight - coinX - 43);
+    if (coinWidth >= 48) {
+      const coinSurface = panel(parent, coinX, balanceTop, coinWidth, balanceHeight,
+        palette.pale, palette.line, 18);
+      coinSurface.label = 'estate-coin-balance';
+      drawImage(parent, 'coin', coinX + 7, balanceTop + 5, 25, 25);
+      const amount = compactLabel(parent, content.coins, coinX + 36, balanceTop, coinWidth - 42,
+        { size: 22, weight: '800' });
+      amount.y = balanceTop + (balanceHeight - amount.height) / 2;
+    }
+    return navigationMenuButton(parent, menuRight, balanceTop);
+  }
+
+  function topBar(parent, content, x, y, w, hasWorld) {
+    const height = 59;
+    panel(parent, 0, 0, frame.width, y + height, palette.paper, null, 0);
+    parent.addChild(inkGraphics().rect(0, y + height - 1, frame.width, 1).fill(palette.line));
+    const backWidth = 48;
+    buttonAt(parent, x, y + 8, backWidth, 43, '返回', back, { iconOnly: 'chevron-left' });
+    const titleRoom = Math.max(1, w - (backWidth + 7) * 2);
+    const titleX = x + (w - titleRoom) / 2;
+    const title = textNode(parent, current, titleX, y, titleRoom, {
+      size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
+    });
+    title.y = y + (height - title.height) / 2;
+    const menu = hasWorld ? navigationMenuButton(parent, x + w, y + 12) : undefined;
+    if (developmentToolsEnabled && current === '设置' && content && !waiting && !status?.busy && !modal && !pendingModal) {
+      const titleHit = inkGraphics();
+      parent.addChild(titleHit);
+      titleHit.label = 'development-settings-title';
+      const hitWidth = Math.max(48, title.width + 8);
+      titleHit.eventMode = 'static';
+      titleHit.hitArea = new Rectangle(title.x + (title.width - hitWidth) / 2, y + 5, hitWidth, 49);
+      titleHit.on('pointertap', handleDevelopmentTitleTap);
+      developmentTitleTarget = titleHit;
+    }
+    return menu;
   }
 
   function drawFeedback() {
@@ -2929,21 +3011,32 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     for (const child of root.removeChildren()) child.destroy({ children: true });
     controls = [];
     scrollTarget = undefined;
+    estateMap = undefined;
+    if (developmentToolsEnabled) developmentTitleTarget = undefined;
     panel(root, 0, 0, frame.width, frame.height, palette.paper, null, 0);
     const margin = frame.width > 550 ? (frame.width - 520) / 2 : 8;
     const left = Math.max(margin, inset.left + 6);
     const w = Math.max(80, frame.width - left - Math.max(margin, inset.right + 6));
-    topBar(root, world, left, inset.top, w);
-    const hasTabs = tabs.includes(current);
+    const isHome = current === homePage;
     const hasWorld = world && !status?.busy;
-    const readyTabs = hasWorld && hasTabs && !waiting ? cachedResearchReadyTabs(world) : noResearchReadyTabs;
+    if (navigationMenu && (!hasWorld || waiting)) {
+      navigationMenu = undefined;
+      focusIndex = -1;
+    }
+    let menu = isHome ? undefined : topBar(root, world, left, inset.top, w, hasWorld);
+    const readyTabs = hasWorld && !waiting && (isHome || current === '研究')
+      ? cachedResearchReadyTabs(world) : noResearchReadyTabs;
     const top = inset.top + 59;
-    const bottom = frame.height - inset.bottom - (hasTabs ? 79 : 5);
-    if (hasWorld) {
+    const bottom = frame.height - inset.bottom - 5;
+    if (hasWorld && isHome) {
+      const hud = new Container();
+      menu = homeHud(hud, world, inset);
+      estateArea(root, readyTabs.size > 0);
+      root.addChild(hud);
+    } else if (hasWorld) {
       const drawPage = current === '研究' ? (ui) => renderResearch(ui, readyTabs) : pages[current];
       scrollArea(root, left, top, w, Math.max(40, bottom - top), locals[current], drawPage,
         Math.max(0, Math.min(left, frame.width - left - w)));
-      if (hasTabs) bottomBar(root, left, bottom + 2, w, readyTabs);
     } else {
       const ui = layoutUI(root, left, top + 20, w, {}, Math.max(40, bottom - top));
       ui.heading(status?.title ?? '正在准备庄园');
@@ -2981,22 +3074,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     }
 
+    if (navigationMenu && menu) drawNavigationMenu(root, menu);
     if (modal && hasWorld) {
       controls = [];
-      const overTabs = modal.variant === 'warehouse-sale' && hasTabs;
-      const sheetBottom = overTabs ? bottom + 2 : frame.height - inset.bottom - 7;
+      const sheetBottom = frame.height - inset.bottom - 7;
       const shade = inkGraphics().rect(0, 0, frame.width, frame.height)
-        .fill({ color: palette.dark, alpha: overTabs ? 0.36 : 0.64 });
+        .fill({ color: palette.dark, alpha: modal.variant === 'warehouse-sale' ? 0.36 : 0.64 });
       shade.eventMode = 'static';
       root.addChild(shade);
-      if (overTabs) {
-        bottomBar(root, left, sheetBottom, w, readyTabs);
-        const cover = inkGraphics().rect(0, sheetBottom, frame.width, frame.height - sheetBottom)
-          .fill({ color: palette.dark, alpha: 0 });
-        cover.eventMode = 'static';
-        root.addChild(cover);
-        controls = [];
-      }
       const variant = modal.variant;
       const minimum = variant === 'warehouse-sale' ? 358 : variant === 'facility-upgrade' ? 475 : 250;
       const ratio = variant === 'warehouse-sale' ? 0.48 : variant === 'facility-upgrade' ? 0.57 : 0.77;
@@ -3101,6 +3186,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let scrollWheelEvent;
   root.on('wheel', (event) => {
     if (!scrollTarget) return;
+    if (navigationMenu) scrollWheelEvent = event.nativeEvent;
     const p = root.toLocal(event.global);
     if (p.x < scrollTarget.x || p.x > scrollTarget.right ||
         p.y < scrollTarget.y || p.y > scrollTarget.y + scrollTarget.height) return;
@@ -3126,11 +3212,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (modal?.onKeyDown?.(event)) { event.preventDefault(); return; }
     if (event.key === 'Escape') { event.preventDefault(); back(); return; }
     if (!controls.length) return;
+    const activeFocus = navigationMenu?.focusIndex ?? focusIndex;
     if (event.key === 'Tab') {
       event.preventDefault();
-      focusIndex = focusIndex < 0 ? (event.shiftKey ? controls.length - 1 : 0)
-        : (focusIndex + (event.shiftKey ? -1 : 1) + controls.length) % controls.length;
-      const target = controls[focusIndex];
+      const nextFocus = activeFocus < 0 ? (event.shiftKey ? controls.length - 1 : 0)
+        : (activeFocus + (event.shiftKey ? -1 : 1) + controls.length) % controls.length;
+      if (navigationMenu) navigationMenu.focusIndex = nextFocus;
+      else focusIndex = nextFocus;
+      const target = controls[nextFocus];
       if (scrollTarget) {
         let container = target.parent;
         while (container && container !== scrollTarget.body) container = container.parent;
@@ -3142,8 +3231,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       redraw();
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      controls[focusIndex]?.run();
-    } else if (controls[focusIndex]?.key?.(event.key)) event.preventDefault();
+      controls[activeFocus]?.run();
+    } else if (controls[activeFocus]?.key?.(event.key)) event.preventDefault();
   });
   app.canvas.addEventListener('paste', (event) => {
     if (modal?.onPaste?.(event)) { event.preventDefault(); return; }
@@ -3211,6 +3300,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       for (const plot of activePlots) if (plot.animation.update(animationFrame) !== false) animated = true;
       if (animated) markDirty();
     }
+    if (estateMap && !document.hidden && !modal && !pendingModal && estateMap.update(now)) markDirty();
     if (coast) markDirty();
     updateScrollThumb(now);
   });
@@ -3250,14 +3340,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function resetSession() {
     navigationEpoch += 1;
+    navigationMenu = undefined;
     pendingModal = undefined;
     activateDialog(undefined);
     pageParent = undefined;
     linkedEntryParent = undefined;
-    current = '庄园';
+    current = homePage;
     lastResearchReady = undefined;
     for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
-    locals.庄园.tab = '田地';
     shortPlotStarts.clear();
     livestockBatches.clear();
     fishBatches.clear();

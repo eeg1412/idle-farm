@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Assets, CanvasTextMetrics, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Texture, TextureSource } from 'pixi.js';
+import { Assets, CanvasTextMetrics, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Sprite, Texture, TextureSource } from 'pixi.js';
 import 'pixi.js/events';
 import { advanceWorld, arrangeStation, assignFacility, buyFacility, buyStation, catalog, newWorld } from '../src/game/world.js';
 import { techDefinitions } from '../src/game/advancement.js';
@@ -43,11 +43,13 @@ function setup(dispatch, browser) {
   let layout;
   let viewportWidth;
   let viewportHeight;
-  const draw = (width, height, timing) => {
-    if (width !== viewportWidth || height !== viewportHeight) {
-      layout = viewportLayout(width, height, zero);
+  let viewportInset;
+  const draw = (width, height, timing, inset = zero) => {
+    if (width !== viewportWidth || height !== viewportHeight || inset !== viewportInset) {
+      layout = viewportLayout(width, height, inset);
       viewportWidth = width;
       viewportHeight = height;
+      viewportInset = inset;
     }
     view.render(layout, structuredClone(world), undefined, timing);
   };
@@ -125,13 +127,17 @@ function tapNode(game, node, pointerType = 'mouse') {
   game.point('pointerup', center.x, center.y, pointerType);
 }
 
-function tapControl(game, label) {
+function controlCenter(game, label) {
   const node = game.nodes().findLast((entry) => entry.label === label && entry.hitArea);
   assert.ok(node, label);
   const { x, y, width, height } = node.hitArea;
-  const center = node.toGlobal({ x: x + width / 2, y: y + height / 2 });
-  game.point('pointerdown', center.x, center.y);
-  game.point('pointerup', center.x, center.y);
+  return node.toGlobal({ x: x + width / 2, y: y + height / 2 });
+}
+
+function tapControl(game, label, pointerType = 'mouse') {
+  const { x, y } = controlCenter(game, label);
+  game.point('pointerdown', x, y, pointerType);
+  game.point('pointerup', x, y, pointerType);
   game.flush();
 }
 
@@ -419,17 +425,127 @@ test('browser navigation restores game pages, research tabs, and nested dialogs 
   assert.ok(game.nodes().some((node) => node.text === '比例 37'));
 });
 
-test('Pixi mouse and touch activate bottom tabs through artwork and survive a mid-press redraw', () => {
-  const game = setup();
-  game.draw(390, 844);
-  game.point('pointerdown', 121, 803);
-  game.draw(390, 844);
+test('Pixi estate hotspots open all ten destinations and return to the same map position', () => {
+  const browser = historyBrowser('');
+  const game = setup(undefined, browser);
+  const destinations = [
+    ['field', '#/farm?tab=fields'], ['livestock', '#/farm?tab=livestock'],
+    ['fish', '#/farm?tab=fish'], ['mine', '#/farm?tab=mining'],
+    ['processing', '#/workshop?tab=processing'], ['refining', '#/workshop?tab=refining'],
+    ['warehouse', '#/warehouse'], ['research', '#/research'],
+    ['operations', '#/management'], ['tasks', '#/tasks'],
+  ];
+  const narrowWidth = 320;
+  const narrowHeight = 568;
+  game.draw(narrowWidth, narrowHeight, undefined, { left: 0, right: 0, top: 47, bottom: 0 });
+  const map = game.nodes().find(({ label }) => label === 'estate-map');
+  const hotspots = game.nodes().filter(({ label }) => label?.startsWith('estate-entry-'));
+  assert.equal(hotspots.length, destinations.length);
+  const narrowGuide = game.nodes().find(({ label }) => label === 'estate-guide-task');
+  const narrowMenu = game.nodes().find(({ label }) => label === 'navigation-menu-button');
+  assert.ok(narrowGuide.getBounds().minY > narrowMenu.hitArea.bottom);
+  assert.ok(game.wheel(narrowWidth / 2, narrowHeight / 2, 10_000));
   game.flush();
-  game.point('pointerup', 121, 803);
-  assert.deepEqual(game.pages, ['工坊']);
-  game.point('pointerdown', 195, 815, 'touch');
-  game.point('pointerup', 195, 815, 'touch');
-  assert.deepEqual(game.pages, ['工坊', '仓库']);
+  assert.ok(map.y < 0);
+  for (const [index, { label, hitArea }] of hotspots.entries()) {
+    assert.ok(hitArea.left >= 0 && hitArea.right <= narrowWidth, label);
+    assert.ok(hitArea.top >= 0 && hitArea.bottom + map.y <= narrowHeight, label);
+    for (const other of hotspots.slice(index + 1)) {
+      assert.ok(!hitArea.intersects(other.hitArea), `${label} overlaps ${other.label}`);
+    }
+  }
+  assert.ok(game.wheel(narrowWidth / 2, narrowHeight / 2, -10_000));
+  game.flush();
+  game.draw(390, 844);
+  const balance = game.nodes().find(({ label }) => label === 'estate-coin-balance');
+  assert.ok(balance);
+  const balanceBounds = balance.getBounds();
+  const balanceX = balanceBounds.x + balanceBounds.width / 2;
+  const balanceY = balanceBounds.y + balanceBounds.height / 2;
+  game.point('pointerdown', balanceX, balanceY, 'touch');
+  game.point('pointerup', balanceX, balanceY, 'touch');
+  game.flush();
+  assert.equal(browser.location.hash, '#/farm');
+  assert.ok(game.nodes().every(({ text }) => text !== '复制数值'));
+  const guide = game.nodes().find(({ text }) => text === '任务 · 第一次收成');
+  assert.ok(guide);
+  const { minX, minY, maxX, maxY } = guide.getBounds();
+  const guideX = (minX + maxX) / 2;
+  const guideY = (minY + maxY) / 2;
+  const taskCenter = controlCenter(game, 'estate-entry-tasks');
+  const guideBounds = guide.parent.getBounds();
+  const menuBounds = game.nodes().find(({ label }) => label === 'navigation-menu-button').getBounds();
+  assert.ok(Math.abs(guideX - taskCenter.x) < 1 && guideBounds.maxY < taskCenter.y);
+  assert.ok(guideBounds.minX >= 0 && guideBounds.maxX <= 390 && guideBounds.maxY <= 844);
+  assert.ok(guideBounds.minY > Math.max(balanceBounds.maxY, menuBounds.maxY));
+  game.point('pointerdown', guideX, guideY, 'touch');
+  game.point('pointerup', guideX, guideY, 'touch');
+  game.flush();
+  assert.equal(browser.location.hash, '#/tasks');
+  tapControl(game, '返回');
+  assert.equal(browser.location.hash, '#/farm');
+  for (const [index, [id, hash]] of destinations.entries()) {
+    const label = `estate-entry-${id}`;
+    const centerY = controlCenter(game, label).y;
+    if (centerY < 60 || centerY > 740) {
+      assert.ok(game.wheel(195, 450, centerY - 450), id);
+      game.flush();
+    }
+    const { x, y } = controlCenter(game, label);
+    assert.ok(y > 59 && y < 844, id);
+    const pointer = index % 2 === 0 ? 'mouse' : 'touch';
+    game.point('pointerdown', x, y, pointer);
+    if (index === 0) {
+      game.draw(390, 844);
+      game.flush();
+    }
+    game.point('pointerup', x, y, pointer);
+    game.flush();
+    assert.equal(browser.location.hash, hash, id);
+    tapControl(game, '返回', pointer);
+    assert.equal(browser.location.hash, '#/farm', id);
+    assert.equal(controlCenter(game, label).y, y, id);
+  }
+});
+
+test('estate art stays visible in the frame that updates the balance', async (t) => {
+  const game = setup();
+  const art = new Map([
+    ['background', 'estate-landscape', 800, 2100],
+    ['field', 'estate-building-field', 536, 320],
+    ['sign', 'estate-sign-field', 516, 110],
+    ['field-motion', 'estate-motion-field', 120, 120],
+  ].map(([id, label, width, height]) => [id, { label, texture: new Texture({ source: new TextureSource({ width, height }) }) }]));
+  t.mock.method(Assets, 'load', (url) => {
+    const id = new URL(url).pathname.match(/^\/art\/estate\/(.+)\.webp$/)?.[1];
+    return art.has(id) ? Promise.resolve(art.get(id).texture) : new Promise(() => {});
+  });
+  const node = (label) => game.nodes().find((entry) => entry.label === label);
+  game.draw(390, 844);
+  await new Promise(setImmediate);
+  game.tick();
+  for (const { label, texture } of art.values()) assert.equal(node(label)?.texture, texture, label);
+
+  game.world.coins = 1_234n;
+  game.draw(390, 844);
+
+  assert.ok(game.nodes().some(({ text }) => text === '1,234'));
+  // The render listener in Pixi's ticker can run before queued texture callbacks.
+  for (const { label, texture } of art.values()) {
+    assert.equal(node(label)?.texture, texture, label);
+    assert.equal(node(label)?.visible, true, label);
+  }
+});
+
+test('a mine deep link opens the facility directly and its return opens the estate map', () => {
+  const browser = historyBrowser('#/farm?tab=mining');
+  const game = setup(undefined, browser);
+  game.draw(390, 844);
+  assert.ok(game.nodes().some(({ text }) => text === '矿洞'));
+  assert.ok(game.nodes().every(({ label }) => label !== 'estate-entry-mine'));
+  tapControl(game, '返回');
+  assert.equal(browser.location.hash, '#/farm');
+  assert.ok(game.nodes().some(({ label }) => label === 'estate-entry-mine'));
 });
 
 test('production batch fills advance between snapshots and stop at their display limits', (t) => {
@@ -441,6 +557,7 @@ test('production batch fills advance between snapshots and stop at their display
   assert.ok(arrangeStation(game.world, 'I', 0, 'I01'));
   const crop = game.world.facilities.C[0].batch;
   const duration = crop.end - crop.start;
+  game.view.go('庄园', { tab: '田地' });
   const draw = () => game.draw(390, 844, { anchor: now });
   const get = (label) => game.nodes().find((node) => node.label === label);
   const fraction = () => get('batch-progress-fill').width / get('batch-progress-track').width;
@@ -598,42 +715,128 @@ test('workshop keeps the same progress track and card height after running out o
   assert.ok(game.nodes().some((node) => node.text === '暂停'));
 });
 
-test('management and settings open from separate controls and landscape margins ignore clicks', () => {
-  const game = setup();
+test('settings opens from the navigation menu and landscape margins ignore clicks', () => {
+  const browser = historyBrowser('#/farm');
+  const game = setup(undefined, browser);
   game.draw(1000, 844);
   game.point('pointerdown', 40, 100);
   game.point('pointerup', 40, 100);
-  assert.deepEqual(game.pages, []);
-  const tap = (label) => {
-    const node = game.nodes().findLast((entry) => entry.text === label);
-    assert.ok(node, label);
-    const center = node.toGlobal({ x: node.width / 2, y: node.height / 2 });
-    game.point('pointerdown', center.x, center.y);
-    game.point('pointerup', center.x, center.y);
-    game.flush();
-  };
+  assert.equal(browser.location.hash, '#/farm');
   assert.ok(game.nodes().every((node) => node.text !== '设置'));
-  const settings = game.nodes().find((node) => node.label === 'settings-button');
-  assert.ok(settings);
-  const center = settings.toGlobal({ x: settings.hitArea.x + settings.hitArea.width / 2,
-    y: settings.hitArea.y + settings.hitArea.height / 2 });
-  game.point('pointerdown', center.x, center.y);
-  game.point('pointerup', center.x, center.y);
+  tapControl(game, 'navigation-menu-button');
+  assert.equal(browser.location.hash, '#/farm');
+  tapText(game, '设置');
+  assert.equal(browser.location.hash, '#/settings');
+  tapControl(game, '返回');
+  assert.equal(browser.location.hash, '#/farm');
+  assert.equal(game.wheel(40, 500, 10_000), false);
+  assert.ok(game.wheel(500, 500, 10_000));
   game.flush();
-  assert.deepEqual(game.pages, ['设置']);
+  tapControl(game, 'estate-entry-operations');
+  assert.equal(browser.location.hash, '#/management');
+  assert.ok(game.nodes().every(({ text }) => text !== '任务'));
+  assert.equal(game.nodes().filter(({ text }) => text === '经营').length, 1);
+  tapText(game, '图鉴');
+  assert.equal(browser.location.hash, '#/catalog');
+});
+
+test('the navigation menu loads icons above every destination and opens the corresponding game pages', async (t) => {
+  const browser = historyBrowser('#/settings');
+  const actions = [];
+  const game = setup((_world, action) => { actions.push(action); return { ok: true }; }, browser);
+  const menuTextures = new Map();
+  t.mock.method(Assets, 'load', (url) => {
+    const key = new URL(url).pathname.match(/^\/ui-icons\/(menu-[a-z-]+)\.webp$/)?.[1];
+    if (!key) return new Promise(() => {});
+    const texture = new Texture({ source: new TextureSource({ width: 96, height: 96 }) });
+    menuTextures.set(key, texture);
+    return Promise.resolve(texture);
+  });
+  game.draw(320, 568, undefined, { left: 0, right: 0, top: 47, bottom: 0 });
+  assert.equal(menuTextures.size, 0);
+  const destinations = [
+    ['大地图', 'menu-map', '#/farm'],
+    ['田地', 'menu-field', '#/farm?tab=fields'],
+    ['畜牧', 'menu-livestock', '#/farm?tab=livestock'],
+    ['鱼池', 'menu-fish', '#/farm?tab=fish'],
+    ['矿洞', 'menu-mine', '#/farm?tab=mining'],
+    ['加工', 'menu-processing', '#/workshop?tab=processing'],
+    ['精制', 'menu-refining', '#/workshop?tab=refining'],
+    ['仓库', 'menu-warehouse', '#/warehouse'],
+    ['行脚商', 'menu-merchant', '#/merchant'],
+    ['研究', 'menu-research', '#/research'],
+    ['经营', 'menu-operations', '#/management'],
+    ['图鉴', 'menu-catalog', '#/catalog'],
+    ['任务', 'menu-tasks', '#/tasks'],
+    ['出售庄园', 'menu-farm-sale', '#/farm-sale'],
+    ['设置', 'menu-settings', '#/settings'],
+  ];
+  const menu = () => game.nodes().find(({ label }) => label === 'navigation-menu');
+  const captions = (node) => node.children.flatMap((child) =>
+    typeof child.text === 'string' ? [child.text] : captions(child));
+  tapControl(game, 'navigation-menu-button', 'touch');
+  await new Promise(setImmediate);
+  game.flush();
+  assert.deepEqual([...menuTextures.keys()], destinations.map(([, key]) => key));
+  for (const [label, key] of destinations) {
+    const tile = game.nodes().find((node) => node.label === key);
+    const artwork = tile.children.find((node) => node instanceof Sprite);
+    const caption = tile.children.find((node) => node.text === label);
+    assert.equal(artwork?.texture, menuTextures.get(key), label);
+    assert.equal(artwork.height, 32, label);
+    assert.ok(artwork.y + artwork.height <= caption.y, label);
+    assert.equal(caption.style.fontSize, 14, label);
+  }
+  tapControl(game, 'navigation-menu-button');
+
+  for (const [label, , hash] of destinations) {
+    const history = browser.history.state;
+    tapControl(game, 'navigation-menu-button', 'touch');
+    assert.equal(browser.history.state, history);
+    assert.deepEqual(captions(menu()), destinations.map(([label]) => label));
+    const caption = game.nodes().findLast((node) => node.text === label);
+    tapNode(game, caption, 'touch');
+    game.flush();
+    assert.equal(browser.location.hash, hash, label);
+    assert.equal(menu(), undefined, label);
+  }
+  assert.deepEqual(actions, []);
+
+  tapControl(game, 'navigation-menu-button');
+  const history = browser.history.state;
   tapControl(game, '返回');
-  assert.deepEqual(game.pages, ['设置', '庄园']);
-  tap('经营');
-  assert.equal(game.pages.at(-1), '经营');
-  tap('庄园');
-  assert.equal(game.pages.at(-1), '庄园');
-  tap('经营');
-  tap('任务');
-  assert.equal(game.pages.at(-1), '任务');
-  tapControl(game, '返回');
-  assert.equal(game.pages.at(-1), '经营');
-  tap('图鉴');
-  assert.equal(game.pages.at(-1), '图鉴');
+  assert.equal(menu(), undefined);
+  assert.equal(browser.history.state, history);
+  tapControl(game, 'navigation-menu-button');
+  game.key('Escape');
+  assert.equal(menu(), undefined);
+  assert.equal(browser.history.state, history);
+  tapControl(game, 'navigation-menu-button');
+  tapControl(game, 'navigation-menu-button');
+  assert.equal(menu(), undefined);
+  tapControl(game, 'navigation-menu-button');
+  browser.history.back();
+  assert.equal(browser.location.hash, '#/farm-sale');
+  assert.equal(menu(), undefined);
+});
+
+test('the navigation menu handles short screens without scrolling or activating the estate map', () => {
+  const browser = historyBrowser('#/farm');
+  const game = setup(undefined, browser);
+  game.draw(260, 310, undefined, { left: 0, right: 0, top: 20, bottom: 12 });
+  tapControl(game, 'navigation-menu-button', 'touch');
+  const map = game.nodes().find(({ label }) => label === 'estate-map');
+  assert.ok(game.wheel(7, 180, 10_000));
+  assert.equal(map.y, 0);
+  assert.ok(game.wheel(180, 140, 10_000));
+  assert.equal(map.y, 0);
+  tapText(game, '设置', 'touch');
+  assert.equal(browser.location.hash, '#/settings');
+
+  tapControl(game, 'navigation-menu-button');
+  game.key('Tab');
+  game.key('Enter');
+  assert.equal(browser.location.hash, '#/farm');
 });
 
 test('catalog tiles in a row grow together for longer copy', () => {
@@ -663,7 +866,7 @@ test('compact card edges and bottom actions align by row in the farm, workshop a
   game.world.market = { day: '2026-11-17', sequence: 0, used: 0, rates: { P169: 200 } };
   game.draw(390, 844);
   for (const page of ['庄园', '工坊', '仓库']) {
-    game.view.go(page);
+    game.view.go(page, page === '庄园' ? { tab: '田地' } : undefined);
     game.flush();
     tapText(game, '缩小');
     const cards = game.nodes().filter((node) => node.label === 'scroll-list-card')
@@ -918,6 +1121,7 @@ test('slider keyboard supports arrows and exact endpoints', () => {
 
 test('narrow portrait purchase uses Pixi taps and applies exactly one real purchase', async () => {
   const game = setup((world, name, kind) => ({ ok: name === 'buyFacility' && buyFacility(world, kind) }));
+  game.view.go('庄园', { tab: '田地' });
   game.draw(320, 760);
   const tap = (label) => {
     const node = game.nodes().find((node) => node.text === label);

@@ -260,7 +260,7 @@ test('workshop replacement explains immediate changes and shows the new recipe w
   assert.equal(waiting.find('heading', (label) => label === '草莓果酱'), undefined);
 });
 
-test('the expansion guide sends a player who needs more coins to sell stock', () => {
+test('the task page routes land expansion by available coins without duplicating guidance on the field page', () => {
   const world = newWorld(0);
   world.stats.produced = { C01: 1n, I01: 1n, P01: 1n };
   world.stats.sold = 1n;
@@ -269,8 +269,10 @@ test('the expansion guide sends a player who needs more coins to sell stock', ()
 
   const production = pageFixture(world);
   renderProduction(production.ui);
-  production.click('扩建田地 · 前往出货');
-  assert.ok(production.find('go', (target) => target === '仓库'));
+  assert.equal(production.find('button', (label) =>
+    label.startsWith('任务 · ') || label.startsWith('扩建田地 · ')), undefined);
+  assert.equal(production.find('titleBar', (label) => label === '种植地块'), undefined);
+  assert.ok(production.find('image', (id, _, options) => id === 'fields' && !options?.title));
 
   const tasks = pageFixture(world);
   renderTasks(tasks.ui);

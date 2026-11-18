@@ -2,7 +2,7 @@
 
 [v1.14 畜牧与水产界面参考图](ui-references/v1.14/README.md) · [v1.14 经营与交互规则](expansion/01-operations.md)
 
-首次进入显示庄园的田地页。庄园、工坊、仓库、研究和经营使用底栏，任务、图鉴、设置、出售庄园和行脚商通过页内入口进入。按当前任务读取对应文件。经营数值与前置见[游戏式样书](game-design.md)，已实现范围见[架构说明](architecture.md)。
+首次进入显示可纵向滚动的像素庄园地图。点击地图上的十个设施或路牌进入对应页面。右上角菜单可直达全站游戏页面，首页左上角显示金币。经营数值与前置见[游戏式样书](game-design.md)，程序模块见[架构说明](architecture.md)。
 
 ## 通用规则
 
@@ -18,7 +18,8 @@
 
 | 页面 | 读取 |
 | --- | --- |
-| 庄园 | [庄园与设施](ui/pages/fields.md) |
+| 庄园首页 | [地图、建筑与路牌](ui/pages/estate.md) |
+| 田地、畜牧、鱼池、矿洞 | [设施与生产](ui/pages/fields.md) |
 | 工坊 | [加工与精制](ui/pages/workshop.md) |
 | 仓库 | [库存与出货](ui/pages/warehouse.md) |
 | 行脚商 | [货架买入、求购卖出与换货](ui/pages/merchant.md) |

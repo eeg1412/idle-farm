@@ -11,10 +11,24 @@ const routes = {
   出售庄园: ['farm-sale', {}],
 };
 
+const productionPages = Object.fromEntries(['庄园', '工坊'].flatMap((page) =>
+  Object.keys(routes[page][1]).map((tab) => [tab, page])));
+
+export function pageForRoute(page, tab) {
+  if (page === '工坊') return Object.hasOwn(routes.工坊[1], tab) ? tab : '加工';
+  if (page === '庄园' && Object.hasOwn(routes.庄园[1], tab)) return tab;
+  return page;
+}
+
+export function routeForPage(page, tab) {
+  return Object.hasOwn(productionPages, page) ? { page: productionPages[page], tab: page } : { page, tab };
+}
+
 export function gameHash(route) {
-  const [slug, tabs] = Object.hasOwn(routes, route.page) ? routes[route.page] : routes.庄园;
+  const { page, tab } = routeForPage(route.page, route.tab);
+  const [slug, tabs] = Object.hasOwn(routes, page) ? routes[page] : routes.庄园;
   const params = new URLSearchParams();
-  if (Object.hasOwn(tabs, route.tab)) params.set('tab', tabs[route.tab]);
+  if (Object.hasOwn(tabs, tab)) params.set('tab', tabs[tab]);
   if (route.id) params.set('item', route.id);
   if (route.dialog) params.set('dialog', route.dialog);
   const query = params.toString();

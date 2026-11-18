@@ -1,4 +1,4 @@
-import { AccessibilitySystem, Application, extensions } from 'pixi.js';
+import { AccessibilitySystem, Application, extensions, UPDATE_PRIORITY } from 'pixi.js';
 import {
   advanceWorld, newWorld, settleProduction, catalog,
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
@@ -33,6 +33,7 @@ let worldEpoch = 0;
 let db;
 let status;
 let layout;
+let viewportResizePending = false;
 let frontAnchor;
 let nextDisplayAt = 0;
 let visible = !document.hidden;
@@ -129,14 +130,30 @@ function paint() {
     researchHourMs - display.basicResearchElapsedMs);
 }
 function resize() {
+  viewportResizePending = false;
   const css = getComputedStyle(canvas);
-  const inset = Object.fromEntries(['top', 'right', 'bottom', 'left'].map((edge) =>
+  const edges = ['top', 'right', 'bottom', 'left'];
+  const inset = Object.fromEntries(edges.map((edge) =>
     [edge, px(css.getPropertyValue('--safe-' + edge))]));
-  const width = Math.max(1, document.documentElement.clientWidth);
-  const height = Math.max(1, window.visualViewport?.height ?? window.innerHeight);
-  app.renderer.resize(width, height);
-  layout = viewportLayout(width, height, inset);
+  const { resolution, screen } = app.renderer;
+  const alignToDevicePixel = (value) => Math.round(Math.max(1, value) * resolution) / resolution;
+  const width = alignToDevicePixel(document.documentElement.clientWidth);
+  const height = alignToDevicePixel(window.visualViewport?.height ?? window.innerHeight);
+  const next = viewportLayout(width, height, inset);
+  const bufferChanged = width !== screen.width || height !== screen.height;
+  if (!bufferChanged && layout && next.width === layout.width && next.height === layout.height &&
+      next.x === layout.x && next.y === layout.y && next.scale === layout.scale &&
+      edges.every((edge) => next.inset[edge] === layout.inset[edge])) return;
+  if (bufferChanged) app.renderer.resize(width, height);
+  layout = next;
   view.resize(layout);
+}
+
+function requestViewportResize() {
+  if (viewportResizePending) return;
+  viewportResizePending = true;
+  // Resizing clears the backing buffer. Do it before the next ticker render, in the same frame.
+  app.ticker.addOnce(resize, undefined, UPDATE_PRIORITY.HIGH);
 }
 
 function advanceForeground(draft, deferFinalStarts, anchor) {
@@ -579,7 +596,7 @@ const view = createGameView(app, dispatch, () => {
   const wasAtMerchant = currentPage === '行脚商';
   const atMerchant = page === '行脚商';
   currentPage = page;
-  audio.setTrack(page === '工坊' ? 'workshop' : 'farm');
+  audio.setTrack(page === '加工' || page === '精制' ? 'workshop' : 'farm');
   if (wasAtMerchant && !atMerchant) {
     void enqueueMerchantRelease(performance.now(), Date.now());
   }
@@ -590,8 +607,8 @@ const view = createGameView(app, dispatch, () => {
   }
 }, window, saveManagement);
 
-window.addEventListener('resize', resize);
-window.visualViewport?.addEventListener('resize', resize);
+window.addEventListener('resize', requestViewportResize);
+window.visualViewport?.addEventListener('resize', requestViewportResize);
 canvas.addEventListener('pointerdown', () => audio.unlock(), { passive: true });
 canvas.addEventListener('keydown', () => audio.unlock());
 resize();

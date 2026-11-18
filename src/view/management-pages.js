@@ -11,13 +11,11 @@ const complexityTabs = ['全部', '单类', '双类', '三类', '四类'];
 const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池', M: '矿洞' };
 
 const managementEntries = [
-  { page: '任务', icon: 'task-product', description: '查看任务进度' },
   { page: '图鉴', icon: 'nav-catalog', description: '查阅物品、配方与来源' },
   { page: '出售庄园', icon: 'sale-reset', description: '预览出售收益与新一轮配置' },
 ];
 
 export function renderManagement(ui) {
-  ui.titleBar('经营');
   for (const { page, icon, description } of managementEntries) {
     ui.card((card) => card.item(icon, page, description), {
       padding: 16, gap: 12, style: 'navigation', onClick: () => ui.go(page),

@@ -40,5 +40,13 @@ for (const path of [...paths, ...imagePaths]) {
 }
 const cache = 'idle-farm-' + hash.digest('hex').slice(0, 16);
 const assets = paths.filter((path) => path !== 'dist/index.html').map((path) => './' + path.slice(5));
+// The default map can load before the worker claims its first client. Match estate-map.js's request URL.
+const estateAssetVersions = { background: 6, fish: 2, field: 2, 'field-motion': 2, 'research-motion': 2, operations: 2 };
+for (const path of imagePaths) {
+  if (!path.startsWith('dist/art/estate/')) continue;
+  const asset = path.slice('dist/art/estate/'.length, -'.webp'.length);
+  const version = estateAssetVersions[asset] ?? 1;
+  assets.push(`./${path.slice(5)}?game=1&v=${version}`);
+}
 await writeFile('dist/sw.js',
   `const cacheName = ${JSON.stringify(cache)};\nconst assets = ${JSON.stringify(assets)};\n` + worker);
