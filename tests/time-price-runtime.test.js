@@ -7,10 +7,11 @@ import {
 import { drawQuality, qualityDrawOffer } from '../src/game/quality.js';
 import { objectives, settleTaskRewards, taskResearchPointRewards } from '../src/game/objectives.js';
 import { integerSquareRoot } from '../src/game/prestige-ledger.js';
+import { localCalendarDay } from '../src/game/market.js';
 import {
   advanceWorld, arrangeStation, assignFacility, buyFacility, buyStation, catalog, clearStation, facilityOffer, farmSaleOffer,
   forecastHourlyProduction, newWorld, sell, sellFarm, stationRequirements, stationUpgradeOffer, tradeOffer, updateWorldWallTime,
-  upgradeFacility, upgradeStation,
+  synchronizeWorldCalendar, upgradeFacility, upgradeStation,
 } from '../src/game/world.js';
 
 const coinScale = BigInt(economyScale.coinScale);
@@ -237,11 +238,16 @@ test('6, 12, 24, 48 and 72-hour offline caps match repeated live ticks with whea
     online.tech.delegation = offline.tech.delegation = level;
     const limit = hours * 3_600_000;
     const late = limit * 2;
-    for (let hour = 1; hour <= hours; hour += 1) assert.equal(updateWorldWallTime(online, hour * 3_600_000), 3_600_000);
+    for (let hour = 1; hour <= hours; hour += 1) {
+      advanceWorld(online, online.clockMs + 3_600_000);
+      online.wallAnchorMs = hour * 2 * 3_600_000;
+      synchronizeWorldCalendar(online, online.wallAnchorMs);
+    }
     assert.equal(updateWorldWallTime(offline, late), limit);
     assert.equal(offline.wallAnchorMs, late);
     assert.equal(updateWorldWallTime(offline, late), 0);
-    assert.deepEqual({ ...offline, wallAnchorMs: online.wallAnchorMs, market: null }, { ...online, market: null });
+    assert.equal(offline.merchant.day, localCalendarDay(late));
+    assert.deepEqual({ ...offline, market: null }, { ...online, market: null });
     assert.equal(offline.basicResearchPoints, BigInt(hours) * 100n);
     const produced = offline.stats.produced;
     const wheat = 4n * BigInt(Math.floor(offline.clockMs / 12_000));
@@ -336,9 +342,9 @@ test('research discounts only the generated physical costs and a declined quote 
 
 test('per-technology costs use exact segment quotas, prerequisites and task scope', () => {
   const world = newWorld(0);
-  world.researchPoints = 5_798_060n;
-  assert.equal(techDefinitions.length, 33);
-  assert.equal(techTotalLevels, 1_474);
+  world.researchPoints = 5_823_060n;
+  assert.equal(techDefinitions.length, 35);
+  assert.equal(techTotalLevels, 1_494);
   assert.equal(techOffer(world, 'qualityDiscount'), null);
   assert.equal(upgradeTech(world, 'fishQuality'), false);
   assert.equal(upgradeTech(world, 'livestockYield'), false);
@@ -379,6 +385,8 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
     marketManipulation: [50n, 450n, 2_500n],
     marketPromotion: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n],
     premiumSales: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n],
+    merchantRestock: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n],
+    merchantBargaining: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n],
   };
   const miningBudgets = {
     miningBuy: 125_000n, miningUpgrade: 125_000n, miningYield: 420_000n,
@@ -421,7 +429,7 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
   const tasks = objectives(world);
   assert.equal(tasks.guide.length, 16);
   assert.equal(tasks.long.length, 38);
-  assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').current, 1_474n);
+  assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').current, 1_494n);
   assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').done, true);
   world.stats.sold = 1n;
   assert.equal(objectives(world).guide.length, 35);

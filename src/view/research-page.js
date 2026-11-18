@@ -57,6 +57,8 @@ const techArt = {
   marketForecast: 'tech-market-forecast',
   marketPromotion: 'tech-market-promotion',
   premiumSales: 'tech-premium-sales',
+  merchantRestock: 'tech-merchant-restock',
+  merchantBargaining: 'tech-merchant-bargaining',
 };
 
 function itemKind(item) {
@@ -208,7 +210,7 @@ function techEffect(offer, key) {
       return (hours ? `${hours}小时` : '') + (minutes ? `${minutes}分钟` : '');
     }
     if (key === 'marketForecast') return value ? '可查看' : '未解锁';
-    if (key === 'premiumSales') return `${value.toFixed(2)} ${unit}`;
+    if (key === 'premiumSales' || key === 'merchantBargaining') return `${value.toFixed(2)} ${unit}`;
     if (unit === '次' || unit === '点') return `${value} ${unit}`;
     return `${prefix}${value}${unit}`;
   };
@@ -275,11 +277,12 @@ function showTech(ui, definition) {
 
 function researchNodes(w) {
   const unlocked = new Set(w.unlocked);
-  return catalogItems.map(([id, item]) => ({
-    id, label: researchName(item), icon: researchIcon(id),
-    requires: catalog.research[id]?.requires ?? [],
-    ...researchStatus(w, id, researchOffer(w, id, unlocked), unlocked),
-  }));
+  return catalogItems.map(([id, item]) => {
+    const requires = catalog.research[id]?.requires ?? [];
+    const offer = requires.every((key) => unlocked.has(key)) ? researchOffer(w, id, unlocked) : null;
+    return { id, label: researchName(item), icon: researchIcon(id), requires,
+      ...researchStatus(w, id, offer, unlocked) };
+  });
 }
 
 function techNodes(w) {
@@ -305,10 +308,11 @@ function techNodes(w) {
   });
 }
 
-function showNodeFinder(ui, nodes, view, active) {
+function showNodeFinder(ui, active, readyOnly, onFocus) {
   const efficiency = active === techTab;
   const recipes = active === recipeTab;
   ui.dialog('查找节点', (dialog) => {
+    const nodes = efficiency ? techNodes(dialog.w) : researchNodes(dialog.w);
     const local = dialog.local;
     const source = local.source ?? sources[0];
     const kind = local.kind ?? kinds[0];
@@ -326,11 +330,12 @@ function showNodeFinder(ui, nodes, view, active) {
       { style: 'filter', compact: true });
     if (showCropUses) dialog.tabs(cropUses, cropUse, (value) => select('cropUse', value), { style: 'filter' });
     if (!efficiency) dialog.tabs(kinds, kind, (value) => select('kind', value), { style: 'filter' });
-    if (recipes) dialog.tabs(['全部状态', '已研发', '可研发'], status,
+    if (recipes && !readyOnly) dialog.tabs(['全部状态', '已研发', '可研发'], status,
       (value) => select('status', value), { style: 'filter' });
     const matches = nodes.filter((node) => {
       const { id } = node;
-      if (recipes && status !== '全部状态' && node.status !== status) return false;
+      if (readyOnly && node.tone !== 'ready') return false;
+      if (!readyOnly && recipes && status !== '全部状态' && node.status !== status) return false;
       if (efficiency) return source === sources[0] || techByKey[id].source === source;
       const item = catalog.items[id];
       const matchesSource = source === sources[0] || item.sources.includes(source);
@@ -340,8 +345,8 @@ function showNodeFinder(ui, nodes, view, active) {
       return matchesSource && matchesUse && (kind === kinds[0] || itemKind(item) === kind);
     });
     if (!matches.length) dialog.text('没有符合筛选的节点', { muted: true });
-    dialog.indexRows(matches, ({ id }) => {
-      view.focus = id;
+    dialog.indexRows(matches, (node) => {
+      onFocus(node);
       dialog.close();
     });
   });
@@ -368,14 +373,12 @@ export function researchReadyTabs(world) {
 export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
   const local = ui.local;
   const { id, openResearchItem } = local;
-  const linked = id && catalog.items[id];
+  const linked = id && Object.hasOwn(catalog.items, id);
   const requested = tabs.includes(local.tab) ? local.tab : recipeTab;
   const active = linked && (requested === techTab ||
     (requested === qualityTab && !ui.w.unlocked.includes(id))) ? recipeTab : requested;
   local.tab = active;
   local.activeResearchTab = active;
-  const panels = local.researchPanels ?? (local.researchPanels = {});
-  const view = panels[active] ?? (panels[active] = {});
   if (linked) local.linkedResearchItem = id;
   delete local.id;
   delete local.openResearchItem;
@@ -393,13 +396,27 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
     return;
   }
   if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point' });
+  const panels = local.researchPanels ?? (local.researchPanels = {});
+  const panel = panels[active] ?? (panels[active] = { all: {}, ready: {} });
   const nodes = efficiency ? techNodes(ui.w) : researchNodes(ui.w);
   const select = (key) => efficiency ? showTech(ui, techByKey[key]) : showResearch(ui, key);
+  const viewport = () => panel.readyOnly ? panel.ready : panel.all;
+  const focus = (node) => {
+    if (panel.readyOnly && node.tone !== 'ready') panel.readyOnly = false;
+    viewport().focus = node.id;
+  };
   if (linked && openResearchItem) {
-    view.focus = id;
+    focus(nodes.find((node) => node.id === id));
     select(id);
   }
-  ui.tree({ nodes, view,
+  ui.tree({
+    nodes: panel.readyOnly ? nodes.filter(({ tone }) => tone === 'ready') : nodes,
+    view: viewport(), readyOnly: panel.readyOnly,
     groups: efficiency ? techSources.slice(1) : undefined,
-    onSelect: select, onFind: () => showNodeFinder(ui, nodes, view, active) });
+    onSelect: select, onFind: () => showNodeFinder(ui, active, panel.readyOnly, focus),
+    onToggleStatus: () => {
+      panel.readyOnly = !panel.readyOnly;
+      ui.refresh();
+    },
+  });
 }

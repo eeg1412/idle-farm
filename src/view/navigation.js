@@ -2,6 +2,7 @@ const routes = {
   庄园: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼池: 'fish', 矿洞: 'mining' }],
   工坊: ['workshop', { 加工: 'processing', 精制: 'refining' }],
   仓库: ['warehouse', {}],
+  行脚商: ['merchant', { 买入: 'buy', 卖出: 'sell' }],
   研究: ['research', { 品种配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],
   经营: ['management', {}],
   图鉴: ['catalog', { 用途: 'uses' }],
@@ -24,9 +25,11 @@ export function parseGameHash(hash) {
   const [slug, query] = hash.replace(/^#\/?/, '').split('?');
   const [page, [, tabs]] = Object.entries(routes).find(([, [path]]) => path === slug) ?? ['庄园', routes.庄园];
   const params = new URLSearchParams(query);
+  const value = params.get('tab');
+  const tab = page === '行脚商' && value === 'give' ? '卖出' : Object.keys(tabs).find((label) => tabs[label] === value);
   return {
     page,
-    tab: Object.keys(tabs).find((tab) => tabs[tab] === params.get('tab')),
+    tab,
     id: /^[A-Z]{1,3}[0-9]{2,3}$/.test(params.get('item') ?? '') ? params.get('item') : undefined,
   };
 }

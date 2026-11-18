@@ -3,10 +3,11 @@ import {
   advanceWorld, newWorld, settleProduction, catalog,
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   assignProductionBatch, clearProductionBatch, upgradeProductionBatch,
-  setStationPriority, reserve, sell, sellBatch, sellFarm,
+  setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar,
 } from './game/world.js';
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
-import { localCalendarDay, resetMarket, synchronizeMarket } from './game/market.js';
+import { resetMarket } from './game/market.js';
+import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
 import { drawQuality } from './game/quality.js';
 import { objectives, settleTaskRewards } from './game/objectives.js';
 import { viewportLayout } from './platform/layout.js';
@@ -37,6 +38,10 @@ let nextDisplayAt = 0;
 let visible = !document.hidden;
 let visibleSince = visible ? performance.now() : Infinity;
 let offlineDialogId;
+let currentPage;
+let pendingMerchantReleases = 0;
+let deferredMerchantRelease;
+let uncommittedProgress;
 const audio = createFarmAudio();
 const saveQueue = createSaveQueue();
 const { enqueue } = saveQueue;
@@ -65,7 +70,9 @@ const actions = {
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   ...productionBatchActions,
   setStationPriority, reserve, sell, sellBatch, sellFarm, research, drawQuality, upgradeTech, resetMarket, updateSettings,
+  buyMerchant, sellMerchant, restockMerchant, visitMerchant,
 };
+const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 
 if (__DEV_TEST_MODE__) {
   const { grantDevelopmentTools } = await import('./game/development-tools.js');
@@ -75,9 +82,9 @@ if (__DEV_TEST_MODE__) {
 const px = (value) => Number.parseFloat(value) || 0;
 const copySlots = (groups) => Object.fromEntries(Object.entries(groups).map(([kind, slots]) =>
   [kind, slots.map((slot) => ({ ...slot }))]));
-// Display-only projection copy. foreground/advanceWorld assign top-level scalars (clock, wall
-// anchor, production value, ledger), replace slot batch/planting/mining objects,
-// and write inventory and stats.produced entries; everything else is shared and only read by the view.
+// Copy the mutable parts used by production projections and transient reservation changes.
+// Advance and restart replace slot batch/planting/mining objects, write inventory and stats.produced
+// entries, and replace top-level fields, including merchant and ledger.
 function projectWorld(source) {
   return {
     ...source,
@@ -90,7 +97,14 @@ function projectWorld(source) {
 function paint() {
   let display = world;
   let anchor = frontAnchor;
-  const live = display && visible && !status?.busy && Number.isFinite(frontAnchor) && frontAnchor >= visibleSince;
+  // An earlier save can still be in flight when navigation leaves the merchant.
+  // Wait for the queued release before projecting production past that departure.
+  const releasing = display?.merchantHold && pendingMerchantReleases > 0;
+  if (releasing) {
+    display = { ...display };
+    reserveMerchantSale(display, null);
+  }
+  const live = display && !releasing && visible && !status?.busy && Number.isFinite(frontAnchor) && frontAnchor >= visibleSince;
   if (live) {
     const now = performance.now();
     display = projectWorld(world);
@@ -135,17 +149,72 @@ function advanceForeground(draft, deferFinalStarts, anchor) {
 function foreground(draft, deferFinalStarts = false, anchor = performance.now(), wallAt = Date.now()) {
   const advanced = advanceForeground(draft, deferFinalStarts, anchor);
   draft.wallAnchorMs = Math.max(draft.wallAnchorMs, wallAt);
-  synchronizeMarket(draft, localCalendarDay(wallAt));
+  const held = draft.merchantHold;
+  synchronizeWorldCalendar(draft, wallAt);
+  if (!deferFinalStarts && held && !draft.merchantHold) settleProduction(draft);
   return advanced;
 }
 
-async function commit(draft, anchor, options) {
+async function commit(draft, anchor, options, initialBase) {
+  const before = world;
+  const progressBefore = uncommittedProgress ?? before ?? initialBase;
   const rewards = settleTaskRewards(draft);
   draft.revision = await writeWorldSave(db, draft, options);
   world = draft;
+  uncommittedProgress = undefined;
   frontAnchor = anchor;
   audio.configure(draft.settings);
-  return rewards;
+  const batch = draft.merchant.batch;
+  if (before && before.completedRuns === draft.completedRuns && batch && batch.id !== before.merchant.batch?.id &&
+      currentPage === '行脚商') {
+    if (view.merchantBatchChanged(showOffline)) offlineDialogId = undefined;
+  }
+  return progressBefore ? progressToast(progressBefore, draft, rewards) : '';
+}
+
+function changeMerchantReservation(hold, anchorAt, wallAt) {
+  const previous = world.merchantHold;
+  const unchanged = previous && hold?.id === previous.id && hold.count === previous.count &&
+    hold.run === previous.run && hold.batchId === previous.batchId;
+  if (unchanged || hold === null && !previous) return { ok: true };
+  // Match a normal action's production boundary without issuing an IndexedDB write for every selection.
+  const draft = projectWorld(world);
+  advanceForeground(draft, true, anchorAt);
+  draft.wallAnchorMs = Math.max(draft.wallAnchorMs, wallAt);
+  const ok = reserveMerchantSale(draft, hold);
+  settleProduction(draft);
+  uncommittedProgress ??= world;
+  // Keep the sub-millisecond remainder across frequent slider updates.
+  frontAnchor += draft.clockMs - world.clockMs;
+  world = draft;
+  paint();
+  return { ok };
+}
+
+function releaseMerchantReservation(anchorAt, wallAt, visibleFrom) {
+  if (!world?.merchantHold) return;
+  if (!status?.busy && frontAnchor >= visibleFrom) {
+    changeMerchantReservation(null, anchorAt, wallAt);
+    return;
+  }
+  // Resume may still need this hold for production before the departure, even after a save retry.
+  deferredMerchantRelease = { hold: world.merchantHold, anchorAt, wallAt };
+  world = { ...world };
+  reserveMerchantSale(world, null);
+  paint();
+}
+
+function enqueueMerchantRelease(anchorAt, wallAt) {
+  const visibleFrom = visibleSince;
+  const epoch = worldEpoch;
+  pendingMerchantReleases += 1;
+  if (world?.merchantHold) queueMicrotask(paint);
+  return enqueue(() => {
+    pendingMerchantReleases -= 1;
+    if (epoch !== worldEpoch) return { ok: false };
+    releaseMerchantReservation(anchorAt, wallAt, visibleFrom);
+    return { ok: true };
+  });
 }
 
 // Committed worlds are never mutated, so each one's guide state is evaluated at most once.
@@ -174,10 +243,9 @@ function progressToast(before, after, rewards) {
 function showOffline() {
   const report = world?.pendingOffline;
   // A native file window can hide the document; keep its import flow in front.
-  if (report && view.isImportingSave()) return;
-  if (offlineDialogId === report?.id) return;
-  offlineDialogId = report?.id;
-  if (!report) { view.dismiss(); return; }
+  if (!report || view.isImportingSave() || view.hasMerchantRefreshNotice()) return;
+  if (offlineDialogId === report.id) return;
+  offlineDialogId = report.id;
   const seconds = Math.floor(report.elapsedMs / 1000);
   const span = seconds >= 3600 ? Math.floor(seconds / 3600) + ' 小时 ' + Math.floor(seconds % 3600 / 60) + ' 分钟' :
     seconds >= 60 ? Math.floor(seconds / 60) + ' 分钟 ' + (seconds % 60) + ' 秒' : seconds + ' 秒';
@@ -192,7 +260,7 @@ function showOffline() {
       });
     }
     ui.button('知道了', ui.close, { tone: 'gold' });
-  }, { center: true, available: (current) => current?.pendingOffline?.id === report.id, onClose: () => {
+  }, { center: true, flow: 'offline-report', available: (current) => current?.pendingOffline?.id === report.id, onClose: () => {
     const anchor = performance.now();
     const now = Date.now();
     return enqueueCurrent(() => closeOffline(report.id, anchor, now));
@@ -201,9 +269,12 @@ function showOffline() {
 
 function staleSave() {
   world = null;
+  uncommittedProgress = undefined;
+  deferredMerchantRelease = undefined;
+  offlineDialogId = undefined;
   status = { title: '经营记录已在其他页面更新', message: '请返回正在经营的页面继续。' };
   paint();
-  showOffline();
+  view.dismiss();
 }
 
 function retryInitialization() {
@@ -219,10 +290,9 @@ async function closeOffline(id, anchorAt, wallAt) {
   if (!acknowledgeOffline(draft, id)) return !draft.pendingOffline;
   try {
     const anchor = foreground(draft, false, anchorAt, wallAt);
-    const rewards = await commit(draft, anchor);
+    const toast = await commit(draft, anchor);
     offlineDialogId = undefined;
     paint();
-    const toast = progressToast(before, draft, rewards);
     if (toast) view.toast(toast);
     return true;
   } catch (error) {
@@ -249,18 +319,32 @@ function settleLocally(base, now) {
 }
 
 async function settleOffline(base, now, anchor) {
+  const release = deferredMerchantRelease;
+  const endsOffline = release && release.anchorAt <= anchor;
+  const snapshot = release ? { ...base, merchantHold: release.hold } : base;
+  if (endsOffline) snapshot.merchantHoldEndsAt = Math.min(release.wallAt, now);
   let draft;
   if (now - base.wallAnchorMs >= offlineWorkerThresholdMs && typeof Worker === 'function') {
     status = { busy: true, title: '正在整理收获' };
     paint();
-    try { draft = await settleInWorker(base, now); }
-    catch { draft = settleLocally(base, now); }
-  } else draft = settleLocally(base, now);
-  const rewards = await commit(draft, anchor);
+    try { draft = await settleInWorker(snapshot, now); }
+    catch { draft = settleLocally(snapshot, now); }
+  } else draft = settleLocally(snapshot, now);
+  if (release && !endsOffline) {
+    const elapsed = Math.floor(release.anchorAt - anchor);
+    advanceWorld(draft, draft.clockMs + elapsed, { deferFinalStarts: true });
+    reserveMerchantSale(draft, null);
+    draft.wallAnchorMs = Math.max(draft.wallAnchorMs, release.wallAt);
+    synchronizeWorldCalendar(draft, release.wallAt);
+    settleProduction(draft);
+    anchor = release.anchorAt;
+  }
+  if (currentPage === '行脚商') visitMerchant(draft);
+  const toast = await commit(draft, anchor, undefined, base);
+  deferredMerchantRelease = undefined;
   status = undefined;
   paint();
   showOffline();
-  const toast = progressToast(base, draft, rewards);
   if (toast) view.toast(toast);
 }
 
@@ -306,6 +390,13 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'research') return { toast: '已研发：' + catalog.items[args[0]].name, sound: 'research' };
   if (name === 'drawQuality') return { sound: 'success', qualityDraw: actionResult };
   if (name === 'resetMarket') return { toast: '今日行情已重置', sound: 'success' };
+  if (name === 'buyMerchant' || name === 'sellMerchant') {
+    const { id, count, total } = args[0];
+    const buying = name === 'buyMerchant';
+    return { toast: (buying ? '已买入 ' : '已卖出 ') + compact(count) + ' 件' + catalog.items[id].name +
+      ' · ' + (buying ? '−' : '+') + compact(total) + ' 金币', sound: buying ? 'success' : 'sell' };
+  }
+  if (name === 'restockMerchant') return { sound: 'success' };
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
@@ -321,29 +412,36 @@ function feedback(name, args, revenueBefore, after, actionResult) {
 }
 
 function dispatch(name, ...args) {
+  const releasesHold = name === 'reserveMerchantSale' && args[0] === null;
+  if (merchantActions.has(name) && (currentPage !== '行脚商' || !visible && !releasesHold)) {
+    return Promise.resolve({ ok: false });
+  }
   const anchorAt = performance.now();
   const wallAt = Date.now();
+  if (releasesHold) return enqueueMerchantRelease(anchorAt, wallAt);
   const epoch = worldEpoch;
   return enqueue(async () => {
-    if (epoch !== worldEpoch || !world || status?.busy || !actions[name]) return { ok: false };
+    if (epoch !== worldEpoch || !world || status?.busy) return { ok: false };
     try {
-      const before = world;
-      const draft = structuredClone(before);
+      if (name === 'reserveMerchantSale') return changeMerchantReservation(args[0], anchorAt, wallAt);
+      if (!Object.hasOwn(actions, name)) return { ok: false };
+      const draft = structuredClone(world);
       const anchor = foreground(draft, true, anchorAt, wallAt);
       // Feedback reads only the revenue before the action; a BigInt needs no copy.
       const revenueBefore = draft.stats.revenue;
       const actionResult = actions[name](draft, ...args);
       if (actionResult === false) {
         settleProduction(draft);
-        const rewards = await commit(draft, anchor);
+        const toast = await commit(draft, anchor);
         paint();
+        if (name === 'visitMerchant') return { ok: true, toast };
+        if (name === 'buyMerchant' || name === 'sellMerchant') return { ok: false, toast };
         const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
-        const toast = progressToast(before, draft, rewards);
         return { ok: false, message: toast ? message + ' · ' + toast : message };
       }
       if (!Object.hasOwn(productionBatchActions, name)) settleProduction(draft);
-      const rewards = await commit(draft, anchor);
+      const toast = await commit(draft, anchor);
       if (name === 'sellFarm') {
         worldEpoch += 1;
         nextDisplayAt = 0;
@@ -351,7 +449,7 @@ function dispatch(name, ...args) {
       }
       paint();
       const result = feedback(name, args, revenueBefore, draft, actionResult);
-      result.toast = [result.toast, progressToast(before, draft, rewards)].filter(Boolean).join(' · ');
+      result.toast = [result.toast, toast].filter(Boolean).join(' · ');
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };
     } catch (error) {
@@ -374,6 +472,8 @@ function transferFailure(error, fallback) {
 
 function activateReplacement(next) {
   world = next;
+  uncommittedProgress = undefined;
+  deferredMerchantRelease = undefined;
   worldEpoch += 1;
   frontAnchor = performance.now();
   nextDisplayAt = 0;
@@ -393,13 +493,11 @@ function exportSave() {
       throw saveTransferError('经营记录尚未准备好，请稍后再导出。');
     }
     try {
-      const before = world;
-      const draft = structuredClone(before);
+      const draft = structuredClone(world);
       const anchor = foreground(draft);
-      const rewards = await commit(draft, anchor);
+      const toast = await commit(draft, anchor);
       const exported = transfer.exportWorld(world);
       paint();
-      const toast = progressToast(before, draft, rewards);
       if (toast) view.toast(toast);
       return exported;
     } catch (error) {
@@ -419,7 +517,7 @@ function importSave(candidate) {
       // Import the saved progress as-is; time since the export earns no extra production.
       draft.wallAnchorMs = Date.now();
       initializeAccountSeed(draft);
-      synchronizeMarket(draft, localCalendarDay(draft.wallAnchorMs));
+      synchronizeWorldCalendar(draft, draft.wallAnchorMs);
       const next = await replaceWorldSave(db, draft, world.revision);
       activateReplacement(next);
       return { ok: true, message: '存档已导入' };
@@ -438,7 +536,7 @@ function clearSave() {
     try {
       const draft = newWorld(Date.now(), null);
       initializeAccountSeed(draft);
-      synchronizeMarket(draft, localCalendarDay(draft.wallAnchorMs));
+      synchronizeWorldCalendar(draft, draft.wallAnchorMs);
       settleTaskRewards(draft);
       const next = await replaceWorldSave(db, draft, world.revision, { clearBackup: true });
       activateReplacement(next);
@@ -467,7 +565,7 @@ const view = createGameView(app, dispatch, () => {
     try {
       const draft = newWorld(Date.now(), null);
       initializeAccountSeed(draft);
-      synchronizeMarket(draft, localCalendarDay(draft.wallAnchorMs));
+      synchronizeWorldCalendar(draft, draft.wallAnchorMs);
       const anchor = performance.now();
       await commit(draft, anchor, { replaceCorrupt: true, corruptRevision: confirmation.corruptRevision });
       status = undefined;
@@ -477,7 +575,20 @@ const view = createGameView(app, dispatch, () => {
       else view.toast('暂时无法新建经营记录');
     }
   });
-}, (page) => audio.setTrack(page === '工坊' ? 'workshop' : 'farm'), window, saveManagement);
+}, (page) => {
+  const wasAtMerchant = currentPage === '行脚商';
+  const atMerchant = page === '行脚商';
+  currentPage = page;
+  audio.setTrack(page === '工坊' ? 'workshop' : 'farm');
+  if (wasAtMerchant && !atMerchant) {
+    void enqueueMerchantRelease(performance.now(), Date.now());
+  }
+  if (!wasAtMerchant && atMerchant && world && visible && !status?.busy) {
+    dispatch('visitMerchant').then(({ message, toast }) => {
+      if (message || toast) view.toast(message || toast);
+    });
+  }
+}, window, saveManagement);
 
 window.addEventListener('resize', resize);
 window.visualViewport?.addEventListener('resize', resize);
@@ -488,14 +599,12 @@ enqueue(() => initialize());
 
 async function saveForeground(anchorAt, wallAt) {
   if (!world || status?.busy) return;
-  const before = world;
-  const draft = structuredClone(before);
+  const draft = structuredClone(world);
   try {
     const anchor = foreground(draft, false, anchorAt, wallAt);
-    const rewards = await commit(draft, anchor);
+    const toast = await commit(draft, anchor);
     paint();
     if (visible) showOffline();
-    const toast = progressToast(before, draft, rewards);
     if (toast) view.toast(toast);
   } catch (error) {
     if (error.code === 'revision-conflict') staleSave();

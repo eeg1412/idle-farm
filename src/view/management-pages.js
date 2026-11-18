@@ -2,6 +2,7 @@ import { catalog, facilityOffer, farmSaleOffer, forecastHourlyProduction, quanti
 import { marketForecast, marketIsActive, marketRate, marketResetsRemaining, marketUnitPrice } from '../game/market.js';
 import { objectives, taskCoinRewards, taskProductionGates } from '../game/objectives.js';
 import { compact } from './numbers.js';
+import { renderMerchantEntry } from './merchant-page.js';
 
 const entries = Object.entries(catalog.items);
 const typeTabs = ['全部', '原料', '中间产物', '商品'];
@@ -66,7 +67,7 @@ function showFilters(ui) {
   ui.tabs(typeTabs, local.type, (value) => select('type', value), { sticky: true, style: 'framed' });
   ui.tabs(sourceTabs, local.source, (value) => select('source', value), { style: 'framed', compact: true });
   if (local.type === '商品') {
-    ui.tabs(complexityTabs, local.complexity, (value) => select('complexity', value), { style: 'framed' });
+    ui.tabs(complexityTabs, local.complexity, (value) => select('complexity', value), { style: 'framed', compact: true });
   }
 }
 
@@ -341,12 +342,14 @@ function showHourlyProduction(ui) {
       return;
     }
     panel.scrollList(rows, (row, { id, produced, consumed, net }) => {
+      const netValue = hourlyRateLabel(net, true);
+      const netTone = netValue === '0' ? undefined : net < 0n ? 'danger' : 'green';
       row.card((cell) => {
         cell.item(id, catalog.items[id].name, undefined, { marketRate: marketRate(panel.w, id) });
         cell.stats([
           { label: '产出', value: hourlyRateLabel(produced) },
           { label: '支出', value: hourlyRateLabel(consumed) },
-          { label: '净变化', value: hourlyRateLabel(net, true) },
+          { label: '净变化', value: netValue, tone: netTone },
         ]);
       }, { padding: 8, gap: 8 });
     });
@@ -359,9 +362,9 @@ function marketRows(ui, rates, showPrice) {
     ui.text('暂无品项涨跌', { muted: true });
     return;
   }
-  ui.scrollList(changes, (row, [id, rate]) => {
+  ui.scrollList(changes, (row, [id, rate], index) => {
     row.row(catalog.items[id].name, showPrice ? compact(marketUnitPrice(ui.w, id)) + ' 金币' : null,
-      { compact: true, divider: true, icon: id, marketRate: rate });
+      { compact: true, divider: index < changes.length - 1, icon: id, marketRate: rate });
   });
 }
 
@@ -395,6 +398,7 @@ export function renderWarehouse(ui) {
       { label: '市场行情', onClick: () => showMarket(ui) },
     ]);
   } else ui.button('查看产出／支出图表', () => showHourlyProduction(ui));
+  renderMerchantEntry(ui);
   ui.local.source ??= '全部';
   ui.local.type ??= '全部';
   ui.tabs(typeTabs, ui.local.type, (type) => {
@@ -948,9 +952,10 @@ function farmDetails(ui, offer) {
     { icon: 'nav-workshop', label: '后续生产评估倍率', value: multiplierLabel },
   ];
   for (const { icon, label, value } of details) {
-    ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true }), { padding: 8, gap: 6 });
+    ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true, divider: false }),
+      { padding: 8, gap: 6 });
   }
-  ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
+  ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered', inspectable: false });
   const newRun = [{ label: '2 块小麦田、基础 ' + compact(startingCoins) + ' 金币' }];
   if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm') &&
     (ui.w.lifetimeProductionValue ?? 0n) >= taskProductionGates.newFarm) {
@@ -959,11 +964,11 @@ function farmDetails(ui, offer) {
   const changes = [
     ['保留', [{ label: '已研发品项、品质、普通研发点、经营改良、任务进度' }]],
     ['清空', [
-      { label: '田地、养殖场、鱼池、矿洞（' + compact(offer.mineCount ?? 0) + ' 座）' },
+      { label: '田地、养殖场、鱼池、矿洞' },
       { label: '库存、金币' },
     ]],
     ['工坊重置', [
-      { label: '现有 ' + compact(offer.stationCount) + ' 个工位重置为加工位、精制位各 1 个' },
+      { label: '重置为加工位、精制位各 1 个' },
       { label: '原配方、优先生产和未完成批次清空' },
     ]],
     ['新一轮', newRun],

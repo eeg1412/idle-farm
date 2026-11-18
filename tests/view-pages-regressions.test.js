@@ -5,7 +5,7 @@ import {
   advanceWorld, arrangeStation, assignFacility, catalog, farmSaleOffer, newWorld, productionDurationMs, reserve, sell, sellFarm,
   batchUpgradeOffer, tradeOffer, unitPrice, upgradeStation,
 } from '../src/game/world.js';
-import { upgradeTech } from '../src/game/advancement.js';
+import { techDefinitions, upgradeTech } from '../src/game/advancement.js';
 import { qualityDrawOffer } from '../src/game/quality.js';
 import { hoursLabel, renderFarmSale, renderTasks, renderWarehouse } from '../src/view/management-pages.js';
 import { renderProduction, renderWorkshop } from '../src/view/production-pages.js';
@@ -443,8 +443,8 @@ test('research keeps the recipe and tech camera state and separates both point b
   const improvement = redraw('经营改良');
   assert.notEqual(improvement.view, recipes.view);
   assert.deepEqual(improvement.nodes.find(({ id }) => id === 'fishCycle').requires, ['fishYield']);
-  assert.deepEqual(improvement.groups, ['通用', '农业', '畜牧', '水产', '市场']);
-  assert.equal(improvement.nodes.length, 26);
+  assert.deepEqual(improvement.groups, ['通用', '农业', '畜牧', '水产', '矿业', '市场']);
+  assert.equal(improvement.nodes.length, techDefinitions.length);
   assert.ok(improvement.nodes.every(({ group }) => improvement.groups.includes(group)));
   assert.deepEqual(points(), ['高级研发点', world.researchPoints, { variant: 'efficiency', icon: 'research-point' }]);
   assert.equal(redraw('品种配方').view.zoom, 0.72);
@@ -476,7 +476,8 @@ test('research exposes the same market nodes in the full tree and finder filter'
   renderResearch(view.ui);
   const [tree] = view.find('tree', () => true);
   const market = tree.nodes.filter(({ group }) => group === '市场');
-  assert.deepEqual(market.map(({ id }) => id).sort(), ['marketForecast', 'marketManipulation', 'marketPromotion', 'premiumSales']);
+  assert.deepEqual(market.map(({ id }) => id).sort(),
+    ['marketForecast', 'marketManipulation', 'marketPromotion', 'merchantBargaining', 'merchantRestock', 'premiumSales']);
   tree.onFind();
   const [, draw] = view.find('dialog', (title) => title === '查找节点');
   const finder = pageFixture(view.ui.w);
@@ -502,6 +503,8 @@ test('technology details use dedicated art, short effects and only unmet require
     ['marketManipulation', 'tech-market-manipulation', '每日重置次数', '0 次', '1 次'],
     ['marketPromotion', 'tech-market-promotion', '上涨方向概率', '50%', '51%'],
     ['premiumSales', 'tech-premium-sales', '最高售价倍率', '1.90 倍', '2.01 倍'],
+    ['merchantRestock', 'tech-merchant-restock', '每日手动进货次数', '0 次', '1 次'],
+    ['merchantBargaining', 'tech-merchant-bargaining', '商人售价倍率', '2.00 倍', '1.95 倍'],
     ['basicResearchRate', 'tech-basic-research-rate', '每小时普通研发点', '100 点', '104 点'],
   ]) {
     const details = open(id);

@@ -86,22 +86,23 @@ test('old records keep previous receipts and qualities while market and ordinary
   ]) assert.throws(() => decodeWorldRecord({ ...old, ...change }), { code: 'corrupt-transfer' });
 });
 
-test('full technology pays at 1474 only once and preserves an older receipt', () => {
+test('full technology pays at 1494 only once and preserves an older receipt', () => {
   const fullTechId = 'techLevel1200';
   const world = newWorld(wall, seed);
   world.tech = Object.fromEntries(techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
-  world.tech.premiumSales -= 1;
-  world.researchPoints = techOffer(world, 'premiumSales').cost;
+  world.tech.merchantBargaining -= 1;
+  world.researchPoints = techOffer(world, 'merchantBargaining').cost;
   assert.ok(!settleTaskRewards(world).ids.includes(fullTechId));
   const before = world.coins;
-  assert.ok(upgradeTech(world, 'premiumSales'));
-  assert.deepEqual(settleTaskRewards(world), { ids: [fullTechId], coins: 7_000_000n, researchPoints: 0n });
-  assert.equal(world.coins - before, 7_000_000n);
+  assert.ok(upgradeTech(world, 'merchantBargaining'));
+  assert.deepEqual(settleTaskRewards(world), { ids: [fullTechId], coins: 9_300_000n, researchPoints: 0n });
+  assert.equal(world.coins - before, 9_300_000n);
   assert.equal(settleTaskRewards(world).coins, 0n);
 
   const old = encodeWorldRecord(world);
-  delete old.tech.marketPromotion;
-  delete old.tech.premiumSales;
+  old.tech = { ...old.tech };
+  delete old.tech.merchantRestock;
+  delete old.tech.merchantBargaining;
   old.coins = String(before + 6_900_000n);
   const imported = decodeWorldRecord(old);
   const goal = objectives(imported).long.find(({ id }) => id === fullTechId);

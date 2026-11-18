@@ -1,10 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Assets, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Texture, TextureSource } from 'pixi.js';
+import { Assets, CanvasTextMetrics, Container, DOMAdapter, EventBoundary, FederatedPointerEvent, FederatedWheelEvent, Texture, TextureSource } from 'pixi.js';
 import 'pixi.js/events';
 import { advanceWorld, arrangeStation, assignFacility, buyFacility, buyStation, catalog, newWorld } from '../src/game/world.js';
 import { techDefinitions } from '../src/game/advancement.js';
+import { buyMerchant, merchantTradeOffer, reserveMerchantSale, sellMerchant } from '../src/game/merchant.js';
 import { createGameView } from '../src/view/canvas-ui.js';
+import { compact } from '../src/view/numbers.js';
 import { viewportLayout } from '../src/platform/layout.js';
 import { livestockSpecies, minLivestockAnimationMs } from '../src/view/livestock-animation.js';
 import { workshopTextureSources } from '../src/view/workshop-animation.js';
@@ -113,10 +115,14 @@ function settingsBrowser() {
 function tapText(game, label, pointerType = 'mouse') {
   const node = game.nodes().find((entry) => entry.text === label);
   assert.ok(node, label);
+  tapNode(game, node, pointerType);
+  game.flush();
+}
+
+function tapNode(game, node, pointerType = 'mouse') {
   const center = node.toGlobal({ x: node.width / 2, y: node.height / 2 });
   game.point('pointerdown', center.x, center.y, pointerType);
   game.point('pointerup', center.x, center.y, pointerType);
-  game.flush();
 }
 
 function tapControl(game, label) {
@@ -362,9 +368,9 @@ test('settings title has no development entry when the compile flag is absent or
   }
 });
 
-test('browser navigation restores game pages, research tabs, and nested dialogs in both directions', async () => {
+function historyBrowser(initialHash) {
   const browser = new EventTarget();
-  const entries = [{ hash: '#/research?tab=quality', state: null }];
+  const entries = [{ hash: initialHash, state: null }];
   let index = 0;
   browser.location = { get hash() { return entries[index].hash; } };
   browser.history = {
@@ -374,6 +380,11 @@ test('browser navigation restores game pages, research tabs, and nested dialogs 
     back() { index -= 1; browser.dispatchEvent(new Event('popstate')); },
     forward() { index += 1; browser.dispatchEvent(new Event('popstate')); },
   };
+  return browser;
+}
+
+test('browser navigation restores game pages, research tabs, and nested dialogs in both directions', async () => {
+  const browser = historyBrowser('#/research?tab=quality');
   const game = setup(undefined, browser);
   game.draw(390, 844);
   assert.ok(game.nodes().some((node) => node.text === '普通研发点'));
@@ -480,6 +491,8 @@ test('research map pans on both axes and pinches without opening a node', async 
   const find = (label) => game.nodes().find((node) => node.label === label);
   const initial = find('research-map-content');
   assert.ok(initial);
+  assert.ok(find('research-map-edge:C01:C02'));
+  assert.ok(game.nodes().filter(({ label }) => label?.startsWith('research-map-edge:')).length <= 8);
   const { x, y } = initial.position;
   game.point('pointerdown', 210, 430, 'touch');
   game.point('pointermove', 134, 390, 'touch');
@@ -504,25 +517,22 @@ test('research map pans on both axes and pinches without opening a node', async 
   assert.ok(game.wheel(190, 420, 80));
   assert.ok(find('research-map-content').scale.x < beforeWheel);
 
-  scaleControl('起点');
-  assert.ok(find('research-map-edge:C01:C02'));
-  assert.ok(game.nodes().filter(({ label }) => label?.startsWith('research-map-edge:')).length <= 8);
+  const beforeButtons = find('research-map-content').scale.x;
+  tapText(game, '＋', 'touch');
+  assert.ok(find('research-map-content').scale.x > beforeButtons);
+  tapText(game, '－', 'touch');
+  assert.ok(Math.abs(find('research-map-content').scale.x - beforeButtons) < 1e-9);
+
+  findResearchNode(game, 'C01');
+  await Promise.resolve();
+  game.flush();
+  assert.ok(!find('关闭'));
   const wheat = find('research-map-node:C01');
   assert.ok(wheat);
-  const center = wheat.toGlobal({ x: wheat.width / 2, y: wheat.height / 2 });
-  game.point('pointerdown', center.x, center.y, 'touch');
-  game.point('pointerup', center.x, center.y, 'touch');
+  tapNode(game, wheat, 'touch');
   await Promise.resolve();
   game.flush();
   assert.ok(find('关闭'));
-
-  function scaleControl(label) {
-    const button = find('research-map').children.find((node) => node.text === label);
-    assert.ok(button);
-    const center = button.toGlobal({ x: button.width / 2, y: button.height / 2 });
-    game.point('pointerdown', center.x, center.y);
-    game.point('pointerup', center.x, center.y);
-  }
 });
 
 test('workshop art fills the card width with rounded top corners and leaves the clear action clickable', async (t) => {
@@ -807,24 +817,56 @@ test('batch tiles toggle by touch and put market rates beside names or below lon
   assert.deepEqual(toggled, [true, false]);
 });
 
-test('research atlas fits the complete catalogue and keeps direct prerequisites above all dependents', async () => {
+function findResearchNode(game, id) {
+  tapText(game, '查找节点', 'touch');
+  const item = catalog.items[id];
+  const result = game.nodes().findLast((node) => node.text === (item.subject ?? item.name));
+  assert.ok(result, id);
+  tapNode(game, result, 'touch');
+}
+
+function zoomResearchOut(game) {
+  const scale = () => game.nodes().find(({ label }) => label === 'research-map-content').scale.x;
+  for (let step = 0; step < 20; step += 1) {
+    const previous = scale();
+    tapText(game, '－', 'touch');
+    if (scale() === previous) return;
+  }
+  assert.fail('research map never reached its minimum zoom');
+}
+
+test('research atlas filters ready nodes and preserves the complete dependency layout', async () => {
   const game = setup();
+  const offer = catalog.research.C02;
+  game.world.coins = BigInt(offer.coins);
+  for (const [id, amount] of Object.entries(offer.costs)) game.world.inventory[id] = BigInt(amount);
   game.draw(390, 844);
   game.view.go('研究', { tab: '品种配方' });
   const find = (label) => game.nodes().find((entry) => entry.label === label);
-  const tap = async (node) => {
-    assert.ok(node);
-    const center = node.toGlobal({ x: node.width / 2, y: node.height / 2 });
-    game.point('pointerdown', center.x, center.y);
-    game.point('pointerup', center.x, center.y);
-    await Promise.resolve();
-    game.flush();
+  const viewport = () => {
+    const { x, y, scale } = find('research-map-content');
+    return { x, y, scale: scale.x };
   };
   const map = () => new Map(game.nodes().filter(({ label }) => label?.startsWith('research-map-node:'))
     .map((node) => [node.label.slice('research-map-node:'.length), node]));
-  const control = (label) => find('research-map').children.find((node) => node.text === label);
+  const tapStatusControl = (label) => {
+    const control = find('research-map').children.find((node) => node.text === label);
+    assert.ok(control, label);
+    tapNode(game, control, 'touch');
+    game.flush();
+  };
   const start = map();
-  await tap(control('全图'));
+  const startViewport = viewport();
+  tapStatusControl('可研发');
+  const ready = map();
+  assert.ok(ready.has('C02'));
+  assert.ok(!ready.has('C01'));
+  assert.ok(!ready.has('C03'));
+  tapStatusControl('全部状态');
+  assert.deepEqual(Array.from(map().keys()), Array.from(start.keys()));
+  assert.deepEqual(viewport(), startViewport);
+
+  zoomResearchOut(game);
   const overview = map();
   assert.equal(overview.size, Object.keys(catalog.items).length);
   assert.equal(new Set(Array.from(overview.values(), ({ x, y }) => `${x}:${y}`)).size, overview.size);
@@ -833,12 +875,16 @@ test('research atlas fits the complete catalogue and keeps direct prerequisites 
   }
   assert.equal(find('research-map-edges').children.length, 0);
 
-  await tap(control('起点'));
-  const restored = map();
-  assert.deepEqual(Array.from(restored.keys()), Array.from(start.keys()));
-  const target = restored.get('C02');
+  findResearchNode(game, 'C02');
+  await Promise.resolve();
+  game.flush();
+  assert.ok(!find('关闭'));
+  const target = map().get('C02');
+  assert.ok(target);
   const { x, y } = target.position;
-  await tap(target);
+  tapNode(game, target, 'touch');
+  await Promise.resolve();
+  game.flush();
   assert.ok(find('关闭'));
   await game.view.close();
   game.flush();
@@ -881,11 +927,270 @@ test('narrow portrait purchase uses Pixi taps and applies exactly one real purch
     game.point('pointerup', x, y, 'touch');
     game.flush();
   };
+  assert.ok(game.wheel(160, 500, 10_000));
   tap('购地');
   tap('确认购买');
   await new Promise(setImmediate);
   assert.equal(game.world.facilities.C.length, 3);
   assert.equal(game.world.coins, 0n);
+});
+
+// Use the screen position of visible Pixi text. Lists remain mounted behind their
+// scroll masks, so looking up a label alone does not mean a player can tap it.
+function merchantScreen(game, width, height) {
+  const centre = (node) => {
+    const bounds = node.getBounds();
+    const x = (bounds.minX + bounds.maxX) / 2;
+    const y = (bounds.minY + bounds.maxY) / 2;
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
+    for (let layer = node; layer; layer = layer.parent) {
+      if (!layer.visible || (layer.mask && !layer.mask.containsPoint(layer.mask.toLocal({ x, y })))) return;
+    }
+    return { x, y };
+  };
+  const locate = (label, item) => {
+    const nodes = game.nodes();
+    const pool = item ? nodes.find((node) => node.text === item)?.parent.children ?? [] : nodes;
+    for (const node of pool) {
+      if (typeof label === 'string' ? node.text !== label : !label.test(node.text ?? '')) continue;
+      const position = centre(node);
+      if (position) return position;
+    }
+  };
+  const find = (label, item) => {
+    let position = locate(label, item);
+    if (position) return position;
+    game.wheel(width / 2, height / 2, -3000);
+    for (let step = 0; step < 12; step++) {
+      position = locate(label, item);
+      if (position) return position;
+      game.wheel(width / 2, height / 2, 110);
+    }
+    assert.fail('No visible ' + label + (item ? ' for ' + item : ''));
+  };
+  const touch = ({ x, y }) => {
+    game.point('pointerdown', x, y, 'touch');
+    game.point('pointerup', x, y, 'touch');
+    game.flush();
+  };
+  return { find, locate, touch, tap: (label, item) => touch(find(label, item)) };
+}
+
+function populateMerchant(world, sales = 1_000_001n) {
+  world.coins = 100_000n;
+  Object.assign(world.merchant, {
+    day: '2026-11-18', freeUsed: true, sequence: 1n, version: 1n, directSales: 0n,
+    produced: Object.fromEntries(Array.from({ length: 10 }, (_, index) =>
+      ['C' + String(index + 1).padStart(2, '0'), 1])),
+    sales: { 1: sales, 2: 0n, 3: 0n },
+    batch: {
+      id: 1n, trades: 0n, stock: { C01: 8n, C04: 4n },
+      wanted: { id: 'C02', capacity: 10n, remaining: 10n, multiplier: 125 },
+      baseline: sales, initialCost: 1_000n, spent: 0n, pending: [],
+    },
+  });
+}
+
+test('320 px merchant buys once with live pricing and no confirmation dialog', async () => {
+  const submits = [];
+  const game = setup((world, name, offer) => {
+    assert.equal(name, 'buyMerchant');
+    submits.push(offer);
+    if (submits.length === 1) world.quality.C01 = '2';
+    const ok = buyMerchant(world, offer);
+    game.draw(320, 760);
+    return { ok };
+  });
+  const { find, locate, tap, touch } = merchantScreen(game, 320, 760);
+  populateMerchant(game.world, 1_000_000n);
+  game.view.go('仓库');
+  game.draw(320, 760);
+  tap('行脚商');
+  assert.equal(game.pages.at(-1), '行脚商');
+  find('开摊条件');
+  find('商人未到');
+  for (const [description, progress] of [
+    [['庄园、工坊加工共出产 10 种物品'], '已生产 10 / 10 种 ✓'],
+    [['在仓库卖出庄园产物和工坊加工品', '累计得款超过 1M 金币'], '已得款 1M 金币'],
+  ]) {
+    const label = description.join('\n');
+    const labelPosition = find(label);
+    const node = game.nodes().find((entry) => entry.text === label);
+    assert.deepEqual(CanvasTextMetrics.measureText(node.text, node.style).lines, description);
+    assert.ok(find(progress).y > labelPosition.y, progress);
+  }
+  assert.ok(!locate('金币余额'));
+  assert.ok(!locate('买入'));
+  assert.ok(!locate('卖出'));
+  assert.ok(!locate('小麦'));
+  const tenthTier = game.world.merchant.produced.C10;
+  delete game.world.merchant.produced.C10;
+  game.world.merchant.sales[1] += 1n;
+  game.draw(320, 760);
+  find('开摊条件');
+  find('已生产 9 / 10 种');
+  find('已得款 1.000001M 金币 ✓');
+  game.world.merchant.produced.C10 = tenthTier;
+  game.draw(320, 760);
+  assert.ok(!locate('开摊条件'));
+  assert.ok(!locate('商人未到'));
+  find('金币余额');
+  find(/金币\/件 · 剩余 8 件/);
+  assert.ok(!locate('甘蔗'));
+
+  tap('小麦');
+  tap('50%');
+  find('已选 4 件');
+  find('买入 4 件');
+  assert.ok(locate(/金币充足/));
+  const first = find('确认买入');
+  touch(first);
+  touch(first);
+  await new Promise(setImmediate);
+  game.flush();
+  assert.equal(submits.length, 1);
+  assert.equal(game.world.inventory.C01 ?? 0n, 0n);
+  find(/^报价已更新。单价现为/);
+  assert.ok(!locate('行脚商已换货'));
+  tap('按新报价确认');
+  await new Promise(setImmediate);
+  game.flush();
+  assert.equal(submits.length, 2);
+  assert.notEqual(submits[0].unitPrice, submits[1].unitPrice);
+  assert.equal(game.world.inventory.C01, 4n);
+  assert.equal(game.world.merchant.batch.stock.C01, 4n);
+  assert.equal(game.world.coins, 100_000n - submits[1].total);
+});
+
+test('320 px merchant sale freezes the percentage, reserves stock, and releases on history navigation', async () => {
+  const browser = historyBrowser('#/warehouse');
+  const submissions = [];
+  const holds = [];
+  const game = setup((world, name, offer) => {
+    if (name === 'reserveMerchantSale') {
+      holds.push(offer?.count ?? null);
+      const ok = reserveMerchantSale(world, offer);
+      game.draw(320, 760);
+      return { ok };
+    }
+    assert.equal(name, 'sellMerchant');
+    submissions.push(offer);
+    const ok = sellMerchant(world, offer);
+    game.draw(320, 760);
+    return { ok };
+  }, browser);
+  populateMerchant(game.world);
+  game.world.inventory.C02 = 6n;
+  game.world.inventory.C03 = 4n;
+  game.world.reserves.C02 = 5n;
+  game.draw(320, 760);
+  const { find, locate, tap } = merchantScreen(game, 320, 760);
+  const slide = (type, percent) => {
+    const track = game.nodes().find(({ label, hitArea }) => label === 'ratio-slider' && hitArea);
+    assert.ok(track);
+    const { x, y, width } = track.hitArea;
+    const point = track.toGlobal({ x: x + 12 + (width - 24) * percent / 100, y: y + 35 });
+    game.point(type, point.x, point.y, 'touch');
+    game.flush();
+  };
+  tap('行脚商');
+  tap('卖出');
+  assert.equal(browser.location.hash, '#/merchant?tab=sell');
+  find('甘蔗');
+  find(/^收购 1\.25 倍/);
+  find('剩余可收');
+  find('当前可卖');
+  assert.ok(!locate('草莓'));
+  assert.ok(!locate('小麦'));
+  tap('选择数量');
+  await new Promise(setImmediate);
+  slide('pointerdown', 25);
+  slide('pointermove', 75);
+  find('已选 4 件');
+  find(compact(merchantTradeOffer(game.world, 'sell', 'C02', 4n).total) + ' 金币');
+  find('松手确定数量');
+  slide('pointermove', 50);
+  assert.deepEqual(holds, [1n]);
+  assert.equal(game.world.merchantHold.count, 1n);
+  slide('pointerup', 50);
+  await new Promise(setImmediate);
+  game.flush();
+  find('已选 3 件');
+  assert.equal(game.world.merchantHold.count, 3n);
+  assert.deepEqual(holds, [1n, 3n]);
+  slide('pointerdown', 0);
+  find('请选择至少 1 件。');
+  assert.equal(game.world.merchantHold.count, 3n);
+  slide('pointercancel', 0);
+  find('已选 3 件');
+  assert.deepEqual(holds, [1n, 3n]);
+  find('本次最多动用 2 件常驻保留库存。');
+  game.world.inventory.C02 += 2n;
+  game.draw(320, 760);
+  find('已选 3 件');
+  find('本次最多动用 2 件常驻保留库存。');
+  assert.ok(!locate(/^报价已更新/));
+  assert.ok(!locate('行脚商已换货'));
+
+  tap('确认卖出');
+  await new Promise(setImmediate);
+  game.flush();
+  assert.equal(submissions.length, 1);
+  assert.equal(submissions[0].count, 3n);
+  assert.equal(game.world.inventory.C02, 5n);
+  assert.equal(game.world.merchantHold, undefined);
+  assert.equal(game.world.merchant.batch.wanted.remaining, 7n);
+  assert.equal(game.world.coins, 100_000n + submissions[0].total);
+
+  tap('选择数量');
+  await new Promise(setImmediate);
+  assert.equal(game.world.merchantHold.count, 1n);
+  tap('100%');
+  await new Promise(setImmediate);
+  assert.equal(game.world.merchantHold.count, 5n);
+  browser.history.back();
+  await new Promise(setImmediate);
+  game.flush();
+  assert.equal(browser.location.hash, '#/merchant');
+  assert.equal(game.world.merchantHold, undefined);
+  browser.history.forward();
+  find('选择数量');
+  assert.ok(!locate(/^确认卖出$/));
+});
+
+test('320 px merchant supports the legacy sale link and shows one notice after a committed batch', async () => {
+  const browser = historyBrowser('#/merchant?tab=give');
+  const game = setup(undefined, browser);
+  populateMerchant(game.world);
+  game.world.inventory.C02 = 6n;
+  game.draw(320, 760);
+  const { find, locate, tap } = merchantScreen(game, 320, 760);
+  find('甘蔗');
+  assert.equal(browser.location.hash, '#/merchant?tab=sell');
+  assert.ok(!locate('行脚商已换货'));
+  tap('选择数量');
+  await new Promise(setImmediate);
+  game.view.dialog('原换货确认', (ui) => ui.text('旧弹层'));
+  game.view.dialog('离开期间收获', (ui) => ui.text('原汇总'), { flow: 'offline-report' });
+
+  game.world.merchant.batch = { ...game.world.merchant.batch, id: 2n, wanted: null };
+  assert.equal(game.view.merchantBatchChanged(() =>
+    game.view.dialog('离开期间收获', (ui) => ui.button('关闭汇总', ui.close), { flow: 'offline-report' })), true);
+  game.draw(320, 760);
+  find('行脚商已换货');
+  assert.ok(!locate('原汇总'));
+  assert.equal(game.view.hasMerchantRefreshNotice(), true);
+  tap('知道了');
+  await new Promise(setImmediate);
+  game.flush();
+  find('离开期间收获');
+  tap('关闭汇总');
+  game.draw(320, 760);
+  find('小麦');
+  assert.ok(!locate('已选 1 件'));
+  assert.ok(!locate('旧弹层'));
+  assert.ok(!locate('行脚商已换货'));
+  assert.equal(game.view.hasMerchantRefreshNotice(), false);
 });
 
 test('320 px shows the research point value and opens its exact balance', () => {
@@ -905,9 +1210,9 @@ test('narrow portrait puts every improvement category on a new row and wraps its
   const game = setup();
   game.draw(320, 760);
   game.view.go('研究', { tab: '经营改良' });
-  tapText(game, '全图');
+  zoomResearchOut(game);
   const nodes = game.nodes();
-  const groups = ['通用', '农业', '畜牧', '水产', '市场'];
+  const groups = ['通用', '农业', '畜牧', '水产', '矿业', '市场'];
   const headings = groups.map((label) => nodes.find((node) => node.label === `research-map-group:${label}`));
   assert.deepEqual(headings.map((node) => node.text), groups);
   for (const [index, group] of groups.entries()) {

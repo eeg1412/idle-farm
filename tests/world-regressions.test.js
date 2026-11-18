@@ -455,7 +455,7 @@ test('scaled task rewards use the lower of each base reward and the rounded cap'
   assert.equal(taskCoinRewards.fieldLevel10, 46_000n * coinScale);
   assert.equal(taskCoinRewards.firstTech, roundCap(1_250n * coinScale));
   assert.equal(taskCoinRewards.delegationTech, roundCap(2_500n * coinScale));
-  assert.equal(taskCoinRewards.techLevel1200, roundCap(1_250n * 1_474n * coinScale));
+  assert.equal(taskCoinRewards.techLevel1200, roundCap(1_250n * 1_494n * coinScale));
 });
 
 test('农地扩建 counts the extra fields currently owned, not lifetime purchases', () => {

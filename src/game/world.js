@@ -2,6 +2,9 @@ import catalog from '../content/game-data.json' with { type: 'json' };
 import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBasis, rate, unitPrice } from './advancement.js';
 import { coinScale } from './coin-scale.js';
 import { localCalendarDay, marketUnitPrice, synchronizeMarket } from './market.js';
+import {
+  newMerchant, recordMerchantProduction, recordMerchantSales, reserveMerchantSale, resetMerchantRun, synchronizeMerchant,
+} from './merchant.js';
 import { accrueBasicResearch } from './quality.js';
 import { newPrestigeLedger, prestigeLedgerOffer, productionContributionBatch, settlePrestigeLedger } from './prestige-ledger.js';
 
@@ -166,11 +169,11 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     schemaVersion: worldSchemaVersion, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
     researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
-    accountSeed, qualityDraws: 0n, market: null, productionValue: 0n, completedRuns: 0,
+    accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(localCalendarDay(now)), productionValue: 0n, completedRuns: 0,
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
-    taskRewards: [], settings: { music: 70, sound: 75, pickerIconsOnly: false },
+    taskRewards: [], settings: { music: 0, sound: 0, pickerIconsOnly: false },
   };
   settleProduction(world);
   return world;
@@ -179,7 +182,11 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
 export const quantity = (world, id) => world.inventory[id] ?? 0n;
 
 export function availableToProduce(world, id) {
-  const available = quantity(world, id) - (world.reserves[id] ?? 0n);
+  const hold = world.merchantHold;
+  const batch = hold && world.merchant?.batch;
+  const temporary = hold && hold.id === id && hold.run === world.completedRuns &&
+    hold.batchId === batch?.id && batch?.wanted?.id === id ? hold.count : 0n;
+  const available = quantity(world, id) - (world.reserves[id] ?? 0n) - temporary;
   return available > 0n ? available : 0n;
 }
 
@@ -246,8 +253,8 @@ function startProduction(world, stations, onStart) {
 // Incremental restarts for advanceWorld. Must start exactly what a full startProduction scan would,
 // in the same order: after one full scan, the only idle facilities with a recipe are those just
 // completed, and an idle station that failed its input check can only pass again once one of its
-// input IDs has been deposited (between scans inventory otherwise only decreases; reserves, levels
-// and recipes are fixed during an advance).
+// input IDs has been deposited (between scans inventory otherwise only decreases; reserves,
+// merchant holds, levels and recipes are fixed during an advance).
 function productionRestarter(world, stations, onStart) {
   const facilityKinds = new Map();
   let facilityCount = 0;
@@ -315,6 +322,7 @@ function deposit(world, batch, contributions) {
   contributions.add(value, appraisalMultiplierBasisPoints(world));
   world.productionValue += value;
   world.stats.produced[id] = (world.stats.produced[id] ?? 0n) + count;
+  recordMerchantProduction(world, id);
 }
 
 function pushEvent(heap, entry) {
@@ -384,10 +392,28 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {})
 export function updateWorldWallTime(world, now) {
   if (!Number.isSafeInteger(now)) return 0;
   const elapsed = Math.max(0, Math.min(delegationMilliseconds(world), now - world.wallAnchorMs));
-  advanceWorld(world, world.clockMs + elapsed);
+  const target = world.clockMs + elapsed;
+  // A page change during inactivity can end a hold partway through the offline interval.
+  // Advance in two runs so the second run checks every waiting station under the released hold.
+  const holdEndsAt = world.merchantHoldEndsAt;
+  delete world.merchantHoldEndsAt;
+  if (world.merchantHold && holdEndsAt !== undefined) {
+    const untilRelease = Math.max(0, holdEndsAt - world.wallAnchorMs);
+    advanceWorld(world, world.clockMs + Math.min(elapsed, untilRelease), { deferFinalStarts: untilRelease <= elapsed });
+    reserveMerchantSale(world, null);
+  }
+  advanceWorld(world, target);
   world.wallAnchorMs = Math.max(world.wallAnchorMs, now);
-  synchronizeMarket(world, localCalendarDay(now));
+  const held = world.merchantHold;
+  synchronizeWorldCalendar(world, now);
+  if (held && !world.merchantHold) settleProduction(world);
   return elapsed;
+}
+
+export function synchronizeWorldCalendar(world, wallMs) {
+  const day = localCalendarDay(wallMs);
+  synchronizeMarket(world, day);
+  synchronizeMerchant(world, day);
 }
 
 export function facilityOffer(world, kind, index = null, steps = 1n) {
@@ -650,6 +676,7 @@ export function sellBatch(world, selections) {
     world.stats.revenue += gain;
     world.stats.lifetimeRevenue += gain;
   }
+  recordMerchantSales(world, quotes);
   return true;
 }
 
@@ -681,6 +708,7 @@ export function sellFarm(world, expectedOffer) {
   world.coins = startingCoins;
   world.productionValue = 0n;
   world.stats.revenue = 0n;
+  resetMerchantRun(world);
   world.inventory = {};
   world.reserves = {};
   world.facilities = startingFacilities('C01');

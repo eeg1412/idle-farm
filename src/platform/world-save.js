@@ -1,6 +1,7 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs, techMaxLevels } from '../game/advancement.js';
 import { validCalendarDay, validMarketRate } from '../game/market.js';
+import { merchantItemTier, merchantProductionGate, merchantPurchaseMultipliers, merchantSalesGate, newMerchant } from '../game/merchant.js';
 import { taskCoinRewards } from '../game/objectives.js';
 import { facilitySnapshotOutput, updateWorldWallTime, worldSchemaVersion } from '../game/world.js';
 import { prestigeLedgerVersion } from '../game/prestige-ledger.js';
@@ -315,6 +316,92 @@ function marketRecord(value, unlocked, seed) {
   return { day, sequence, used, rates: Object.fromEntries(entries) };
 }
 
+function merchantRecord(value, world, market, seed, convert) {
+  const legacy = !Object.hasOwn(world, 'merchant');
+  const source = legacy ? newMerchant(market?.day ?? null) : object(value, 'merchant');
+  const { day, freeUsed, manualUsed, sequence, version, produced, sales, batch } = source;
+  const barter = !Object.hasOwn(source, 'directSales');
+  valid(day === null || validCalendarDay(day), 'merchant.day');
+  valid(typeof freeUsed === 'boolean', 'merchant.freeUsed');
+  valid(integer(manualUsed, 'merchant.manualUsed') <= (world.tech.merchantRestock ?? 0), 'merchant.manualUsed');
+  const amount = (value, field, minimum = 0n) =>
+    convert(legacy && typeof value === 'bigint' ? value.toString() : value, `merchant.${field}`, minimum);
+  const savedSequence = amount(sequence, 'sequence');
+  const savedVersion = amount(version, 'version');
+  valid(BigInt(savedVersion) >= BigInt(savedSequence), 'merchant.version');
+  valid(BigInt(savedSequence) >= BigInt(manualUsed + Number(freeUsed)) &&
+    (BigInt(savedSequence) === 0n || day !== null && seed !== null), 'merchant.sequence');
+
+  const entries = Object.entries(object(produced, 'merchant.produced'));
+  const unlocked = new Set(world.unlocked);
+  for (const [id, tier] of entries) {
+    valid(unlocked.has(id) && merchantItemTier(id) === tier && BigInt(world.stats.produced[id] ?? 0n) > 0n,
+      `merchant.produced.${id}`);
+  }
+  const totals = object(sales, 'merchant.sales');
+  const salesByTier = Object.fromEntries([1, 2, 3].map((tier) => [tier, amount(totals[tier], 'sales.' + tier)]));
+  const salesLevel12 = BigInt(salesByTier[1]) + BigInt(salesByTier[2]);
+  const warehouseSales = salesLevel12 + BigInt(salesByTier[3]);
+  valid(warehouseSales <= BigInt(world.stats.revenue), 'merchant.sales');
+  const directSales = amount(barter ? '0' : source.directSales, 'directSales');
+  const state = { day, freeUsed, manualUsed, sequence: savedSequence, version: savedVersion,
+    produced: Object.fromEntries(entries), sales: salesByTier, directSales, batch: null };
+  if (batch === null) return state;
+
+  object(batch, 'merchant.batch');
+  valid(salesLevel12 > merchantSalesGate && entries.filter(([, tier]) => tier < 3).length >= merchantProductionGate,
+    'merchant.batch');
+  const id = amount(batch.id, 'batch.id', 1n);
+  valid(id === savedSequence, 'merchant.batch.id');
+  const baseline = amount(batch.baseline, 'batch.baseline', merchantSalesGate + 1n);
+  const spent = amount(batch.spent, 'batch.spent');
+  const baselineAmount = BigInt(baseline);
+  const salesGrowth = warehouseSales + BigInt(directSales) - baselineAmount;
+  valid(salesGrowth >= 0n, 'merchant.batch.baseline');
+  valid(salesGrowth > 0n || BigInt(spent) === 0n, 'merchant.batch.spent');
+  const oldBudget = baselineAmount * 5n;
+  if (barter) {
+    valid(!Object.hasOwn(batch, 'trades') && !Object.hasOwn(batch, 'initialCost') &&
+      !Object.hasOwn(batch, 'initialCostIsUpperBound') &&
+      BigInt(spent) <= (warehouseSales - baselineAmount) * 5n, 'merchant.batch');
+  }
+  const initialCost = amount(barter ? oldBudget.toString() : batch.initialCost, 'batch.initialCost', 1n);
+  const initialCostIsUpperBound = barter || batch.initialCostIsUpperBound;
+  valid(typeof initialCostIsUpperBound === 'boolean' &&
+    (!initialCostIsUpperBound || BigInt(initialCost) === oldBudget && baselineAmount <= warehouseSales),
+    'merchant.batch.initialCostIsUpperBound');
+  const trades = amount(barter ? '0' : batch.trades, 'batch.trades');
+  valid(BigInt(trades) <= BigInt(savedVersion) - BigInt(savedSequence), 'merchant.batch.trades');
+  const stock = quantityMap(batch.stock, 'merchant.batch.stock', convert);
+  const ids = Object.keys(stock);
+  const stockedUnits = Object.values(stock).reduce((total, count) => total + BigInt(count), 0n);
+  valid(ids.length >= 1 && ids.length <= Math.floor(entries.length / merchantProductionGate) &&
+    ids.every((id) => state.produced[id] === 1 || state.produced[id] === 2) &&
+    stockedUnits <= BigInt(initialCost) + BigInt(spent), 'merchant.batch.stock');
+  valid(Array.isArray(batch.pending), 'merchant.batch.pending');
+  const pending = new Set(batch.pending);
+  valid(pending.size === batch.pending.length && pending.size === ids.filter((id) => BigInt(stock[id]) === 0n).length &&
+    [...pending].every((id) => typeof id === 'string' && Object.hasOwn(stock, id) && BigInt(stock[id]) === 0n),
+    'merchant.batch.pending');
+  let wanted = null;
+  if (batch.wanted !== null) {
+    const { id, multiplier: savedMultiplier } = object(batch.wanted, 'merchant.batch.wanted');
+    valid(typeof id === 'string' && Object.hasOwn(state.produced, id) && !Object.hasOwn(stock, id),
+      'merchant.batch.wanted.id');
+    const capacity = amount(batch.wanted.capacity, 'batch.wanted.capacity', 1n);
+    const remaining = amount(batch.wanted.remaining, 'batch.wanted.remaining');
+    valid(BigInt(remaining) <= BigInt(capacity) &&
+      (!initialCostIsUpperBound || BigInt(capacity) <= oldBudget / 10n), 'merchant.batch.wanted.remaining');
+    valid(!barter || !Object.hasOwn(batch.wanted, 'multiplier'), 'merchant.batch.wanted.multiplier');
+    const multiplier = barter ? 200 : savedMultiplier;
+    valid(merchantPurchaseMultipliers.includes(multiplier) && (!initialCostIsUpperBound || multiplier === 200),
+      'merchant.batch.wanted.multiplier');
+    wanted = { id, capacity, remaining, multiplier };
+  }
+  state.batch = { id, baseline, initialCost, initialCostIsUpperBound, spent, stock, pending: [...pending], wanted, trades };
+  return state;
+}
+
 function amounts(world, convert, convertSigned) {
   const pendingOffline = Object.hasOwn(world, 'pendingOffline') && offlineAmounts(world.pendingOffline, convert, convertSigned);
   if (pendingOffline) valid(pendingOffline.id <= world.revision, 'pendingOffline.id');
@@ -322,6 +409,7 @@ function amounts(world, convert, convertSigned) {
   const accountSeed = Object.hasOwn(world, 'accountSeed') ? world.accountSeed : null;
   valid(accountSeed === null || typeof accountSeed === 'string' && seedPattern.test(accountSeed), 'accountSeed');
   const market = Object.hasOwn(world, 'market') ? marketRecord(world.market, world.unlocked, accountSeed) : null;
+  const merchant = merchantRecord(world.merchant, world, market, accountSeed, convert);
   const basicResearchElapsedMs = Object.hasOwn(world, 'basicResearchElapsedMs')
     ? integer(world.basicResearchElapsedMs, 'basicResearchElapsedMs') : 0;
   return {
@@ -346,6 +434,7 @@ function amounts(world, convert, convertSigned) {
     qualityDraws: convert(Object.hasOwn(world, 'qualityDraws') ? world.qualityDraws : '0', 'qualityDraws'),
     accountSeed,
     market,
+    merchant,
     lifetimeProductionValue: convert(world.lifetimeProductionValue, 'lifetimeProductionValue'),
     prestigeCredit: convert(world.prestigeCredit, 'prestigeCredit'),
     inventory: quantityMap(world.inventory, 'inventory', convert),

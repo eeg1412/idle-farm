@@ -10,7 +10,7 @@ const hz = (note) => 440 * 2 ** ((note - 69) / 12);
 
 export function createFarmAudio() {
   let audio;
-  let volume = { music: 70, sound: 75 };
+  let volume = { music: 0, sound: 0 };
   let track = 'farm';
   let cursor = 0;
   let timer;

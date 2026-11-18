@@ -541,8 +541,8 @@ export function renderProduction(ui) {
     ui.refresh();
   }, { sticky: true, style: 'segmented' });
   const quote = facilityOffer(ui.w, kind);
-  ui.titleBar(kind === 'C' ? '种植地块' : kind === 'L' ? '养殖场地' : kind === 'M' ? '开采矿洞' : '养殖鱼池', purchaseLabels[kind], () => purchaseFacility(ui, kind), {
-    style: 'production', tone: 'green', disabled: quote?.atLimit,
+  ui.titleBar(kind === 'C' ? '种植地块' : kind === 'L' ? '养殖场地' : kind === 'M' ? '开采矿洞' : '养殖鱼池', undefined, undefined, {
+    style: 'production',
   });
   if (kind === 'C') {
     const objective = activeGuideTask(ui.w);
@@ -558,16 +558,19 @@ export function renderProduction(ui) {
   const focus = catalog.items[ui.local.id]?.kind === kind ? ui.local.id : null;
   const sourceIndex = focus ? list.findIndex(({ slot }) => slot.recipe === focus || slot.batch?.id === focus) : -1;
   if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + facilityNames[kind] + '中安排生产');
-  if (!list.length) {
+  if (list.length) {
+    const focusIndex = productionFocusIndex(ui.local, kind, list.length - 1, focus, sourceIndex);
+    ui.scrollList(list, (cell, { slot, index }) => {
+      if (compactMode) compactProductionCard(cell, kind, index, slot);
+      else facilityCard(cell, kind, index, slot);
+    }, { columns: compactMode ? 'auto' : 1, focusIndex });
+  } else {
     const instruction = kind === 'C' ? '购地后即可播种。' : '购买' + facilityNames[kind] + (kind === 'M' ? '后即可开采。' : '后即可安排养殖。');
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
-    return;
   }
-  const focusIndex = productionFocusIndex(ui.local, kind, list.length - 1, focus, sourceIndex);
-  ui.scrollList(list, (cell, { slot, index }) => {
-    if (compactMode) compactProductionCard(cell, kind, index, slot);
-    else facilityCard(cell, kind, index, slot);
-  }, { columns: compactMode ? 'auto' : 1, focusIndex });
+  if (quote) ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
+    style: 'production', tone: 'gold', disabled: quote.atLimit,
+  });
 }
 
 function workshopRecipes(ui, kind, source) {

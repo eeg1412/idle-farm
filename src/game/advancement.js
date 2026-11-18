@@ -12,6 +12,8 @@ export const marketBaseUpwardChance = 50;
 export const marketUpwardChancePerLevel = 1;
 export const marketBaseMaximumIncrease = 90;
 export const marketMaximumIncreasePerLevel = 11;
+const merchantBaseMarkup = 200;
+const merchantMarkupReduction = 5;
 
 export const techDefinitions = [
   { key: 'recipeDiscount', budget: 125_000n, name: '配方笔记', source: '通用' },
@@ -48,6 +50,10 @@ export const techDefinitions = [
   { key: 'marketPromotion', name: '市场推广', source: '市场',
     costs: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n] },
   { key: 'premiumSales', name: '溢价销售', source: '市场',
+    costs: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n] },
+  { key: 'merchantRestock', name: '商路调度', source: '市场',
+    costs: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n] },
+  { key: 'merchantBargaining', name: '采购议价', source: '市场',
     costs: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n] },
 ].map((definition) => {
   const costs = definition.costs ?? techCostCurve(definition);
@@ -107,6 +113,8 @@ const effectDefinitions = {
   marketForecast: ['明日首次行情', 0, 1, ''],
   marketPromotion: ['上涨方向概率', marketBaseUpwardChance, marketUpwardChancePerLevel, '%'],
   premiumSales: ['最高售价倍率', 100 + marketBaseMaximumIncrease, marketMaximumIncreasePerLevel, '倍', 100],
+  merchantRestock: ['每日手动进货次数', 0, 1, '次'],
+  merchantBargaining: ['商人售价倍率', merchantBaseMarkup, -merchantMarkupReduction, '倍', 100],
 };
 
 const techLevel = (world, key) => world.tech[key] ?? 0;
@@ -114,6 +122,8 @@ const held = (world, id) => world.inventory[id] ?? 0n;
 const canPay = (world, coins, costs) => world.coins >= coins && costs.every(([id, amount]) => held(world, id) >= amount);
 
 export const discount = (world, key) => discountPerLevel * techLevel(world, key);
+export const merchantRestockLimit = (world) => techLevel(world, 'merchantRestock');
+export const merchantMarkup = (world) => BigInt(merchantBaseMarkup - merchantMarkupReduction * techLevel(world, 'merchantBargaining'));
 export const appraisalLevel = (world) => techLevel(world, 'appraisal');
 export const appraisalMultiplierBasisPoints = (world) => 10000 + appraisalPerLevel * appraisalLevel(world);
 export const researchHourMs = 3_600_000;
