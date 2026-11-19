@@ -1,0 +1,341 @@
+{
+  "version": 1,
+  "generatedWith": "built-in image_gen",
+  "generation": "assets/source/art/estate-atmosphere/generation.json",
+  "sources": {
+    "sunlight": {
+      "path": "assets/source/art/estate-atmosphere/sunlight-native.png",
+      "sha256": "1f4002ffab615c6b403fe70e411fb780b2a937da102fc827443ea22ea7832a2e",
+      "width": 887,
+      "height": 1774,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 252,
+        "zero": 545668,
+        "low": 790172,
+        "opaque": 0
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 887,
+        "height": 1774,
+        "count": 1027870
+      },
+      "visibleBoundsAlpha64": {
+        "left": 8,
+        "top": 51,
+        "width": 728,
+        "height": 1306,
+        "count": 407366
+      }
+    },
+    "birds": {
+      "path": "assets/source/art/estate-atmosphere/birds-native.png",
+      "sha256": "8b6588fdec2ea5f9024cba3b02d89c21edc8f7023aa5de5e3b643b2cb0056f2c",
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "zero": 1208410,
+        "low": 158466,
+        "opaque": 524
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 9,
+        "width": 1253,
+        "height": 1245,
+        "count": 364106
+      },
+      "visibleBoundsAlpha64": {
+        "left": 137,
+        "top": 101,
+        "width": 1011,
+        "height": 1033,
+        "count": 208118
+      }
+    }
+  },
+  "sunlight": {
+    "path": "public/art/estate/atmosphere/sunlight.webp",
+    "sha256": "13ba3cb7ecdd0ca2a46bf6d0684ef40da8964e54580db70d4a5dc666d64dbc9b",
+    "width": 512,
+    "height": 1024,
+    "channels": 4,
+    "alpha": {
+      "min": 0,
+      "max": 252,
+      "zero": 186948,
+      "low": 258265,
+      "opaque": 0
+    },
+    "visibleBoundsAlpha1": {
+      "left": 0,
+      "top": 0,
+      "width": 512,
+      "height": 1024,
+      "count": 337340
+    },
+    "visibleBoundsAlpha64": {
+      "left": 5,
+      "top": 30,
+      "width": 419,
+      "height": 753,
+      "count": 135650
+    },
+    "conversion": "Full 887x1774 native canvas resized proportionally to 512x1024 with linear sampling; original alpha retained; no procedural light or alpha mask.",
+    "quality": {
+      "quality": 70,
+      "alphaQuality": 100,
+      "effort": 6
+    }
+  },
+  "birds": {
+    "path": "public/art/estate/atmosphere/birds.webp",
+    "sha256": "f4cf20c207ba073445c2f0b935acbd90ffd57c8d2c78a04292cd00bd45e7e9e5",
+    "width": 512,
+    "height": 128,
+    "channels": 4,
+    "alpha": {
+      "min": 0,
+      "max": 255,
+      "zero": 48087,
+      "low": 7277,
+      "opaque": 27
+    },
+    "visibleBoundsAlpha1": {
+      "left": 0,
+      "top": 0,
+      "width": 512,
+      "height": 128,
+      "count": 17449
+    },
+    "visibleBoundsAlpha64": {
+      "left": 20,
+      "top": 7,
+      "width": 464,
+      "height": 95,
+      "count": 10292
+    },
+    "conversion": "Four distinct native drawings; equal 576x576 crops registered on torso, nearest resize 128x128, horizontal packing; no rotation, reshaping, recoloring, masking, or generated pixels.",
+    "anchor": {
+      "x": 64,
+      "y": 64
+    },
+    "quality": {
+      "quality": 70,
+      "alphaQuality": 100,
+      "effort": 6
+    },
+    "frames": [
+      {
+        "pose": "wings-raised",
+        "crop": {
+          "left": 45,
+          "top": 72,
+          "width": 576,
+          "height": 576
+        },
+        "sourceTorso": {
+          "x": 333,
+          "y": 360
+        },
+        "index": 0,
+        "pngPath": "assets/source/art/estate-atmosphere/birds-frame-1.png",
+        "outputFrame": {
+          "x": 0,
+          "y": 0,
+          "width": 128,
+          "height": 128
+        },
+        "outputTorso": {
+          "x": 64,
+          "y": 64
+        },
+        "width": 128,
+        "height": 128,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "zero": 11583,
+          "low": 1758,
+          "opaque": 6
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 128,
+          "height": 128,
+          "count": 4801
+        },
+        "visibleBoundsAlpha64": {
+          "left": 20,
+          "top": 7,
+          "width": 75,
+          "height": 68,
+          "count": 3076
+        },
+        "sha256": "e66388b20304039e14998f153c56052d5227d778c161fe79df9a07648b307701"
+      },
+      {
+        "pose": "wings-middle-downstroke",
+        "crop": {
+          "left": 651,
+          "top": 72,
+          "width": 576,
+          "height": 576
+        },
+        "sourceTorso": {
+          "x": 939,
+          "y": 360
+        },
+        "index": 1,
+        "pngPath": "assets/source/art/estate-atmosphere/birds-frame-2.png",
+        "outputFrame": {
+          "x": 128,
+          "y": 0,
+          "width": 128,
+          "height": 128
+        },
+        "outputTorso": {
+          "x": 64,
+          "y": 64
+        },
+        "width": 128,
+        "height": 128,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "zero": 11941,
+          "low": 2107,
+          "opaque": 3
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 2,
+          "width": 128,
+          "height": 126,
+          "count": 4443
+        },
+        "visibleBoundsAlpha64": {
+          "left": 20,
+          "top": 44,
+          "width": 91,
+          "height": 50,
+          "count": 2356
+        },
+        "sha256": "55e065fcc4f8daa81979210c5b7970e3b37665f361fd0339b848e68b5988cef4"
+      },
+      {
+        "pose": "wings-down",
+        "crop": {
+          "left": 45,
+          "top": 676,
+          "width": 576,
+          "height": 576
+        },
+        "sourceTorso": {
+          "x": 333,
+          "y": 964
+        },
+        "index": 2,
+        "pngPath": "assets/source/art/estate-atmosphere/birds-frame-3.png",
+        "outputFrame": {
+          "x": 256,
+          "y": 0,
+          "width": 128,
+          "height": 128
+        },
+        "outputTorso": {
+          "x": 64,
+          "y": 64
+        },
+        "width": 128,
+        "height": 128,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "zero": 12460,
+          "low": 1482,
+          "opaque": 8
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 1,
+          "width": 128,
+          "height": 123,
+          "count": 3924
+        },
+        "visibleBoundsAlpha64": {
+          "left": 20,
+          "top": 43,
+          "width": 79,
+          "height": 59,
+          "count": 2479
+        },
+        "sha256": "73bda05cd1ccfe4976e1f655467e2b40d5037404e0cd93ff5c5ce9b1e1cfb9bb"
+      },
+      {
+        "pose": "wings-recovering",
+        "crop": {
+          "left": 651,
+          "top": 676,
+          "width": 576,
+          "height": 576
+        },
+        "sourceTorso": {
+          "x": 939,
+          "y": 964
+        },
+        "index": 3,
+        "pngPath": "assets/source/art/estate-atmosphere/birds-frame-4.png",
+        "outputFrame": {
+          "x": 384,
+          "y": 0,
+          "width": 128,
+          "height": 128
+        },
+        "outputTorso": {
+          "x": 64,
+          "y": 64
+        },
+        "width": 128,
+        "height": 128,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 255,
+          "zero": 12103,
+          "low": 1930,
+          "opaque": 10
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 128,
+          "height": 123,
+          "count": 4281
+        },
+        "visibleBoundsAlpha64": {
+          "left": 20,
+          "top": 22,
+          "width": 80,
+          "height": 51,
+          "count": 2381
+        },
+        "sha256": "fd93b01924569787ee4ff22362f37095007618d05c7ed82c926f9fca14c0678c"
+      }
+    ]
+  },
+  "prompts": [
+    "assets/source/art/estate-atmosphere/sunlight-prompt.txt",
+    "assets/source/art/estate-atmosphere/birds-prompt.txt"
+  ]
+}

@@ -1,0 +1,670 @@
+{
+  "note": "Pure pose and source-art approximation, no Pixi/GPU or actual animation evidence. Original building/prop geometry; props placed at neutral source registration; sign labels use Noto Sans CJK SC substitute.",
+  "sites": [
+    {
+      "id": "operations",
+      "label": "经营",
+      "center": [
+        0.7357,
+        0.3163
+      ],
+      "footprint": [
+        9,
+        27,
+        527,
+        311
+      ],
+      "widthRatio": 0.38,
+      "prop": [
+        329,
+        194,
+        65
+      ],
+      "pivot": [
+        0.5,
+        0.09
+      ],
+      "signAnchorX": "250"
+    },
+    {
+      "id": "tasks",
+      "label": "任务",
+      "center": [
+        0.2131,
+        0.3063
+      ],
+      "footprint": [
+        78,
+        31,
+        457,
+        310
+      ],
+      "widthRatio": 0.2,
+      "prop": [
+        389,
+        122,
+        94
+      ],
+      "pivot": [
+        0.52,
+        0.07
+      ]
+    },
+    {
+      "id": "livestock",
+      "label": "畜牧",
+      "center": [
+        0.1947,
+        0.6626
+      ],
+      "footprint": [
+        33,
+        21,
+        503,
+        309
+      ],
+      "widthRatio": 0.37,
+      "prop": [
+        226,
+        264,
+        113
+      ],
+      "pivot": [
+        0.5,
+        0.96
+      ]
+    },
+    {
+      "id": "field",
+      "label": "田地",
+      "center": [
+        0.6731,
+        0.8245
+      ],
+      "footprint": [
+        39,
+        18,
+        497,
+        310
+      ],
+      "widthRatio": 0.51,
+      "prop": [
+        398,
+        221,
+        89
+      ],
+      "pivot": [
+        0.513,
+        0.982
+      ]
+    },
+    {
+      "id": "fish",
+      "label": "鱼池",
+      "center": [
+        0.6584,
+        1.2769
+      ],
+      "footprint": [
+        11,
+        126,
+        528,
+        309
+      ],
+      "widthRatio": 0.504,
+      "prop": [
+        147,
+        245,
+        64
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "signAnchorX": "164"
+    },
+    {
+      "id": "mine",
+      "label": "矿洞",
+      "center": [
+        0.235,
+        1.385
+      ],
+      "footprint": [
+        27,
+        37,
+        508,
+        309
+      ],
+      "widthRatio": 0.38,
+      "prop": [
+        328,
+        263,
+        132
+      ],
+      "pivot": [
+        0.5,
+        0.93
+      ]
+    },
+    {
+      "id": "processing",
+      "label": "加工",
+      "center": [
+        0.6515,
+        1.6266
+      ],
+      "footprint": [
+        32,
+        24,
+        504,
+        309
+      ],
+      "widthRatio": 0.37,
+      "prop": [
+        348,
+        223,
+        152
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "refining",
+      "label": "精制",
+      "center": [
+        0.2226,
+        1.7611
+      ],
+      "footprint": [
+        28,
+        30,
+        506,
+        309
+      ],
+      "widthRatio": 0.34,
+      "prop": [
+        403,
+        37,
+        122
+      ],
+      "pivot": [
+        0.28,
+        0.93
+      ]
+    },
+    {
+      "id": "research",
+      "label": "研发",
+      "center": [
+        0.2596,
+        2.1034
+      ],
+      "footprint": [
+        29,
+        12,
+        507,
+        309
+      ],
+      "widthRatio": 0.344,
+      "prop": [
+        455,
+        305,
+        127
+      ],
+      "pivot": [
+        0.42,
+        0.982
+      ],
+      "signAnchorX": "228"
+    },
+    {
+      "id": "warehouse",
+      "label": "仓库",
+      "center": [
+        0.7469,
+        2.0221
+      ],
+      "footprint": [
+        30,
+        21,
+        506,
+        309
+      ],
+      "widthRatio": 0.37,
+      "prop": [
+        484,
+        118,
+        106
+      ],
+      "pivot": [
+        0.51,
+        0.08
+      ]
+    }
+  ],
+  "records": [
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4400-scroll-0.png",
+      "time": 4400,
+      "viewportTop": 0,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -22.26735893208422,
+        "y": -31.2,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.04453249604734226
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "x": -0.7959183673469429,
+          "y": 176.94800211782027,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "x": -37.08979591836735,
+          "y": 189.48838112678612,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 43.85,
+          "x": -39,
+          "y": 209.36,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4900-scroll-0.png",
+      "time": 4900,
+      "viewportTop": 0,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -22.14167674945229,
+        "y": -31.2,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.0447046398134075
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 44.85,
+          "x": 94.7142857142857,
+          "y": 196.57417129263987,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.35,
+          "x": 58.4204081632653,
+          "y": 209.58726370362166,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 43.85,
+          "x": 22.126530612244903,
+          "y": 222.34812005352313,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-5500-scroll-0.png",
+      "time": 5500,
+      "viewportTop": 0,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -21.992148154949952,
+        "y": -31.2,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.04491035590751184
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "x": 209.3265306122449,
+          "y": 217.1753164749442,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "x": 173.0326530612245,
+          "y": 231.36258809380428,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "x": 136.73877551020408,
+          "y": 245.13972786928593,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-6200-scroll-0.png",
+      "time": 6200,
+      "viewportTop": 0,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -21.8196865907844,
+        "y": -31.2,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.04514903569502408
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "x": 343.0408163265306,
+          "y": 236.3031243942532,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "x": 306.7469387755102,
+          "y": 251.84029775924745,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "x": 270.45306122448983,
+          "y": 267.07412791589934,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-40392-scroll-0.png",
+      "time": 40392,
+      "viewportTop": 0,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -19.741043973762448,
+        "y": -31.2,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.051999999999939275
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 1,
+          "frame": 0,
+          "size": 44.85,
+          "x": 428.99999999999994,
+          "y": 356.52000000000004,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 1,
+          "frame": 3,
+          "size": 44.35,
+          "x": 428.99999999999994,
+          "y": 376.80000000000007,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 1,
+          "frame": 2,
+          "size": 43.85,
+          "x": 428.99999999999994,
+          "y": 397.08000000000004,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4400-scroll-76.png",
+      "time": 4400,
+      "viewportTop": 76,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -22.26735893208422,
+        "y": 44.8,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.04453249604734226
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "x": -0.7959183673469429,
+          "y": 252.94800211782027,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "x": -37.08979591836735,
+          "y": 265.4883811267861,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 43.85,
+          "x": -39,
+          "y": 285.36,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4900-scroll-76.png",
+      "time": 4900,
+      "viewportTop": 76,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -22.14167674945229,
+        "y": 44.8,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.0447046398134075
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 44.85,
+          "x": 94.7142857142857,
+          "y": 272.57417129263985,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.35,
+          "x": 58.4204081632653,
+          "y": 285.58726370362166,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 43.85,
+          "x": 22.126530612244903,
+          "y": 298.34812005352313,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-5500-scroll-76.png",
+      "time": 5500,
+      "viewportTop": 76,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -21.992148154949952,
+        "y": 44.8,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.04491035590751184
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "x": 209.3265306122449,
+          "y": 293.1753164749442,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "x": 173.0326530612245,
+          "y": 307.3625880938043,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "x": 136.73877551020408,
+          "y": 321.13972786928593,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-6200-scroll-76.png",
+      "time": 6200,
+      "viewportTop": 76,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -21.8196865907844,
+        "y": 44.8,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.04514903569502408
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "x": 343.0408163265306,
+          "y": 312.3031243942532,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "x": 306.7469387755102,
+          "y": 327.84029775924745,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "x": 270.45306122448983,
+          "y": 343.07412791589934,
+          "alpha": 0.82
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-40392-scroll-76.png",
+      "time": 40392,
+      "viewportTop": 76,
+      "viewportHeight": 844,
+      "sun": {
+        "x": -19.741043973762448,
+        "y": 44.8,
+        "width": 436.80000000000007,
+        "height": 873.6000000000001,
+        "alpha": 0.051999999999939275
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 1,
+          "frame": 0,
+          "size": 44.85,
+          "x": 428.99999999999994,
+          "y": 432.52000000000004,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 1,
+          "frame": 3,
+          "size": 44.35,
+          "x": 428.99999999999994,
+          "y": 452.80000000000007,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 1,
+          "frame": 2,
+          "size": 43.85,
+          "x": 428.99999999999994,
+          "y": 473.08000000000004,
+          "alpha": 0.82
+        }
+      ]
+    }
+  ]
+}

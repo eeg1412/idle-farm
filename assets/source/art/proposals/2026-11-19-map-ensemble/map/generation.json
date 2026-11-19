@@ -1,0 +1,48 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "intent": "native whole-image redraw using spatial/style references",
+  "generation_date": "2026-11-19",
+  "source_main": "45b53cef26bff6397acb95be6e27eeaa1710a86f",
+  "raw_output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-4ef08329-3658-4490-b997-d588a0c36d56.png",
+  "preserved_raw_copy": "assets/source/art/proposals/2026-11-19-map-ensemble/map/raw-output.png",
+  "draft": "assets/source/art/proposals/2026-11-19-map-ensemble/map/background-draft.png",
+  "raw_size": [
+    816,
+    1926
+  ],
+  "mode": "RGB",
+  "sha256": "b24a5b48c3dff14620123755547d3675df5a087f175de2ac746959606c1c2a6f",
+  "postprocess": "none; byte-identical file copy only",
+  "prompt_file": "prompt.txt",
+  "references": [
+    {
+      "path": "public/art/estate/background.webp",
+      "role": "space/layout reference; actually opened before generation",
+      "sha256": "9617f1e38b735fedb48b5894d38648bdc364e2171c45af6d8128894782c33eb8",
+      "size": [
+        756,
+        1784
+      ]
+    },
+    {
+      "path": "public/art/estate/operations.webp",
+      "role": "pixel materials, light, camera only; actually opened before generation",
+      "sha256": "8459396c8bb08bb971209a1203ea6a1a7d7918b90ab84017598439e924d15e22",
+      "size": [
+        536,
+        320
+      ]
+    },
+    {
+      "path": "src/view/estate-map.js",
+      "role": "read-only fixed geometry; not an imagegen input",
+      "sha256": "8361bbeb1c4c89b6cdc9a737f06637af2ee4ca2f4c8c4abcd3cdb81ce3ebc9b8"
+    },
+    {
+      "path": "assets/estate/README.md",
+      "role": "read-only current background history/dimensions; not an imagegen input",
+      "sha256": "fd3174ba4db116a5e87ceab83643a329f5ddd7987ed093f88fb169746ff6604d"
+    }
+  ],
+  "scope": "review draft only; no public/code/build/test/preview/push/publish changes"
+}

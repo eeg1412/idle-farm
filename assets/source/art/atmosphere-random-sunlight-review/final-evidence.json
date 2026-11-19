@@ -1,0 +1,111 @@
+{
+  "scope": "New static composites and source reading only. No game/Pixi/browser/tests/syntax checks/build.",
+  "reviewedFiles": {
+    "src/view/estate-atmosphere.js": "d57cf98797a645734c0434fa940df6bf3365f625cac6dffc1ec2369643c03ac3",
+    "src/view/estate-atmosphere-layout.js": "554d269cb082e279dedc0ab59e2b5fd70241f80e3afa888927fe77380f8017c6",
+    "src/view/estate-map.js": "9d06477d7d9a80871afed48e60f168ee9f7c2ca9903cc380ad255cbf5d5b5d8b",
+    "src/view/canvas-ui.js": "84b22140334237cedc010e2143527f751b14139c457a59ac551170def53c76b4",
+    "public/art/estate/atmosphere/birds.webp": "f4cf20c207ba073445c2f0b935acbd90ffd57c8d2c78a04292cd00bd45e7e9e5",
+    "public/art/estate/atmosphere/sunlight.webp": "13ba3cb7ecdd0ca2a46bf6d0684ef40da8964e54580db70d4a5dc666d64dbc9b",
+    "public/art/estate/tasks.webp": "c9b836d3d63f25c92b57b713c77910dd65dd4e12455acc187b9133af178c5c89",
+    "public/art/estate/sign.webp": "22a26aec0c839a4fb1882ebc6dcb0f21f1cb44d1a6bba060d854de980b9c6c7f",
+    "public/art/estate/operations-motion.webp": "f9ea23deca1df9a2be317e2fd3961e17cd7d763514999a52fcfeed0195b4e803",
+    "public/art/estate/mine.webp": "0725674ddc8479c27e9a60f58aaddcd40bc5ed9d9d081738a5d3338671b46be8",
+    "public/art/estate/processing-motion.webp": "2d42f3d73b4b9bdd26d60c3b1ee479da2fa7e3f4cdc28a87dd9d04a678e3af1d",
+    "public/art/estate/refining-motion.webp": "2db1fd822dd1504e3023f35d9152fdb66184f4e63f228ad014efa96a161b3326",
+    "public/art/estate/livestock.webp": "2094af4862b4537d44b13d1ebca46d5de13ad33940046857718c307e499c3b97",
+    "public/art/estate/fish.webp": "12ce99008fcebb736679a9f24d766f28c88ca0c81caebc63502e3cbae1d0a1c6",
+    "public/art/estate/warehouse.webp": "3ae6ab47e65706663ce229a55dd39684fa8573eb1a0bcd5872ff12754fdaa651",
+    "public/art/estate/research-motion.webp": "229e88f4eb93a5e18c478587d6aa392f4c7b7a3bb672854538f68051347c66ce",
+    "public/art/estate/tasks-motion.webp": "55fb6421fbc3206d94322373b33451d7cec8a4befd6a9a5a8394f91d75d1859f",
+    "public/art/estate/warehouse-motion.webp": "14955aa4ba2b3a2c3ff7412b8c176749169f884c8e51a6ef05401b4172dbb557",
+    "public/art/estate/operations.webp": "8459396c8bb08bb971209a1203ea6a1a7d7918b90ab84017598439e924d15e22",
+    "public/art/estate/field.webp": "fb734f59a0c224910e46e86cd32ff3d701370a819166fee2c895a558200e2874",
+    "public/art/estate/background.webp": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803",
+    "public/art/estate/mine-motion.webp": "ce2255df8c1d0900881f1676953442097b187a810a58f9c0970704b177ac7831",
+    "public/art/estate/refining.webp": "bcc3e245dcc369a95f1a300f67da5a1e51205924fc6d78e75e254c81de6859e3",
+    "public/art/estate/fish-motion.webp": "2959435a309ab7fc3aa04a68acea4136d070245a55c543fdda570672ed09ae96",
+    "public/art/estate/research.webp": "278f86c01dadd63a993866d25ff3aeba6e1b5e453bdba24c10a46581574bd697",
+    "public/art/estate/field-motion.webp": "d7cff292e5a8d132554a32998afd54b4709af10ad3dccf4313d691438f2d41d7",
+    "public/art/estate/livestock-motion.webp": "4d0cc21de05694aa1a37f8e5688f82c59622017c6aa8475aeacae01baaafc1cb",
+    "public/art/estate/processing.webp": "21488af92acfe219c6fa6ac30dcfb0d294f228d8ed85860163305155c7a5faee"
+  },
+  "baselineChanges": {
+    "src/view/estate-atmosphere.js": {
+      "before": "ce2de642cda2f9fa69a7d81d95342e80c550218e334266e91011e97a7ecd4e1d",
+      "after": "d57cf98797a645734c0434fa940df6bf3365f625cac6dffc1ec2369643c03ac3"
+    },
+    "src/view/estate-atmosphere-layout.js": {
+      "before": "79a826c91e07d97156533e00033ff172fe53fa33075d3fe922904105b3f19e65",
+      "after": "554d269cb082e279dedc0ab59e2b5fd70241f80e3afa888927fe77380f8017c6"
+    }
+  },
+  "actualOpenedRetainedPngs": [
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-40392-scroll-187.png",
+      "bytes": 439346,
+      "sha256": "71d4ef77a4e48ce4ea66ce26a8797fcd7b3cc77fcaee5b990b79569476a1c51d"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-contact-scroll-0.png",
+      "bytes": 819696,
+      "sha256": "0dd6f2a1389d4b2940c4e2edeeb84765c88742eb481f60a68b4200270488a1cc"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-contact-scroll-187.png",
+      "bytes": 854115,
+      "sha256": "e03d4687ef071c62ad8149760cf8200a168b8aa06f9cc7e774381bf8c19e88b7"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-off-scroll-187.png",
+      "bytes": 398201,
+      "sha256": "983ab2223b1e9d037bc39f4194f5294888312df6134cc045ee8dd794e084e2df"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/route-A-contact-scroll-0.png",
+      "bytes": 868728,
+      "sha256": "0ecc2759185473968563c3d3300710b62292aea9ce1d0c2e13547c8f1f386f68"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/route-B-contact-scroll-0.png",
+      "bytes": 868916,
+      "sha256": "2a6acbac3a137dfb6950a4c23b98ddd97e354c214777d7c216d5ebe8ffa5f680"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/route-C-contact-scroll-0.png",
+      "bytes": 868162,
+      "sha256": "9c93986776fb9bdc544f1a64c0ac1e08186f743bc009a85950fbec75f51b40c6"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-40392-scroll-0.png",
+      "bytes": 745465,
+      "sha256": "c1887a5d4799dffe634c62cf9659d16ac5d49e110bfd3ea001b129239f985ed9"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-contact-scroll-0.png",
+      "bytes": 1278630,
+      "sha256": "1b873265737a30fc266635580d921bd9575a913ae59bc9fbb4fa50fda11f42e7"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-contact-scroll-76.png",
+      "bytes": 1340129,
+      "sha256": "a560bd27b034386324cc94d3b4aaccec041c039d255712851f282548dd263582"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-off-scroll-0.png",
+      "bytes": 679263,
+      "sha256": "da8e8d406cf0918caa13db97c2267d904138b18f677db85035a44f9d67798702"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-414x896/sun-contact-scroll-0.png",
+      "bytes": 1402700,
+      "sha256": "a9d9e3303bdc890d639b12a7369b9cb25f51390f7fa37f4b40e19cf116b8bebb"
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-414x896/sun-contact-scroll-81.png",
+      "bytes": 1470488,
+      "sha256": "cc49340bb319b7e713f789e469ec8f28bc140678662c33710f51641155d11fe5"
+    }
+  ],
+  "directoryBytes": 12183907
+}

@@ -1,5 +1,16 @@
 # 庄园首页美术原稿
 
+## 当前采用底图 · 2026-11-19
+
+用户认可的当前源为 `assets/source/art/proposals/2026-11-19-map-ensemble/map/background-draft.png`，816 × 1926，SHA256 `b24a5b48c3dff14620123755547d3675df5a087f175de2ac746959606c1c2a6f`。直接保留整幅尺寸与比例导出 WebP 质量 90、effort 6，不裁切、不重绘。底图运行 URL 为 `art/estate/background.webp?game=1&v=7`，离线清单版本同步为 7。
+
+成品 `public/art/estate/background.webp`：816 × 1926 RGB，140,656 字节，SHA256 `e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803`。仅底图替换；建筑、门牌、动件资源与 `estate-map.js` 的既有建筑坐标、比例、命中范围保持。以下旧底图资料保留作历史来源。
+
+```js
+await sharp('assets/source/art/proposals/2026-11-19-map-ensemble/map/background-draft.png')
+  .webp({ quality: 90, effort: 6 }).toFile('public/art/estate/background.webp');
+```
+
 地图底图、建筑图集、动件图集和空白门牌均由内置图像生成工具生成。共用的风格参考见 `concept-reference.webp`，源图编号为 `exec-82be9ccb-d162-4743-9c7d-6ef41c0981b6`。正式地图在运行时组合 22 张独立图像，门牌文字由界面渲染。
 
 | 原稿 | 原始尺寸 | 导出至 `public/art/estate/` |

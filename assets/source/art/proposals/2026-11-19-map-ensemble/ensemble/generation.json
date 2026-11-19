@@ -1,0 +1,142 @@
+{
+  "date": "2026-11-19",
+  "method": "built-in image_gen.imagegen; native full-image generation then native targeted correction of newly generated first draft",
+  "transparent_background": true,
+  "final": {
+    "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/managers-draft.png",
+    "role": "Final review candidate; unchanged tool output copied into repository",
+    "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+    "size": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA"
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "intent": "new native-painted ensemble generation; old ensemble never used",
+      "promptFile": "prompt.txt",
+      "inputs": [
+        {
+          "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/identity-contact-sheet.png",
+          "role": "Identity only; all 22 existing smile busts; grid and poses not copied",
+          "sha256": "15486f1e462a07007977c1f17f4b6b3665f9789cd1ac11243c2a1b263aa6868d",
+          "size": [
+            1600,
+            2220
+          ],
+          "mode": "RGB"
+        },
+        {
+          "path": "/workspace/scratch/a46f8d1a2380/research/ensemble-composition/persona-5-royal.jpg",
+          "role": "Composition only; large foreground, diagonal depth and cropping, no character/style/color copying",
+          "sha256": "fb1fe6a42f8b2bd2c369b5319a3078aa58a9515914b5d02485fa520c41bddff1",
+          "size": [
+            410,
+            581
+          ],
+          "mode": "RGB"
+        }
+      ],
+      "toolArguments": {
+        "transparent_background": true,
+        "referenced_image_paths": [
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/identity-contact-sheet.png",
+          "/workspace/scratch/a46f8d1a2380/research/ensemble-composition/persona-5-royal.jpg"
+        ]
+      },
+      "originalOutputPath": "/workspace/scratch/a46f8d1a2380/generated_images/exec-cde055bf-5389-45db-8a9a-46648e2201d6.png",
+      "retainedOutput": {
+        "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/raw-attempt-01.png",
+        "role": "Unmodified first output",
+        "sha256": "5dc94887ec3d8e72fb1bc8df983df8b2864f8ea237126067d66b2706d2e267c9",
+        "size": [
+          1024,
+          1536
+        ],
+        "mode": "RGBA"
+      },
+      "result": "21 human faces; merchant male omitted. Native targeted correction requested."
+    },
+    {
+      "attempt": 2,
+      "intent": "identity-preserving native correction; add only missing merchant male in middle depth; new first draft is the edit target, never an old ensemble",
+      "promptFile": "prompt-correction.txt",
+      "inputs": [
+        {
+          "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/raw-attempt-01.png",
+          "role": "Edit target; new first draft generated in this task",
+          "sha256": "5dc94887ec3d8e72fb1bc8df983df8b2864f8ea237126067d66b2706d2e267c9",
+          "size": [
+            1024,
+            1536
+          ],
+          "mode": "RGBA"
+        },
+        {
+          "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/identity-contact-sheet.png",
+          "role": "Identity only; all 22 existing smile busts; grid and poses not copied",
+          "sha256": "15486f1e462a07007977c1f17f4b6b3665f9789cd1ac11243c2a1b263aa6868d",
+          "size": [
+            1600,
+            2220
+          ],
+          "mode": "RGB"
+        },
+        {
+          "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/public/art/managers/portraits/merchant/male-smile.webp",
+          "role": "Identity only for missing merchant male in correction",
+          "sha256": "846428461ad02c6a9af99dd76ed83a0a6f0327390967b868be5e0af28c6f2033",
+          "size": [
+            492,
+            289
+          ],
+          "mode": "RGBA"
+        }
+      ],
+      "toolArguments": {
+        "transparent_background": true,
+        "referenced_image_paths": [
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/raw-attempt-01.png",
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/identity-contact-sheet.png",
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/public/art/managers/portraits/merchant/male-smile.webp"
+        ]
+      },
+      "originalOutputPath": "/workspace/scratch/a46f8d1a2380/generated_images/exec-3e3138a6-39a9-4368-ab3d-b9245f993675.png",
+      "retainedOutput": {
+        "path": "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/raw-attempt-02.png",
+        "role": "Unmodified corrected output; final candidate",
+        "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+        "size": [
+          1024,
+          1536
+        ],
+        "mode": "RGBA"
+      },
+      "result": "Author identifies 22 distinct canonical faces. Reviewer receives exact path for independent visual review."
+    }
+  ],
+  "otherViewedCompositionReferences": [
+    {
+      "path": "/workspace/scratch/a46f8d1a2380/research/ensemble-composition/rune-factory-5.jpg",
+      "role": "Viewed for depth/cropping study; NOT passed to image_gen",
+      "sha256": "48da896dafcceee6915f08c453ef23f79c9cacf848970de30c23dccde5c5184d",
+      "size": [
+        900,
+        900
+      ],
+      "mode": "RGB"
+    }
+  ],
+  "identityInputsFile": "identity-inputs.json",
+  "canonicalManifest": "assets/source/art/loading/references-all22.json",
+  "authorInspection": {
+    "faces": 22,
+    "female": 11,
+    "male": 11,
+    "composition": "Estate pair large lower foreground, other jobs mixed in diagonal overlapping depths, off-canvas shoulders/clothing allowed. Merchant male added in inner-middle, all other 21 faces retained.",
+    "alpha": "RGBA native output, alpha range 0..254. Top background corners alpha 0; hidden RGB gradient is not an opaque background. No alpha repaint or removal applied.",
+    "scope": "Only ensemble proposal directory written. No public/code changes, test, game preview, compile, push or publication."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-19",
+  "tool": "built-in image_gen.imagegen",
+  "purpose": "Native transparent atmosphere assets for approved manor map",
+  "inputRoles": [
+    {
+      "path": "assets/source/art/proposals/2026-11-19-map-ensemble/review/draft-map-buildings-static.png",
+      "role": "style/palette reference only; not an edit target"
+    },
+    {
+      "path": "public/art/estate/operations.webp",
+      "role": "style/palette reference only; not an edit target"
+    }
+  ],
+  "requests": [
+    {
+      "asset": "sunlight",
+      "promptFile": "assets/source/art/estate-atmosphere/sunlight-prompt.txt",
+      "actualInput": {
+        "prompt": "Use case: stylized-concept.\nAsset type: transparent sunlight overlay texture for a warm painterly pixel-art manor game.\nPrimary request: Draw ONLY soft, graceful warm white and very pale gold diagonal sunrays on genuine transparent alpha. This is a separate atmosphere texture, NOT a scene. The rays travel from upper left toward lower right through a tall 1:2 canvas; a few broad diffuse streaks, softly varied translucency and feathered edges, brightest near the upper left but no sun disk. Most of the canvas remains transparent. The warmth should complement ochre paths, lime grass, terracotta roofs and cozy detailed pixel-art buildings shown in references.\nInput images: reference image 1 is the approved map with existing buildings; reference image 2 is a current building. References are solely for palette and atmosphere. Do not reproduce them.\nComposition/framing: portrait 512x1024 target aspect, isolated airy light rays with generous true transparency around all four edges, no rectangular luminous plate; all glow fades gradually into zero alpha inside the canvas.\nStyle/medium: soft luminous atmospheric light with gentle diffusion, subtle hand-painted softness; sunlight may be smoother than the pixel-art world.\nColor palette: warm white, pale cream gold only, no orange smoke.\nConstraints: genuinely transparent background; no map, no landscape, no buildings, no birds, no ground, no horizon, no hard edges, no sun disk, no flare rings, no starbursts, no particles, no text, no watermark, no checkerboard drawn into the pixels. Preserve soft low-opacity alpha in the light itself.",
+        "transparent_background": true,
+        "referenced_image_paths": [
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/review/draft-map-buildings-static.png",
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/public/art/estate/operations.webp"
+        ]
+      },
+      "actualOutput": "/workspace/scratch/a46f8d1a2380/generated_images/exec-9a36819f-995c-42e9-8d2c-ae5ac9cb3123.png",
+      "source": "assets/source/art/estate-atmosphere/sunlight-native.png"
+    },
+    {
+      "asset": "birds",
+      "promptFile": "assets/source/art/estate-atmosphere/birds-prompt.txt",
+      "actualInput": {
+        "prompt": "Use case: stylized-concept.\nAsset type: transparent 2x2 four-frame bird flight sprite sheet for a warm painterly pixel-art manor game.\nPrimary request: ONE same small distant brown-gray songbird flying to the RIGHT, drawn in FOUR genuinely different anatomical wingbeat frames. Arrange four individual frames in a strict uniform 2x2 square grid, reading top-left, top-right, bottom-left, bottom-right. Each cell is an identical square with plenty of transparent margin. Frame 1 wings raised high, frame 2 wings at middle with visible feather shapes, frame 3 wings fully swept downward, frame 4 wings flexed and recovering upward. The wings change pose and feather silhouette visibly; the bird body stays steady and horizontal.\nInput images: reference image 1 is the approved warm pixel-art map; reference image 2 is a current pixel-art building. References are style and palette references only. Do not reproduce their subjects.\nSubject: restrained warm taupe and brown upper feathers, pale cream-gray underside, small darker head, pointed tiny beak pointing right, compact identifiable bird body, short tail pointing left. View from slightly above and the side, clear bird silhouette with visible feather anatomy. Same individual bird, same size and body proportions in all four frames.\nComposition/framing: square sheet, four equal square cells. The center of the torso in every cell must be EXACTLY at that cell's center. The bird's head/beak/tail should keep the same positions from frame to frame while only wings articulate. Wings may reach upward/downward but must fit inside the central 70 percent of each cell, no clipping, no overlap into neighboring cells. Body axis faces right, no diagonal whole-body rotation. Each drawing should be legible after nearest-neighbor reduction into a 128x128 animation cell and when displayed at 24–36 pixels.\nStyle/medium: clean detailed warm pixel-art sprite consistent with reference buildings, crisp feather pixel clusters and restrained shading. Not photorealism, not smooth vector icon.\nConstraints: TRUE transparent background, NO ground, NO shadows, NO sky, NO scenery, NO motion lines, NO text or numbers or cell borders or labels. Never repeat or rotate the same silhouette to fake wingbeats. No V symbols, no black silhouette-only birds, no spread standing-bird pose, no extra birds or detached wings.",
+        "transparent_background": true,
+        "referenced_image_paths": [
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/assets/source/art/proposals/2026-11-19-map-ensemble/review/draft-map-buildings-static.png",
+          "/workspace/scratch/a46f8d1a2380/idle-farm-online/.sites-checkout/public/art/estate/operations.webp"
+        ]
+      },
+      "actualOutput": "/workspace/scratch/a46f8d1a2380/generated_images/exec-579cb347-dd94-4f17-bc6c-6fb9422abe4f.png",
+      "source": "assets/source/art/estate-atmosphere/birds-native.png"
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "scope": "Image pixel reading and source text comparison only; no game/tests/build.",
+  "preservedAssetChanges": {
+    "public/art/estate/background.webp": {
+      "before": "9617f1e38b735fedb48b5894d38648bdc364e2171c45af6d8128894782c33eb8",
+      "after": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803"
+    }
+  },
+  "siteGeometryBlockUnchanged": true,
+  "managerAlphaDifferenceBounds": null,
+  "files": [
+    {
+      "path": "assets/source/art/proposals/2026-11-19-map-ensemble/map/background-draft.png",
+      "sha256": "b24a5b48c3dff14620123755547d3675df5a087f175de2ac746959606c1c2a6f",
+      "size": [
+        816,
+        1926
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/managers-draft.png",
+      "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/source/art/loading/managers.png",
+      "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "public/art/loading/managers.webp",
+      "sha256": "8ecdcbbf99395c62612fb0f34b78c6896a75b329a0ea737caa6bc9f99d82d197",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "public/art/estate/background.webp",
+      "sha256": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803",
+      "size": [
+        816,
+        1926
+      ],
+      "mode": "RGB"
+    },
+    {
+      "path": "public/art/estate/atmosphere/birds.webp",
+      "sha256": "f4cf20c207ba073445c2f0b935acbd90ffd57c8d2c78a04292cd00bd45e7e9e5",
+      "size": [
+        512,
+        128
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "public/art/estate/atmosphere/sunlight.webp",
+      "sha256": "13ba3cb7ecdd0ca2a46bf6d0684ef40da8964e54580db70d4a5dc666d64dbc9b",
+      "size": [
+        512,
+        1024
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/source/art/estate-atmosphere/birds-native.png",
+      "sha256": "8b6588fdec2ea5f9024cba3b02d89c21edc8f7023aa5de5e3b643b2cb0056f2c",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "assets/source/art/estate-atmosphere/sunlight-native.png",
+      "sha256": "1f4002ffab615c6b403fe70e411fb780b2a937da102fc827443ea22ea7832a2e",
+      "size": [
+        887,
+        1774
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "path": "src/view/loading-layout.js",
+      "sha256": "65b0d8aabd2c9ad285e54e1dcdc25eefcf41f57b079fa9b4abff075ea2fc7e42"
+    },
+    {
+      "path": "src/view/loading-screen.js",
+      "sha256": "832f5ae71279df78a116b18f760e6b6d051e70322b9cccf2ffaf331cc6473e69"
+    },
+    {
+      "path": "src/view/estate-atmosphere.js",
+      "sha256": "ce2de642cda2f9fa69a7d81d95342e80c550218e334266e91011e97a7ecd4e1d"
+    },
+    {
+      "path": "src/view/estate-atmosphere-layout.js",
+      "sha256": "79a826c91e07d97156533e00033ff172fe53fa33075d3fe922904105b3f19e65"
+    },
+    {
+      "path": "src/view/estate-map.js",
+      "sha256": "9d06477d7d9a80871afed48e60f168ee9f7c2ca9903cc380ad255cbf5d5b5d8b"
+    },
+    {
+      "path": "src/view/canvas-ui.js",
+      "sha256": "84b22140334237cedc010e2143527f751b14139c457a59ac551170def53c76b4"
+    },
+    {
+      "path": "scripts/build-offline.mjs",
+      "sha256": "9aeb342dc31c6f4615df2c1ddabdd3fd8a085f7a40204cd5432afc255dc12070"
+    }
+  ],
+  "readings": {
+    "public/art/estate/atmosphere/birds.webp": {
+      "alphaRange": [
+        0,
+        255
+      ],
+      "alphaZeroPixels": 48087,
+      "fullyOpaquePixels": 27
+    },
+    "public/art/estate/atmosphere/sunlight.webp": {
+      "alphaRange": [
+        0,
+        252
+      ],
+      "alphaZeroPixels": 186948,
+      "fullyOpaquePixels": 0
+    }
+  },
+  "reviewEvidenceFiles": [
+    {
+      "path": "assets/source/art/approved-atmosphere-review/bird-frames-and-canvas-sizes.png",
+      "sha256": "457acb55431797d07fa292f796a63d095577d3da97a9bcbdcc616b687064643c"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/bird-runtime-size.png",
+      "sha256": "be967e3799df0ff5d6d2fae315deac2006e05937dc4d79a990d2a403c9d79172"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/base-buildings-signs.png",
+      "sha256": "7ccd0198f04e8129962642f6e0899dfcbe4609a08b674ecb2292345209bc8076"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/max-sunlight-comparison.png",
+      "sha256": "829b85332f92618f7c3ac40c6637987618a03b4124eb111796d07e18deda305e"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-40392-scroll-0.png",
+      "sha256": "dbf6ea7d7882ed9b1d630a05c41c335573630196916e9243abb3c88ebad44bf1"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-40392-scroll-76.png",
+      "sha256": "fb08e71d2debed0786dec4189b1e3340a72ae9f7f3acd94492e81cd8588090ea"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4400-scroll-0.png",
+      "sha256": "f685215437d8c99a17f5ac352d167a82bd168659a74251d4883069ba108410e6"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4400-scroll-76.png",
+      "sha256": "7a196fdc116d09b6daf68b80b5e860179b9f926aa91d019cf099921ba0baa5c3"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4900-scroll-0.png",
+      "sha256": "2febc4b6502fe0f73ec76b080789353da1f54f39e7c84e8c5af92f9b870eef81"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-4900-scroll-76.png",
+      "sha256": "4400d44e3a90fce98eee68dbcc7bd6605ca4b22a3ec05ecfc2a25f76b3df26d4"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-5500-scroll-0.png",
+      "sha256": "c4d7845fe9a348b569f84689e46902840130b313f76b051bfb6b5fcbe205f769"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-5500-scroll-76.png",
+      "sha256": "f8d8bd4a9f5b55c557072dbe4fb113af2338cac3a8eb741056da86d907d8beea"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-6200-scroll-0.png",
+      "sha256": "f99b6dabcfab5806bb871a09f7685b5e4ff483dfdbe5d23b04470609d910a97c"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/pose-6200-scroll-76.png",
+      "sha256": "2b3420ba22768dd3d54f1ec2efa6b8101fd2416a2563d0dae94f4b9dcefb282a"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/poses-scroll-0-contact.png",
+      "sha256": "21e33d4cacff79f8506b0fe3301f0837736c37a77b5dac4a066b1049ec0c9f21"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/estate/poses-scroll-76-contact.png",
+      "sha256": "14aefb5f179c710b2f985f87784913ae9b2ce37474ed49cdbc014ed5643908ee"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/failed-320x568.png",
+      "sha256": "b564e461d89499b20caace512ba578f703f139108fa13fe707da5b1328d2545f"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/failed-320x640.png",
+      "sha256": "342b5ee11c0465e15cec866232e99367619e0e1024aa0660f276bf7c4700440f"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/failed-390x844-safe.png",
+      "sha256": "764e889d1b73526db00fdb7c085b8a8837d2c9cd7ee0c65d039451503765a3f3"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/failed-390x844.png",
+      "sha256": "7d2f70059eff43585965be62a91700501513614e9e51275a3b87b87966b147e0"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/failed-414x896.png",
+      "sha256": "bb628c8df3c43df3f930c306972b7f604dcce242ba545d2c3adfc56f1b4a6429"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/failed-contact.png",
+      "sha256": "db515c91833c571f940acd7fd732b90c4534230c307617af09de5f52c2ed4b8e"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/normal-320x568.png",
+      "sha256": "d349e8e7a50ef17f36068cf693f162234e30452f4b42e2da8c541247643209ca"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/normal-320x640.png",
+      "sha256": "852cf387d448b64bd4e86648f52fcd82fa9e654b25db3aff870959237df5180a"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/normal-390x844-safe.png",
+      "sha256": "44035a186696446c8e4994bfcb1e94a86905d6c2a19fd3d330f3926edd08f118"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/normal-390x844.png",
+      "sha256": "cc95e88f979d20e92b0070ae444eabdfb3270adf7fb529c3d278596eeadc7e2b"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/normal-414x896.png",
+      "sha256": "2954a61db94428a08d0700a12643d9c8cdf7077e0b2ac88188a1fd31c314a701"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/normal-contact.png",
+      "sha256": "1b2a8484643a30ae1af9d2b56d999bc35f430b220bf6792b3a188c7df2f80098"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/problem-320x568.png",
+      "sha256": "5a730319ad09dfe266a2b72604a2d12f35868a022419b00b77e4d856c7af2012"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/problem-320x640.png",
+      "sha256": "21830ae6957689b9766556377d57ad328330818a37025d1f600e3480d48e5a13"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/problem-390x844-safe.png",
+      "sha256": "1e69848d517a32d71cc308cb3f906ceec49fc87c71dc9735ccb9f6e9513ab70e"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/problem-390x844.png",
+      "sha256": "e47961d5ae663f671da563c53f7771e76170b1ca72f6124d3b6d7d80bca7e763"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/problem-414x896.png",
+      "sha256": "a9f73454a53df7f8c5122c525ed9e929bd6907469afbb86568b1e4aaf7c042ba"
+    },
+    {
+      "path": "assets/source/art/approved-atmosphere-review/loading/problem-contact.png",
+      "sha256": "01555313d8ab6770fb752f5de60acfd9ad84ec1ee0d991298bbdcc5664543664"
+    }
+  ]
+}

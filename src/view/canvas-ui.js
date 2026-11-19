@@ -380,6 +380,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let floatNode;
   let drawn;
   let estateMap;
+  let parkedEstateAtmosphere;
   let lastResearchReady;
   // Any change to the stage sets this; the stage is rendered only on dirty frames (plus a slow
   // safety refresh), never skipped when something may have changed.
@@ -3206,12 +3207,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       getImage: (url) => textures.get(url),
       loadImage: loadAnimationImage,
       markDirty,
+      retainedAtmosphere: parkedEstateAtmosphere,
       researchReady,
       returnGiftSites: new Set(Object.entries(estateDestinations)
         .filter(([, page]) => claimableReturns.has(page)).map(([site]) => site)),
       guideTaskName: activeGuideTask(world)?.name,
       focusedIndex: focusIndex - firstControl,
     });
+    parkedEstateAtmosphere = undefined;
     const map = estateMap;
     setupScrollTarget(parent, body, locals[homePage], 0, width, 0, height, map.height, undefined,
       [(scroll) => map.setViewport(scroll, height)]);
@@ -3467,7 +3470,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     // A throwing page must not leave `building` set, or every later redraw would be skipped.
     try { build(); }
     catch (error) { flushRetainedAnimations(); throw error; }
-    finally { building = false; }
+    finally {
+      // A non-map page (or a throwing build) cannot leave a detached flock alive.
+      parkedEstateAtmosphere?.destroy();
+      parkedEstateAtmosphere = undefined;
+      building = false;
+    }
     drawn = { layout, world, status, epoch: progressTiming?.epoch };
     if (pendingModal) {
       const next = pendingModal;
@@ -3509,6 +3517,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     syncPlotVisibility = undefined;
     visiblePlotIds.clear();
     imagesInUse = new Set();
+    parkedEstateAtmosphere = estateMap?.parkAtmosphere();
     for (const child of root.removeChildren()) child.destroy({ children: true });
     controls = [];
     scrollTarget = undefined;
@@ -3782,7 +3791,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     } catch (error) { toast(error?.userMessage || '无法读取存档文件。'); }
   });
-  document.addEventListener?.('visibilitychange', () => { markDirty(); syncPlotVisibility?.(); });
+  document.addEventListener?.('visibilitychange', () => {
+    markDirty();
+    syncPlotVisibility?.();
+    // Browsers may suspend the ticker while hidden, so reset at the visibility
+    // event as well as inactive ticks instead of counting any background gap.
+    estateMap?.pauseAtmosphere();
+  });
   // Input, focus, viewport and context events may change what is shown (hover, gestures in the
   // research tree, sliders, text entry); each marks the next frame dirty.
   for (const type of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'pointerleave', 'wheel',
@@ -3828,7 +3843,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       for (const plot of activePlots) if (plot.animation.update(animationFrame) !== false) animated = true;
       if (animated) markDirty();
     }
-    if (estateMap && !document.hidden && !modal && !pendingModal && estateMap.update(now)) markDirty();
+    if (estateMap) {
+      const mapActive = !document.hidden && !modal && !pendingModal;
+      const atmosphereActive = mapActive && openingScreen.complete && !status?.busy && !navigationMenu;
+      if (estateMap.update(now, atmosphereActive, mapActive)) markDirty();
+    }
     if (coast) markDirty();
     updateScrollThumb(now);
   });

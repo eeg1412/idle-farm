@@ -1,0 +1,72 @@
+const sites = [
+  { id: 'operations', label: '经营', center: [0.7357, 0.3163], footprint: [9, 27, 527, 311],
+    widthRatio: 0.38, prop: [329, 194, 65], pivot: [0.5, 0.09], signAnchorX: 250,
+    animate(sprite, time, unit, scale) {
+      const phase = turn * cycle(time, 2.7);
+      sprite.scale.x = scale * (0.87 + 0.13 * Math.cos(phase));
+      sprite.rotation = 0.055 * Math.sin(phase);
+    } },
+  { id: 'tasks', label: '任务', center: [0.2131, 0.3063], footprint: [78, 31, 457, 310],
+    widthRatio: 0.2, prop: [389, 122, 94], pivot: [0.52, 0.07],
+    animate(sprite, time) {
+      sprite.rotation = 0.09 * Math.sin(turn * cycle(time, 3.4));
+      sprite.alpha = 0.94 + 0.06 * Math.sin(turn * cycle(time, 1.8));
+    } },
+
+  { id: 'livestock', label: '畜牧', center: [0.1947, 0.6626], footprint: [33, 21, 503, 309],
+    widthRatio: 0.37, prop: [226, 264, 113], pivot: [0.5, 0.96],
+    animate(sprite, time, unit, scale) {
+      sprite.scale.y = scale * (1 + 0.078 * Math.sin(turn * cycle(time, 2.8)));
+    } },
+  { id: 'field', label: '田地', center: [0.6731, 0.8245], footprint: [39, 18, 497, 310],
+    widthRatio: 0.51, prop: [398, 221, 89], pivot: [0.513, 0.982],
+    animate(sprite, time) {
+      sprite.rotation = 0.12 * Math.sin(turn * cycle(time, 3.5));
+    } },
+
+  { id: 'fish', label: '鱼池', center: [0.6584, 1.2769], footprint: [11, 126, 528, 309],
+    // Center the plaque on the inland pond; the offshore cages share its entry.
+    widthRatio: 0.504, prop: [147, 245, 64], signAnchorX: 164,
+    // Give the mine the narrow decorative fringe shared by their hit boxes.
+    hitInsetLeft: 20,
+    animate(sprite, time, unit, scale, x, y) {
+      const phase = cycle(time, 8.4);
+      const angle = turn * phase;
+      sprite.position.set(x + 28 * unit * Math.cos(angle), y + 12 * unit * Math.sin(angle));
+      sprite.scale.x = phase < 0.5 ? scale : -scale;
+      sprite.alpha = 0.8;
+    } },
+  { id: 'mine', label: '矿洞', center: [0.235, 1.385], footprint: [27, 37, 508, 309],
+    widthRatio: 0.38, prop: [328, 263, 132], pivot: [0.5, 0.93],
+    animate(sprite, time, unit, scale, x, y) {
+      const angle = turn * cycle(time, 7.5);
+      sprite.position.set(x + 51 * unit * Math.sin(angle), y + 14 * unit * Math.sin(angle));
+    } },
+
+  { id: 'processing', label: '加工', center: [0.6515, 1.6266], footprint: [32, 24, 504, 309],
+    widthRatio: 0.37, prop: [348, 223, 152],
+    animate(sprite, time) {
+      sprite.rotation = turn * cycle(time, 8);
+    } },
+  { id: 'refining', label: '精制', center: [0.2226, 1.7611], footprint: [28, 30, 506, 309],
+    widthRatio: 0.34, prop: [403, 37, 122], pivot: [0.28, 0.93],
+    animate(sprite, time, unit, scale, x, y) {
+      const phase = cycle(time, 4.4);
+      sprite.position.set(x + phase * 17 * unit, y - phase * 26 * unit);
+      sprite.scale.set(scale * (0.53 + phase * 0.47));
+      sprite.alpha = 0.82 * Math.sin(Math.PI * phase);
+    } },
+
+  { id: 'research', label: '研发', center: [0.2596, 2.1034], footprint: [29, 12, 507, 309],
+    widthRatio: 0.344, prop: [455, 305, 127], pivot: [0.42, 0.982], signAnchorX: 228,
+    animate(sprite, time) {
+      sprite.rotation = 0.05 * Math.sin(turn * cycle(time, 5.6));
+    } },
+  { id: 'warehouse', label: '仓库', center: [0.7469, 2.0221], footprint: [30, 21, 506, 309],
+    widthRatio: 0.37, prop: [484, 118, 106], pivot: [0.51, 0.08],
+    animate(sprite, time, unit, scale) {
+      const lift = (1 + Math.cos(turn * cycle(time, 6.7))) / 2;
+      sprite.scale.y = scale * (0.72 + 0.28 * lift);
+    } },
+];
+

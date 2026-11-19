@@ -1,0 +1,2162 @@
+{
+  "note": "Static art composition, pixel metadata, and source reading only; no game/Pixi/browser/test/runtime/syntax check/build. Neutral building motion; Pango substitute labels; integer raster approximation.",
+  "baselineGeometryUnchanged": true,
+  "baselineGeometrySha256": "2e328afd71445fd20e5b59e231bb81deb3a0edc704cd2d40a762d2f1e9e81819",
+  "currentGeometrySha256": "2e328afd71445fd20e5b59e231bb81deb3a0edc704cd2d40a762d2f1e9e81819",
+  "sizes": [
+    {
+      "id": "grass-meadow",
+      "width": 128,
+      "height": 65,
+      "at320": [
+        18.05128205128205,
+        9.166666666666666
+      ],
+      "at390": [
+        22,
+        11.171875
+      ],
+      "anchor": [
+        0.5097276264591439,
+        0.9694656488549618
+      ],
+      "sourcePng": "assets/source/art/estate-foliage/grass-meadow.png"
+    },
+    {
+      "id": "tree-oak",
+      "width": 255,
+      "height": 256,
+      "at320": [
+        52.30769230769231,
+        52.51282051282051
+      ],
+      "at390": [
+        63.75,
+        64
+      ],
+      "anchor": [
+        0.49184149184149184,
+        0.9906976744186047
+      ],
+      "sourcePng": "assets/source/art/estate-foliage/tree-oak.png"
+    },
+    {
+      "id": "tree-birch",
+      "width": 225,
+      "height": 256,
+      "at320": [
+        49.03846153846154,
+        55.794871794871796
+      ],
+      "at390": [
+        59.765625,
+        68
+      ],
+      "anchor": [
+        0.463768115942029,
+        0.9915254237288136
+      ],
+      "sourcePng": "assets/source/art/estate-foliage/tree-birch.png"
+    },
+    {
+      "id": "grass-fescue",
+      "width": 128,
+      "height": 63,
+      "at320": [
+        16.41025641025641,
+        8.076923076923077
+      ],
+      "at390": [
+        20,
+        9.84375
+      ],
+      "anchor": [
+        0.5230769230769231,
+        0.968503937007874
+      ],
+      "sourcePng": "assets/source/art/estate-foliage/grass-fescue.png"
+    },
+    {
+      "id": "grass-sedge",
+      "width": 117,
+      "height": 128,
+      "at320": [
+        17.25,
+        18.871794871794872
+      ],
+      "at390": [
+        21.0234375,
+        23
+      ],
+      "anchor": [
+        0.5060975609756098,
+        0.9776536312849162
+      ],
+      "sourcePng": "assets/source/art/estate-foliage/grass-sedge.png"
+    },
+    {
+      "id": "tree-pine",
+      "width": 207,
+      "height": 256,
+      "at320": [
+        42.46153846153846,
+        52.51282051282051
+      ],
+      "at390": [
+        51.75,
+        64
+      ],
+      "anchor": [
+        0.5118110236220472,
+        0.9915254237288136
+      ],
+      "sourcePng": "assets/source/art/estate-foliage/tree-pine.png"
+    }
+  ],
+  "records": [
+    {
+      "path": "assets/source/art/map-foliage-review/full-map.png",
+      "map": [
+        816,
+        1926
+      ],
+      "viewport": [
+        0,
+        0,
+        816,
+        1926
+      ],
+      "time": 5500,
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "sun": {
+        "x": -93.5015111324583,
+        "y": -65.28,
+        "width": 1036.44,
+        "height": 2072.88,
+        "alpha": 0.1953065441875329
+      },
+      "route": {
+        "direction": -1,
+        "startX": 897.6,
+        "endX": -81.60000000000001,
+        "startY": 1209.48,
+        "endY": 959.784,
+        "formationGap": 39.984,
+        "curve": -13.7088
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 46,
+          "direction": -1,
+          "x": 378.0244897959184,
+          "y": 1063.3427917143613,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 45.5,
+          "direction": -1,
+          "x": 453.96244897959184,
+          "y": 1122.7764048393603,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 45,
+          "direction": -1,
+          "x": 529.9004081632653,
+          "y": 1183.0109318410696,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 290,
+          "y": 188,
+          "width": 46.03076923076923,
+          "height": 23.375,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 743,
+          "y": 526,
+          "width": 133.3846153846154,
+          "height": 133.90769230769232,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 90,
+          "y": 967,
+          "width": 125.04807692307693,
+          "height": 142.27692307692308,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 743,
+          "y": 910,
+          "width": 41.84615384615385,
+          "height": 20.596153846153847,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 620,
+          "y": 1244,
+          "width": 43.9875,
+          "height": 48.12307692307692,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 45,
+          "y": 1281,
+          "width": 41.84615384615385,
+          "height": 20.596153846153847,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 755,
+          "y": 1528,
+          "width": 108.27692307692308,
+          "height": 133.90769230769232,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 547,
+          "y": 1869,
+          "width": 46.03076923076923,
+          "height": 23.375,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/phone-320-scroll-0.png",
+      "map": [
+        320,
+        755
+      ],
+      "viewport": [
+        0,
+        0,
+        320,
+        568
+      ],
+      "time": 5500,
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "sun": {
+        "x": -36.667259267630705,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 343.2,
+        "endY": 245.27999999999997,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 148.24489795918367,
+          "y": 285.8912908683769,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 178.02448979591838,
+          "y": 309.19859013308246,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 207.80408163265307,
+          "y": 332.81997327100765,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 114,
+          "y": 74,
+          "width": 18.05128205128205,
+          "height": 9.166666666666666,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 291,
+          "y": 206,
+          "width": 52.30769230769231,
+          "height": 52.51282051282051,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 35,
+          "y": 379,
+          "width": 49.03846153846154,
+          "height": 55.794871794871796,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 291,
+          "y": 357,
+          "width": 16.41025641025641,
+          "height": 8.076923076923077,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 243,
+          "y": 488,
+          "width": 17.25,
+          "height": 18.871794871794872,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 18,
+          "y": 502,
+          "width": 16.41025641025641,
+          "height": 8.076923076923077,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 296,
+          "y": 599,
+          "width": 42.46153846153846,
+          "height": 52.51282051282051,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 214,
+          "y": 733,
+          "width": 18.05128205128205,
+          "height": 9.166666666666666,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/phone-320-scroll-187.png",
+      "map": [
+        320,
+        755
+      ],
+      "viewport": [
+        0,
+        187,
+        320,
+        568
+      ],
+      "time": 5500,
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "sun": {
+        "x": -36.667259267630705,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 530.2,
+        "endY": 432.28000000000003,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 148.24489795918367,
+          "y": 472.891290868377,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 178.02448979591838,
+          "y": 496.1985901330825,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 207.80408163265307,
+          "y": 519.8199732710078,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 114,
+          "y": 74,
+          "width": 18.05128205128205,
+          "height": 9.166666666666666,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 291,
+          "y": 206,
+          "width": 52.30769230769231,
+          "height": 52.51282051282051,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 35,
+          "y": 379,
+          "width": 49.03846153846154,
+          "height": 55.794871794871796,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 291,
+          "y": 357,
+          "width": 16.41025641025641,
+          "height": 8.076923076923077,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 243,
+          "y": 488,
+          "width": 17.25,
+          "height": 18.871794871794872,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 18,
+          "y": 502,
+          "width": 16.41025641025641,
+          "height": 8.076923076923077,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 296,
+          "y": 599,
+          "width": 42.46153846153846,
+          "height": 52.51282051282051,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 214,
+          "y": 733,
+          "width": 18.05128205128205,
+          "height": 9.166666666666666,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/phone-390-scroll-0.png",
+      "map": [
+        390,
+        920
+      ],
+      "viewport": [
+        0,
+        0,
+        390,
+        844
+      ],
+      "time": 5500,
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "sun": {
+        "x": -44.68822223242493,
+        "y": -31.2,
+        "width": 475.8,
+        "height": 951.6,
+        "alpha": 0.1953065441875329
+      },
+      "route": {
+        "direction": -1,
+        "startX": 429.00000000000006,
+        "endX": -39,
+        "startY": 524.5,
+        "endY": 405.15999999999997,
+        "formationGap": 19.11,
+        "curve": -6.5520000000000005
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "direction": -1,
+          "x": 180.67346938775512,
+          "y": 454.6550107458344,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "direction": -1,
+          "x": 216.96734693877553,
+          "y": 483.06078172469427,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "direction": -1,
+          "x": 253.26122448979595,
+          "y": 511.8493424240406,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 138,
+          "y": 90,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 355,
+          "y": 252,
+          "width": 63.75,
+          "height": 64,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 43,
+          "y": 462,
+          "width": 59.765625,
+          "height": 68,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 355,
+          "y": 435,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 296,
+          "y": 595,
+          "width": 21.0234375,
+          "height": 23,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 21,
+          "y": 612,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 361,
+          "y": 730,
+          "width": 51.75,
+          "height": 64,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 261,
+          "y": 893,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/phone-390-scroll-76.png",
+      "map": [
+        390,
+        920
+      ],
+      "viewport": [
+        0,
+        76,
+        390,
+        844
+      ],
+      "time": 5500,
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "sun": {
+        "x": -44.68822223242493,
+        "y": 44.8,
+        "width": 475.8,
+        "height": 951.6,
+        "alpha": 0.1953065441875329
+      },
+      "route": {
+        "direction": -1,
+        "startX": 429.00000000000006,
+        "endX": -39,
+        "startY": 600.5,
+        "endY": 481.15999999999997,
+        "formationGap": 19.11,
+        "curve": -6.5520000000000005
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "direction": -1,
+          "x": 180.67346938775512,
+          "y": 530.6550107458344,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "direction": -1,
+          "x": 216.96734693877553,
+          "y": 559.0607817246943,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "direction": -1,
+          "x": 253.26122448979595,
+          "y": 587.8493424240406,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 138,
+          "y": 90,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 355,
+          "y": 252,
+          "width": 63.75,
+          "height": 64,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 43,
+          "y": 462,
+          "width": 59.765625,
+          "height": 68,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 355,
+          "y": 435,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 296,
+          "y": 595,
+          "width": 21.0234375,
+          "height": 23,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 21,
+          "y": 612,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 361,
+          "y": 730,
+          "width": 51.75,
+          "height": 64,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 261,
+          "y": 893,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/flight-4900.png",
+      "map": [
+        390,
+        920
+      ],
+      "viewport": [
+        0,
+        0,
+        390,
+        844
+      ],
+      "time": 4900,
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "sun": {
+        "x": -44.912515124178434,
+        "y": -31.2,
+        "width": 475.8,
+        "height": 951.6,
+        "alpha": 0.19473511059279863
+      },
+      "route": {
+        "direction": 1,
+        "startX": -39,
+        "endX": 429.00000000000006,
+        "startY": 189,
+        "endY": 281.82,
+        "formationGap": 15.6,
+        "curve": 2.1839999999999997
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 44.85,
+          "direction": 1,
+          "x": 94.71428571428572,
+          "y": 217.22751995771017,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.35,
+          "direction": 1,
+          "x": 58.42040816326532,
+          "y": 225.25032331096799,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 43.85,
+          "direction": 1,
+          "x": 22.126530612244913,
+          "y": 233.19465322300084,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 138,
+          "y": 90,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 355,
+          "y": 252,
+          "width": 63.75,
+          "height": 64,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 43,
+          "y": 462,
+          "width": 59.765625,
+          "height": 68,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 355,
+          "y": 435,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 296,
+          "y": 595,
+          "width": 21.0234375,
+          "height": 23,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 21,
+          "y": 612,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 361,
+          "y": 730,
+          "width": 51.75,
+          "height": 64,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 261,
+          "y": 893,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/flight-5500.png",
+      "map": [
+        390,
+        920
+      ],
+      "viewport": [
+        0,
+        0,
+        390,
+        844
+      ],
+      "time": 5500,
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "sun": {
+        "x": -44.68822223242493,
+        "y": -31.2,
+        "width": 475.8,
+        "height": 951.6,
+        "alpha": 0.1953065441875329
+      },
+      "route": {
+        "direction": 1,
+        "startX": -39,
+        "endX": 429.00000000000006,
+        "startY": 189,
+        "endY": 281.82,
+        "formationGap": 15.6,
+        "curve": 2.1839999999999997
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "direction": 1,
+          "x": 209.32653061224494,
+          "y": 240.4253365541096,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "direction": 1,
+          "x": 173.03265306122452,
+          "y": 248.813440105374,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "direction": 1,
+          "x": 136.7387755102041,
+          "y": 257.0739470831429,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 138,
+          "y": 90,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 355,
+          "y": 252,
+          "width": 63.75,
+          "height": 64,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 43,
+          "y": 462,
+          "width": 59.765625,
+          "height": 68,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 355,
+          "y": 435,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 296,
+          "y": 595,
+          "width": 21.0234375,
+          "height": 23,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 21,
+          "y": 612,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 361,
+          "y": 730,
+          "width": 51.75,
+          "height": 64,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 261,
+          "y": 893,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/map-foliage-review/flight-6200.png",
+      "map": [
+        390,
+        920
+      ],
+      "viewport": [
+        0,
+        0,
+        390,
+        844
+      ],
+      "time": 6200,
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "sun": {
+        "x": -44.429529886176596,
+        "y": -31.2,
+        "width": 475.8,
+        "height": 951.6,
+        "alpha": 0.19596954359728913
+      },
+      "route": {
+        "direction": 1,
+        "startX": -39,
+        "endX": 429.00000000000006,
+        "startY": 189,
+        "endY": 281.82,
+        "formationGap": 15.6,
+        "curve": 2.1839999999999997
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 44.85,
+          "direction": 1,
+          "x": 343.04081632653066,
+          "y": 265.96287679567246,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 44.35,
+          "direction": 1,
+          "x": 306.7469387755102,
+          "y": 274.77094977906745,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 43.85,
+          "direction": 1,
+          "x": 270.45306122448983,
+          "y": 283.48464931986706,
+          "alpha": 0.82
+        }
+      ],
+      "plants": [
+        {
+          "id": "north-meadow",
+          "asset": "grass-meadow",
+          "x": 138,
+          "y": 90,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        },
+        {
+          "id": "east-oak",
+          "asset": "tree-oak",
+          "x": 355,
+          "y": 252,
+          "width": 63.75,
+          "height": 64,
+          "anchor": [
+            0.49184149184149184,
+            0.9906976744186047
+          ]
+        },
+        {
+          "id": "west-birch",
+          "asset": "tree-birch",
+          "x": 43,
+          "y": 462,
+          "width": 59.765625,
+          "height": 68,
+          "anchor": [
+            0.463768115942029,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "field-fescue",
+          "asset": "grass-fescue",
+          "x": 355,
+          "y": 435,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "pond-sedge",
+          "asset": "grass-sedge",
+          "x": 296,
+          "y": 595,
+          "width": 21.0234375,
+          "height": 23,
+          "anchor": [
+            0.5060975609756098,
+            0.9776536312849162
+          ]
+        },
+        {
+          "id": "mine-fescue",
+          "asset": "grass-fescue",
+          "x": 21,
+          "y": 612,
+          "width": 20,
+          "height": 9.84375,
+          "anchor": [
+            0.5230769230769231,
+            0.968503937007874
+          ]
+        },
+        {
+          "id": "east-pine",
+          "asset": "tree-pine",
+          "x": 361,
+          "y": 730,
+          "width": 51.75,
+          "height": 64,
+          "anchor": [
+            0.5118110236220472,
+            0.9915254237288136
+          ]
+        },
+        {
+          "id": "south-meadow",
+          "asset": "grass-meadow",
+          "x": 261,
+          "y": 893,
+          "width": 22,
+          "height": 11.171875,
+          "anchor": [
+            0.5097276264591439,
+            0.9694656488549618
+          ]
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "src/view/estate-map.js",
+      "sha256": "3fa14660dc1f4d4b962cf911f2cc433a1597d347309e480ae8dbea64a5cb1dea",
+      "bytes": 16406
+    },
+    {
+      "path": "src/view/estate-foliage-layout.js",
+      "sha256": "ddd56e0662bd19deede47f550b9d8ee1318966b6f3d3a69e271d164ebb2a5cad",
+      "bytes": 2206
+    },
+    {
+      "path": "src/view/estate-atmosphere.js",
+      "sha256": "d57cf98797a645734c0434fa940df6bf3365f625cac6dffc1ec2369643c03ac3",
+      "bytes": 6482
+    },
+    {
+      "path": "src/view/estate-atmosphere-layout.js",
+      "sha256": "554d269cb082e279dedc0ab59e2b5fd70241f80e3afa888927fe77380f8017c6",
+      "bytes": 2837
+    },
+    {
+      "path": "assets/source/art/estate-foliage/registration.json",
+      "sha256": "9931f81ebc90f7d7ba9753fb44654d1594b1749e8ef1569518977b10b65cf3d3",
+      "bytes": 13274
+    },
+    {
+      "path": "assets/source/art/estate-foliage/foliage-atlas-original.png",
+      "sha256": "d1e8bac8a4e24c7cc506493b9605ef6017be250911bb8a80f19c1bd11e03ae05",
+      "bytes": 1610259,
+      "size": [
+        1536,
+        1024
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 1008806,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/prompt.txt",
+      "sha256": "35244bb509ae9f923b58f3c8318f2ce1331b6e64e712417ba3f739c15bdaf5f1",
+      "bytes": 2347
+    },
+    {
+      "path": "assets/source/art/estate-foliage/generation.json",
+      "sha256": "6ddf1778870dd9ca6d471086c3f3bb1f5cab07ed7a82a2b1d7a446925c777518",
+      "bytes": 709
+    },
+    {
+      "path": "public/art/estate/foliage/registration.json",
+      "sha256": "9931f81ebc90f7d7ba9753fb44654d1594b1749e8ef1569518977b10b65cf3d3",
+      "bytes": 13274
+    },
+    {
+      "path": "public/art/estate/background.webp",
+      "sha256": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803",
+      "bytes": 140656,
+      "size": [
+        816,
+        1926
+      ],
+      "alphaMin": 255,
+      "alphaMax": 255,
+      "transparentPixels": 0,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        816,
+        1926
+      ]
+    },
+    {
+      "path": "public/art/estate/atmosphere/sunlight.webp",
+      "sha256": "13ba3cb7ecdd0ca2a46bf6d0684ef40da8964e54580db70d4a5dc666d64dbc9b",
+      "bytes": 100134,
+      "size": [
+        512,
+        1024
+      ],
+      "alphaMin": 0,
+      "alphaMax": 252,
+      "transparentPixels": 186948,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        512,
+        1024
+      ]
+    },
+    {
+      "path": "public/art/estate/atmosphere/birds.webp",
+      "sha256": "f4cf20c207ba073445c2f0b935acbd90ffd57c8d2c78a04292cd00bd45e7e9e5",
+      "bytes": 12936,
+      "size": [
+        512,
+        128
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 48087,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        512,
+        128
+      ]
+    },
+    {
+      "path": "public/art/estate/foliage/grass-meadow.webp",
+      "sha256": "96bbfbd5f71e5875d4aaf22125e3cbd69cc74a42aebeab1528317ea3b8f64830",
+      "bytes": 5190,
+      "size": [
+        128,
+        65
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 1727,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        128,
+        65
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/grass-meadow.png",
+      "sha256": "6916876a799ecced54399a51a07804c5bdadd22c31b26f469023f4cf3f23da95",
+      "bytes": 91994,
+      "size": [
+        257,
+        131
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 7196,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        257,
+        131
+      ]
+    },
+    {
+      "path": "public/art/estate/foliage/tree-oak.webp",
+      "sha256": "af13a10d7af14809b00138b57b5762db9581fdb5b43a02bacaa5497949e26b9f",
+      "bytes": 16586,
+      "size": [
+        255,
+        256
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 21000,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        255,
+        256
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/tree-oak.png",
+      "sha256": "2265b30a0fd3cc77613eb41cf05493d1c919d00ee5548603779319d2fe078ff3",
+      "bytes": 419889,
+      "size": [
+        429,
+        430
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 59345,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        429,
+        430
+      ]
+    },
+    {
+      "path": "public/art/estate/foliage/tree-birch.webp",
+      "sha256": "b01e8bd5db238812a304fbe3f8752beb07747a0c475f86a0171c85890c893694",
+      "bytes": 23736,
+      "size": [
+        225,
+        256
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 24555,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        225,
+        256
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/tree-birch.png",
+      "sha256": "3f3de74a1baeb1aa4dd1ce2894b65cf54ce379a7a5fe67fc85cd97433f7029a5",
+      "bytes": 483469,
+      "size": [
+        414,
+        472
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 83387,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        414,
+        472
+      ]
+    },
+    {
+      "path": "public/art/estate/foliage/grass-fescue.webp",
+      "sha256": "cc3f344cf7df939da26442d467ea6683b19131fb97ca27d24e29e004d5f40b35",
+      "bytes": 5270,
+      "size": [
+        128,
+        63
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 1384,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        128,
+        63
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/grass-fescue.png",
+      "sha256": "f710d01b74027744699472ee126418fc0db34c5747841c48db26ed787f641a9d",
+      "bytes": 95953,
+      "size": [
+        260,
+        127
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 5719,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        260,
+        127
+      ]
+    },
+    {
+      "path": "public/art/estate/foliage/grass-sedge.webp",
+      "sha256": "987ea600f4f95da6db7bbea4b0c9d78931b866a7251258cb560e0aaeacb9248c",
+      "bytes": 8404,
+      "size": [
+        117,
+        128
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 4690,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        117,
+        128
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/grass-sedge.png",
+      "sha256": "830c098e60afe25179e37341f81dcb1d80963f5e55e50f2d2b78226bc562cb2c",
+      "bytes": 76768,
+      "size": [
+        164,
+        179
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 9204,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        164,
+        179
+      ]
+    },
+    {
+      "path": "public/art/estate/foliage/tree-pine.webp",
+      "sha256": "012473926f49f42f96f9a962435e2e28d4b3b327ccac7fd68a4f2a13d7d567e0",
+      "bytes": 14436,
+      "size": [
+        207,
+        256
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 20084,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        207,
+        256
+      ]
+    },
+    {
+      "path": "assets/source/art/estate-foliage/tree-pine.png",
+      "sha256": "0b396df9bd8d1d665e4e9ee7190fa6e32ac0044bf884f6f7813362f99693c110",
+      "bytes": 381475,
+      "size": [
+        381,
+        472
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 68141,
+      "nonzeroAlphaBounds": [
+        0,
+        0,
+        381,
+        472
+      ]
+    },
+    {
+      "path": "public/art/estate/operations.webp",
+      "sha256": "8459396c8bb08bb971209a1203ea6a1a7d7918b90ab84017598439e924d15e22",
+      "bytes": 78624,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 58592,
+      "nonzeroAlphaBounds": [
+        8,
+        26,
+        528,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/operations-motion.webp",
+      "sha256": "f9ea23deca1df9a2be317e2fd3961e17cd7d763514999a52fcfeed0195b4e803",
+      "bytes": 9672,
+      "size": [
+        127,
+        166
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 8819,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        124,
+        163
+      ]
+    },
+    {
+      "path": "public/art/estate/tasks.webp",
+      "sha256": "c9b836d3d63f25c92b57b713c77910dd65dd4e12455acc187b9133af178c5c89",
+      "bytes": 57292,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 253,
+      "transparentPixels": 91244,
+      "nonzeroAlphaBounds": [
+        75,
+        28,
+        460,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/tasks-motion.webp",
+      "sha256": "55fb6421fbc3206d94322373b33451d7cec8a4befd6a9a5a8394f91d75d1859f",
+      "bytes": 9154,
+      "size": [
+        109,
+        166
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 8222,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        106,
+        163
+      ]
+    },
+    {
+      "path": "public/art/estate/livestock.webp",
+      "sha256": "2094af4862b4537d44b13d1ebca46d5de13ad33940046857718c307e499c3b97",
+      "bytes": 73428,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 253,
+      "transparentPixels": 70180,
+      "nonzeroAlphaBounds": [
+        30,
+        18,
+        506,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/livestock-motion.webp",
+      "sha256": "4d0cc21de05694aa1a37f8e5688f82c59622017c6aa8475aeacae01baaafc1cb",
+      "bytes": 11810,
+      "size": [
+        166,
+        131
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 8665,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        163,
+        128
+      ]
+    },
+    {
+      "path": "public/art/estate/field.webp",
+      "sha256": "fb734f59a0c224910e46e86cd32ff3d701370a819166fee2c895a558200e2874",
+      "bytes": 73818,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 74817,
+      "nonzeroAlphaBounds": [
+        37,
+        16,
+        499,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/field-motion.webp",
+      "sha256": "d7cff292e5a8d132554a32998afd54b4709af10ad3dccf4313d691438f2d41d7",
+      "bytes": 7734,
+      "size": [
+        126,
+        166
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 13739,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        123,
+        163
+      ]
+    },
+    {
+      "path": "public/art/estate/fish.webp",
+      "sha256": "12ce99008fcebb736679a9f24d766f28c88ca0c81caebc63502e3cbae1d0a1c6",
+      "bytes": 57042,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 107883,
+      "nonzeroAlphaBounds": [
+        8,
+        125,
+        528,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/fish-motion.webp",
+      "sha256": "2959435a309ab7fc3aa04a68acea4136d070245a55c543fdda570672ed09ae96",
+      "bytes": 11816,
+      "size": [
+        166,
+        104
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 8506,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        163,
+        101
+      ]
+    },
+    {
+      "path": "public/art/estate/mine.webp",
+      "sha256": "0725674ddc8479c27e9a60f58aaddcd40bc5ed9d9d081738a5d3338671b46be8",
+      "bytes": 72456,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 253,
+      "transparentPixels": 71767,
+      "nonzeroAlphaBounds": [
+        25,
+        35,
+        511,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/mine-motion.webp",
+      "sha256": "ce2255df8c1d0900881f1676953442097b187a810a58f9c0970704b177ac7831",
+      "bytes": 14290,
+      "size": [
+        166,
+        145
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 8076,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        163,
+        142
+      ]
+    },
+    {
+      "path": "public/art/estate/processing.webp",
+      "sha256": "21488af92acfe219c6fa6ac30dcfb0d294f228d8ed85860163305155c7a5faee",
+      "bytes": 73228,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 71193,
+      "nonzeroAlphaBounds": [
+        29,
+        21,
+        507,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/processing-motion.webp",
+      "sha256": "2d42f3d73b4b9bdd26d60c3b1ee479da2fa7e3f4cdc28a87dd9d04a678e3af1d",
+      "bytes": 18670,
+      "size": [
+        166,
+        163
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 9220,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        163,
+        160
+      ]
+    },
+    {
+      "path": "public/art/estate/refining.webp",
+      "sha256": "bcc3e245dcc369a95f1a300f67da5a1e51205924fc6d78e75e254c81de6859e3",
+      "bytes": 74364,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 69257,
+      "nonzeroAlphaBounds": [
+        26,
+        28,
+        509,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/refining-motion.webp",
+      "sha256": "2db1fd822dd1504e3023f35d9152fdb66184f4e63f228ad014efa96a161b3326",
+      "bytes": 8210,
+      "size": [
+        140,
+        166
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 12059,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        137,
+        163
+      ]
+    },
+    {
+      "path": "public/art/estate/research.webp",
+      "sha256": "278f86c01dadd63a993866d25ff3aeba6e1b5e453bdba24c10a46581574bd697",
+      "bytes": 80564,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 254,
+      "transparentPixels": 61771,
+      "nonzeroAlphaBounds": [
+        26,
+        9,
+        510,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/research-motion.webp",
+      "sha256": "229e88f4eb93a5e18c478587d6aa392f4c7b7a3bb672854538f68051347c66ce",
+      "bytes": 8438,
+      "size": [
+        122,
+        166
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 13204,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        119,
+        163
+      ]
+    },
+    {
+      "path": "public/art/estate/warehouse.webp",
+      "sha256": "3ae6ab47e65706663ce229a55dd39684fa8573eb1a0bcd5872ff12754fdaa651",
+      "bytes": 75582,
+      "size": [
+        536,
+        320
+      ],
+      "alphaMin": 0,
+      "alphaMax": 253,
+      "transparentPixels": 63515,
+      "nonzeroAlphaBounds": [
+        27,
+        18,
+        509,
+        312
+      ]
+    },
+    {
+      "path": "public/art/estate/warehouse-motion.webp",
+      "sha256": "14955aa4ba2b3a2c3ff7412b8c176749169f884c8e51a6ef05401b4172dbb557",
+      "bytes": 8986,
+      "size": [
+        110,
+        166
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 10336,
+      "nonzeroAlphaBounds": [
+        3,
+        3,
+        107,
+        163
+      ]
+    },
+    {
+      "path": "public/art/estate/sign.webp",
+      "sha256": "22a26aec0c839a4fb1882ebc6dcb0f21f1cb44d1a6bba060d854de980b9c6c7f",
+      "bytes": 14584,
+      "size": [
+        516,
+        110
+      ],
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 5348,
+      "nonzeroAlphaBounds": [
+        2,
+        2,
+        514,
+        108
+      ]
+    }
+  ]
+}

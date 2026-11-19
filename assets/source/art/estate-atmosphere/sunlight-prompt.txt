@@ -1,0 +1,8 @@
+Use case: stylized-concept.
+Asset type: transparent sunlight overlay texture for a warm painterly pixel-art manor game.
+Primary request: Draw ONLY soft, graceful warm white and very pale gold diagonal sunrays on genuine transparent alpha. This is a separate atmosphere texture, NOT a scene. The rays travel from upper left toward lower right through a tall 1:2 canvas; a few broad diffuse streaks, softly varied translucency and feathered edges, brightest near the upper left but no sun disk. Most of the canvas remains transparent. The warmth should complement ochre paths, lime grass, terracotta roofs and cozy detailed pixel-art buildings shown in references.
+Input images: reference image 1 is the approved map with existing buildings; reference image 2 is a current building. References are solely for palette and atmosphere. Do not reproduce them.
+Composition/framing: portrait 512x1024 target aspect, isolated airy light rays with generous true transparency around all four edges, no rectangular luminous plate; all glow fades gradually into zero alpha inside the canvas.
+Style/medium: soft luminous atmospheric light with gentle diffusion, subtle hand-painted softness; sunlight may be smoother than the pixel-art world.
+Color palette: warm white, pale cream gold only, no orange smoke.
+Constraints: genuinely transparent background; no map, no landscape, no buildings, no birds, no ground, no horizon, no hard edges, no sun disk, no flare rings, no starbursts, no particles, no text, no watermark, no checkerboard drawn into the pixels. Preserve soft low-opacity alpha in the light itself.

@@ -1,0 +1,523 @@
+{
+  "version": 1,
+  "generatedWith": "built-in image_gen",
+  "generation": "assets/source/art/estate-foliage/generation.json",
+  "atlas": {
+    "path": "assets/source/art/estate-foliage/foliage-atlas-original.png",
+    "width": 1536,
+    "height": 1024,
+    "channels": 4,
+    "alpha": {
+      "min": 0,
+      "max": 254,
+      "zero": 1008806,
+      "translucent": 564058,
+      "opaque": 0,
+      "total": 1572864
+    },
+    "visibleBoundsAlpha1": {
+      "left": 0,
+      "top": 0,
+      "width": 1536,
+      "height": 1024,
+      "count": 564058
+    },
+    "visibleBoundsAlpha128": {
+      "left": 55,
+      "top": 145,
+      "width": 1414,
+      "height": 767,
+      "count": 293556
+    },
+    "sha256": "d1e8bac8a4e24c7cc506493b9605ef6017be250911bb8a80f19c1bd11e03ae05"
+  },
+  "conversion": "Six native atlas drawings tightly cropped with four-pixel margins around alpha>=128 silhouettes. Original alpha preserved, including faint generator alpha. Only crop and proportional nearest downsampling; no alpha cleanup, masks, paint, or synthesized plant pixels.",
+  "outputQuality": {
+    "quality": 70,
+    "alphaQuality": 100,
+    "effort": 6
+  },
+  "anchorConvention": "Normalized [0,1] root ground contact on each full cropped image; y increases downwards.",
+  "assets": [
+    {
+      "id": "grass-meadow",
+      "type": "grass",
+      "path": "public/art/estate/foliage/grass-meadow.webp",
+      "width": 128,
+      "height": 65,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero": 1727,
+        "translucent": 6593,
+        "opaque": 0,
+        "total": 8320
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 128,
+        "height": 65,
+        "count": 6593
+      },
+      "visibleBoundsAlpha128": {
+        "left": 2,
+        "top": 2,
+        "width": 124,
+        "height": 61,
+        "count": 4215
+      },
+      "anchor": {
+        "x": 0.5097276264591439,
+        "y": 0.9694656488549618
+      },
+      "anchorPixels": {
+        "x": 65.24513618677042,
+        "y": 63.01526717557252
+      },
+      "anchorBasis": "Ground contact at lower root/blade support boundary; hand registered on native atlas, normalized to the full crop.",
+      "atlasRoot": {
+        "x": 263,
+        "y": 316
+      },
+      "source": {
+        "path": "assets/source/art/estate-foliage/grass-meadow.png",
+        "crop": {
+          "left": 132,
+          "top": 189,
+          "width": 257,
+          "height": 131
+        },
+        "width": 257,
+        "height": 131,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 254,
+          "zero": 7196,
+          "translucent": 26471,
+          "opaque": 0,
+          "total": 33667
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 257,
+          "height": 131,
+          "count": 26471
+        },
+        "visibleBoundsAlpha128": {
+          "left": 4,
+          "top": 4,
+          "width": 249,
+          "height": 123,
+          "count": 16939
+        },
+        "sha256": "6916876a799ecced54399a51a07804c5bdadd22c31b26f469023f4cf3f23da95"
+      },
+      "sha256": "96bbfbd5f71e5875d4aaf22125e3cbd69cc74a42aebeab1528317ea3b8f64830",
+      "bytes": 5190
+    },
+    {
+      "id": "grass-sedge",
+      "type": "grass",
+      "path": "public/art/estate/foliage/grass-sedge.webp",
+      "width": 117,
+      "height": 128,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero": 4690,
+        "translucent": 10286,
+        "opaque": 0,
+        "total": 14976
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 117,
+        "height": 128,
+        "count": 10286
+      },
+      "visibleBoundsAlpha128": {
+        "left": 3,
+        "top": 3,
+        "width": 111,
+        "height": 122,
+        "count": 5036
+      },
+      "anchor": {
+        "x": 0.5060975609756098,
+        "y": 0.9776536312849162
+      },
+      "anchorPixels": {
+        "x": 59.21341463414634,
+        "y": 125.13966480446928
+      },
+      "anchorBasis": "Ground contact at lower root/blade support boundary; hand registered on native atlas, normalized to the full crop.",
+      "atlasRoot": {
+        "x": 768,
+        "y": 316
+      },
+      "source": {
+        "path": "assets/source/art/estate-foliage/grass-sedge.png",
+        "crop": {
+          "left": 685,
+          "top": 141,
+          "width": 164,
+          "height": 179
+        },
+        "width": 164,
+        "height": 179,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 254,
+          "zero": 9204,
+          "translucent": 20152,
+          "opaque": 0,
+          "total": 29356
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 164,
+          "height": 179,
+          "count": 20152
+        },
+        "visibleBoundsAlpha128": {
+          "left": 4,
+          "top": 4,
+          "width": 156,
+          "height": 171,
+          "count": 9843
+        },
+        "sha256": "830c098e60afe25179e37341f81dcb1d80963f5e55e50f2d2b78226bc562cb2c"
+      },
+      "sha256": "987ea600f4f95da6db7bbea4b0c9d78931b866a7251258cb560e0aaeacb9248c",
+      "bytes": 8404
+    },
+    {
+      "id": "grass-fescue",
+      "type": "grass",
+      "path": "public/art/estate/foliage/grass-fescue.webp",
+      "width": 128,
+      "height": 63,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero": 1384,
+        "translucent": 6680,
+        "opaque": 0,
+        "total": 8064
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 128,
+        "height": 63,
+        "count": 6680
+      },
+      "visibleBoundsAlpha128": {
+        "left": 2,
+        "top": 2,
+        "width": 124,
+        "height": 59,
+        "count": 4196
+      },
+      "anchor": {
+        "x": 0.5230769230769231,
+        "y": 0.968503937007874
+      },
+      "anchorPixels": {
+        "x": 66.95384615384616,
+        "y": 61.01574803149606
+      },
+      "anchorBasis": "Ground contact at lower root/blade support boundary; hand registered on native atlas, normalized to the full crop.",
+      "atlasRoot": {
+        "x": 1272,
+        "y": 316
+      },
+      "source": {
+        "path": "assets/source/art/estate-foliage/grass-fescue.png",
+        "crop": {
+          "left": 1136,
+          "top": 193,
+          "width": 260,
+          "height": 127
+        },
+        "width": 260,
+        "height": 127,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 254,
+          "zero": 5719,
+          "translucent": 27301,
+          "opaque": 0,
+          "total": 33020
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 260,
+          "height": 127,
+          "count": 27301
+        },
+        "visibleBoundsAlpha128": {
+          "left": 4,
+          "top": 4,
+          "width": 252,
+          "height": 119,
+          "count": 17331
+        },
+        "sha256": "f710d01b74027744699472ee126418fc0db34c5747841c48db26ed787f641a9d"
+      },
+      "sha256": "cc3f344cf7df939da26442d467ea6683b19131fb97ca27d24e29e004d5f40b35",
+      "bytes": 5270
+    },
+    {
+      "id": "tree-oak",
+      "type": "tree",
+      "path": "public/art/estate/foliage/tree-oak.webp",
+      "width": 255,
+      "height": 256,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero": 21000,
+        "translucent": 44280,
+        "opaque": 0,
+        "total": 65280
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 255,
+        "height": 256,
+        "count": 44280
+      },
+      "visibleBoundsAlpha128": {
+        "left": 2,
+        "top": 2,
+        "width": 251,
+        "height": 252,
+        "count": 37068
+      },
+      "anchor": {
+        "x": 0.49184149184149184,
+        "y": 0.9906976744186047
+      },
+      "anchorPixels": {
+        "x": 125.41958041958041,
+        "y": 253.6186046511628
+      },
+      "anchorBasis": "Ground contact at lower root/blade support boundary; hand registered on native atlas, normalized to the full crop.",
+      "atlasRoot": {
+        "x": 262,
+        "y": 912
+      },
+      "source": {
+        "path": "assets/source/art/estate-foliage/tree-oak.png",
+        "crop": {
+          "left": 51,
+          "top": 486,
+          "width": 429,
+          "height": 430
+        },
+        "width": 429,
+        "height": 430,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 254,
+          "zero": 59345,
+          "translucent": 125125,
+          "opaque": 0,
+          "total": 184470
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 429,
+          "height": 430,
+          "count": 125125
+        },
+        "visibleBoundsAlpha128": {
+          "left": 4,
+          "top": 4,
+          "width": 421,
+          "height": 422,
+          "count": 104641
+        },
+        "sha256": "2265b30a0fd3cc77613eb41cf05493d1c919d00ee5548603779319d2fe078ff3"
+      },
+      "sha256": "af13a10d7af14809b00138b57b5762db9581fdb5b43a02bacaa5497949e26b9f",
+      "bytes": 16586
+    },
+    {
+      "id": "tree-birch",
+      "type": "tree",
+      "path": "public/art/estate/foliage/tree-birch.webp",
+      "width": 225,
+      "height": 256,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero": 24555,
+        "translucent": 33045,
+        "opaque": 0,
+        "total": 57600
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 225,
+        "height": 256,
+        "count": 33045
+      },
+      "visibleBoundsAlpha128": {
+        "left": 2,
+        "top": 2,
+        "width": 221,
+        "height": 252,
+        "count": 18898
+      },
+      "anchor": {
+        "x": 0.463768115942029,
+        "y": 0.9915254237288136
+      },
+      "anchorPixels": {
+        "x": 104.34782608695652,
+        "y": 253.83050847457628
+      },
+      "anchorBasis": "Ground contact at lower root/blade support boundary; hand registered on native atlas, normalized to the full crop.",
+      "atlasRoot": {
+        "x": 754,
+        "y": 912
+      },
+      "source": {
+        "path": "assets/source/art/estate-foliage/tree-birch.png",
+        "crop": {
+          "left": 562,
+          "top": 444,
+          "width": 414,
+          "height": 472
+        },
+        "width": 414,
+        "height": 472,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 254,
+          "zero": 83387,
+          "translucent": 112021,
+          "opaque": 0,
+          "total": 195408
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 414,
+          "height": 472,
+          "count": 112021
+        },
+        "visibleBoundsAlpha128": {
+          "left": 4,
+          "top": 4,
+          "width": 406,
+          "height": 464,
+          "count": 64247
+        },
+        "sha256": "3f3de74a1baeb1aa4dd1ce2894b65cf54ce379a7a5fe67fc85cd97433f7029a5"
+      },
+      "sha256": "b01e8bd5db238812a304fbe3f8752beb07747a0c475f86a0171c85890c893694",
+      "bytes": 23736
+    },
+    {
+      "id": "tree-pine",
+      "type": "tree",
+      "path": "public/art/estate/foliage/tree-pine.webp",
+      "width": 207,
+      "height": 256,
+      "channels": 4,
+      "alpha": {
+        "min": 0,
+        "max": 254,
+        "zero": 20084,
+        "translucent": 32908,
+        "opaque": 0,
+        "total": 52992
+      },
+      "visibleBoundsAlpha1": {
+        "left": 0,
+        "top": 0,
+        "width": 207,
+        "height": 256,
+        "count": 32908
+      },
+      "visibleBoundsAlpha128": {
+        "left": 2,
+        "top": 2,
+        "width": 203,
+        "height": 252,
+        "count": 23714
+      },
+      "anchor": {
+        "x": 0.5118110236220472,
+        "y": 0.9915254237288136
+      },
+      "anchorPixels": {
+        "x": 105.94488188976378,
+        "y": 253.83050847457628
+      },
+      "anchorBasis": "Ground contact at lower root/blade support boundary; hand registered on native atlas, normalized to the full crop.",
+      "atlasRoot": {
+        "x": 1287,
+        "y": 912
+      },
+      "source": {
+        "path": "assets/source/art/estate-foliage/tree-pine.png",
+        "crop": {
+          "left": 1092,
+          "top": 444,
+          "width": 381,
+          "height": 472
+        },
+        "width": 381,
+        "height": 472,
+        "channels": 4,
+        "alpha": {
+          "min": 0,
+          "max": 254,
+          "zero": 68141,
+          "translucent": 111691,
+          "opaque": 0,
+          "total": 179832
+        },
+        "visibleBoundsAlpha1": {
+          "left": 0,
+          "top": 0,
+          "width": 381,
+          "height": 472,
+          "count": 111691
+        },
+        "visibleBoundsAlpha128": {
+          "left": 4,
+          "top": 4,
+          "width": 373,
+          "height": 464,
+          "count": 80555
+        },
+        "sha256": "0b396df9bd8d1d665e4e9ee7190fa6e32ac0044bf884f6f7813362f99693c110"
+      },
+      "sha256": "012473926f49f42f96f9a962435e2e28d4b3b327ccac7fd68a4f2a13d7d567e0",
+      "bytes": 14436
+    }
+  ]
+}

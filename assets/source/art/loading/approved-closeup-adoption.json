@@ -1,0 +1,112 @@
+{
+  "date": "2026-11-19",
+  "artVersion": "all22-v3-approved-closeup",
+  "layoutVersion": "closeup-bottom-bleed-v1",
+  "records": [
+    {
+      "path": "assets/source/art/loading/managers.png",
+      "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+      "bytes": 3739624,
+      "size": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "alphaZeroPixels": 109465,
+      "alphaBounds": [
+        0,
+        0,
+        1024,
+        1536
+      ]
+    },
+    {
+      "path": "public/art/loading/managers.webp",
+      "sha256": "8ecdcbbf99395c62612fb0f34b78c6896a75b329a0ea737caa6bc9f99d82d197",
+      "bytes": 393748,
+      "size": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "alphaZeroPixels": 109465,
+      "alphaBounds": [
+        0,
+        0,
+        1024,
+        1536
+      ]
+    },
+    {
+      "path": "public/art/loading/background.webp",
+      "sha256": "90fe80e13e4e55ea2e49f91fdc617c09546630838fea231f682b8a86e2718f93",
+      "bytes": 166340,
+      "size": [
+        768,
+        1366
+      ]
+    },
+    {
+      "path": "public/art/loading/logo.webp",
+      "sha256": "feac002f24120b11b1071c2a9523b81e76aec511fb74cb3f944d49d35a60f488",
+      "bytes": 43788,
+      "size": [
+        1024,
+        400
+      ]
+    },
+    {
+      "path": "src/view/loading-layout.js",
+      "sha256": "65b0d8aabd2c9ad285e54e1dcdc25eefcf41f57b079fa9b4abff075ea2fc7e42",
+      "bytes": 2750
+    },
+    {
+      "path": "src/view/loading-screen.js",
+      "sha256": "832f5ae71279df78a116b18f760e6b6d051e70322b9cccf2ffaf331cc6473e69",
+      "bytes": 9325
+    },
+    {
+      "path": "scripts/export-loading-art.mjs",
+      "sha256": "1a1b89f68652cb259e5deb78218dd028db8c6d44e44078a97eea3b4034d996ed",
+      "bytes": 3757
+    }
+  ],
+  "scope": "Image format conversion and image-byte/pixel reading only; no tests, syntax/runtime checks, game/browser preview, build or push.",
+  "alphaChannelPixelReading": {
+    "sourceAndOutputSameDimensions": [
+      1024,
+      1536
+    ],
+    "differingAlphaPixels": 0,
+    "note": "Decoded alpha-byte comparison; lossy WebP RGB is expected to differ."
+  },
+  "runtimeCallChain": [
+    "canvas-ui.js:createLoadingScreen(load=loadOpeningImage)",
+    "loading-screen.js:assetUrl(managers) -> ./art/loading/managers.webp?game=1&v=all22-v3-approved-closeup",
+    "canvas-ui.js:loadOpeningImage -> smoothImages.add(url) -> loadImage -> existing Assets.load/cache/tasks",
+    "loading-screen.js:arrange -> loadingLayout -> Sprite.scale/position, shared viewport mask",
+    "existing afterRender/update -> complete-render minimum 1000ms -> 300ms fade; state machine unchanged"
+  ],
+  "expectedChanges": "Approved close-up artwork and full-width bottom-bleed geometry; compact bottom caption/bar spacing. Gameplay, economy, saves, retries, loading timing and rendering lifecycle unchanged.",
+  "freeze": {
+    "date": "2026-11-19",
+    "status": "Loading source/export/layout frozen after independent static composition review",
+    "reviewEvidence": "assets/source/art/approved-atmosphere-review/loading/",
+    "reviewMeasurements": "assets/source/art/approved-atmosphere-review/loading/measurements.json",
+    "reviewReport": "docs/art-reviews/2026-11-19-approved-art-atmosphere.md",
+    "independentReview": "Reviewer opened 15 static compositions including 320x568 normal/failed/problem and 390x844 safe area; 22 faces, title/control clearance and viewport-bottom crop accepted; no current loading blocker.",
+    "authorActuallyOpened": [
+      "assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/managers-draft.png",
+      "assets/source/art/approved-atmosphere-review/loading/problem-320x568.png",
+      "assets/source/art/approved-atmosphere-review/loading/normal-contact.png"
+    ],
+    "runtimeStatus": "Not tested or previewed. Static Sharp/Pango composites use substitute text raster and do not prove Pixi sampling/timing.",
+    "ownership": "approved_loading_integration loading source/export/layout ownership ended; PM receives frozen artifacts for final integration."
+  }
+}

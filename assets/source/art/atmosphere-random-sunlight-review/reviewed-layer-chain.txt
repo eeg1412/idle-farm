@@ -1,0 +1,12 @@
+const backgroundLayer = parent.addChild(new Container({ label: 'estate-background-layer' }));
+  const buildingLayer = parent.addChild(new Container({ label: 'estate-building-layer' }));
+  let atmosphere;
+  if (retainedAtmosphere?.matches(width, height)) atmosphere = retainedAtmosphere.attach(parent);
+  else {
+    retainedAtmosphere?.destroy();
+    atmosphere = mountEstateAtmosphere(parent, { width, height, loadImage, markDirty });
+  }
+  const signLayer = parent.addChild(new Container({ label: 'estate-sign-layer' }));
+  const controlLayer = parent.addChild(new Container({ label: 'estate-control-layer' }));
+  for (const layer of [backgroundLayer, buildingLayer, signLayer]) layer.eventMode = 'none';
+  

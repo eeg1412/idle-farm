@@ -1,0 +1,233 @@
+{
+  "note": "Targeted source and image-pixel reading, not game execution or a test.",
+  "plants": [
+    {
+      "id": "grass-meadow",
+      "sourceSha256": "6916876a799ecced54399a51a07804c5bdadd22c31b26f469023f4cf3f23da95",
+      "sourceRegistrationSha256": "6916876a799ecced54399a51a07804c5bdadd22c31b26f469023f4cf3f23da95",
+      "webpSha256": "96bbfbd5f71e5875d4aaf22125e3cbd69cc74a42aebeab1528317ea3b8f64830",
+      "webpRegistrationSha256": "96bbfbd5f71e5875d4aaf22125e3cbd69cc74a42aebeab1528317ea3b8f64830",
+      "nearestResizedSourceVersusWebpAlpha": {
+        "method": "resize(128,128, fit inside, nearest, withoutEnlargement) per actual exporter",
+        "maxDifference": 0,
+        "changedPixels": 0
+      }
+    },
+    {
+      "id": "grass-sedge",
+      "sourceSha256": "830c098e60afe25179e37341f81dcb1d80963f5e55e50f2d2b78226bc562cb2c",
+      "sourceRegistrationSha256": "830c098e60afe25179e37341f81dcb1d80963f5e55e50f2d2b78226bc562cb2c",
+      "webpSha256": "987ea600f4f95da6db7bbea4b0c9d78931b866a7251258cb560e0aaeacb9248c",
+      "webpRegistrationSha256": "987ea600f4f95da6db7bbea4b0c9d78931b866a7251258cb560e0aaeacb9248c",
+      "nearestResizedSourceVersusWebpAlpha": {
+        "method": "resize(128,128, fit inside, nearest, withoutEnlargement) per actual exporter",
+        "maxDifference": 0,
+        "changedPixels": 0
+      }
+    },
+    {
+      "id": "grass-fescue",
+      "sourceSha256": "f710d01b74027744699472ee126418fc0db34c5747841c48db26ed787f641a9d",
+      "sourceRegistrationSha256": "f710d01b74027744699472ee126418fc0db34c5747841c48db26ed787f641a9d",
+      "webpSha256": "cc3f344cf7df939da26442d467ea6683b19131fb97ca27d24e29e004d5f40b35",
+      "webpRegistrationSha256": "cc3f344cf7df939da26442d467ea6683b19131fb97ca27d24e29e004d5f40b35",
+      "nearestResizedSourceVersusWebpAlpha": {
+        "method": "resize(128,128, fit inside, nearest, withoutEnlargement) per actual exporter",
+        "maxDifference": 0,
+        "changedPixels": 0
+      }
+    },
+    {
+      "id": "tree-oak",
+      "sourceSha256": "2265b30a0fd3cc77613eb41cf05493d1c919d00ee5548603779319d2fe078ff3",
+      "sourceRegistrationSha256": "2265b30a0fd3cc77613eb41cf05493d1c919d00ee5548603779319d2fe078ff3",
+      "webpSha256": "af13a10d7af14809b00138b57b5762db9581fdb5b43a02bacaa5497949e26b9f",
+      "webpRegistrationSha256": "af13a10d7af14809b00138b57b5762db9581fdb5b43a02bacaa5497949e26b9f",
+      "nearestResizedSourceVersusWebpAlpha": {
+        "method": "resize(256,256, fit inside, nearest, withoutEnlargement) per actual exporter",
+        "maxDifference": 0,
+        "changedPixels": 0
+      }
+    },
+    {
+      "id": "tree-birch",
+      "sourceSha256": "3f3de74a1baeb1aa4dd1ce2894b65cf54ce379a7a5fe67fc85cd97433f7029a5",
+      "sourceRegistrationSha256": "3f3de74a1baeb1aa4dd1ce2894b65cf54ce379a7a5fe67fc85cd97433f7029a5",
+      "webpSha256": "b01e8bd5db238812a304fbe3f8752beb07747a0c475f86a0171c85890c893694",
+      "webpRegistrationSha256": "b01e8bd5db238812a304fbe3f8752beb07747a0c475f86a0171c85890c893694",
+      "nearestResizedSourceVersusWebpAlpha": {
+        "method": "resize(256,256, fit inside, nearest, withoutEnlargement) per actual exporter",
+        "maxDifference": 0,
+        "changedPixels": 0
+      }
+    },
+    {
+      "id": "tree-pine",
+      "sourceSha256": "0b396df9bd8d1d665e4e9ee7190fa6e32ac0044bf884f6f7813362f99693c110",
+      "sourceRegistrationSha256": "0b396df9bd8d1d665e4e9ee7190fa6e32ac0044bf884f6f7813362f99693c110",
+      "webpSha256": "012473926f49f42f96f9a962435e2e28d4b3b327ccac7fd68a4f2a13d7d567e0",
+      "webpRegistrationSha256": "012473926f49f42f96f9a962435e2e28d4b3b327ccac7fd68a4f2a13d7d567e0",
+      "nearestResizedSourceVersusWebpAlpha": {
+        "method": "resize(256,256, fit inside, nearest, withoutEnlargement) per actual exporter",
+        "maxDifference": 0,
+        "changedPixels": 0
+      }
+    }
+  ],
+  "retained": [
+    {
+      "path": "public/art/estate/background.webp",
+      "currentSha256": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803",
+      "headSha256": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/sign.webp",
+      "currentSha256": "22a26aec0c839a4fb1882ebc6dcb0f21f1cb44d1a6bba060d854de980b9c6c7f",
+      "headSha256": "22a26aec0c839a4fb1882ebc6dcb0f21f1cb44d1a6bba060d854de980b9c6c7f",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/operations.webp",
+      "currentSha256": "8459396c8bb08bb971209a1203ea6a1a7d7918b90ab84017598439e924d15e22",
+      "headSha256": "8459396c8bb08bb971209a1203ea6a1a7d7918b90ab84017598439e924d15e22",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/operations-motion.webp",
+      "currentSha256": "f9ea23deca1df9a2be317e2fd3961e17cd7d763514999a52fcfeed0195b4e803",
+      "headSha256": "f9ea23deca1df9a2be317e2fd3961e17cd7d763514999a52fcfeed0195b4e803",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/tasks.webp",
+      "currentSha256": "c9b836d3d63f25c92b57b713c77910dd65dd4e12455acc187b9133af178c5c89",
+      "headSha256": "c9b836d3d63f25c92b57b713c77910dd65dd4e12455acc187b9133af178c5c89",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/tasks-motion.webp",
+      "currentSha256": "55fb6421fbc3206d94322373b33451d7cec8a4befd6a9a5a8394f91d75d1859f",
+      "headSha256": "55fb6421fbc3206d94322373b33451d7cec8a4befd6a9a5a8394f91d75d1859f",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/livestock.webp",
+      "currentSha256": "2094af4862b4537d44b13d1ebca46d5de13ad33940046857718c307e499c3b97",
+      "headSha256": "2094af4862b4537d44b13d1ebca46d5de13ad33940046857718c307e499c3b97",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/livestock-motion.webp",
+      "currentSha256": "4d0cc21de05694aa1a37f8e5688f82c59622017c6aa8475aeacae01baaafc1cb",
+      "headSha256": "4d0cc21de05694aa1a37f8e5688f82c59622017c6aa8475aeacae01baaafc1cb",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/field.webp",
+      "currentSha256": "fb734f59a0c224910e46e86cd32ff3d701370a819166fee2c895a558200e2874",
+      "headSha256": "fb734f59a0c224910e46e86cd32ff3d701370a819166fee2c895a558200e2874",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/field-motion.webp",
+      "currentSha256": "d7cff292e5a8d132554a32998afd54b4709af10ad3dccf4313d691438f2d41d7",
+      "headSha256": "d7cff292e5a8d132554a32998afd54b4709af10ad3dccf4313d691438f2d41d7",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/fish.webp",
+      "currentSha256": "12ce99008fcebb736679a9f24d766f28c88ca0c81caebc63502e3cbae1d0a1c6",
+      "headSha256": "12ce99008fcebb736679a9f24d766f28c88ca0c81caebc63502e3cbae1d0a1c6",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/fish-motion.webp",
+      "currentSha256": "2959435a309ab7fc3aa04a68acea4136d070245a55c543fdda570672ed09ae96",
+      "headSha256": "2959435a309ab7fc3aa04a68acea4136d070245a55c543fdda570672ed09ae96",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/mine.webp",
+      "currentSha256": "0725674ddc8479c27e9a60f58aaddcd40bc5ed9d9d081738a5d3338671b46be8",
+      "headSha256": "0725674ddc8479c27e9a60f58aaddcd40bc5ed9d9d081738a5d3338671b46be8",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/mine-motion.webp",
+      "currentSha256": "ce2255df8c1d0900881f1676953442097b187a810a58f9c0970704b177ac7831",
+      "headSha256": "ce2255df8c1d0900881f1676953442097b187a810a58f9c0970704b177ac7831",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/processing.webp",
+      "currentSha256": "21488af92acfe219c6fa6ac30dcfb0d294f228d8ed85860163305155c7a5faee",
+      "headSha256": "21488af92acfe219c6fa6ac30dcfb0d294f228d8ed85860163305155c7a5faee",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/processing-motion.webp",
+      "currentSha256": "2d42f3d73b4b9bdd26d60c3b1ee479da2fa7e3f4cdc28a87dd9d04a678e3af1d",
+      "headSha256": "2d42f3d73b4b9bdd26d60c3b1ee479da2fa7e3f4cdc28a87dd9d04a678e3af1d",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/refining.webp",
+      "currentSha256": "bcc3e245dcc369a95f1a300f67da5a1e51205924fc6d78e75e254c81de6859e3",
+      "headSha256": "bcc3e245dcc369a95f1a300f67da5a1e51205924fc6d78e75e254c81de6859e3",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/refining-motion.webp",
+      "currentSha256": "2db1fd822dd1504e3023f35d9152fdb66184f4e63f228ad014efa96a161b3326",
+      "headSha256": "2db1fd822dd1504e3023f35d9152fdb66184f4e63f228ad014efa96a161b3326",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/research.webp",
+      "currentSha256": "278f86c01dadd63a993866d25ff3aeba6e1b5e453bdba24c10a46581574bd697",
+      "headSha256": "278f86c01dadd63a993866d25ff3aeba6e1b5e453bdba24c10a46581574bd697",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/research-motion.webp",
+      "currentSha256": "229e88f4eb93a5e18c478587d6aa392f4c7b7a3bb672854538f68051347c66ce",
+      "headSha256": "229e88f4eb93a5e18c478587d6aa392f4c7b7a3bb672854538f68051347c66ce",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/warehouse.webp",
+      "currentSha256": "3ae6ab47e65706663ce229a55dd39684fa8573eb1a0bcd5872ff12754fdaa651",
+      "headSha256": "3ae6ab47e65706663ce229a55dd39684fa8573eb1a0bcd5872ff12754fdaa651",
+      "byteIdentical": true
+    },
+    {
+      "path": "public/art/estate/warehouse-motion.webp",
+      "currentSha256": "14955aa4ba2b3a2c3ff7412b8c176749169f884c8e51a6ef05401b4172dbb557",
+      "headSha256": "14955aa4ba2b3a2c3ff7412b8c176749169f884c8e51a6ef05401b4172dbb557",
+      "byteIdentical": true
+    }
+  ],
+  "versions": [
+    {
+      "path": "src/view/estate-map.js",
+      "sha256": "3fa14660dc1f4d4b962cf911f2cc433a1597d347309e480ae8dbea64a5cb1dea"
+    },
+    {
+      "path": "src/view/estate-foliage-layout.js",
+      "sha256": "ddd56e0662bd19deede47f550b9d8ee1318966b6f3d3a69e271d164ebb2a5cad"
+    },
+    {
+      "path": "src/view/estate-atmosphere.js",
+      "sha256": "d57cf98797a645734c0434fa940df6bf3365f625cac6dffc1ec2369643c03ac3"
+    },
+    {
+      "path": "src/view/estate-atmosphere-layout.js",
+      "sha256": "554d269cb082e279dedc0ab59e2b5fd70241f80e3afa888927fe77380f8017c6"
+    },
+    {
+      "path": "public/art/estate/foliage/registration.json",
+      "sha256": "9931f81ebc90f7d7ba9753fb44654d1594b1749e8ef1569518977b10b65cf3d3"
+    }
+  ]
+}

@@ -1,0 +1,349 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "generatedAt": "2026-11-19",
+  "outputs": {
+    "background": "/workspace/scratch/a46f8d1a2380/generated_images/exec-94b74483-5091-475d-bd04-cd1c208083be.png",
+    "managers": "/workspace/scratch/a46f8d1a2380/generated_images/exec-8a986b54-a61d-4a5b-aae2-bf0d0d5e20f5.png",
+    "logo": "/workspace/scratch/a46f8d1a2380/generated_images/exec-4a74d72f-9ef4-46c4-bf1d-0987913c7b5e.png"
+  },
+  "referenceManifest": "references.json",
+  "prompts": {
+    "background": "background.prompt.txt",
+    "managers": "managers.prompt.txt",
+    "logo": "logo.prompt.txt"
+  },
+  "notes": [
+    "Background and logo remain unchanged original imagegen layers.",
+    "All22 manager ensemble newly drawn by built-in imagegen using four identity-only contact sheets covering 22 canonical portraits.",
+    "Contact sheets are reference-only program compositions; final image is not program-composited artwork.",
+    "Current all22 replaces managers only; historical composition-v2 source/export/records preserved.",
+    "2026-11-19 user reported opaque black filler in old all22-v1 and requested complete ensemble redraw. Round4 local candidate retained unused; round5 rebuilt from canonical reference sheets only; round6 completed clipped fishing male right forearm/hand.",
+    "Current specification does not require spaces or internal transparent holes between people. Existing prompt text retained verbatim for provenance."
+  ],
+  "managerRevision": {
+    "version": "all22-v2-redraw-linear",
+    "intent": "Complete newly drawn cohesive 22-manager ensemble, followed only by clipped right-forearm/hand completion; not old black-fill artwork patching",
+    "tool": "built-in image_gen.imagegen",
+    "transparentBackground": true,
+    "generatedAt": "2026-11-19",
+    "prompt": "managers.prompt.txt",
+    "references": "references.json",
+    "actualImagegenReferences": {
+      "round1": [
+        "assets/source/art/loading/manager-all22-reference-row1.png",
+        "assets/source/art/loading/manager-all22-reference-row2.png",
+        "assets/source/art/loading/manager-all22-reference-row3.png",
+        "assets/source/art/loading/manager-all22-reference-row4.png"
+      ],
+      "round2": [
+        "assets/source/art/loading/managers-all22-round1.png",
+        "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+        "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_女_微笑.png"
+      ],
+      "round3": [
+        "assets/source/art/loading/managers-all22-round2.png",
+        "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_微笑.png"
+      ],
+      "round4": [
+        "assets/source/art/loading/managers-all22-round3.png",
+        "assets/source/art/loading/manager-all22-reference-row1.png",
+        "assets/source/art/loading/manager-all22-reference-row2.png",
+        "assets/source/art/loading/manager-all22-reference-row3.png",
+        "assets/source/art/loading/manager-all22-reference-row4.png"
+      ],
+      "round5": [
+        "assets/source/art/loading/manager-all22-reference-row1.png",
+        "assets/source/art/loading/manager-all22-reference-row2.png",
+        "assets/source/art/loading/manager-all22-reference-row3.png",
+        "assets/source/art/loading/manager-all22-reference-row4.png"
+      ],
+      "round6": [
+        "assets/source/art/loading/managers-all22-round5-redraw.png"
+      ]
+    },
+    "preservedHistory": "history/composition-v2/",
+    "source": "managers.png",
+    "rawSource": "managers-all22-round6-edge.png",
+    "sourceSize": [
+      1145,
+      1374
+    ],
+    "sourceAlphaBounds": [
+      0,
+      35,
+      1145,
+      1339
+    ],
+    "visibleAlphaAbove8Bounds": [
+      0,
+      37,
+      1140,
+      1334
+    ],
+    "positionMap": [
+      {
+        "position": "R1C1",
+        "id": "tasks",
+        "gender": "female"
+      },
+      {
+        "position": "R1C2",
+        "id": "tasks",
+        "gender": "male"
+      },
+      {
+        "position": "R1C3",
+        "id": "estate",
+        "gender": "female"
+      },
+      {
+        "position": "R1C4",
+        "id": "estate",
+        "gender": "male"
+      },
+      {
+        "position": "R1C5",
+        "id": "livestock",
+        "gender": "female"
+      },
+      {
+        "position": "R1C6",
+        "id": "livestock",
+        "gender": "male"
+      },
+      {
+        "position": "R2C1",
+        "id": "field",
+        "gender": "female"
+      },
+      {
+        "position": "R2C2",
+        "id": "field",
+        "gender": "male"
+      },
+      {
+        "position": "R2C3",
+        "id": "mine",
+        "gender": "female"
+      },
+      {
+        "position": "R2C4",
+        "id": "mine",
+        "gender": "male"
+      },
+      {
+        "position": "R2C5",
+        "id": "fish",
+        "gender": "female"
+      },
+      {
+        "position": "R2C6",
+        "id": "fish",
+        "gender": "male"
+      },
+      {
+        "position": "R3C1",
+        "id": "processing",
+        "gender": "female"
+      },
+      {
+        "position": "R3C2",
+        "id": "processing",
+        "gender": "male"
+      },
+      {
+        "position": "R3C3",
+        "id": "refining",
+        "gender": "female"
+      },
+      {
+        "position": "R3C4",
+        "id": "refining",
+        "gender": "male"
+      },
+      {
+        "position": "R3C5",
+        "id": "warehouse",
+        "gender": "female"
+      },
+      {
+        "position": "R3C6",
+        "id": "warehouse",
+        "gender": "male"
+      },
+      {
+        "position": "R4C1",
+        "id": "research",
+        "gender": "female"
+      },
+      {
+        "position": "R4C2",
+        "id": "research",
+        "gender": "male"
+      },
+      {
+        "position": "R4C3",
+        "id": "merchant",
+        "gender": "female"
+      },
+      {
+        "position": "R4C4",
+        "id": "merchant",
+        "gender": "male"
+      }
+    ],
+    "freezeStatus": "final independent static art review accepted; source/WebP/layout/loading inputs frozen; opening_filter_fix ownership ended",
+    "sourceTransform": "none; exact copy of built-in round6 output; original alpha preserved",
+    "rounds": [
+      {
+        "round": 1,
+        "source": "managers-all22-round1.png",
+        "prompt": "managers-all22-round1.prompt.txt",
+        "output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-ce8c8d82-f703-4b86-9920-2f822a6dbb5e.png",
+        "actualReferences": [
+          "assets/source/art/loading/manager-all22-reference-row1.png",
+          "assets/source/art/loading/manager-all22-reference-row2.png",
+          "assets/source/art/loading/manager-all22-reference-row3.png",
+          "assets/source/art/loading/manager-all22-reference-row4.png"
+        ],
+        "review": "22 identities and outer contour accepted; processing female gear box and warehouse female hand stamp returned for correction"
+      },
+      {
+        "round": 2,
+        "source": "managers-all22-round2.png",
+        "prompt": "managers-all22-round2.prompt.txt",
+        "output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-26524be7-6352-402b-9ccc-b5f907991fc6.png",
+        "actualReferences": [
+          "assets/source/art/loading/managers-all22-round1.png",
+          "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+          "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_女_微笑.png"
+        ],
+        "change": "Only local gear parts box and hand stamp correction; all 22 positions retained"
+      },
+      {
+        "round": 3,
+        "source": "managers-all22-round3.png",
+        "prompt": "managers-all22-round3.prompt.txt",
+        "output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-e2cfe329-583a-4ad8-806e-f7ae65d0ee96.png",
+        "actualReferences": [
+          "assets/source/art/loading/managers-all22-round2.png",
+          "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_微笑.png"
+        ],
+        "change": "Only restore refining female two-arm metal tongs visibly gripping separate rectangular gold ingot; keep corrected gear box and numbering stamp"
+      },
+      {
+        "round": 4,
+        "source": "managers-all22-round4-unused-local.png",
+        "prompt": "managers-all22-round4-unused-local.prompt.txt",
+        "output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-a92c374e-10df-4f00-9cd5-c409875cd336.png",
+        "actualReferences": [
+          "assets/source/art/loading/managers-all22-round3.png",
+          "assets/source/art/loading/manager-all22-reference-row1.png",
+          "assets/source/art/loading/manager-all22-reference-row2.png",
+          "assets/source/art/loading/manager-all22-reference-row3.png",
+          "assets/source/art/loading/manager-all22-reference-row4.png"
+        ],
+        "actualInvocationPaths": [
+          "assets/source/art/loading/managers.png",
+          "assets/source/art/loading/manager-all22-reference-row1.png",
+          "assets/source/art/loading/manager-all22-reference-row2.png",
+          "assets/source/art/loading/manager-all22-reference-row3.png",
+          "assets/source/art/loading/manager-all22-reference-row4.png"
+        ],
+        "status": "unused; user changed direction to complete redraw during this local-edit request",
+        "sourceSha256": "f5dd51aae6873b1ff521c8557085d8ca0764b7654f2dd2f45f697094739ef4e8"
+      },
+      {
+        "round": 5,
+        "source": "managers-all22-round5-redraw.png",
+        "prompt": "managers-all22-round5-redraw.prompt.txt",
+        "output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-2f214c0c-5b8d-48fd-baae-9a7080593d7e.png",
+        "actualReferences": [
+          "assets/source/art/loading/manager-all22-reference-row1.png",
+          "assets/source/art/loading/manager-all22-reference-row2.png",
+          "assets/source/art/loading/manager-all22-reference-row3.png",
+          "assets/source/art/loading/manager-all22-reference-row4.png"
+        ],
+        "change": "Entire ensemble newly drawn from four canonical contact sheets only; no old ensemble input",
+        "review": "22 canonical identities, natural group, corrected props and disappearance of old black filler accepted; returned only right-edge fishing male forearm/hand clipping",
+        "sourceSha256": "7c200cd4a7cebdf035ebf08e6b6731145de4ee3279989ec5c7f7feaf5e4dca62",
+        "promptSpecificationClarification": "Natural compact 22-manager group; normal overlaps and clothing shadows allowed. No requirement for internal gaps or transparent holes. Preserve all 22 canonical identities, corrected props, complete outer silhouettes and front shoes; remove unowned large black background defects."
+      },
+      {
+        "round": 6,
+        "source": "managers-all22-round6-edge.png",
+        "prompt": "managers-all22-round6-edge.prompt.txt",
+        "output": "/workspace/scratch/a46f8d1a2380/generated_images/exec-8a986b54-a61d-4a5b-aae2-bf0d0d5e20f5.png",
+        "actualReferences": [
+          "assets/source/art/loading/managers-all22-round5-redraw.png"
+        ],
+        "change": "Complete only new ensemble fishing male right forearm/hand outer contour and right margin; retain 22 identities, natural overlaps, props and complete front shoes",
+        "sourceSha256": "421847775fdec966417b836beea4682cad95f1056c90b90484c09bd2a9b5660b",
+        "status": "accepted: complete right forearm/hand and outer silhouette; 22 identities/props/front shoes retained; no old unowned black filler"
+      }
+    ],
+    "outputAlphaBounds": [
+      24,
+      116,
+      976,
+      1141
+    ],
+    "artVersion": "all22-v2-redraw-linear",
+    "finalFreeze": {
+      "date": "2026-11-19",
+      "status": "accepted and frozen",
+      "artVersion": "all22-v2-redraw-linear",
+      "sourceSha256": "421847775fdec966417b836beea4682cad95f1056c90b90484c09bd2a9b5660b",
+      "outputSha256": "7146f260276d09b88ebc791f2c84f12849ad5dcf5cfd98eebe218aad65aa4885",
+      "layoutSha256": "592ca16a547fa3b864f855da0e581096c5b407f83c00f9eed77115d93612587d",
+      "reviewReport": "docs/art-reviews/2026-11-19-opening-black-filter.md",
+      "reviewEvidence": "assets/source/art/loading/review-black-filter/",
+      "sourceSize": [
+        1145,
+        1374
+      ],
+      "outputSize": [
+        1024,
+        1344
+      ],
+      "outputAlphaBounds": [
+        24,
+        116,
+        976,
+        1141
+      ],
+      "authorValidation": "Built-in image generation, image metadata/pixel reading, nearest image format conversion and actual image opening only; no tests/browser/game preview/syntax check/build",
+      "ownership": "opening_filter_fix asset/loading/layout ownership ended; PM owns final integration and production build",
+      "scope": "22 canonical identities and corrected props, natural compact group, complete outer contours/right forearm/front shoes, no old unowned large black filler, four phone sizes normal/failed and 390x844 safe-area offline static compositions accepted; no requirement for internal gaps or transparent holes"
+    },
+    "historicalFreezes": [
+      {
+        "date": "2026-11-19",
+        "artVersion": "all22-v1",
+        "sourceSha256": "e99a275db1fc05c9bdcd236d44897f985611e1df6c0f4941cfc7cce80af2d8bc",
+        "outputSha256": "193d395c3abcbabbecfb1a535d823f535160312974d4340f760045706522a88b",
+        "layoutSha256": "72de1ea255b482210a0715b0703443cfbd4eb6b7754afe48536d1d983b9bc3f2",
+        "reviewReport": "docs/art-reviews/2026-11-19-loading-all22.md",
+        "reviewEvidence": "assets/source/art/loading/review-all22/final/",
+        "scope": "22 canonical identities, source/export silhouettes and eighteen final static phone/safe-area/landscape compositions accepted; landscape limited to entry/controls/outer silhouettes, not facial detail",
+        "sourceSize": [
+          1145,
+          1374
+        ],
+        "outputSize": [
+          1024,
+          1344
+        ],
+        "outputAlphaBounds": [
+          24,
+          109,
+          976,
+          1148
+        ],
+        "authorValidation": "Image generation, nearest format conversion, static compositions and actual image opening only; no tests/browser/game preview/syntax check/build",
+        "ownership": "loading_all22 asset/layout ownership ended"
+      }
+    ],
+    "currentSpecification": "Natural compact 22-manager group; normal overlaps and clothing shadows allowed. No requirement for internal gaps or transparent holes. Preserve all 22 canonical identities, corrected props, complete outer silhouettes and front shoes; remove unowned large black background defects."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "generatedWith": "built-in image_gen",
+  "transparent_background": true,
+  "date": "2026-11-19",
+  "promptFile": "assets/source/art/estate-foliage/prompt.txt",
+  "originalOutput": "/workspace/scratch/a46f8d1a2380/generated_images/exec-4807f3e9-1607-4007-91cc-c56d94896fb6.png",
+  "retainedOutput": "assets/source/art/estate-foliage/foliage-atlas-original.png",
+  "references": [
+    {
+      "path": "assets/source/art/estate-foliage/references/background.webp",
+      "role": "Approved estate map palette and pixel treatment"
+    },
+    {
+      "path": "assets/source/art/estate-foliage/references/operations.webp",
+      "role": "Approved estate building pixel edges and upper-left lighting"
+    }
+  ]
+}

@@ -1,0 +1,987 @@
+[
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/normal-320x568.png",
+    "state": "normal",
+    "size": [
+      320,
+      568
+    ],
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      97,
+      15
+    ],
+    "geometry": {
+      "logo": {
+        "x": 25.599999999999994,
+        "y": 0.40749999999999886,
+        "width": 268.8,
+        "height": 105
+      },
+      "managers": {
+        "x": -1,
+        "y": 86,
+        "width": 322,
+        "height": 483,
+        "scale": 0.314453125
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 516,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 534,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 99.5,
+        "y": 531,
+        "width": 121,
+        "height": 21
+      },
+      "retry": {
+        "x": 95,
+        "y": 514,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 533,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/failed-320x568.png",
+    "state": "failed",
+    "size": [
+      320,
+      568
+    ],
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      145,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 25.599999999999994,
+        "y": 0.40749999999999886,
+        "width": 268.8,
+        "height": 105
+      },
+      "managers": {
+        "x": -1,
+        "y": 86,
+        "width": 322,
+        "height": 483,
+        "scale": 0.314453125
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 477,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 495,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 75.5,
+        "y": 492,
+        "width": 169,
+        "height": 20
+      },
+      "retry": {
+        "x": 95,
+        "y": 514,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 533,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/problem-320x568.png",
+    "state": "problem",
+    "size": [
+      320,
+      568
+    ],
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      121,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 25.599999999999994,
+        "y": 0.40749999999999886,
+        "width": 268.8,
+        "height": 105
+      },
+      "managers": {
+        "x": -1,
+        "y": 86,
+        "width": 322,
+        "height": 483,
+        "scale": 0.314453125
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 477,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 495,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 87.5,
+        "y": 492,
+        "width": 145,
+        "height": 20
+      },
+      "retry": {
+        "x": 22,
+        "y": 514,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 533,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/normal-320x640.png",
+    "state": "normal",
+    "size": [
+      320,
+      640
+    ],
+    "viewport": {
+      "width": 320,
+      "height": 640
+    },
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      97,
+      15
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.9304347826087,
+        "y": 3.0103260869565247,
+        "width": 272.1391304347826,
+        "height": 106.30434782608695
+      },
+      "managers": {
+        "x": -1,
+        "y": 158,
+        "width": 322,
+        "height": 483,
+        "scale": 0.314453125
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 588,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 606,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 99.5,
+        "y": 603,
+        "width": 121,
+        "height": 21
+      },
+      "retry": {
+        "x": 95,
+        "y": 586,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 605,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/failed-320x640.png",
+    "state": "failed",
+    "size": [
+      320,
+      640
+    ],
+    "viewport": {
+      "width": 320,
+      "height": 640
+    },
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      145,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.9304347826087,
+        "y": 3.0103260869565247,
+        "width": 272.1391304347826,
+        "height": 106.30434782608695
+      },
+      "managers": {
+        "x": -1,
+        "y": 158,
+        "width": 322,
+        "height": 483,
+        "scale": 0.314453125
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 549,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 567,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 75.5,
+        "y": 564,
+        "width": 169,
+        "height": 20
+      },
+      "retry": {
+        "x": 95,
+        "y": 586,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 605,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/problem-320x640.png",
+    "state": "problem",
+    "size": [
+      320,
+      640
+    ],
+    "viewport": {
+      "width": 320,
+      "height": 640
+    },
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      121,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.9304347826087,
+        "y": 3.0103260869565247,
+        "width": 272.1391304347826,
+        "height": 106.30434782608695
+      },
+      "managers": {
+        "x": -1,
+        "y": 158,
+        "width": 322,
+        "height": 483,
+        "scale": 0.314453125
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 549,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 567,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 87.5,
+        "y": 564,
+        "width": 145,
+        "height": 20
+      },
+      "retry": {
+        "x": 22,
+        "y": 586,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 605,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/normal-390x844.png",
+    "state": "normal",
+    "size": [
+      390,
+      844
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      120,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 5.271718749999998,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -1,
+        "y": 257,
+        "width": 392,
+        "height": 588,
+        "scale": 0.3828125
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 784.9,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 802.9,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 123,
+        "y": 799.9,
+        "width": 144,
+        "height": 23
+      },
+      "retry": {
+        "x": 130,
+        "y": 784.9,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 803.9,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/failed-390x844.png",
+    "state": "failed",
+    "size": [
+      390,
+      844
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      180,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 5.271718749999998,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -1,
+        "y": 257,
+        "width": 392,
+        "height": 588,
+        "scale": 0.3828125
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 744.9,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 762.9,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 93,
+        "y": 759.9,
+        "width": 204,
+        "height": 23
+      },
+      "retry": {
+        "x": 130,
+        "y": 784.9,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 803.9,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/problem-390x844.png",
+    "state": "problem",
+    "size": [
+      390,
+      844
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      150,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 5.271718749999998,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -1,
+        "y": 257,
+        "width": 392,
+        "height": 588,
+        "scale": 0.3828125
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 744.9,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 762.9,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 108,
+        "y": 759.9,
+        "width": 174,
+        "height": 23
+      },
+      "retry": {
+        "x": 57,
+        "y": 784.9,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 803.9,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/normal-414x896.png",
+    "state": "normal",
+    "size": [
+      414,
+      896
+    ],
+    "viewport": {
+      "width": 414,
+      "height": 896
+    },
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      131,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 5.598593750000003,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -1,
+        "y": 273,
+        "width": 416,
+        "height": 624,
+        "scale": 0.40625
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 834.6,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 852.6,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "caption": {
+        "x": 129.5,
+        "y": 849.6,
+        "width": 155,
+        "height": 24
+      },
+      "retry": {
+        "x": 142,
+        "y": 835.6,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 281,
+        "y": 854.6,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/failed-414x896.png",
+    "state": "failed",
+    "size": [
+      414,
+      896
+    ],
+    "viewport": {
+      "width": 414,
+      "height": 896
+    },
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      192,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 5.598593750000003,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -1,
+        "y": 273,
+        "width": 416,
+        "height": 624,
+        "scale": 0.40625
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 794.6,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 812.6,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "caption": {
+        "x": 99,
+        "y": 809.6,
+        "width": 216,
+        "height": 24
+      },
+      "retry": {
+        "x": 142,
+        "y": 835.6,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 281,
+        "y": 854.6,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/problem-414x896.png",
+    "state": "problem",
+    "size": [
+      414,
+      896
+    ],
+    "viewport": {
+      "width": 414,
+      "height": 896
+    },
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      160,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 5.598593750000003,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -1,
+        "y": 273,
+        "width": 416,
+        "height": 624,
+        "scale": 0.40625
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 794.6,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 812.6,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "caption": {
+        "x": 115,
+        "y": 809.6,
+        "width": 184,
+        "height": 24
+      },
+      "retry": {
+        "x": 69,
+        "y": 835.6,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 281,
+        "y": 854.6,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/normal-390x844-safe.png",
+    "state": "normal",
+    "size": [
+      390,
+      844
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "inset": {
+        "top": 44,
+        "bottom": 34
+      }
+    },
+    "inset": {
+      "top": 44,
+      "bottom": 34
+    },
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      120,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 25.60434782608698,
+        "y": 46.51767493206522,
+        "width": 338.79130434782604,
+        "height": 132.34035326086953
+      },
+      "managers": {
+        "x": -1,
+        "y": 257,
+        "width": 392,
+        "height": 588,
+        "scale": 0.3828125
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 752.85,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 770.85,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 123,
+        "y": 767.85,
+        "width": 144,
+        "height": 23
+      },
+      "retry": {
+        "x": 130,
+        "y": 752.85,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 771.85,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/failed-390x844-safe.png",
+    "state": "failed",
+    "size": [
+      390,
+      844
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "inset": {
+        "top": 44,
+        "bottom": 34
+      }
+    },
+    "inset": {
+      "top": 44,
+      "bottom": 34
+    },
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      180,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 25.60434782608698,
+        "y": 46.51767493206522,
+        "width": 338.79130434782604,
+        "height": 132.34035326086953
+      },
+      "managers": {
+        "x": -1,
+        "y": 257,
+        "width": 392,
+        "height": 588,
+        "scale": 0.3828125
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 712.85,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 730.85,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 93,
+        "y": 727.85,
+        "width": 204,
+        "height": 23
+      },
+      "retry": {
+        "x": 130,
+        "y": 752.85,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 771.85,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/approved-atmosphere-review/loading/problem-390x844-safe.png",
+    "state": "problem",
+    "size": [
+      390,
+      844
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "inset": {
+        "top": 44,
+        "bottom": 34
+      }
+    },
+    "inset": {
+      "top": 44,
+      "bottom": 34
+    },
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      150,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 25.60434782608698,
+        "y": 46.51767493206522,
+        "width": 338.79130434782604,
+        "height": 132.34035326086953
+      },
+      "managers": {
+        "x": -1,
+        "y": 257,
+        "width": 392,
+        "height": 588,
+        "scale": 0.3828125
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 712.85,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 730.85,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 108,
+        "y": 727.85,
+        "width": 174,
+        "height": 23
+      },
+      "retry": {
+        "x": 57,
+        "y": 752.85,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 771.85,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango image approximation only, not Pixi/GPU output; linear triangle image resampling; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; image layers rounded to raster pixels, fractional landscape viewport background rounded; no runtime or Pixi evidence."
+  },
+  {
+    "path": "assets/source/art/loading/managers.png",
+    "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b"
+  },
+  {
+    "path": "public/art/loading/managers.webp",
+    "sha256": "8ecdcbbf99395c62612fb0f34b78c6896a75b329a0ea737caa6bc9f99d82d197"
+  },
+  {
+    "path": "src/view/loading-layout.js",
+    "sha256": "65b0d8aabd2c9ad285e54e1dcdc25eefcf41f57b079fa9b4abff075ea2fc7e42"
+  },
+  {
+    "path": "src/view/loading-screen.js",
+    "sha256": "832f5ae71279df78a116b18f760e6b6d051e70322b9cccf2ffaf331cc6473e69"
+  }
+]

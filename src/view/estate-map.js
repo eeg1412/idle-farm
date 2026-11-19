@@ -1,7 +1,8 @@
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
+import { mountEstateAtmosphere } from './estate-atmosphere.js';
 
 // Keep the revised asset URLs in sync with the offline precache.
-const assetVersions = { background: 6, fish: 2, field: 2, 'field-motion': 2, 'research-motion': 2, operations: 2 };
+const assetVersions = { background: 7, fish: 2, field: 2, 'field-motion': 2, 'research-motion': 2, operations: 2 };
 export const estateAssetUrl = (name) => new URL(`./art/estate/${name}.webp?game=1&v=${assetVersions[name] ?? 1}`, document.baseURI).href;
 export const estateMapAspect = 2.36;
 const buildingArtWidth = 536;
@@ -143,7 +144,7 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
 
 export function mountEstateMap(parent, {
   width, insetTop, onOpen, bind, markDirty, getImage, loadImage,
-  researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides,
+  researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere,
 }) {
   const height = Math.round(width * estateMapAspect);
   const preload = width * 0.22;
@@ -163,6 +164,12 @@ export function mountEstateMap(parent, {
   }
   const backgroundLayer = parent.addChild(new Container({ label: 'estate-background-layer' }));
   const buildingLayer = parent.addChild(new Container({ label: 'estate-building-layer' }));
+  let atmosphere;
+  if (retainedAtmosphere?.matches(width, height)) atmosphere = retainedAtmosphere.attach(parent);
+  else {
+    retainedAtmosphere?.destroy();
+    atmosphere = mountEstateAtmosphere(parent, { width, height, loadImage, markDirty });
+  }
   const signLayer = parent.addChild(new Container({ label: 'estate-sign-layer' }));
   const controlLayer = parent.addChild(new Container({ label: 'estate-control-layer' }));
   for (const layer of [backgroundLayer, buildingLayer, signLayer]) layer.eventMode = 'none';
@@ -292,7 +299,10 @@ export function mountEstateMap(parent, {
   let visibleEntries = [];
   return {
     height,
+    parkAtmosphere() { return atmosphere.park(); },
+    pauseAtmosphere() { atmosphere.pause(); },
     setViewport(scroll, viewportHeight) {
+      atmosphere.setViewport(scroll, viewportHeight);
       const viewportEnd = scroll + viewportHeight;
       visibleEntries = [];
       for (const entry of entries) {
@@ -302,10 +312,10 @@ export function mountEstateMap(parent, {
         if (entry.bottom > scroll - preload && entry.top < viewportEnd + preload) entry.loadArt();
       }
     },
-    update(now) {
-      let animated = false;
+    update(now, atmosphereActive = false, buildingsActive = true) {
+      let animated = atmosphere.update(now, atmosphereActive);
       const time = now / 1000;
-      for (const entry of visibleEntries) if (entry.update(time)) animated = true;
+      if (buildingsActive) for (const entry of visibleEntries) if (entry.update(time)) animated = true;
       return animated;
     },
   };

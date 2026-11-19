@@ -1,0 +1,170 @@
+[
+  {
+    "size": [
+      320,
+      568
+    ],
+    "top": 0,
+    "off": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-off-scroll-0.png",
+    "maxOn": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-40392-scroll-0.png",
+    "absoluteRgbMeanDelta": [
+      3.949378301056338,
+      3.3523767605633803,
+      8.420439040492958
+    ],
+    "absoluteRgbChannelExtrema": [
+      [
+        0,
+        47
+      ],
+      [
+        0,
+        43
+      ],
+      [
+        0,
+        46
+      ]
+    ]
+  },
+  {
+    "size": [
+      320,
+      568
+    ],
+    "top": 187,
+    "off": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-off-scroll-187.png",
+    "maxOn": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-40392-scroll-187.png",
+    "absoluteRgbMeanDelta": [
+      4.06018926056338,
+      3.5383802816901406,
+      8.17923085387324
+    ],
+    "absoluteRgbChannelExtrema": [
+      [
+        0,
+        47
+      ],
+      [
+        0,
+        42
+      ],
+      [
+        0,
+        46
+      ]
+    ]
+  },
+  {
+    "size": [
+      390,
+      844
+    ],
+    "top": 0,
+    "off": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-off-scroll-0.png",
+    "maxOn": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-40392-scroll-0.png",
+    "absoluteRgbMeanDelta": [
+      3.2810699963543564,
+      2.788349131121643,
+      6.9566897557418885
+    ],
+    "absoluteRgbChannelExtrema": [
+      [
+        0,
+        48
+      ],
+      [
+        0,
+        44
+      ],
+      [
+        0,
+        46
+      ]
+    ]
+  },
+  {
+    "size": [
+      390,
+      844
+    ],
+    "top": 76,
+    "off": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-off-scroll-76.png",
+    "maxOn": "assets/source/art/atmosphere-random-sunlight-review/estate-390x844/sun-40392-scroll-76.png",
+    "absoluteRgbMeanDelta": [
+      3.208995625227853,
+      2.8817535545023696,
+      6.721737149106818
+    ],
+    "absoluteRgbChannelExtrema": [
+      [
+        0,
+        45
+      ],
+      [
+        0,
+        46
+      ],
+      [
+        0,
+        46
+      ]
+    ]
+  },
+  {
+    "size": [
+      414,
+      896
+    ],
+    "top": 0,
+    "off": "assets/source/art/atmosphere-random-sunlight-review/estate-414x896/sun-off-scroll-0.png",
+    "maxOn": "assets/source/art/atmosphere-random-sunlight-review/estate-414x896/sun-40392-scroll-0.png",
+    "absoluteRgbMeanDelta": [
+      3.274267814009662,
+      2.7828081866804695,
+      6.942055943754314
+    ],
+    "absoluteRgbChannelExtrema": [
+      [
+        0,
+        48
+      ],
+      [
+        0,
+        44
+      ],
+      [
+        0,
+        46
+      ]
+    ]
+  },
+  {
+    "size": [
+      414,
+      896
+    ],
+    "top": 81,
+    "off": "assets/source/art/atmosphere-random-sunlight-review/estate-414x896/sun-off-scroll-81.png",
+    "maxOn": "assets/source/art/atmosphere-random-sunlight-review/estate-414x896/sun-40392-scroll-81.png",
+    "absoluteRgbMeanDelta": [
+      3.2010141692546585,
+      2.8733366761559695,
+      6.710576259489303
+    ],
+    "absoluteRgbChannelExtrema": [
+      [
+        0,
+        45
+      ],
+      [
+        0,
+        46
+      ],
+      [
+        0,
+        47
+      ]
+    ]
+  }
+]

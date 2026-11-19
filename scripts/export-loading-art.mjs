@@ -8,7 +8,8 @@ const sourceRoot = 'assets/source/art/loading';
 const outputRoot = 'public/art/loading';
 const definitions = [
   { name: 'background', width: 768, height: 1366, artWidth: 768, artHeight: 1366, transparent: false },
-  { name: 'managers', width: 1024, height: 1344, artWidth: 976, artHeight: 1296, transparent: true },
+  // Approved close-up is already the intended art canvas: no historical padding.
+  { name: 'managers', width: 1024, height: 1536, artWidth: 1024, artHeight: 1536, transparent: true },
   { name: 'logo', width: 1024, height: 400, artWidth: 940, artHeight: 376, transparent: true },
 ];
 await mkdir(outputRoot, { recursive: true });
@@ -48,7 +49,7 @@ for (const definition of definitions) {
     sourceHasAlpha: metadata.hasAlpha, alphaPreserved: transparent,
     artSize: [resizedWidth, resizedHeight],
     padding: transparent ? [Math.floor((width - resizedWidth) / 2), Math.floor((height - resizedHeight) / 2)] : [0, 0],
-    sampling: 'nearest', fit: transparent ? 'contain' : 'cover', quality: 70, alphaQuality: 100,
+    sampling: 'nearest', fit: name === 'managers' ? 'source-canvas' : transparent ? 'contain' : 'cover', quality: 70, alphaQuality: 100,
     sourceSha256: createHash('sha256').update(sourceBytes).digest('hex'),
     outputSha256: createHash('sha256').update(data).digest('hex'),
     bytes: info.size,

@@ -1,0 +1,1948 @@
+{
+  "note": "Pure geometry/source-art static composition only; no Pixi/DOM, game startup, tests or actual animation. Source neutral props and substitute Noto Sans CJK SC labels. Mirror applied for negative route direction.",
+  "size": [
+    320,
+    568
+  ],
+  "records": [
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-0-scroll-0.png",
+      "time": 0,
+      "viewportTop": 0,
+      "sun": {
+        "x": -38.4,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19
+      },
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-40392-scroll-0.png",
+      "time": 40392,
+      "viewportTop": 0,
+      "sun": {
+        "x": -33.89666950616916,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.21499999999983135
+      },
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-121176-scroll-0.png",
+      "time": 121176,
+      "viewportTop": 0,
+      "sun": {
+        "x": -35.900747967017246,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1650000000015179
+      },
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-4400-scroll-0.png",
+      "time": 4400,
+      "viewportTop": 0,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 136.4,
+        "endY": 212.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -37.00598022410366,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19425693346483963
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": 1,
+          "x": -0.6530612244897966,
+          "y": 143.07169187150868,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": 1,
+          "x": -30.43265306122449,
+          "y": 149.53383501942218,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41,
+          "direction": 1,
+          "x": -32,
+          "y": 162,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-4900-scroll-0.png",
+      "time": 4900,
+      "viewportTop": 0,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 136.4,
+        "endY": 212.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.85129446086436,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19473511059279863
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": 1,
+          "x": 77.71428571428571,
+          "y": 159.56104201658272,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": 1,
+          "x": 47.93469387755101,
+          "y": 166.14385502438404,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41,
+          "direction": 1,
+          "x": 18.15510204081633,
+          "y": 172.66227956759042,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-5500-scroll-0.png",
+      "time": 5500,
+      "viewportTop": 0,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 136.4,
+        "endY": 212.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.667259267630705,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": 1,
+          "x": 171.75510204081633,
+          "y": 178.59514794183352,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": 1,
+          "x": 141.97551020408162,
+          "y": 185.4776944454351,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": 1,
+          "x": 112.19591836734693,
+          "y": 192.2555463246301,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-6200-scroll-0.png",
+      "time": 6200,
+      "viewportTop": 0,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 136.4,
+        "endY": 212.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.45499888096541,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19596954359728913
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": 1,
+          "x": 281.46938775510205,
+          "y": 199.5490271143979,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": 1,
+          "x": 251.68979591836734,
+          "y": 206.77616392128613,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": 1,
+          "x": 221.91020408163268,
+          "y": 213.9258661086089,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-7000-scroll-0.png",
+      "time": 7000,
+      "viewportTop": 0,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 136.4,
+        "endY": 212.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.21603549743658,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19672181223583177
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": 1,
+          "x": 352,
+          "y": 212.56,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": 1,
+          "x": 352,
+          "y": 225.36,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": 1,
+          "x": 347.29795918367347,
+          "y": 237.296347089412,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-4400-scroll-0.png",
+      "time": 4400,
+      "viewportTop": 0,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 343.2,
+        "endY": 245.27999999999997,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -37.00598022410366,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19425693346483963
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 320.6530612244898,
+          "y": 333.8428835691474,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 350.43265306122447,
+          "y": 358.4113929009172,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41,
+          "direction": -1,
+          "x": 352,
+          "y": 374.56,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-4900-scroll-0.png",
+      "time": 4900,
+      "viewportTop": 0,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 343.2,
+        "endY": 245.27999999999997,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.85129446086436,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19473511059279863
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": 242.28571428571428,
+          "y": 311.01973109310904,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": 272.065306122449,
+          "y": 335.22623084521535,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41,
+          "direction": -1,
+          "x": 301.84489795918364,
+          "y": 359.62589599110623,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-5500-scroll-0.png",
+      "time": 5500,
+      "viewportTop": 0,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 343.2,
+        "endY": 245.27999999999997,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.667259267630705,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 148.24489795918367,
+          "y": 285.8912908683769,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 178.02448979591838,
+          "y": 309.19859013308246,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 207.80408163265307,
+          "y": 332.81997327100765,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-6200-scroll-0.png",
+      "time": 6200,
+      "viewportTop": 0,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 343.2,
+        "endY": 245.27999999999997,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.45499888096541,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19596954359728913
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 38.53061224489795,
+          "y": 260.332510493541,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 68.31020408163266,
+          "y": 282.60603884838656,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 98.08979591836732,
+          "y": 305.1118710619284,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-7000-scroll-0.png",
+      "time": 7000,
+      "viewportTop": 0,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 343.2,
+        "endY": 245.27999999999997,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.21603549743658,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19672181223583177
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": -32,
+          "y": 245.27999999999997,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": -32,
+          "y": 260.96,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": -27.29795918367347,
+          "y": 277.63226485421296,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-4400-scroll-0.png",
+      "time": 4400,
+      "viewportTop": 0,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 237.92,
+        "endY": 237.92,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -37.00598022410366,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19425693346483963
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 320.6530612244898,
+          "y": 239.73819605746334,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 350.43265306122447,
+          "y": 249.53191150626006,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41,
+          "direction": -1,
+          "x": 352,
+          "y": 260.96,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-4900-scroll-0.png",
+      "time": 4900,
+      "viewportTop": 0,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 237.92,
+        "endY": 237.92,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.85129446086436,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19473511059279863
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": 242.28571428571428,
+          "y": 243.52416806633082,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": 272.065306122449,
+          "y": 253.80056295467887,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41,
+          "direction": -1,
+          "x": 301.84489795918364,
+          "y": 263.81940398464747,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-5500-scroll-0.png",
+      "time": 5500,
+      "viewportTop": 0,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 237.92,
+        "endY": 237.92,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.667259267630705,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 148.24489795918367,
+          "y": 245.05487748161983,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 178.02448979591838,
+          "y": 256.5302063531689,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 207.80408163265307,
+          "y": 267.58675672709177,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-6200-scroll-0.png",
+      "time": 6200,
+      "viewportTop": 0,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 237.92,
+        "endY": 237.92,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.45499888096541,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19596954359728913
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 38.53061224489795,
+          "y": 241.8303941718772,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 68.31020408163266,
+          "y": 254.68408425657304,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 98.08979591836732,
+          "y": 267.228035863007,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-7000-scroll-0.png",
+      "time": 7000,
+      "viewportTop": 0,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 237.92,
+        "endY": 237.92,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.21603549743658,
+        "y": -25.6,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19672181223583177
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": -32,
+          "y": 237.92,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": -32,
+          "y": 249.44,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": -27.29795918367347,
+          "y": 261.2356740719337,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-0-scroll-187.png",
+      "time": 0,
+      "viewportTop": 187,
+      "sun": {
+        "x": -38.4,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19
+      },
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-40392-scroll-187.png",
+      "time": 40392,
+      "viewportTop": 187,
+      "sun": {
+        "x": -33.89666950616916,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.21499999999983135
+      },
+      "individualImageRetained": true
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/sun-121176-scroll-187.png",
+      "time": 121176,
+      "viewportTop": 187,
+      "sun": {
+        "x": -35.900747967017246,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1650000000015179
+      },
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-4400-scroll-187.png",
+      "time": 4400,
+      "viewportTop": 187,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 323.4,
+        "endY": 399.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -37.00598022410366,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19425693346483963
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": 1,
+          "x": -0.6530612244897966,
+          "y": 330.0716918715087,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": 1,
+          "x": -30.43265306122449,
+          "y": 336.5338350194221,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41,
+          "direction": 1,
+          "x": -32,
+          "y": 349,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-4900-scroll-187.png",
+      "time": 4900,
+      "viewportTop": 187,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 323.4,
+        "endY": 399.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.85129446086436,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19473511059279863
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": 1,
+          "x": 77.71428571428571,
+          "y": 346.5610420165827,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": 1,
+          "x": 47.93469387755101,
+          "y": 353.14385502438404,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41,
+          "direction": 1,
+          "x": 18.15510204081633,
+          "y": 359.6622795675905,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-5500-scroll-187.png",
+      "time": 5500,
+      "viewportTop": 187,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 323.4,
+        "endY": 399.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.667259267630705,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": 1,
+          "x": 171.75510204081633,
+          "y": 365.59514794183355,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": 1,
+          "x": 141.97551020408162,
+          "y": 372.4776944454351,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": 1,
+          "x": 112.19591836734693,
+          "y": 379.2555463246301,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-6200-scroll-187.png",
+      "time": 6200,
+      "viewportTop": 187,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 323.4,
+        "endY": 399.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.45499888096541,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19596954359728913
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": 1,
+          "x": 281.46938775510205,
+          "y": 386.54902711439786,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": 1,
+          "x": 251.68979591836734,
+          "y": 393.7761639212861,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": 1,
+          "x": 221.91020408163268,
+          "y": 400.92586610860894,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-A-7000-scroll-187.png",
+      "time": 7000,
+      "viewportTop": 187,
+      "routeName": "A",
+      "samples": [
+        0.15,
+        0.85,
+        0.1,
+        0.25,
+        0.6
+      ],
+      "route": {
+        "direction": 1,
+        "startX": -32,
+        "endX": 352,
+        "startY": 323.4,
+        "endY": 399.56,
+        "formationGap": 12.8,
+        "curve": 1.7919999999999996
+      },
+      "sun": {
+        "x": -36.21603549743658,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19672181223583177
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": 1,
+          "x": 352,
+          "y": 399.56,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": 1,
+          "x": 352,
+          "y": 412.36,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": 1,
+          "x": 347.29795918367347,
+          "y": 424.29634708941205,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-4400-scroll-187.png",
+      "time": 4400,
+      "viewportTop": 187,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 530.2,
+        "endY": 432.28000000000003,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -37.00598022410366,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19425693346483963
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 320.6530612244898,
+          "y": 520.8428835691474,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 350.43265306122447,
+          "y": 545.4113929009172,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41,
+          "direction": -1,
+          "x": 352,
+          "y": 561.5600000000001,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-4900-scroll-187.png",
+      "time": 4900,
+      "viewportTop": 187,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 530.2,
+        "endY": 432.28000000000003,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.85129446086436,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19473511059279863
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": 242.28571428571428,
+          "y": 498.0197310931091,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": 272.065306122449,
+          "y": 522.2262308452154,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41,
+          "direction": -1,
+          "x": 301.84489795918364,
+          "y": 546.6258959911063,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-5500-scroll-187.png",
+      "time": 5500,
+      "viewportTop": 187,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 530.2,
+        "endY": 432.28000000000003,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.667259267630705,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 148.24489795918367,
+          "y": 472.891290868377,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 178.02448979591838,
+          "y": 496.1985901330825,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 207.80408163265307,
+          "y": 519.8199732710078,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-6200-scroll-187.png",
+      "time": 6200,
+      "viewportTop": 187,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 530.2,
+        "endY": 432.28000000000003,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.45499888096541,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19596954359728913
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 38.53061224489795,
+          "y": 447.3325104935411,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 68.31020408163266,
+          "y": 469.6060388483866,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 98.08979591836732,
+          "y": 492.11187106192847,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-B-7000-scroll-187.png",
+      "time": 7000,
+      "viewportTop": 187,
+      "routeName": "B",
+      "samples": [
+        0.7,
+        0.05,
+        0.8,
+        0.7,
+        0.2
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 530.2,
+        "endY": 432.28000000000003,
+        "formationGap": 15.68,
+        "curve": -5.376
+      },
+      "sun": {
+        "x": -36.21603549743658,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19672181223583177
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": -32,
+          "y": 432.28000000000003,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": -32,
+          "y": 447.96000000000004,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": -27.29795918367347,
+          "y": 464.632264854213,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-4400-scroll-187.png",
+      "time": 4400,
+      "viewportTop": 187,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 424.91999999999996,
+        "endY": 424.91999999999996,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -37.00598022410366,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19425693346483963
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 320.6530612244898,
+          "y": 426.7381960574633,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 350.43265306122447,
+          "y": 436.53191150626003,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41,
+          "direction": -1,
+          "x": 352,
+          "y": 447.96,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-4900-scroll-187.png",
+      "time": 4900,
+      "viewportTop": 187,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 424.91999999999996,
+        "endY": 424.91999999999996,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.85129446086436,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19473511059279863
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": 242.28571428571428,
+          "y": 430.5241680663308,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": 272.065306122449,
+          "y": 440.8005629546788,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41,
+          "direction": -1,
+          "x": 301.84489795918364,
+          "y": 450.81940398464747,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-5500-scroll-187.png",
+      "time": 5500,
+      "viewportTop": 187,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 424.91999999999996,
+        "endY": 424.91999999999996,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.667259267630705,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.1953065441875329
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 148.24489795918367,
+          "y": 432.0548774816198,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 178.02448979591838,
+          "y": 443.53020635316886,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 207.80408163265307,
+          "y": 454.58675672709177,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-6200-scroll-187.png",
+      "time": 6200,
+      "viewportTop": 187,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 424.91999999999996,
+        "endY": 424.91999999999996,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.45499888096541,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19596954359728913
+      },
+      "birds": [
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 2,
+          "size": 42,
+          "direction": -1,
+          "x": 38.53061224489795,
+          "y": 428.8303941718772,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 1,
+          "size": 41.5,
+          "direction": -1,
+          "x": 68.31020408163266,
+          "y": 441.684084256573,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": 98.08979591836732,
+          "y": 454.228035863007,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    },
+    {
+      "path": "assets/source/art/atmosphere-random-sunlight-review/estate-320x568/route-C-7000-scroll-187.png",
+      "time": 7000,
+      "viewportTop": 187,
+      "routeName": "C",
+      "samples": [
+        0.42,
+        0.5,
+        0.55,
+        0.05,
+        0.9
+      ],
+      "route": {
+        "direction": -1,
+        "startX": 352,
+        "endX": -32,
+        "startY": 424.91999999999996,
+        "endY": 424.91999999999996,
+        "formationGap": 11.520000000000001,
+        "curve": 7.168
+      },
+      "sun": {
+        "x": -36.21603549743658,
+        "y": 161.4,
+        "width": 390.4,
+        "height": 780.8,
+        "alpha": 0.19672181223583177
+      },
+      "birds": [
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 3,
+          "size": 42,
+          "direction": -1,
+          "x": -32,
+          "y": 424.91999999999996,
+          "alpha": 0.82
+        },
+        {
+          "visible": false,
+          "pass": 0,
+          "frame": 2,
+          "size": 41.5,
+          "direction": -1,
+          "x": -32,
+          "y": 436.43999999999994,
+          "alpha": 0.82
+        },
+        {
+          "visible": true,
+          "pass": 0,
+          "frame": 0,
+          "size": 41,
+          "direction": -1,
+          "x": -27.29795918367347,
+          "y": 448.2356740719337,
+          "alpha": 0.82
+        }
+      ],
+      "individualImageRetained": false
+    }
+  ],
+  "retentionNote": "Keep representative contact sheets and four off/max originals; remaining individual composites removed to avoid redundant source history. All exact pose/sample parameters retained."
+}

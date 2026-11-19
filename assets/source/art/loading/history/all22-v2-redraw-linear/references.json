@@ -1,0 +1,315 @@
+{
+  "referenceUse": "identity only; all22 smiling full-body portraits; original art takes precedence",
+  "order": "Rows back to front; left to right",
+  "characters": [
+    {
+      "id": "tasks",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/01_任务管理/任务管理_女_微笑.png",
+      "sha256": "88a4be498de6e00793e989d8e772727d077b03b13638e8d06fb3cad587cd437d",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R1C1"
+    },
+    {
+      "id": "tasks",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/01_任务管理/任务管理_男_微笑.png",
+      "sha256": "722567eb390bf7d373b5822f2a183913a8bdfe87aa19f85e4ff6c56cb48726aa",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R1C2"
+    },
+    {
+      "id": "estate",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/02_庄园管理/庄园管理_女_微笑.png",
+      "sha256": "2a25c4b5711593e1282b55b3d7a13d867ae847176cb85e62777624904a810975",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R1C3"
+    },
+    {
+      "id": "estate",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/02_庄园管理/庄园管理_男_微笑.png",
+      "sha256": "62add6f4a551ab232ae50cd312c9e7e685d434afd8ecf7a0c3693c49ddc14e77",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R1C4"
+    },
+    {
+      "id": "livestock",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/03_畜牧管理/畜牧管理_女_微笑.png",
+      "sha256": "8c682d18827001212f607e0fbda6d5fe8feb5273b93a424ff93c80509324e256",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R1C5"
+    },
+    {
+      "id": "livestock",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/03_畜牧管理/畜牧管理_男_微笑.png",
+      "sha256": "24ce33e58bf36a9a94cbe8e83ad16316923dd468bcc8026fec9301a15d3dc5da",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R1C6"
+    },
+    {
+      "id": "field",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/04_农田管理/农田管理_女_微笑.png",
+      "sha256": "21a9e98914a50dd7192bf57e628372a0c001a192e449828d70eb6f161175c8f9",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R2C1"
+    },
+    {
+      "id": "field",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/04_农田管理/农田管理_男_微笑.png",
+      "sha256": "356d00dfb48fd5332598d97ff4bbd39933672d9c4c28ef91515dc5329dca994c",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R2C2"
+    },
+    {
+      "id": "mine",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/05_矿洞管理/矿洞管理_女_微笑.png",
+      "sha256": "e4ebc59ffb3d7088cd705f3022499dac2faa1cbee6cee0ae964d01a00e9659ce",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R2C3"
+    },
+    {
+      "id": "mine",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/05_矿洞管理/矿洞管理_男_微笑.png",
+      "sha256": "1e7ad0e526b91911b09dd7e593401b5c83c44eca2d59c449967f86d4090d0de6",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R2C4"
+    },
+    {
+      "id": "fish",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/06_渔场管理/渔场管理_女_微笑.png",
+      "sha256": "141527d174f2f1935f9fcb76f0b7a91d3560994dc191c79c78811478673d31fc",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R2C5"
+    },
+    {
+      "id": "fish",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/06_渔场管理/渔场管理_男_微笑.png",
+      "sha256": "b5dcb66bf508894060fb0ecfa2b44b15254c60d1916e776f8804cc723b2ab516",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R2C6"
+    },
+    {
+      "id": "processing",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+      "sha256": "3249ff86ffc9d5ecc538f22de7ff4c523b6f6f826656ee727b45ff8449d2a1ef",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R3C1"
+    },
+    {
+      "id": "processing",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_男_微笑.png",
+      "sha256": "5e98dab0a09aa5d04f142b3ac8e3f0377934239bca2e039a2db3960deb6c0b43",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R3C2"
+    },
+    {
+      "id": "refining",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_微笑.png",
+      "sha256": "f1ac8a4142f3196101c5d873246d4ce1db00c10de624da88c4e9caf43cf7f2c4",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R3C3"
+    },
+    {
+      "id": "refining",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_微笑.png",
+      "sha256": "afc93669e1bf335645d1c54273ca3be23902890e3f3d32971c56ca0dad91e687",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R3C4"
+    },
+    {
+      "id": "warehouse",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_女_微笑.png",
+      "sha256": "b5b2c98737b379c750f06b428ebc1efa1b42a6f5aed704eba272e40090fde1ee",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R3C5"
+    },
+    {
+      "id": "warehouse",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_男_微笑.png",
+      "sha256": "1220649d56e87cfafaed94cf818da8fecee4edcfdf41948dbe8638dfdc1c74e8",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R3C6"
+    },
+    {
+      "id": "research",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/10_研发管理/研发管理_女_微笑.png",
+      "sha256": "025b8044bf685f1b3660b073ebd3531ce90f9b17fd9005da2e1225c13da0de2c",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R4C1"
+    },
+    {
+      "id": "research",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/10_研发管理/研发管理_男_微笑.png",
+      "sha256": "71300d3b5ed578a90c88f2984ac45c69ffc8600593e4b8fac533fc1c35add85a",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R4C2"
+    },
+    {
+      "id": "merchant",
+      "gender": "female",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/11_行脚商/行脚商_女_微笑.png",
+      "sha256": "b15c75458133d107c6cc0b79ed4eb93fd04a706d521c9ab8ea72f6c544dd3240",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R4C3"
+    },
+    {
+      "id": "merchant",
+      "gender": "male",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/11_行脚商/行脚商_男_微笑.png",
+      "sha256": "b757a3a850dea2384cde7959f7b0fcaa11acf58d1d528f19b418719438d3f4a4",
+      "size": [
+        1024,
+        1536
+      ],
+      "position": "R4C4"
+    }
+  ],
+  "role": "Canonical identity references only; reference contact sheets are program-composed original portraits, never final artwork",
+  "portraits": [
+    "docs/Pixel-Characters-Complete-Pack/立绘/01_任务管理/任务管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/01_任务管理/任务管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/02_庄园管理/庄园管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/02_庄园管理/庄园管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/03_畜牧管理/畜牧管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/03_畜牧管理/畜牧管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/04_农田管理/农田管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/04_农田管理/农田管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/05_矿洞管理/矿洞管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/05_矿洞管理/矿洞管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/06_渔场管理/渔场管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/06_渔场管理/渔场管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/10_研发管理/研发管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/10_研发管理/研发管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/11_行脚商/行脚商_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/11_行脚商/行脚商_男_微笑.png"
+  ],
+  "contactSheets": [
+    "assets/source/art/loading/manager-all22-reference-row1.png",
+    "assets/source/art/loading/manager-all22-reference-row2.png",
+    "assets/source/art/loading/manager-all22-reference-row3.png",
+    "assets/source/art/loading/manager-all22-reference-row4.png"
+  ],
+  "actualImagegenReferences": {
+    "round1": [
+      "assets/source/art/loading/manager-all22-reference-row1.png",
+      "assets/source/art/loading/manager-all22-reference-row2.png",
+      "assets/source/art/loading/manager-all22-reference-row3.png",
+      "assets/source/art/loading/manager-all22-reference-row4.png"
+    ],
+    "round2": [
+      "assets/source/art/loading/managers-all22-round1.png",
+      "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+      "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_女_微笑.png"
+    ],
+    "round3": [
+      "assets/source/art/loading/managers-all22-round2.png",
+      "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_微笑.png"
+    ],
+    "round4": [
+      "assets/source/art/loading/managers-all22-round3.png",
+      "assets/source/art/loading/manager-all22-reference-row1.png",
+      "assets/source/art/loading/manager-all22-reference-row2.png",
+      "assets/source/art/loading/manager-all22-reference-row3.png",
+      "assets/source/art/loading/manager-all22-reference-row4.png"
+    ],
+    "round5": [
+      "assets/source/art/loading/manager-all22-reference-row1.png",
+      "assets/source/art/loading/manager-all22-reference-row2.png",
+      "assets/source/art/loading/manager-all22-reference-row3.png",
+      "assets/source/art/loading/manager-all22-reference-row4.png"
+    ],
+    "round6": [
+      "assets/source/art/loading/managers-all22-round5-redraw.png"
+    ]
+  },
+  "backgroundStyle": "unchanged from history/composition-v2/references.json; no background/logo regeneration in all22",
+  "currentSpecification": "Natural compact 22-manager group; normal overlaps and clothing shadows allowed. No requirement for internal gaps or transparent holes. Preserve all 22 canonical identities, corrected props, complete outer silhouettes and front shoes; remove unowned large black background defects.",
+  "referenceProvenanceNote": "Round4 local edit was already in flight when the user requested full redraw; retained unused. Its first actual invocation path was managers.png, resolving then to exact round3 source bytes. Round5 complete redraw uses only four canonical contact sheets; round6 completes the new drawing right forearm/hand using only round5."
+}

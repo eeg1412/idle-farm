@@ -1,0 +1,100 @@
+[
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/map/background-draft.png",
+    "sha256": "b24a5b48c3dff14620123755547d3675df5a087f175de2ac746959606c1c2a6f",
+    "size": [
+      816,
+      1926
+    ],
+    "mode": "RGB"
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/review/current-map-buildings-static.png",
+    "sha256": "c2a8746bdfa867df10350694c241ca09c9d88c71adee6e904986c76124977701",
+    "size": [
+      756,
+      1784
+    ],
+    "mode": "RGBA"
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/review/draft-map-buildings-static.png",
+    "sha256": "f28dec91efe7c3cfbc62e51d56e35377c1e473dc7b9b68f6369a2db0ad16a07d",
+    "size": [
+      816,
+      1926
+    ],
+    "mode": "RGBA"
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/review/identity22-reference.jpg",
+    "sha256": "46aef49facc2236aa929ad77b6e850839520209f883178aa9b74036d51dd00c1",
+    "size": [
+      1320,
+      560
+    ],
+    "mode": "RGB"
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/raw-attempt-01.png",
+    "sha256": "5dc94887ec3d8e72fb1bc8df983df8b2864f8ea237126067d66b2706d2e267c9",
+    "size": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "finding": "21 identifiable faces; merchant/male absent; returned for one native revision"
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/raw-attempt-02.png",
+    "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+    "size": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      254
+    ]
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/ensemble/managers-draft.png",
+    "sha256": "02bb75f5c4daf3af3bd1a2416979d66509d8dd0df71d2b031152aff67601ea9b",
+    "size": [
+      1024,
+      1536
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      254
+    ]
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/review/ensemble-cream-v2.jpg",
+    "sha256": "6140b7f5bba79bec4731a017c46953a2f43e1f76cf505d06dece2a2305706591",
+    "size": [
+      1024,
+      1536
+    ],
+    "mode": "RGB"
+  },
+  {
+    "path": "assets/source/art/proposals/2026-11-19-map-ensemble/review/ensemble-phone-390-v2.png",
+    "sha256": "896f49995d1c37e09e31c18f650715c459c926efd370047735e260cf9ee1c931",
+    "size": [
+      390,
+      585
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ]
+  }
+]
