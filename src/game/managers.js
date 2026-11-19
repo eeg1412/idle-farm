@@ -5,6 +5,19 @@ import { availableToProduce, settleProduction } from './world.js';
 
 export const managerIds = Object.freeze(['tasks', 'estate', 'livestock', 'field', 'mine', 'fish',
   'processing', 'refining', 'warehouse', 'research', 'merchant']);
+export const managerDefaultGenders = Object.freeze({
+  tasks: 'female',
+  estate: 'male',
+  livestock: 'female',
+  field: 'male',
+  mine: 'female',
+  fish: 'male',
+  processing: 'female',
+  refining: 'male',
+  warehouse: 'female',
+  research: 'male',
+  merchant: 'female',
+});
 export const managerDailyCap = 30_000n;
 export const managerWishUnlockCount = 10;
 export const managerAffinityThresholds = Object.freeze([
@@ -16,14 +29,15 @@ const maximumAffinity = managerAffinityThresholds.at(-1);
 const giftQuoteTerms = ['day', 'run', 'spent', 'unitPrice', 'gain', 'affinityCharge', 'affinityRemainder', 'returnValue'];
 const min = (a, b) => a < b ? a : b;
 
-function newRelationship() {
-  return { gender: 'female', affinity: 0n, dailyGain: 0n, affinityRemainder: 0n, wants: [],
+function newRelationship(gender) {
+  return { gender, affinity: 0n, dailyGain: 0n, affinityRemainder: 0n, wants: [],
     currentReturn: 0n, readyReturn: 0n, sequence: 0n };
 }
 
-export function newManagers(day = null) {
+export function newManagers(day = null, { legacyAllFemale = false } = {}) {
   return { day: validCalendarDay(day) ? day : null, spent: 0n, affinitySpent: 0n,
-    roles: Object.fromEntries(managerIds.map((id) => [id, newRelationship()])) };
+    roles: Object.fromEntries(managerIds.map((id) =>
+      [id, newRelationship(legacyAllFemale ? 'female' : managerDefaultGenders[id])])) };
 }
 
 function managerLevel(affinity) {

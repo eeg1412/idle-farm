@@ -1,0 +1,101 @@
+{
+  "generator": "built-in image_gen.imagegen",
+  "command": "node scripts/export-loading-art.mjs --only=managers",
+  "generationRecord": "assets/source/art/loading/generation.json",
+  "referenceRecord": "assets/source/art/loading/references.json",
+  "layers": [
+    {
+      "name": "background",
+      "source": "assets/source/art/loading/background.png",
+      "output": "public/art/loading/background.webp",
+      "sourceSize": [
+        941,
+        1672
+      ],
+      "outputSize": [
+        768,
+        1366
+      ],
+      "sourceHasAlpha": false,
+      "alphaPreserved": false,
+      "artSize": [
+        768,
+        1366
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "sampling": "nearest",
+      "fit": "fill",
+      "quality": 70,
+      "alphaQuality": 100,
+      "sourceSha256": "c5aa4b4a18bfd64368402ace2b65b7fed0c92d7a6d13eed9d993d005bb02cc40",
+      "outputSha256": "90fe80e13e4e55ea2e49f91fdc617c09546630838fea231f682b8a86e2718f93",
+      "bytes": 166340,
+      "prompt": "assets/source/art/loading/background.prompt.txt"
+    },
+    {
+      "name": "managers",
+      "source": "assets/source/art/loading/managers.png",
+      "output": "public/art/loading/managers.webp",
+      "sourceSize": [
+        1102,
+        1427
+      ],
+      "outputSize": [
+        1024,
+        1344
+      ],
+      "sourceHasAlpha": true,
+      "alphaPreserved": true,
+      "artSize": [
+        976,
+        1264
+      ],
+      "padding": [
+        24,
+        40
+      ],
+      "sampling": "nearest",
+      "fit": "contain",
+      "quality": 70,
+      "alphaQuality": 100,
+      "sourceSha256": "aa444745a12357cfe816a04d8d812f535c00bf0686bb5ff4c465f08c9fa11845",
+      "outputSha256": "1392efe0c1e13038f8c530136992fe1ecdba3578edd856def1a4959145cf199b",
+      "bytes": 339890,
+      "prompt": "assets/source/art/loading/managers.prompt.txt"
+    },
+    {
+      "name": "logo",
+      "source": "assets/source/art/loading/logo.png",
+      "output": "public/art/loading/logo.webp",
+      "sourceSize": [
+        1983,
+        793
+      ],
+      "outputSize": [
+        1024,
+        400
+      ],
+      "sourceHasAlpha": true,
+      "alphaPreserved": true,
+      "artSize": [
+        940,
+        376
+      ],
+      "padding": [
+        42,
+        12
+      ],
+      "sampling": "nearest",
+      "fit": "fill",
+      "quality": 70,
+      "alphaQuality": 100,
+      "sourceSha256": "e5fa9632ab770d6640af3d7c358a8151ad88bcdb7b37b52f6c7d9d2ec4220f20",
+      "outputSha256": "feac002f24120b11b1071c2a9523b81e76aec511fb74cb3f944d49d35a60f488",
+      "bytes": 43788,
+      "prompt": "assets/source/art/loading/logo.prompt.txt"
+    }
+  ]
+}

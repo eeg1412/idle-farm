@@ -1,0 +1,17 @@
+{
+  "role": "identity and pixel style reference; program-composited existing portraits, not new art",
+  "portraits": [
+    "docs/Pixel-Characters-Complete-Pack/立绘/01_任务管理/任务管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/02_庄园管理/庄园管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/03_畜牧管理/畜牧管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/04_农田管理/农田管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/05_矿洞管理/矿洞管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/06_渔场管理/渔场管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/09_仓库管理/仓库管理_女_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/10_研发管理/研发管理_男_微笑.png",
+    "docs/Pixel-Characters-Complete-Pack/立绘/11_行脚商/行脚商_女_微笑.png"
+  ],
+  "backgroundStyle": "assets/source/art/fields.png"
+}

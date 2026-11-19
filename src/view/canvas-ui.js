@@ -410,6 +410,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const workshopMotionStates = new Map();
   const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
   const textures = new Map();
+  // Only the three opening-art URLs use smooth sampling. Keep the policy by URL
+  // so a later caller/retry cannot switch a shared opening source back to nearest.
+  const smoothImages = new Set();
   const failedImages = new Set();
   const loadingImages = new Map();
   // LRU order (oldest first) of page icons and scenes drawn by drawImage, url -> category.
@@ -507,7 +510,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // internally later, but its continuation cannot populate our live texture map.
       const asset = openingTasks.active ? await loadWithDeadline(requestTexture) : await requestTexture();
       if (!asset || asset.destroyed || !asset.width || !asset.height) throw new Error('图片无效');
-      asset.source.scaleMode = 'nearest';
+      asset.source.scaleMode = smoothImages.has(url) ? 'linear' : 'nearest';
       textures.set(url, asset);
       markDirty();
       return asset;
@@ -522,6 +525,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function prepareTextures(key, work) {
     // This separate task includes atlas validation/slicing, beyond the image requests.
     return openingTasks.run('textures:' + key, work).catch(() => {});
+  }
+
+  function loadOpeningImage(url) {
+    // Opening URLs belong only to this overlay. These three fixed textures have
+    // no icon/scene LRU category and retain the existing cache ownership.
+    smoothImages.add(url);
+    return loadImage(url);
   }
 
   function unavailableTextures(key) {
@@ -562,7 +572,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   openingScreen = createLoadingScreen(app, {
-    tasks: openingTasks, load: loadImage, markDirty, retry: retryOpeningResources,
+    tasks: openingTasks, load: loadOpeningImage, markDirty, retry: retryOpeningResources,
     retryStartup: () => saveManagement.retryInitialization?.(),
     onComplete: () => { syncPlotVisibility?.(); requestRender(); },
   });

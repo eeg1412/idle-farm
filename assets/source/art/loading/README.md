@@ -1,23 +1,56 @@
 # 分层开屏原画
 
-三层均由内置 `image_gen.imagegen` 分别新绘，非程序绘制。完整原始输出保留为 `background.png`、`managers.png`、`logo.png`；具体提示词在同名 `.prompt.txt`，工具输出来源见 `generation.json`。
+当前人物为内置 image_gen.imagegen 整幅新绘的22人自然群像，版本 `all22-v2-redraw-linear`。背景及准确中文「放置庄园」LOGO源图／WebP均保持原字节。来源、实际输入、逐轮提示与导出登记见 generation.json、references.json、export-manifest.json。
 
-| 图层 | 原图 | 发布图 | 发布尺寸 |
+| 图层 | 当前原图 | 发布图 | 发布尺寸 |
 | --- | --- | --- | --- |
-| 庄园背景 | `background.png`，941×1672 RGB | `public/art/loading/background.webp` | 768×1366 |
-| 11岗位群像 v2 | `managers.png`，1102×1427 RGBA | `public/art/loading/managers.webp` | 1024×1344 |
-| 中文标题 | `logo.png`，1983×793 RGBA | `public/art/loading/logo.webp` | 1024×400 |
+| 庄园背景 | background.png，941×1672 RGB | public/art/loading/background.webp | 768×1366 |
+| 22人群像 | managers.png，1145×1374 RGBA | public/art/loading/managers.webp | 1024×1344 |
+| 中文标题 | logo.png，1983×793 RGBA | public/art/loading/logo.webp | 1024×400 |
 
-群像按原微笑立绘身份重新构图，三排4／4／3，阅读顺序为任务女、庄园男、畜牧女、农田男、矿洞女、渔场男、加工女、精制男、仓库女、研发男、行脚商女。标志发型、服装与道具以 `references.json` 记录的原画为准。原稿中的行脚商展示红宝石，提示词遵循该原画；不是依据文字设定将其改为蓝宝石。
+## 身份与当前规格
 
-`manager-reference-contact-sheet.png` 仅由既有原画以程序合成的输入联系表，不是新绘成果。联系表与 `assets/source/art/fields.png` 在生成前已实际打开；前者用于角色身份，后者仅用于背景像素风和田园配色。群像无背景文字，标题无人物背景，背景无人无字无进度条。标题文字为「放置庄园」，无副标题。
+唯一身份依据为 docs/Pixel-Characters-Complete-Pack/立绘/**/*微笑.png 的22张既有全身原画。路径、SHA-256、gender及位置见 references-all22.json 与 references.json。四张 manager-all22-reference-row1.png 至 row4.png 是有ID/gender标签的程序联系表，仅作身份参考；最终群像由内置绘图真实新绘，未拼贴联系表。
 
-本轮仅重导出群像：`node scripts/export-loading-art.mjs --only=managers`。背景和LOGO发布文件保留原字节，不改绘。脚本最近邻等比缩放并居中透明留边，群像有效缩放976×1264、额外左右24px／上下40px留边；质量70、Alpha质量100。尺寸、路径、SHA-256和实际字节数见 `export-manifest.json`。
+从后／上排到前／下排，每排左→右：
 
-2026-11-19 `composition-v2`：内置 imagegen 以旧群像作精确编辑目标、11人联系表作完整服装参考，扩绘前排仓库女、研发男、行脚商女至完整鞋脚。v64原稿、提示词、WebP和导出记录保留在 `history/v64/`，不能把旧半身硬切作为合格依据。实际输入与生成输出见 `generation.json.managerRevision`。
+| 排 | 人数 | 身份 |
+| --- | --- | --- |
+| R1 | 6 | tasks女／男；estate女／男；livestock女／男 |
+| R2 | 6 | field女／男；mine女／男；fish女／男 |
+| R3 | 6 | processing女／男；refining女／男；warehouse女／男 |
+| R4 | 4 | research女／男；merchant女／男 |
 
-现行版式 `bottom-progress-v1` 由 `src/view/loading-layout.js` 的 `loadingLayout(viewport, {failed, problem, labelHeight, labelWidth})` 唯一计算。输出 logo/managers/bar/label/caption/retry/problem 的坐标与尺寸；像素参考空间等于游戏viewport。文字先设字号与换行宽，再传真实文字宽高计算第二次。
+原画优于辅助文字设定。加工女为敞口木齿轮箱与机械工具；仓库女为包裹与手持数字印章；精制女为双臂金属钳夹独立矩形金块；行脚商女展示红宝石。新档默认6女5男岗位表独立固定在代码，不从开屏推断。
 
-LOGO在顶部，按真实主体y85–305定位，利用其透明画布留白；群像居中；进度条与提示在底部安全区内。失败态重试与存档入口在提示下方同排，viewport窄于304px时改为上下居中，避免横屏黑边内的窄竖屏按钮越界。底部从 `viewport.inset.bottom` 加额外16px以上边距向上计算；标题同时纳入 `inset.top`。状态文字与存档入口保留实心深绿 `#203b2a` 底板。群像按Alpha>5的有效轮廓931×1205等比排入标题与进度区之间，最大113%屏宽，短屏及失败态按净空适度收放，人物/鞋脚与进度区不重叠。只有viewport矩形可裁外侧，无角色内部遮罩、渐隐或固定底裁。资源URL仍为 `?game=1&v=composition-v2`，未变更加载状态机或图片。
+用户当前要求自然紧凑群像，允许人物靠近、正常重叠、深色服装和有归属的遮挡阴影；不要求人物之间留缝或内部透明孔。不以制造间隙或删衣物处理瑕疵。验收聚焦22个身份、自然完整群像与外轮廓／前排鞋脚、无用户报告的大块无归属黑底和适用手机可辨性。
 
-已做作者静态开图；交付后由独立审阅者核对角色身份、像素风、中文、Alpha及小屏合成。不将源图或WebP存在视为用户验收或实际运行通过；未执行测试、预览、检查器或构建。
+## 本轮生成与历史
+
+旧all22-v1的round1至round3原图、提示、引用与审阅证据均保留。round3曾通过静态审阅，但用户重新报告黑块后已重开，不沿用旧通过结论。独审在旧源PNG确认人物之间已有不透明近黑填充，不能靠linear或改alpha模式消除。
+
+managers-all22-round4-unused-local.png 是用户改为整幅重绘时已在途的局部编辑输出，明确未采用。managers-all22-round5-redraw.png 仅以四张canonical身份联系表为输入整幅新绘，未输入旧群像；独审确认22身份、自然构图、三项道具与旧黑团消失，仅退回渔场男右前臂／手触右画布硬截。
+
+managers-all22-round6-edge.png 只以新round5为编辑目标，由内置imagegen补完整右前臂／手与外缘余量；其原字节副本为当前managers.png。没有回用旧黑块图、程序加边掩盖截断、脚本涂色或Alpha阈值修画。managers-all22-round6-edge.prompt.txt 与当前managers.prompt.txt 保存实际提示。round5提示中的间隙措辞仅作真实历史记录，不是当前验收条件；没有为满足该措辞机械重画或改衣物。
+
+历史11人素材仍在history/composition-v2/与history/v64/。
+
+## 导出、采样与版式
+
+仅执行素材转换 `node scripts/export-loading-art.mjs --only=managers`：nearest按单一比例缩放源图为976×1171，在1024×1344透明画布居中（左右24px，上86px、下87px），WebP质量70、Alpha质量100；不裁切或重绘，背景／LOGO发布图未重写。人物WebP为369862字节。
+
+运行时仅开屏局部linear：loadOpeningImage登记背景／人物／LOGO三个专用URL，再沿原loadImage加载；其他游戏纹理保持nearest。人物URL为 `?game=1&v=all22-v2-redraw-linear`。不改全局Texture默认、alpha模式或LRU；导出nearest与运行时linear是不同阶段。
+
+loadingLayout仅按新导出实际Alpha>0边界 `{x:24,y:116,width:976,height:1141}` 更新群像几何输入；最大可见宽度仍为视口96%。源图Alpha>0边界 `{x:0,y:35,width:1145,height:1339}`，Alpha>8边界 `{x:0,y:37,width:1140,height:1334}`；见redraw-alpha-measurements.json，阈值仅用于读数，未改通道。底部进度、失败重试／存档操作、safe inset、LOGO几何、至少1000ms完整显示与300ms淡出均保持原实现。
+
+| 当前对象 | SHA-256 |
+| --- | --- |
+| managers.png／round6原稿 | 421847775fdec966417b836beea4682cad95f1056c90b90484c09bd2a9b5660b |
+| public/art/loading/managers.webp | 7146f260276d09b88ebc791f2c84f12849ad5dcf5cfd98eebe218aad65aa4885 |
+| src/view/loading-layout.js | 592ca16a547fa3b864f855da0e581096c5b407f83c00f9eed77115d93612587d |
+
+## 最终静态审阅与限制
+
+本轮独审已按上述新源／成品／布局hash通过：正常背景／棋盘、完整右手及其余外轮廓、22身份／道具／前排鞋脚、四手机尺寸普通／失败及390×844安全区静态图已实际打开。报告见 docs/art-reviews/2026-11-19-opening-black-filter.md，证据在review-black-filter/；旧all22-v1记录仅作历史。
+
+作者仅执行资源生成、图片转换、像素读数与实际开图，未运行测试、游戏／浏览器预览、语法／运行检查或构建。静态合成不构成Pixi实际运行通过。人物资源及本轮加载／布局输入已冻结，opening_filter_fix所有权结束，后续仅由PM整合最终生产构建。

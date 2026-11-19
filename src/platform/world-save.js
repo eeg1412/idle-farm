@@ -406,7 +406,7 @@ function merchantRecord(value, world, market, seed, convert) {
 
 function managerRecord(world, merchant, seed, convert) {
   const legacy = !Object.hasOwn(world, 'managers');
-  const managers = legacy ? newManagers(merchant.day) : object(world.managers, 'managers');
+  const managers = legacy ? newManagers(merchant.day, { legacyAllFemale: true }) : object(world.managers, 'managers');
   const { day, spent, roles } = managers;
   valid(day === null || validCalendarDay(day), 'managers.day');
   const amount = (value, field) => convert(legacy ? String(value) : value, `managers.${field}`);

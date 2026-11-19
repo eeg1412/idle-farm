@@ -1,8 +1,8 @@
 // Pure geometry shared by the Pixi opening overlay and static art reviews.
-// Bounds describe the exported v2 image's visible alpha, not a clipping mask.
-export const LOADING_ART_VERSION = 'composition-v2';
+// Bounds describe the exported 22-person image's visible alpha, not a clipping mask.
+export const LOADING_ART_VERSION = 'all22-v2-redraw-linear';
 export const LOADING_LAYOUT_VERSION = 'bottom-progress-v1';
-export const LOADING_MANAGER_BOUNDS = { x: 49, y: 68, width: 931, height: 1205 };
+export const LOADING_MANAGER_BOUNDS = { x: 24, y: 116, width: 976, height: 1141 };
 
 export function loadingLayout(viewport, { failed = false, problem = false, labelHeight = 20, labelWidth } = {}) {
   const { x = 0, y = 0, width, height } = viewport;
@@ -31,7 +31,7 @@ export function loadingLayout(viewport, { failed = false, problem = false, label
   const groupTop = logo.y + 305 * logoScale + 12;
   const groupBottom = bar.y - 18;
   const availableHeight = Math.max(1, groupBottom - groupTop);
-  const managerScale = Math.min(width * 1.13 / LOADING_MANAGER_BOUNDS.width,
+  const managerScale = Math.min(width * 0.96 / LOADING_MANAGER_BOUNDS.width,
     availableHeight / LOADING_MANAGER_BOUNDS.height);
   const visibleTop = groupTop + (availableHeight - LOADING_MANAGER_BOUNDS.height * managerScale) / 2;
   const managers = { x: x + width / 2 - (LOADING_MANAGER_BOUNDS.x + LOADING_MANAGER_BOUNDS.width / 2) * managerScale,

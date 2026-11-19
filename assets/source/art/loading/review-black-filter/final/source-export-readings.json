@@ -1,0 +1,30 @@
+{
+  "source": {
+    "path": "assets/source/art/loading/managers.png",
+    "size": [
+      1145,
+      1374
+    ],
+    "sha256": "421847775fdec966417b836beea4682cad95f1056c90b90484c09bd2a9b5660b",
+    "boundaryMaxAlpha": {
+      "left": 17,
+      "right": 2,
+      "top": 0,
+      "bottom": 3
+    }
+  },
+  "webp": {
+    "path": "public/art/loading/managers.webp",
+    "size": [
+      1024,
+      1344
+    ],
+    "sha256": "7146f260276d09b88ebc791f2c84f12849ad5dcf5cfd98eebe218aad65aa4885",
+    "boundaryMaxAlpha": {
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0
+    }
+  }
+}

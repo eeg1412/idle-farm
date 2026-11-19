@@ -40,8 +40,8 @@
       "source": "assets/source/art/loading/managers.png",
       "output": "public/art/loading/managers.webp",
       "sourceSize": [
-        1102,
-        1427
+        1145,
+        1374
       ],
       "outputSize": [
         1024,
@@ -51,19 +51,19 @@
       "alphaPreserved": true,
       "artSize": [
         976,
-        1264
+        1171
       ],
       "padding": [
         24,
-        40
+        86
       ],
       "sampling": "nearest",
       "fit": "contain",
       "quality": 70,
       "alphaQuality": 100,
-      "sourceSha256": "aa444745a12357cfe816a04d8d812f535c00bf0686bb5ff4c465f08c9fa11845",
-      "outputSha256": "1392efe0c1e13038f8c530136992fe1ecdba3578edd856def1a4959145cf199b",
-      "bytes": 339890,
+      "sourceSha256": "421847775fdec966417b836beea4682cad95f1056c90b90484c09bd2a9b5660b",
+      "outputSha256": "7146f260276d09b88ebc791f2c84f12849ad5dcf5cfd98eebe218aad65aa4885",
+      "bytes": 369862,
       "prompt": "assets/source/art/loading/managers.prompt.txt"
     },
     {

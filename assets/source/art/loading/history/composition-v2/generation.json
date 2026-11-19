@@ -1,0 +1,32 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "generatedAt": "2026-11-19",
+  "outputs": {
+    "background": "/workspace/scratch/a46f8d1a2380/generated_images/exec-94b74483-5091-475d-bd04-cd1c208083be.png",
+    "managers": "/workspace/scratch/a46f8d1a2380/generated_images/exec-dc7ca398-1793-4c62-a017-6ecd5197aca2.png",
+    "logo": "/workspace/scratch/a46f8d1a2380/generated_images/exec-4a74d72f-9ef4-46c4-bf1d-0987913c7b5e.png"
+  },
+  "referenceManifest": "references.json",
+  "prompts": {
+    "background": "background.prompt.txt",
+    "managers": "managers.prompt.txt",
+    "logo": "logo.prompt.txt"
+  },
+  "notes": [
+    "All three layers newly drawn separately by built-in imagegen.",
+    "Reference contact sheet is program-composited existing portraits solely as imagegen identity input.",
+    "Source fields.png is style-only background input."
+  ],
+  "managerRevision": {
+    "version": "composition-v2",
+    "intent": "identity-preserve / lower-edge outpainting",
+    "editTarget": "history/v64/managers.png",
+    "supportingInput": "manager-reference-contact-sheet.png",
+    "prompt": "managers.prompt.txt",
+    "preservedHistory": "history/v64/",
+    "generatedAt": "2026-11-19",
+    "tool": "built-in image_gen.imagegen",
+    "transparentBackground": true,
+    "change": "Complete the front three characters with natural skirts, coat tails, legs and boots; extend outer visible silhouettes, preserve all eleven upper identities."
+  }
+}

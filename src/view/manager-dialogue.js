@@ -697,7 +697,9 @@ export const managerCharacters = {
         '需要我搭手吗？说声就行。',
         '来聊两句，我也活动下肩膀。',
       ],
-      help: (name) => name + '今天涨价了，可以看看。',
+      help: (name, rate) => rate < 0
+        ? name + '今天降价了，出货前留意一下。'
+        : name + '今天涨价了，可以看看。',
       thanks: [
         '给我的？谢谢，我接好了。',
         '心意收到，这份我自己收着。',
@@ -738,7 +740,9 @@ export const managerCharacters = {
         '重的东西别硬搬，叫我一声。',
         '有空坐坐，我给你留点地方。',
       ],
-      help: (name) => '我对过价了，' + name + '今儿卖得高些。',
+      help: (name, rate) => rate < 0
+        ? '我对过价了，' + name + '今儿卖价低些。'
+        : '我对过价了，' + name + '今儿卖得高些。',
       thanks: [
         '是给我的？谢谢你。',
         '我会放在自己的格子里。',

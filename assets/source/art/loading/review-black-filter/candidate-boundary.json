@@ -1,0 +1,45 @@
+{
+  "size": [
+    1145,
+    1374
+  ],
+  "boundary": {
+    "left": {
+      "countAlphaOver8": 0,
+      "range": null
+    },
+    "right": {
+      "countAlphaOver8": 66,
+      "range": [
+        [
+          1144,
+          418,
+          [
+            229,
+            178,
+            153,
+            10
+          ]
+        ],
+        [
+          1144,
+          484,
+          [
+            170,
+            113,
+            85,
+            9
+          ]
+        ]
+      ]
+    },
+    "top": {
+      "countAlphaOver8": 0,
+      "range": null
+    },
+    "bottom": {
+      "countAlphaOver8": 0,
+      "range": null
+    }
+  }
+}

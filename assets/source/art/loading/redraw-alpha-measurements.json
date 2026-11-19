@@ -1,0 +1,46 @@
+[
+  {
+    "path": "assets/source/art/loading/managers.png",
+    "size": [
+      1145,
+      1374
+    ],
+    "sha256": "421847775fdec966417b836beea4682cad95f1056c90b90484c09bd2a9b5660b",
+    "bounds": {
+      "alphaAbove0": [
+        0,
+        35,
+        1145,
+        1339
+      ],
+      "alphaAbove8": [
+        0,
+        37,
+        1140,
+        1334
+      ]
+    }
+  },
+  {
+    "path": "public/art/loading/managers.webp",
+    "size": [
+      1024,
+      1344
+    ],
+    "sha256": "7146f260276d09b88ebc791f2c84f12849ad5dcf5cfd98eebe218aad65aa4885",
+    "bounds": {
+      "alphaAbove0": [
+        24,
+        116,
+        976,
+        1141
+      ],
+      "alphaAbove8": [
+        24,
+        117,
+        972,
+        1138
+      ]
+    }
+  }
+]

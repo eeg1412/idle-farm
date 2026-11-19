@@ -110,8 +110,9 @@ function managerContextMessages(ui, id, character, researchReady) {
   if (id === 'warehouse') {
     return Object.keys(world.market?.rates ?? {}).flatMap((key) => {
       const name = catalog.items[key]?.name;
-      return name && world.inventory[key] > 0n && marketRate(world, key) > 0
-        ? [{ text: character.help(name), emphasis: [name] }] : [];
+      const rate = marketRate(world, key);
+      return name && world.inventory[key] > 0n && rate !== 0
+        ? [{ text: character.help(name, rate), emphasis: [name] }] : [];
     });
   }
   if (id === 'research') {
