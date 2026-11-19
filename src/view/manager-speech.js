@@ -65,8 +65,14 @@ export function createManagerSpeechQueue(role, gender) {
     if (!reply) activate(base);
   }
 
+  function select(line) {
+    reply = undefined;
+    base = line ? entry(line, 0) : undefined;
+    activate(base);
+  }
+
   return {
-    role, gender, offer, enqueue,
+    role, gender, offer, enqueue, select,
     get line() { return active?.line; },
     get shown() { return active?.shown ?? 0; },
     pause() { lastTick = undefined; },

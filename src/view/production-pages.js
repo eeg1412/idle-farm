@@ -204,13 +204,16 @@ function batchClear(ui, kind, targets) {
 
 function batchUpgrade(ui, kind, targets) {
   let steps = batchUpgradeSteps[0];
+  let pending = false;
   ui.dialog('批量升级', (dlg) => {
     const quote = batchUpgradeOffer(dlg.w, kind, targets, steps);
     dlg.row('升级数量', String(targets.length));
     dlg.buttons(batchUpgradeSteps.map((step) => ({
       label: '+' + step,
       tone: step === steps ? 'gold' : 'plain',
+      disabled: pending,
       onClick: () => {
+        if (pending) return;
         steps = step;
         dlg.refresh();
       },
@@ -218,7 +221,17 @@ function batchUpgrade(ui, kind, targets) {
     if (quote) dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
     dlg.text(isWorkshop(kind) ? '升级从下一批生效，每批材料投入同步增加。'
       : '升级后按新等级计算产出，进行中的批次收获时间不变。', { muted: true });
-    dialogButtons(dlg, '确认升级', () => submit(dlg, 'upgradeProductionBatch', [kind, targets, steps, quote?.cost], null, '已批量升级'), !quote?.affordable);
+    dialogButtons(dlg, pending ? '升级中…' : '确认升级', async () => {
+      if (pending || !quote?.affordable || !dlg.isActive()) return;
+      pending = true;
+      dlg.refresh();
+      try {
+        await dlg.action('upgradeProductionBatch', kind, targets, steps, quote.cost);
+      } finally {
+        pending = false;
+        if (dlg.isActive()) dlg.refresh();
+      }
+    }, pending || !quote?.affordable);
   });
 }
 

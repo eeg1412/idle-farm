@@ -81,6 +81,10 @@ export function gameHistory(browser) {
     },
     write(route, modal, replace = false, scroll = 0, context) {
       const hash = gameHash(route);
+      // The research tabs are a single destination. Keep dialog entries layered.
+      if (!modal && !active?.modal && !route.dialog && !active?.route.dialog &&
+          route.page === '研究' && active?.route.page === '研究' &&
+          route.tab !== active.route.tab) replace = true;
       const previous = replace ? active?.previous : active?.key;
       const key = replace && active ? active.key : ++sequence;
       const observed = history.state?.farmNavigation?.position;

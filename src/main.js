@@ -573,7 +573,7 @@ function clearSave() {
 }
 
 const saveManagement = {
-  version: transfer.version, environment: transfer.environment,
+  version: transfer.version, environment: transfer.environment, retryInitialization,
   exportSave, inspectSave: transfer.inspectSave, importSave, clearSave,
   captureImport: transfer.captureImport, readImportFile: transfer.readImportFile, readClipboard: transfer.readClipboard,
   copyText: transfer.copyText, download: transfer.download,
@@ -617,8 +617,8 @@ const view = createGameView(app, dispatch, () => {
 
 window.addEventListener('resize', requestViewportResize);
 window.visualViewport?.addEventListener('resize', requestViewportResize);
-canvas.addEventListener('pointerdown', () => audio.unlock(), { passive: true });
-canvas.addEventListener('keydown', () => audio.unlock());
+canvas.addEventListener('pointerdown', () => { if (!view.loading) audio.unlock(); }, { passive: true });
+canvas.addEventListener('keydown', () => { if (!view.loading) audio.unlock(); });
 resize();
 enqueue(() => initialize());
 

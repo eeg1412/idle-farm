@@ -1,0 +1,164 @@
+[
+  {
+    "path": "assets/source/art/loading/background.png",
+    "width": 941,
+    "height": 1672,
+    "counts": {
+      "zero": 0,
+      "low1to5": 0,
+      "partial6to254": 0,
+      "opaque": 1573352
+    },
+    "visibleBoundsAlphaOver5": [
+      0,
+      0,
+      940,
+      1671
+    ],
+    "vividRedYellowLowAlpha": 0,
+    "vividRedYellowAlphaOver5": 5523
+  },
+  {
+    "path": "assets/source/art/loading/managers.png",
+    "width": 1254,
+    "height": 1254,
+    "counts": {
+      "zero": 344223,
+      "low1to5": 50272,
+      "partial6to254": 1177383,
+      "opaque": 638
+    },
+    "visibleBoundsAlphaOver5": [
+      30,
+      39,
+      1242,
+      1240
+    ],
+    "vividRedYellowLowAlpha": 13528,
+    "vividRedYellowAlphaOver5": 0
+  },
+  {
+    "path": "assets/source/art/loading/logo.png",
+    "width": 1983,
+    "height": 793,
+    "counts": {
+      "zero": 741496,
+      "low1to5": 90950,
+      "partial6to254": 739259,
+      "opaque": 814
+    },
+    "visibleBoundsAlphaOver5": [
+      22,
+      155,
+      1963,
+      620
+    ],
+    "vividRedYellowLowAlpha": 150,
+    "vividRedYellowAlphaOver5": 0
+  },
+  {
+    "path": "public/art/loading/background.webp",
+    "width": 768,
+    "height": 1366,
+    "counts": {
+      "zero": 0,
+      "low1to5": 0,
+      "partial6to254": 0,
+      "opaque": 1049088
+    },
+    "visibleBoundsAlphaOver5": [
+      0,
+      0,
+      767,
+      1365
+    ],
+    "vividRedYellowLowAlpha": 0,
+    "vividRedYellowAlphaOver5": 964
+  },
+  {
+    "path": "public/art/loading/managers.webp",
+    "width": 1024,
+    "height": 1024,
+    "counts": {
+      "zero": 352711,
+      "low1to5": 28407,
+      "partial6to254": 667109,
+      "opaque": 349
+    },
+    "visibleBoundsAlphaOver5": [
+      63,
+      69,
+      975,
+      973
+    ],
+    "vividRedYellowLowAlpha": 2800,
+    "vividRedYellowAlphaOver5": 0
+  },
+  {
+    "path": "public/art/loading/logo.webp",
+    "width": 1024,
+    "height": 400,
+    "counts": {
+      "zero": 223024,
+      "low1to5": 20464,
+      "partial6to254": 165874,
+      "opaque": 238
+    },
+    "visibleBoundsAlphaOver5": [
+      52,
+      85,
+      972,
+      305
+    ],
+    "vividRedYellowLowAlpha": 0,
+    "vividRedYellowAlphaOver5": 0
+  },
+  {
+    "static": [
+      320,
+      640
+    ],
+    "managers": {
+      "x": 10,
+      "y": 201,
+      "width": 301,
+      "height": 301
+    },
+    "logo": {
+      "x": 19,
+      "y": 96,
+      "width": 282,
+      "height": 110
+    },
+    "bar": {
+      "x": 41.6,
+      "y": 544,
+      "width": 236.8
+    },
+    "note": "Static layer composition; illustrative 60% bar, no runtime/loading behavior evidence."
+  },
+  {
+    "static": [
+      390,
+      844
+    ],
+    "managers": {
+      "x": -3,
+      "y": 266,
+      "width": 397,
+      "height": 397
+    },
+    "logo": {
+      "x": 24,
+      "y": 127,
+      "width": 343,
+      "height": 134
+    },
+    "bar": {
+      "x": 50.7,
+      "y": 717.4,
+      "width": 288.6
+    },
+    "note": "Static layer composition; illustrative 60% bar, no runtime/loading behavior evidence."
+  }
+]

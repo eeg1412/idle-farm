@@ -1,0 +1,8 @@
+Use case: logo-brand
+Asset type: standalone transparent game title logo for a polished pixel-art manor farming game.
+Primary request: Create a newly drawn wide title logo displaying EXACTLY four simplified Chinese characters, in one horizontal line: “放置庄园”.
+Text (verbatim): 放置庄园
+Character accuracy: character 1 放, character 2 置, character 3 庄, character 4 园. Maintain precise standard Simplified Chinese character structure, all strokes fully legible; no alternate text, no traditional forms. No subtitle and no roman letters.
+Style/medium: crisp intentional pixel-art display lettering, bold readable broad strokes, warm golden wheat and honey interior, pale cream highlights, dark forest-green stepped outline with subtle brown depth, decorative tiny green leaves and wheat ears at outside ends only, cozy pastoral fantasy game identity. Avoid overly ornate strokes. Lettering must remain readable when reduced to 280px wide.
+Composition/framing: wide transparent canvas ideal 1024x400. Four equally prominent Chinese characters centered in one horizontal line, title fills about 90% width, moderate restrained botanical embellishments, at least 4% transparent margin all sides. Logo ONLY; no banner rectangle, no wooden plank or signboard backdrop.
+Constraints: Genuine transparent background, clean alpha around all strokes. No characters/people, no landscape, no progress bar, no UI frame, no watermark, no extra writing. Sharp pixel-cluster edges rather than smooth vector curves, no soft glow.

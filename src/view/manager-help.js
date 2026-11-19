@@ -1,5 +1,7 @@
 import { activeGuideTask, objectives } from '../game/objectives.js';
 import { catalog, facilityOffer, stationOffer, stationUpgradeOffer, stationRequirements } from '../game/world.js';
+import { techDefinitions, techOffer } from '../game/advancement.js';
+import { qualityDrawOffer } from '../game/quality.js';
 
 const facilityKinds = { 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M' };
 const stationKinds = { 加工: 'I', 精制: 'P' };
@@ -9,6 +11,7 @@ const assignmentNames = { C: '播种', L: '安排养殖', F: '安排养殖', M: 
 const replacementNames = { C: '换种', L: '更换品种', F: '更换品种', M: '更换矿种', I: '更换配方', P: '更换配方' };
 const taskCache = new WeakMap();
 const upgradeCache = new WeakMap();
+const researchHelpCache = new WeakMap();
 const tutorial = (text, emphasis = []) => ({ text, emphasis, priority: 2, expression: 'smile' });
 
 function guideState(world) {
@@ -93,7 +96,7 @@ function taskInstruction(world, task, page) {
     case 'addProcessor': return purchaseStep(world, 'I');
     case 'addRefinery': return purchaseStep(world, 'P');
     case 'stationUpgrade': return upgradeStep(world, page === '精制' ? 'P' : 'I', 2n);
-    case 'recipeTrio': return '在「品种配方」点尚未研发的精制配方，查看材料后点「研发」，累计解锁3种精制配方。';
+    case 'recipeTrio': return '在「品种配方」点尚未研发的商品配方，查看材料后点「研发」，累计解锁3种商品配方。';
     case 'fieldLevel10': return upgradeStep(world, 'C', 10n);
     case 'codex20': return '点尚未收录的物品，点「查看研发」检查条件，再点「研发」；累计解锁20种物品就能完成收录。';
     case 'livestockIntro': case 'buildLivestock': return purchaseStep(world, 'L');
@@ -113,7 +116,7 @@ function taskInstruction(world, task, page) {
     }
     case 'firstMixedProduct': {
       const id = firstUnlocked(world, (item) => item.kind.startsWith('P') && item.sources.length >= 2);
-      return id ? assignStep(world, 'P', id) : '先去研究的「品种配方」研发多来源的精制配方，再回精制位点「选择配方」。';
+      return id ? assignStep(world, 'P', id) : '先去研究的「品种配方」研发多来源的商品配方，再回精制位点「选择配方」。';
     }
     case 'newFarm': return !task.gateMet
       ? '先继续生产，累计产值达到任务门槛后，再点「出售庄园」核对收益并「确认出售」。'
@@ -136,24 +139,58 @@ export function managerTutorial(world, page) {
   return { ...tutorial(prefix + text, [...new Set([...text.matchAll(/「([^」]+)」/g)].map((match) => match[1]))]), taskId: task.id };
 }
 
-export function managerUpgradeHelp(world, page) {
+export function managerUpgradeMessages(world, page) {
   let cached = upgradeCache.get(world);
   if (!cached) { cached = new Map(); upgradeCache.set(world, cached); }
   if (cached.has(page)) return cached.get(page);
   const kind = facilityKinds[page] ?? stationKinds[page];
-  let message = null;
+  const messages = [];
   if (kind) {
     const facilities = Boolean(facilityKinds[page]);
     const slots = slotsFor(world, kind);
     const quote = facilities ? facilityOffer : stationUpgradeOffer;
-    const index = slots.findIndex((slot, index) => quote(world, kind, index, 1n)?.affordable);
-    if (index >= 0) {
-      const entry = facilities && !slots[index].recipe ? '点第' + (index + 1) + '个' + placeNames[kind] + '的图片打开详情，再点「升级」'
-        : '点第' + (index + 1) + '个' + placeNames[kind] + '的「升级」';
-      message = { text: entry + '，核对金币后点「确认升级」，就能提高每批产出。',
-        priority: 1, emphasis: ['升级', '确认升级'], expression: 'smile' };
+    for (const [index, slot] of slots.entries()) {
+      if (!quote(world, kind, index, 1n)?.affordable) continue;
+      const entry = facilities && !slot.recipe ? '点第' + (index + 1) + '个' + placeNames[kind] + '图片，选「升级」'
+        : '第' + (index + 1) + '个' + placeNames[kind] + '可升级啦，点「升级」';
+      messages.push({ text: entry + '再「确认升级」，增加产出。',
+        priority: 1, emphasis: ['升级', '确认升级'], expression: 'smile' });
     }
   }
-  cached.set(page, message);
-  return message;
+  cached.set(page, messages);
+  return messages;
+}
+
+export function managerUpgradeHelp(world, page) {
+  return managerUpgradeMessages(world, page)[0] ?? null;
+}
+
+export function managerResearchHelp(world, tab) {
+  let cached = researchHelpCache.get(world);
+  if (!cached) { cached = new Map(); researchHelpCache.set(world, cached); }
+  if (cached.has(tab)) return cached.get(tab);
+  const messages = [];
+  if (tab === '品质') {
+    const single = qualityDrawOffer(world, 'single');
+    if (single?.affordable) {
+      const all = qualityDrawOffer(world, 'all');
+      messages.push({
+        text: '普通研发点够了，点「抽取一次」提升品质。'
+          + (all.affordable && all.count > 1n ? '也可「全部抽取」连抽。' : ''),
+        emphasis: ['抽取一次', ...(all.affordable && all.count > 1n ? ['全部抽取'] : [])],
+        expression: 'smile', priority: 1,
+      });
+    }
+  } else if (tab === '经营改良') {
+    for (const definition of techDefinitions) {
+      const offer = techOffer(world, definition.key);
+      if (!offer?.eligible || !offer.affordable) continue;
+      messages.push({
+        text: '「' + definition.name + '」可以升级啦，点开核对效果，再点「确认升级」。',
+        emphasis: ['经营改良', definition.name, '确认升级'], expression: 'smile', priority: 1,
+      });
+    }
+  }
+  cached.set(tab, messages);
+  return messages;
 }

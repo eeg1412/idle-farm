@@ -3,7 +3,7 @@ import { marketRate } from '../game/market.js';
 import { merchantStatus } from '../game/merchant.js';
 import { managerAffinityThresholds, managerGiftLimit, managerGiftRemaining, managerStatus, quoteManagerGift } from '../game/managers.js';
 import { managerCharacters } from './manager-dialogue.js';
-import { managerTutorial, managerUpgradeHelp } from './manager-help.js';
+import { managerTutorial, managerUpgradeMessages, managerResearchHelp } from './manager-help.js';
 import { compact } from './numbers.js';
 
 export const managerPages = {
@@ -13,8 +13,7 @@ export const managerPages = {
 };
 
 const estatePageIntroductions = {
-  经营: '这里可以查看管理员、经营统计和图鉴，也能预览出售庄园的收益。',
-  管理员管理: '这里能查看各位管理员的好感、今日心愿，送礼或切换角色形象。',
+  管理员管理: '这里能查看各位管理员的好感、今日心愿，送礼或切换角色。',
   统计: '这里能看生产状态、库存估值和累计收入，帮你核对经营情况。',
   出售庄园历史: '这里记着每次出售庄园的时间和产值。',
   图鉴: '这里能查每件物品的材料、来源和用途，未收录的物品也能查看研发条件。',
@@ -29,6 +28,9 @@ const facilityHelpEmphasis = {
   mine: ['选矿', '矿种', '买一座矿洞', '准备矿洞'],
 };
 const workshops = { processing: 'I', refining: 'P' };
+const contextPlaceNames = { field: '田地', livestock: '养殖场', fish: '鱼池', mine: '矿洞', processing: '加工位', refining: '精制位' };
+const assignmentNames = { field: '播种', livestock: '安排养殖', fish: '安排养殖', mine: '开采', processing: '选择配方', refining: '选择配方' };
+const assignmentHints = { field: '把种子种下吧。', livestock: '迎接新伙伴吧。', fish: '挑批鱼种吧。', mine: '选好矿种。' };
 const silent = { muted: true, fontSize: 14 };
 const produceForAffinity = '多生产一些物品，就能继续提高好感。';
 const giftTypes = ['全部', '原料', '加工品', '商品'];
@@ -51,64 +53,103 @@ function affinityNeedsProduction(status) {
   return status.valueToDailyCap > 0n && status.affinityFundingRemaining === 0n;
 }
 
+function managerResearchTab(ui) {
+  const requested = ['品种配方', '品质', '经营改良'].includes(ui.local.tab) ? ui.local.tab : '品种配方';
+  const linked = ui.local.id && Object.hasOwn(catalog.items, ui.local.id);
+  return linked && (requested === '经营改良' || (requested === '品质' && !ui.w.unlocked.includes(ui.local.id)))
+    ? '品种配方' : requested;
+}
+
 function managerHelp(ui, id, character, researchReady, page) {
   const world = ui.w;
   const tutorial = managerTutorial(world, page);
-  if (tutorial) return tutorial;
-  return managerContextHelp(ui, id, character, researchReady) ?? managerUpgradeHelp(world, page);
+  const tab = managerResearchTab(ui);
+  const techTutorial = tutorial && ['firstTech', 'delegationTech'].includes(tutorial.taskId);
+  const showTutorial = id !== 'research' || (tab === '经营改良' ? techTutorial : tab === '品种配方' && !techTutorial);
+  return [
+    showTutorial ? tutorial : null,
+    ...managerContextMessages(ui, id, character, researchReady),
+    ...managerUpgradeMessages(world, page),
+    ...(id === 'research' ? managerResearchHelp(world, tab) : []),
+  ].filter(Boolean);
 }
 
-function managerContextHelp(ui, id, character, researchReady) {
+function managerContextMessages(ui, id, character, researchReady) {
   const world = ui.w;
-  if (id === 'tasks') return null;
-  if (id === 'estate') return null;
+  if (id === 'tasks' || id === 'estate') return [];
   if (Object.hasOwn(facilities, id)) {
     const slots = world.facilities[facilities[id]];
-    if (!slots.length) return { text: character.help('none'), emphasis: facilityHelpEmphasis[id] };
-    if (slots.some((slot) => !slot.recipe)) return { text: character.help('empty'), emphasis: facilityHelpEmphasis[id] };
-    return null;
+    if (!slots.length) return [{ text: character.help('none'), emphasis: facilityHelpEmphasis[id] }];
+    return slots.flatMap((slot, index) => slot.recipe ? [] : [{
+      text: '第' + (index + 1) + '个' + contextPlaceNames[id] + '还空着，点「' + assignmentNames[id] + '」' + assignmentHints[id],
+      emphasis: [assignmentNames[id]],
+    }]);
   }
   if (Object.hasOwn(workshops, id)) {
     const stations = world.stations[workshops[id]];
-    for (const station of stations) {
+    const messages = [];
+    for (const [index, station] of stations.entries()) {
       if (!station.recipe || station.batch) continue;
-      const missing = stationRequirements(world, station.recipe, station.level).find(({ owned, needed }) => owned < needed);
-      if (missing) {
+      for (const missing of stationRequirements(world, station.recipe, station.level)) {
+        if (missing.owned >= missing.needed) continue;
         const name = catalog.items[missing.id].name;
-        return { text: character.help(name), expression: 'sad', emphasis: [name] };
+        messages.push({
+          text: '第' + (index + 1) + '个' + contextPlaceNames[id] + '还差「' + name + '」，点「查看来源」'
+            + (id === 'refining' ? '补齐就能起炉。' : '补齐再开工吧。'),
+          expression: 'sad', emphasis: [name, '查看来源'],
+        });
       }
     }
-    return stations.some((station) => !station.recipe)
-      ? { text: character.help(), emphasis: ['配方', '想做的商品'] } : null;
+    for (const [index, station] of stations.entries()) if (!station.recipe) messages.push({
+      text: '第' + (index + 1) + '个' + contextPlaceNames[id] + '还闲着，点「选择配方」'
+        + (id === 'refining' ? '挑个想做的商品吧。' : '咱们就开工吧。'),
+      emphasis: ['配方', '想做的商品', '选择配方'],
+    });
+    return messages;
   }
   if (id === 'warehouse') {
-    const item = Object.keys(world.market?.rates ?? {}).find((key) => world.inventory[key] > 0n && marketRate(world, key) > 0);
-    const name = catalog.items[item]?.name;
-    return name ? { text: character.help(name), emphasis: [name] } : null;
+    return Object.keys(world.market?.rates ?? {}).flatMap((key) => {
+      const name = catalog.items[key]?.name;
+      return name && world.inventory[key] > 0n && marketRate(world, key) > 0
+        ? [{ text: character.help(name), emphasis: [name] }] : [];
+    });
   }
-  if (id === 'research') return researchReady ? { text: character.help(), emphasis: ['品种配方'] } : null;
-  if (id === 'merchant' && !merchantStatus(world).unlocked) return { text: character.help(), emphasis: ['开摊条件'] };
-  return null;
+  if (id === 'research') {
+    const tab = managerResearchTab(ui);
+    return tab === '品种配方' && researchReady ? [{ text: character.help(), emphasis: ['品种配方'] }] : [];
+  }
+  if (id === 'merchant' && !merchantStatus(world).unlocked) return [{ text: character.help(), emphasis: ['开摊条件'] }];
+  return [];
 }
 
 const randomLine = (lines) => lines[Math.floor(Math.random() * lines.length)];
+const nextGreetingFor = (character) => (currentText) => {
+  const lines = character.hello;
+  const start = lines.indexOf(currentText);
+  for (let step = 1; step <= lines.length; step += 1) {
+    const line = lines[(start + step) % lines.length];
+    if (line !== currentText) return line;
+  }
+  return undefined;
+};
 
 function showManagerFeedback(ui, id, text, wanted = false, inCard = false) {
   ui.queueManagerSpeech(id, managerStatus(ui.currentWorld(), id).gender, { text, expression: wanted ? 'happy' : 'smile' }, { inCard });
 }
 
-async function receiveGift(page, panel, status) {
+async function receiveGift(page, panel, status, inCard = false) {
   if (!status.claim) return;
   const result = await panel.action('claimManagerGift', status.claim);
   if (!result || result === true) return;
   const text = '收到 ' + pieces(result.count) + catalog.items[result.itemId].name;
   panel.toast(text);
   const appearance = managerCharacters[status.id][status.gender];
-  showManagerFeedback(page, status.id, appearance.received);
+  showManagerFeedback(page, status.id, appearance.received, false, inCard);
 }
 
-export function managerInfo(page, id) {
+export function managerInfo(page, id, { inCard = false } = {}) {
   const role = managerCharacters[id];
+  if (inCard) page.local.managerReplyRole = id;
   page.dialog('管理员资料', (panel) => {
     const status = managerStatus(panel.w, id);
     const character = role[status.gender];
@@ -117,7 +158,12 @@ export function managerInfo(page, id) {
       copy.heading(character.name, { size: 19 });
       copy.text(role.title, silent);
       copy.text(character.bio, silent);
-    }, { align: 'center', ratio: 0.34, artAspect: 1.13, surface: 'none', cover: true }), { padding: 9, gap: 7 });
+    }, {
+      align: 'center', ratio: 0.34, artAspect: 1.13, surface: 'none', cover: true,
+      onClick: () => panel.advanceManagerSpeech(id, status.gender, {
+        nextGreeting: nextGreetingFor(character), inCard,
+      }),
+    }), { padding: 9, gap: 7 });
     const atMax = status.nextThreshold == null || status.level === 10;
     panel.row('好感等级', atMax ? '10 级 · 已满级' : status.level + ' 级', { compact: true, noWrap: true });
     if (!atMax) {
@@ -143,10 +189,10 @@ export function managerInfo(page, id) {
     }
     if (status.readyReturn > 0n && !status.claim) panel.text('有合适的物品时可领取回礼。', silent);
     panel.buttons([
-      ...(status.claim ? [{ label: '收回礼', icon: actionIcon('receive'), onClick: () => receiveGift(page, panel, status) }] : []),
-      { label: '切换角色', tone: 'gold', icon: actionIcon('switch'), onClick: () => panel.action('switchManagerAppearance', id) },
+      ...(status.claim ? [{ label: '收回礼', icon: actionIcon('receive'), onClick: () => receiveGift(page, panel, status, inCard) }] : []),
+      { label: '切换角色', tone: 'plain', icon: actionIcon('switch'), onClick: () => panel.action('switchManagerAppearance', id) },
     ]);
-  }, { managerFocus: '管理员资料' });
+  }, { managerFocus: '管理员资料', managerRole: id, managerInCard: inCard });
 }
 
 function giftChoices(world, status) {
@@ -380,19 +426,27 @@ function giftQuantity(page, picker, id, item, inCard) {
 export function renderManager(ui, id, researchReady = false, page = Object.keys(managerPages).find((page) => managerPages[page] === id)) {
   const status = managerStatus(ui.w, id);
   const character = managerCharacters[id][status.gender];
-  const help = managerHelp(ui, id, character, researchReady, page);
-  const message = help ? { priority: 1, ...help }
-    : estatePageIntroductions[page] ? { text: estatePageIntroductions[page], priority: 0 }
-      : status.claim ? { text: character.return, expression: 'smile', priority: 0 } : null;
+  const seen = new Set();
+  const messages = [
+    ...managerHelp(ui, id, character, researchReady, page).map((help) => ({ priority: 1, ...help })),
+    ...(estatePageIntroductions[page] ? [{ text: estatePageIntroductions[page], priority: 0 }] : []),
+    ...(status.claim ? [{ text: character.return, expression: 'smile', priority: 0 }] : []),
+  ].sort((a, b) => b.priority - a.priority).filter(({ text }) => {
+    if (!text || seen.has(text)) return false;
+    seen.add(text);
+    return true;
+  });
+  const message = messages[0] ?? null;
   ui.managerBanner({
-    role: id, gender: status.gender, message, greeting: () => randomLine(character.hello),
+    role: id, gender: status.gender, message, messages,
+    greeting: () => randomLine(character.hello), nextGreeting: nextGreetingFor(character),
     background: 'manager-art:backgrounds/' + id,
     receive: status.claim ? () => receiveGift(ui, ui, status) : undefined,
     receiveIcon: actionIcon('receive'),
     actions: [
       { label: '管理员资料', icon: actionIcon('info'), onClick: () => managerInfo(ui, id) },
       { label: '送礼', icon: actionIcon('gift'), onClick: () => giftPicker(ui, ui, id) },
-      { label: '切换管理员形象', icon: actionIcon('switch'), onClick: () => ui.action('switchManagerAppearance', id) },
+      { label: '切换角色', icon: actionIcon('switch'), onClick: () => ui.action('switchManagerAppearance', id) },
     ],
   });
 }
@@ -415,12 +469,17 @@ export function renderManagerDirectory(ui) {
           const floor = managerAffinityThresholds[status.level];
           copy.goalProgress(Number(status.affinity - floor) / Number(status.nextThreshold - floor));
         } else copy.text('已满级', silent);
-      }, { ratio: 0.32, artAspect: 1.12, cover: true, surface: 'none' });
-      card.managerReply(id, status.gender);
+      }, {
+        ratio: 0.32, artAspect: 1.12, cover: true, surface: 'none',
+        onClick: () => ui.advanceManagerSpeech(id, status.gender, {
+          messages: [], nextGreeting: nextGreetingFor(character), inCard: true,
+        }),
+      });
+      card.managerReply(id, status.gender, () => randomLine(character.hello));
       card.buttons([
-        { label: '资料', icon: actionIcon('info'), indicator: Boolean(status.claim), onClick: () => managerInfo(ui, id) },
+        { label: '资料', icon: actionIcon('info'), indicator: Boolean(status.claim), onClick: () => managerInfo(ui, id, { inCard: true }) },
         { label: '送礼', icon: actionIcon('gift'), onClick: () => giftPicker(ui, ui, id, true) },
-        { label: '切换形象', icon: actionIcon('switch'), onClick: async () => {
+        { label: '切换角色', icon: actionIcon('switch'), onClick: async () => {
           const changed = await ui.action('switchManagerAppearance', id);
           if (changed) { delete ui.local.managerSpeechKeys?.[id]; if (ui.local.managerReplyRole === id) delete ui.local.managerReplyRole; ui.refresh(); }
         } },

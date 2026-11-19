@@ -1,0 +1,196 @@
+import { Container, Graphics, Rectangle, Sprite, Text } from 'pixi.js';
+
+const fontFamily = 'system-ui, "PingFang SC", "Microsoft YaHei", sans-serif';
+const assetUrl = (name) => new URL(`./art/loading/${name}.webp?game=1`, document.baseURI).href;
+
+// A single Pixi overlay shares the game's canvas; it never pauses page construction.
+export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryStartup, onComplete }) {
+  const layer = app.stage.addChild(new Container({ label: 'opening-screen' }));
+  layer.eventMode = 'static';
+  const shade = layer.addChild(new Graphics());
+  const art = ['background', 'managers', 'logo'].map((name) => {
+    const sprite = layer.addChild(new Sprite({ label: 'opening-' + name, roundPixels: true }));
+    sprite.visible = false;
+    sprite.eventMode = 'none';
+    return sprite;
+  });
+  const mask = layer.addChild(new Graphics());
+  for (const sprite of art) sprite.mask = mask;
+  const track = layer.addChild(new Graphics());
+  const fill = layer.addChild(new Graphics());
+  const label = layer.addChild(new Text({ text: '正在准备庄园', style: {
+    fontFamily, fontSize: 15, wordWrap: true, breakWords: true, fontWeight: '700', fill: 0xfff4d6, align: 'center',
+  } }));
+  const retryButton = layer.addChild(new Container({ label: '重试加载' }));
+  const retrySurface = retryButton.addChild(new Graphics());
+  const retryLabel = retryButton.addChild(new Text({ text: '重试加载', style: {
+    fontFamily, fontSize: 16, fontWeight: '800', fill: 0x243d27,
+  } }));
+  const problemButton = layer.addChild(new Container({ label: '查看存档问题' }));
+  const problemLabel = problemButton.addChild(new Text({ text: '查看存档问题', style: {
+    fontFamily, fontSize: 14, fill: 0xfff4d6,
+  } }));
+  let viewport;
+  let shownMs = 0;
+  let lastTick;
+  let wasVisible = !document.hidden;
+  const resetVisibleTime = () => {
+    lastTick = undefined; wasVisible = !document.hidden; fadeAt = undefined; stableFrames = 0;
+  };
+  document.addEventListener('visibilitychange', resetVisibleTime);
+  let firstCompleteRendered = false;
+  let fadeAt;
+  let lastVersion = -1;
+  let stableFrames = 0;
+  let done = false;
+  let revealedProblem = false;
+  let startupProblem;
+  let pageReady = false;
+  let lastPixels = -1;
+  let lastCaption;
+  let lastFailure;
+  let retrying = false;
+  const stop = (event) => event.stopPropagation();
+  for (const type of ['pointerdown', 'pointermove', 'pointerup', 'pointertap', 'wheel']) layer.on(type, stop);
+  retryButton.eventMode = 'static';
+  retryButton.cursor = 'pointer';
+  const retryFailed = () => {
+    if (retrying || (!tasks.snapshot().failed.length && !startupProblem)) return;
+    retrying = true;
+    revealedProblem = false;
+    fadeAt = undefined;
+    Promise.resolve(retry()).then(() => {
+      if (startupProblem) return retryStartup?.();
+    }).catch(() => {}).finally(() => { retrying = false; markDirty(); });
+  };
+  retryButton.on('pointertap', retryFailed);
+  problemButton.eventMode = 'static';
+  problemButton.cursor = 'pointer';
+  problemButton.on('pointertap', () => { revealedProblem = true; layer.visible = false; markDirty(); });
+  retryButton.visible = false;
+  problemButton.visible = false;
+
+  function arrange() {
+    if (!viewport) return;
+    const { x, y, width, height } = viewport;
+    shade.clear().rect(0, 0, app.screen.width, app.screen.height).fill(0x000000)
+      .rect(x, y, width, height).fill(0x172b20);
+    layer.hitArea = new Rectangle(0, 0, app.screen.width, app.screen.height);
+    mask.clear().rect(x, y, width, height).fill(0xffffff);
+    for (const [index, sprite] of art.entries()) {
+      if (!sprite.visible) continue;
+      const texture = sprite.texture;
+      if (index === 0) {
+        const scale = Math.max(width / texture.width, height / texture.height);
+        sprite.scale.set(scale);
+        sprite.position.set(x + (width - sprite.width) / 2, y + (height - sprite.height) / 2);
+      } else {
+        const scale = index === 1 ? Math.min(width * 1.04 / texture.width, height * 0.47 / texture.height)
+          : Math.min(width * 0.88 / texture.width, height * 0.18 / texture.height);
+        sprite.scale.set(scale);
+        sprite.position.set(x + (width - sprite.width) / 2,
+          y + (index === 1 ? height * 0.785 - sprite.height : height * 0.15));
+      }
+    }
+    const barWidth = width * 0.74;
+    const barX = x + (width - barWidth) / 2;
+    // Leave a full failure message and both recovery controls inside short screens.
+    const bottom = y + height - (viewport.inset?.bottom ?? 0) - 10;
+    const hasFailure = tasks.snapshot().failed.length > 0 || Boolean(startupProblem);
+    const barY = hasFailure ? Math.min(y + height * 0.85, bottom - 150) : y + height * 0.85;
+    track.clear().roundRect(barX - 3, barY - 3, barWidth + 6, 17, 8).fill(0x263f29)
+      .stroke({ color: 0xf6dfa2, width: 2 });
+    // Keep the fill geometry local so changing its x scale cannot shift its anchor.
+    fill.clear().roundRect(0, 0, barWidth, 11, 5).fill(0xeacb64);
+    fill.position.set(barX, barY);
+    const state = tasks.snapshot();
+    fill.scale.x = (state.done + (pageReady ? 1 : 0)) / (state.total + 1);
+    label.style.wordWrapWidth = width * 0.9;
+    label.style.fontSize = Math.max(11, Math.min(17, width * 0.039));
+    label.anchor.set(0.5, 0);
+    label.position.set(x + width / 2, barY + 24);
+    retryButton.position.set(x + width / 2 - 65, Math.min(bottom - 80, barY + 28 + label.height + 8));
+    retrySurface.clear().roundRect(0, 0, 130, 38, 9).fill(0xf6dfa2);
+    retryButton.hitArea = new Rectangle(0, 0, 130, 38);
+    retryLabel.anchor.set(0.5);
+    retryLabel.position.set(65, 19);
+    problemLabel.anchor.set(0.5);
+    problemButton.position.set(x + width / 2, Math.min(bottom - 17, barY + 132));
+    problemButton.hitArea = new Rectangle(-75, -17, 150, 34);
+    lastPixels = -1;
+    markDirty();
+  }
+  function loadArt() {
+    art.forEach((sprite, index) => {
+      if (sprite.visible) return;
+      load(assetUrl(['background', 'managers', 'logo'][index])).then((texture) => {
+        if (!texture || texture.destroyed || done || sprite.destroyed) return;
+        sprite.texture = texture;
+        sprite.visible = true;
+        arrange();
+      });
+    });
+  }
+  loadArt();
+  return {
+    get blocking() { return !done && !revealedProblem; },
+    get complete() { return done; },
+    resize(next) { viewport = next; if (!done) arrange(); },
+    retryArt: loadArt,
+    retryFailed,
+    pageState(ready, problem) {
+      pageReady = ready;
+      startupProblem = problem;
+      if (!problem && revealedProblem) { revealedProblem = false; layer.visible = true; markDirty(); }
+    },
+    afterRender() {
+      if (!done && !firstCompleteRendered && layer.visible && art.every((sprite) => sprite.visible)) {
+        firstCompleteRendered = true; shownMs = 0; lastTick = undefined;
+      }
+    },
+    update(now, settled) {
+      if (done) return;
+      const visible = !document.hidden;
+      const elapsed = lastTick === undefined || !wasVisible || !visible ? 0 : Math.max(0, now - lastTick);
+      lastTick = now;
+      wasVisible = visible;
+      if (firstCompleteRendered && layer.visible && visible) shownMs += elapsed;
+      const state = tasks.snapshot();
+      const failed = state.failed.length > 0 || Boolean(startupProblem);
+      const total = state.total + 1;
+      const completed = state.done + (pageReady ? 1 : 0);
+      const width = viewport ? viewport.width * 0.74 : 0;
+      const pixels = Math.floor(width * completed / total);
+      if (pixels !== lastPixels) { fill.scale.x = width ? pixels / width : 0; lastPixels = pixels; markDirty(); }
+      const caption = startupProblem?.title ?? (failed ? '部分资源未能载入，请重试' : `正在加载 ${completed} / ${total}`);
+      if (caption !== lastCaption) { label.text = caption; lastCaption = caption; arrange(); markDirty(); }
+      const failureKey = failed + ":" + Boolean(startupProblem);
+      if (failureKey !== lastFailure) {
+        retryButton.visible = failed;
+        problemButton.visible = Boolean(startupProblem);
+        lastFailure = failureKey;
+        arrange();
+        markDirty();
+      }
+      // Promise continuations may request another redraw or discover dependent textures.
+      // Require two quiet rendered frames; an arrival during fading cancels that fade.
+      const ready = pageReady && !state.pending && !failed && settled && firstCompleteRendered;
+      if (ready && lastVersion === tasks.version) stableFrames += 1;
+      else { stableFrames = 0; fadeAt = undefined; }
+      lastVersion = tasks.version;
+      if (!ready || stableFrames < 2 || shownMs < 1000 || document.hidden) {
+        if (layer.alpha !== 1) { layer.alpha = 1; markDirty(); }
+        return;
+      }
+      fadeAt ??= now;
+      layer.alpha = Math.max(0, 1 - (now - fadeAt) / 300);
+      markDirty();
+      if (layer.alpha > 0) return;
+      done = true;
+      tasks.finish();
+      document.removeEventListener('visibilitychange', resetVisibleTime);
+      layer.destroy({ children: true });
+      onComplete?.();
+    },
+  };
+}

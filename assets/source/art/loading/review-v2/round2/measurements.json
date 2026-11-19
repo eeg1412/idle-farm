@@ -1,0 +1,966 @@
+[
+  {
+    "output": "assets/source/art/loading/review-v2/round2/normal-320x568.png",
+    "state": "normal",
+    "baseline": false,
+    "size": [
+      320,
+      568
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      97,
+      15
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 28.400000000000002,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": -39.8315789473684,
+        "y": 180.98882921589689,
+        "width": 397.7211600429645,
+        "height": 522.009022556391,
+        "scale": 0.38839957035445755
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 144.4,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 168.4,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 99.5,
+        "y": 163.4,
+        "width": 121,
+        "height": 25
+      },
+      "retry": {
+        "x": 95,
+        "y": 193.4,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 212.4,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/failed-320x568.png",
+    "state": "failed",
+    "baseline": false,
+    "size": [
+      320,
+      568
+    ],
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      145,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 28.400000000000002,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": -39.8315789473684,
+        "y": 221.98882921589689,
+        "width": 397.7211600429645,
+        "height": 522.009022556391,
+        "scale": 0.38839957035445755
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 144.4,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 168.4,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 75.5,
+        "y": 163.4,
+        "width": 169,
+        "height": 24
+      },
+      "retry": {
+        "x": 95,
+        "y": 192.4,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 211.4,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/problem-320x568.png",
+    "state": "problem",
+    "baseline": false,
+    "size": [
+      320,
+      568
+    ],
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      121,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 28.400000000000002,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": -39.8315789473684,
+        "y": 221.98882921589689,
+        "width": 397.7211600429645,
+        "height": 522.009022556391,
+        "scale": 0.38839957035445755
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 144.4,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 168.4,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 87.5,
+        "y": 163.4,
+        "width": 145,
+        "height": 24
+      },
+      "retry": {
+        "x": 22,
+        "y": 192.4,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 211.4,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/v64-normal-320x568.png",
+    "state": "normal",
+    "baseline": true,
+    "size": [
+      320,
+      568
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      97,
+      15
+    ],
+    "geometry": {
+      "logo": {
+        "x": 29.132800000000003,
+        "y": 85.2,
+        "width": 261.7344,
+        "height": 102.24
+      },
+      "managers": {
+        "x": 26.52000000000001,
+        "y": 178.92000000000002,
+        "width": 266.96,
+        "height": 266.96
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 482.8,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 506.8,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "retry": {
+        "x": 95,
+        "y": 478
+      },
+      "problem": {
+        "x": 160,
+        "y": 541
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/normal-320x640.png",
+    "state": "normal",
+    "baseline": false,
+    "size": [
+      320,
+      640
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      97,
+      15
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 32,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": -39.8315789473684,
+        "y": 184.58882921589688,
+        "width": 397.7211600429645,
+        "height": 522.009022556391,
+        "scale": 0.38839957035445755
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 148,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 172,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 99.5,
+        "y": 167,
+        "width": 121,
+        "height": 25
+      },
+      "retry": {
+        "x": 95,
+        "y": 197,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 216,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/failed-320x640.png",
+    "state": "failed",
+    "baseline": false,
+    "size": [
+      320,
+      640
+    ],
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      145,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 32,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": -39.8315789473684,
+        "y": 225.58882921589688,
+        "width": 397.7211600429645,
+        "height": 522.009022556391,
+        "scale": 0.38839957035445755
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 148,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 172,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 75.5,
+        "y": 167,
+        "width": 169,
+        "height": 24
+      },
+      "retry": {
+        "x": 95,
+        "y": 196,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 215,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/problem-320x640.png",
+    "state": "problem",
+    "baseline": false,
+    "size": [
+      320,
+      640
+    ],
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      121,
+      14
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 32,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": -39.8315789473684,
+        "y": 225.58882921589688,
+        "width": 397.7211600429645,
+        "height": 522.009022556391,
+        "scale": 0.38839957035445755
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 148,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 172,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "caption": {
+        "x": 87.5,
+        "y": 167,
+        "width": 145,
+        "height": 24
+      },
+      "retry": {
+        "x": 22,
+        "y": 196,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 234,
+        "y": 215,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/v64-normal-320x640.png",
+    "state": "normal",
+    "baseline": true,
+    "size": [
+      320,
+      640
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      97,
+      15
+    ],
+    "geometry": {
+      "logo": {
+        "x": 19.19999999999999,
+        "y": 96,
+        "width": 281.6,
+        "height": 110.00000000000001
+      },
+      "managers": {
+        "x": 9.600000000000023,
+        "y": 201.60000000000008,
+        "width": 300.79999999999995,
+        "height": 300.79999999999995
+      },
+      "bar": {
+        "x": 41.6,
+        "y": 544,
+        "width": 236.8,
+        "height": 11
+      },
+      "label": {
+        "x": 160,
+        "y": 568,
+        "width": 288,
+        "fontSize": 12.48
+      },
+      "retry": {
+        "x": 95,
+        "y": 550
+      },
+      "problem": {
+        "x": 160,
+        "y": 613
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/normal-390x844.png",
+    "state": "normal",
+    "baseline": false,
+    "size": [
+      390,
+      844
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      120,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 42.2,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -48.54473684210524,
+        "y": 215.0738856068743,
+        "width": 484.722663802363,
+        "height": 636.1984962406015,
+        "scale": 0.4733619763694951
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 182.2625,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 206.2625,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 123,
+        "y": 201.2625,
+        "width": 144,
+        "height": 27
+      },
+      "retry": {
+        "x": 130,
+        "y": 233.2625,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 252.2625,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/failed-390x844.png",
+    "state": "failed",
+    "baseline": false,
+    "size": [
+      390,
+      844
+    ],
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      180,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 42.2,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -48.54473684210524,
+        "y": 257.07388560687434,
+        "width": 484.722663802363,
+        "height": 636.1984962406015,
+        "scale": 0.4733619763694951
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 182.2625,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 206.2625,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 93,
+        "y": 201.2625,
+        "width": 204,
+        "height": 27
+      },
+      "retry": {
+        "x": 130,
+        "y": 233.2625,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 252.2625,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/problem-390x844.png",
+    "state": "problem",
+    "baseline": false,
+    "size": [
+      390,
+      844
+    ],
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      150,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 42.2,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -48.54473684210524,
+        "y": 257.07388560687434,
+        "width": 484.722663802363,
+        "height": 636.1984962406015,
+        "scale": 0.4733619763694951
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 182.2625,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 206.2625,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "caption": {
+        "x": 108,
+        "y": 201.2625,
+        "width": 174,
+        "height": 27
+      },
+      "retry": {
+        "x": 57,
+        "y": 233.2625,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 269,
+        "y": 252.2625,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/v64-normal-390x844.png",
+    "state": "normal",
+    "baseline": true,
+    "size": [
+      390,
+      844
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      120,
+      17
+    ],
+    "geometry": {
+      "logo": {
+        "x": 23.400000000000006,
+        "y": 126.6,
+        "width": 343.2,
+        "height": 134.0625
+      },
+      "managers": {
+        "x": -3.339999999999975,
+        "y": 265.8600000000001,
+        "width": 396.67999999999995,
+        "height": 396.67999999999995
+      },
+      "bar": {
+        "x": 50.7,
+        "y": 717.4,
+        "width": 288.6,
+        "height": 11
+      },
+      "label": {
+        "x": 195,
+        "y": 741.4,
+        "width": 351,
+        "fontSize": 15.21
+      },
+      "retry": {
+        "x": 130,
+        "y": 754
+      },
+      "problem": {
+        "x": 195,
+        "y": 817
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/normal-414x896.png",
+    "state": "normal",
+    "baseline": false,
+    "size": [
+      414,
+      896
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      131,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 44.800000000000004,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -51.53210526315786,
+        "y": 224.9430477980666,
+        "width": 514.5517508055854,
+        "height": 675.3491729323308,
+        "scale": 0.5024919441460795
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 193.1125,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 217.1125,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "caption": {
+        "x": 129.5,
+        "y": 212.1125,
+        "width": 155,
+        "height": 28
+      },
+      "retry": {
+        "x": 142,
+        "y": 245.1125,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 281,
+        "y": 264.1125,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/failed-414x896.png",
+    "state": "failed",
+    "baseline": false,
+    "size": [
+      414,
+      896
+    ],
+    "caption": "部分资源未能载入，请重试",
+    "labelRaster": [
+      192,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 44.800000000000004,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -51.53210526315786,
+        "y": 266.94304779806663,
+        "width": 514.5517508055854,
+        "height": 675.3491729323308,
+        "scale": 0.5024919441460795
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 193.1125,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 217.1125,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "caption": {
+        "x": 99,
+        "y": 212.1125,
+        "width": 216,
+        "height": 28
+      },
+      "retry": {
+        "x": 142,
+        "y": 245.1125,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 281,
+        "y": 264.1125,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/problem-414x896.png",
+    "state": "problem",
+    "baseline": false,
+    "size": [
+      414,
+      896
+    ],
+    "caption": "这份经营记录无法读取",
+    "labelRaster": [
+      160,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 44.800000000000004,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -51.53210526315786,
+        "y": 266.94304779806663,
+        "width": 514.5517508055854,
+        "height": 675.3491729323308,
+        "scale": 0.5024919441460795
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 193.1125,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 217.1125,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "caption": {
+        "x": 115,
+        "y": 212.1125,
+        "width": 184,
+        "height": 28
+      },
+      "retry": {
+        "x": 69,
+        "y": 245.1125,
+        "width": 130,
+        "height": 38
+      },
+      "problem": {
+        "x": 281,
+        "y": 264.1125,
+        "width": 140,
+        "height": 34
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "output": "assets/source/art/loading/review-v2/round2/v64-normal-414x896.png",
+    "state": "normal",
+    "baseline": true,
+    "size": [
+      414,
+      896
+    ],
+    "caption": "正在加载 60 / 100",
+    "labelRaster": [
+      131,
+      18
+    ],
+    "geometry": {
+      "logo": {
+        "x": 24.840000000000003,
+        "y": 134.4,
+        "width": 364.32,
+        "height": 142.3125
+      },
+      "managers": {
+        "x": -3.5600000000000023,
+        "y": 282.24,
+        "width": 421.12,
+        "height": 421.12
+      },
+      "bar": {
+        "x": 53.82,
+        "y": 761.6,
+        "width": 306.36,
+        "height": 11
+      },
+      "label": {
+        "x": 207,
+        "y": 785.6,
+        "width": 372.6,
+        "fontSize": 16.146
+      },
+      "retry": {
+        "x": 142,
+        "y": 806
+      },
+      "problem": {
+        "x": 207,
+        "y": 869
+      }
+    },
+    "note": "Offline Sharp/Pango composition; Noto Sans CJK SC substitute for system font. Supplied label raster height feeds pure layout; no runtime or Pixi evidence."
+  },
+  {
+    "path": "assets/source/art/loading/managers.png",
+    "sha256": "aa444745a12357cfe816a04d8d812f535c00bf0686bb5ff4c465f08c9fa11845",
+    "size": [
+      1102,
+      1427
+    ],
+    "alpha": {
+      "zero": 477002,
+      "low1to5": 52511,
+      "partial6to254": 1041863,
+      "opaque": 1178
+    },
+    "visibleBoundsAlphaOver5": [
+      28,
+      32,
+      1078,
+      1391
+    ]
+  },
+  {
+    "path": "public/art/loading/managers.webp",
+    "sha256": "1392efe0c1e13038f8c530136992fe1ecdba3578edd856def1a4959145cf199b",
+    "size": [
+      1024,
+      1344
+    ],
+    "alpha": {
+      "zero": 516807,
+      "low1to5": 41344,
+      "partial6to254": 817203,
+      "opaque": 902
+    },
+    "visibleBoundsAlphaOver5": [
+      49,
+      68,
+      979,
+      1272
+    ]
+  },
+  {
+    "path": "src/view/loading-layout.js",
+    "sha256": "5d1f89be3a733d877ce5dc96646be41dc7deabed01c5795553d67864429557f5"
+  },
+  {
+    "path": "src/view/loading-screen.js",
+    "sha256": "832f5ae71279df78a116b18f760e6b6d051e70322b9cccf2ffaf331cc6473e69"
+  }
+]

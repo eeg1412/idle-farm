@@ -1,0 +1,6 @@
+Use case: stylized-concept
+Asset type: portrait pixel-art farm game loading-screen BACKGROUND ONLY, for game 放置庄园.
+Primary request: Paint a completely new bright, welcoming manor landscape in crisp detailed pixel art. Use the provided fields.png strictly as pixel art visual style and pastoral palette reference, not as a layout to copy.
+Composition/framing: Portrait 9:16 canvas, ideal 768x1366. Spacious blue sky fills top 32%, distant green mountain ridge, a charming timber manor and red-roof farm buildings around left and right edges in the middle distance, tidy golden wheat fields and green orchard framing both sides, a gentle lane leading into the manor. Warm sunlight, cheerful saturated natural greens, golden harvest accents, cream pixel clouds. Keep a spacious quiet central clearing from 35% to 78% of height for a separately composited character group, and a calm unobstructed grass/path area at 85% for a separate progress bar. Top sky 15–28% must remain visually calm for a separate game logo.
+Style/medium: unmistakable 2D pixel art with intentional square pixel clusters, stepped edges and discrete shades; polished retro farm JRPG game art, coherent pixel grid, not smooth painterly illustration.
+Constraints: BACKGROUND ONLY. No people, no animals, no text or lettering, no logo, no progress bar, no UI, no watermark. Full opaque image. Not a framed card.

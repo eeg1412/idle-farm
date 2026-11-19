@@ -9,6 +9,8 @@ import managerPortraits from '../content/manager-portraits.json' with { type: 'j
 import { compact } from './numbers.js';
 import { gameHistory, pageForRoute, routeForPage } from './navigation.js';
 import { mountEstateMap } from './estate-map.js';
+import { createLoadingTasks, loadWithDeadline } from './loading-tasks.js';
+import { createLoadingScreen } from './loading-screen.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
 import { minPlotAnimationMs, mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
 import {
@@ -338,6 +340,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let merchantDialogEpoch = 0;
   const managerConversations = new Map();
   const managerDailyLines = new WeakMap();
+  const managerCandidates = new Map();
+  const managerTapTimes = new Map();
+  const managerSelections = new WeakMap();
   let managerConversationSequence = 0;
   let managerSpeech;
   let managerSpeechMount;
@@ -381,6 +386,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let frameDirty = true;
   let lastRenderAt = -Infinity;
   const markDirty = () => { frameDirty = true; };
+  const openingTasks = createLoadingTasks(markDirty);
+  let openingScreen;
   let progressTiming;
   let progressEpoch;
   let lastProgressClock;
@@ -485,22 +492,80 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function loadImage(url) {
     const texture = textures.get(url);
-    if (texture || failedImages.has(url)) return Promise.resolve(texture);
+    if (texture && !texture.destroyed) return Promise.resolve(texture);
+    if (texture) textures.delete(url);
+    if (failedImages.has(url)) return Promise.resolve(undefined);
     if (loadingImages.has(url)) return loadingImages.get(url);
-    // An evicted url finishes unloading before it loads again, so Assets cannot hand back
-    // the texture that is about to be destroyed.
+    // Assets owns the cache. Wait for any prior eviction before requesting it again.
     const unloading = unloadingImages.get(url);
-    const pending = (unloading ? unloading.then(() => Assets.load(url)) : Assets.load(url)).then((asset) => {
+    const requestTexture = async () => {
+      if (unloading) await unloading;
+      return Assets.load(url);
+    };
+    const fetchTexture = async () => {
+      // Only the winning await may publish. A timed-out Assets request can finish
+      // internally later, but its continuation cannot populate our live texture map.
+      const asset = openingTasks.active ? await loadWithDeadline(requestTexture) : await requestTexture();
+      if (!asset || asset.destroyed || !asset.width || !asset.height) throw new Error('图片无效');
       asset.source.scaleMode = 'nearest';
       textures.set(url, asset);
       markDirty();
       return asset;
-    }).catch(() => {
+    };
+    const pending = openingTasks.run('image:' + url, fetchTexture).catch(() => {
       failedImages.add(url);
     }).finally(() => loadingImages.delete(url));
     loadingImages.set(url, pending);
     return pending;
   }
+
+  function prepareTextures(key, work) {
+    // This separate task includes atlas validation/slicing, beyond the image requests.
+    return openingTasks.run('textures:' + key, work).catch(() => {});
+  }
+
+  function unavailableTextures(key) {
+    prepareTextures(key, () => { throw new Error('动画资源资料缺失或无效'); });
+  }
+
+  async function retryOpeningResources() {
+    // Failed Assets promises are explicitly removed before a fresh request. Successful
+    // page/animation textures retain their normal bounded/pinned cache ownership.
+    // Let current preparations settle before discarding their destination entries.
+    // A slow unrelated atlas can otherwise complete into an entry we already removed.
+    await openingTasks.settlePending();
+    const failedKeys = new Set(openingTasks.snapshot().failed.map((task) => task.key));
+    const failed = [...failedImages].filter((url) => failedKeys.has('image:' + url));
+    await Promise.allSettled(failed.map((url) => {
+      let unloading = unloadingImages.get(url);
+      if (!unloading) {
+        unloading = Assets.unload(url).catch(() => {}).finally(() => {
+          if (unloadingImages.get(url) === unloading) unloadingImages.delete(url);
+        });
+        unloadingImages.set(url, unloading);
+      }
+      // Keep the actual unload in the shared map even when this short wait times out;
+      // a new request must never race an outstanding texture destruction.
+      return loadWithDeadline(() => unloading, 5000);
+    }));
+    for (const url of failed) failedImages.delete(url);
+    for (const cache of [cropPlots, livestockTextures, fishTextures, miningTextures, workshopTextures]) {
+      for (const [key, entry] of cache) {
+        if (!entry.textures && failedKeys.has(entry.loadingKey) &&
+            openingTasks.state(entry.loadingKey) === 'failed') cache.delete(key);
+      }
+    }
+    plotSharedLoad = undefined;
+    openingTasks.clearFailures(failedKeys);
+    openingScreen.retryArt();
+    requestRender();
+  }
+
+  openingScreen = createLoadingScreen(app, {
+    tasks: openingTasks, load: loadImage, markDirty, retry: retryOpeningResources,
+    retryStartup: () => saveManagement.retryInitialization?.(),
+    onComplete: () => { syncPlotVisibility?.(); requestRender(); },
+  });
 
   // Animation scenes (crop plants, livestock, fish, workshop) load through here and are pinned.
   function loadAnimationImage(url) {
@@ -544,56 +609,56 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (existing) return existing.textures;
     const visual = cropVisuals[id];
     const individual = visual?.mode === 'individual';
-    if (!individual && id !== 'C01') return;
-    const crop = {};
+    if (!individual && id !== 'C01') return unavailableTextures('crop:' + id);
+    const crop = { loadingKey: 'textures:crop:' + id };
     cropPlots.set(id, crop);
     plotSharedLoad ??= Promise.all(plotSharedTextureKeys.map(async (key) => [
       key, await loadAnimationImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
     ])).then((entries) => entries.every(([, texture]) => texture) ? new Map(entries) : undefined);
 
     if (individual) {
-      if (visual.stages?.length !== 4) return;
+      if (visual.stages?.length !== 4) return unavailableTextures('crop:' + id);
       const retained = visual.harvestMode === 'retainedPlant';
-      if (retained && !visual.repeatBare) return;
+      if (retained && !visual.repeatBare) return unavailableTextures('crop:' + id);
       const plantLoad = Promise.all(visual.stages.map((stage) =>
         loadAnimationImage(path('./' + stage.path + '?game=1&v=4'))));
       const bareLoad = retained
         ? loadAnimationImage(path('./' + visual.repeatBare.path + '?game=1&v=5')) : Promise.resolve(undefined);
-      Promise.all([plotSharedLoad, plantLoad, bareLoad]).then(([shared, plants, bare]) => {
+      prepareTextures('crop:' + id, () => Promise.all([plotSharedLoad, plantLoad, bareLoad]).then(([shared, plants, bare]) => {
         if (!shared || plants.some((texture, index) => !texture ||
-            texture.width !== visual.stages[index].width || texture.height !== visual.stages[index].height)) return;
-        if (retained && (!bare || bare.width !== visual.repeatBare.width || bare.height !== visual.repeatBare.height)) return;
+            texture.width !== visual.stages[index].width || texture.height !== visual.stages[index].height)) throw new Error('作物纹理无效');
+        if (retained && (!bare || bare.width !== visual.repeatBare.width || bare.height !== visual.repeatBare.height)) throw new Error('作物成年纹理无效');
         crop.textures = { shared, plants, visual, bare };
         if (visiblePlotIds.has(id)) requestRender();
-      });
+      }));
       return;
     }
 
     const atlasLoad = loadAnimationImage(path(`./art/plot/crops/${id}.webp?game=1&v=3`));
     const frontLoad = loadAnimationImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=3`));
-    Promise.all([plotSharedLoad, atlasLoad, frontLoad]).then(([shared, atlas, front]) => {
+    prepareTextures('crop:' + id, () => Promise.all([plotSharedLoad, atlasLoad, frontLoad]).then(([shared, atlas, front]) => {
       const size = plotFrameSize;
       if (!shared || !atlas || !front || atlas.width !== size * 2 || atlas.height !== size * 2 ||
-          front.width !== size * 2 || front.height !== size * 2) return;
+          front.width !== size * 2 || front.height !== size * 2) throw new Error('小麦图集无效');
       const frames = (texture) => Array.from({ length: 4 }, (_, index) => new Texture({
         source: texture.source,
         frame: new Rectangle(index % 2 * size, Math.floor(index / 2) * size, size, size),
       }));
       crop.textures = { shared, stages: frames(atlas), frontStages: frames(front) };
       if (visiblePlotIds.has(id)) requestRender();
-    });
+    }));
   }
 
   function loadLivestockTextures(id) {
-    if (!Object.hasOwn(livestockSpecies, id)) return;
+    if (!Object.hasOwn(livestockSpecies, id)) return unavailableTextures('livestock:' + id);
     const species = livestockSpecies[id];
     const feedTexture = species?.feedTexture;
-    if (!feedTexture?.path || feedTexture.size?.length !== 2 || !species.product?.icon || !species.stages) return;
+    if (!feedTexture?.path || feedTexture.size?.length !== 2 || !species.product?.icon || !species.stages) return unavailableTextures('livestock:' + id);
     const existing = livestockTextures.get(id);
     if (existing) return existing.textures;
-    const entry = {};
+    const entry = { loadingKey: 'textures:livestock:' + id };
     livestockTextures.set(id, entry);
-    Promise.all([
+    prepareTextures('livestock:' + id, () => Promise.all([
       loadAnimationImage(path('./art/livestock/barn.webp?game=1&v=1')),
       loadAnimationImage(path(`./art/livestock/animals/${id}.webp?game=1&v=4`)),
       loadAnimationImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
@@ -604,12 +669,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (!barn || !atlas || !product || !feed || barn.width !== size || barn.height !== size ||
           atlas.width !== size * livestockIdleFrames || atlas.height !== size * rows ||
           product.width !== 96 || product.height !== 96 ||
-          feed.width !== feedTexture.size[0] || feed.height !== feedTexture.size[1]) return;
+          feed.width !== feedTexture.size[0] || feed.height !== feedTexture.size[1]) throw new Error('畜牧纹理无效');
       const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: livestockIdleFrames }, (_, frame) =>
         new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
       entry.textures = { barn, stages, product, feed };
       if (visiblePlotIds.has(id)) requestRender();
-    });
+    }));
   }
 
   function syncLivestockBatches(nextWorld) {
@@ -633,27 +698,27 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function loadFishTextures(id) {
-    if (!Object.hasOwn(fishSpecies, id)) return;
+    if (!Object.hasOwn(fishSpecies, id)) return unavailableTextures('fish:' + id);
     const species = fishSpecies[id];
     const habitat = fishHabitats[species?.habitat];
-    if (!habitat?.pond || !species.stages) return;
+    if (!habitat?.pond || !species.stages) return unavailableTextures('fish:' + id);
     const existing = fishTextures.get(id);
     if (existing) return existing.textures;
-    const entry = {};
+    const entry = { loadingKey: 'textures:fish:' + id };
     fishTextures.set(id, entry);
-    Promise.all([
+    prepareTextures('fish:' + id, () => Promise.all([
       loadAnimationImage(path(habitat.pond.replace(/^public\//, './') + '?game=1&v=1')),
       loadAnimationImage(path(`./art/fish/animals/${id}.webp?game=1&v=1`)),
     ]).then(([pond, atlas]) => {
       const size = fishFrameSize;
       const rows = fishSpecies[id].stages;
       if (!pond || !atlas || pond.width !== size || pond.height !== size ||
-          atlas.width !== size * fishIdleFrames || atlas.height !== size * rows) return;
+          atlas.width !== size * fishIdleFrames || atlas.height !== size * rows) throw new Error('鱼池图集无效');
       const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: fishIdleFrames }, (_, frame) =>
         new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
       entry.textures = { pond, stages };
       if (visiblePlotIds.has(id)) requestRender();
-    });
+    }));
   }
 
   function syncFishBatches(nextWorld) {
@@ -674,16 +739,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function loadWorkshopTextures(id, kind) {
-    if (!data.items[id]) return;
+    if (!data.items[id]) return unavailableTextures('workshop:' + kind + ':' + id);
     const visibleKey = kind + ':' + id;
     const sources = workshopTextureSources(kind);
-    if (!sources?.length || sources.some((source) => !source?.path)) return;
+    if (!sources?.length || sources.some((source) => !source?.path)) return unavailableTextures('workshop:' + visibleKey);
     const key = visibleKey + '|' + sources.map((source) => source.path).join('|');
     const existing = workshopTextures.get(key);
     if (existing) return existing.textures;
-    const entry = {};
+    const entry = { loadingKey: 'textures:workshop:' + key };
     workshopTextures.set(key, entry);
-    Promise.all([
+    prepareTextures('workshop:' + key, () => Promise.all([
       ...workshopIconIds(id).map(async (iconId) => [iconId,
         await loadAnimationImage(path('./wiki/icons/' + iconId + '.webp?game=1')),
       ]),
@@ -691,12 +756,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         await loadAnimationImage(path(source.path + '?game=1')),
       ]),
     ]).then((assets) => {
-      if (assets.some(([, texture]) => !texture)) return;
+      if (assets.some(([, texture]) => !texture)) throw new Error('动画图片未载入');
       entry.textures = new Map(assets);
       // A completed load only redraws a still-visible recipe. No display node is
       // captured here, so leaving a page cannot resurrect its conveyor sprites.
       if (visiblePlotIds.has('workshop:' + visibleKey)) requestRender();
-    });
+    }));
   }
 
   // Shared animation textures are pinned; only visible mines initiate loads.
@@ -707,24 +772,24 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         !miningVisuals.foreground.rect || !miningVisuals.cart?.path || !miningVisuals.cart.cargo ||
         !Number.isFinite(miningVisuals.cart.visibleLeftX) ||
         !Number.isFinite(left) || !Number.isFinite(right) || right <= left ||
-        !miningVisuals.track?.inside || !miningVisuals.track?.station || !miningVisuals.sceneSize) return;
+        !miningVisuals.track?.inside || !miningVisuals.track?.station || !miningVisuals.sceneSize) return unavailableTextures('mining:' + id);
     const existing = miningTextures.get(id);
     if (existing) return existing.textures;
-    const entry = {};
+    const entry = { loadingKey: 'textures:mining:' + id };
     miningTextures.set(id, entry);
     const sources = { background: miningVisuals.background.path, foreground: miningVisuals.foreground.path,
       cart: miningVisuals.cart.path, icon: item.icon };
-    Promise.all(Object.entries(sources).map(async ([key, source]) => [key,
+    prepareTextures('mining:' + id, () => Promise.all(Object.entries(sources).map(async ([key, source]) => [key,
       await loadAnimationImage(path('./' + source.replace(/^(?:public\/|\.\/)/, '') + '?game=1')),
     ])).then((assets) => {
-      if (assets.some(([, texture]) => !texture)) return;
+      if (assets.some(([, texture]) => !texture)) throw new Error('动画图片未载入');
       const loaded = Object.fromEntries(assets);
       if (loaded.background.width !== miningVisuals.background.width ||
           loaded.background.height !== miningVisuals.background.height ||
-          loaded.cart.width !== miningVisuals.cart.width || loaded.cart.height !== miningVisuals.cart.height) return;
+          loaded.cart.width !== miningVisuals.cart.width || loaded.cart.height !== miningVisuals.cart.height) throw new Error('矿洞纹理无效');
       entry.textures = loaded;
       if (visiblePlotIds.has('mining:' + id)) requestRender();
-    });
+    }));
   }
 
   function unmountPlot(plot) {
@@ -869,7 +934,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const hitArea = new Rectangle(x, y, width, height);
     g.hitArea = hitArea;
     const run = (event) => {
-      if (blockTap || waiting) return;
+      if (blockTap || waiting || openingScreen?.blocking) return;
       if (developmentToolsEnabled) settingsTitleClicks = 0;
       if (event) point = root.toLocal(event.global);
       else point = root.toLocal(parent.toGlobal({ x: x + width / 2, y: y + hitArea.height / 2 }));
@@ -1085,6 +1150,32 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     requestRender();
   }
 
+  function advanceManagerSpeech(role, gender, { messages, nextGreeting, inCard = false } = {}) {
+    const now = performance.now();
+    if (now - (managerTapTimes.get(role) ?? -Infinity) < 300) return;
+    managerTapTimes.set(role, now);
+    const owner = modal?.managerRole === role && modal.managerFocus !== '管理员资料' ? modal : locals[current];
+    const speech = conversationFor(owner, role, gender);
+    const candidates = messages ?? (inCard ? [] : managerCandidates.get(role + ':' + gender)?.messages) ?? [];
+    const nextDaily = nextGreeting ?? managerCandidates.get(role + ':' + gender)?.nextGreeting;
+    const currentText = speech.line?.text;
+    const help = candidates.filter((line, index) => line?.text &&
+      candidates.findIndex((other) => other?.text === line.text) === index);
+    const currentIndex = help.findIndex((line) => line.text === currentText);
+    const another = help.find((line, index) => index > currentIndex && line.text !== currentText)
+      ?? help.find((line) => line.text !== currentText);
+    const daily = !another && nextDaily?.(currentText);
+    const selected = another ?? (daily ? { text: daily, expression: 'smile', priority: 0 } : undefined);
+    if (!selected) return;
+    speech.select(selected);
+    managerSelections.set(speech, { line: selected, candidates: JSON.stringify(help) });
+    if (daily) managerDailyLines.set(speech, selected);
+    if (inCard) owner.managerReplyRole = role;
+    else delete owner.managerReplyRole;
+    pauseManagerSpeech();
+    requestRender();
+  }
+
   async function closeDialog() {
     if (waiting || navigation?.returning) return;
     const shown = modal;
@@ -1233,7 +1324,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       : captureContext(availableDialog(sourceDialog) ? sourceDialog : modal);
     if (page === homePage) pageParent = undefined;
     else if (options.menu) pageParent = defaultParent(page);
-    else if (changedPage || directedEntry) pageParent = source;
+    else if (changedPage || directedEntry && !(page === '研究' && !modal && options.id === undefined)) pageParent = source;
     linkedEntryParent = page === '研究' && options.id !== undefined ? pageParent : undefined;
     if (changedPage || tab !== undefined) prepareMerchantNavigation(page, tab);
     if (changedPage) {
@@ -1628,7 +1719,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       go: (page, settings) => go(page, settings, local.routeKey ? local : undefined),
       isActive: () => local.routeKey ? modal === local && local.navigationEpoch === navigationEpoch : locals[current] === local,
       saveManagement, saveAction,
-      dialog: setDialog, close: closeDialog, closeManagerGift, queueManagerSpeech,
+      dialog: setDialog, close: closeDialog, closeManagerGift, queueManagerSpeech, advanceManagerSpeech,
       tree(options) {
         const treeHeight = Math.max(120, availableHeight - cursor - 5);
         mountResearchTree({
@@ -1964,15 +2055,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += h + rowGap;
       },
       managerExpression(role, gender) {
-        return managerConversations.get(local.managerSpeechKeys?.[role])?.gender === gender
-          ? managerConversations.get(local.managerSpeechKeys[role]).line?.expression ?? 'smile' : 'smile';
+        const owner = local.managerFocus === '管理员资料' ? locals[current] : local;
+        const speech = managerConversations.get(owner.managerSpeechKeys?.[role]);
+        return speech?.gender === gender ? speech.line?.expression ?? 'smile' : 'smile';
       },
       managerReply(role, gender, greeting, { always = false } = {}) {
         if (!always && local.managerReplyRole !== role) return;
         const speech = conversationFor(local, role, gender, greeting);
-        if (!always && speech.line?.priority !== 3) return;
+        if (!always && !speech.line) return;
         const top = cursor;
         const height = width < 285 ? 52 : 46;
+        // A directory profile leaves its source card's reply in the uncovered strip.
+        if (modal?.managerFocus === '管理员资料' && modal.managerRole === role && modal.managerInCard) {
+          local.scroll = Math.max(0, top - 5);
+        }
         cursor += height + rowGap;
         managerSpeech = speech;
         const caption = parent.addChild(new Container({ label: 'manager-dialogue' }));
@@ -1981,7 +2077,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         let reveal;
         let visible = true;
         const startLine = () => {
-          if (!always && speech.line?.priority !== 3) {
+          if (!always && !speech.line) {
             delete local.managerReplyRole;
             requestRender();
             return;
@@ -1991,7 +2087,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           requestRender();
         };
         managerSpeechMount = {
-          visible: () => visible && (local.routeKey ? modal === local : !modal),
+          visible: () => visible && (local.routeKey ? modal === local :
+            !modal || modal.managerFocus === '管理员资料' && modal.managerRole === role && modal.managerInCard),
           startLine,
           reveal: () => { if (reveal(speech.shown)) markDirty(); },
         };
@@ -2001,12 +2098,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           visible = withinScrollViewport(top, top + height, scroll, options.viewport, x, x + width);
         });
       },
-      managerBanner({ role, gender, greeting, background, message, receive, receiveIcon, actions }) {
+      managerBanner({ role, gender, greeting, background, message, messages = [], nextGreeting, receive, receiveIcon, actions }) {
         const speech = conversationFor(local, role, gender, greeting);
-        speech.offer(message ?? managerDailyLines.get(speech));
-        if (current === '管理员管理' && local.managerReplyRole) {
-          const reply = managerConversations.get(local.managerSpeechKeys?.[local.managerReplyRole]);
-          if (reply?.line?.priority !== 3) delete local.managerReplyRole;
+        managerCandidates.set(role + ':' + gender, { messages, nextGreeting });
+        const selection = managerSelections.get(speech);
+        if (selection && selection.candidates !== JSON.stringify(messages) &&
+            !(current === '管理员管理' && local.managerReplyRole === role)) managerSelections.delete(speech);
+        if (!(current === '管理员管理' && local.managerReplyRole === role)) {
+          speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
         }
         const suppressed = current === '管理员管理' && Boolean(local.managerReplyRole);
         if (!suppressed) managerSpeech = speech;
@@ -2084,7 +2183,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           markDirty();
         };
         if (!suppressed) managerSpeechMount = {
-          visible: () => bubbleVisible && !modal,
+          visible: () => bubbleVisible && (!modal || modal.managerFocus === '管理员资料' &&
+            modal.managerRole === role && !modal.managerInCard),
           startLine,
           reveal: () => { if (reveal(speech.shown)) markDirty(); },
         };
@@ -2122,6 +2222,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
               .stroke({ color: palette.green, width: 2 });
             hitAt(hit, parent, dialogueX, bubbleY, dialogueWidth, bubbleHeight, receive);
           }
+        }
+        if (!waiting) {
+          const portraitHit = parent.addChild(inkGraphics());
+          portraitHit.label = '换管理员对白';
+          hitAt(portraitHit, parent, left, top, Math.max(1, dialogueX - left - 4), height,
+            () => advanceManagerSpeech(role, gender, { messages, nextGreeting }));
         }
         const actionLeft = dialogueX + (dialogueWidth - actionSpan) / 2;
         actions.forEach(({ label, icon, onClick }, index) => {
@@ -2818,7 +2924,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     return (scroll = state.scroll) => {
       visiblePlotIds.clear();
-      if (!world || status?.busy || modal || pendingModal || document.hidden ||
+      if (!world || status?.busy || (modal || pendingModal) && !openingScreen.blocking || document.hidden ||
           state !== locals[current] || state.tab !== tab) {
         for (const plot of activePlots) unmountPlot(plot);
         return;
@@ -3511,7 +3617,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function beginDrag(event, thumb = false) {
-    if (!scrollTarget?.max || !event.isPrimary || event.button !== 0) return;
+    if (openingScreen?.blocking || !scrollTarget?.max || !event.isPrimary || event.button !== 0) return;
     const p = root.toLocal(event.global);
     if (p.x < scrollTarget.x || p.x > scrollTarget.right ||
         p.y < scrollTarget.y || p.y > scrollTarget.y + scrollTarget.height) return;
@@ -3561,6 +3667,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   root.on('pointerupoutside', (event) => endPointer(event));
   root.on('pointercancel', (event) => endPointer(event, true));
   app.canvas.addEventListener('pointerdown', (event) => {
+    if (openingScreen?.blocking) return;
     if (event.isPrimary && event.button === 0) pressedPointer = event.pointerId;
   }, { capture: true });
   function releasePointer(event) {
@@ -3580,6 +3687,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   });
   let scrollWheelEvent;
   root.on('wheel', (event) => {
+    if (openingScreen?.blocking) return;
     if (!scrollTarget) return;
     if (navigationMenu) scrollWheelEvent = event.nativeEvent;
     const p = root.toLocal(event.global);
@@ -3604,6 +3712,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   });
 
   app.canvas.addEventListener('keydown', (event) => {
+    if (openingScreen?.blocking) {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openingScreen.retryFailed(); }
+      return;
+    }
     if (modal?.onKeyDown?.(event)) { event.preventDefault(); return; }
     if (event.key === 'Escape') { event.preventDefault(); back(); return; }
     if (!controls.length) return;
@@ -3630,6 +3742,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     } else if (controls[activeFocus]?.key?.(event.key)) event.preventDefault();
   });
   app.canvas.addEventListener('paste', (event) => {
+    if (openingScreen?.blocking) return;
     if (modal?.onPaste?.(event)) { event.preventDefault(); return; }
     if (!modal?.onImportText || waiting) return;
     event.preventDefault();
@@ -3640,6 +3753,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (modal?.onImportText || modal?.onImportFile) event.preventDefault();
   });
   app.canvas.addEventListener('drop', async (event) => {
+    if (openingScreen?.blocking) return;
     const shown = modal;
     if (!shown?.onImportText && !shown?.onImportFile) return;
     event.preventDefault();
@@ -3674,7 +3788,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   app.ticker.add(() => {
     if (notices || floating) drawFeedback();
     const now = performance.now();
-    const speechVisible = managerSpeechMount?.visible() && !document.hidden && !status?.busy &&
+    openingScreen.update(now, !needsRender && !pendingRender && !building);
+    const speechVisible = !openingScreen.blocking && managerSpeechMount?.visible() && !document.hidden && !status?.busy &&
       !pendingModal && !navigationMenu;
     if (!speechVisible && managerSpeechWasVisible) pauseManagerSpeech();
     managerSpeechWasVisible = speechVisible;
@@ -3719,6 +3834,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       frameDirty = false;
       lastRenderAt = now;
       app.render();
+      openingScreen.afterRender();
     }, undefined, UPDATE_PRIORITY.LOW);
   }
 
@@ -3735,6 +3851,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function resize(nextLayout) {
     const resized = !layout || layout.width !== nextLayout.width || layout.height !== nextLayout.height;
     layout = nextLayout;
+    openingScreen.resize(nextLayout);
     markDirty();
     if (resized) { pressedPointer = null; treeGesture = false; coast = null; endPointer(undefined, true); floating = undefined; }
     // Keep captured pointer targets intact until a drag finishes.
@@ -3763,6 +3880,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     lastProgressClock = undefined;
     resetManagerSpeech();
     managerConversations.clear();
+    managerCandidates.clear();
+    managerTapTimes.clear();
     progressBars.clear();
     countdowns.clear();
     coast = null;
@@ -3799,6 +3918,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   return {
     go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize, resetSession, isImportingSave,
     merchantBatchChanged, hasMerchantRefreshNotice,
+    get loading() { return openingScreen.blocking; },
     pauseProgress() {
       if (world && progressTiming) progressClock(performance.now());
       progressTiming = undefined;
@@ -3841,6 +3961,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;
+      openingScreen.pageState(Boolean(world && !status?.busy), !world && status && !status.busy ? status : undefined);
       if (structural) resize(nextLayout);
       if (world && !status?.busy && !document.hidden) updateBatchDisplays(performance.now());
     },

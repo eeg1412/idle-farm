@@ -133,7 +133,7 @@ const qualityTask = (id) => [id, `品质抽取 ${qualityDrawTaskTargets[id]} 次
 const plotCondition = '累计购买至少 {目标} 块额外田地';
 const fieldLevelCondition = '将任意一块田地升到 {目标} 级';
 const stationLevelCondition = '将任意加工位或精制位升到 {目标} 级';
-const recipeCondition = '研发至少 {目标} 种精制配方';
+const recipeCondition = '研发至少 {目标} 种商品配方';
 const codexCondition = '解锁至少 {目标} 种图鉴物品';
 const facilityLevelCondition = '将任意田地、养殖场、鱼池或矿洞升到 {目标} 级';
 const techCondition = '永久科技的总等级达到 {目标} 级';
@@ -143,7 +143,7 @@ const runCondition = '累计出售庄园至少 {目标} 次';
 const mainGuide = [
   ['firstHarvest', '第一次收成', '让至少 {目标} 份小麦入库', field, (world) => produced(world, 'C01')],
   ['firstFlour', '磨出面粉', '加工并入库至少 {目标} 份面粉', processing, (world) => produced(world, 'I01')],
-  ['breadRecipe', '研发乡村面包', '解锁乡村面包的精制配方', research, (world) => learned(world, 'P01')],
+  ['breadRecipe', '研发乡村面包', '解锁乡村面包的商品配方', research, (world) => learned(world, 'P01')],
   ['firstBread', '烤出乡村面包', '精制并入库至少 {目标} 份乡村面包', refining, (world) => produced(world, 'P01')],
   ['firstSale', '第一次出货', '在仓库售出至少 {目标} 件物品', warehouse, (world) => world.stats.sold],
   ['firstPlot', '扩建田地', plotCondition, field, (world) => world.stats.plots],
