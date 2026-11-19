@@ -11,6 +11,7 @@
 | 应用外壳、页面入口、响应式布局 | [全局导航与画布布局](ui/navigation.md) |
 | 缩写、完整整数、数量输入、窄屏 | [数字显示](ui/numbers.md) |
 | Dialog、Toast、点击处浮动小字 | [反馈规则](ui/feedback.md) |
+| 管理员胸像、资料、送礼与收礼 | [管理员关系与礼物](tasks/2026-11-18-manager-relationships.md#操作与文案) |
 | 验收 | [界面验收](ui/qa.md) |
 | 绘制稿 | [八页界面参考图](ui-references/README.md) |
 

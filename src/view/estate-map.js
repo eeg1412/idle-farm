@@ -142,7 +142,8 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
 }
 
 export function mountEstateMap(parent, {
-  width, insetTop, onOpen, bind, markDirty, getImage, loadImage, researchReady, guideTaskName, focusedIndex, layoutOverrides,
+  width, insetTop, onOpen, bind, markDirty, getImage, loadImage,
+  researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides,
 }) {
   const height = Math.round(width * estateMapAspect);
   const preload = width * 0.22;
@@ -223,7 +224,7 @@ export function mountEstateMap(parent, {
     text.y = sign.y;
     plaque.addChild(text);
 
-    if (id === 'research' && researchReady) {
+    if (returnGiftSites?.has(id) || (id === 'research' && researchReady)) {
       const marker = new Graphics().circle(signWidth / 2 - 7, signTop + 7, 5)
         .fill(0xd85b37).stroke({ color: 0xfff1cf, width: 1.5 });
       plaque.addChild(marker);

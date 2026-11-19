@@ -437,6 +437,11 @@ test('crop technology and catalog changes preserve the persisted open-batch snap
   assert.deepEqual(loadedCrop.planting, planting);
   assert.ok(sellFarm(loaded, farmSaleOffer(loaded)));
   assert.equal(loaded.tech.cropYield, 26);
+  assert.deepEqual(loaded.facilities.C, [
+    { level: '1', recipe: null, batch: null },
+    { level: '1', recipe: null, batch: null },
+  ]);
+  assert.ok(assignFacility(loaded, 'C', 0, 'C01'));
   assert.equal(loaded.facilities.C[0].batch.amount, '6');
 });
 

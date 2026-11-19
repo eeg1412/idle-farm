@@ -1,4 +1,5 @@
 import { merchantProductionGate, merchantSalesGate, merchantStatus, merchantTradeOffer } from '../game/merchant.js';
+import { managerStatus } from '../game/managers.js';
 import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 
@@ -9,7 +10,7 @@ const coins = (value) => compact(value) + ' 金币';
 const atPercent = (count, percent) => count * BigInt(percent) / 100n;
 
 export function renderMerchantEntry(ui) {
-  ui.button('行脚商', () => ui.go('行脚商'));
+  ui.button('行脚商', () => ui.go('行脚商'), { indicator: Boolean(managerStatus(ui.w, 'merchant')?.claim) });
 }
 
 function restockDialog(ui) {
@@ -229,7 +230,6 @@ function waitingForMerchant(ui, { producedCount, salesLevel12 }) {
   const salesAmount = salesReady && sales === salesTarget ? compact(salesLevel12, 6) : sales;
   const salesProgress = salesReady ? 1 : Number(salesLevel12) / Number(merchantSalesGate);
 
-  ui.image('merchant-waiting', Math.max(124, Math.min(148, Math.round(ui.width * 400 / 960))));
   ui.card((card) => {
     card.heading('开摊条件', { size: 19, aside: '商人未到', asideNoWrap: true });
     const condition = (description, progress, fraction, complete) => {
@@ -248,7 +248,6 @@ export function renderMerchant(ui) {
   const status = merchantStatus(ui.w);
   if (!status.unlocked) return waitingForMerchant(ui, status);
   const tab = ui.local.tab === '卖出' ? '卖出' : '买入';
-  ui.image('merchant-banner', Math.min(90, Math.round(ui.width * 0.19)));
   ui.row('金币余额', coins(ui.w.coins), { ...compactRow, icon: 'coin' });
   ui.tabs(['买入', '卖出'], tab, ui.switchMerchantTab, { style: 'framed', sticky: true });
   if (status.restocksRemaining > 0n) {

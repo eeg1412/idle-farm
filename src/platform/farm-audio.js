@@ -17,18 +17,21 @@ export function createFarmAudio() {
   let visible = !document.hidden;
   let musicBus;
   let effectsBus;
+  let lastTyping = -Infinity;
+  let typingPulse;
 
-  function note(value, start, duration, bus, type, level) {
+  function note(value, start, duration, bus, type, level, attack = 0.035) {
     const oscillator = audio.createOscillator();
     const gain = audio.createGain();
     oscillator.type = type;
     oscillator.frequency.value = hz(value);
     gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(level, start + 0.035);
+    gain.gain.linearRampToValueAtTime(level, start + attack);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
     oscillator.connect(gain).connect(bus);
     oscillator.start(start);
     oscillator.stop(start + duration + 0.01);
+    return oscillator;
   }
 
   function applyVolume() {
@@ -70,6 +73,20 @@ export function createFarmAudio() {
       if (audio?.state !== 'running' || !visible || !volume.sound || !effects[name]) return;
       const now = audio.currentTime + 0.015;
       effects[name].forEach((pitch, i) => note(pitch, now + i * 0.09, 0.29, effectsBus, 'triangle', 0.08));
+    },
+    typeDialogue() {
+      if (audio?.state !== 'running' || !visible || !volume.sound) return;
+      const now = audio.currentTime;
+      if (now - lastTyping < 0.115) return;
+      lastTyping = now;
+      const pulse = note(79, now + 0.005, 0.045, effectsBus, 'square', 0.031, 0.004);
+      typingPulse = pulse;
+      pulse.onended = () => { if (typingPulse === pulse) typingPulse = undefined; };
+    },
+    stopDialogue() {
+      if (!typingPulse) return;
+      typingPulse.stop(audio.currentTime);
+      typingPulse = undefined;
     },
   };
 }

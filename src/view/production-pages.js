@@ -9,8 +9,6 @@ import { compact } from './numbers.js';
 const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
 const facilityTabs = { 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M' };
 const facilityNames = { C: '田地', L: '养殖场', F: '鱼池', M: '矿洞' };
-const facilityHeroes = { C: 'fields', L: 'livestock', F: 'fish', M: 'mining' };
-const facilityHeroHeights = { C: 0.45, L: 0.45, F: 0.45, M: 0.45 };
 const facilityArtAspects = { C: 1.06, L: 1.11, F: 1.20, M: 1 };
 const emptyFacilityArt = { C: 'scene-empty-field', L: 'scene-empty-barn', F: 'scene-empty-pond', M: 'facility-empty-mine' };
 const purchaseLabels = { C: '购地', L: '购买养殖场', F: '购买鱼池', M: '购买矿洞' };
@@ -537,7 +535,6 @@ function facilitySlots(world, kind) {
 }
 
 export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
-  ui.image(facilityHeroes[kind], Math.round(ui.width * facilityHeroHeights[kind]), { maxHeight: 205 });
   const scope = (world) => facilitySlots(world, kind);
   const list = scope(ui.w);
   const compactMode = productionLayout(ui, kind, list, scope);
@@ -839,7 +836,6 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
   const sourceKey = 'workshopSource' + kind;
   const focus = catalog.items[local.id]?.kind?.[0] === kind ? local.id : null;
   const source = !focus && sources.includes(local[sourceKey]) ? local[sourceKey] : sources[0];
-  ui.image('workshop', Math.round(ui.width * 0.35));
   ui.tabs(sources, source, (value) => {
     local[sourceKey] = value;
     local.id = null;

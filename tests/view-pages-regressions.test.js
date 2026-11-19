@@ -70,7 +70,7 @@ test('warehouse shows permanent filters, current quality and price, and exact st
   const amount = 10n ** 120n + 9n;
   const view = pageFixture(world);
   renderWarehouse(view.ui);
-  assert.deepEqual(view.calls[0], ['image', ['warehouse', Math.round(view.ui.width * 0.35)]]);
+  assert.equal(view.find('image', (id) => id === 'warehouse'), undefined);
   assert.ok(view.find('image', (id, _, options) => id === 'warehouse-empty-v1' && options?.center));
   assert.ok(view.find('text', (label, options) => label === '库存 0' && options.align === 'center'));
   assert.ok(view.find('tabs', (tabs) => tabs.includes('中间产物')));
@@ -275,7 +275,7 @@ test('the task page routes land expansion by available coins without duplicating
   assert.equal(production.find('button', (label) =>
     label.startsWith('任务 · ') || label.startsWith('扩建田地 · ')), undefined);
   assert.equal(production.find('titleBar', (label) => label === '种植地块'), undefined);
-  assert.ok(production.find('image', (id, _, options) => id === 'fields' && !options?.title));
+  assert.equal(production.find('image', (id) => id === 'fields'), undefined);
 
   const tasks = pageFixture(world);
   renderTasks(tasks.ui);

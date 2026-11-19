@@ -8,12 +8,16 @@
 | `src/game/advancement.js` | 品种与配方研发、品质计价、35 项经营改良及叠加规则 |
 | `src/game/quality.js` | 普通点整小时加权发放、抽取报价与事务 |
 | `src/game/market.js` | 有效自然日、三轮行情、市场科技效果、倍率校验、重置与预测、成交计价 |
+| `src/game/managers.js` | 各岗位好感、每日心愿、共用送礼额度、送礼报价和回礼结算 |
 | `src/game/development-tools.js` | 仅开发服务器动态加载的科技与金币发放动作，正式构建排除 |
 | `src/game/objectives.js` | 入门路径、养殖引导和长期目标 |
 | `src/platform/world-save.js` | IndexedDB 读写、字段白名单与结构校验、修订号保护和备份恢复 |
 | `src/platform/layout.js` | 竖屏响应式布局与横屏最大宽度 |
 | `src/platform/farm-audio.js` | 游戏音乐、操作音效和音量 |
 | `src/view/canvas-ui.js` | PixiJS 页面与 Dialog、响应式排版、滚动、键盘焦点和按需贴图 |
+| `src/view/manager-page.js`、`src/view/manager-dialogue.js` | 各岗位关系区、统一管理列表、资料、送收礼及 22 套姓名与独立对白 |
+| `src/view/manager-speech.js` | 对白抢占与基础进度恢复、逐字时序、红色标记和中文换行 |
+| `src/view/manager-help.js` | 按当前任务选择单条教学步骤，按既有报价提供六类产线升级指导 |
 | `src/view/production-pages.js` | 田地、畜牧、鱼池、矿洞、加工与精制 |
 | `src/view/livestock-animation.js` | 全部牲畜的阶段、idle 换帧、9 秒保底和产品淡入淡出，按视觉登记分类，接收显示时钟而不改变经营数据 |
 | `src/view/research-page.js` | 品种与配方、品质、经营改良 |
@@ -21,7 +25,8 @@
 | `src/content/mining-visuals.json` | 矿洞原画路径、轨道/车轮/货载锚点与源登记 |
 | `scripts/export-mining-art.mjs`、`scripts/compose-mining-keyframes.mjs` | 矿业素材转换、复用运行时序与布局的关键帧交付 |
 | `src/view/research-tree.js` | 研究节点布局、可见范围和拖动缩放 |
-| `src/view/management-pages.js` | 仓库、图鉴、任务、设置、出售庄园 |
+| `src/view/management-pages.js` | 经营入口、仓库、图鉴、任务、设置、出售庄园 |
+| `src/view/management-records.js` | 当前与累计统计、按次数倒序的出售历史 |
 | `src/main.js` | 时间推进、交互提交、离线汇总和存档边界 |
 | `scripts/generate-game-data.mjs` | 将 1.14 式样表转换为运行数据 |
 | `scripts/export-livestock-animation.mjs` | 按多来源布局裁切牲畜原画，导出固定脚位图集、透明牲畜选择图及运行视觉登记 |

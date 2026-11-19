@@ -5,6 +5,9 @@ const routes = {
   行脚商: ['merchant', { 买入: 'buy', 卖出: 'sell' }],
   研究: ['research', { 品种配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],
   经营: ['management', {}],
+  管理员管理: ['managers', {}],
+  统计: ['statistics', {}],
+  出售庄园历史: ['farm-sale-history', {}],
   图鉴: ['catalog', { 用途: 'uses' }],
   任务: ['tasks', {}],
   设置: ['settings', {}],
@@ -55,30 +58,59 @@ export function gameHistory(browser) {
   const entries = new Map();
   let sequence = 0;
   let active;
+  let returningTo;
   return {
     get active() { return active; },
+    get returning() { return returningTo !== undefined; },
     read() {
       const state = history.state?.farmNavigation;
+      const position = Number.isSafeInteger(state?.position) ? state.position : undefined;
+      const backward = position !== undefined && active && position < active.position && returningTo === undefined;
+      const returned = returningTo;
+      returningTo = undefined;
       if (state?.session === session && entries.has(state.key) && entries.get(state.key).hash === location.hash) {
         active = entries.get(state.key);
-        return active;
+        if (returned?.key === active.key) {
+          active.context = returned.context;
+          active.scroll = returned.context?.local.scroll ?? active.scroll;
+        }
+        return { ...active, backward };
       }
       active = undefined;
-      return { route: parseGameHash(location.hash) };
+      return { route: parseGameHash(location.hash), position, backward };
     },
     write(route, modal, replace = false, scroll = 0, context) {
       const hash = gameHash(route);
       const previous = replace ? active?.previous : active?.key;
       const key = replace && active ? active.key : ++sequence;
-      active = { key, previous, route, modal, hash, scroll, context };
+      const observed = history.state?.farmNavigation?.position;
+      const position = (active?.position ?? (Number.isSafeInteger(observed) ? observed : 0)) + (replace ? 0 : 1);
+      active = { key, position, previous, route, modal, hash, scroll, context };
       entries.set(key, active);
-      history[replace ? 'replaceState' : 'pushState']({ ...history.state, farmNavigation: { session, key } }, '', hash);
+      history[replace ? 'replaceState' : 'pushState']({
+        ...history.state, farmNavigation: { session, key, position },
+      }, '', hash);
       return active;
     },
-    back() {
-      if (!active?.previous) return false;
-      history.back();
-      return true;
+    backTo(route, modal, context) {
+      if (returningTo) return false;
+      const hash = gameHash(route);
+      for (let entry = entries.get(active?.previous); entry; entry = entries.get(entry.previous)) {
+        if (entry.hash !== hash || entry.modal !== modal) continue;
+        const steps = entry.position - active.position;
+        if (steps === -1 && typeof history.back === 'function') {
+          returningTo = { key: entry.key, context };
+          history.back();
+          return true;
+        }
+        if (steps < 0 && typeof history.go === 'function') {
+          returningTo = { key: entry.key, context };
+          history.go(steps);
+          return true;
+        }
+        break;
+      }
+      return false;
     },
   };
 }

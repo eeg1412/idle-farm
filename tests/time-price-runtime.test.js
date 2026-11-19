@@ -288,6 +288,11 @@ test('activity credits settle once at farm sale, keep their remainder and carry 
   assert.equal(world.qualityDraws, 1n);
   assert.equal(world.basicResearchPoints, 100n);
   assert.equal(world.researchPoints, 18n);
+  assert.deepEqual(world.facilities.C, [
+    { level: '1', recipe: null, batch: null },
+    { level: '1', recipe: null, batch: null },
+  ]);
+  assert.ok(assignFacility(world, 'C', 0, 'C01'));
   assert.equal(world.facilities.C[0].batch.amount, '2');
 });
 

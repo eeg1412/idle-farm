@@ -5,6 +5,7 @@ import 'pixi.js/events';
 import { advanceWorld, arrangeStation, assignFacility, buyFacility, buyStation, catalog, newWorld } from '../src/game/world.js';
 import { techDefinitions } from '../src/game/advancement.js';
 import { buyMerchant, merchantTradeOffer, reserveMerchantSale, sellMerchant } from '../src/game/merchant.js';
+import { switchManagerAppearance } from '../src/game/managers.js';
 import { createGameView } from '../src/view/canvas-ui.js';
 import { compact } from '../src/view/numbers.js';
 import { viewportLayout } from '../src/platform/layout.js';
@@ -383,11 +384,42 @@ function historyBrowser(initialHash) {
     get state() { return entries[index].state; },
     replaceState(state, _, hash) { entries[index] = { hash, state }; },
     pushState(state, _, hash) { entries.splice(++index, entries.length, { hash, state }); },
-    back() { index -= 1; browser.dispatchEvent(new Event('popstate')); },
-    forward() { index += 1; browser.dispatchEvent(new Event('popstate')); },
+    go(offset) {
+      if (!entries[index + offset]) return;
+      index += offset;
+      browser.dispatchEvent(new Event('popstate'));
+    },
+    back() { this.go(-1); },
+    forward() { this.go(1); },
   };
   return browser;
 }
+
+test('all manager pages share one touch header and appearance switches change the profile', async () => {
+  const game = setup((world, action, id) => ({ ok: action === 'switchManagerAppearance' && Boolean(switchManagerAppearance(world, id)) }));
+  game.draw(320, 568);
+  const labels = ['管理员资料', '送礼', '切换管理员形象'];
+  const managerPages = ['任务', '经营', '田地', '畜牧', '矿洞', '鱼池', '加工', '精制', '仓库', '研究', '行脚商'];
+  for (const page of managerPages) {
+    game.view.go(page);
+    for (const label of labels) {
+      const buttons = game.nodes().filter((node) => node.label === label && node.hitArea);
+      assert.equal(buttons.length, 1, page + ' ' + label);
+      assert.ok(buttons[0].hitArea.width >= 44 && buttons[0].hitArea.height >= 44, page + ' ' + label);
+    }
+  }
+  game.view.go('田地');
+  tapControl(game, '管理员资料', 'touch');
+  assert.ok(game.nodes().some((node) => node.text?.includes('种田细致又耐心')));
+  tapControl(game, '关闭', 'touch');
+  tapControl(game, '切换管理员形象', 'touch');
+  await new Promise(setImmediate);
+  game.draw(320, 568);
+  assert.equal(game.world.managers.roles.field.gender, 'male');
+  tapControl(game, '管理员资料', 'touch');
+  assert.ok(game.nodes().some((node) => node.text?.includes('常挎种篮拿短锄')));
+  assert.ok(game.nodes().every((node) => !node.text?.includes('种田细致又耐心')));
+});
 
 test('browser navigation restores game pages, research tabs, and nested dialogs in both directions', async () => {
   const browser = historyBrowser('#/research?tab=quality');
@@ -423,6 +455,26 @@ test('browser navigation restores game pages, research tabs, and nested dialogs 
   assert.ok(game.nodes().some((node) => node.text === '完整数字'));
   await game.view.close();
   assert.ok(game.nodes().some((node) => node.text === '比例 37'));
+});
+
+test('manually closing dialogs reuses their parent browser entry', async () => {
+  const browser = historyBrowser('#/warehouse');
+  const game = setup(undefined, browser);
+  game.draw(390, 844);
+  const page = browser.history.state;
+  game.view.dialog('出售小麦', () => {});
+  for (let index = 0; index < 3; index += 1) {
+    game.view.dialog('完整库存', () => {});
+    await game.view.close();
+    assert.ok(game.nodes().some(({ text }) => text === '出售小麦'));
+  }
+  browser.history.back();
+  assert.equal(browser.history.state, page);
+  assert.equal(browser.location.hash, '#/warehouse');
+  browser.history.forward();
+  assert.ok(game.nodes().some(({ text }) => text === '出售小麦'));
+  browser.history.forward();
+  assert.ok(game.nodes().some(({ text }) => text === '完整库存'));
 });
 
 test('Pixi estate hotspots open all ten destinations and return to the same map position', () => {
@@ -543,6 +595,10 @@ test('a mine deep link opens the facility directly and its return opens the esta
   game.draw(390, 844);
   assert.ok(game.nodes().some(({ text }) => text === '矿洞'));
   assert.ok(game.nodes().every(({ label }) => label !== 'estate-entry-mine'));
+  browser.history.back();
+  assert.equal(browser.location.hash, '#/farm');
+  browser.history.forward();
+  assert.equal(browser.location.hash, '#/farm?tab=mining');
   tapControl(game, '返回');
   assert.equal(browser.location.hash, '#/farm');
   assert.ok(game.nodes().some(({ label }) => label === 'estate-entry-mine'));
@@ -746,7 +802,7 @@ test('the navigation menu loads icons above every destination and opens the corr
   const game = setup((_world, action) => { actions.push(action); return { ok: true }; }, browser);
   const menuTextures = new Map();
   t.mock.method(Assets, 'load', (url) => {
-    const key = new URL(url).pathname.match(/^\/ui-icons\/(menu-[a-z-]+)\.webp$/)?.[1];
+    const key = new URL(url).pathname.match(/^\/ui-icons\/(menu-[a-z-]+|manager-directory|statistics|sale-history)\.webp$/)?.[1];
     if (!key) return new Promise(() => {});
     const texture = new Texture({ source: new TextureSource({ width: 96, height: 96 }) });
     menuTextures.set(key, texture);
@@ -766,6 +822,9 @@ test('the navigation menu loads icons above every destination and opens the corr
     ['行脚商', 'menu-merchant', '#/merchant'],
     ['研究', 'menu-research', '#/research'],
     ['经营', 'menu-operations', '#/management'],
+    ['管理员管理', 'manager-directory', '#/managers'],
+    ['统计', 'statistics', '#/statistics'],
+    ['出售庄园历史', 'sale-history', '#/farm-sale-history'],
     ['图鉴', 'menu-catalog', '#/catalog'],
     ['任务', 'menu-tasks', '#/tasks'],
     ['出售庄园', 'menu-farm-sale', '#/farm-sale'],
@@ -816,7 +875,7 @@ test('the navigation menu loads icons above every destination and opens the corr
   assert.equal(menu(), undefined);
   tapControl(game, 'navigation-menu-button');
   browser.history.back();
-  assert.equal(browser.location.hash, '#/farm-sale');
+  assert.equal(browser.location.hash, '#/farm');
   assert.equal(menu(), undefined);
 });
 

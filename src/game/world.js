@@ -2,6 +2,7 @@ import catalog from '../content/game-data.json' with { type: 'json' };
 import { appraisalMultiplierBasisPoints, delegationMilliseconds, discount, facilityYieldBasis, rate, unitPrice } from './advancement.js';
 import { coinScale } from './coin-scale.js';
 import { localCalendarDay, marketUnitPrice, synchronizeMarket } from './market.js';
+import { newManagers, resetManagerRun, synchronizeManagerCalendar } from './managers.js';
 import {
   newMerchant, recordMerchantProduction, recordMerchantSales, reserveMerchantSale, resetMerchantRun, synchronizeMerchant,
 } from './merchant.js';
@@ -165,11 +166,13 @@ function startingFacilities(recipe) {
 }
 
 export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0')) {
+  const day = localCalendarDay(now);
   const world = {
     schemaVersion: worldSchemaVersion, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
     researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
-    accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(localCalendarDay(now)), productionValue: 0n, completedRuns: 0,
+    accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(day),
+    managers: newManagers(day), productionValue: 0n, completedRuns: 0, farmSaleHistory: [],
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
@@ -313,7 +316,7 @@ export function settleProduction(world) {
   startProduction(world, orderedStations(world));
 }
 
-function deposit(world, batch, contributions) {
+function deposit(world, batch, contributions, wallAt) {
   const { id } = batch;
   const count = BigInt(batch.amount);
   world.inventory[id] = quantity(world, id) + count;
@@ -322,7 +325,13 @@ function deposit(world, batch, contributions) {
   contributions.add(value, appraisalMultiplierBasisPoints(world));
   world.productionValue += value;
   world.stats.produced[id] = (world.stats.produced[id] ?? 0n) + count;
-  recordMerchantProduction(world, id);
+  if (!Object.hasOwn(world.merchant.produced, id)) {
+    // Preserve the first eligible assortment even when several discoveries are settled in one catch-up.
+    const day = localCalendarDay(wallAt);
+    synchronizeManagerCalendar(world, day);
+    recordMerchantProduction(world, id);
+    synchronizeManagerCalendar(world, day);
+  }
 }
 
 function pushEvent(heap, entry) {
@@ -352,9 +361,10 @@ function popEvent(heap) {
   return result;
 }
 
-export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {}) {
+export function advanceWorld(world, targetMs, { deferFinalStarts = false, wallStartMs = world.wallAnchorMs } = {}) {
   if (!Number.isSafeInteger(targetMs) || targetMs < world.clockMs) return;
-  const elapsed = targetMs - world.clockMs;
+  const startMs = world.clockMs;
+  const elapsed = targetMs - startMs;
   const stations = orderedStations(world);
   const heap = [];
   const enqueue = (entry) => pushEvent(heap, entry);
@@ -375,7 +385,7 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {})
       const depositedIds = new Set();
       do {
         const entry = popEvent(heap);
-        deposit(world, entry.batch, contributions);
+        deposit(world, entry.batch, contributions, wallStartMs + completedAt - startMs);
         depositedIds.add(entry.batch.id);
         entry.batch = null;
         completed.push(entry);
@@ -392,7 +402,8 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false } = {})
 export function updateWorldWallTime(world, now) {
   if (!Number.isSafeInteger(now)) return 0;
   const elapsed = Math.max(0, Math.min(delegationMilliseconds(world), now - world.wallAnchorMs));
-  const target = world.clockMs + elapsed;
+  const startMs = world.clockMs;
+  const target = startMs + elapsed;
   // A page change during inactivity can end a hold partway through the offline interval.
   // Advance in two runs so the second run checks every waiting station under the released hold.
   const holdEndsAt = world.merchantHoldEndsAt;
@@ -402,7 +413,7 @@ export function updateWorldWallTime(world, now) {
     advanceWorld(world, world.clockMs + Math.min(elapsed, untilRelease), { deferFinalStarts: untilRelease <= elapsed });
     reserveMerchantSale(world, null);
   }
-  advanceWorld(world, target);
+  advanceWorld(world, target, { wallStartMs: world.wallAnchorMs + world.clockMs - startMs });
   world.wallAnchorMs = Math.max(world.wallAnchorMs, now);
   const held = world.merchantHold;
   synchronizeWorldCalendar(world, now);
@@ -414,6 +425,7 @@ export function synchronizeWorldCalendar(world, wallMs) {
   const day = localCalendarDay(wallMs);
   synchronizeMarket(world, day);
   synchronizeMerchant(world, day);
+  synchronizeManagerCalendar(world, day);
 }
 
 export function facilityOffer(world, kind, index = null, steps = 1n) {
@@ -697,21 +709,26 @@ export function farmSaleOffer(world) {
   };
 }
 
-export function sellFarm(world, expectedOffer) {
+export function sellFarm(world, expectedOffer, soldAt = world.wallAnchorMs) {
+  if (!Number.isSafeInteger(soldAt) || soldAt < 0 || !Number.isSafeInteger(world.completedRuns + 1)) return false;
   const actual = farmSaleOffer(world);
   const check = ['completedRuns', 'productionValue', 'multiplierBasisPoints', 'reward',
     'stationCount', 'plotCount', 'livestockCount', 'pondCount', 'mineCount', 'prestigeLedgerVersion',
     'lifetimeProductionValue', 'prestigeCredit'];
   if (!expectedOffer || check.some((key) => actual[key] !== expectedOffer[key])) return false;
   settlePrestigeLedger(world);
+  world.farmSaleHistory = [...(world.farmSaleHistory ?? []), {
+    run: world.completedRuns + 1, soldAt, productionValue: world.productionValue,
+  }];
   world.completedRuns += 1;
   world.coins = startingCoins;
   world.productionValue = 0n;
   world.stats.revenue = 0n;
   resetMerchantRun(world);
+  resetManagerRun(world);
   world.inventory = {};
   world.reserves = {};
-  world.facilities = startingFacilities('C01');
+  world.facilities = startingFacilities(null);
   world.stations = { I: [emptyStation(0)], P: [emptyStation(1)] };
   settleProduction(world);
   return true;

@@ -1,0 +1,178 @@
+{
+  "tasks": {
+    "female": {
+      "width": 461,
+      "height": 289,
+      "faceX": 225.0,
+      "inkLeft": 62,
+      "inkRight": 396
+    },
+    "male": {
+      "width": 502,
+      "height": 289,
+      "faceX": 247.0,
+      "inkLeft": 101,
+      "inkRight": 416
+    }
+  },
+  "estate": {
+    "female": {
+      "width": 505,
+      "height": 289,
+      "faceX": 233.0,
+      "inkLeft": 119,
+      "inkRight": 392
+    },
+    "male": {
+      "width": 467,
+      "height": 289,
+      "faceX": 211.5,
+      "inkLeft": 4,
+      "inkRight": 369
+    }
+  },
+  "livestock": {
+    "female": {
+      "width": 480,
+      "height": 289,
+      "faceX": 210.0,
+      "inkLeft": 104,
+      "inkRight": 367
+    },
+    "male": {
+      "width": 503,
+      "height": 289,
+      "faceX": 240.5,
+      "inkLeft": 109,
+      "inkRight": 398
+    }
+  },
+  "field": {
+    "female": {
+      "width": 477,
+      "height": 289,
+      "faceX": 256.0,
+      "inkLeft": 20,
+      "inkRight": 414
+    },
+    "male": {
+      "width": 504,
+      "height": 289,
+      "faceX": 245.0,
+      "inkLeft": 80,
+      "inkRight": 432
+    }
+  },
+  "mine": {
+    "female": {
+      "width": 501,
+      "height": 289,
+      "faceX": 242.5,
+      "inkLeft": 101,
+      "inkRight": 398
+    },
+    "male": {
+      "width": 505,
+      "height": 289,
+      "faceX": 243.0,
+      "inkLeft": 70,
+      "inkRight": 383
+    }
+  },
+  "fish": {
+    "female": {
+      "width": 502,
+      "height": 289,
+      "faceX": 241.5,
+      "inkLeft": 4,
+      "inkRight": 449
+    },
+    "male": {
+      "width": 484,
+      "height": 289,
+      "faceX": 222.0,
+      "inkLeft": 68,
+      "inkRight": 424
+    }
+  },
+  "processing": {
+    "female": {
+      "width": 505,
+      "height": 289,
+      "faceX": 233.0,
+      "inkLeft": 86,
+      "inkRight": 425
+    },
+    "male": {
+      "width": 503,
+      "height": 289,
+      "faceX": 237.0,
+      "inkLeft": 111,
+      "inkRight": 426
+    }
+  },
+  "refining": {
+    "female": {
+      "width": 481,
+      "height": 289,
+      "faceX": 214.5,
+      "inkLeft": 140,
+      "inkRight": 396
+    },
+    "male": {
+      "width": 491,
+      "height": 289,
+      "faceX": 211.5,
+      "inkLeft": 98,
+      "inkRight": 387
+    }
+  },
+  "warehouse": {
+    "female": {
+      "width": 501,
+      "height": 289,
+      "faceX": 232.0,
+      "inkLeft": 115,
+      "inkRight": 386
+    },
+    "male": {
+      "width": 503,
+      "height": 289,
+      "faceX": 233.0,
+      "inkLeft": 142,
+      "inkRight": 385
+    }
+  },
+  "research": {
+    "female": {
+      "width": 505,
+      "height": 289,
+      "faceX": 228.0,
+      "inkLeft": 103,
+      "inkRight": 414
+    },
+    "male": {
+      "width": 512,
+      "height": 289,
+      "faceX": 237.0,
+      "inkLeft": 83,
+      "inkRight": 438
+    }
+  },
+  "merchant": {
+    "female": {
+      "width": 503,
+      "height": 289,
+      "faceX": 234.0,
+      "inkLeft": 44,
+      "inkRight": 440
+    },
+    "male": {
+      "width": 492,
+      "height": 289,
+      "faceX": 226.5,
+      "inkLeft": 53,
+      "inkRight": 435
+    }
+  }
+}

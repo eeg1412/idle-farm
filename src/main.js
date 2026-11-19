@@ -6,8 +6,9 @@ import {
   setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar,
 } from './game/world.js';
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
-import { resetMarket } from './game/market.js';
+import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
+import { claimManagerGift, giftManager, switchManagerAppearance } from './game/managers.js';
 import { drawQuality } from './game/quality.js';
 import { objectives, settleTaskRewards } from './game/objectives.js';
 import { viewportLayout } from './platform/layout.js';
@@ -72,6 +73,7 @@ const actions = {
   ...productionBatchActions,
   setStationPriority, reserve, sell, sellBatch, sellFarm, research, drawQuality, upgradeTech, resetMarket, updateSettings,
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
+  giftManager, claimManagerGift, switchManagerAppearance,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 
@@ -110,6 +112,8 @@ function paint() {
     const now = performance.now();
     display = projectWorld(world);
     advanceForeground(display, false, now);
+    const wallAt = Date.now();
+    if (!display.managers.day || localCalendarDay(wallAt) > display.managers.day) synchronizeWorldCalendar(display, wallAt);
     // The projection stores whole milliseconds; keep the remaining frame phase in its anchor.
     anchor = frontAnchor + (display.clockMs - world.clockMs);
   }
@@ -406,6 +410,8 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   }
   if (name === 'research') return { toast: '已研发：' + catalog.items[args[0]].name, sound: 'research' };
   if (name === 'drawQuality') return { sound: 'success', qualityDraw: actionResult };
+  if (name === 'giftManager') return { sound: 'success', managerGift: actionResult };
+  if (name === 'claimManagerGift') return { sound: 'success', managerGift: actionResult };
   if (name === 'resetMarket') return { toast: '今日行情已重置', sound: 'success' };
   if (name === 'buyMerchant' || name === 'sellMerchant') {
     const { id, count, total } = args[0];
@@ -446,13 +452,15 @@ function dispatch(name, ...args) {
       const anchor = foreground(draft, true, anchorAt, wallAt);
       // Feedback reads only the revenue before the action; a BigInt needs no copy.
       const revenueBefore = draft.stats.revenue;
-      const actionResult = actions[name](draft, ...args);
+      const actionResult = name === 'sellFarm' ? actions[name](draft, ...args, wallAt) : actions[name](draft, ...args);
       if (actionResult === false) {
         settleProduction(draft);
         const toast = await commit(draft, anchor);
         paint();
         if (name === 'visitMerchant') return { ok: true, toast };
         if (name === 'buyMerchant' || name === 'sellMerchant') return { ok: false, toast };
+        if (name === 'giftManager') return { ok: false, toast, staleManagerGift: true };
+        if (name === 'claimManagerGift') return { ok: false, toast };
         const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
         return { ok: false, message: toast ? message + ' · ' + toast : message };
@@ -605,7 +613,7 @@ const view = createGameView(app, dispatch, () => {
       if (message || toast) view.toast(message || toast);
     });
   }
-}, window, saveManagement);
+}, window, saveManagement, audio);
 
 window.addEventListener('resize', requestViewportResize);
 window.visualViewport?.addEventListener('resize', requestViewportResize);

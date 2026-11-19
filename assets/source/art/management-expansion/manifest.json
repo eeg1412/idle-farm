@@ -1,0 +1,74 @@
+{
+  "source": "icons.png",
+  "icons": [
+    {
+      "id": "manager-directory",
+      "cell": [
+        0,
+        0,
+        512,
+        1024
+      ],
+      "bounds_in_cell": [
+        60,
+        299,
+        466,
+        744
+      ],
+      "sprite_size": [
+        75,
+        82
+      ],
+      "frame_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "id": "statistics",
+      "cell": [
+        512,
+        0,
+        1024,
+        1024
+      ],
+      "bounds_in_cell": [
+        33,
+        283,
+        475,
+        730
+      ],
+      "sprite_size": [
+        81,
+        82
+      ],
+      "frame_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "id": "sale-history",
+      "cell": [
+        1024,
+        0,
+        1536,
+        1024
+      ],
+      "bounds_in_cell": [
+        27,
+        304,
+        448,
+        777
+      ],
+      "sprite_size": [
+        73,
+        82
+      ],
+      "frame_size": [
+        96,
+        96
+      ]
+    }
+  ]
+}

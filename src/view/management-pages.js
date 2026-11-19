@@ -2,6 +2,7 @@ import { catalog, facilityOffer, farmSaleOffer, forecastHourlyProduction, quanti
 import { marketForecast, marketIsActive, marketRate, marketResetsRemaining, marketUnitPrice } from '../game/market.js';
 import { objectives, taskCoinRewards, taskProductionGates } from '../game/objectives.js';
 import { compact } from './numbers.js';
+import { managerIds, managerStatus } from '../game/managers.js';
 import { renderMerchantEntry } from './merchant-page.js';
 
 const entries = Object.entries(catalog.items);
@@ -11,6 +12,9 @@ const complexityTabs = ['全部', '单类', '双类', '三类', '四类'];
 const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池', M: '矿洞' };
 
 const managementEntries = [
+  { page: '管理员管理', icon: 'manager-directory', description: '查看管理员、送礼与切换形象' },
+  { page: '统计', icon: 'statistics', description: '查看产出、收入与经营进度' },
+  { page: '出售庄园历史', icon: 'sale-history', description: '查看历次出售时间与产值' },
   { page: '图鉴', icon: 'nav-catalog', description: '查阅物品、配方与来源' },
   { page: '出售庄园', icon: 'sale-reset', description: '预览出售收益与新一轮配置' },
 ];
@@ -19,6 +23,7 @@ export function renderManagement(ui) {
   for (const { page, icon, description } of managementEntries) {
     ui.card((card) => card.item(icon, page, description), {
       padding: 16, gap: 12, style: 'navigation', onClick: () => ui.go(page),
+      indicator: page === '管理员管理' && managerIds.some((id) => managerStatus(ui.w, id).claim),
     });
   }
 }
@@ -388,7 +393,6 @@ function showMarket(ui) {
 }
 
 export function renderWarehouse(ui) {
-  ui.image('warehouse', Math.round(ui.width * 0.35));
   const obtained = warehouseEntries(ui.w);
   if (marketIsActive(ui.w)) {
     ui.buttons([
@@ -624,7 +628,6 @@ export function renderTasks(ui) {
   const { guide, active, long } = objectives(ui.w);
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
-  ui.image('tasks-banner', 101);
   ui.text('任务完成后自动发奖，每项只发一次。', { muted: true });
   const goals = active ? guide : [
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
@@ -954,7 +957,7 @@ function farmDetails(ui, offer) {
       { padding: 8, gap: 6 });
   }
   ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered', inspectable: false });
-  const newRun = [{ label: '2 块小麦田、基础 ' + compact(startingCoins) + ' 金币' }];
+  const newRun = [{ label: '2 块空田、基础 ' + compact(startingCoins) + ' 金币' }];
   if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm') &&
     (ui.w.lifetimeProductionValue ?? 0n) >= taskProductionGates.newFarm) {
     newRun.push({ label: '首次经营交接另奖 ' + compact(taskCoinRewards.newFarm) + ' 金币（仅一次）' });
