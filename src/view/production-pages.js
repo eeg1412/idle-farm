@@ -276,7 +276,7 @@ function manageProduction(ui, kind, scope, source) {
     const list = scope(dlg.w);
     const checked = list.filter(({ index }) => selected.has(index));
     const targets = checked.map(({ index }) => index);
-    const upgradeQuote = kind !== 'M' && targets.length ? batchUpgradeOffer(dlg.w, kind, targets, batchUpgradeSteps[0]) : null;
+    const upgradeQuote = targets.length ? batchUpgradeOffer(dlg.w, kind, targets, batchUpgradeSteps[0]) : null;
     const canClear = checked.some(({ slot }) => slot.recipe || slot.batch || slot.planting);
     const replaceLabel = assignmentLabel(kind, canClear);
     dlg.row('已选', targets.length + ' / ' + list.length);
@@ -309,7 +309,7 @@ function manageProduction(ui, kind, scope, source) {
     dlg.buttons([
       { label: replaceLabel, disabled: !targets.length, onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
       { label: '清空', disabled: !canClear, onClick: () => batchClear(dlg, kind, targets) },
-      { label: '升级', tone: 'gold', disabled: kind === 'M' ? !targets.length : !upgradeQuote?.affordable,
+      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable,
         onClick: () => batchUpgrade(dlg, kind, targets) },
     ], { style: 'production' });
   });
@@ -336,7 +336,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
   const choose = workshop ? () => chooseRecipe(ui, kind, index, source) : () => chooseFacility(ui, kind, index);
   const improve = workshop ? () => improveStation(ui, kind, index) : () => improveFacility(ui, kind, index);
   const offer = workshop ? stationUpgradeOffer : facilityOffer;
-  const upgradeQuote = kind === 'M' ? undefined : offer(ui.w, kind, index, 1n);
+  const upgradeQuote = offer(ui.w, kind, index, 1n);
   ui.card((body) => {
     body.row(id ? itemName(id) : emptySlotName(kind), undefined, {
       compact: true, icon: id ?? (emptyStationArt[kind] ?? emptyFacilityArt[kind]),
@@ -357,9 +357,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
     padding: 7, style: 'production',
     footer: (actions) => actions.buttons([
       { label: assignmentLabel(kind, Boolean(id)), tone: id ? 'plain' : 'green', onClick: choose },
-      { label: '升级', tone: 'gold', onClick: improve,
-        ...(kind === 'M' ? { indicatorWhenVisible: () => offer(ui.w, kind, index, 1n)?.affordable ?? false }
-          : { disabled: !upgradeQuote?.affordable }) },
+      { label: '升级', tone: 'gold', onClick: improve, disabled: !upgradeQuote?.affordable },
     ]),
   });
 }
@@ -483,7 +481,7 @@ function facilityDetails(ui, kind, index, compactMode = false) {
     } else if (!id) {
       const quote = facilityOffer(dlg.w, kind, index, 1n);
       dlg.button('升级', () => improveFacility(dlg, kind, index), {
-        ...confirm, ...(kind === 'M' ? { indicator: quote?.affordable ?? false } : { disabled: !quote?.affordable }),
+        ...confirm, disabled: !quote?.affordable,
       });
     }
   });
@@ -509,14 +507,12 @@ function facilityCard(ui, kind, index, facility) {
       });
       return;
     }
-    let upgradeQuote = kind === 'M' ? undefined : facilityOffer(ui.w, kind, index, 1n);
-    const getUpgradeQuote = () => kind === 'M' ? upgradeQuote ??= facilityOffer(ui.w, kind, index, 1n) : upgradeQuote;
+    const upgradeQuote = facilityOffer(ui.w, kind, index, 1n);
     const actions = [
       { label: assignmentLabel(kind, true), onClick: () => chooseFacility(ui, kind, index) },
       {
         label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index),
-        ...(kind === 'M' ? { indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false }
-          : { disabled: !getUpgradeQuote()?.affordable }),
+        disabled: !upgradeQuote?.affordable,
       },
     ];
     body.feature(facilityImage(kind, id), (copy) => {
@@ -525,7 +521,7 @@ function facilityCard(ui, kind, index, facility) {
       const name = assignedName(id);
       copy.heading(name, { style: 'production', aside: crop && !todayRate ? level : undefined, marketRate: name === item.name ? todayRate : 0 });
       if (!crop || todayRate) copy.badges([{ label: level }], { style: 'production' });
-      const amount = active?.amount ?? getUpgradeQuote()?.currentOutput;
+      const amount = active?.amount ?? upgradeQuote?.currentOutput;
       if (amount != null) {
         copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', {
           style: 'metric', icon: id, marketRate: name === item.name ? 0 : todayRate,
@@ -608,9 +604,9 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
   }
   const quote = facilityOffer(ui.w, kind);
-  if (quote || kind !== 'M') ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
+  ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
     style: 'production', tone: 'gold',
-    ...(kind === 'M' ? { disabled: quote.atLimit, indicator: quote.affordable } : { disabled: !quote?.affordable }),
+    disabled: !quote?.affordable,
   });
 }
 

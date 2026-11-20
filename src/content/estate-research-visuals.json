@@ -1,0 +1,34 @@
+{
+  "base": {
+    "assetName": "research",
+    "canvas": [
+      536,
+      320
+    ],
+    "footprint": [
+      29,
+      12,
+      507,
+      309
+    ]
+  },
+  "bubbles": {
+    "assetName": "research-motion",
+    "frameSize": [
+      44,
+      44
+    ],
+    "frameCount": 4,
+    "frameSeconds": 0.16,
+    "position": [
+      364,
+      188
+    ],
+    "animationBBox": [
+      364,
+      188,
+      408,
+      232
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "refining-male",
+  "source": "assets/source/art/refining-v4/male-cg/original.png",
+  "path": "art/loading/scenes/refining-male.webp",
+  "width": 1024,
+  "height": 1536,
+  "faceBounds": {
+    "x": 307,
+    "y": 385,
+    "width": 218,
+    "height": 215
+  },
+  "faceBoundsStatus": "reviewed-source",
+  "nativeGeneration": "built-in image_gen; original 1024x1536 PNG; no upscaling",
+  "export": "WebP quality 92, method 6; original dimensions preserved",
+  "reviewStatus": "independent-static-review-passed/runtime-not-verified"
+}

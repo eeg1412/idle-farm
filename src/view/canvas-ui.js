@@ -104,6 +104,7 @@ const path = (name) => new URL(name, document.baseURI).href;
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const managerAsset = (id) => typeof id === 'string' && id.startsWith('manager-art:') ? id.slice(12) : undefined;
+const managerPortraitVersion = (role) => role === 'refining' ? 4 : 2;
 const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id) || Boolean(managerAsset(id));
 const marketLabelGap = 4;
 const marketRateText = (rate) => '×' + ((100 + rate) / 100);
@@ -385,6 +386,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let drawn;
   let estateMap;
   let parkedEstateAtmosphere;
+  let parkedEstateResearch;
   let lastResearchReady;
   // Any change to the stage sets this; the stage is rendered only on dirty frames (plus a slow
   // safety refresh), never skipped when something may have changed.
@@ -502,7 +504,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     });
   };
 
-  function loadImage(url) {
+  function loadImage(url, requiredForOpening = true) {
     const texture = textures.get(url);
     if (texture && !texture.destroyed) return Promise.resolve(texture);
     if (texture) textures.delete(url);
@@ -517,14 +519,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const fetchTexture = async () => {
       // Only the winning await may publish. A timed-out Assets request can finish
       // internally later, but its continuation cannot populate our live texture map.
-      const asset = openingTasks.active ? await loadWithDeadline(requestTexture) : await requestTexture();
+      const asset = openingTasks.active && requiredForOpening ? await loadWithDeadline(requestTexture) : await requestTexture();
       if (!asset || asset.destroyed || !asset.width || !asset.height) throw new Error('图片无效');
       asset.source.scaleMode = smoothImages.has(url) ? 'linear' : 'nearest';
       textures.set(url, asset);
       markDirty();
       return asset;
     };
-    const pending = openingTasks.run('image:' + url, fetchTexture).catch(() => {
+    const request = requiredForOpening ? openingTasks.run('image:' + url, fetchTexture) : fetchTexture();
+    const pending = request.catch(() => {
       failedImages.add(url);
     }).finally(() => loadingImages.delete(url));
     loadingImages.set(url, pending);
@@ -590,6 +593,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function loadAnimationImage(url) {
     pinnedImages.add(url);
     return loadImage(url);
+  }
+
+  // Birds may download with the current map while the opening is visible, but
+  // optional decoration cannot add opening requirements, failures, or retries.
+  function loadOptionalAnimationImage(url) {
+    pinnedImages.add(url);
+    return loadImage(url, false);
   }
 
   function touchImage(url, category) {
@@ -891,7 +901,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const version = livestockChoice ? '&v=4' : livestockScene ? '&v=4' : '';
     const source = id === 'mining' ? miningVisuals.background?.path : undefined;
     const file = id === 'merchant-banner' ? 'merchant' : id;
-    const url = manager ? path('./art/managers/' + manager + '.webp?game=1' + (manager.startsWith('portraits/') ? '&v=2' : ''))
+    const managerVersion = manager?.startsWith('portraits/') ? '&v=' + managerPortraitVersion(manager.split('/')[1])
+      : manager === 'backgrounds/refining' ? '&v=3' : '';
+    const url = manager ? path('./art/managers/' + manager + '.webp?game=1' + managerVersion)
       : source ? path('./' + source.replace(/^public\//, '') + '?game=1')
       : path(directory + file + '.webp?game=1' + version);
     touchImage(url, scene || manager && !manager.startsWith('icons/') ? 'scene' : hero ? undefined : 'icon');
@@ -966,7 +978,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const show = () => {
       if (!visible || portrait.destroyed) return;
       const expression = speech.line?.expression ?? 'smile';
-      const url = path('./art/managers/portraits/' + speech.role + '/' + speech.gender + '-' + expression + '.webp?game=1&v=2');
+      const url = path('./art/managers/portraits/' + speech.role + '/' + speech.gender + '-' + expression + '.webp?game=1&v=' + managerPortraitVersion(speech.role));
       portraitUrl = url;
       touchImage(url, 'scene');
       const mount = (texture) => {
@@ -1134,6 +1146,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       modal.dismissed = true;
       if (modal.afterClose) queueMicrotask(modal.afterClose);
     }
+    if (modal?.flow === 'game-update' && !modal.updateDismissed) {
+      modal.updateDismissed = true;
+      if (modal.onUpdateDismiss) queueMicrotask(modal.onUpdateDismiss);
+    }
     modal = dialog;
     nextDialogSampleAt = 0;
     updateDialogSampleProgress = undefined;
@@ -1171,6 +1187,48 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     activateDialog(undefined);
     focusIndex = -1;
     returnToRecordedParent();
+  }
+
+  function showGameUpdate({ accept, isAvailable, onDismiss }) {
+    if (!openingScreen.complete || !world || status?.busy || document.hidden || waiting || modal || pendingModal ||
+        navigationMenu || navigation?.returning || building || pendingRender || drag || sliderDrag || treeGesture ||
+        pressedPointer !== null || !isAvailable()) return false;
+    let message = '';
+    let invalidated = false;
+    let shown;
+    const confirm = async () => {
+      if (waiting || modal !== shown || shown.updateAccepting || invalidated) return;
+      shown.updateAccepting = true;
+      waiting = true;
+      message = '正在保存并更新…';
+      redraw();
+      try {
+        const result = await accept();
+        message = result?.ok ? '正在打开新版本…' : result?.message || '暂时无法更新，请稍后重试。';
+      } catch { message = '暂时无法更新，请稍后重试。'; }
+      finally {
+        shown.updateAccepting = false;
+        waiting = false;
+        redraw();
+      }
+    };
+    setDialog('游戏更新', (ui) => {
+      ui.text('新版本已准备好。');
+      if (message) ui.text(message, { muted: true });
+      ui.footer((footer) => footer.buttons([
+        { label: '稍后', onClick: closeDialog },
+        { label: '更新游戏', onClick: confirm, tone: 'gold', disabled: invalidated || !isAvailable() },
+      ]));
+    }, { center: true, flow: 'game-update', minHeight: 240, maxHeight: 310,
+      available: () => !shown?.updateDismissed,
+      onClose: () => !shown.updateAccepting, onUpdateDismiss: onDismiss });
+    shown = modal;
+    return { invalidate() {
+      invalidated = true;
+      if (modal !== shown || shown.updateAccepting) return;
+      message = '版本已变化，请稍后再试。';
+      requestRender();
+    } };
   }
 
   function closeManagerGift(afterReturn) {
@@ -1527,6 +1585,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function restoreRoute(initial = false) {
     if (!navigation) return;
+    if (!initial && modal?.flow === 'game-update' && modal.updateAccepting) {
+      navigation.write(routeSnapshot(), modal, true, locals[current].scroll, captureContext());
+      return;
+    }
     navigationMenu = undefined;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     const entry = navigation.read();
@@ -2208,7 +2270,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const showPortrait = () => {
           if (!portraitVisible) return;
           const expression = speech.line?.expression ?? 'smile';
-          const url = path('./art/managers/portraits/' + role + '/' + gender + '-' + expression + '.webp?game=1&v=2');
+          const url = path('./art/managers/portraits/' + role + '/' + gender + '-' + expression + '.webp?game=1&v=' + managerPortraitVersion(role));
           portraitUrl = url;
           touchImage(url, 'scene');
           const mount = (texture) => {
@@ -3406,8 +3468,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       bind: (target, x, y, w, h, run) => hitAt(target, body, x, y, w, h, run),
       getImage: (url) => textures.get(url),
       loadImage: loadAnimationImage,
+      loadAtmosphereImage: loadOptionalAnimationImage,
       markDirty,
       retainedAtmosphere: parkedEstateAtmosphere,
+      retainedResearch: parkedEstateResearch,
       merchantUnlocked: merchantStatus(world).unlocked,
       researchReady,
       returnGiftSites: new Set(Object.entries(estateDestinations)
@@ -3416,6 +3480,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       focusedIndex: focusIndex - firstControl,
     });
     parkedEstateAtmosphere = undefined;
+    parkedEstateResearch = undefined;
     const map = estateMap;
     setupScrollTarget(parent, body, locals[homePage], 0, width, 0, height, map.height, undefined,
       [(scroll) => map.setViewport(scroll, height)]);
@@ -3672,9 +3737,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     try { build(); }
     catch (error) { flushRetainedAnimations(); throw error; }
     finally {
-      // A non-map page (or a throwing build) cannot leave a detached flock alive.
+      // A non-map page (or a throwing build) cannot leave detached map animations alive.
       parkedEstateAtmosphere?.destroy();
       parkedEstateAtmosphere = undefined;
+      parkedEstateResearch?.destroy();
+      parkedEstateResearch = undefined;
       building = false;
     }
     drawn = { layout, world, status, epoch: progressTiming?.epoch };
@@ -3724,6 +3791,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     visiblePlotIds.clear();
     imagesInUse = new Set();
     parkedEstateAtmosphere = estateMap?.parkAtmosphere();
+    parkedEstateResearch = estateMap?.parkResearch();
     for (const child of root.removeChildren()) child.destroy({ children: true });
     controls = [];
     scrollTarget = undefined;
@@ -4003,7 +4071,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     syncPlotVisibility?.();
     // Browsers may suspend the ticker while hidden, so reset at the visibility
     // event as well as inactive ticks instead of counting any background gap.
-    estateMap?.pauseAtmosphere();
+    estateMap?.pauseAnimations();
   });
   // Input, focus, viewport and context events may change what is shown (hover, gestures in the
   // research tree, sliders, text entry); each marks the next frame dirty.
@@ -4158,6 +4226,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   return {
     go, toast, float, dialog: setDialog, close: closeDialog, dismiss: dismissDialog, resize, resetSession, isImportingSave,
+    showGameUpdate,
     merchantBatchChanged, hasMerchantRefreshNotice,
     get loading() { return openingScreen.blocking; },
     pauseProgress() {

@@ -1,0 +1,113 @@
+{
+  "revision": "refining-v4 male oblique working pose",
+  "generation": "built-in imagegen, one native fullbody per expression",
+  "bodyReference": "assets/source/art/refining-v3/male-fullbody-original-reference.png",
+  "nativeSize": [
+    1024,
+    1536
+  ],
+  "sourcePoseApprovedBy": [
+    "independent reviewer",
+    "PM"
+  ],
+  "expressions": {
+    "smile": {
+      "source": "assets/source/art/refining-v4/male/smile-fullbody-native.png",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_微笑.png",
+      "runtime": "public/art/managers/portraits/refining/male-smile.webp",
+      "canonicalInk": [
+        170,
+        0,
+        805,
+        1534
+      ],
+      "runtimeInk": [
+        116,
+        0,
+        382,
+        289
+      ]
+    },
+    "happy": {
+      "source": "assets/source/art/refining-v4/male/happy-fullbody-native.png",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_高兴.png",
+      "runtime": "public/art/managers/portraits/refining/male-happy.webp",
+      "canonicalInk": [
+        169,
+        0,
+        806,
+        1534
+      ],
+      "runtimeInk": [
+        115,
+        0,
+        383,
+        289
+      ]
+    },
+    "angry": {
+      "source": "assets/source/art/refining-v4/male/angry-fullbody-native.png",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_生气.png",
+      "runtime": "public/art/managers/portraits/refining/male-angry.webp",
+      "canonicalInk": [
+        169,
+        0,
+        806,
+        1535
+      ],
+      "runtimeInk": [
+        115,
+        0,
+        383,
+        289
+      ]
+    },
+    "sad": {
+      "source": "assets/source/art/refining-v4/male/sad-fullbody-native.png",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_男_不高兴.png",
+      "runtime": "public/art/managers/portraits/refining/male-sad.webp",
+      "canonicalInk": [
+        169,
+        0,
+        805,
+        1534
+      ],
+      "runtimeInk": [
+        116,
+        1,
+        382,
+        289
+      ]
+    }
+  },
+  "canonicalSize": [
+    1024,
+    1536
+  ],
+  "alphaNoiseFloor": 8,
+  "runtimeCropFromCanonical": [
+    0,
+    0,
+    1024,
+    620
+  ],
+  "runtimeScale": 0.4661290322580645,
+  "runtimeResizedWidth": 477,
+  "runtimePasteLeft": 7,
+  "runtimeCanvas": [
+    491,
+    289
+  ],
+  "faceSource": [
+    505,
+    194
+  ],
+  "bodyPropFaceCompositing": "none",
+  "metrics": {
+    "width": 491,
+    "height": 289,
+    "faceX": 242.4,
+    "inkLeft": 115,
+    "inkRight": 383
+  }
+}

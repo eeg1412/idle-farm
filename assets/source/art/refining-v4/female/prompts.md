@@ -1,0 +1,27 @@
+# Female refining manager v4
+
+Tool: built-in image_gen. Edit input: `assets/source/art/refining-v3/female-fullbody-original-reference.png`.
+
+## Smile base
+
+Use case: identity-preserve. Asset type: ONE standalone native full-body transparent character portrait, smile expression, for a fantasy farming game. Input image 1 is the ORIGINAL fullbody appearance and 3/4 body-angle reference, edit target. Preserve her exact identity: gray lavender short bob with ahoge, purple eyes, brass goggles, purple ribbon and gold star hair ornament; white long open coat with purple lining and gold piping, charcoal apron and frilled short skirt, belts, waist pockets and tools, thigh strap, dark thigh-high stockings, brown lace boots with white cuffs and purple bows. Preserve the reference's original three-quarter torso/shoulder line, waist and pelvis angle and original staggered leg/foot stance. DO NOT turn shoulders or torso into a symmetrical straight front view. Change ONLY the arm working action and held objects: REMOVE the metal tongs, gold ingot, gold bowl. Her glove on the viewer-left arm delicately pinches a small stoppered AMBER botanical oil sample vial at chest-to-shoulder height near her face, inspecting its clear oil; her other gloved hand naturally LOWER around her waist cradles a small SEALED glass mineral crystal sample jar with the original clean white cloth with purple stripes folded beneath/around the jar. The two hands must be clearly asymmetric vertically, relaxed working wrists, fine careful fastidious craftsperson. Small gentle closed-mouth smile, attentive purple eyes. Preserve clothes, lower body, face design, proportions, rendering style, crisp detailed anime fantasy/pixel-textured painted line art. Composition: a single fullbody figure from highest hair tip to complete soles with comfortable transparent margins, portrait format with maximum character detail, NO contact sheet. Real alpha transparent background, no backdrop glow or floor or vignette or opaque black. No tray, no sales display, no matching raised two-hand pose, no frontal squared shoulders, no cropped feet, no missing boots or stockings, no extra hands, no text, no watermark.
+# Expression-only native edits
++
+## happy
+
+Edit input: `smile-native.png`.
+
+Use case: identity-preserve. Edit target: supplied approved female refining manager full-body transparent portrait. Create ONE standalone native fullbody portrait, same 1024x1536 composition. ONLY CHANGE FACIAL EXPRESSION in the small face area. Keep every other element identical: same exact gray-purple bob and goggles/hair ribbons, face identity, three-quarter slanted shoulders and torso, apron/waist/pelvis angle, crossed weighted legs and boots, long white-purple-gold coat and all belts/tools/pockets, the raised hand gripping small amber oil vial, lower hand steadying sealed mineral crystal jar with white-purple cloth. Preserve pose, hand anatomy/grips, all objects, size, position, rendering and transparent alpha. All hair tips through complete boot soles visible. No background, glow, vignette, floor shadow, text, contact sheet, tray. Facial expression only: a genuinely delighted but refined bright smile, upward joyful eyebrows and softly curved happy eyes, small cheerful open smiling mouth; elegant precise character, keep facial proportions.
+
+## angry
+
+Edit input: `smile-native.png`.
+
+Use case: identity-preserve. Edit target: supplied approved female refining manager full-body transparent portrait. Create ONE standalone native fullbody portrait, same 1024x1536 composition. ONLY CHANGE FACIAL EXPRESSION in the small face area. Keep every other element identical: same exact gray-purple bob and goggles/hair ribbons, face identity, three-quarter slanted shoulders and torso, apron/waist/pelvis angle, crossed weighted legs and boots, long white-purple-gold coat and all belts/tools/pockets, the raised hand gripping small amber oil vial, lower hand steadying sealed mineral crystal jar with white-purple cloth. Preserve pose, hand anatomy/grips, all objects, size, position, rendering and transparent alpha. All hair tips through complete boot soles visible. No background, glow, vignette, floor shadow, text, contact sheet, tray. Facial expression only: mild precise fastidious irritation: brows angled down toward nose, narrowed purple eyes, tiny firm pursed mouth; controlled annoyed expression, no tears, no cartoon rage symbols.
+
+## sad
+
+Edit input: `smile-native.png`.
+
+Use case: identity-preserve. Edit target: supplied approved female refining manager full-body transparent portrait. Create ONE standalone native fullbody portrait, same 1024x1536 composition. ONLY CHANGE FACIAL EXPRESSION in the small face area. Keep every other element identical: same exact gray-purple bob and goggles/hair ribbons, face identity, three-quarter slanted shoulders and torso, apron/waist/pelvis angle, crossed weighted legs and boots, long white-purple-gold coat and all belts/tools/pockets, the raised hand gripping small amber oil vial, lower hand steadying sealed mineral crystal jar with white-purple cloth. Preserve pose, hand anatomy/grips, all objects, size, position, rendering and transparent alpha. All hair tips through complete boot soles visible. No background, glow, vignette, floor shadow, text, contact sheet, tray. Facial expression only: quiet disappointed displeasure: slightly worried raised inner brows, downcast soft purple eyes and a small gently downturned closed mouth; no crying, no tears or symbols.
+

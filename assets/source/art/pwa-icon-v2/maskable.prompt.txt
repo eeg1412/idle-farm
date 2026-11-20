@@ -1,0 +1,16 @@
+PWA manor icon v2 — maskable generation record
+Date: 2026-11-20
+Tool: built-in image_gen.imagegen (not CLI/API fallback)
+Mode: edit; referenced_image_paths=[assets/source/art/pwa-icon-v2/original.png]; transparent_background=false.
+Input: original.png, exact native 1254x1254 primary icon drawing.
+Output: maskable-original.png, exact native 1254x1254 output, retained unmodified. The prompt requested 1024x1024; the tool returned 1254x1254.
+Generated output path: /workspace/scratch/a46f8d1a2380/generated_images/exec-816d50ac-3358-4c7a-a9de-04a600066346.png
+Purpose: proportionally inset the source emblem and naturally extend its opaque textured green background; no programmatic drawing or background blending.
+Production conversion: scripts/export-pwa-icons-v2.mjs only resizes this complete image to 512x512.
+Full prompt:
+Use case: background-extraction / precise-object-edit
+Asset type: independent opaque PWA maskable installation icon, square.
+Edit the supplied freshly drawn manor emblem image to make a properly inset maskable variant. Preserve the exact identity, design, orange-red roof, cream gatehouse, amber windows, golden wheat ears, dark outlines and pixel-art rendering. Keep the complete original building-and-wheat emblem intact as a unit, proportionally reduced and centered, with its complete silhouette fitting comfortably inside a centered safe circle of diameter 76% of the full image. No visible safe-circle outline.
+Extend the deep forest-green subtly mottled pixel-textured background naturally across the entire square, all edges and corners. There must be no visible central square, inset-box boundary, seam, halo or abrupt texture boundary. This is a background expansion/composition edit, not a redesign.
+Full-bleed opaque square 1024x1024 PNG. No transparency, rounded corners, baked mask, border, text, letters or watermark. Preserve crisp intentional pixel-art and the exact source emblem details; no added objects.
+

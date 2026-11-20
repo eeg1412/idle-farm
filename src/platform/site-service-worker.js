@@ -22,8 +22,11 @@ self.addEventListener('install', (event) => {
     const cache = await caches.open(cacheName);
     await cache.addAll(staticAssets);
     await cache.put(home.href, shell);
-    await self.skipWaiting();
   })());
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'IDLE_MANOR_ACTIVATE_UPDATE') event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', (event) => {

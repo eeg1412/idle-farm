@@ -17,6 +17,7 @@ import {
   replaceWorldSave, initializeAccountSeed,
 } from './platform/world-save.js';
 import { createSaveQueue } from './platform/save-queue.js';
+import { startPwaUpdates } from './platform/pwa-update.js';
 import { createSaveTransfer, saveFormatMessage, saveTransferError } from './platform/save-transfer.js';
 import { compact } from './view/numbers.js';
 import { createGameView } from './view/canvas-ui.js';
@@ -44,6 +45,8 @@ let currentPage;
 let pendingMerchantReleases = 0;
 let deferredMerchantRelease;
 let uncommittedProgress;
+let updatePromptOpen = false;
+let deferredUpdateMerchantNotice = false;
 const audio = createFarmAudio();
 const saveQueue = createSaveQueue();
 const { enqueue } = saveQueue;
@@ -188,7 +191,8 @@ async function commit(draft, anchor, options, initialBase) {
   const batch = draft.merchant.batch;
   if (before && before.completedRuns === draft.completedRuns && batch && batch.id !== before.merchant.batch?.id &&
       currentPage === '行脚商') {
-    if (view.merchantBatchChanged(showOffline)) offlineDialogId = undefined;
+    if (updatePromptOpen) deferredUpdateMerchantNotice = true;
+    else if (view.merchantBatchChanged(showOffline)) offlineDialogId = undefined;
   }
   return progressBefore ? progressToast(progressBefore, draft, rewards) : '';
 }
@@ -264,7 +268,7 @@ function progressToast(before, after, rewards) {
 function showOffline() {
   const report = world?.pendingOffline;
   // A native file window can hide the document; keep its import flow in front.
-  if (!report || view.isImportingSave() || view.hasMerchantRefreshNotice()) return;
+  if (!report || updatePromptOpen || view.isImportingSave() || view.hasMerchantRefreshNotice()) return;
   if (offlineDialogId === report.id) return;
   offlineDialogId = report.id;
   const seconds = Math.floor(report.elapsedMs / 1000);
@@ -622,18 +626,20 @@ canvas.addEventListener('keydown', () => { if (!view.loading) audio.unlock(); })
 resize();
 enqueue(() => initialize());
 
-async function saveForeground(anchorAt, wallAt) {
-  if (!world || status?.busy) return;
+async function saveForeground(anchorAt, wallAt, forUpdate = false) {
+  if (!world || status?.busy) return false;
   const draft = structuredClone(world);
   try {
     const anchor = foreground(draft, false, anchorAt, wallAt);
     const toast = await commit(draft, anchor);
     paint();
-    if (visible) showOffline();
+    if (visible && !forUpdate) showOffline();
     if (toast) view.toast(toast);
+    return true;
   } catch (error) {
     if (error.code === 'revision-conflict') staleSave();
-    else if (visible) view.toast('暂时无法保存经营记录');
+    else if (visible && !forUpdate) view.toast('暂时无法保存经营记录');
+    return false;
   }
 }
 
@@ -672,5 +678,24 @@ document.addEventListener('visibilitychange', () => {
 });
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  navigator.serviceWorker.register(new URL('./sw.js', document.baseURI)).catch(() => {});
+  startPwaUpdates({
+    serviceWorker: navigator.serviceWorker,
+    scriptURL: new URL('./sw.js', document.baseURI),
+    save: () => enqueueCurrent(() => saveForeground(undefined, undefined, true)),
+    canPrompt: () => Boolean(world && visible && !status?.busy && !saveQueue.pending),
+    showPrompt: (request) => {
+      const shown = view.showGameUpdate({ ...request, onDismiss: () => {
+        updatePromptOpen = false;
+        // Deliver business notices after the confirmation has left its parent chain.
+        if (deferredUpdateMerchantNotice && world && !status?.busy && currentPage === '行脚商') {
+          if (view.merchantBatchChanged(showOffline)) offlineDialogId = undefined;
+        }
+        deferredUpdateMerchantNotice = false;
+        if (world && visible && !status?.busy) showOffline();
+      } });
+      if (shown) updatePromptOpen = true;
+      return shown;
+    },
+    reload: () => window.location.reload(),
+  });
 }

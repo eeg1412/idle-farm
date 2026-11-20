@@ -123,7 +123,8 @@ export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryS
     art.forEach((sprite, index) => {
       if (sprite.visible) return;
       if (index === 0 && !selectedScene) return;
-      const url = index === 0 ? assetUrl(selectedScene.path, LOADING_ART_VERSION) : assetUrl('art/loading/logo.webp');
+      const url = index === 0 ? assetUrl(selectedScene.path,
+        selectedScene.id === 'refining-male' ? 'refining-male-v3' : LOADING_ART_VERSION) : assetUrl('art/loading/logo.webp');
       load(url).then((texture) => {
         if (!texture || texture.destroyed || done || sprite.destroyed) return;
         sprite.texture = texture;

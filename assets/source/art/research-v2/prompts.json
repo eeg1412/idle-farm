@@ -1,0 +1,44 @@
+{
+  "generator": "Built-in image_gen.imagegen, transparent native image generation",
+  "building": {
+    "prompt": "Use case: precise-object-edit. Asset type: transparent building sprite for a warm handcrafted pixel-art farming game estate map. Input image 1 is edit target and footprint reference: old stone research library; input images 2 and 3 are style references only: warehouse and refining cottage. Redraw the full research cottage into the same broad 536:320 landscape silhouette and the same elevated three-quarter camera. Preserve the footprint placement, grounded grass island, cream stone masonry, teal tiled gabled roof, warm bookshelf doorway, trailing ivy and yellow flowers. Integrate a VERY LARGE clear cylindrical laboratory GLASS BEAKER in the foreground RIGHT, as a conspicuous outdoor laboratory fixture on a low stout stone bench at the front facade, with glass rim and small pour spout. The beaker is nearly HALF of the building height and about a QUARTER of its width, unobscured, making the research purpose readable even when whole sprite is 140 pixels wide. Beaker contains clean luminous teal liquid filled halfway to two thirds. Make liquid broad and readable, with empty clear glass above. NO bubbles at all in the base image: the liquid interior must be smooth flat teal for a separately animated overlay. Preserve rich warm hand-drawn pixel clusters and crisp dark brown contours matching the supplied estate sprites, detailed but readable, not glossy 3D, not vectors. Entire cottage and grass island visible; outermost silhouette must fit the supplied building boundaries with transparent padding. Background genuinely transparent; no text, labels, numbers, symbols, UI, frame, contact sheet, backdrop or cast shadow outside the grass island.",
+    "source": "research-generated.png",
+    "sourceSize": [
+      1624,
+      969
+    ],
+    "alpha128Crop": [
+      59,
+      17,
+      1560,
+      941
+    ],
+    "runtimeSize": [
+      536,
+      320
+    ],
+    "conversion": "Crop source to alpha>=128 bounds, resize to 478x297, place at [29,12] in 536x320 transparent canvas; save lossless WebP."
+  },
+  "bubbles": {
+    "prompt": "Use case: stylized-concept. Asset type: native hand-painted transparent PIXEL GAME ANIMATION SPRITE SHEET. A single very wide horizontal strip with EXACTLY FOUR equal-width rectangular animation cells in one row, no margins between cells; 4:1 overall canvas aspect. Each cell has exactly the same fixed empty canvas area. Draw ONLY a few luminous pale mint and light turquoise round boiling-liquid bubbles and their tiny reflective glints in each cell. Absolutely transparent outside the bubbles AND transparent inside their circular rings. NO liquid rectangle, NO liquid background, NO glass, NO beaker, NO cup, NO outlines of any container, NO ground, NO borders, NO dividers, NO labels, NO text, NO numbers. Four consecutive frames of ONE small boiling cluster: approximately three bubbles per frame, two main bubbles and one small bubble. Rings thick enough to read as 2-pixel mint crescents at 44x36px output. Bubbles should occupy central 80 percent of each 44x36 virtual cell, never touch cell edges; largest bubbles about 9 pixels diameter in this virtual grid, medium about 6 pixels. Frame 1: largest bubble at x16,y25, medium at x29,y14, small x9,y8; Frame 2: largest bubble at x16,y20, medium at x29,y9, small new x9,y30; Frame 3: largest bubble at x16,y14, medium near surface x29,y5, small at x9,y25; Frame 4: largest bubble at x16,y8 breaking into a tiny ripple, new medium at x29,y29, small x9,y20. These are LOCAL COORDINATES in EVERY cell, so each frame remains registered on the same 44x36 coordinate grid with bubbles rising 5 pixels each step. Hand-painted warm farming-game pixel art, no anti-gravity smoke, no stars, no decorative particles beyond bubbles. Draw all art natively, true transparent alpha.",
+    "source": "research-bubbles-generated.png",
+    "sourceSize": [
+      2172,
+      724
+    ],
+    "conversion": "Crop four equal 543x543 cells from x=543*i, y=90; resize each to44x44; concatenate horizontally without painting or synthetic patches; save lossless WebP.",
+    "frameSize": [
+      44,
+      44
+    ],
+    "position": [
+      364,
+      188
+    ],
+    "frameSeconds": 0.16
+  },
+  "versions": {
+    "research": 2,
+    "research-motion": 3
+  }
+}

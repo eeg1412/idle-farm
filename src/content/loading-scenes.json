@@ -246,14 +246,14 @@
       "role": "refining",
       "gender": "male",
       "path": "art/loading/scenes/refining-male.webp",
-      "source": "assets/source/art/loading/solo/refining/male.png",
+      "source": "assets/source/art/refining-v4/male-cg/original.png",
       "width": 1024,
       "height": 1536,
       "faceBounds": {
-        "x": 371,
-        "y": 345,
-        "width": 240,
-        "height": 236
+        "x": 307,
+        "y": 385,
+        "width": 218,
+        "height": 215
       },
       "faceBoundsStatus": "reviewed-source"
     },

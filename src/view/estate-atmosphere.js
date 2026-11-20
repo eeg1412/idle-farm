@@ -42,6 +42,7 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
     Promise.resolve(loadImage(estateAtmosphereAssetUrl('birds'))).then((texture) => {
       if (!disposed && !layer.destroyed && texture?.width === 512 && texture.height === 128) {
         birdTexture = texture;
+        markDirty();
       }
     }).catch(() => {});
   }
@@ -90,6 +91,18 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
         return false;
       }
       request();
+      if (birdTexture && !birdTexture.destroyed && !frames) {
+        frames = Array.from({ length: 4 }, (_, index) => new Texture({
+          source: birdTexture.source, frame: new Rectangle(index * 128, 0, 128, 128),
+        }));
+      }
+      // Download and atlas preparation do not consume visible flight time. The
+      // first ready, active map tick therefore starts pass zero even after a
+      // slow request, a hidden tab, a modal, or an equivalent map rebuild.
+      if (!frames) {
+        lastNow = undefined;
+        return false;
+      }
       // Reset on every inactive tick. Also cap an unobserved browser suspension
       // so restoration never fast-forwards a flock across the map.
       if (lastNow !== undefined) elapsed += Math.max(0, Math.min(80, now - lastNow));
@@ -97,11 +110,6 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
       if (elapsed - lastPaint < 1000 / 30) return false;
       lastPaint = elapsed;
       let changed = false;
-      if (birdTexture && !birdTexture.destroyed && !frames) {
-        frames = Array.from({ length: 4 }, (_, index) => new Texture({
-          source: birdTexture.source, frame: new Rectangle(index * 128, 0, 128, 128),
-        }));
-      }
       if (frames) {
         // Pin a pass to the map location where it started. Scrolling moves the
         // world beneath the shared viewport mask instead of dragging the birds.
@@ -112,6 +120,9 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
           // motion, and is independent of game seeds and saved state.
           for (let index = 0; index < routeSamples.length; index += 1) routeSamples[index] = Math.random();
           estateBirdRoute(width, viewportTop, viewportHeight, routeSamples, flightRoute);
+          // Put the leading bird at the visible edge immediately on the first
+          // pass; later passes retain their full off-map entry routes.
+          if (pass === 0) flightRoute.startX = width * (flightRoute.direction > 0 ? -0.02 : 1.02);
         }
         for (let index = 0; index < birds.length; index += 1) {
           const bird = birds[index];
@@ -133,5 +144,8 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
       return changed;
     },
   };
+  // The game supplies an optional pinned loader, so a mounted map can fetch the
+  // atlas during the opening without changing its task/completion registry.
+  request();
   return atmosphere;
 }

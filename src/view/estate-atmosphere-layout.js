@@ -1,7 +1,7 @@
 // Pure display geometry, also consumed by static art review. Time is visible-map
 // time, never world/economy time. Callers can reuse `out` in the frame path.
 export const estateAtmosphereTiming = Object.freeze({
-  firstBirdMs: 4200, passEveryMs: 19200, flightMs: 2450, birdDelayMs: 190, flapMs: 90,
+  firstBirdMs: 0, passEveryMs: 19200, flightMs: 2450, birdDelayMs: 190, flapMs: 90,
 });
 export const estateBirdCount = 3;
 

@@ -196,10 +196,10 @@ registration.json的runtime对象原样转入小型src/content/estate-merchant-v
 
 新开闭、手机实际比例、四帧与代码路径见[本轮静态独审](art-reviews/2026-11-19-merchant-states.md)。源码／分镜结论不代替真实Pixi循环和运行体验，用户认可另记。
 
-### 网页图标与PWA图标（2026-11-19）
+### 网页图标与PWA图标（2026-11-20重绘）
 
-沿用已绘制的庄园屋public/art/estate/operations.webp，不新增主体绘画。scripts/export-pwa-icons.mjs以完整屋体透明裁切(8,26,520,286)等比nearest导出；原源副本、裁切图、转换登记、ICO解码证据保留assets/source/art/pwa-icons/。普通图标底色#263a28；32/48 favicon、180 Apple、192/512 any和独立512 maskable分别导出。maskable主体352×194置于512中心，完整外接矩形在中心安全圆内；不以大标题文字缩成不可读favicon。
+正式安装图标为内置绘图工具新绘的庄园门楼与金色麦穗徽记，深绿满幅底、橙红屋顶和亮窗，主体大且适配小尺寸，无文字。不是旧operations建筑裁切。原生普通与maskable两张1254×1254源图及完整提示词分别保留在assets/source/art/pwa-icon-v2/，独立maskable由图工具保持主体身份并原生延展背景；禁止用程序渐变补画遮住接缝。
 
-public/favicon.ico封装32/48 PNG，public/icons/六项PNG由index.html和public/manifest.webmanifest引用。manifest名称放置庄园，id为idle-manor（按start_url.origin解析的同源游戏身份，不按目录区分）、start_url ./#/farm、scope ./、standalone、主题色#263a28，启动底色沿壳黑色。相对启动／控制范围保留子目录路径；固定游戏身份不充当实际资源URL。
+scripts/export-pwa-icons-v2.mjs仅从真实源等比转换正式PNG32/48/180/192/512及独立maskable512，封装32/48 ICO；不重新绘画主体。public/icons/manor-v2-*使用新文件名，旧6PNG移除，index.html的favicon、manifest引用同步版本化，Apple使用v2的180图。所有正式PNG满幅不透明，关键房屋/麦穗在maskable中央安全圆内；主体、圆/圆角裁切与小尺寸均实际审阅。只保留短审阅报告，临时图板置于项目外，不入源码包。
 
-沿现有生产Service Worker注册和scripts/build-offline.mjs非WebP资源遍历纳入manifest／ICO／PNG，不另建缓存体系，不改存档。静态源与成品、身份退项修正和未安装验收范围见[PWA交付](reviews/2026-11-19-pwa-install.md)。不增加游戏内安装弹窗或解释性长文。
+manifest仍为放置庄园，id=idle-manor、start_url=./#/farm、scope=./、standalone及主题不改，不重新建立应用身份。新图地址让浏览器识别图标变更；已安装图标的最终替换仍受浏览器及系统策略影响，可能需要用户在系统提供的更新入口确认，不能由游戏UI保证立即变更。生产Service Worker/离线构建沿现有非WebP资源遍历收录manifest/ICO/PNG，不另建缓存体系；用户授权的新版本提示在游戏UI中处理，安装提示不在本轮范围。

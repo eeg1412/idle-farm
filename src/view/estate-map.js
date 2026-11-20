@@ -1,9 +1,12 @@
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
 import { mountEstateAtmosphere } from './estate-atmosphere.js';
 import { estateMerchantAsset, estateMerchantMotionBounds, mountEstateMerchant } from './estate-merchant.js';
+import {
+  estateResearchAsset, estateResearchFootprint, estateResearchMotionBounds, mountEstateResearch,
+} from './estate-research.js';
 
 // Keep the revised asset URLs in sync with the offline precache.
-const assetVersions = { background: 7, fish: 2, field: 2, 'field-motion': 2, 'research-motion': 2, operations: 2 };
+const assetVersions = { background: 7, fish: 2, field: 2, 'field-motion': 2, research: 2, 'research-motion': 3, operations: 2 };
 export const estateAssetUrl = (name) => new URL(`./art/estate/${name}.webp?game=1&v=${assetVersions[name] ?? 1}`, document.baseURI).href;
 export const estateMapAspect = 2.36;
 const buildingArtWidth = 536;
@@ -78,11 +81,8 @@ const sites = [
       sprite.alpha = 0.82 * Math.sin(Math.PI * phase);
     } },
 
-  { id: 'research', label: '研发', center: [0.2596, 2.1034], footprint: [29, 12, 507, 309],
-    widthRatio: 0.344, prop: [455, 305, 127], pivot: [0.42, 0.982], signAnchorX: 228,
-    animate(sprite, time) {
-      sprite.rotation = 0.05 * Math.sin(turn * cycle(time, 5.6));
-    } },
+  { id: 'research', label: '研发', center: [0.2596, 2.1034], footprint: estateResearchFootprint,
+    widthRatio: 0.344, signAnchorX: 228 },
   { id: 'warehouse', label: '仓库', center: [0.7469, 2.0221], footprint: [30, 21, 506, 309],
     widthRatio: 0.37, prop: [484, 118, 106], pivot: [0.51, 0.08],
     animate(sprite, time, unit, scale) {
@@ -147,8 +147,8 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
 }
 
 export function mountEstateMap(parent, {
-  width, insetTop, onOpen, bind, markDirty, getImage, loadImage,
-  researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere,
+  width, insetTop, onOpen, bind, markDirty, getImage, loadImage, loadAtmosphereImage = loadImage,
+  researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere, retainedResearch,
   merchantUnlocked = true,
 }) {
   const height = Math.round(width * estateMapAspect);
@@ -156,6 +156,7 @@ export function mountEstateMap(parent, {
   const signWidth = Math.round(width * signWidthRatio);
   const signHeight = signWidth * 110 / 516;
   const signGap = Math.max(2, Math.round(width * 0.009));
+  let researchMotion;
   const labelSize = Math.max(13, Math.min(23, Math.round(signHeight * 0.76)));
   const guideHeight = Math.max(26, Math.round(width * 0.068));
   // The coin display ends 48px below the top safe inset.
@@ -169,14 +170,17 @@ export function mountEstateMap(parent, {
   }
   const backgroundLayer = parent.addChild(new Container({ label: 'estate-background-layer' }));
   const buildingLayer = parent.addChild(new Container({ label: 'estate-building-layer' }));
+  const signLayer = parent.addChild(new Container({ label: 'estate-sign-layer' }));
+  const controlLayer = parent.addChild(new Container({ label: 'estate-control-layer' }));
+  // Read-only birds cover the map's buildings, nameplates, and task guides.
+  // The map viewport still clips them; global HUD/navigation/modals are siblings
+  // mounted later by canvas-ui and remain above this entire map.
   let atmosphere;
   if (retainedAtmosphere?.matches(width, height)) atmosphere = retainedAtmosphere.attach(parent);
   else {
     retainedAtmosphere?.destroy();
-    atmosphere = mountEstateAtmosphere(parent, { width, height, loadImage, markDirty });
+    atmosphere = mountEstateAtmosphere(parent, { width, height, loadImage: loadAtmosphereImage, markDirty });
   }
-  const signLayer = parent.addChild(new Container({ label: 'estate-sign-layer' }));
-  const controlLayer = parent.addChild(new Container({ label: 'estate-control-layer' }));
   for (const layer of [backgroundLayer, buildingLayer, signLayer]) layer.eventMode = 'none';
   const background = backgroundLayer.addChild(emptySprite('estate-landscape', [0, 0]));
   applyImage('background', (texture) => {
@@ -219,6 +223,14 @@ export function mountEstateMap(parent, {
     const building = art.addChild(emptySprite(`estate-building-${id}`));
     const merchantMotion = id === 'merchant'
       ? mountEstateMerchant(art, { unit, unlocked: merchantUnlocked, applyImage, markDirty }) : undefined;
+    if (id === 'research') {
+      if (retainedResearch?.matches(unit)) researchMotion = retainedResearch.attach(art);
+      else {
+        retainedResearch?.destroy();
+        researchMotion = mountEstateResearch(art, { unit, applyImage, markDirty });
+      }
+    }
+    const researchAnimation = id === 'research' ? researchMotion : undefined;
     const motion = prop && site.animate ? art.addChild(emptySprite(`estate-motion-${id}`, pivot)) : undefined;
     const [propX, propY, motionSize] = prop ?? [buildingArtWidth / 2, buildingArtHeight / 2, 0];
     const motionX = (propX - buildingArtWidth / 2) * unit;
@@ -275,7 +287,8 @@ export function mountEstateMap(parent, {
 
     let artRequested = false;
     let motionScale;
-    function update(time) {
+    function update(time, now) {
+      if (researchAnimation) return building.visible && researchAnimation.update(now);
       if (merchantMotion) return building.visible && merchantMotion.update(time);
       if (!motion || !building.visible || !motionScale) return false;
       motion.visible = true;
@@ -285,35 +298,41 @@ export function mountEstateMap(parent, {
     function loadArt() {
       if (artRequested) return;
       artRequested = true;
-      applyImage(id === 'merchant' ? estateMerchantAsset(merchantUnlocked) : id, (texture) => {
+      applyImage(id === 'merchant' ? estateMerchantAsset(merchantUnlocked) : id === 'research' ? estateResearchAsset : id, (texture) => {
         if (!texture || art.destroyed) return;
         fitSprite(building, texture, buildingSize, buildingHeight);
         merchantMotion?.setBaseReady();
+        researchAnimation?.setBaseReady();
         markDirty();
       });
       merchantMotion?.loadArt();
+      researchAnimation?.loadArt();
       if (motion) applyImage(`${id}-motion`, (texture) => {
         if (!texture || art.destroyed) return;
         const size = motionSize * unit;
         motionScale = fitSprite(motion, texture, size, size);
         motion.visible = false;
-        if (art.visible) update(performance.now() / 1000);
+        if (art.visible) {
+          const now = performance.now();
+          update(now / 1000, now);
+        }
         markDirty();
       });
     }
 
-    const merchantBounds = merchantMotion ? estateMerchantMotionBounds() : undefined;
-    const animatedTop = merchantBounds ? Math.min(top, y + (merchantBounds[1] - buildingArtHeight / 2) * unit)
+    const motionBounds = researchAnimation ? estateResearchMotionBounds : merchantMotion ? estateMerchantMotionBounds() : undefined;
+    const animatedTop = motionBounds ? Math.min(top, y + (motionBounds[1] - buildingArtHeight / 2) * unit)
       : id === 'refining' ? Math.min(top, y + motionY - (motionSize + 26) * unit) : top;
-    const animatedBottom = merchantBounds ? Math.max(bottom, y + (merchantBounds[3] - buildingArtHeight / 2) * unit) : bottom;
-    return { art, plaque, top: animatedTop, bottom: animatedBottom, loadArt, update };
+    const animatedBottom = motionBounds ? Math.max(bottom, y + (motionBounds[3] - buildingArtHeight / 2) * unit) : bottom;
+    return { art, plaque, top: animatedTop, bottom: animatedBottom, loadArt, update, pause: () => researchAnimation?.pause() };
   });
 
   let visibleEntries = [];
   return {
     height,
     parkAtmosphere() { return atmosphere.park(); },
-    pauseAtmosphere() { atmosphere.pause(); },
+    parkResearch() { return researchMotion?.park(); },
+    pauseAnimations() { atmosphere.pause(); researchMotion?.pause(); },
     setViewport(scroll, viewportHeight) {
       atmosphere.setViewport(scroll, viewportHeight);
       const viewportEnd = scroll + viewportHeight;
@@ -322,13 +341,16 @@ export function mountEstateMap(parent, {
         entry.art.visible = entry.bottom > scroll && entry.top < viewportEnd;
         entry.plaque.visible = entry.art.visible;
         if (entry.art.visible) visibleEntries.push(entry);
+        else entry.pause();
         if (entry.bottom > scroll - preload && entry.top < viewportEnd + preload) entry.loadArt();
       }
     },
     update(now, atmosphereActive = false, buildingsActive = true) {
       let animated = atmosphere.update(now, atmosphereActive);
       const time = now / 1000;
-      if (buildingsActive) for (const entry of visibleEntries) if (entry.update(time)) animated = true;
+      if (buildingsActive) {
+        for (const entry of visibleEntries) if (entry.update(time, now)) animated = true;
+      } else researchMotion?.pause();
       return animated;
     },
   };

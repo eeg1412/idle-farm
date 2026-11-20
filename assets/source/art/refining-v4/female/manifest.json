@@ -1,0 +1,162 @@
+{
+  "revision": "v4 independent female fullbody native expression edits",
+  "tool": "built-in image_gen",
+  "originalAppearanceReference": "assets/source/art/refining-v3/female-fullbody-original-reference.png",
+  "basePoseReview": "PM and independent reviewer approved smile source before expression edits",
+  "finalStaticReview": "PM approved complete fullbody sources, four runtime expressions, and independent 390px UI static composition; image/static-use approval only",
+  "canonicalSize": [
+    1024,
+    1536
+  ],
+  "canonicalConversion": "Native single fullbody image, alpha<=8 set to zero; no scale, pose repair, face composite, or drawing",
+  "runtimeCropFromCanonical": [
+    0,
+    0,
+    1024,
+    550
+  ],
+  "runtimeResize": [
+    538,
+    289
+  ],
+  "runtimeScaleXY": [
+    0.525390625,
+    0.5254545454545455
+  ],
+  "runtimePasteLeft": -21,
+  "runtimeCanvas": [
+    481,
+    289
+  ],
+  "runtimeEncoding": "RGBA WebP lossless exact, method=6",
+  "alphaNoiseFloor": 8,
+  "faceReview": {
+    "method": "Approximate manual visible face skin contour including forehead/chin, excluding ear/hair; source tolerance about 4px and old runtime about 2px. Three-quarter face is narrower than rejected frontal v82.",
+    "newCanonicalFaceBoxApprox": [
+      452,
+      146,
+      583,
+      292
+    ],
+    "oldV82RuntimeFaceBoxApprox": [
+      212,
+      90,
+      289,
+      166
+    ],
+    "newRuntimeFaceBoxApprox": [
+      216.4765625,
+      76.71636363636364,
+      285.302734375,
+      153.43272727272728
+    ],
+    "faceHeightRatioNewToOldApprox": 1.0094258373205742,
+    "faceWidthRatioNewToOldApprox": 0.893846387987013,
+    "cropLimitation": "Full oil vial and mineral sample jar remain readable; the lower cloth/hand extends below the 289px runtime frame. Full grip is retained in canonical."
+  },
+  "expressions": {
+    "smile": {
+      "source": "assets/source/art/refining-v4/female/smile-native.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "sourceSha256": "718c335b01982e01bcf54829660850da8d88b5055fe32b391c409fb1cf48f25a",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_微笑.png",
+      "canonicalSha256": "ac4eae0736e5e3ff854a39d75c9e246f3ab56d08ba54c8d451183c4a6b43e470",
+      "canonicalInk": [
+        214,
+        4,
+        805,
+        1531
+      ],
+      "runtime": "public/art/managers/portraits/refining/female-smile.webp",
+      "runtimeSha256": "8001eb9dee77af06d7ae6cb3ea94a97216b0027ed4a4e0def80440588eb30366",
+      "runtimeInk": [
+        139,
+        2,
+        367,
+        289
+      ]
+    },
+    "happy": {
+      "source": "assets/source/art/refining-v4/female/happy-native.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "sourceSha256": "0b98fb56d3bec7dddaaaf732ece0d22dab30d31a4ee0c8153df3b6f585f6a6b5",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_高兴.png",
+      "canonicalSha256": "84b0320368e91bab033a4628e924c9ed3f1873dcbb82aa43a4827862554b8559",
+      "canonicalInk": [
+        212,
+        4,
+        806,
+        1532
+      ],
+      "runtime": "public/art/managers/portraits/refining/female-happy.webp",
+      "runtimeSha256": "8fe8e1e4ddec943cd34b96901f172fff28294763420c35c4ad51b8e5a00240a5",
+      "runtimeInk": [
+        138,
+        2,
+        367,
+        289
+      ]
+    },
+    "angry": {
+      "source": "assets/source/art/refining-v4/female/angry-native.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "sourceSha256": "c2aca6c5d9dbaa0147d5e7298927da0b03d95d24e77ea9df3382ec43351faa48",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_生气.png",
+      "canonicalSha256": "ec73aa8d1fcde2716f90eaef2b658144c8210469267992af7f9f7ef3e39a775b",
+      "canonicalInk": [
+        211,
+        4,
+        812,
+        1534
+      ],
+      "runtime": "public/art/managers/portraits/refining/female-angry.webp",
+      "runtimeSha256": "8279e72284e675065d93f499da93ac264e0677e757aa2cd16950fe783444989a",
+      "runtimeInk": [
+        139,
+        2,
+        370,
+        289
+      ]
+    },
+    "sad": {
+      "source": "assets/source/art/refining-v4/female/sad-native.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "sourceSha256": "50309d380ba241e9857d8ce97d9313ee96ff2daaaa01a606b92e462bd86cf312",
+      "canonical": "docs/Pixel-Characters-Complete-Pack/立绘/08_精制管理/精制管理_女_不高兴.png",
+      "canonicalSha256": "868daa0d92ec64571ec466e8ea7970891f18b2a12a56d2a80bc70cf0abe07e0a",
+      "canonicalInk": [
+        211,
+        2,
+        807,
+        1533
+      ],
+      "runtime": "public/art/managers/portraits/refining/female-sad.webp",
+      "runtimeSha256": "c9ce8d720f91afd8881647c6ac2a02d9a49004a997e1de4ab8e1a75befc0d327",
+      "runtimeInk": [
+        138,
+        2,
+        368,
+        289
+      ]
+    }
+  },
+  "metrics": {
+    "width": 481,
+    "height": 289,
+    "faceX": 250.9,
+    "inkLeft": 138,
+    "inkRight": 370
+  }
+}

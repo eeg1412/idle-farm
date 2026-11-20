@@ -1,0 +1,20 @@
+PWA manor icon v2 — generation record
+Date: 2026-11-20
+Tool: built-in image_gen.imagegen (not CLI/API fallback)
+Mode: new generation; transparent_background=false; no image inputs passed.
+Visual references inspected only: public/icons/icon-512.png (old installation icon), public/art/estate/operations.webp (existing pixel-art style). Neither asset was used as a generation/edit input or raster source.
+Generated raw output: /workspace/scratch/a46f8d1a2380/generated_images/exec-41750438-f912-47ba-aca5-fcb25c85f3ca.png (1254x1254 opaque RGB).
+Source original.png: exact native 1254x1254 output, preserved unmodified as the primary drawing source. The prompt requested 1024x1024; the built-in tool returned 1254x1254. Standard icons use proportional conversion from this original.
+Exports: scripts/export-pwa-icons-v2.mjs; any/Apple/favicon use full-frame proportional downscaling. The separate maskable-original.png was produced by built-in image_gen background expansion/edit of this primary source; see maskable.prompt.txt for its complete prompt and provenance. The exporter only rescales both source images, with no programmatic drawing or background blending.
+Full prompt:
+Use case: stylized-concept
+Asset type: one newly drawn 1024 x 1024 square PWA installation icon for a Japanese pixel-art manor farming game.
+Primary request: Create a fresh, original manor emblem: one bold front-facing manor gatehouse with a broad warm orange-red gabled roof and one large glowing amber arched doorway/window, embraced by two simple curved golden wheat ears. This is an independent app-icon composition, not a building sprite pasted onto a background and not a miniature landscape.
+Style/medium: refined Japanese 2D pixel art, crisp intentional square pixels, strong dark outlines, rich but controlled stepped shading, handsome crafted game art. Fine pixel texture is secondary to the clear silhouette.
+Composition/framing: large compact centered emblem. Roof, gatehouse and both wheat ears form one immediately readable shape. All meaningful silhouette, including wheat tips, must fit entirely inside the central safe circle of diameter 76% of the image, centered at image center; keep the emblem as large as possible within that circle. No tiny side wings, gardens, pathways, scenery, tools, characters or multiple buildings.
+Scene/backdrop: full-bleed opaque deep forest-green square background, subtle restrained pixel tonal texture, no outer border. The green background reaches all four edges and corners. No baked-in rounded corners, black corners, circular badge disk, or transparent pixels.
+Color palette: deep forest green, orange-red roof, golden wheat, cream stone, glowing amber. Strong contrast readable as a manor-and-wheat emblem even at 32 and 48 pixels.
+Lighting/mood: warm welcoming prosperity, simple coherent highlights.
+Text: none.
+Constraints: exactly one standalone square image, 1024x1024; brand-new drawing, not crop, tracing, rescaling or a recomposition of an old building asset; no text, letters, digits, watermark, logos, caption, frame, mockup or comparison sheet. Keep details few and chunky for actual app-icon legibility.
+

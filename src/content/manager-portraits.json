@@ -115,16 +115,16 @@
     "female": {
       "width": 481,
       "height": 289,
-      "faceX": 214.5,
-      "inkLeft": 140,
-      "inkRight": 396
+      "faceX": 250.9,
+      "inkLeft": 138,
+      "inkRight": 370
     },
     "male": {
       "width": 491,
       "height": 289,
-      "faceX": 211.5,
-      "inkLeft": 98,
-      "inkRight": 387
+      "faceX": 242.4,
+      "inkLeft": 115,
+      "inkRight": 383
     }
   },
   "warehouse": {
