@@ -3,6 +3,7 @@ import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
 import { managerStatus } from '../game/managers.js';
+import { merchantStatus } from '../game/merchant.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import workshopVisuals from '../content/workshop-visuals.json' with { type: 'json' };
 import managerPortraits from '../content/manager-portraits.json' with { type: 'json' };
@@ -57,7 +58,7 @@ const menuIcons = {
 };
 const estateDestinations = {
   field: '田地', livestock: '畜牧', fish: '鱼池', mine: '矿洞', processing: '加工', refining: '精制',
-  warehouse: '仓库', research: '研究', operations: '经营', tasks: '任务',
+  warehouse: '仓库', research: '研究', operations: '经营', tasks: '任务', merchant: '行脚商',
 };
 const noResearchReadyTabs = new Set();
 const defaultDialogSampleEveryMs = 3000;
@@ -346,6 +347,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let managerConversationSequence = 0;
   let managerSpeech;
   let managerSpeechMount;
+  let managerCardSpeech;
+  let managerCardSpeechMount;
+  let managerBannerMount;
+  let managerPortraitMounts = new Map();
   let managerSpeechWasVisible = false;
   let routeDialogSequence = 0;
   let applyingRoute = false;
@@ -364,7 +369,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let point;
   let scrollTarget;
   let focusIndex = -1;
-  let returnedManagerFocus;
   let controls = [];
   let building = false;
   let drag = null;
@@ -411,7 +415,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const workshopMotionStates = new Map();
   const locals = Object.fromEntries(Object.keys(pages).map((page) => [page, { scroll: 0 }]));
   const textures = new Map();
-  // Only the three opening-art URLs use smooth sampling. Keep the policy by URL
+  // Only the selected CG and logo opening URLs use smooth sampling. Keep the policy by URL
   // so a later caller/retry cannot switch a shared opening source back to nearest.
   const smoothImages = new Set();
   const failedImages = new Set();
@@ -430,14 +434,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const scale = () => 1;
   function pauseManagerSpeech() {
     managerSpeech?.pause();
+    managerCardSpeech?.pause();
     audio.stopDialogue?.();
     managerSpeechWasVisible = false;
   }
 
   function resetManagerSpeech() {
-    if (managerSpeech) pauseManagerSpeech();
+    if (managerSpeech || managerCardSpeech) pauseManagerSpeech();
     managerSpeech = undefined;
     managerSpeechMount = undefined;
+    managerCardSpeech = undefined;
+    managerCardSpeechMount = undefined;
+    managerBannerMount = undefined;
   }
 
   function progressClock(now) {
@@ -529,7 +537,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function loadOpeningImage(url) {
-    // Opening URLs belong only to this overlay. These three fixed textures have
+    // Opening URLs belong only to this overlay. Its two selected textures have
     // no icon/scene LRU category and retain the existing cache ownership.
     smoothImages.add(url);
     return loadImage(url);
@@ -939,6 +947,59 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
   }
 
+  function updateManagerPortraits(speech) {
+    for (const show of managerPortraitMounts.get(speech) ?? []) show();
+  }
+
+  function mountManagerPortrait(parent, speech, x, y, width, height, crop, observeScroll, viewport, availableHeight) {
+    const portrait = parent.addChild(new Sprite({ texture: Texture.EMPTY, roundPixels: true, label: 'manager-card-portrait' }));
+    portrait.eventMode = 'none';
+    portrait.visible = false;
+    if (crop) {
+      const mask = parent.addChild(inkGraphics().rect(x, y, width, height).fill(0xffffff));
+      mask.eventMode = 'none';
+      portrait.mask = mask;
+    }
+    let visible = !observeScroll;
+    let portraitUrl;
+    let pendingPortrait;
+    const show = () => {
+      if (!visible || portrait.destroyed) return;
+      const expression = speech.line?.expression ?? 'smile';
+      const url = path('./art/managers/portraits/' + speech.role + '/' + speech.gender + '-' + expression + '.webp?game=1&v=2');
+      portraitUrl = url;
+      touchImage(url, 'scene');
+      const mount = (texture) => {
+        if (!texture || texture.destroyed || portrait.destroyed || portraitUrl !== url || !visible) return;
+        const factor = (crop ? Math.max : Math.min)(width / texture.width, height / texture.height);
+        portrait.texture = texture;
+        portrait.scale.set(factor);
+        portrait.position.set(x + (width - texture.width * factor) / 2, y + (height - texture.height * factor) / 2);
+        portrait.visible = visible;
+        markDirty();
+      };
+      const cached = textures.get(url);
+      if (cached && !cached.destroyed) {
+        if (portrait.texture !== cached) mount(cached);
+        return;
+      }
+      if (pendingPortrait === url || failedImages.has(url)) return;
+      pendingPortrait = url;
+      loadImage(url).then(mount).finally(() => {
+        if (pendingPortrait === url) pendingPortrait = undefined;
+      });
+    };
+    if (!managerPortraitMounts.has(speech)) managerPortraitMounts.set(speech, new Set());
+    managerPortraitMounts.get(speech).add(show);
+    if (observeScroll) observeScroll((scroll) => {
+      visible = withinScrollViewport(y, y + height, scroll, viewport ?? { height: availableHeight }, x, x + width);
+      if (!visible) portrait.texture = Texture.EMPTY;
+      portrait.visible = visible && portrait.texture !== Texture.EMPTY && !portrait.texture.destroyed;
+      show();
+    });
+    else show();
+  }
+
   function hitAt(g, parent, x, y, width, height, fn) {
     g.eventMode = 'static';
     g.cursor = 'pointer';
@@ -1000,10 +1061,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const hasIndicator = options.indicator || (!disabled && options.indicatorWhenVisible);
     const tone = options.tone ?? 'plain';
     const index = disabled ? -1 : controls.length;
-    if (index >= 0 && !modal && options.managerFocus && returnedManagerFocus === label) {
-      focusIndex = index;
-      returnedManagerFocus = undefined;
-    }
     const focused = index >= 0 && index === focusIndex;
     const green = tone === 'green' && !disabled;
     const gold = tone === 'gold' && !disabled;
@@ -1022,22 +1079,29 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     const iconOnly = options.iconOnly ?? (label === '关闭' ? 'close' : label === '返回' ? 'chevron-left' : undefined);
     if (iconOnly) {
-      const size = options.managerFocus ? Math.min(24, Math.max(8, Math.min(width, height) - 8)) : 24;
+      const size = Math.min(24, Math.max(8, Math.min(width, height) - 8));
       drawImage(parent, iconOnly, x + (width - size) / 2, y + (height - size) / 2, size, size);
     } else {
-      const icon = options.icon && hasIcon(options.icon) && width >= 63 ? 21 : 0;
-      const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? 22 : 0;
+      const faceY = y + (options.segment ? 2 : 0);
+      const faceHeight = Math.max(1, height - (options.segment ? 4 : 3));
+      const contentHeight = Math.max(1, faceHeight - (options.compactLabel ? 2 : 4));
+      const iconSize = Math.min(18, contentHeight);
+      const icon = options.icon && hasIcon(options.icon) && width >= 63 ? iconSize + 3 : 0;
+      const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? iconSize + 4 : 0;
       const baseSize = options.emphasis ? 23 : 18;
-      const captionWidth = width - 8 - icon - trailing;
+      const captionWidth = Math.max(1, width - 8 - icon - trailing);
       const size = options.compactLabel ? 15 * scale() : Math.min(baseSize * scale(),
         (captionWidth - 2) / Math.max(2, Array.from(String(label)).length));
-      const caption = textNode(parent, label, x + 4 + icon, y + 2, captionWidth,
+      const caption = textNode(parent, label, 0, 0, captionWidth,
         { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink,
           weight: '750', wrap: !options.compactLabel });
-      if (options.compactLabel && caption.width > captionWidth) caption.scale.set(captionWidth / caption.width);
-      caption.y = y + (height - caption.height) / 2;
-      if (icon) drawImage(parent, options.icon, Math.max(x + 5, caption.x - icon), y + (height - 18) / 2, 18, 18);
-      if (trailing) drawImage(parent, options.trailingIcon, x + width - trailing - 3, y + (height - 18) / 2, 18, 18);
+      if (options.compactLabel) caption.scale.set(Math.min(1,
+        captionWidth / Math.max(1, caption.width), contentHeight / Math.max(1, caption.height)));
+      const contentLeft = x + (width - icon - caption.width - trailing) / 2;
+      caption.position.set(contentLeft + icon, faceY + (faceHeight - caption.height) / 2);
+      const iconY = faceY + (faceHeight - iconSize) / 2;
+      if (icon) drawImage(parent, options.icon, contentLeft, iconY, iconSize, iconSize);
+      if (trailing) drawImage(parent, options.trailingIcon, caption.x + caption.width + 4, iconY, iconSize, iconSize);
     }
     if (hasIndicator) {
       const segmentInset = options.segment ? 2 : 0;
@@ -1065,7 +1129,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function activateDialog(dialog) {
     if (dialog) navigationMenu = undefined;
     if (modal === dialog) return;
-    if (dialog) pauseManagerSpeech();
     if (modal?.sample) delete modal.sampledValue;
     if (modal?.flow === 'merchant-refresh') {
       modal.dismissed = true;
@@ -1105,7 +1168,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function dismissDialog() {
     coast = null;
     pendingModal = undefined;
-    returnedManagerFocus = modal?.managerFocus;
     activateDialog(undefined);
     focusIndex = -1;
     returnToRecordedParent();
@@ -1119,7 +1181,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const picker = modal.parentDialog;
     if (picker?.flow === 'manager-gifts') picker.dismissed = true;
     const parent = picker?.parentDialog;
-    returnedManagerFocus = parent ? undefined : '送礼';
     const returned = availableDialog(parent);
     activateDialog(returned ? parent : undefined);
     focusIndex = -1;
@@ -1128,9 +1189,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return returned;
   }
 
-  function conversationFor(owner, role, gender, greeting) {
+  // A directory card and the banner can show the same role without sharing replies or expressions.
+  const managerSpeechKey = (role, inCard = false) => inCard ? role + ':card' : role;
+
+  function conversationFor(owner, role, gender, greeting, { inCard = false } = {}) {
     owner.managerSpeechKeys ??= {};
-    const previous = managerConversations.get(owner.managerSpeechKeys[role]);
+    const source = managerSpeechKey(role, inCard);
+    const previous = managerConversations.get(owner.managerSpeechKeys[source]);
     if (previous?.gender === gender) {
       if (greeting && !managerDailyLines.has(previous)) managerDailyLines.set(previous, { text: greeting(), expression: 'smile', priority: 0 });
       return previous;
@@ -1141,7 +1206,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       managerDailyLines.set(speech, daily);
       speech.offer(daily);
     }
-    owner.managerSpeechKeys[role] = ++managerConversationSequence;
+    owner.managerSpeechKeys[source] = ++managerConversationSequence;
     managerConversations.set(managerConversationSequence, speech);
     // Retain queues for live pages and the open dialog chain; discarded profiles and
     // earlier page visits must not accumulate for the lifetime of an idle session.
@@ -1152,13 +1217,26 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return speech;
   }
 
+  function releaseManagerCardReply(owner, nextRole) {
+    const previousRole = owner.managerReplyRole;
+    if (!previousRole || previousRole === nextRole) return;
+    const previous = managerConversations.get(owner.managerSpeechKeys?.[managerSpeechKey(previousRole, true)]);
+    if (previous) {
+      previous.select(managerDailyLines.get(previous));
+      updateManagerPortraits(previous);
+    }
+    delete owner.managerReplyRole;
+  }
+
   function queueManagerSpeech(role, gender, line, { inCard = false } = {}) {
     const owner = modal?.managerRole === role && modal.managerFocus !== '管理员资料' ? modal : locals[current];
-    const speech = conversationFor(owner, role, gender);
+    releaseManagerCardReply(owner, inCard ? role : undefined);
+    const speech = conversationFor(owner, role, gender, undefined, { inCard });
     if (inCard) owner.managerReplyRole = role;
     else delete owner.managerReplyRole;
     speech.enqueue(line);
-    requestRender();
+    if (managerSpeech === speech && managerSpeechMount?.inCard === inCard) markDirty();
+    else requestRender();
   }
 
   function advanceManagerSpeech(role, gender, { messages, nextGreeting, inCard = false } = {}) {
@@ -1166,7 +1244,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (now - (managerTapTimes.get(role) ?? -Infinity) < 300) return;
     managerTapTimes.set(role, now);
     const owner = modal?.managerRole === role && modal.managerFocus !== '管理员资料' ? modal : locals[current];
-    const speech = conversationFor(owner, role, gender);
+    const speech = conversationFor(owner, role, gender, undefined, { inCard });
     const candidates = messages ?? (inCard ? [] : managerCandidates.get(role + ':' + gender)?.messages) ?? [];
     const nextDaily = nextGreeting ?? managerCandidates.get(role + ':' + gender)?.nextGreeting;
     const currentText = speech.line?.text;
@@ -1178,13 +1256,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const daily = !another && nextDaily?.(currentText);
     const selected = another ?? (daily ? { text: daily, expression: 'smile', priority: 0 } : undefined);
     if (!selected) return;
-    speech.select(selected);
-    managerSelections.set(speech, { line: selected, candidates: JSON.stringify(help) });
+    const returnReminder = !inCard && selected.priority === 4;
+    if (!returnReminder) releaseManagerCardReply(owner, inCard ? role : undefined);
+    if (inCard) speech.enqueue(selected);
+    else {
+      speech.select(selected);
+      managerSelections.set(speech, { line: selected, candidates: JSON.stringify(help) });
+    }
     if (daily) managerDailyLines.set(speech, selected);
     if (inCard) owner.managerReplyRole = role;
-    else delete owner.managerReplyRole;
+    else if (!returnReminder) delete owner.managerReplyRole;
     pauseManagerSpeech();
-    requestRender();
+    if (managerSpeech === speech && managerSpeechMount?.inCard === inCard) markDirty();
+    else requestRender();
   }
 
   async function closeDialog() {
@@ -1214,7 +1298,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     focusIndex = -1;
     if (availableDialog(shown?.parentDialog)) activateDialog(shown.parentDialog);
     else if (!restoreContext(shown?.parentPage)) {
-      returnedManagerFocus = shown?.managerFocus;
       activateDialog(undefined);
     }
   }
@@ -1299,7 +1382,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       local.scroll = context.local.merchantDialogEpoch === merchantDialogEpoch ? context.local.scroll : 0;
     } else restoreViewState(local, context.local);
     if (changedPage) { delete local.managerSpeechKeys; delete local.managerReplyRole; }
-    pageParent = context.parent;
+    pageParent = current === '行脚商' ? merchantMapParent(context.parent) : context.parent;
     linkedEntryParent = context.linkedEntryParent;
     pendingModal = undefined;
     activateDialog(availableDialog(context.modal) ? context.modal : undefined);
@@ -1309,11 +1392,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function defaultParent(page) {
-    const parent = page === '行脚商' ? '仓库' : ['图鉴', '出售庄园', '管理员管理', '统计', '出售庄园历史'].includes(page) ? '经营' : homePage;
+    const parent = ['图鉴', '出售庄园', '管理员管理', '统计', '出售庄园历史'].includes(page) ? '经营' : homePage;
     return {
       page: parent, local: copyViewState(locals[parent]), modal: undefined,
       parent: parent === homePage ? undefined : defaultParent(parent), epoch: navigationEpoch,
     };
+  }
+
+  function merchantMapParent(source) {
+    for (let context = source; context; context = context.parent) {
+      if (context.page === homePage && context.epoch === navigationEpoch) {
+        return { ...context, modal: undefined, parent: undefined, linkedEntryParent: undefined };
+      }
+    }
+    return defaultParent('行脚商');
   }
 
   function go(destination, options = {}, sourceDialog) {
@@ -1334,6 +1426,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       ? { ...sourceDialog.pageContext, modal: sourceDialog }
       : captureContext(availableDialog(sourceDialog) ? sourceDialog : modal);
     if (page === homePage) pageParent = undefined;
+    else if (page === '行脚商') pageParent = merchantMapParent(source);
     else if (options.menu) pageParent = defaultParent(page);
     else if (changedPage || directedEntry && !(page === '研究' && !modal && options.id === undefined)) pageParent = source;
     linkedEntryParent = page === '研究' && options.id !== undefined ? pageParent : undefined;
@@ -1443,7 +1536,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     applyingRoute = true;
     coast = null;
     const restoringTab = !modal && !entry.modal && page === current &&
-      (page === '研究' || page === '行脚商') && routeSnapshot().tab !== routeTab;
+      page === '研究' && routeSnapshot().tab !== routeTab;
     if (entry.backward && !restoringTab && (modal || current !== homePage)) {
       try {
         if (modal) restoreDialogParent(modal);
@@ -2065,60 +2158,24 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         drawImage(parent, id, left, cursor, span, h, hero);
         cursor += h + rowGap;
       },
-      managerExpression(role, gender) {
+      managerExpression(role, gender, { inCard = false } = {}) {
         const owner = local.managerFocus === '管理员资料' ? locals[current] : local;
-        const speech = managerConversations.get(owner.managerSpeechKeys?.[role]);
+        const speech = managerConversations.get(owner.managerSpeechKeys?.[managerSpeechKey(role, inCard)]);
         return speech?.gender === gender ? speech.line?.expression ?? 'smile' : 'smile';
-      },
-      managerReply(role, gender, greeting, { always = false } = {}) {
-        if (!always && local.managerReplyRole !== role) return;
-        const speech = conversationFor(local, role, gender, greeting);
-        if (!always && !speech.line) return;
-        const top = cursor;
-        const height = width < 285 ? 52 : 46;
-        // A directory profile leaves its source card's reply in the uncovered strip.
-        if (modal?.managerFocus === '管理员资料' && modal.managerRole === role && modal.managerInCard) {
-          local.scroll = Math.max(0, top - 5);
-        }
-        cursor += height + rowGap;
-        managerSpeech = speech;
-        const caption = parent.addChild(new Container({ label: 'manager-dialogue' }));
-        parent.addChildAt(managerBubblePath(inkGraphics(), x + 5, top, width - 5, height)
-          .fill(palette.card).stroke({ color: palette.border, width: 1.1 }), parent.children.length - 1);
-        let reveal;
-        let visible = true;
-        const startLine = () => {
-          if (!always && !speech.line) {
-            delete local.managerReplyRole;
-            requestRender();
-            return;
-          }
-          reveal = managerCaption(caption, speech.line, x + 14, top + 5, width - 24, height - 10, 14);
-          reveal(speech.shown);
-          requestRender();
-        };
-        managerSpeechMount = {
-          visible: () => visible && (local.routeKey ? modal === local :
-            !modal || modal.managerFocus === '管理员资料' && modal.managerRole === role && modal.managerInCard),
-          startLine,
-          reveal: () => { if (reveal(speech.shown)) markDirty(); },
-        };
-        reveal = managerCaption(caption, speech.line, x + 14, top + 5, width - 24, height - 10, 14);
-        reveal(speech.shown);
-        options.observeScroll?.((scroll) => {
-          visible = withinScrollViewport(top, top + height, scroll, options.viewport, x, x + width);
-        });
       },
       managerBanner({ role, gender, greeting, background, message, messages = [], nextGreeting, receive, receiveIcon, actions }) {
         const speech = conversationFor(local, role, gender, greeting);
         managerCandidates.set(role + ':' + gender, { messages, nextGreeting });
         const selection = managerSelections.get(speech);
-        if (selection && selection.candidates !== JSON.stringify(messages) &&
-            !(current === '管理员管理' && local.managerReplyRole === role)) managerSelections.delete(speech);
-        if (!(current === '管理员管理' && local.managerReplyRole === role)) {
-          speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
+        if (selection && selection.candidates !== JSON.stringify(messages)) managerSelections.delete(speech);
+        speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
+        let suppressed = false;
+        if (!receive && current === '管理员管理' && local.managerReplyRole) {
+          const replyRole = local.managerReplyRole;
+          const cardSpeech = managerConversations.get(local.managerSpeechKeys?.[managerSpeechKey(replyRole, true)]);
+          suppressed = Boolean(cardSpeech?.replying && cardSpeech.gender === managerStatus(world, replyRole).gender);
+          if (!suppressed) delete local.managerReplyRole;
         }
-        const suppressed = current === '管理员管理' && Boolean(local.managerReplyRole);
         if (!suppressed) managerSpeech = speech;
         const height = Math.max(66, Math.min(205, Math.round(width * 0.45)));
         const bleed = fullBleed;
@@ -2176,7 +2233,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const bubbleY = top + (tight ? 4 : 8);
         const bubbleHeight = Math.max(18, buttonsTop - bubbleY - (tight ? 3 : 6));
         const bubble = parent.addChild(managerBubblePath(inkGraphics(), dialogueX, bubbleY, dialogueWidth, bubbleHeight)
-          .fill(receive && bubbleHeight < 49 ? palette.selection : palette.card)
+          .fill(palette.card)
           .stroke({ color: palette.border, width: 1.25 }));
         bubble.visible = !suppressed;
         const bubbleWidth = Math.max(1, dialogueWidth - 20);
@@ -2191,16 +2248,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             bubbleHeight - claimHeight - 6, width < 350 ? 14 : 16);
           reveal(speech.shown);
           showPortrait();
+          updateManagerPortraits(speech);
           markDirty();
         };
-        if (!suppressed) managerSpeechMount = {
-          visible: () => bubbleVisible && (!modal || modal.managerFocus === '管理员资料' &&
-            modal.managerRole === role && !modal.managerInCard),
+        const mount = {
+          inCard: false,
+          visible: () => bubbleVisible,
           startLine,
           reveal: () => { if (reveal(speech.shown)) markDirty(); },
         };
+        if (!suppressed) managerSpeechMount = mount;
         startLine();
+        let lastScroll = local.scroll ?? 0;
         const observe = (scroll) => {
+          lastScroll = scroll;
           const viewport = options.viewport ?? { height: availableHeight };
           portraitVisible = withinScrollViewport(top, top + height, scroll, viewport, left, right);
           portrait.visible = portraitVisible && portrait.texture !== Texture.EMPTY && !portrait.texture.destroyed;
@@ -2214,26 +2275,41 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         };
         if (options.observeScroll) options.observeScroll(observe);
         else observe(0);
-        if (claimHeight && !suppressed) {
-          const claimTop = bubbleY + bubbleHeight - claimHeight - 3;
-          panel(parent, dialogueX + 6, claimTop, dialogueWidth - 12, claimHeight - 2,
-            palette.selection, palette.green, 6);
-          const claimLabel = textNode(parent, '收回礼', dialogueX + 22, claimTop + 1, dialogueWidth - 35, {
-            size: Math.min(13, claimHeight - 4), weight: '800', color: palette.green, align: 'center',
-          });
-          const iconSize = Math.min(18, claimHeight - 4);
-          drawImage(parent, receiveIcon, Math.max(dialogueX + 10, claimLabel.x - iconSize - 2), claimTop + 2, iconSize, iconSize);
+        const claimNodes = [];
+        const claimTop = bubbleY + bubbleHeight - claimHeight - 3;
+        const bubbleHits = [];
+        if (!waiting) {
+          const bodyHit = parent.addChild(inkGraphics());
+          bodyHit.label = '换管理员对白';
+          const bodyHeight = claimHeight ? Math.max(1, claimTop - bubbleY) : bubbleHeight;
+          hitAt(bodyHit, parent, dialogueX, bubbleY, dialogueWidth, bodyHeight,
+            () => { if (!suppressed) advanceManagerSpeech(role, gender, { messages, nextGreeting }); });
+          bubbleHits.push(bodyHit);
         }
-        if (receive) {
-          const hit = inkGraphics();
-          parent.addChild(hit);
-          hit.label = '收回礼';
-          if (!waiting) {
-            if (controls.length === focusIndex) managerBubblePath(hit, dialogueX, bubbleY, dialogueWidth, bubbleHeight)
-              .stroke({ color: palette.green, width: 2 });
-            hitAt(hit, parent, dialogueX, bubbleY, dialogueWidth, bubbleHeight, receive);
-          }
+        if (claimHeight) {
+          const claim = parent.addChild(new Container());
+          claimNodes.push(claim);
+          buttonAt(claim, dialogueX + 6, claimTop, dialogueWidth - 12, claimHeight - 2, '收回礼',
+            () => { if (!suppressed) receive(); }, { tone: 'plain', icon: receiveIcon, compactLabel: true });
         }
+        const setSuppressed = (value) => {
+          suppressed = value;
+          bubble.visible = !suppressed;
+          for (const node of [caption, ...claimNodes, ...bubbleHits]) node.visible = !suppressed;
+          observe(lastScroll);
+          markDirty();
+        };
+        managerBannerMount = {
+          urgent: Boolean(receive),
+          restore() {
+            speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
+            setSuppressed(false);
+            managerSpeech = speech;
+            managerSpeechMount = mount;
+            startLine();
+          },
+        };
+        setSuppressed(suppressed);
         if (!waiting) {
           const portraitHit = parent.addChild(inkGraphics());
           portraitHit.label = '换管理员对白';
@@ -2243,8 +2319,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const actionLeft = dialogueX + (dialogueWidth - actionSpan) / 2;
         actions.forEach(({ label, icon, onClick }, index) => {
           buttonAt(parent, actionLeft + index * (actionWidth + gap), buttonsTop, actionWidth, actionWidth,
-            label, onClick, { iconOnly: icon, managerFocus: true, touchSize: tight ? actionWidth : 48 });
+            label, onClick, { iconOnly: icon, touchSize: tight ? actionWidth : 48 });
         });
+        cursor += height + rowGap;
+      },
+      itemQuantity(id, label, value) {
+        const top = cursor;
+        const iconSize = 32;
+        const gap = 8;
+        const amount = textNode(parent, value, x, top, width,
+          { size: 17 * scale(), weight: '800', wrap: false });
+        const amountWidth = Math.max(1, (width - iconSize - gap * 2) * 0.4);
+        if (amount.width > amountWidth) amount.scale.set(amountWidth / amount.width);
+        const nameX = x + iconSize + gap;
+        const name = textNode(parent, label, nameX, top, Math.max(1, width - iconSize - gap * 2 - amount.width),
+          { size: 16 * scale(), weight: '750' });
+        const height = Math.max(40, name.height + 8, amount.height + 8);
+        drawImage(parent, id, x, top + (height - iconSize) / 2, iconSize, iconSize);
+        name.y = top + (height - name.height) / 2;
+        amount.position.set(x + width - amount.width, top + (height - amount.height) / 2);
         cursor += height + rowGap;
       },
       item(id, title, description, { marketRate } = {}) {
@@ -2257,7 +2350,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += Math.max(icon ? 52 : 0, label.height + extra) + rowGap;
       },
       feature(id, draw, { ratio = 0.31, onClick, style, surface, align, artAspect, cover,
-        plotAnimation, livestockAnimation, fishAnimation, miningAnimation, workshopAnimation, animationOnly = false } = {}) {
+        plotAnimation, livestockAnimation, fishAnimation, miningAnimation, workshopAnimation, animationOnly = false, managerReply } = {}) {
         const top = cursor;
         const workshop = Boolean(workshopAnimation?.id);
         const strip = workshop ? options.workshopStrip : undefined;
@@ -2309,10 +2402,82 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           options.registerPlot({ art, box: new Rectangle(0, 0, imageWidth, imageHeight),
             type: workshop ? 'workshop' : miningAnimation ? 'mining' : fishAnimation ? 'fish' : livestockAnimation ? 'livestock' : 'crop', ...animation });
         } else if (!animationOnly && !animation) {
-          drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
+          const portrait = managerAsset(id)?.match(/^portraits\/([^/]+)\/([^-]+)-/);
+          if (portrait) {
+            const owner = local.managerFocus === '管理员资料' ? locals[current] : local;
+            const speech = conversationFor(owner, portrait[1], portrait[2], undefined,
+              { inCard: Boolean(managerReply) || Boolean(local.managerInCard) });
+            mountManagerPortrait(parent, speech, artX + inset, artY + inset, imageWidth, imageHeight, crop,
+              options.observeScroll, options.viewport, availableHeight);
+          } else drawImage(parent, id, artX + inset, artY + inset, imageWidth, imageHeight, crop);
         }
         if (!stacked) parent.addChild(inkGraphics().rect(x + artWidth + 7, top, 1, height)
           .fill(palette.line));
+        if (managerReply) {
+          const { role, gender } = managerReply;
+          const speech = conversationFor(local, role, gender, undefined, { inCard: true });
+          if (local.managerReplyRole === role && !speech.replying) delete local.managerReplyRole;
+          if (local.managerReplyRole !== role && speech.replying) {
+            speech.select(managerDailyLines.get(speech));
+            updateManagerPortraits(speech);
+          }
+          if (local.managerReplyRole === role && speech.replying) {
+            const replyTop = drawY + copy.y;
+            const replyWidth = Math.max(1, width - (drawX - x));
+            const replyHeight = Math.max(1, child.bottom - drawY - rowGap);
+            const bubble = parent.addChild(managerBubblePath(inkGraphics(), drawX + 5, replyTop, Math.max(1, replyWidth - 5), replyHeight)
+              .fill(palette.card).stroke({ color: palette.border, width: 1.1 }));
+            bubble.eventMode = 'none';
+            const caption = parent.addChild(new Container({ label: 'manager-card-dialogue' }));
+            caption.eventMode = 'none';
+            let visible = !options.observeScroll;
+            let reveal = () => false;
+            const startLine = () => {
+              const replying = speech.replying && local.managerReplyRole === role;
+              copy.visible = !replying;
+              bubble.visible = replying;
+              caption.visible = replying;
+              updateManagerPortraits(speech);
+              if (!replying) {
+                if (local.managerReplyRole === role) delete local.managerReplyRole;
+                if (managerCardSpeech === speech) {
+                  managerCardSpeech = undefined;
+                  managerCardSpeechMount = undefined;
+                }
+                if (managerSpeech === speech) {
+                  if (managerBannerMount) managerBannerMount.restore();
+                  else resetManagerSpeech();
+                }
+                markDirty();
+                return;
+              }
+              reveal = managerCaption(caption, speech.line, drawX + 13, replyTop + 5,
+                Math.max(1, replyWidth - 23), Math.max(1, replyHeight - 10), 14);
+              reveal(speech.shown);
+              markDirty();
+            };
+            const mount = {
+              inCard: true,
+              visible: () => visible,
+              startLine,
+              reveal: () => { if (reveal(speech.shown)) markDirty(); },
+            };
+            // A pending top return stays visible and audible; a successful card
+            // reply can finish independently without taking over the banner.
+            if (managerBannerMount?.urgent) {
+              managerCardSpeech = speech;
+              managerCardSpeechMount = mount;
+            } else {
+              managerSpeech = speech;
+              managerSpeechMount = mount;
+            }
+            startLine();
+            options.observeScroll?.((scroll) => {
+              visible = withinScrollViewport(replyTop, replyTop + replyHeight, scroll,
+                options.viewport ?? { height: availableHeight }, drawX, drawX + replyWidth);
+            });
+          }
+        }
         cursor = top + height + rowGap;
       },
       stats(entries, { columns = entries.length, style } = {}) {
@@ -2723,15 +2888,50 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         });
       },
       indexRows(items, onSelect) {
-        const height = Math.max(48, Math.ceil(28 * 1.36 * scale() + 7));
-        scrollChoices(items, onSelect, 1, height, (layer, { icon, label, status }, left, top, span) => {
+        const titleSize = 15 * scale();
+        const statusSize = 13 * scale();
+        const titleHeight = Math.ceil(titleSize * 1.36);
+        const statusHeight = Math.ceil(statusSize * 1.36);
+        const statusWidth = Math.max(1, width - 66);
+        const style = new TextStyle(textStyle(statusWidth, { size: statusSize, wrap: false }));
+        const measure = (text) => CanvasTextMetrics.measureText(text, style).width;
+        const layouts = new Map();
+        const heights = items.map((item) => {
+          const text = number(item.status);
+          const ranges = [];
+          for (const term of item.statusEmphasis ?? []) {
+            if (!term) continue;
+            for (let at = text.indexOf(term); at !== -1; at = text.indexOf(term, at + term.length)) ranges.push([at, at + term.length]);
+          }
+          const lines = [[]];
+          let lineText = '';
+          let offset = 0;
+          for (const glyph of Array.from(text)) {
+            if (lineText && measure(lineText + glyph) > statusWidth) { lines.push([]); lineText = ''; }
+            const red = ranges.some(([start, end]) => offset >= start && offset < end);
+            const runs = lines.at(-1);
+            if (!runs.length || runs.at(-1).red !== red) runs.push({ text: '', red });
+            runs.at(-1).text += glyph;
+            lineText += glyph;
+            offset += glyph.length;
+          }
+          layouts.set(item, lines);
+          return Math.max(48, titleHeight + lines.length * statusHeight + 11);
+        });
+        scrollChoices(items, onSelect, 1, heights, (layer, item, left, top, span, height) => {
           panel(layer, left, top, span, height, palette.card, palette.line, 9);
-          if (icon) drawImage(layer, icon, left + 7, top + 6, 32, height - 12);
-          const title = textNode(layer, label, left + 47, top + 4, span - 66,
-            { size: 15 * scale(), weight: '800', wrap: false });
+          if (item.icon) drawImage(layer, item.icon, left + 7, top + (height - 32) / 2, 32, 32);
+          const title = textNode(layer, item.label, left + 47, top + 4, span - 66,
+            { size: titleSize, weight: '800', wrap: false });
           if (title.width > span - 66) title.style.fontSize *= (span - 66) / title.width;
-          textNode(layer, status, left + 47, top + height - 5 - Math.ceil(13 * scale() * 1.36), span - 66,
-            { size: 13 * scale(), color: palette.muted });
+          layouts.get(item).forEach((runs, row) => {
+            let prefix = '';
+            for (const run of runs) {
+              textNode(layer, run.text, left + 47 + (prefix ? measure(prefix) : 0), top + 7 + titleHeight + row * statusHeight,
+                statusWidth, { size: statusSize, wrap: false, color: run.red ? palette.red : palette.muted });
+              prefix += run.text;
+            }
+          });
           if (onSelect) directionIcon(layer, 'right', left + span - 20, top + (height - 18) / 2, 15, 18,
             { color: palette.green });
         });
@@ -3208,6 +3408,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       loadImage: loadAnimationImage,
       markDirty,
       retainedAtmosphere: parkedEstateAtmosphere,
+      merchantUnlocked: merchantStatus(world).unlocked,
       researchReady,
       returnGiftSites: new Set(Object.entries(estateDestinations)
         .filter(([, page]) => claimableReturns.has(page)).map(([site]) => site)),
@@ -3513,6 +3714,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     countdowns.clear();
     updateDialogSampleProgress = undefined;
     managerSpeechMount = undefined;
+    managerCardSpeech?.pause();
+    managerCardSpeech = undefined;
+    managerCardSpeechMount = undefined;
+    managerBannerMount = undefined;
+    managerPortraitMounts = new Map();
     for (const plot of [...activePlots]) parkPlot(plot);
     syncPlotVisibility = undefined;
     visiblePlotIds.clear();
@@ -3793,6 +3999,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   });
   document.addEventListener?.('visibilitychange', () => {
     markDirty();
+    pauseManagerSpeech();
     syncPlotVisibility?.();
     // Browsers may suspend the ticker while hidden, so reset at the visibility
     // event as well as inactive ticks instead of counting any background gap.
@@ -3815,13 +4022,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const now = performance.now();
     openingScreen.update(now, !needsRender && !pendingRender && !building);
     const speechVisible = !openingScreen.blocking && managerSpeechMount?.visible() && !document.hidden && !status?.busy &&
-      !pendingModal && !navigationMenu;
+      !navigationMenu;
     if (!speechVisible && managerSpeechWasVisible) pauseManagerSpeech();
     managerSpeechWasVisible = speechVisible;
     const speechUpdate = managerSpeech?.update(now, speechVisible);
     if (speechUpdate?.changed) managerSpeechMount?.startLine();
     else if (speechUpdate) managerSpeechMount?.reveal();
     if (speechUpdate?.audible) audio.typeDialogue?.();
+    const cardVisible = !openingScreen.blocking && managerCardSpeechMount?.visible() && !document.hidden && !status?.busy &&
+      !navigationMenu;
+    const cardSpeechUpdate = managerCardSpeech?.update(now, cardVisible);
+    if (cardSpeechUpdate?.changed) managerCardSpeechMount?.startLine();
+    else if (cardSpeechUpdate) managerCardSpeechMount?.reveal();
     const clock = world && !status?.busy && !document.hidden ? updateBatchDisplays(now) : undefined;
     if (sampleDialog(now)) requestRender();
     if (clock !== undefined) updateDialogSampleProgress?.(now);
@@ -3990,6 +4202,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;
+      if (world && !status?.busy) openingScreen.setWorld(world);
       openingScreen.pageState(Boolean(world && !status?.busy), !world && status && !status.busy ? status : undefined);
       if (structural) resize(nextLayout);
       if (world && !status?.busy && !document.hidden) updateBatchDisplays(performance.now());

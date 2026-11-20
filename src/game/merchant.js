@@ -49,8 +49,7 @@ export function merchantStatus(world) {
   const unlocked = producedCount >= merchantProductionGate && salesLevel12 > merchantSalesGate;
   const restocksRemaining = BigInt(Math.max(0, merchantRestockLimit(world) - manualUsed));
   const freeRestockAvailable = Boolean(day && !freeUsed);
-  const lockedReason = !unlocked ? 'requirements' : !batch && !freeRestockAvailable ? 'free-used' :
-    !batch ? 'no-supply' : undefined;
+  const lockedReason = !unlocked ? 'requirements' : !batch ? 'no-supply' : undefined;
   return { unlocked, producedCount, salesLevel12, salesTotal, directSales, batch, restocksRemaining, freeRestockAvailable,
     day, run: world.completedRuns, version, lockedReason };
 }
@@ -139,9 +138,13 @@ export function synchronizeMerchant(world, day) {
   const merchant = world.merchant;
   const dateChanged = validCalendarDay(day) && (!merchant.day || day > merchant.day);
   if (dateChanged) world.merchant = { ...merchant, day, freeUsed: false, manualUsed: 0 };
-  if (!world.merchant.day || world.merchant.freeUsed || !world.accountSeed) return dateChanged;
-  const { unlocked, salesTotal } = merchantStatus(world);
-  return (unlocked && fullRestock(world, salesTotal, false)) || dateChanged;
+  if (!world.merchant.day || !world.accountSeed) return dateChanged;
+  const { unlocked, salesTotal, batch } = merchantStatus(world);
+  if (!unlocked) return dateChanged;
+  // Opening this run must create a batch even if today's free change was already used.
+  if (!batch) return fullRestock(world, salesTotal, false) || dateChanged;
+  if (world.merchant.freeUsed) return dateChanged;
+  return fullRestock(world, salesTotal, false) || dateChanged;
 }
 
 export function restockMerchant(world, expected) {

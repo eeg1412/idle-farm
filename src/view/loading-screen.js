@@ -1,15 +1,17 @@
 import { Container, Graphics, Rectangle, Sprite, Text } from 'pixi.js';
 import { loadingLayout, LOADING_ART_VERSION } from './loading-layout.js';
+import loadingScenes from '../content/loading-scenes.json' with { type: 'json' };
+import { managerIds, managerDefaultGenders } from '../game/managers.js';
 
 const fontFamily = 'system-ui, "PingFang SC", "Microsoft YaHei", sans-serif';
-const assetUrl = (name) => new URL(`./art/loading/${name}.webp?game=1${name === 'managers' ? `&v=${LOADING_ART_VERSION}` : ''}`, document.baseURI).href;
+const assetUrl = (path, version = '') => new URL(`./${path}?game=1${version ? `&v=${version}` : ''}`, document.baseURI).href;
 
 // A single Pixi overlay shares the game's canvas; it never pauses page construction.
 export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryStartup, onComplete }) {
   const layer = app.stage.addChild(new Container({ label: 'opening-screen' }));
   layer.eventMode = 'static';
   const shade = layer.addChild(new Graphics());
-  const art = ['background', 'managers', 'logo'].map((name) => {
+  const art = ['scene', 'logo'].map((name) => {
     const sprite = layer.addChild(new Sprite({ label: 'opening-' + name, roundPixels: true }));
     sprite.visible = false;
     sprite.eventMode = 'none';
@@ -34,6 +36,7 @@ export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryS
     fontFamily, fontSize: 14, fill: 0xfff4d6,
   } }));
   let viewport;
+  let selectedScene;
   let shownMs = 0;
   let lastTick;
   let wasVisible = !document.hidden;
@@ -81,23 +84,17 @@ export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryS
     layer.hitArea = new Rectangle(0, 0, app.screen.width, app.screen.height);
     mask.clear().rect(x, y, width, height).fill(0xffffff);
     const hasFailure = tasks.snapshot().failed.length > 0 || Boolean(startupProblem);
-    let geometry = loadingLayout(viewport, { failed: hasFailure, problem: Boolean(startupProblem) });
+    let geometry = loadingLayout(viewport, { scene: selectedScene, failed: hasFailure, problem: Boolean(startupProblem) });
     label.style.wordWrapWidth = geometry.label.width;
     label.style.fontSize = geometry.label.fontSize;
     label.anchor.set(0.5, 0);
-    geometry = loadingLayout(viewport, { failed: hasFailure, problem: Boolean(startupProblem), labelHeight: label.height, labelWidth: label.width });
+    geometry = loadingLayout(viewport, { scene: selectedScene, failed: hasFailure, problem: Boolean(startupProblem), labelHeight: label.height, labelWidth: label.width });
     for (const [index, sprite] of art.entries()) {
       if (!sprite.visible) continue;
       const texture = sprite.texture;
-      if (index === 0) {
-        const scale = Math.max(width / texture.width, height / texture.height);
-        sprite.scale.set(scale);
-        sprite.position.set(x + (width - sprite.width) / 2, y + (height - sprite.height) / 2);
-      } else {
-        const box = index === 1 ? geometry.managers : geometry.logo;
-        sprite.scale.set(box.width / texture.width);
-        sprite.position.set(box.x, box.y);
-      }
+      const box = index === 0 ? geometry.scene : geometry.logo;
+      sprite.scale.set(box.width / texture.width);
+      sprite.position.set(box.x, box.y);
     }
     const { width: barWidth, x: barX, y: barY } = geometry.bar;
     track.clear().roundRect(barX - 3, barY - 3, barWidth + 6, 17, 8).fill(0x263f29)
@@ -125,7 +122,9 @@ export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryS
   function loadArt() {
     art.forEach((sprite, index) => {
       if (sprite.visible) return;
-      load(assetUrl(['background', 'managers', 'logo'][index])).then((texture) => {
+      if (index === 0 && !selectedScene) return;
+      const url = index === 0 ? assetUrl(selectedScene.path, LOADING_ART_VERSION) : assetUrl('art/loading/logo.webp');
+      load(url).then((texture) => {
         if (!texture || texture.destroyed || done || sprite.destroyed) return;
         sprite.texture = texture;
         sprite.visible = true;
@@ -137,6 +136,17 @@ export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryS
   return {
     get blocking() { return !done && !revealedProblem; },
     get complete() { return done; },
+    setWorld(world) {
+      // Called only after restoration/new-save creation has resolved. Lock the one
+      // startup draw, including its selected gender, across resource retries.
+      if (selectedScene || done || !world) return;
+      const role = managerIds[Math.floor(Math.random() * managerIds.length)];
+      const savedGender = world.managers?.roles?.[role]?.gender;
+      const gender = savedGender === 'female' || savedGender === 'male' ? savedGender : managerDefaultGenders[role];
+      selectedScene = loadingScenes.scenes.find((scene) => scene.role === role && scene.gender === gender);
+      loadArt();
+      arrange();
+    },
     resize(next) { viewport = next; if (!done) arrange(); },
     retryArt: loadArt,
     retryFailed,

@@ -45,24 +45,36 @@ export function createManagerSpeechQueue(role, gender) {
 
   function activate(next) {
     if (active === next) return;
+    // A sentence reached through another line starts a fresh telling. Pausing or
+    // rebuilding its mount never changes the active entry, so it keeps progress.
+    if (next) {
+      next.shown = 0;
+      next.typedMs = 0;
+      next.holdMs = 0;
+    }
     active = next;
     lastTick = undefined;
     changed = true;
   }
 
+  function chooseActive() {
+    activate(reply && (!base || reply.line.priority >= base.line.priority) ? reply : base);
+  }
+
   function enqueue(line) {
     reply = entry(line, 3);
-    activate(reply);
+    chooseActive();
   }
 
   function offer(line) {
     if (line && lineKey(line) === base?.key) {
       // Priority can change without restarting the same sentence.
       base.line.priority = line.priority ?? 0;
+      chooseActive();
       return;
     }
     base = line ? entry(line, 0) : undefined;
-    if (!reply) activate(base);
+    chooseActive();
   }
 
   function select(line) {
@@ -74,6 +86,7 @@ export function createManagerSpeechQueue(role, gender) {
   return {
     role, gender, offer, enqueue, select,
     get line() { return active?.line; },
+    get replying() { return Boolean(reply); },
     get shown() { return active?.shown ?? 0; },
     pause() { lastTick = undefined; },
     update(now, visible) {
@@ -90,9 +103,9 @@ export function createManagerSpeechQueue(role, gender) {
       if (!active) return;
       if (active.shown === active.line.glyphs.length) {
         active.holdMs = Math.min(readTimeMs, active.holdMs + elapsed);
-        if (active.holdMs < readTimeMs || !reply) return;
+        if (active.holdMs < readTimeMs || active !== reply) return;
         reply = undefined;
-        activate(base);
+        chooseActive();
         // The restored sentence starts measuring visible time at this tick.
         lastTick = now;
         changed = false;

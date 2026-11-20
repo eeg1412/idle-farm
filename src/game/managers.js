@@ -210,16 +210,40 @@ export function claimManagerGift(world, expected) {
   if (!day || typeof id !== 'string' || !Object.hasOwn(roles, id) || expected.day !== day ||
     expected.run !== world.completedRuns || expected.sequence !== roles[id].sequence) return false;
   const role = roles[id];
-  const candidates = returnCandidates(world, role.readyReturn);
+  let candidates = returnCandidates(world, role.readyReturn);
   if (!candidates.length) return false;
-  const random = accountRandom(world.accountSeed, `manager-return:${id}`, role.sequence);
-  const { itemId, price } = candidates[Number(random(BigInt(candidates.length)))];
-  const count = role.readyReturn / (10n * price);
-  const value = count * 10n * price;
-  world.inventory[itemId] = (world.inventory[itemId] ?? 0n) + count;
-  setRelationship(world, id, { ...role, readyReturn: role.readyReturn - value, sequence: role.sequence + 1n });
+  let balance = role.readyReturn;
+  let sequence = role.sequence;
+  let value = 0n;
+  const items = [];
+  const byItem = new Map();
+  // Keep one price snapshot, but use each legacy draw's own persistent sequence.
+  while (candidates.length) {
+    const random = accountRandom(world.accountSeed, `manager-return:${id}`, sequence);
+    const { itemId, price } = candidates[Number(random(BigInt(candidates.length)))];
+    const count = balance / (10n * price);
+    const itemValue = count * 10n * price;
+    const previous = byItem.get(itemId);
+    if (previous) {
+      previous.count += count;
+      previous.value += itemValue;
+    } else {
+      const item = { itemId, count, value: itemValue };
+      items.push(item);
+      byItem.set(itemId, item);
+    }
+    balance -= itemValue;
+    value += itemValue;
+    sequence += 1n;
+    candidates = candidates.filter(({ price: candidatePrice }) => 10n * candidatePrice <= balance);
+  }
+
+  const inventory = { ...world.inventory };
+  for (const { itemId, count } of items) inventory[itemId] = (inventory[itemId] ?? 0n) + count;
+  world.inventory = inventory;
+  setRelationship(world, id, { ...role, readyReturn: balance, sequence });
   settleProduction(world);
-  return { id, itemId, count, value };
+  return { id, items, value };
 }
 
 export function switchManagerAppearance(world, id) {

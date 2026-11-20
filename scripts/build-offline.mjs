@@ -23,6 +23,10 @@ await Promise.all(cropAtlasFiles.map((name) => {
   return rm(`${cropAtlasDir}/${name}`);
 }));
 
+// The opening now requests one complete scene and the original logo. Keep the
+// superseded three-layer art in public/source only, outside the published build.
+await Promise.all(['background', 'managers'].map((name) => rm(`dist/art/loading/${name}.webp`, { force: true })));
+
 // PixiJS chunks only fetched on demand (no WebGL, or accessibility enabled) stay in dist but are not precached.
 const onDemandChunk = /^dist\/assets\/(?:WebGPURenderer|CanvasRenderer|AccessibilitySystem)-[\w-]+\.js$/;
 

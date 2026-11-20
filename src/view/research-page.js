@@ -273,7 +273,7 @@ function techRequirements(ui, definition) {
   ui.detailRows(rows, { variant: 'stack' });
 }
 
-function techDetails(ui, definition) {
+function techDetails(ui, definition, state) {
   const offer = techOffer(ui.w, definition.key);
   if (!offer) return;
   ui.feature(techIcon(definition), (content) => {
@@ -289,21 +289,38 @@ function techDetails(ui, definition) {
   });
   ui.detailRows([techEffect(offer, definition.key)], { variant: 'stack' });
   techRequirements(ui, definition);
-  if (offer.maxed) return;
+  if (offer.maxed) {
+    ui.row('高级研发点', compact(ui.w.researchPoints));
+    return;
+  }
   ui.materialTable([{ id: 'research-point', label: '高级研发点', owned: ui.w.researchPoints, needed: offer.cost }],
     { style: 'research' });
   ui.buttons([
     {
-      label: '确认升级', tone: 'gold', disabled: !offer.eligible || !offer.affordable,
+      label: state.pending ? '升级中…' : '确认升级', tone: 'gold', disabled: state.pending || !offer.eligible || !offer.affordable,
       onClick: async () => {
-        if (await ui.action('upgradeTech', definition.key)) ui.close();
+        if (state.pending || !ui.isActive()) return;
+        const current = techOffer(ui.currentWorld(), definition.key);
+        if (!current?.eligible || !current.affordable || current.maxed || current.level !== offer.level || current.cost !== offer.cost) {
+          ui.refresh();
+          return;
+        }
+        state.pending = true;
+        ui.refresh();
+        try {
+          await ui.action('upgradeTech', definition.key);
+        } finally {
+          state.pending = false;
+          if (ui.isActive()) ui.refresh();
+        }
       },
     },
   ], { style: 'production' });
 }
 
 function showTech(ui, definition) {
-  ui.dialog(definition.name, (dialog) => techDetails(dialog, definition));
+  const state = { pending: false };
+  ui.dialog(definition.name, (dialog) => techDetails(dialog, definition, state));
 }
 
 function researchNodes(w) {

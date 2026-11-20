@@ -2,6 +2,7 @@ import { activeGuideTask, objectives } from '../game/objectives.js';
 import { catalog, facilityOffer, stationOffer, stationUpgradeOffer, stationRequirements } from '../game/world.js';
 import { techDefinitions, techOffer } from '../game/advancement.js';
 import { qualityDrawOffer } from '../game/quality.js';
+import { helpVoice, productionHelpCopy, taskHelpCopy, tutorialDestination, otherStationCopy, researchHelpCopy, contextHelpCopy } from './manager-help-copy.js';
 
 const facilityKinds = { 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M' };
 const stationKinds = { 加工: 'I', 精制: 'P' };
@@ -37,112 +38,113 @@ function slotsFor(world, kind) {
   return world.facilities[kind] ?? world.stations[kind];
 }
 
-function purchaseStep(world, kind) {
+function purchaseStep(world, kind, speaker) {
   const quote = Object.hasOwn(world.facilities, kind) ? facilityOffer(world, kind) : stationOffer(world, kind);
-  if (quote && !quote.affordable) return '金币还不够，先去仓库点物品的「出售」出货，再回来点「' + purchaseNames[kind] + '」。';
-  return '点页面下方的「' + purchaseNames[kind] + '」，核对金额后点「确认购买」。';
+  return productionHelpCopy(speaker, quote && !quote.affordable ? 'funds' : 'buy', { purchase: purchaseNames[kind] });
 }
 
-function assignStep(world, kind, id) {
+function assignStep(world, kind, id, speaker) {
   const slots = slotsFor(world, kind);
   const name = catalog.items[id]?.subject ?? catalog.items[id]?.name;
-  if (!slots.length) return purchaseStep(world, kind);
-  if (!world.unlocked.includes(id)) return '先去研究的「品种配方」，点「' + catalog.items[id].name + '」查看条件并点「研发」，再回来安排生产。';
+  if (!slots.length) return purchaseStep(world, kind, speaker);
+  if (!world.unlocked.includes(id)) return productionHelpCopy(speaker, 'locked', { name: catalog.items[id].name });
   const assigned = slots.find((slot) => slot.recipe === id);
-  if (assigned?.batch) return '「' + name + '」正在生产，倒计时结束后会自动入库。';
+  if (assigned?.batch) return productionHelpCopy(speaker, 'running', { name });
   if (assigned) {
     const missing = (kind === 'I' || kind === 'P') && stationRequirements(world, id, assigned.level)
       .find(({ owned, needed }) => owned < needed);
-    return missing ? '「' + name + '」在等材料，点它的「查看来源」，先补足「' + catalog.items[missing.id].name + '」；材料齐后会自动开工。'
-      : '「' + name + '」已安排好，材料齐备会自动开工，产出自动入库。';
+    return missing ? productionHelpCopy(speaker, 'missing', {
+      name, index: slots.indexOf(assigned) + 1, place: placeNames[kind], item: catalog.items[missing.id].name,
+    }) : productionHelpCopy(speaker, 'ready', { name });
   }
   const index = Math.max(0, slots.findIndex((slot) => !slot.recipe));
   const button = slots[index].recipe ? replacementNames[kind] : assignmentNames[kind];
-  return '点第' + (index + 1) + '个' + placeNames[kind] + '的「' + button + '」，在列表点「' + name + '」安排生产。';
+  return productionHelpCopy(speaker, 'empty', { index: index + 1, place: placeNames[kind], button, name });
 }
 
-function upgradeStep(world, kind, target) {
+function upgradeStep(world, kind, target, speaker) {
   const slots = slotsFor(world, kind);
-  if (!slots.length) return purchaseStep(world, kind);
+  if (!slots.length) return purchaseStep(world, kind, speaker);
   const quote = world.facilities[kind] ? facilityOffer : stationUpgradeOffer;
   let index = slots.findIndex((slot, index) => BigInt(slot.level) < target && quote(world, kind, index, 1n)?.affordable);
   if (index < 0) index = slots.findIndex((slot) => BigInt(slot.level) < target);
-  if (index < 0) return '这页的等级已达标，去另一类工位点「升级」，核对后点「确认升级」。';
+  if (index < 0) return otherStationCopy(speaker);
   const empty = world.facilities[kind] && !slots[index].recipe;
   const entry = empty ? '点第' + (index + 1) + '个' + placeNames[kind] + '的图片打开详情，再点「升级」'
     : '点第' + (index + 1) + '个' + placeNames[kind] + '的「升级」';
-  return entry + '，选「+1」并点「确认升级」，逐次升到' + target + '级。';
+  return productionHelpCopy(speaker, 'upgrade', { index: index + 1, place: placeNames[kind], target, entry });
 }
 
 function firstUnlocked(world, predicate) {
   return world.unlocked.find((id) => predicate(catalog.items[id]));
 }
 
-function taskInstruction(world, task, page) {
+function taskInstruction(world, task, page, speaker) {
   switch (task.id) {
-    case 'firstHarvest': return assignStep(world, 'C', 'C01');
-    case 'firstFlour': return assignStep(world, 'I', 'I01');
-    case 'breadRecipe': return '打开「品种配方」，点「乡村面包」查看所需金币和材料，备齐后点「研发」。';
-    case 'firstBread': return assignStep(world, 'P', 'P01');
-    case 'firstSale': return '点有库存物品的「出售」，选好数量，再点「确认出售」完成第一次出货。';
-    case 'firstPlot': return purchaseStep(world, 'C');
-    case 'firstUpgrade': return upgradeStep(world, 'C', 2n);
-    case 'firstSeed': return '打开「品种配方」，点「甘蔗」查看条件，备齐金币和材料后点「研发」。';
+    case 'firstHarvest': return assignStep(world, 'C', 'C01', speaker);
+    case 'firstFlour': return assignStep(world, 'I', 'I01', speaker);
+    case 'breadRecipe': case 'firstSale': case 'firstSeed': case 'reserveStock': case 'recipeTrio': case 'codex20':
+    case 'firstTech': case 'delegationTech': return taskHelpCopy(speaker, task.id);
+    case 'firstBread': return assignStep(world, 'P', 'P01', speaker);
+    case 'firstPlot': return purchaseStep(world, 'C', speaker);
+    case 'firstUpgrade': return upgradeStep(world, 'C', 2n, speaker);
     case 'firstSwitch': {
       const alternative = world.unlocked.find((id) => id !== 'C01' && catalog.items[id]?.kind === 'C');
-      return alternative ? assignStep(world, 'C', alternative) : '先去研究的「品种配方」点「甘蔗」并「研发」，再回田地点击「换种」选择甘蔗。';
+      return alternative ? assignStep(world, 'C', alternative, speaker) : taskHelpCopy(speaker, 'firstSwitch');
     }
-    case 'reserveStock': return '点任一物品打开详情，点「加工保留量」，填入大于0的数量并点「保存」。';
-    case 'addProcessor': return purchaseStep(world, 'I');
-    case 'addRefinery': return purchaseStep(world, 'P');
-    case 'stationUpgrade': return upgradeStep(world, page === '精制' ? 'P' : 'I', 2n);
-    case 'recipeTrio': return '在「品种配方」点尚未研发的商品配方，查看材料后点「研发」，累计解锁3种商品配方。';
-    case 'fieldLevel10': return upgradeStep(world, 'C', 10n);
-    case 'codex20': return '点尚未收录的物品，点「查看研发」检查条件，再点「研发」；累计解锁20种物品就能完成收录。';
-    case 'livestockIntro': case 'buildLivestock': return purchaseStep(world, 'L');
-    case 'fishIntro': case 'buildFish': return purchaseStep(world, 'F');
-    case 'miningIntro': case 'buildMine': return purchaseStep(world, 'M');
+    case 'addProcessor': return purchaseStep(world, 'I', speaker);
+    case 'addRefinery': return purchaseStep(world, 'P', speaker);
+    case 'stationUpgrade': return upgradeStep(world, page === '精制' ? 'P' : 'I', 2n, speaker);
+    case 'fieldLevel10': return upgradeStep(world, 'C', 10n, speaker);
+    case 'livestockIntro': case 'buildLivestock': return purchaseStep(world, 'L', speaker);
+    case 'fishIntro': case 'buildFish': return purchaseStep(world, 'F', speaker);
+    case 'miningIntro': case 'buildMine': return purchaseStep(world, 'M', speaker);
     case 'collectLivestock': case 'collectFish': case 'collectMining': {
       const kind = { collectLivestock: 'L', collectFish: 'F', collectMining: 'M' }[task.id];
       const id = firstUnlocked(world, (item) => item.kind === kind);
-      return id ? assignStep(world, kind, id) : '先去研究的「品种配方」研发对应品种，再回这里点「' + assignmentNames[kind] + '」。';
+      return id ? assignStep(world, kind, id, speaker) : taskHelpCopy(speaker, 'collectLocked', {
+        branch: task.branch, button: assignmentNames[kind],
+      });
     }
     case 'livestockUpgrade': case 'fishUpgrade': case 'miningUpgrade':
-      return upgradeStep(world, { livestockUpgrade: 'L', fishUpgrade: 'F', miningUpgrade: 'M' }[task.id], 5n);
+      return upgradeStep(world, { livestockUpgrade: 'L', fishUpgrade: 'F', miningUpgrade: 'M' }[task.id], 5n, speaker);
     case 'firstLivestockProcessing': case 'firstFishProcessing': case 'firstMiningProcessing': {
       const kind = { firstLivestockProcessing: 'IL', firstFishProcessing: 'IF', firstMiningProcessing: 'IM' }[task.id];
       const id = firstUnlocked(world, (item) => item.kind === kind);
-      return id ? assignStep(world, 'I', id) : '先去研究的「品种配方」研发' + task.branch + '加工配方，再回加工位点「选择配方」。';
+      return id ? assignStep(world, 'I', id, speaker) : taskHelpCopy(speaker, 'processingLocked', { branch: task.branch });
     }
     case 'firstMixedProduct': {
       const id = firstUnlocked(world, (item) => item.kind.startsWith('P') && item.sources.length >= 2);
-      return id ? assignStep(world, 'P', id) : '先去研究的「品种配方」研发多来源的商品配方，再回精制位点「选择配方」。';
+      return id ? assignStep(world, 'P', id, speaker) : taskHelpCopy(speaker, 'mixedLocked');
     }
-    case 'newFarm': return !task.gateMet
-      ? '先继续生产，累计产值达到任务门槛后，再点「出售庄园」核对收益并「确认出售」。'
-      : '先核对本页预计收益与重置项目，再点「出售庄园」，确认后点「确认出售」。';
-    case 'firstTech': return '打开「经营改良」，点一项未满级改良，查看升级需要的高级研发点，备齐后点「确认升级」。';
-    case 'delegationTech': return '打开「经营改良」，点「代管时长」查看所需高级研发点，备齐后点「确认升级」。';
+    case 'newFarm': return taskHelpCopy(speaker, task.gateMet ? 'newFarm' : 'newFarmGate');
     default: return null;
   }
 }
 
-export function managerTutorial(world, page) {
+const pageRoles = { 任务: 'tasks', 田地: 'field', 畜牧: 'livestock', 鱼池: 'fish', 矿洞: 'mine',
+  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 图鉴: 'estate', 出售庄园: 'estate' };
+const speakerKey = (speaker) => speaker.role + ':' + speaker.gender;
+
+export function managerTutorial(world, page, speaker) {
+  speaker = helpVoice(speaker, pageRoles[page]);
   const state = guideState(world);
   const task = page === '任务' ? state.active : state.active && matchesPage(state.active, page) ? state.active
     : state.branches.find((task) => matchesPage(task, page));
   if (!task) return null;
   const destination = task.tab ?? task.target;
-  const text = taskInstruction(world, task, page === '任务' ? destination : page);
+  const text = taskInstruction(world, task, page === '任务' ? destination : page, speaker);
   if (!text) return null;
-  const prefix = page === '任务' ? '先去「' + destination + '」。' : '';
-  return { ...tutorial(prefix + text, [...new Set([...text.matchAll(/「([^」]+)」/g)].map((match) => match[1]))]), taskId: task.id };
+  const spoken = page === '任务' ? tutorialDestination(speaker, destination, text) : text;
+  return { ...tutorial(spoken, [...new Set([...spoken.matchAll(/「([^」]+)」/g)].map((match) => match[1]))]), taskId: task.id };
 }
 
-export function managerUpgradeMessages(world, page) {
+export function managerUpgradeMessages(world, page, speaker) {
+  speaker = helpVoice(speaker, pageRoles[page]);
+  const key = page + ':' + speakerKey(speaker);
   let cached = upgradeCache.get(world);
   if (!cached) { cached = new Map(); upgradeCache.set(world, cached); }
-  if (cached.has(page)) return cached.get(page);
+  if (cached.has(key)) return cached.get(key);
   const kind = facilityKinds[page] ?? stationKinds[page];
   const messages = [];
   if (kind) {
@@ -151,32 +153,33 @@ export function managerUpgradeMessages(world, page) {
     const quote = facilities ? facilityOffer : stationUpgradeOffer;
     for (const [index, slot] of slots.entries()) {
       if (!quote(world, kind, index, 1n)?.affordable) continue;
-      const entry = facilities && !slot.recipe ? '点第' + (index + 1) + '个' + placeNames[kind] + '图片，选「升级」'
-        : '第' + (index + 1) + '个' + placeNames[kind] + '可升级啦，点「升级」';
-      messages.push({ text: entry + '再「确认升级」，增加产出。',
+      const entry = facilities && !slot.recipe ? '点第' + (index + 1) + '个' + placeNames[kind] + '的图片打开详情，再点「升级」'
+        : '点第' + (index + 1) + '个' + placeNames[kind] + '的「升级」';
+      messages.push({ text: productionHelpCopy(speaker, 'upgradeReady', { index: index + 1, place: placeNames[kind], entry }),
         priority: 1, emphasis: ['升级', '确认升级'], expression: 'smile' });
     }
   }
-  cached.set(page, messages);
+  cached.set(key, messages);
   return messages;
 }
 
-export function managerUpgradeHelp(world, page) {
-  return managerUpgradeMessages(world, page)[0] ?? null;
+export function managerUpgradeHelp(world, page, speaker) {
+  return managerUpgradeMessages(world, page, speaker)[0] ?? null;
 }
 
-export function managerResearchHelp(world, tab) {
+export function managerResearchHelp(world, tab, speaker) {
+  speaker = helpVoice(speaker, 'research');
+  const key = tab + ':' + speakerKey(speaker);
   let cached = researchHelpCache.get(world);
   if (!cached) { cached = new Map(); researchHelpCache.set(world, cached); }
-  if (cached.has(tab)) return cached.get(tab);
+  if (cached.has(key)) return cached.get(key);
   const messages = [];
   if (tab === '品质') {
     const single = qualityDrawOffer(world, 'single');
     if (single?.affordable) {
       const all = qualityDrawOffer(world, 'all');
       messages.push({
-        text: '普通研发点够了，点「抽取一次」提升品质。'
-          + (all.affordable && all.count > 1n ? '也可「全部抽取」连抽。' : ''),
+        text: researchHelpCopy(speaker, 'quality', { all: all.affordable && all.count > 1n }),
         emphasis: ['抽取一次', ...(all.affordable && all.count > 1n ? ['全部抽取'] : [])],
         expression: 'smile', priority: 1,
       });
@@ -186,11 +189,22 @@ export function managerResearchHelp(world, tab) {
       const offer = techOffer(world, definition.key);
       if (!offer?.eligible || !offer.affordable) continue;
       messages.push({
-        text: '「' + definition.name + '」可以升级啦，点开核对效果，再点「确认升级」。',
+        text: researchHelpCopy(speaker, 'tech', { name: definition.name }),
         emphasis: ['经营改良', definition.name, '确认升级'], expression: 'smile', priority: 1,
       });
     }
   }
-  cached.set(tab, messages);
+  cached.set(key, messages);
   return messages;
+}
+
+export function managerContextHelp(role, gender, type, details = {}) {
+  const text = contextHelpCopy(role, gender, type, details);
+  if (!text) return null;
+  const introductionEmphasis = { 管理员管理: ['好感', '今日心愿', '送礼', '切换角色'],
+    统计: ['生产状态', '库存估值', '累计收入'], 出售庄园历史: ['时间', '产值'],
+    图鉴: ['材料', '来源', '用途', '研发条件'], 出售庄园: ['高级研发点', '新一轮配置'] };
+  const emphasis = type === 'introduction' ? introductionEmphasis[details.page] ?? []
+    : [...new Set([...text.matchAll(/「([^」]+)」/g)].map((match) => match[1]))];
+  return { text, emphasis, expression: type === 'missing' ? 'sad' : 'smile' };
 }

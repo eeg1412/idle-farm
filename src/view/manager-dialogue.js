@@ -1,3 +1,5 @@
+import { characterHelpCopy } from './manager-help-copy.js';
+
 // Lines and bios follow the two character designs supplied for each role.
 export const managerCharacters = {
   tasks: {
@@ -5,6 +7,13 @@ export const managerCharacters = {
     female: {
       name: '露斐',
       bio: '擅长协调庄园里的活儿。每天把委托捋顺，最怕有人忙起来就忘了先后。',
+      returnPrompts: [
+        '手里的事先缓缓，来收份回礼。',
+        '你的回礼备好了，过来看看吧。',
+        '我也想照顾你一回，请收下。',
+        '忙里留点高兴，回礼在这儿。',
+        '来坐坐，顺便把我的心意带上。',
+      ],
       hello: [
         '来啦，要一起看看委托吗？',
         '别着急，我们一件件安排。',
@@ -17,7 +26,7 @@ export const managerCharacters = {
         '能见到你，我就放心些了。',
         '手头事情多的时候，记得来找我。',
       ],
-      help: (name) => '接下来可以做「' + name + '」。',
+      help: characterHelpCopy.tasks.female,
       thanks: [
         '谢谢你，我会好好收下这份心意。',
         '还特地想着我，真是费心了。',
@@ -46,6 +55,13 @@ export const managerCharacters = {
     male: {
       name: '维诺',
       bio: '总带着账本，办事一丝不苟。只要条目说得清楚，再多委托也难不倒他。',
+      returnPrompts: [
+        '回礼已备妥，请来领取。',
+        '这份记在你名下，请收下。',
+        '东西已经理齐，等你来取。',
+        '我先合上账本，给你拿回礼。',
+        '这次由我致谢，请收好这份礼。',
+      ],
       hello: [
         '请坐，有什么事项需要商量？',
         '事情写清楚，就容易办妥。',
@@ -58,7 +74,7 @@ export const managerCharacters = {
         '你好，先从一件明确的事开始吧。',
         '坐这边，纸和笔都在手旁。',
       ],
-      help: (name) => '账本上下一项是「' + name + '」。',
+      help: characterHelpCopy.tasks.male,
       thanks: [
         '礼物收到了，谢谢你的心意。',
         '我会妥善收好，请放心。',
@@ -90,6 +106,13 @@ export const managerCharacters = {
     female: {
       name: '瑟菈',
       bio: '掌管庄园的钥匙与图册，待人讲礼数，对庄园的伙计格外上心。',
+      returnPrompts: [
+        '备了一份薄礼，请你笑纳。',
+        '承蒙照顾，也请收下我的心意。',
+        '你的回礼已妥当，方便时来取吧。',
+        '请到这边来，我有份礼要给你。',
+        '难得有机会致谢，请收下这份。',
+      ],
       hello: [
         '欢迎，请进来坐一会儿。',
         '庄园的事情，我们可以慢慢商量。',
@@ -102,7 +125,7 @@ export const managerCharacters = {
         '路上辛苦了，先缓一缓。',
         '庄园有你惦记着，我也安心。',
       ],
-      help: () => '想出售庄园？可以先看看能拿到多少高级研发点。',
+      help: characterHelpCopy.estate.female,
       thanks: [
         '谢谢你的心意，我会妥善收下。',
         '还让你特地送来，真是费心。',
@@ -131,6 +154,13 @@ export const managerCharacters = {
     male: {
       name: '斐洛',
       bio: '善交际的勘测能手。喜欢摊开地图商量下一步，也很看重大家对他的信任。',
+      returnPrompts: [
+        '来得好，我给你备了回礼！',
+        '先别急着看地图，看看这份礼。',
+        '这回换我表心意，收下吧。',
+        '坐下聊聊，再把回礼一起带走。',
+        '咱们的交情我记着，来收礼吧。',
+      ],
       hello: [
         '来得正好，坐下陪我聊聊。',
         '想去庄园哪里走走？',
@@ -143,7 +173,7 @@ export const managerCharacters = {
         '看着这张图，总会生出些新主意。',
         '欢迎回来，咱们接着聊。',
       ],
-      help: () => '出售庄园的账我算好了，先看看能拿到多少高级研发点吧。',
+      help: characterHelpCopy.estate.male,
       thanks: [
         '还给我带了东西，谢谢你。',
         '这份心意够实在，我收下了。',
@@ -175,6 +205,13 @@ export const managerCharacters = {
     female: {
       name: '米绒',
       bio: '热情又护短，最放心不下栏里的幼畜。忙完了也会抱着小羊坐一会儿。',
+      returnPrompts: [
+        '过来呀，给你的回礼备好啦！',
+        '这份是你的，我也想让你高兴。',
+        '先把小羊抱稳，再拿回礼给你。',
+        '来收礼吧，你也该被惦记着呀。',
+        '有心意要送你，伸手接一下？',
+      ],
       hello: [
         '你来啦，要看看这些小家伙吗？',
         '脚步轻一点，它们会更亲近你。',
@@ -187,7 +224,7 @@ export const managerCharacters = {
         '想学怎么抱小羊吗？我教你。',
         '欢迎回来，给你让个舒服的位置。',
       ],
-      help: (kind) => kind === 'empty' ? '空栏都收拾好了，选只小家伙吧。' : '想添新伙伴的话，可以先盖座养殖场。',
+      help: characterHelpCopy.livestock.female,
       thanks: [
         '谢谢啦，我会仔细收好的。',
         '还有我的礼物呀，真贴心。',
@@ -216,6 +253,13 @@ export const managerCharacters = {
     male: {
       name: '塔珀',
       bio: '带着软缰绳照看畜栏，平时随和，碰上怠慢牲畜的事会格外认真。',
+      returnPrompts: [
+        '给你留了回礼，顺路来拿吧。',
+        '在栏边坐坐？还有份礼给你。',
+        '忙活半天了，来收点心意吧。',
+        '这份我替你放好了，来带走吧。',
+        '也让我回份礼，你收着就好。',
+      ],
       hello: [
         '来啦，先把脚下站稳。',
         '想亲近动物，动作慢些就好。',
@@ -228,7 +272,7 @@ export const managerCharacters = {
         '欢迎回来，进来坐坐。',
         '手放松些，别把自己绷得太紧。',
       ],
-      help: (kind) => kind === 'empty' ? '有空栏，挑个合适的动物住进来。' : '先添个养殖场，才好安排动物。',
+      help: characterHelpCopy.livestock.male,
       thanks: [
         '谢了，我收好了，放心。',
         '专门带给我的？真够意思。',
@@ -260,6 +304,13 @@ export const managerCharacters = {
     female: {
       name: '莉芙',
       bio: '种田细致又耐心，会一遍遍查看幼苗。见着庄稼被糟蹋，平日的好脾气就藏不住了。',
+      returnPrompts: [
+        '回礼备好了，沿田埂慢慢过来。',
+        '我把手擦干净，再把礼递给你。',
+        '这点心意，想请你好好收下。',
+        '来田边歇歇，也把回礼带上吧。',
+        '回礼就在手边，慢慢来拿就好。',
+      ],
       hello: [
         '来啦，小心别踩到田埂边。',
         '想看看种子吗？我陪你挑。',
@@ -272,7 +323,7 @@ export const managerCharacters = {
         '我喜欢在田边慢慢听人说话。',
         '欢迎回来，种篮就在我手边。',
       ],
-      help: (kind) => kind === 'empty' ? '有块地空着，播下种子就能开工。' : '想多种一点，我们得先添块田。',
+      help: characterHelpCopy.field.female,
       thanks: [
         '谢谢，我会小心收好这份礼物。',
         '还记得给我带东西，真有心。',
@@ -301,6 +352,13 @@ export const managerCharacters = {
     male: {
       name: '芮可',
       bio: '常挎种篮拿短锄，节俭又固执。对他来说，每一粒粮种都该落到合适的土里。',
+      returnPrompts: [
+        '我仔细挑了回礼，来看看吧。',
+        '不讲那些虚的，这份你收着。',
+        '从田边经过，就把回礼捎上。',
+        '给你的东西放妥了，来拿吧。',
+        '心意不在排场，收下这份就好。',
+      ],
       hello: [
         '来了就坐，别挡着田间小路。',
         '种子不急着撒，先挑合适的。',
@@ -313,7 +371,7 @@ export const managerCharacters = {
         '回来啦？鞋上的泥记得蹭一蹭。',
         '庄稼等得起认真，可等不起糟蹋。',
       ],
-      help: (kind) => kind === 'empty' ? '空地别闲着，挑样种子下地吧。' : '种篮还有余粮，添块田就能种。',
+      help: characterHelpCopy.field.male,
       thanks: [
         '多谢，我收着，绝不糟蹋。',
         '送给我的？那得放仔细些。',
@@ -345,6 +403,13 @@ export const managerCharacters = {
     female: {
       name: '诺珥',
       bio: '话很少，习惯先查看矿道再开工。遇到冒险的做法，会立刻警觉起来。',
+      returnPrompts: [
+        '回礼在这。请收下。',
+        '给你备好了。来拿。',
+        '嗯。这份心意，给你。',
+        '有空过来。回礼好了。',
+        '收下吧。我也想谢谢你。',
+      ],
       hello: [
         '来了。脚下慢些。',
         '你好。留意石阶。',
@@ -357,7 +422,7 @@ export const managerCharacters = {
         '这里安静。歇一会儿。',
         '嗯。我在这里。',
       ],
-      help: (kind) => kind === 'empty' ? '矿洞空着。先选矿。' : '先买一座矿洞。',
+      help: characterHelpCopy.mine.female,
       thanks: [
         '收到了。谢谢。',
         '给我的？嗯，多谢。',
@@ -386,6 +451,13 @@ export const managerCharacters = {
     male: {
       name: '赛穆',
       bio: '常提着笼灯，做事冷静严格。每次进洞前都要把矿灯和轨道检查一遍。',
+      returnPrompts: [
+        '回礼准备好了，来这边取。',
+        '站稳些，我把给你的礼递过来。',
+        '这份是我的谢意，请收下。',
+        '东西放在稳妥处，等你来拿。',
+        '歇脚时过来吧，给你留了回礼。',
+      ],
       hello: [
         '你好，进来先看脚下。',
         '矿道里慢一点，总没有坏处。',
@@ -398,7 +470,7 @@ export const managerCharacters = {
         '急事也别急着跑，安全要紧。',
         '坐下歇会儿，工具留在原处。',
       ],
-      help: (kind) => kind === 'empty' ? '空矿洞已验过，选好矿种就能开采。' : '先准备矿洞，工具已经齐了。',
+      help: characterHelpCopy.mine.male,
       thanks: [
         '多谢，我会妥善收好。',
         '递稳些，我接住了。谢谢。',
@@ -430,6 +502,13 @@ export const managerCharacters = {
     female: {
       name: '缇澜',
       bio: '好胜又直率，把淡水池和海边网箱都照料得井井有条。谁坏了码头规矩，她就当面说。',
+      returnPrompts: [
+        '这回换我送礼，来看看眼光！',
+        '给你的回礼，痛快收下吧。',
+        '来码头瞧瞧，我还留了你的份。',
+        '有份心意给你，我就直说啦！',
+        '回礼在这儿，看看合不合心意？',
+      ],
       hello: [
         '来啦，要不要到水边看看？',
         '靠码头走，眼睛可得看着路。',
@@ -442,7 +521,7 @@ export const managerCharacters = {
         '回来得正好，我正想找人说话。',
         '不熟悉码头，就跟紧我的步子。',
       ],
-      help: (kind) => kind === 'empty' ? '鱼池空着，挑种鱼来，比比谁长得快。' : '想养鱼？先腾地方建个鱼池。',
+      help: characterHelpCopy.fish.female,
       thanks: [
         '谢啦，这份礼我收下了。',
         '你还想着我，挺有心嘛。',
@@ -471,6 +550,13 @@ export const managerCharacters = {
     male: {
       name: '泊恩',
       bio: '肩上总搭着一把桨，喜欢跟船员开玩笑。有人难为自己的船伴时，他会立刻站出来。',
+      returnPrompts: [
+        '来接回礼吧，这回不用撒网。',
+        '给你备了礼，笑话另算一份。',
+        '先把桨放下，好腾手递你回礼。',
+        '往这边来，你的回礼稳稳当当。',
+        '收下这份心意，再陪我聊两句？',
+      ],
       hello: [
         '来啦，别让这把桨绊着你。',
         '坐一会儿？我保证少讲两句笑话。',
@@ -483,7 +569,7 @@ export const managerCharacters = {
         '想学打绳结吗？我慢慢教。',
         '来歇歇脚，别总像赶潮水似的。',
       ],
-      help: (kind) => kind === 'empty' ? '空鱼池等着呢，咱们挑一批鱼种？' : '先添个鱼池，让我的鱼篓派上用场。',
+      help: characterHelpCopy.fish.male,
       thanks: [
         '谢啦，这回鱼篓可派不上用场。',
         '给我的礼？我可得接稳了。',
@@ -515,6 +601,13 @@ export const managerCharacters = {
     female: {
       name: '芮塔',
       bio: '拎着手摇柄和齿轮盒，手快嘴也快。看见有人略过测量，总会立刻把人叫住。',
+      returnPrompts: [
+        '回礼备齐了，过来接一下！',
+        '工具先放下，我拿礼物给你。',
+        '这份给你，谢意我就直说了。',
+        '来看看回礼，挑的时候可用心了。',
+        '忙归忙，给你的心意也备上了！',
+      ],
       hello: [
         '来啦，有想做的东西就说。',
         '进工坊先看脚下，工具挺多。',
@@ -527,7 +620,7 @@ export const managerCharacters = {
         '欢迎回来，给你腾个站脚处。',
         '你说，我听着，螺丝先放一边。',
       ],
-      help: (name) => name ? '等等，还差' + name + '，齐了再开工。' : '有个空工位，选张配方吧。',
+      help: characterHelpCopy.processing.female,
       thanks: [
         '谢啦，我把手套摘了再接。',
         '有我的份？你真有心。',
@@ -556,6 +649,13 @@ export const managerCharacters = {
     male: {
       name: '柯斐',
       bio: '惯用短木槌做细活，做事很有耐心。越是赶工，他越坚持把每一步都做扎实。',
+      returnPrompts: [
+        '回礼包好了，有空来拿就好。',
+        '先坐稳，我慢慢把礼递给你。',
+        '这份心意备得仔细，请你收下。',
+        '木槌放一放，正好给你拿回礼。',
+        '来歇会儿吧，也带上我的谢意。',
+      ],
       hello: [
         '你好，咱们慢慢把事情说清。',
         '先坐会儿，做事不差这一口气。',
@@ -568,7 +668,7 @@ export const managerCharacters = {
         '手头再忙，也该歇一歇。',
         '来聊聊吧，兴许能想到新做法。',
       ],
-      help: (name) => name ? '这批还缺' + name + '，材料齐了就能做。' : '有工位闲着，可以慢慢挑张配方。',
+      help: characterHelpCopy.processing.male,
       thanks: [
         '谢谢，我会慢慢仔细看。',
         '这份礼物，我会好好收着。',
@@ -600,6 +700,13 @@ export const managerCharacters = {
     female: {
       name: '塞菈',
       bio: '习惯把护目镜架在额上，爱把炉台擦得干干净净。任何杂质都逃不过她的眼睛。',
+      returnPrompts: [
+        '回礼收拾妥当了，来看看吧。',
+        '这边台面干净，来接你的回礼。',
+        '给你的礼包好了，没沾炉灰。',
+        '我摘了手套，把这份心意递给你。',
+        '这份回礼也用了心，请收下。',
+      ],
       hello: [
         '你好，进来先把灰尘拍掉。',
         '器具别乱碰，坐这边就好。',
@@ -612,7 +719,7 @@ export const managerCharacters = {
         '有什么想法？我听听。',
         '做事讲究些，总是值得的。',
       ],
-      help: (name) => name ? '还少' + name + '，我先把炉子看好。' : '炉台有空位，选好商品配方就能做。',
+      help: characterHelpCopy.refining.female,
       thanks: [
         '谢谢，我找个干净位置收下。',
         '先放这边，别沾到炉灰。',
@@ -641,6 +748,13 @@ export const managerCharacters = {
     male: {
       name: '诺铎',
       bio: '擅长掌握炉温，常戴着隔热手套守在坩埚边。他珍惜手艺，也很愿意把经验教给人。',
+      returnPrompts: [
+        '回礼备好了，这份心意你收下。',
+        '我认真挑过，来看看这份礼吧。',
+        '先离炉边远些，我拿回礼给你。',
+        '话不用说得多，谢意在这份礼里。',
+        '给你的东西包稳了，放心来拿。',
+      ],
       hello: [
         '来啦，离炉边稍远些坐。',
         '手艺这回事，得慢慢琢磨。',
@@ -653,7 +767,7 @@ export const managerCharacters = {
         '聊聊你的想法，或许能用上。',
         '做件好东西，急也急不来。',
       ],
-      help: (name) => name ? '这份少了' + name + '，等料齐了便能起炉。' : '炉边还空着，选个想做的商品吧。',
+      help: characterHelpCopy.refining.male,
       thanks: [
         '谢谢，这份心意我收下了。',
         '我会认真珍惜，放心吧。',
@@ -685,6 +799,13 @@ export const managerCharacters = {
     female: {
       name: '薇珀',
       bio: '腰间的黄铜计数器响得很勤。点货反应快，账目乱了也能当场理清。',
+      returnPrompts: [
+        '你的回礼点好了，来接手吧！',
+        '这份是私人的心意，你收着。',
+        '回礼就在手边，我递给你。',
+        '不用翻箱子，我替你放好了。',
+        '来拿回礼，拿稳了再聊两句。',
+      ],
       hello: [
         '来啦，先说你想找什么。',
         '箱边留条路，走起来方便。',
@@ -697,9 +818,7 @@ export const managerCharacters = {
         '需要我搭手吗？说声就行。',
         '来聊两句，我也活动下肩膀。',
       ],
-      help: (name, rate) => rate < 0
-        ? name + '今天降价了，出货前留意一下。'
-        : name + '今天涨价了，可以看看。',
+      help: characterHelpCopy.warehouse.female,
       thanks: [
         '给我的？谢谢，我接好了。',
         '心意收到，这份我自己收着。',
@@ -728,6 +847,13 @@ export const managerCharacters = {
     male: {
       name: '米昂',
       bio: '腼腆又守序，认得每一叠木箱的位置。货物摆回原处，就能安心地忙一整天。',
+      returnPrompts: [
+        '那个……我也给你备了回礼。',
+        '包裹放在这格，你来拿就好。',
+        '这份是给你的，愿意收下吗？',
+        '我把箱子扶稳，再递回礼给你。',
+        '不太会说好听的，请收下心意。',
+      ],
       hello: [
         '你来了，走这边会宽些。',
         '找东西的话，可以先问我。',
@@ -740,9 +866,7 @@ export const managerCharacters = {
         '重的东西别硬搬，叫我一声。',
         '有空坐坐，我给你留点地方。',
       ],
-      help: (name, rate) => rate < 0
-        ? '我对过价了，' + name + '今儿卖价低些。'
-        : '我对过价了，' + name + '今儿卖得高些。',
+      help: characterHelpCopy.warehouse.male,
       thanks: [
         '是给我的？谢谢你。',
         '我会放在自己的格子里。',
@@ -774,6 +898,13 @@ export const managerCharacters = {
     female: {
       name: '芙缇',
       bio: '带着试剂和笔记簿，好奇心从没闲过。喜欢追着新发现问到底，也格外在意实验按规矩来。',
+      returnPrompts: [
+        '回礼准备好啦，想来看看吗？',
+        '笔记先放下，我有份心意给你。',
+        '来看看回礼，喜欢的话告诉我。',
+        '这回是我备的惊喜，请你收下。',
+        '来拿回礼呀，之后听听你的感想。',
+      ],
       hello: [
         '你来了，有什么新鲜想法？',
         '先别碰瓶子，来这边说话。',
@@ -786,7 +917,7 @@ export const managerCharacters = {
         '好奇是好事，动手前先问我。',
         '说说你的发现，我很想听。',
       ],
-      help: () => '有新发现可以研发，去翻翻品种配方吧。',
+      help: characterHelpCopy.research.female,
       thanks: [
         '谢谢，这是个意外的小惊喜。',
         '给我的礼物？让我仔细看看。',
@@ -815,6 +946,13 @@ export const managerCharacters = {
     male: {
       name: '伊珞',
       bio: '一手放大镜一手札记，做研究时十分专注。看到草率的结论，总要亲自再验证一遍。',
+      returnPrompts: [
+        '嗯，回礼备好了，请来取。',
+        '我先合上札记，把这份礼给你。',
+        '我挑得很仔细，你来看看。',
+        '这份谢意很明确，请收下。',
+        '研究可以稍停，正好把回礼给你。',
+      ],
       hello: [
         '嗯，你来了。有什么想法？',
         '先坐，我把笔记合上。',
@@ -827,7 +965,7 @@ export const managerCharacters = {
         '札记在手边，可以慢慢翻。',
         '坐这边，别挡住纸上的光。',
       ],
-      help: () => '材料和前置已齐，品种配方可继续研发。',
+      help: characterHelpCopy.research.male,
       thanks: [
         '原来是给我的，多谢。',
         '我会收妥，不混进研究材料里。',
@@ -859,6 +997,13 @@ export const managerCharacters = {
     female: {
       name: '赛琳',
       bio: '大方利落的商人，背着小货架走遍各处。她喜欢爽快买卖，也很擅长看穿假话。',
+      returnPrompts: [
+        '来，回礼给你，我早就挑好了！',
+        '这份心意不用讨价，拿着吧。',
+        '货架先不看，先看给你的回礼。',
+        '路上给你挑了回礼，来拿吧。',
+        '这回我送，你爽快收着就好。',
+      ],
       hello: [
         '来啦，坐下聊两句？',
         '遇见你，路上也多了点意思。',
@@ -871,7 +1016,7 @@ export const managerCharacters = {
         '来都来了，多坐一会儿。',
         '交朋友贵在爽快，你说是不是？',
       ],
-      help: () => '我还没开摊，条件在下面。',
+      help: characterHelpCopy.merchant.female,
       thanks: [
         '谢啦，这份我就爽快收下。',
         '还给我带礼，真有心。',
@@ -900,6 +1045,13 @@ export const managerCharacters = {
     male: {
       name: '洛缇',
       bio: '带一把黄铜小秤四处跑商。有些幽默，谈买卖时总能稳稳拿捏分寸。',
+      returnPrompts: [
+        '回礼备好了，这桩不用掏钱。',
+        '秤能歇歇了，心意直接给你。',
+        '来收礼吧，讨价的本事先留着。',
+        '给你挑的回礼，可没混进货架。',
+        '这份请带走，算我路上的惦记。',
+      ],
       hello: [
         '你好，赶路的人也得坐一坐。',
         '来啦，想聊货物还是聊见闻？',
@@ -912,7 +1064,7 @@ export const managerCharacters = {
         '来得巧，我正想找人说话。',
         '走得再远，也该留点闲聊工夫。',
       ],
-      help: () => '货还没摆开，往下看看开摊条件。',
+      help: characterHelpCopy.merchant.male,
       thanks: [
         '多谢，这份心意不用上秤。',
         '是给我的？我仔细收着。',

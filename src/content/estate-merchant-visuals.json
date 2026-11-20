@@ -1,0 +1,84 @@
+{
+  "closed": {
+    "assetName": "merchant-closed",
+    "canvas": [
+      536,
+      320
+    ],
+    "footprint": [
+      54,
+      15,
+      498,
+      307
+    ],
+    "wheelContacts": [
+      [
+        124,
+        300
+      ],
+      [
+        315,
+        307
+      ]
+    ],
+    "baselineY": 307
+  },
+  "pennant": {
+    "assetNames": [
+      "merchant-pennant-1",
+      "merchant-pennant-2",
+      "merchant-pennant-3",
+      "merchant-pennant-4"
+    ],
+    "canvas": [
+      84,
+      90
+    ],
+    "attach": [
+      421,
+      38
+    ],
+    "pivot": [
+      0.11904761904761904,
+      0.9333333333333333
+    ],
+    "displaySize": [
+      84,
+      90
+    ],
+    "frameSeconds": 0.18,
+    "animationBBox": [
+      415,
+      -42,
+      491,
+      37
+    ]
+  },
+  "lantern": {
+    "assetName": "merchant-lantern",
+    "canvas": [
+      36,
+      81
+    ],
+    "attach": [
+      375,
+      91
+    ],
+    "pivot": [
+      0.5,
+      0.012345679012345678
+    ],
+    "displaySize": [
+      36,
+      81
+    ],
+    "angle": 0.055,
+    "periodSeconds": 3.2,
+    "animationBBox": [
+      352,
+      89,
+      398,
+      172
+    ]
+  }
+}

@@ -330,6 +330,8 @@ function deposit(world, batch, contributions, wallAt) {
     const day = localCalendarDay(wallAt);
     synchronizeManagerCalendar(world, day);
     recordMerchantProduction(world, id);
+    // Open on the qualifying production event without advancing the merchant's calendar boundary.
+    if (!world.merchant.batch) synchronizeMerchant(world, world.merchant.day);
     synchronizeManagerCalendar(world, day);
   }
 }

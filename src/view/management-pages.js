@@ -3,7 +3,6 @@ import { marketForecast, marketIsActive, marketRate, marketResetsRemaining, mark
 import { objectives, taskCoinRewards, taskProductionGates } from '../game/objectives.js';
 import { compact } from './numbers.js';
 import { managerIds, managerStatus } from '../game/managers.js';
-import { renderMerchantEntry } from './merchant-page.js';
 
 const entries = Object.entries(catalog.items);
 const typeTabs = ['全部', '原料', '中间产物', '商品'];
@@ -400,7 +399,6 @@ export function renderWarehouse(ui) {
       { label: '市场行情', onClick: () => showMarket(ui) },
     ]);
   } else ui.button('查看产出／支出图表', () => showHourlyProduction(ui));
-  renderMerchantEntry(ui);
   ui.local.source ??= '全部';
   ui.local.type ??= '全部';
   ui.tabs(typeTabs, ui.local.type, (type) => {

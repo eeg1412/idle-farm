@@ -55,11 +55,30 @@ function remainingTime(ms) {
   return remainder ? minutes + ' 分 ' + remainder + ' 秒' : minutes + ' 分';
 }
 
-async function submit(ui, name, args, success, feedback) {
-  if (!await ui.action(name, ...args)) return;
-  success?.();
-  ui.close();
-  if (feedback) ui.float?.(feedback);
+async function submit(ui, name, args, success, feedback, { keepOpen = false, state, isCurrent } = {}) {
+  if (state?.pending || (keepOpen && !ui.isActive())) return;
+  if (isCurrent && !isCurrent()) {
+    ui.refresh();
+    return;
+  }
+  if (state) {
+    state.pending = true;
+    ui.refresh();
+  }
+  try {
+    if (!await ui.action(name, ...args)) return;
+    success?.();
+    if (!keepOpen) ui.close();
+    if (feedback && (!keepOpen || ui.isActive())) ui.float?.(feedback);
+  } finally {
+    if (state) state.pending = false;
+    if (keepOpen && ui.isActive()) ui.refresh();
+  }
+}
+
+function currentUpgradeQuote(ui, offer, kind, index, steps, quote) {
+  const current = offer(ui.currentWorld(), kind, index, steps);
+  return current?.affordable && current.cost === quote.cost && current.target === quote.target;
 }
 
 async function clearProduction(ui, action, kind, index, label, panel) {
@@ -132,11 +151,11 @@ function assignmentLabel(kind, occupied) {
   return occupied ? '更换品种' : '安排养殖';
 }
 
-function batchOutput(world, kind, index, slot, id) {
+function batchOutput(world, kind, index, slot, id, upgradeQuote) {
   const workshop = isWorkshop(kind);
   const active = slot.batch;
-  const amount = active?.amount ?? (workshop ? stationUpgradeOffer(world, kind, index, 1n)
-    : facilityOffer(world, kind, index, 1n))?.currentOutput;
+  const amount = active?.amount ?? (upgradeQuote !== undefined ? upgradeQuote
+    : workshop ? stationUpgradeOffer(world, kind, index, 1n) : facilityOffer(world, kind, index, 1n))?.currentOutput;
   if (amount == null) return null;
   return {
     label: active ? '本批' : '下批',
@@ -208,6 +227,14 @@ function batchUpgrade(ui, kind, targets) {
   ui.dialog('批量升级', (dlg) => {
     const quote = batchUpgradeOffer(dlg.w, kind, targets, steps);
     dlg.row('升级数量', String(targets.length));
+    if (quote) {
+      const slots = isWorkshop(kind) ? dlg.w.stations[kind] : dlg.w.facilities[kind];
+      const levels = targets.map((index) => BigInt(slots[index].level));
+      const low = levels.reduce((value, level) => level < value ? level : value);
+      const high = levels.reduce((value, level) => level > value ? level : value);
+      const range = (from, to) => compact(from) + (from === to ? '' : '～' + compact(to)) + ' 级';
+      dlg.row('等级', { from: range(low, high), to: range(low + steps, high + steps) }, { style: 'comparison' });
+    }
     dlg.buttons(batchUpgradeSteps.map((step) => ({
       label: '+' + step,
       tone: step === steps ? 'gold' : 'plain',
@@ -223,6 +250,11 @@ function batchUpgrade(ui, kind, targets) {
       : '升级后按新等级计算产出，进行中的批次收获时间不变。', { muted: true });
     dialogButtons(dlg, pending ? '升级中…' : '确认升级', async () => {
       if (pending || !quote?.affordable || !dlg.isActive()) return;
+      const current = batchUpgradeOffer(dlg.currentWorld(), kind, targets, steps);
+      if (!current?.affordable || current.cost !== quote.cost) {
+        dlg.refresh();
+        return;
+      }
       pending = true;
       dlg.refresh();
       try {
@@ -244,6 +276,7 @@ function manageProduction(ui, kind, scope, source) {
     const list = scope(dlg.w);
     const checked = list.filter(({ index }) => selected.has(index));
     const targets = checked.map(({ index }) => index);
+    const upgradeQuote = kind !== 'M' && targets.length ? batchUpgradeOffer(dlg.w, kind, targets, batchUpgradeSteps[0]) : null;
     const canClear = checked.some(({ slot }) => slot.recipe || slot.batch || slot.planting);
     const replaceLabel = assignmentLabel(kind, canClear);
     dlg.row('已选', targets.length + ' / ' + list.length);
@@ -276,7 +309,8 @@ function manageProduction(ui, kind, scope, source) {
     dlg.buttons([
       { label: replaceLabel, disabled: !targets.length, onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
       { label: '清空', disabled: !canClear, onClick: () => batchClear(dlg, kind, targets) },
-      { label: '升级', tone: 'gold', disabled: !targets.length, onClick: () => batchUpgrade(dlg, kind, targets) },
+      { label: '升级', tone: 'gold', disabled: kind === 'M' ? !targets.length : !upgradeQuote?.affordable,
+        onClick: () => batchUpgrade(dlg, kind, targets) },
     ], { style: 'production' });
   });
 }
@@ -302,6 +336,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
   const choose = workshop ? () => chooseRecipe(ui, kind, index, source) : () => chooseFacility(ui, kind, index);
   const improve = workshop ? () => improveStation(ui, kind, index) : () => improveFacility(ui, kind, index);
   const offer = workshop ? stationUpgradeOffer : facilityOffer;
+  const upgradeQuote = kind === 'M' ? undefined : offer(ui.w, kind, index, 1n);
   ui.card((body) => {
     body.row(id ? itemName(id) : emptySlotName(kind), undefined, {
       compact: true, icon: id ?? (emptyStationArt[kind] ?? emptyFacilityArt[kind]),
@@ -313,7 +348,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
     if (status?.tone === 'blocked') {
       body.text(level + ' · ', { ...textOptions, suffix: { value: status.label, tone: 'danger' } });
     } else body.text(status ? level + ' · ' + status.label : level, textOptions);
-    const output = id ? batchOutput(ui.w, kind, index, slot, id) : null;
+    const output = id ? batchOutput(ui.w, kind, index, slot, id, upgradeQuote) : null;
     if (output) body.text(output.label + ' ' + output.amount + ' · 总价 ' + compact(output.total), { fontSize: 13 });
     if (slot.batch) body.countdown(workshop ? '剩余' : '距收获', {
       type: workshop ? 'station' : 'facility', kind, index,
@@ -323,7 +358,8 @@ function compactProductionCard(ui, kind, index, slot, source) {
     footer: (actions) => actions.buttons([
       { label: assignmentLabel(kind, Boolean(id)), tone: id ? 'plain' : 'green', onClick: choose },
       { label: '升级', tone: 'gold', onClick: improve,
-        indicatorWhenVisible: () => offer(ui.w, kind, index, 1n)?.affordable ?? false },
+        ...(kind === 'M' ? { indicatorWhenVisible: () => offer(ui.w, kind, index, 1n)?.affordable ?? false }
+          : { disabled: !upgradeQuote?.affordable }) },
     ]),
   });
 }
@@ -367,6 +403,7 @@ function purchaseFacility(ui, kind) {
 
 function improveFacility(ui, kind, index) {
   let selected = upgradeOptions[0];
+  const state = { pending: false };
   ui.dialog('升级' + facilityNames[kind], (dlg) => {
     const facility = dlg.w.facilities[kind][index];
     if (!facility) return;
@@ -380,7 +417,9 @@ function improveFacility(ui, kind, index) {
     dlg.buttons(upgradeOptions.map((option) => ({
       label: option.label,
       tone: option === selected ? 'gold' : 'plain',
+      disabled: state.pending,
       onClick: () => {
+        if (state.pending) return;
         selected = option;
         dlg.refresh();
       },
@@ -405,8 +444,11 @@ function improveFacility(ui, kind, index) {
     }
     dlg.materialTable([{ id: 'coin', label: '金币', owned: dlg.w.coins, needed: quote.cost }], { style: 'balance' });
     dlg.text(facility.batch ? '升级后本批产出立即增加，收获时间不变。' : '升级后每批产出立即生效。', { muted: true });
-    dialogButtons(dlg, '确认升级', () => submit(dlg, 'upgradeFacility', [kind, index, selected.steps], null,
-      '升至 ' + compact(quote.target) + ' 级'), !quote.affordable, 'production');
+    dialogButtons(dlg, state.pending ? '升级中…' : '确认升级', () => submit(dlg, 'upgradeFacility', [kind, index, selected.steps], null,
+      '升至 ' + compact(quote.target) + ' 级', {
+        keepOpen: true, state,
+        isCurrent: () => currentUpgradeQuote(dlg, facilityOffer, kind, index, selected.steps, quote),
+      }), state.pending || !quote.affordable, 'production');
   }, { variant: 'facility-upgrade' });
 }
 
@@ -441,7 +483,7 @@ function facilityDetails(ui, kind, index, compactMode = false) {
     } else if (!id) {
       const quote = facilityOffer(dlg.w, kind, index, 1n);
       dlg.button('升级', () => improveFacility(dlg, kind, index), {
-        ...confirm, indicator: quote?.affordable ?? false,
+        ...confirm, ...(kind === 'M' ? { indicator: quote?.affordable ?? false } : { disabled: !quote?.affordable }),
       });
     }
   });
@@ -467,13 +509,14 @@ function facilityCard(ui, kind, index, facility) {
       });
       return;
     }
-    let upgradeQuote;
-    const getUpgradeQuote = () => upgradeQuote ??= facilityOffer(ui.w, kind, index, 1n);
+    let upgradeQuote = kind === 'M' ? undefined : facilityOffer(ui.w, kind, index, 1n);
+    const getUpgradeQuote = () => kind === 'M' ? upgradeQuote ??= facilityOffer(ui.w, kind, index, 1n) : upgradeQuote;
     const actions = [
       { label: assignmentLabel(kind, true), onClick: () => chooseFacility(ui, kind, index) },
       {
         label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index),
-        indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false,
+        ...(kind === 'M' ? { indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false }
+          : { disabled: !getUpgradeQuote()?.affordable }),
       },
     ];
     body.feature(facilityImage(kind, id), (copy) => {
@@ -565,8 +608,9 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
   }
   const quote = facilityOffer(ui.w, kind);
-  if (quote) ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
-    style: 'production', tone: 'gold', disabled: quote.atLimit, indicator: quote.affordable,
+  if (quote || kind !== 'M') ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
+    style: 'production', tone: 'gold',
+    ...(kind === 'M' ? { disabled: quote.atLimit, indicator: quote.affordable } : { disabled: !quote?.affordable }),
   });
 }
 
@@ -621,6 +665,7 @@ function purchaseStation(ui, kind) {
 
 function improveStation(ui, kind, index) {
   let selected = upgradeOptions[0];
+  const state = { pending: false };
   ui.dialog('升级' + stationNames[kind], (dlg) => {
     const station = dlg.w.stations[kind][index];
     if (!station) return;
@@ -632,7 +677,9 @@ function improveStation(ui, kind, index) {
     dlg.buttons(upgradeOptions.map((option) => ({
       label: option.label,
       tone: option === selected ? 'gold' : 'plain',
+      disabled: state.pending,
       onClick: () => {
+        if (state.pending) return;
         selected = option;
         dlg.refresh();
       },
@@ -648,8 +695,11 @@ function improveStation(ui, kind, index) {
     dlg.text(station.batch
       ? '升级从下一批起生效，本批产出与已扣材料不变。每批材料投入随等级同步增加。'
       : '升级从下一批起生效。每批材料投入随等级同步增加。', { muted: true });
-    dialogButtons(dlg, '确认升级', () => submit(dlg, 'upgradeStation', [kind, index, selected.steps], null,
-      '升至 ' + compact(quote.target) + ' 级'), !quote.affordable, 'production');
+    dialogButtons(dlg, state.pending ? '升级中…' : '确认升级', () => submit(dlg, 'upgradeStation', [kind, index, selected.steps], null,
+      '升至 ' + compact(quote.target) + ' 级', {
+        keepOpen: true, state,
+        isCurrent: () => currentUpgradeQuote(dlg, stationUpgradeOffer, kind, index, selected.steps, quote),
+      }), state.pending || !quote.affordable, 'production');
   }, { variant: 'facility-upgrade' });
 }
 
@@ -759,7 +809,7 @@ function stationDetails(ui, kind, index, compactMode = false) {
       },
       {
         label: '升级', tone: 'gold', onClick: () => improveStation(dlg, kind, index),
-        indicator: quote?.affordable ?? false,
+        disabled: !quote?.affordable,
       },
     ], { style: 'production' });
     if (compactMode && id) {
@@ -776,11 +826,10 @@ function stationCard(ui, kind, index, station, source) {
   const badge = stationBadge(ui.w, station);
   const level = { label: compact(station.level) + ' 级' };
   const openDetails = () => stationDetails(ui, kind, index);
-  let upgradeQuote;
-  const getUpgradeQuote = () => upgradeQuote ??= stationUpgradeOffer(ui.w, kind, index, 1n);
+  const upgradeQuote = stationUpgradeOffer(ui.w, kind, index, 1n);
   const upgrade = {
     label: '升级', tone: 'gold', onClick: () => improveStation(ui, kind, index),
-    indicatorWhenVisible: () => getUpgradeQuote()?.affordable ?? false,
+    disabled: !upgradeQuote?.affordable,
   };
   ui.card((body) => {
     if (!item) {
@@ -810,7 +859,7 @@ function stationCard(ui, kind, index, station, source) {
         { label: '当前库存', value: compact(quantity(ui.w, id)) },
         {
           label: active ? '本批产出' : '每批产出',
-          value: compact(active?.amount ?? getUpgradeQuote()?.currentOutput) + ' 件',
+          value: compact(active?.amount ?? upgradeQuote?.currentOutput) + ' 件',
         },
       ], { style: 'workshop' });
     }, {
@@ -869,7 +918,7 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
     }, { columns: compactMode ? 'auto' : 1, focusIndex });
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
-  if (quote) ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
-    style: 'production', tone: 'gold', disabled: quote.atLimit, indicator: quote.affordable,
+  ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
+    style: 'production', tone: 'gold', disabled: !quote?.affordable,
   });
 }

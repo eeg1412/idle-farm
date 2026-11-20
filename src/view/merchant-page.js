@@ -254,7 +254,7 @@ export function renderMerchant(ui) {
     ui.button('手动换货 · 剩 ' + compact(status.restocksRemaining) + ' 次', () => restockDialog(ui));
   }
   if (!status.batch) {
-    ui.text(status.freeRestockAvailable ? '暂未开摊。' : '今日免费换货已用。', note);
+    ui.text('暂未进货。', note);
     return;
   }
   if (tab === '买入') shelf(ui, status.batch);

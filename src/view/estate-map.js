@@ -1,5 +1,6 @@
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
 import { mountEstateAtmosphere } from './estate-atmosphere.js';
+import { estateMerchantAsset, estateMerchantMotionBounds, mountEstateMerchant } from './estate-merchant.js';
 
 // Keep the revised asset URLs in sync with the offline precache.
 const assetVersions = { background: 7, fish: 2, field: 2, 'field-motion': 2, 'research-motion': 2, operations: 2 };
@@ -88,6 +89,9 @@ const sites = [
       const lift = (1 + Math.cos(turn * cycle(time, 6.7))) / 2;
       sprite.scale.y = scale * (0.72 + 0.28 * lift);
     } },
+  // Append the travelling cart so the existing motion phases keep their indices.
+  { id: 'merchant', label: '行脚商', center: [0.51, 0.485], footprint: [54, 15, 497, 307],
+    widthRatio: 0.18 },
 ];
 
 export function getEstateLayout() {
@@ -145,6 +149,7 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
 export function mountEstateMap(parent, {
   width, insetTop, onOpen, bind, markDirty, getImage, loadImage,
   researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere,
+  merchantUnlocked = true,
 }) {
   const height = Math.round(width * estateMapAspect);
   const preload = width * 0.22;
@@ -212,11 +217,13 @@ export function mountEstateMap(parent, {
     signLayer.addChild(plaque);
 
     const building = art.addChild(emptySprite(`estate-building-${id}`));
-    const motion = art.addChild(emptySprite(`estate-motion-${id}`, pivot));
-    const [propX, propY, motionSize] = prop;
+    const merchantMotion = id === 'merchant'
+      ? mountEstateMerchant(art, { unit, unlocked: merchantUnlocked, applyImage, markDirty }) : undefined;
+    const motion = prop && site.animate ? art.addChild(emptySprite(`estate-motion-${id}`, pivot)) : undefined;
+    const [propX, propY, motionSize] = prop ?? [buildingArtWidth / 2, buildingArtHeight / 2, 0];
     const motionX = (propX - buildingArtWidth / 2) * unit;
     const motionY = (propY - buildingArtHeight / 2) * unit;
-    motion.position.set(motionX, motionY);
+    motion?.position.set(motionX, motionY);
     const sign = plaque.addChild(emptySprite(`estate-sign-${id}`));
     sign.y = signTop + signHeight / 2;
     const text = new Text({
@@ -269,7 +276,8 @@ export function mountEstateMap(parent, {
     let artRequested = false;
     let motionScale;
     function update(time) {
-      if (!building.visible || !motionScale) return false;
+      if (merchantMotion) return building.visible && merchantMotion.update(time);
+      if (!motion || !building.visible || !motionScale) return false;
       motion.visible = true;
       site.animate(motion, time + index * 0.73, unit, motionScale, motionX, motionY);
       return true;
@@ -277,12 +285,14 @@ export function mountEstateMap(parent, {
     function loadArt() {
       if (artRequested) return;
       artRequested = true;
-      applyImage(id, (texture) => {
+      applyImage(id === 'merchant' ? estateMerchantAsset(merchantUnlocked) : id, (texture) => {
         if (!texture || art.destroyed) return;
         fitSprite(building, texture, buildingSize, buildingHeight);
+        merchantMotion?.setBaseReady();
         markDirty();
       });
-      applyImage(`${id}-motion`, (texture) => {
+      merchantMotion?.loadArt();
+      if (motion) applyImage(`${id}-motion`, (texture) => {
         if (!texture || art.destroyed) return;
         const size = motionSize * unit;
         motionScale = fitSprite(motion, texture, size, size);
@@ -292,8 +302,11 @@ export function mountEstateMap(parent, {
       });
     }
 
-    const animatedTop = id === 'refining' ? Math.min(top, y + motionY - (motionSize + 26) * unit) : top;
-    return { art, plaque, top: animatedTop, bottom, loadArt, update };
+    const merchantBounds = merchantMotion ? estateMerchantMotionBounds() : undefined;
+    const animatedTop = merchantBounds ? Math.min(top, y + (merchantBounds[1] - buildingArtHeight / 2) * unit)
+      : id === 'refining' ? Math.min(top, y + motionY - (motionSize + 26) * unit) : top;
+    const animatedBottom = merchantBounds ? Math.max(bottom, y + (merchantBounds[3] - buildingArtHeight / 2) * unit) : bottom;
+    return { art, plaque, top: animatedTop, bottom: animatedBottom, loadArt, update };
   });
 
   let visibleEntries = [];

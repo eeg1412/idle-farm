@@ -465,7 +465,7 @@ function dispatch(name, ...args) {
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
         return { ok: false, message: toast ? message + ' · ' + toast : message };
       }
-      if (!Object.hasOwn(productionBatchActions, name)) settleProduction(draft);
+      if (!Object.hasOwn(productionBatchActions, name) && name !== 'claimManagerGift') settleProduction(draft);
       const toast = await commit(draft, anchor);
       if (name === 'sellFarm') {
         worldEpoch += 1;

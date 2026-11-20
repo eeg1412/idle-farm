@@ -1,0 +1,357 @@
+{
+  "version": "solo-scenes-v1",
+  "scenes": [
+    {
+      "id": "tasks-female",
+      "role": "tasks",
+      "gender": "female",
+      "path": "art/loading/scenes/tasks-female.webp",
+      "source": "assets/source/art/loading/solo/tasks/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 400,
+        "y": 390,
+        "width": 235,
+        "height": 205
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "tasks-male",
+      "role": "tasks",
+      "gender": "male",
+      "path": "art/loading/scenes/tasks-male.webp",
+      "source": "assets/source/art/loading/solo/tasks/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 460,
+        "y": 365,
+        "width": 220,
+        "height": 193
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "estate-female",
+      "role": "estate",
+      "gender": "female",
+      "path": "art/loading/scenes/estate-female.webp",
+      "source": "assets/source/art/loading/solo/estate/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 407,
+        "y": 338,
+        "width": 204,
+        "height": 205
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "estate-male",
+      "role": "estate",
+      "gender": "male",
+      "path": "art/loading/scenes/estate-male.webp",
+      "source": "assets/source/art/loading/solo/estate/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 412,
+        "y": 427,
+        "width": 221,
+        "height": 198
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "livestock-female",
+      "role": "livestock",
+      "gender": "female",
+      "path": "art/loading/scenes/livestock-female.webp",
+      "source": "assets/source/art/loading/solo/livestock/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 408,
+        "y": 356,
+        "width": 250,
+        "height": 230
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "livestock-male",
+      "role": "livestock",
+      "gender": "male",
+      "path": "art/loading/scenes/livestock-male.webp",
+      "source": "assets/source/art/loading/solo/livestock/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 352,
+        "y": 404,
+        "width": 225,
+        "height": 200
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "field-female",
+      "role": "field",
+      "gender": "female",
+      "path": "art/loading/scenes/field-female.webp",
+      "source": "assets/source/art/loading/solo/field/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 423,
+        "y": 421,
+        "width": 219,
+        "height": 178
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "field-male",
+      "role": "field",
+      "gender": "male",
+      "path": "art/loading/scenes/field-male.webp",
+      "source": "assets/source/art/loading/solo/field/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 432,
+        "y": 433,
+        "width": 243,
+        "height": 193
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "mine-female",
+      "role": "mine",
+      "gender": "female",
+      "path": "art/loading/scenes/mine-female.webp",
+      "source": "assets/source/art/loading/solo/mine/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 390,
+        "y": 445,
+        "width": 249,
+        "height": 188
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "mine-male",
+      "role": "mine",
+      "gender": "male",
+      "path": "art/loading/scenes/mine-male.webp",
+      "source": "assets/source/art/loading/solo/mine/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 401,
+        "y": 394,
+        "width": 218,
+        "height": 200
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "fish-female",
+      "role": "fish",
+      "gender": "female",
+      "path": "art/loading/scenes/fish-female.webp",
+      "source": "assets/source/art/loading/solo/fish/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 402,
+        "y": 397,
+        "width": 260,
+        "height": 202
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "fish-male",
+      "role": "fish",
+      "gender": "male",
+      "path": "art/loading/scenes/fish-male.webp",
+      "source": "assets/source/art/loading/solo/fish/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 391,
+        "y": 407,
+        "width": 225,
+        "height": 194
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "processing-female",
+      "role": "processing",
+      "gender": "female",
+      "path": "art/loading/scenes/processing-female.webp",
+      "source": "assets/source/art/loading/solo/processing/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 454,
+        "y": 514,
+        "width": 285,
+        "height": 203
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "processing-male",
+      "role": "processing",
+      "gender": "male",
+      "path": "art/loading/scenes/processing-male.webp",
+      "source": "assets/source/art/loading/solo/processing/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 382,
+        "y": 406,
+        "width": 260,
+        "height": 240
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "refining-female",
+      "role": "refining",
+      "gender": "female",
+      "path": "art/loading/scenes/refining-female.webp",
+      "source": "assets/source/art/loading/solo/refining/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 336,
+        "y": 443,
+        "width": 347,
+        "height": 269
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "refining-male",
+      "role": "refining",
+      "gender": "male",
+      "path": "art/loading/scenes/refining-male.webp",
+      "source": "assets/source/art/loading/solo/refining/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 371,
+        "y": 345,
+        "width": 240,
+        "height": 236
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "warehouse-female",
+      "role": "warehouse",
+      "gender": "female",
+      "path": "art/loading/scenes/warehouse-female.webp",
+      "source": "assets/source/art/loading/solo/warehouse/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 405,
+        "y": 345,
+        "width": 265,
+        "height": 261
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "warehouse-male",
+      "role": "warehouse",
+      "gender": "male",
+      "path": "art/loading/scenes/warehouse-male.webp",
+      "source": "assets/source/art/loading/solo/warehouse/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 389,
+        "y": 360,
+        "width": 234,
+        "height": 192
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "research-female",
+      "role": "research",
+      "gender": "female",
+      "path": "art/loading/scenes/research-female.webp",
+      "source": "assets/source/art/loading/solo/research/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 440,
+        "y": 448,
+        "width": 260,
+        "height": 238
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "research-male",
+      "role": "research",
+      "gender": "male",
+      "path": "art/loading/scenes/research-male.webp",
+      "source": "assets/source/art/loading/solo/research/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 425,
+        "y": 396,
+        "width": 269,
+        "height": 268
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "merchant-female",
+      "role": "merchant",
+      "gender": "female",
+      "path": "art/loading/scenes/merchant-female.webp",
+      "source": "assets/source/art/loading/solo/merchant/female.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 432,
+        "y": 350,
+        "width": 208,
+        "height": 185
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "merchant-male",
+      "role": "merchant",
+      "gender": "male",
+      "path": "art/loading/scenes/merchant-male.webp",
+      "source": "assets/source/art/loading/solo/merchant/male.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 450,
+        "y": 350,
+        "width": 198,
+        "height": 196
+      },
+      "faceBoundsStatus": "reviewed-source"
+    }
+  ]
+}
