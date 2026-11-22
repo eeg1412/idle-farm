@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "date": "2026-11-22",
+  "task": "EW-ART-ANIMAL-R2",
+  "generator": "built-in image_gen.imagegen",
+  "intent": "precise-object-edit",
+  "parameters": {
+    "prompt": "Use case: precise-object-edit\nEdit the supplied transparent 2×2 pixel-art animal-CLOUD sheet. Keep exactly the same four cloud identities in exactly the same cells: top-left rabbit cloud, top-right cat cloud, bottom-left whale cloud, bottom-right turtle cloud. Keep the 2:1 landscape composition and transparent background.\nThe only intended change is direction:\n- In the TOP LEFT cell, horizontally reverse the RABBIT CLOUD inside its own cell so its muzzle/face is on the RIGHT and its round tail is on the LEFT. Keep both long cloud ears whole and clearly separated.\n- In the TOP RIGHT cell, horizontally reverse the CAT CLOUD inside its own cell so its cloud head with two short ears is on the RIGHT and its raised curling cloud tail is on the LEFT.\n- In the BOTTOM LEFT cell, horizontally reverse the WHALE CLOUD inside its own cell so its big rounded cloud head is on the RIGHT and its forked cloud tail is on the LEFT.\n- In the BOTTOM RIGHT cell, the TURTLE CLOUD ALREADY FACES RIGHT: keep it unchanged, with its long neck and rounded head on the RIGHT and short tail on the LEFT. DO NOT reverse the turtle.\nDO NOT mirror the whole sheet, do not swap positions between cells, do not create new poses or new designs. Preserve each existing silhouette, internal white/pale cool-gray cloud shading, pixel clusters and proportions as closely as possible. These remain puffy cloud formations resembling animal silhouettes, with no eyes, mouth, fur, shell plates or realistic animal details. Keep the full cloud contours, especially the rabbit's two ear tips, inside their cells with a clear transparent margin on all sides. No additional objects, text, border, background or cast shadow.",
+    "transparent_background": true,
+    "referenced_image_paths": [
+      "D:/myProject/idle-farm/tianjian-workshop/assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png"
+    ]
+  },
+  "input": {
+    "path": "assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png",
+    "sha256": "7076d0f9c137178c6e4b56488537b1dd4ef27a37749e9924a7216e2d564326f8",
+    "viewedBeforeEditing": true
+  },
+  "generatedFile": "C:/Users/eeg14/.codex/generated_images/01a2033e-ab0e-7610-b57f-e8628c6e6be3/exec-f5919005-8686-42ff-a35d-d6e487ddc9ed.png",
+  "sourcePath": "assets/source/art/estate-weather/animals-v1/animal-clouds-r2.png",
+  "sourceDimensions": {
+    "width": 1774,
+    "height": 887
+  },
+  "directionReview": [
+    {
+      "frame": 0,
+      "animal": "rabbit-shaped cloud",
+      "r1": "Muzzle left and round tail right; superseded for direction.",
+      "r2": "Rounded muzzle at right, round tail at left; two complete cloud ears retained."
+    },
+    {
+      "frame": 1,
+      "animal": "cat-shaped cloud",
+      "r1": "Head left and curling tail right; superseded for direction.",
+      "r2": "Two-eared head at right and raised curling tail at left."
+    },
+    {
+      "frame": 2,
+      "animal": "whale-shaped cloud",
+      "r1": "Large rounded head left and forked tail right; superseded for direction.",
+      "r2": "Large rounded head right and forked tail left."
+    },
+    {
+      "frame": 3,
+      "animal": "turtle-shaped cloud",
+      "r1": "Already right-facing: long head/neck right and short tail left.",
+      "r2": "Kept right-facing: long head/neck right and short tail left; not reversed."
+    }
+  ],
+  "history": {
+    "source": "assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png",
+    "sourceRecord": "assets/source/art/estate-weather/animals-v1/generation.json",
+    "atlas": "assets/source/art/estate-weather/animals-v1/history-r1/animal-clouds-v1.webp",
+    "atlasSha256": "e07df3e65fb84a50a2d2a972c2b62493b2eec81b3373b8160f52052c2e998ff8",
+    "layout": "assets/source/art/estate-weather/animals-v1/history-r1/layout.json",
+    "conversion": "assets/source/art/estate-weather/animals-v1/history-r1/conversion.json",
+    "status": "R1 superseded for direction in frames 0/1/2 only; retained as history without deletion."
+  },
+  "transformation": "Native image-tool directional edit, followed by existing rectangular crop and proportional nearest export. No programmatic flip/flop or retouching.",
+  "output": "public/art/estate/atmosphere/animal-clouds-v1.webp",
+  "urlVersion": 2,
+  "offlineVersion": {
+    "file": "scripts/build-offline.mjs",
+    "key": "atmosphere/animal-clouds-v1",
+    "value": 2,
+    "scope": "Only estateAssetVersions entry added; script not executed."
+  },
+  "verification": "Direct source/export viewing and resource conversion/registration only. No tests, checks, game preview, build or runtime validation."
+}

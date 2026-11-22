@@ -257,13 +257,20 @@ function recordStats(value, convert) {
   const warehouseRevenue = Object.hasOwn(stats, 'warehouseRevenue')
     ? convert(stats.warehouseRevenue, 'stats.warehouseRevenue') : revenue;
   valid(BigInt(warehouseRevenue) <= BigInt(revenue), 'stats.warehouseRevenue');
+  const lifetimeRevenue = convert(stats.lifetimeRevenue, 'stats.lifetimeRevenue');
+  // Order revenue fields arrived after the order center; older records start them at zero.
+  const orderRevenue = convert(Object.hasOwn(stats, 'orderRevenue') ? stats.orderRevenue : '0', 'stats.orderRevenue');
+  const lifetimeOrderRevenue = convert(Object.hasOwn(stats, 'lifetimeOrderRevenue') ? stats.lifetimeOrderRevenue : '0',
+    'stats.lifetimeOrderRevenue');
+  valid(BigInt(orderRevenue) <= BigInt(revenue), 'stats.orderRevenue');
+  valid(BigInt(lifetimeOrderRevenue) <= BigInt(lifetimeRevenue), 'stats.lifetimeOrderRevenue');
   return {
     produced: quantityMap(stats.produced, 'stats.produced', convert),
     sold: convert(stats.sold, 'stats.sold'),
     plots: convert(stats.plots, 'stats.plots'),
     revenue, warehouseRevenue,
     ordersCompleted: convert(Object.hasOwn(stats, 'ordersCompleted') ? stats.ordersCompleted : '0', 'stats.ordersCompleted'),
-    lifetimeRevenue: convert(stats.lifetimeRevenue, 'stats.lifetimeRevenue'),
+    orderRevenue, lifetimeOrderRevenue, lifetimeRevenue,
     boughtL: convert(stats.boughtL, 'stats.boughtL'),
     boughtF: convert(stats.boughtF, 'stats.boughtF'),
     boughtM: convert(Object.hasOwn(stats, 'boughtM') ? stats.boughtM : '0', 'stats.boughtM'),

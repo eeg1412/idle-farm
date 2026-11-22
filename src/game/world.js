@@ -180,7 +180,7 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, warehouseRevenue: 0n, lifetimeRevenue: 0n,
-      ordersCompleted: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
+      ordersCompleted: 0n, orderRevenue: 0n, lifetimeOrderRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
     taskRewards: [], legacyGuideCompleted: false, settings: { music: 0, sound: 0, pickerIconsOnly: false },
   };
   settleProduction(world);
@@ -766,6 +766,7 @@ export function sellFarm(world, expectedOffer, soldAt = world.wallAnchorMs) {
   world.productionValue = 0n;
   world.stats.revenue = 0n;
   world.stats.warehouseRevenue = 0n;
+  world.stats.orderRevenue = 0n;
   resetOrderRun(world);
   resetMerchantRun(world);
   resetManagerRun(world);

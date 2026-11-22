@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "date": "2026-11-22",
+  "task": "EW-ART-ANIMAL",
+  "generator": "built-in image_gen.imagegen",
+  "intent": "generate",
+  "subject": "White/pale-gray puffy cloud formations resembling rabbit/cat/whale/turtle silhouettes, not live animals or livestock assets.",
+  "parameters": {
+    "prompt": "Use case: stylized-concept\nAsset type: four ANIMAL-SHAPED CLOUD sprites for a pixel-art farm game, one transparent 2-column 2-row sprite sheet. New artwork. Overall wide 2:1 landscape canvas, each of the four invisible cells is twice as wide as tall. Exactly one full cloud in every cell, with generous empty transparent gutters and no cell lines or labels.\nThe subject is ALWAYS A WHITE PUFFY CLOUD. These are cloud formations that happen to have recognizable animal silhouettes, NOT animals painted white, animal characters, live creatures, balloons, sculptures or animal sprites. Entire bodies are irregular joined cumulus puffs; their internal details are only light-gray cloud shading. No eyes, mouth, nose, whiskers, fur, claws, shell plates, gills, blowholes, clothing or accessories.\nTop left: RABBIT-shaped CLOUD, a side-view crouched rounded cloud body, two clearly separated long upright fluffy cloud ears, small rounded muzzle puff and little round tail puff.\nTop right: CAT-shaped CLOUD, side-view cloud cat resting low, two clearly separated short triangular-ish puff ears, rounded cloud head, long rounded body, and a thick raised curling cloud tail. The outline must unmistakably differ from the rabbit.\nBottom left: WHALE-shaped CLOUD, broad long softly rounded body with big rounded head on the left, small lower fin-shaped cloud puff, and a clearly forked upturned tail made of two puffs on the right. No water or sea, it is a floating cloud.\nBottom right: TURTLE-shaped CLOUD, broad gently domed cloud mass, short neck and rounded head puff on the right, four short low foot puffs below the dome, a tiny cloudy tail on the left. No hard shell lines.\nStyle: clean handmade pixel art matching a cozy farm game; visible square pixel clusters and staircase contours, flat broad white and pale cool-gray color groups, slight interior underside shading, no dark outlines. Preserve a bright white cloud body. Readable simple silhouettes at small game sizes.\nAll four shapes fully inside their cells, as large as fits while preserving transparent padding. True transparent alpha background. No sky, ground, scene, cast shadow, glow, white background, mist field, particles, text, grid, borders or watermark. Do not draw ordinary clouds elsewhere in the sheet.",
+    "transparent_background": true
+  },
+  "reference": [
+    {
+      "path": "public/art/estate/background.webp",
+      "role": "Farm pixel-art reference opened earlier in the same cloud-material task; unchanged."
+    },
+    {
+      "path": "public/art/estate/atmosphere/cloud-shapes-v2.webp",
+      "role": "Existing ordinary cloud palette/style reference opened using view_image, not changed or supplied as file input."
+    }
+  ],
+  "inputPolicy": "No referenced_image_paths or num_last_images_to_include supplied.",
+  "generatedFile": "C:/Users/eeg14/.codex/generated_images/01a2033e-ab0e-7610-b57f-e8628c6e6be3/exec-5e98cc18-e862-404a-96ec-b98e940ea918.png",
+  "sourcePath": "assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png",
+  "sourceDimensions": {
+    "width": 1774,
+    "height": 887
+  },
+  "exportScript": "scripts/export-estate-animal-clouds.mjs",
+  "layout": "assets/source/art/estate-weather/animals-v1/layout.json",
+  "conversion": "assets/source/art/estate-weather/animals-v1/conversion.json",
+  "output": "public/art/estate/atmosphere/animal-clouds-v1.webp",
+  "frameOrder": {
+    "0": "rabbit-shaped cloud",
+    "1": "cat-shaped cloud",
+    "2": "whale-shaped cloud",
+    "3": "turtle-shaped cloud"
+  },
+  "scope": "Art only. Ordinary ten clouds and entry layout unchanged; sunny-only runtime gating belongs to code owner.",
+  "verification": "Direct source/export viewing and resource conversion only. No tests, checks, preview, compilation or runtime validation."
+}

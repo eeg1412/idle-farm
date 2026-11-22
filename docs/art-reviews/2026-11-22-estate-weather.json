@@ -1,0 +1,957 @@
+{
+    "task":  "EW-REVIEW",
+    "date":  "2026-11-22",
+    "scope":  "Current ordinary10+right-facing animal4 shapes share one sunny3–10 shadow stream with nonoverlapping random vertical bands; white animal foreground superseded; entrance cancelled",
+    "retention":  "证据图仅本地保存",
+    "reproductionScript":  "scripts/review-estate-weather.mjs",
+    "reproductionMode":  "No arguments: current shadow static evidence only. --historical: opt-in prior cancelled preview reproduction, not executed this round and not current authorization.",
+    "sourceReference":  "public/art/estate/background.webp opened directly; recognized reference per docs/assets.md",
+    "inputs":  {
+                   "source":  {
+                                  "path":  "assets/source/art/estate-weather/clouds-v1.png",
+                                  "sha256":  "9fdf480b12e3c72443ffca380d96e36459e6ad29dc00c1b23b5266e3b17f2ea8",
+                                  "state":  "superseded"
+                              },
+                   "webp":  {
+                                "path":  "assets/source/art/estate-weather/shapes-v2/clouds-v1-export.webp",
+                                "sha256":  "6ca64e4695a2efe4d6eb54f38bfecb6c1771e4624c249bf98c6866db7a9a45aa",
+                                "state":  "superseded",
+                                "historicalOriginalPath":  "public/art/estate/atmosphere/clouds-v1.webp (removed/replaced)"
+                            },
+                   "reference":  {
+                                     "path":  "public/art/estate/background.webp",
+                                     "sha256":  "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803"
+                                 },
+                   "sourceV2":  {
+                                    "path":  "assets/source/art/estate-weather/shapes-v2/cloud-shapes-v2-r3.png",
+                                    "sha256":  "3bf7aab4fe66a896557352e8be263f8c2dda1cc9a4a49db5df62bf0cac669cef"
+                                },
+                   "pngV2":  {
+                                 "path":  "assets/source/art/estate-weather/shapes-v2/cloud-shapes-v2.png",
+                                 "sha256":  "7112b326a3a8d566240264b1d067184e6270f611346a9c1680b8a5a7fec8dca7"
+                             },
+                   "webpV2":  {
+                                  "path":  "public/art/estate/atmosphere/cloud-shapes-v2.webp",
+                                  "sha256":  "e4c171adee2e94d863ae6bdb305b05f0e829f68eb5efe4bb80577a1c6e84aeab"
+                              },
+                   "animalSource":  {
+                                        "path":  "assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png",
+                                        "sha256":  "7076d0f9c137178c6e4b56488537b1dd4ef27a37749e9924a7216e2d564326f8",
+                                        "state":  "superseded"
+                                    },
+                   "animalPng":  {
+                                     "path":  "assets/source/art/estate-weather/animals-v1/history-r1/animal-clouds-v1.png",
+                                     "sha256":  "447551db55e0d173bcb65bea905401531abba857d20e46e9bf2e49c1ab313764",
+                                     "state":  "superseded"
+                                 },
+                   "animalWebp":  {
+                                      "path":  "assets/source/art/estate-weather/animals-v1/history-r1/animal-clouds-v1.webp",
+                                      "sha256":  "e07df3e65fb84a50a2d2a972c2b62493b2eec81b3373b8160f52052c2e998ff8",
+                                      "state":  "superseded"
+                                  },
+                   "animalSourceR2":  {
+                                          "path":  "assets/source/art/estate-weather/animals-v1/animal-clouds-r2.png",
+                                          "sha256":  "ecfcf8e36d51b3566f44bcdceda6e797620d7e6826118210f4ad7855fa10a2d3"
+                                      },
+                   "animalPngR2":  {
+                                       "path":  "assets/source/art/estate-weather/animals-v1/animal-clouds-v1.png",
+                                       "sha256":  "83a0e8f78486eeaf10e786368f4f9052953e6b2810a7d85e537f9fa3f60c285b"
+                                   },
+                   "animalWebpR2":  {
+                                        "path":  "public/art/estate/atmosphere/animal-clouds-v1.webp",
+                                        "sha256":  "c04b46b05ffa24a1cdb000e2ae745747d3a9bfda366c7e8129e3792e2dbb4929"
+                                    }
+               },
+    "capturedSourceReads":  [
+                                {
+                                    "path":  "src/view/estate-clouds.js",
+                                    "sha256":  "21f8e90a5578a6aadfc33861479388a71995968f057fc8d9bad00297a1c06ab8"
+                                },
+                                {
+                                    "path":  "src/view/estate-weather.js",
+                                    "sha256":  "4bcfb562ea9a52f354395e9e9cc68090274f331f7eae342c7ce283740d79b9ec"
+                                }
+                            ],
+    "currentResults":  {
+                           "ordinarySourcePngWebp":  "通过，仅精确源/PNG/WebP静态形态和正常合成边缘，字节不变，十形可辨",
+                           "animalR2SourcePngWebp":  "通过，兔猫鲸龟完整云团轮廓且四头右；仅源/成品静态层级，非活体",
+                           "unifiedFourteenShapeShadowSizes":  "通过，仅静态实际尺度：320/390宽，ratio.6/.86，height=.24width，tint213e4c，alpha.13；十四形主要轮廓可辨，无白色前景或外部矩形雾/杂边",
+                           "sharedShadowCountEndpoints":  "通过，仅最终静态随机分散样本：两尺寸3/10片，按coverageCost近优候选及互斥高度带公式固定采样；无互相叠压。shape手选范围内混合用例，并非运行Math.random分布",
+                           "nonOverlapSourceBoundary":  "每槽固定band b/10..(b+1)/10；r=.24w/(2*2.1)；y在b/10+.0005+r至(b+1)/10−.0005−r内随机，H=round2.36W；rH大于frame半高.12wW，完整frame不跨带，x/speed/shape随机和同槽替补不叠；数量变更保留原片位置；结构及不等式说明，运行未验证",
+                           "streamSourceOnly":  "同一10 Sprite池shape0..13，正速度右移；可见Alpha128左缘到右界即同slot替补，下一片可见右缘从左内1px出现并保留时间余量；无整批/40–70s等待；初始/真转晴2s整体fade，替补不fade；真实连续体验未验证",
+                           "layerRequirement":  "云影覆盖建筑和建筑名字，HUD/menu/Dialog在上方；地景静态图不能验收叠层或点击，PM源码核对，未浏览器验证",
+                           "animalForeground":  "superseded_user_rejected，旧白色width.22–.36/alpha.28–.38实际尺寸图不作当前通过",
+                           "opening":  "user_rejected_cancelled，全部入口版本/分镜/动图仅历史，不作当前功能或通过项",
+                           "runtime":  "未验证游戏运行与真实循环体验",
+                           "userFinalApproval":  "未验证"
+                       },
+    "unifiedShadowCases":  [
+                               {
+                                   "count":  3,
+                                   "width":  320,
+                                   "height":  693,
+                                   "layout":  "nonoverlapping-complete-frame-random-bands",
+                                   "bands":  [
+                                                 2,
+                                                 5,
+                                                 8
+                                             ],
+                                   "staticSampleTimeMs":  2000,
+                                   "seed":  20261125,
+                                   "shapes":  [
+                                                  {
+                                                      "shape":  0,
+                                                      "band":  2,
+                                                      "ratio":  0.7721038976171986,
+                                                      "initialX":  0.8308559262659401,
+                                                      "y":  0.24906768305987878,
+                                                      "speed":  0.000013024292877669034,
+                                                      "laneTop":  0.24462022272098277,
+                                                      "laneBottom":  0.25537977727901723
+                                                  },
+                                                  {
+                                                      "shape":  10,
+                                                      "band":  5,
+                                                      "ratio":  0.8512853779830039,
+                                                      "initialX":  0.01807764545083046,
+                                                      "y":  0.5493947614796901,
+                                                      "speed":  0.000010797412566846722,
+                                                      "laneTop":  0.5491448787418859,
+                                                      "laneBottom":  0.5508551212581141
+                                                  },
+                                                  {
+                                                      "shape":  13,
+                                                      "band":  8,
+                                                      "ratio":  0.6653525285422802,
+                                                      "initialX":  0.46863825200125575,
+                                                      "y":  0.8390216663090326,
+                                                      "speed":  0.00001142881462549883,
+                                                      "laneTop":  0.8385201444881303,
+                                                      "laneBottom":  0.8614798555118698
+                                                  }
+                                              ]
+                               },
+                               {
+                                   "count":  10,
+                                   "width":  320,
+                                   "height":  693,
+                                   "layout":  "nonoverlapping-complete-frame-random-bands",
+                                   "bands":  [
+                                                 0,
+                                                 1,
+                                                 2,
+                                                 3,
+                                                 4,
+                                                 5,
+                                                 6,
+                                                 7,
+                                                 8,
+                                                 9
+                                             ],
+                                   "staticSampleTimeMs":  2000,
+                                   "seed":  20261132,
+                                   "shapes":  [
+                                                  {
+                                                      "shape":  0,
+                                                      "band":  0,
+                                                      "ratio":  0.8195256442995742,
+                                                      "initialX":  0.17458841856569052,
+                                                      "y":  0.05152568538083367,
+                                                      "speed":  0.000010088728869230893,
+                                                      "laneTop":  0.04733003681711852,
+                                                      "laneBottom":  0.05266996318288149
+                                                  },
+                                                  {
+                                                      "shape":  10,
+                                                      "band":  1,
+                                                      "ratio":  0.7937594504654407,
+                                                      "initialX":  0.0731870059389621,
+                                                      "y":  0.1527867848001405,
+                                                      "speed":  0.000009888940838169073,
+                                                      "laneTop":  0.14585768288373946,
+                                                      "laneBottom":  0.15414231711626053
+                                                  },
+                                                  {
+                                                      "shape":  2,
+                                                      "band":  2,
+                                                      "ratio":  0.7579030249780043,
+                                                      "initialX":  0.7922064021695405,
+                                                      "y":  0.25570207010279133,
+                                                      "speed":  0.000011252469952999948,
+                                                      "laneTop":  0.2438087442844574,
+                                                      "laneBottom":  0.2561912557155426
+                                                  },
+                                                  {
+                                                      "shape":  11,
+                                                      "band":  3,
+                                                      "ratio":  0.8227264838758857,
+                                                      "initialX":  0.7673979180399328,
+                                                      "y":  0.35103525471151853,
+                                                      "speed":  0.000010189358841769742,
+                                                      "laneTop":  0.3475129419357649,
+                                                      "laneBottom":  0.35248705806423514
+                                                  },
+                                                  {
+                                                      "shape":  4,
+                                                      "band":  4,
+                                                      "ratio":  0.6290729360003025,
+                                                      "initialX":  0.3351027730386704,
+                                                      "y":  0.45601610981039603,
+                                                      "speed":  0.000010694064801362292,
+                                                      "laneTop":  0.43644702491430304,
+                                                      "laneBottom":  0.463552975085697
+                                                  },
+                                                  {
+                                                      "shape":  12,
+                                                      "band":  5,
+                                                      "ratio":  0.8568032403057442,
+                                                      "initialX":  0.33972162823192775,
+                                                      "y":  0.5494882712435012,
+                                                      "speed":  0.00001134372084412158,
+                                                      "laneTop":  0.5494601851603281,
+                                                      "laneBottom":  0.5505398148396718
+                                                  },
+                                                  {
+                                                      "shape":  6,
+                                                      "band":  6,
+                                                      "ratio":  0.757375962040387,
+                                                      "initialX":  0.7120488092768937,
+                                                      "y":  0.6462009639125672,
+                                                      "speed":  0.000010494673908796634,
+                                                      "laneTop":  0.6437786264023078,
+                                                      "laneBottom":  0.6562213735976922
+                                                  },
+                                                  {
+                                                      "shape":  13,
+                                                      "band":  7,
+                                                      "ratio":  0.6762793126609177,
+                                                      "initialX":  0.6577440837863833,
+                                                      "y":  0.7530431749722414,
+                                                      "speed":  0.000011523230939536108,
+                                                      "laneTop":  0.7391445321520523,
+                                                      "laneBottom":  0.7608554678479477
+                                                  },
+                                                  {
+                                                      "shape":  8,
+                                                      "band":  8,
+                                                      "ratio":  0.6335845208028331,
+                                                      "initialX":  0.2741903876885772,
+                                                      "y":  0.859131124366662,
+                                                      "speed":  0.000010026135736162062,
+                                                      "laneTop":  0.8367048297601619,
+                                                      "laneBottom":  0.8632951702398381
+                                                  },
+                                                  {
+                                                      "shape":  9,
+                                                      "band":  9,
+                                                      "ratio":  0.7887459964025766,
+                                                      "initialX":  0.5562789365649223,
+                                                      "y":  0.9457956607697696,
+                                                      "speed":  0.000009928969429608996,
+                                                      "laneTop":  0.9455711997944329,
+                                                      "laneBottom":  0.9544288002055671
+                                                  }
+                                              ]
+                               },
+                               {
+                                   "count":  3,
+                                   "width":  390,
+                                   "height":  844,
+                                   "layout":  "nonoverlapping-complete-frame-random-bands",
+                                   "bands":  [
+                                                 2,
+                                                 5,
+                                                 8
+                                             ],
+                                   "staticSampleTimeMs":  2000,
+                                   "seed":  20261125,
+                                   "shapes":  [
+                                                  {
+                                                      "shape":  0,
+                                                      "band":  2,
+                                                      "ratio":  0.7721038976171986,
+                                                      "initialX":  0.8308559262659401,
+                                                      "y":  0.24906768305987878,
+                                                      "speed":  0.000013024292877669034,
+                                                      "laneTop":  0.24462022272098277,
+                                                      "laneBottom":  0.25537977727901723
+                                                  },
+                                                  {
+                                                      "shape":  10,
+                                                      "band":  5,
+                                                      "ratio":  0.8512853779830039,
+                                                      "initialX":  0.01807764545083046,
+                                                      "y":  0.5493947614796901,
+                                                      "speed":  0.000010797412566846722,
+                                                      "laneTop":  0.5491448787418859,
+                                                      "laneBottom":  0.5508551212581141
+                                                  },
+                                                  {
+                                                      "shape":  13,
+                                                      "band":  8,
+                                                      "ratio":  0.6653525285422802,
+                                                      "initialX":  0.46863825200125575,
+                                                      "y":  0.8390216663090326,
+                                                      "speed":  0.00001142881462549883,
+                                                      "laneTop":  0.8385201444881303,
+                                                      "laneBottom":  0.8614798555118698
+                                                  }
+                                              ]
+                               },
+                               {
+                                   "count":  10,
+                                   "width":  390,
+                                   "height":  844,
+                                   "layout":  "nonoverlapping-complete-frame-random-bands",
+                                   "bands":  [
+                                                 0,
+                                                 1,
+                                                 2,
+                                                 3,
+                                                 4,
+                                                 5,
+                                                 6,
+                                                 7,
+                                                 8,
+                                                 9
+                                             ],
+                                   "staticSampleTimeMs":  2000,
+                                   "seed":  20261132,
+                                   "shapes":  [
+                                                  {
+                                                      "shape":  0,
+                                                      "band":  0,
+                                                      "ratio":  0.8195256442995742,
+                                                      "initialX":  0.17458841856569052,
+                                                      "y":  0.05152568538083367,
+                                                      "speed":  0.000010088728869230893,
+                                                      "laneTop":  0.04733003681711852,
+                                                      "laneBottom":  0.05266996318288149
+                                                  },
+                                                  {
+                                                      "shape":  10,
+                                                      "band":  1,
+                                                      "ratio":  0.7937594504654407,
+                                                      "initialX":  0.0731870059389621,
+                                                      "y":  0.1527867848001405,
+                                                      "speed":  0.000009888940838169073,
+                                                      "laneTop":  0.14585768288373946,
+                                                      "laneBottom":  0.15414231711626053
+                                                  },
+                                                  {
+                                                      "shape":  2,
+                                                      "band":  2,
+                                                      "ratio":  0.7579030249780043,
+                                                      "initialX":  0.7922064021695405,
+                                                      "y":  0.25570207010279133,
+                                                      "speed":  0.000011252469952999948,
+                                                      "laneTop":  0.2438087442844574,
+                                                      "laneBottom":  0.2561912557155426
+                                                  },
+                                                  {
+                                                      "shape":  11,
+                                                      "band":  3,
+                                                      "ratio":  0.8227264838758857,
+                                                      "initialX":  0.7673979180399328,
+                                                      "y":  0.35103525471151853,
+                                                      "speed":  0.000010189358841769742,
+                                                      "laneTop":  0.3475129419357649,
+                                                      "laneBottom":  0.35248705806423514
+                                                  },
+                                                  {
+                                                      "shape":  4,
+                                                      "band":  4,
+                                                      "ratio":  0.6290729360003025,
+                                                      "initialX":  0.3351027730386704,
+                                                      "y":  0.45601610981039603,
+                                                      "speed":  0.000010694064801362292,
+                                                      "laneTop":  0.43644702491430304,
+                                                      "laneBottom":  0.463552975085697
+                                                  },
+                                                  {
+                                                      "shape":  12,
+                                                      "band":  5,
+                                                      "ratio":  0.8568032403057442,
+                                                      "initialX":  0.33972162823192775,
+                                                      "y":  0.5494882712435012,
+                                                      "speed":  0.00001134372084412158,
+                                                      "laneTop":  0.5494601851603281,
+                                                      "laneBottom":  0.5505398148396718
+                                                  },
+                                                  {
+                                                      "shape":  6,
+                                                      "band":  6,
+                                                      "ratio":  0.757375962040387,
+                                                      "initialX":  0.7120488092768937,
+                                                      "y":  0.6462009639125672,
+                                                      "speed":  0.000010494673908796634,
+                                                      "laneTop":  0.6437786264023078,
+                                                      "laneBottom":  0.6562213735976922
+                                                  },
+                                                  {
+                                                      "shape":  13,
+                                                      "band":  7,
+                                                      "ratio":  0.6762793126609177,
+                                                      "initialX":  0.6577440837863833,
+                                                      "y":  0.7530431749722414,
+                                                      "speed":  0.000011523230939536108,
+                                                      "laneTop":  0.7391445321520523,
+                                                      "laneBottom":  0.7608554678479477
+                                                  },
+                                                  {
+                                                      "shape":  8,
+                                                      "band":  8,
+                                                      "ratio":  0.6335845208028331,
+                                                      "initialX":  0.2741903876885772,
+                                                      "y":  0.859131124366662,
+                                                      "speed":  0.000010026135736162062,
+                                                      "laneTop":  0.8367048297601619,
+                                                      "laneBottom":  0.8632951702398381
+                                                  },
+                                                  {
+                                                      "shape":  9,
+                                                      "band":  9,
+                                                      "ratio":  0.7887459964025766,
+                                                      "initialX":  0.5562789365649223,
+                                                      "y":  0.9457956607697696,
+                                                      "speed":  0.000009928969429608996,
+                                                      "laneTop":  0.9455711997944329,
+                                                      "laneBottom":  0.9544288002055671
+                                                  }
+                                              ]
+                               }
+                           ],
+    "historicalVersions":  [
+                               {
+                                   "id":  "single-cloud-v1",
+                                   "state":  "superseded",
+                                   "reason":  "十形需求取代，旧public已移除，字节归档shapes-v2/clouds-v1-export.webp"
+                               },
+                               {
+                                   "id":  "opening-r1",
+                                   "state":  "superseded_user_rejected_cancelled",
+                                   "rejection":  "EW-COMPOSITION-01",
+                                   "reason":  "24云六横带、过大，PM退回"
+                               },
+                               {
+                                   "id":  "opening-large12-r2",
+                                   "state":  "not_delivered_no_evidence",
+                                   "reason":  "巨大云不交付，无正式证据"
+                               },
+                               {
+                                   "id":  "opening-small64-r3",
+                                   "state":  "superseded_no_formal_evidence",
+                                   "reason":  "只读原则，十形需求后取代"
+                               },
+                               {
+                                   "id":  "opening-dense-v2-halves",
+                                   "state":  "superseded_user_rejected_cancelled",
+                                   "reason":  "中线直切边缘，曾给用户预览，原字节保留"
+                               },
+                               {
+                                   "id":  "opening-v3-banks",
+                                   "state":  "not_delivered_no_evidence",
+                                   "reason":  "用户要求每片不规则左右散开后停止，无正式证据"
+                               },
+                               {
+                                   "id":  "opening-v4-individual",
+                                   "state":  "superseded_user_rejected_cancelled",
+                                   "reason":  "逐片合成预览后用户明确效果不好要求全部去掉"
+                               },
+                               {
+                                   "id":  "animal-r1",
+                                   "state":  "superseded",
+                                   "reason":  "兔猫鲸左头，r2内置编辑右头；龟保持右头，旧导出在history-r1"
+                               },
+                               {
+                                   "id":  "animal-white-foreground",
+                                   "state":  "superseded_user_rejected",
+                                   "reason":  "用户明确动物云也应为影子；旧独立白色层/尺寸/alpha证据不作当前通过"
+                               },
+                               {
+                                   "id":  "ordinary-only-batch-shadows",
+                                   "state":  "superseded",
+                                   "reason":  "改为统一14形逐槽流式补云"
+                               },
+                               {
+                                   "id":  "unified-shadow-random-y",
+                                   "state":  "superseded_user_rejected_overlap",
+                                   "reason":  "用户要求不得重叠且随机分散；旧四张count图重叠，最终互斥随机带替代"
+                               }
+                           ],
+    "historicalOpeningMeasurements":  {
+                                          "state":  "superseded_historical_only",
+                                          "seed":  20261122,
+                                          "fieldRecords":  [
+                                                               {
+                                                                   "width":  320,
+                                                                   "height":  693,
+                                                                   "seed":  20261122,
+                                                                   "rows":  61,
+                                                                   "cloudCount":  732,
+                                                                   "minimumAlpha":  254,
+                                                                   "zeroAlphaPixels":  0,
+                                                                   "below128Pixels":  0,
+                                                                   "below255Pixels":  1205
+                                                               },
+                                                               {
+                                                                   "width":  390,
+                                                                   "height":  844,
+                                                                   "seed":  20261122,
+                                                                   "rows":  61,
+                                                                   "cloudCount":  732,
+                                                                   "minimumAlpha":  254,
+                                                                   "zeroAlphaPixels":  0,
+                                                                   "below128Pixels":  0,
+                                                                   "below255Pixels":  1909
+                                                               }
+                                                           ],
+                                          "individualRecords":  [
+                                                                    {
+                                                                        "width":  320,
+                                                                        "height":  693,
+                                                                        "seed":  20261122,
+                                                                        "cloudCount":  732,
+                                                                        "leftCount":  354,
+                                                                        "rightCount":  378,
+                                                                        "maxFinishedAtMs":  1640
+                                                                    },
+                                                                    {
+                                                                        "width":  390,
+                                                                        "height":  844,
+                                                                        "seed":  20261122,
+                                                                        "cloudCount":  732,
+                                                                        "leftCount":  354,
+                                                                        "rightCount":  378,
+                                                                        "maxFinishedAtMs":  1640
+                                                                    }
+                                                                ],
+                                          "previews":  [
+                                                           {
+                                                               "path":  "assets/source/art/estate-weather/reviews/v2-opening-preview-390x844.webp",
+                                                               "frames":  35,
+                                                               "frameStepMs":  50,
+                                                               "effectDurationMs":  1700,
+                                                               "firstHoldMs":  450,
+                                                               "lastHoldMs":  900
+                                                           }
+                                                       ],
+                                          "historicalV2SourceSha256":  "c77f1b364c6f8dc00641c4d81080680ba5ed8745527e4c30f8e6600a9b21707f",
+                                          "historicalV4SourceSha256":  "e2c05046f96d90b8db4b614459e59af3015cbf2ab67cb91b23659c78bdf4fe45"
+                                      },
+    "evidence":  [
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/source-grass.png",
+                         "sha256":  "2f90a58004c278398906279d3903fe2417589b880be28fe232a82e39dd1e8bf4",
+                         "purpose":  "source whole-canvas native-size alpha composite over normal grass color",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/webp-grass.png",
+                         "sha256":  "60e91246d1da5d2b12ed0a6863ba69bd2084a8fbccb53bbc99ca849c9e798361",
+                         "purpose":  "webp whole-canvas native-size alpha composite over normal grass color",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/webp-edge-6x.png",
+                         "sha256":  "d5e468b651ed3790f8ab199b363d90e083568292fb9a3b650ef3295c771aa226",
+                         "purpose":  "normal grass alpha composite; upper/left silhouette nearest-neighbor 6x",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/opening-320x693.png",
+                         "sha256":  "537f192f23c25c4b709ee409a1be1894875e517ed5dd7719644145b8851b8dfa",
+                         "purpose":  "left to right: 0/300/850/1400 ms; static formula reproduction, original terrain only, no UI/buildings",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/sunny-320x693.png",
+                         "sha256":  "84452be1ae061bf0dd7a9c364718d4767d0f615e01af724d0fdc370ea714bccf",
+                         "purpose":  "left/right motionMs 0/60000; six tinted cloud shadows on original terrain; no buildings/UI",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/single-cloud-320x693.png",
+                         "sha256":  "c8ee20e43839a9a03a3d705fb2b6b11a9aac78fdc30e0349cb7a9b03744edffe",
+                         "purpose":  "single whole texture at actual opening minimum span over unmodified terrain",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/opening-390x844.png",
+                         "sha256":  "5efa7f85f3cc092814d2f2f9c8a3aa468ce6f269be855abc7255b2b1f1d317ff",
+                         "purpose":  "left to right: 0/300/850/1400 ms; static formula reproduction, original terrain only, no UI/buildings",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/sunny-390x844.png",
+                         "sha256":  "f7e2fc01cce69437f3e4fdd2eba3424277578a464b313457f39bcd7eae56c6aa",
+                         "purpose":  "left/right motionMs 0/60000; six tinted cloud shadows on original terrain; no buildings/UI",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/single-cloud-390x844.png",
+                         "sha256":  "dafc4a9d854e2aa00db44bb9ab29bf87e3a5dda83fb7b8d43e63ef5cb8962967",
+                         "purpose":  "single whole texture at actual opening minimum span over unmodified terrain",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/sourceV2-grass.png",
+                         "sha256":  "6a99a41a7584830395589eaf4efd88325edcef8f933d3ec9436e693128c59551",
+                         "purpose":  "sourceV2 normal grass alpha composite; native complete image",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/pngV2-grass.png",
+                         "sha256":  "8fbff589d1555096043f7f8da53c72a8e8d322f71948353d58c470a2ac80c07d",
+                         "purpose":  "pngV2 normal grass alpha composite; native complete image",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/webpV2-grass.png",
+                         "sha256":  "69dd4cbf90c00fad115efe2f603ffbce111224d6cda89ac14fb3f51e929b9b7f",
+                         "purpose":  "webpV2 normal grass alpha composite; native complete image",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animalSource-grass.png",
+                         "sha256":  "c55fa53f42024382e96c0fd323759c4a79af40c180c5728f83febb96e296cf62",
+                         "purpose":  "animalSource normal grass alpha composite; native complete image; raw source head directions 0/1/2 left, 3 right",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animalPng-grass.png",
+                         "sha256":  "8f976344a3e59a7f3fe9e0bd3e4eef398feb6e97e5d189ca25fb7c780ce74117",
+                         "purpose":  "animalPng normal grass alpha composite; native complete image; raw source head directions 0/1/2 left, 3 right",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animalWebp-grass.png",
+                         "sha256":  "790157a2f5be8aa650a7035d43ff3da13ec75a8ce39cb4953e794355e4cd750c",
+                         "purpose":  "animalWebp normal grass alpha composite; native complete image; raw source head directions 0/1/2 left, 3 right",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animalSourceR2-grass.png",
+                         "sha256":  "3c54d4ffa57d6cc3c2e3d313e46ba900a2fdd32d0da009617386abd05eb64565",
+                         "purpose":  "animalSourceR2 normal grass alpha composite; native complete image; all four heads face right",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animalPngR2-grass.png",
+                         "sha256":  "f86e9579210ccdb047268cbf99d260de4cf6a3ce6ffebeca136783edb959282c",
+                         "purpose":  "animalPngR2 normal grass alpha composite; native complete image; all four heads face right",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animalWebpR2-grass.png",
+                         "sha256":  "30658aedd53b0ecef3cf1ef8afb6f6fe060436f94056ead3e2ce3b62bd5b61f4",
+                         "purpose":  "animalWebpR2 normal grass alpha composite; native complete image; all four heads face right",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-atlas-edge-6x.png",
+                         "sha256":  "b5702001a95c16c0edcc5d3c54a0549abf5aa2d7d1089a1c7f6d9f68b3376f28",
+                         "purpose":  "variant 2 cell near-right fringe in normal grass; nearest-neighbor 6x",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-actual-shapes-320.png",
+                         "sha256":  "87db12fa8d49442e2e53ef775a1ad01dbcfaca19e81cfe977903868cb940338a",
+                         "purpose":  "ten variant frames at entrance min/max spans 115.19999999999999/185.6; rows 0-1 minimum, 2-3 maximum, row-major IDs 0-9",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-field-320x693.png",
+                         "sha256":  "8f4e2570d9b91ec22a3893fb202ffae7341ce815ab40d5127537c63a1127bb1f",
+                         "purpose":  "transparent dense cloud field, seed 20261122, 732 sampled clouds; no backing, no fog",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-opening-320x693.png",
+                         "sha256":  "96dadaa7949c0174a53617e54743ffc4c238589575df653660ffa3e2f4014c4c",
+                         "purpose":  "final 10-shape horizontal split, seed 20261122; left to right 0/300/850/1400ms; original map beneath cloud halves solely for review; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-sunny-3-320x693.png",
+                         "sha256":  "a2dc91eaf5a4b4c18f8d03c5f5495ccc82e76711185f3c280bf4f758fc00fc9c",
+                         "purpose":  "final atlas ground-shadow batch count 3, fully faded-in at 2000ms; deterministic in-range example values from hash seed 20261125, not game\u0027s Math.random sequence; count includes currently offscreen clouds",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-sunny-10-320x693.png",
+                         "sha256":  "9ee77c683dad984f4b36ca5deb93b4a431759f8c47eabb088d183467206cbaf1",
+                         "purpose":  "final atlas ground-shadow batch count 10, fully faded-in at 2000ms; deterministic in-range example values from hash seed 20261132, not game\u0027s Math.random sequence; count includes currently offscreen clouds",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-actual-shapes-390.png",
+                         "sha256":  "9eddd3bd6edcbb2ba4ea10827b27f636738dca4aa9d91e38c8746835f4fbb40d",
+                         "purpose":  "ten variant frames at entrance min/max spans 140.4/226.2; rows 0-1 minimum, 2-3 maximum, row-major IDs 0-9",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-field-390x844.png",
+                         "sha256":  "da7e773de81dc5fed5feae771517bb294da634f1f504034267e8a9b2467f6061",
+                         "purpose":  "transparent dense cloud field, seed 20261122, 732 sampled clouds; no backing, no fog",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-opening-390x844.png",
+                         "sha256":  "22c83bf260c4264e35774f3fd8cdf556ccd0471d04b962b19403be4431a7023c",
+                         "purpose":  "final 10-shape horizontal split, seed 20261122; left to right 0/300/850/1400ms; original map beneath cloud halves solely for review; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-opening-preview-390x844.webp",
+                         "sha256":  "0d63bb01a8324cc0b8b526a2d42312c2a4baa072f1d0187c054b2afa1221da27",
+                         "purpose":  "user-authorized synthetic animation, seed20261122, 50ms samples of 1700ms effect; 450ms first-frame and 900ms final-frame viewing holds; original terrain only, no UI/audio; not actual browser rendering",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "historical file opened; image tool displays first frame; complete playback not claimed",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-sunny-3-390x844.png",
+                         "sha256":  "2815f883f35fa7c5c71d44453093f1e342565b8a330ac66d2c3257751b824bdf",
+                         "purpose":  "final atlas ground-shadow batch count 3, fully faded-in at 2000ms; deterministic in-range example values from hash seed 20261125, not game\u0027s Math.random sequence; count includes currently offscreen clouds",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v2-sunny-10-390x844.png",
+                         "sha256":  "a16ecd378f082bf908168a88ea9aabd0f4ea6cf1551c9e131f0e7f31158e4af7",
+                         "purpose":  "final atlas ground-shadow batch count 10, fully faded-in at 2000ms; deterministic in-range example values from hash seed 20261132, not game\u0027s Math.random sequence; count includes currently offscreen clouds",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v4-opening-320x693.png",
+                         "sha256":  "37932f117a5428741ed13310e38571fd8ee84f0a85cacc23589d948258f85d72",
+                         "purpose":  "independent individual left/right clouds, seed 20261122, 0/300/850/1400/1640ms; no bank or backing; no game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v4-opening-390x844.png",
+                         "sha256":  "3d6765db8abdcf5251730766d2cb8ac1256daf396f2f77d37e248c5984297382",
+                         "purpose":  "independent individual left/right clouds, seed 20261122, 0/300/850/1400/1640ms; no bank or backing; no game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/v4-opening-preview-390x844.webp",
+                         "sha256":  "34533fc10b39113d3b8501c06acf341e658f3d14b2e37b2b9b8a0d2ed50e74f9",
+                         "purpose":  "user-authorized independent-cloud synthetic preview; seed20261122, 50ms samples, 1700ms effect, 450ms/900ms viewing holds; no browser, banks, backing, UI or audio",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "historical file opened; image tool displays first frame; complete playback not claimed",
+                         "openingDisposition":  "user_rejected_cancelled; historical only"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animal-r2-actual-320.png",
+                         "sha256":  "757ee56eebfbd88624140ea7ea6264fc9e40b9dfdc5cc71137587ea29af08dc0",
+                         "purpose":  "right-facing animal clouds at real pixel sizes; columns rabbit/cat/whale/turtle; rows widthRatio/alpha .22/.28, .22/.38, .36/.28, .36/.38; midpoint passage over original terrain, 200x120 crop, no magnification; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "disposition":  "superseded_user_rejected_white_foreground"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animal-r2-actual-390.png",
+                         "sha256":  "a029b124de71a3b6a6ed775b5e57e51d5eb05e3b09b3d24bac52024cc40af50c",
+                         "purpose":  "right-facing animal clouds at real pixel sizes; columns rabbit/cat/whale/turtle; rows widthRatio/alpha .22/.28, .22/.38, .36/.28, .36/.38; midpoint passage over original terrain, 200x120 crop, no magnification; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "disposition":  "superseded_user_rejected_white_foreground"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/animal-r2-edge-6x.png",
+                         "sha256":  "f807bd7b019c808aa31b694ffcda16401f76ef320922e719ff1450d158275940",
+                         "purpose":  "right-facing cat cloud and curl tail normal grass, nearest-neighbor 6x",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-14-320-60.png",
+                         "sha256":  "a7e9feffe5552bdccc3101f931fcb7459b86175df631def102c0763bb4056558",
+                         "purpose":  "current 14 shadow shapes in row-major order: ordinary 0-9, rabbit10/cat11/whale12/turtle13; final two cells empty; W=320, span=192, height=46.08, tint213e4c alpha.13; original map crop at actual pixels, no magnification; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-14-320-86.png",
+                         "sha256":  "1f601e733f04f9cdc38d45a5395c3beefb0536d2ecb770766e6ea7f73f4fac3f",
+                         "purpose":  "current 14 shadow shapes in row-major order: ordinary 0-9, rabbit10/cat11/whale12/turtle13; final two cells empty; W=320, span=275.2, height=66.048, tint213e4c alpha.13; original map crop at actual pixels, no magnification; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-count3-320x693.png",
+                         "sha256":  "fb3c24846f2333306377540abcc4537058e42cfa24ec549f4643718ca37eaf4b",
+                         "purpose":  "current shared 3-slot static shadow example including ordinary and animal shapes; manually selected in-range shape IDs, other values fixed hash seed 20261125; initial fade fully reached after2000ms; count includes offscreen slots; not game\u0027s Math.random sequence or runtime screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "disposition":  "superseded_user_rejected_overlap; old random-y sample"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-count10-320x693.png",
+                         "sha256":  "f7e0775c8ed98bf07bec1fc573e35cb9afab5bc844fa6a35aa30f0647a593183",
+                         "purpose":  "current shared 10-slot static shadow example including ordinary and animal shapes; manually selected in-range shape IDs, other values fixed hash seed 20261132; initial fade fully reached after2000ms; count includes offscreen slots; not game\u0027s Math.random sequence or runtime screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "disposition":  "superseded_user_rejected_overlap; old random-y sample"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-14-390-60.png",
+                         "sha256":  "273eb38e64d67aa98266addb95e145ec6e4645b33d4077bd2e4aa20b0f5c4086",
+                         "purpose":  "current 14 shadow shapes in row-major order: ordinary 0-9, rabbit10/cat11/whale12/turtle13; final two cells empty; W=390, span=234, height=56.16, tint213e4c alpha.13; original map crop at actual pixels, no magnification; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-14-390-86.png",
+                         "sha256":  "cbc9ea853d2e8da9583d52c6b5f8e978dc223a138b74694032a76e10430f10cb",
+                         "purpose":  "current 14 shadow shapes in row-major order: ordinary 0-9, rabbit10/cat11/whale12/turtle13; final two cells empty; W=390, span=335.4, height=80.496, tint213e4c alpha.13; original map crop at actual pixels, no magnification; not a game screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-count3-390x844.png",
+                         "sha256":  "343e3bc648508b7922b0924e7c1a98378c73751d3cd6319a3ffe59d09aa90883",
+                         "purpose":  "current shared 3-slot static shadow example including ordinary and animal shapes; manually selected in-range shape IDs, other values fixed hash seed 20261125; initial fade fully reached after2000ms; count includes offscreen slots; not game\u0027s Math.random sequence or runtime screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "disposition":  "superseded_user_rejected_overlap; old random-y sample"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-shadow-count10-390x844.png",
+                         "sha256":  "f4d0a7fc426e0837d7a0ab43a82c1bba510306b020bacdf0cab2b73544cee159",
+                         "purpose":  "current shared 10-slot static shadow example including ordinary and animal shapes; manually selected in-range shape IDs, other values fixed hash seed 20261132; initial fade fully reached after2000ms; count includes offscreen slots; not game\u0027s Math.random sequence or runtime screenshot",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "superseded",
+                         "inspected":  "directly opened and visually inspected",
+                         "disposition":  "superseded_user_rejected_overlap; old random-y sample"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-dispersed-count3-320x693.png",
+                         "sha256":  "d241f87452ae143190c088bc18e956b5aa96af6045ea3925c81fce32e3e5df0c",
+                         "purpose":  "current nonoverlapping 3-slot shadow sample, runtime cost/band formulas copied, fixed example hash seed 20261125, bands 2,5,8; shape IDs chosen in range to show ordinary and animals, no game Math.random or runtime; after initial2000ms fade; offscreen slots included",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-dispersed-count10-320x693.png",
+                         "sha256":  "abbc060218d1082f3cf5b716a6cca78042aec444e57ac1b169adacfd37b8179f",
+                         "purpose":  "current nonoverlapping 10-slot shadow sample, runtime cost/band formulas copied, fixed example hash seed 20261132, bands 0,1,2,3,4,5,6,7,8,9; shape IDs chosen in range to show ordinary and animals, no game Math.random or runtime; after initial2000ms fade; offscreen slots included",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-dispersed-count3-390x844.png",
+                         "sha256":  "6d085f940180bdcb8c42c15ffe90318c46baca1d32d3899c2079de97bcb4d3c3",
+                         "purpose":  "current nonoverlapping 3-slot shadow sample, runtime cost/band formulas copied, fixed example hash seed 20261125, bands 2,5,8; shape IDs chosen in range to show ordinary and animals, no game Math.random or runtime; after initial2000ms fade; offscreen slots included",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     },
+                     {
+                         "path":  "assets/source/art/estate-weather/reviews/unified-dispersed-count10-390x844.png",
+                         "sha256":  "bfb8d283c4d6171344b55530e7e4416c72006f8ab468279bf941eae8bd03931f",
+                         "purpose":  "current nonoverlapping 10-slot shadow sample, runtime cost/band formulas copied, fixed example hash seed 20261132, bands 0,1,2,3,4,5,6,7,8,9; shape IDs chosen in range to show ordinary and animals, no game Math.random or runtime; after initial2000ms fade; offscreen slots included",
+                         "retention":  "证据图仅本地保存",
+                         "state":  "current_static_evidence",
+                         "inspected":  "directly opened and visually inspected"
+                     }
+                 ],
+    "limitations":  [
+                        "Only source reading and static image compositing; no game module imported/executed",
+                        "Final invocation generated four14-shape scale sheets and four nonoverlapping3/10 endpoint images; historical branches disabled; no opening/white-animal preview regenerated",
+                        "Static cases copy cost/band formulas, use fixed samples and hand-selected in-range mixed shapes; not runtime randomness or continuous-play evidence",
+                        "Original terrain only; no buildings/names/HUD/menu/Dialog/birds/sunlight/processing-smoke/audio; cannot establish layering/input/runtime experience",
+                        "Non-overlap source argument assumes current height=.24width, mapH=round2.36W, fixed disjoint slots; actual rendering/runtime not verified",
+                        "No tests, smoke checks, game preview, audio audition, syntax/runtime checks, art:check, compilation or push"
+                    ],
+    "ownership":  "EW-REVIEW completed and returned report/JSON/review script to PM; source/public art/runtime code never modified by reviewer"
+}

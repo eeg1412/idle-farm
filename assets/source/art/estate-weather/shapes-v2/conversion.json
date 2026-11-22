@@ -1,0 +1,978 @@
+{
+  "version": 2,
+  "source": {
+    "path": "assets/source/art/estate-weather/shapes-v2/cloud-shapes-v2-r3.png",
+    "sha256": "3bf7aab4fe66a896557352e8be263f8c2dda1cc9a4a49db5df62bf0cac669cef",
+    "width": 1983,
+    "height": 793,
+    "channels": 4,
+    "hasAlpha": true
+  },
+  "sourceGeneration": "assets/source/art/estate-weather/shapes-v2/generation.json",
+  "layout": "assets/source/art/estate-weather/shapes-v2/layout.json",
+  "transformation": "Manual per-cloud rectangular crop; nearest proportional inside 244×116; transparent centering in 256×128 cells; 5×2 row-major compositing. No drawing, retouching, recoloring, alpha thresholding, mirroring or distortion.",
+  "atlas": {
+    "width": 1280,
+    "height": 256,
+    "columns": 5,
+    "rows": 2,
+    "cellWidth": 256,
+    "cellHeight": 128,
+    "order": "row-major",
+    "innerBox": {
+      "width": 244,
+      "height": 116
+    }
+  },
+  "frames": [
+    {
+      "id": 0,
+      "shape": "低矮五瓣",
+      "sourceCrop": {
+        "left": 10,
+        "top": 150,
+        "width": 380,
+        "height": 190
+      },
+      "cropSha256": "d4b587e54a9d1a107518ad57d1ffcef0648f25321c6fc1221fabeb6c03a09f2c",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 7,
+            "top": 1,
+            "width": 373,
+            "height": 189
+          },
+          "padding": {
+            "left": 7,
+            "top": 1,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 16,
+            "top": 20,
+            "width": 353,
+            "height": 152
+          },
+          "padding": {
+            "left": 16,
+            "top": 20,
+            "right": 11,
+            "bottom": 18
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 232,
+        "actualHeight": 116,
+        "offset": {
+          "left": 12,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/00.png",
+        "sha256": "8def8062c3cc77b7784f22beeefb624f30c3f7d343bb38e312b2e060d7d236c0",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 16,
+              "top": 8,
+              "width": 228,
+              "height": 114
+            },
+            "padding": {
+              "left": 16,
+              "top": 8,
+              "right": 12,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 22,
+              "top": 18,
+              "width": 215,
+              "height": 93
+            },
+            "padding": {
+              "left": 22,
+              "top": 18,
+              "right": 19,
+              "bottom": 17
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 1,
+      "shape": "高耸单峰",
+      "sourceCrop": {
+        "left": 440,
+        "top": 115,
+        "width": 320,
+        "height": 238
+      },
+      "cropSha256": "f0e782fba27ec072b13e9cd92baaeacadf005bcb28b2ff3d9224c5b3b92a6ecb",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 14,
+            "width": 320,
+            "height": 224
+          },
+          "padding": {
+            "left": 0,
+            "top": 14,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 25,
+            "top": 19,
+            "width": 273,
+            "height": 199
+          },
+          "padding": {
+            "left": 25,
+            "top": 19,
+            "right": 22,
+            "bottom": 20
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 156,
+        "actualHeight": 116,
+        "offset": {
+          "left": 50,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/01.png",
+        "sha256": "6117bba18d2ea632f3faa4215981ebd687e7fc1184e901638f6a7dd5577f5e4f",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 55,
+              "top": 13,
+              "width": 151,
+              "height": 108
+            },
+            "padding": {
+              "left": 55,
+              "top": 13,
+              "right": 50,
+              "bottom": 7
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 62,
+              "top": 15,
+              "width": 133,
+              "height": 97
+            },
+            "padding": {
+              "left": 62,
+              "top": 15,
+              "right": 61,
+              "bottom": 16
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "shape": "双峰谷口",
+      "sourceCrop": {
+        "left": 800,
+        "top": 150,
+        "width": 365,
+        "height": 202
+      },
+      "cropSha256": "fb4dd855b0a6753d97300d94503568bbae51a3f68a34ec49cd3ac57978f2d548",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 365,
+            "height": 202
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 20,
+            "top": 20,
+            "width": 325,
+            "height": 161
+          },
+          "padding": {
+            "left": 20,
+            "top": 20,
+            "right": 20,
+            "bottom": 21
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 210,
+        "actualHeight": 116,
+        "offset": {
+          "left": 23,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/02.png",
+        "sha256": "a54c1c7fbcbac1974011d1b19337ffd0665446fd585c8eaff7b2f3310faff528",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 23,
+              "top": 6,
+              "width": 210,
+              "height": 116
+            },
+            "padding": {
+              "left": 23,
+              "top": 6,
+              "right": 23,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 35,
+              "top": 17,
+              "width": 186,
+              "height": 93
+            },
+            "padding": {
+              "left": 35,
+              "top": 17,
+              "right": 35,
+              "bottom": 18
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "shape": "左峰右尾",
+      "sourceCrop": {
+        "left": 1188,
+        "top": 112,
+        "width": 355,
+        "height": 245
+      },
+      "cropSha256": "83109a68b0cee894a682b0893619d5ef057a98e105ba7a49428edc3cdec92413",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 352,
+            "height": 245
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 3,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 18,
+            "top": 16,
+            "width": 313,
+            "height": 205
+          },
+          "padding": {
+            "left": 18,
+            "top": 16,
+            "right": 24,
+            "bottom": 24
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 168,
+        "actualHeight": 116,
+        "offset": {
+          "left": 44,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 768,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/03.png",
+        "sha256": "eea5488144eda3482a8259fa74b3e5ec38543b239885798141e56922d7c7685e",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 44,
+              "top": 12,
+              "width": 166,
+              "height": 110
+            },
+            "padding": {
+              "left": 44,
+              "top": 12,
+              "right": 46,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 52,
+              "top": 14,
+              "width": 149,
+              "height": 97
+            },
+            "padding": {
+              "left": 52,
+              "top": 14,
+              "right": 55,
+              "bottom": 17
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "shape": "扁薄长云",
+      "sourceCrop": {
+        "left": 1575,
+        "top": 187,
+        "width": 395,
+        "height": 130
+      },
+      "cropSha256": "fb398292c2650ab404221a2e22504e7440de61aa7972bab0bf0d2118fea61cff",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 395,
+            "height": 130
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 23,
+            "top": 18,
+            "width": 354,
+            "height": 95
+          },
+          "padding": {
+            "left": 23,
+            "top": 18,
+            "right": 18,
+            "bottom": 17
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 244,
+        "actualHeight": 80,
+        "offset": {
+          "left": 6,
+          "top": 24
+        }
+      },
+      "frame": {
+        "x": 1024,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/04.png",
+        "sha256": "755711282e563cce8a2db0415e4785e3dad0d8a590129069c4ca8e3bd9138308",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 6,
+              "top": 24,
+              "width": 244,
+              "height": 80
+            },
+            "padding": {
+              "left": 6,
+              "top": 24,
+              "right": 6,
+              "bottom": 24
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 20,
+              "top": 35,
+              "width": 219,
+              "height": 59
+            },
+            "padding": {
+              "left": 20,
+              "top": 35,
+              "right": 17,
+              "bottom": 34
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "shape": "三峰塔云",
+      "sourceCrop": {
+        "left": 16,
+        "top": 458,
+        "width": 375,
+        "height": 260
+      },
+      "cropSha256": "35bd78cdae158c26ebd320056860cd248849a223684cec36d2c082bf42e1527e",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 1,
+            "top": 0,
+            "width": 374,
+            "height": 260
+          },
+          "padding": {
+            "left": 1,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 20,
+            "top": 22,
+            "width": 341,
+            "height": 217
+          },
+          "padding": {
+            "left": 20,
+            "top": 22,
+            "right": 14,
+            "bottom": 21
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 167,
+        "actualHeight": 116,
+        "offset": {
+          "left": 44,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/05.png",
+        "sha256": "b9ca530262f5713cdba5bda37727239705166fbb6c8d1e12ff72c0637e2ce6d8",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 44,
+              "top": 6,
+              "width": 167,
+              "height": 116
+            },
+            "padding": {
+              "left": 44,
+              "top": 6,
+              "right": 45,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 53,
+              "top": 16,
+              "width": 152,
+              "height": 97
+            },
+            "padding": {
+              "left": 53,
+              "top": 16,
+              "right": 51,
+              "bottom": 15
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 6,
+      "shape": "紧凑圆团",
+      "sourceCrop": {
+        "left": 456,
+        "top": 465,
+        "width": 280,
+        "height": 255
+      },
+      "cropSha256": "b685a0a80d543d70cea1ca0081fd4fd119b5bab26bd8b3a5e0dd51d43523207f",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 280,
+            "height": 255
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 21,
+            "top": 18,
+            "width": 248,
+            "height": 220
+          },
+          "padding": {
+            "left": 21,
+            "top": 18,
+            "right": 11,
+            "bottom": 17
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 127,
+        "actualHeight": 116,
+        "offset": {
+          "left": 64,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 256,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/06.png",
+        "sha256": "f2bf7462865dd2e822296b9d43a2d980dce7b6bbb8fbd07f9af164b5a5274a2a",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 64,
+              "top": 6,
+              "width": 127,
+              "height": 116
+            },
+            "padding": {
+              "left": 64,
+              "top": 6,
+              "right": 65,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 73,
+              "top": 14,
+              "width": 113,
+              "height": 100
+            },
+            "padding": {
+              "left": 73,
+              "top": 14,
+              "right": 70,
+              "bottom": 14
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "shape": "右峰阶梯左翼",
+      "sourceCrop": {
+        "left": 790,
+        "top": 463,
+        "width": 365,
+        "height": 250
+      },
+      "cropSha256": "6f052e6e27e94ab1cc3a74e1dc84cfd615b5dfe0b43443242c4099f585159748",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 365,
+            "height": 250
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 17,
+            "top": 17,
+            "width": 327,
+            "height": 217
+          },
+          "padding": {
+            "left": 17,
+            "top": 17,
+            "right": 21,
+            "bottom": 16
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 169,
+        "actualHeight": 116,
+        "offset": {
+          "left": 43,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 512,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/07.png",
+        "sha256": "b9d3765af4372380c2ae8e354fdf22239404afe6e0e403f6bdb8d02522880ded",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 43,
+              "top": 6,
+              "width": 169,
+              "height": 116
+            },
+            "padding": {
+              "left": 43,
+              "top": 6,
+              "right": 44,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 51,
+              "top": 14,
+              "width": 151,
+              "height": 101
+            },
+            "padding": {
+              "left": 51,
+              "top": 14,
+              "right": 54,
+              "bottom": 13
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "shape": "宽平冠下瓣",
+      "sourceCrop": {
+        "left": 1175,
+        "top": 487,
+        "width": 390,
+        "height": 218
+      },
+      "cropSha256": "13251e2d1db38c5ee0ea5c5805389073a96e9b39555866b83d52efb398e092f8",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 389,
+            "height": 218
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 1,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 15,
+            "top": 18,
+            "width": 357,
+            "height": 178
+          },
+          "padding": {
+            "left": 15,
+            "top": 18,
+            "right": 18,
+            "bottom": 22
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 208,
+        "actualHeight": 116,
+        "offset": {
+          "left": 24,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 768,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/08.png",
+        "sha256": "97fd6ebd798deb305bede21140563460b282adee5b571fbbd3c38d71dff65c3e",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 24,
+              "top": 6,
+              "width": 206,
+              "height": 112
+            },
+            "padding": {
+              "left": 24,
+              "top": 6,
+              "right": 26,
+              "bottom": 10
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 32,
+              "top": 16,
+              "width": 190,
+              "height": 94
+            },
+            "padding": {
+              "left": 32,
+              "top": 16,
+              "right": 34,
+              "bottom": 18
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "shape": "连续小团链",
+      "sourceCrop": {
+        "left": 1568,
+        "top": 535,
+        "width": 410,
+        "height": 150
+      },
+      "cropSha256": "a10bb081cfb88cdcac41caa6ca3a52d708e9c2d49b75d59f3058d42c7d9bc23b",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 11,
+            "top": 0,
+            "width": 390,
+            "height": 150
+          },
+          "padding": {
+            "left": 11,
+            "top": 0,
+            "right": 9,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 25,
+            "top": 17,
+            "width": 367,
+            "height": 111
+          },
+          "padding": {
+            "left": 25,
+            "top": 17,
+            "right": 18,
+            "bottom": 22
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 244,
+        "actualHeight": 89,
+        "offset": {
+          "left": 6,
+          "top": 19
+        }
+      },
+      "frame": {
+        "x": 1024,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/shapes-v2/png/09.png",
+        "sha256": "719682e2a740d99672c3f5d763a3334c68c47d696ada7821b0b8efa02fa32d1e",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 13,
+              "top": 19,
+              "width": 232,
+              "height": 89
+            },
+            "padding": {
+              "left": 13,
+              "top": 19,
+              "right": 11,
+              "bottom": 20
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 21,
+              "top": 29,
+              "width": 218,
+              "height": 66
+            },
+            "padding": {
+              "left": 21,
+              "top": 29,
+              "right": 17,
+              "bottom": 33
+            }
+          }
+        }
+      }
+    }
+  ],
+  "png": {
+    "path": "assets/source/art/estate-weather/shapes-v2/cloud-shapes-v2.png",
+    "sha256": "7112b326a3a8d566240264b1d067184e6270f611346a9c1680b8a5a7fec8dca7"
+  },
+  "output": {
+    "path": "public/art/estate/atmosphere/cloud-shapes-v2.webp",
+    "sha256": "e4c171adee2e94d863ae6bdb305b05f0e829f68eb5efe4bb80577a1c6e84aeab",
+    "width": 1280,
+    "height": 256,
+    "channels": 4,
+    "bytes": 45958,
+    "encoder": {
+      "format": "webp",
+      "quality": 70,
+      "alphaQuality": 100,
+      "effort": 6
+    }
+  },
+  "status": "Source and export ready for independent image review; runtime not verified."
+}

@@ -1,0 +1,420 @@
+{
+  "version": 1,
+  "source": {
+    "path": "assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png",
+    "sha256": "7076d0f9c137178c6e4b56488537b1dd4ef27a37749e9924a7216e2d564326f8",
+    "width": 1774,
+    "height": 887,
+    "channels": 4,
+    "hasAlpha": true
+  },
+  "sourceGeneration": "assets/source/art/estate-weather/animals-v1/generation.json",
+  "layout": "assets/source/art/estate-weather/animals-v1/layout.json",
+  "transformation": "Manual per-cloud rectangular crop; nearest proportional inside 244×116; transparent centering in 256×128 cells; 2×2 row-major compositing. No drawing, retouching, recoloring, alpha thresholding, mirroring or distortion.",
+  "atlas": {
+    "width": 512,
+    "height": 256,
+    "columns": 2,
+    "rows": 2,
+    "cellWidth": 256,
+    "cellHeight": 128,
+    "order": "row-major",
+    "innerBox": {
+      "width": 244,
+      "height": 116
+    }
+  },
+  "frames": [
+    {
+      "id": 0,
+      "shape": "兔形团云",
+      "sourceCrop": {
+        "left": 140,
+        "top": 0,
+        "width": 620,
+        "height": 445
+      },
+      "cropSha256": "cce48876d79215de24ac7c1970068f20915bcc0009a31fc953c2db350f3f3174",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 620,
+            "height": 445
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 26,
+            "top": 13,
+            "width": 555,
+            "height": 423
+          },
+          "padding": {
+            "left": 26,
+            "top": 13,
+            "right": 39,
+            "bottom": 9
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 162,
+        "actualHeight": 116,
+        "offset": {
+          "left": 47,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/animals-v1/png/00.png",
+        "sha256": "8c68230036345c0785abe26380d6f92e93169fba09d4e6d8dc4251ab849b7e2d",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 47,
+              "top": 6,
+              "width": 160,
+              "height": 116
+            },
+            "padding": {
+              "left": 47,
+              "top": 6,
+              "right": 49,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 54,
+              "top": 9,
+              "width": 145,
+              "height": 111
+            },
+            "padding": {
+              "left": 54,
+              "top": 9,
+              "right": 57,
+              "bottom": 8
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 1,
+      "shape": "猫形团云",
+      "sourceCrop": {
+        "left": 990,
+        "top": 0,
+        "width": 740,
+        "height": 445
+      },
+      "cropSha256": "b3e429ac19369c11bbf7d4db4f47850bc178a0b9815f4d4056072dcc7a7270cf",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 5,
+            "width": 740,
+            "height": 440
+          },
+          "padding": {
+            "left": 0,
+            "top": 5,
+            "right": 0,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 30,
+            "top": 20,
+            "width": 657,
+            "height": 410
+          },
+          "padding": {
+            "left": 30,
+            "top": 20,
+            "right": 53,
+            "bottom": 15
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 193,
+        "actualHeight": 116,
+        "offset": {
+          "left": 31,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/animals-v1/png/01.png",
+        "sha256": "769b70e52f77455adf0b6e682b1cb595f10b094edb528a7acb08af008e8aebea",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 31,
+              "top": 8,
+              "width": 193,
+              "height": 114
+            },
+            "padding": {
+              "left": 31,
+              "top": 8,
+              "right": 32,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 39,
+              "top": 11,
+              "width": 171,
+              "height": 107
+            },
+            "padding": {
+              "left": 39,
+              "top": 11,
+              "right": 46,
+              "bottom": 10
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "shape": "鲸形团云",
+      "sourceCrop": {
+        "left": 18,
+        "top": 473,
+        "width": 850,
+        "height": 410
+      },
+      "cropSha256": "164e3010fb4c3866f5144a351c5626c33c34a896cd59ba56968ae822f347590f",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 849,
+            "height": 410
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 1,
+            "bottom": 0
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 28,
+            "top": 13,
+            "width": 797,
+            "height": 383
+          },
+          "padding": {
+            "left": 28,
+            "top": 13,
+            "right": 25,
+            "bottom": 14
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 240,
+        "actualHeight": 116,
+        "offset": {
+          "left": 8,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 0,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/animals-v1/png/02.png",
+        "sha256": "fd2b549aa9d966459b48d1b44d0e36034b07d31ecd70459996f17763e5d1f4e7",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 8,
+              "top": 6,
+              "width": 238,
+              "height": 116
+            },
+            "padding": {
+              "left": 8,
+              "top": 6,
+              "right": 10,
+              "bottom": 6
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 16,
+              "top": 10,
+              "width": 225,
+              "height": 108
+            },
+            "padding": {
+              "left": 16,
+              "top": 10,
+              "right": 15,
+              "bottom": 10
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "shape": "龟形团云",
+      "sourceCrop": {
+        "left": 945,
+        "top": 487,
+        "width": 800,
+        "height": 396
+      },
+      "cropSha256": "0a911b51cacc5a377ddf1580e2d981d88cac74fc79b94b0c3ed302c60c8cdd91",
+      "cropRegistration": {
+        "alpha1": {
+          "bounds": {
+            "left": 0,
+            "top": 0,
+            "width": 800,
+            "height": 392
+          },
+          "padding": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 4
+          }
+        },
+        "alpha128": {
+          "bounds": {
+            "left": 23,
+            "top": 15,
+            "width": 748,
+            "height": 356
+          },
+          "padding": {
+            "left": 23,
+            "top": 15,
+            "right": 29,
+            "bottom": 25
+          }
+        }
+      },
+      "fit": {
+        "kernel": "nearest",
+        "mode": "inside",
+        "maxWidth": 244,
+        "maxHeight": 116,
+        "actualWidth": 234,
+        "actualHeight": 116,
+        "offset": {
+          "left": 11,
+          "top": 6
+        }
+      },
+      "frame": {
+        "x": 256,
+        "y": 128,
+        "width": 256,
+        "height": 128
+      },
+      "png": {
+        "path": "assets/source/art/estate-weather/animals-v1/png/03.png",
+        "sha256": "a1062b489c0e22332eadd87ff397b75fe04a8c46a6588c8c7626a86d9ddfa2ae",
+        "registration": {
+          "alpha1": {
+            "bounds": {
+              "left": 11,
+              "top": 6,
+              "width": 234,
+              "height": 114
+            },
+            "padding": {
+              "left": 11,
+              "top": 6,
+              "right": 11,
+              "bottom": 8
+            }
+          },
+          "alpha128": {
+            "bounds": {
+              "left": 18,
+              "top": 10,
+              "width": 219,
+              "height": 105
+            },
+            "padding": {
+              "left": 18,
+              "top": 10,
+              "right": 19,
+              "bottom": 13
+            }
+          }
+        }
+      }
+    }
+  ],
+  "png": {
+    "path": "assets/source/art/estate-weather/animals-v1/animal-clouds-v1.png",
+    "sha256": "447551db55e0d173bcb65bea905401531abba857d20e46e9bf2e49c1ab313764"
+  },
+  "output": {
+    "path": "public/art/estate/atmosphere/animal-clouds-v1.webp",
+    "sha256": "e07df3e65fb84a50a2d2a972c2b62493b2eec81b3373b8160f52052c2e998ff8",
+    "width": 512,
+    "height": 256,
+    "channels": 4,
+    "bytes": 25192,
+    "encoder": {
+      "format": "webp",
+      "quality": 70,
+      "alphaQuality": 100,
+      "effort": 6
+    }
+  },
+  "status": "Source and export ready for independent image review; runtime not verified."
+}

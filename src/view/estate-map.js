@@ -1,5 +1,6 @@
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
 import { mountEstateAtmosphere } from './estate-atmosphere.js';
+import { mountEstateWeather } from './estate-weather.js';
 import { estateMerchantAsset, estateMerchantMotionBounds, mountEstateMerchant } from './estate-merchant.js';
 import {
   estateResearchAsset, estateResearchFootprint, estateResearchMotionBounds, mountEstateResearch,
@@ -13,6 +14,13 @@ const buildingArtWidth = 536;
 const buildingArtHeight = 320;
 const signWidthRatio = 0.224;
 const turn = Math.PI * 2;
+// Both chimneys use the same default plume dimensions in map-width units;
+// layout-editor scale overrides still scale each building's plume with it.
+// Three staggered puffs keep smoke visible across each wrap.
+const chimneySmokeStyle = {
+  size: 88, pivot: [0.28, 0.93], rise: 20, drift: 12,
+  period: 4.4, puffCount: 3, peakAlpha: 0.62,
+};
 
 function cycle(time, period) {
   return (time % period) / period;
@@ -68,18 +76,12 @@ const sites = [
     } },
 
   { id: 'processing', label: '加工', center: [0.6515, 1.6266], footprint: [32, 24, 504, 309],
-    widthRatio: 0.37, prop: [348, 223, 152],
+    widthRatio: 0.37, prop: [348, 223, 152], smoke: { origin: [330, 32], phaseOffset: 0 },
     animate(sprite, time) {
       sprite.rotation = turn * cycle(time, 8);
     } },
   { id: 'refining', label: '精制', center: [0.2226, 1.7611], footprint: [28, 30, 506, 309],
-    widthRatio: 0.34, prop: [403, 37, 122], pivot: [0.28, 0.93],
-    animate(sprite, time, unit, scale, x, y) {
-      const phase = cycle(time, 4.4);
-      sprite.position.set(x + phase * 17 * unit, y - phase * 26 * unit);
-      sprite.scale.set(scale * (0.53 + phase * 0.47));
-      sprite.alpha = 0.82 * Math.sin(Math.PI * phase);
-    } },
+    widthRatio: 0.34, smoke: { origin: [403, 37], phaseOffset: 1.1 } },
 
   { id: 'research', label: '研发', center: [0.2596, 2.1034], footprint: estateResearchFootprint,
     widthRatio: 0.344, signAnchorX: 228 },
@@ -154,6 +156,7 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
 export function mountEstateMap(parent, {
   width, insetTop, onOpen, bind, markDirty, getImage, loadImage, loadAtmosphereImage = loadImage,
   researchReady, ordersReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere, retainedResearch,
+  weatherSession, getWeatherCloud, retainedWeather,
   merchantUnlocked = true,
 }) {
   const height = Math.round(width * estateMapAspect);
@@ -161,6 +164,7 @@ export function mountEstateMap(parent, {
   const signWidth = Math.round(width * signWidthRatio);
   const signHeight = signWidth * 110 / 516;
   const signGap = Math.max(2, Math.round(width * 0.009));
+  const smokeUnit = width * 0.37 / 472;
   let researchMotion;
   const labelSize = Math.max(13, Math.min(23, Math.round(signHeight * 0.76)));
   const guideHeight = Math.max(26, Math.round(width * 0.068));
@@ -177,6 +181,9 @@ export function mountEstateMap(parent, {
   const buildingLayer = parent.addChild(new Container({ label: 'estate-building-layer' }));
   const signLayer = parent.addChild(new Container({ label: 'estate-sign-layer' }));
   const controlLayer = parent.addChild(new Container({ label: 'estate-control-layer' }));
+  const weatherShadowLayer = parent.addChild(new Container({ label: 'estate-weather-shadow-layer' }));
+  weatherShadowLayer.eventMode = 'none';
+  weatherShadowLayer.interactiveChildren = false;
   // Read-only birds cover the map's buildings, nameplates, and task guides.
   // The map viewport still clips them; global HUD/navigation/modals are siblings
   // mounted later by canvas-ui and remain above this entire map.
@@ -197,6 +204,21 @@ export function mountEstateMap(parent, {
     markDirty();
   });
 
+  // Cloud shadows cover buildings/plaques and remain below birds. Rain covers the map's
+  // existing atmosphere but stays inside its scrolling mask, below global UI.
+  let weather;
+  if (weatherSession) {
+    if (retainedWeather?.matches(width, height, weatherSession)) {
+      weather = retainedWeather.attach(weatherShadowLayer, parent);
+    } else {
+      retainedWeather?.destroy();
+      weather = mountEstateWeather(weatherShadowLayer, parent, {
+        width, height, session: weatherSession, getCloudTexture: getWeatherCloud,
+        loadAnimalImage: loadAtmosphereImage, markDirty,
+      });
+    }
+  } else retainedWeather?.destroy();
+
   const entries = sites.map((site, index) => {
     const override = layoutOverrides?.[site.id];
     const [centerX, centerY] = override?.center ?? site.center;
@@ -206,6 +228,7 @@ export function mountEstateMap(parent, {
       signAnchorX = (artLeft + artRight) / 2, hitInsetLeft = 0,
     } = site;
     const unit = width * widthRatio / (artRight - artLeft);
+    const effectiveSmokeUnit = smokeUnit * widthRatio / site.widthRatio;
     const x = Math.round(width * centerX);
     const y = Math.round(width * centerY);
     const buildingSize = buildingArtWidth * unit;
@@ -241,6 +264,11 @@ export function mountEstateMap(parent, {
     const motionX = (propX - buildingArtWidth / 2) * unit;
     const motionY = (propY - buildingArtHeight / 2) * unit;
     motion?.position.set(motionX, motionY);
+    const chimney = site.smoke;
+    const chimneySmoke = chimney ? Array.from({ length: chimneySmokeStyle.puffCount }, (_, part) =>
+      art.addChild(emptySprite(`estate-${id}-smoke-${part}`, chimneySmokeStyle.pivot))) : [];
+    const smokeX = chimney ? (chimney.origin[0] - buildingArtWidth / 2) * unit : 0;
+    const smokeY = chimney ? (chimney.origin[1] - buildingArtHeight / 2) * unit : 0;
     const sign = plaque.addChild(emptySprite(`estate-sign-${id}`));
     sign.y = signTop + signHeight / 2;
     const text = new Text({
@@ -294,13 +322,31 @@ export function mountEstateMap(parent, {
 
     let artRequested = false;
     let motionScale;
+    let smokeScale;
     function update(time, now) {
       if (researchAnimation) return building.visible && researchAnimation.update(now);
       if (merchantMotion) return building.visible && merchantMotion.update(time);
-      if (!motion || !building.visible || !motionScale) return false;
-      motion.visible = true;
-      site.animate(motion, time + index * 0.73, unit, motionScale, motionX, motionY);
-      return true;
+      if (!building.visible) return false;
+      let animated = false;
+      if (motion && motionScale) {
+        motion.visible = true;
+        site.animate(motion, time + index * 0.73, unit, motionScale, motionX, motionY);
+        animated = true;
+      }
+      if (smokeScale) {
+        for (let part = 0; part < chimneySmoke.length; part += 1) {
+          const sprite = chimneySmoke[part];
+          const phase = cycle(time + chimney.phaseOffset + part * chimneySmokeStyle.period / chimneySmokeStyle.puffCount,
+            chimneySmokeStyle.period);
+          sprite.visible = true;
+          sprite.position.set(smokeX + phase * chimneySmokeStyle.drift * effectiveSmokeUnit,
+            smokeY - phase * chimneySmokeStyle.rise * effectiveSmokeUnit);
+          sprite.scale.set(smokeScale * (0.53 + phase * 0.47));
+          sprite.alpha = chimneySmokeStyle.peakAlpha * Math.sin(Math.PI * phase);
+        }
+        animated = true;
+      }
+      return animated;
     }
     function loadArt() {
       if (artRequested) return;
@@ -325,11 +371,24 @@ export function mountEstateMap(parent, {
         }
         markDirty();
       });
+      if (chimneySmoke.length) applyImage('refining-motion', (texture) => {
+        if (!texture || art.destroyed) return;
+        const size = chimneySmokeStyle.size * effectiveSmokeUnit;
+        for (const sprite of chimneySmoke) {
+          smokeScale = fitSprite(sprite, texture, size, size);
+          sprite.visible = false;
+        }
+        if (art.visible) {
+          const now = performance.now();
+          update(now / 1000, now);
+        }
+        markDirty();
+      });
     }
 
     const motionBounds = researchAnimation ? estateResearchMotionBounds : merchantMotion ? estateMerchantMotionBounds() : undefined;
     const animatedTop = motionBounds ? Math.min(top, y + (motionBounds[1] - buildingArtHeight / 2) * unit)
-      : id === 'refining' ? Math.min(top, y + motionY - (motionSize + 26) * unit) : top;
+      : chimneySmoke.length ? Math.min(top, y + smokeY - (chimneySmokeStyle.size + chimneySmokeStyle.rise) * effectiveSmokeUnit) : top;
     const animatedBottom = motionBounds ? Math.max(bottom, y + (motionBounds[3] - buildingArtHeight / 2) * unit) : bottom;
     return { art, plaque, top: animatedTop, bottom: animatedBottom, loadArt, update, pause: () => researchAnimation?.pause() };
   });
@@ -339,9 +398,11 @@ export function mountEstateMap(parent, {
     height,
     parkAtmosphere() { return atmosphere.park(); },
     parkResearch() { return researchMotion?.park(); },
-    pauseAnimations() { atmosphere.pause(); researchMotion?.pause(); },
+    parkWeather() { return weather?.park(); },
+    pauseAnimations() { atmosphere.pause(); researchMotion?.pause(); weather?.pause(); },
     setViewport(scroll, viewportHeight) {
       atmosphere.setViewport(scroll, viewportHeight);
+      weather?.setViewport(scroll, viewportHeight);
       const viewportEnd = scroll + viewportHeight;
       visibleEntries = [];
       for (const entry of entries) {
@@ -354,6 +415,7 @@ export function mountEstateMap(parent, {
     },
     update(now, atmosphereActive = false, buildingsActive = true) {
       let animated = atmosphere.update(now, atmosphereActive);
+      if (weather?.update(now, atmosphereActive)) animated = true;
       const time = now / 1000;
       if (buildingsActive) {
         for (const entry of visibleEntries) if (entry.update(time, now)) animated = true;

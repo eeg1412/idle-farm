@@ -600,7 +600,7 @@ const taskArt = {
   fishIntro: 'scene-fish', buildFish: 'scene-fish', collectFish: 'scene-fish',
   miningIntro: 'mining-tab', buildMine: 'mining-tab', collectMining: 'mining-tab',
   miningUpgrade: 'mining-tab', miningTop: 'mining-tab', miningProduct: 'mining-tab',
-  firstOrder: 'tech-order-negotiation', firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
+  firstOrder: 'menu-orders', firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
   recipeCollection: 'nav-research', qualityCollection: 'nav-research', qualityMaster: 'nav-research',
   newFarm: 'sale-retain', itemCollection: 'nav-catalog',
   firstUpgrade: 'scene-wheat', firstSeed: 'nav-research', firstSwitch: 'scene-wheat',

@@ -142,6 +142,8 @@ export function deliverOrder(world, id) {
   world.stats.revenue += reward;
   world.stats.lifetimeRevenue += reward;
   world.stats.ordersCompleted += 1n;
+  world.stats.orderRevenue = (world.stats.orderRevenue ?? 0n) + reward;
+  world.stats.lifetimeOrderRevenue = (world.stats.lifetimeOrderRevenue ?? 0n) + reward;
   endOrder(world, order);
   return true;
 }

@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "source": "assets/source/art/estate-weather/animals-v1/animal-clouds-r1.png",
+  "sourceCanvas": {
+    "width": 1774,
+    "height": 887
+  },
+  "atlas": {
+    "width": 512,
+    "height": 256,
+    "columns": 2,
+    "rows": 2,
+    "cellWidth": 256,
+    "cellHeight": 128,
+    "order": "row-major",
+    "innerBox": {
+      "width": 244,
+      "height": 116
+    }
+  },
+  "clouds": [
+    {
+      "id": 0,
+      "shape": "兔形团云",
+      "crop": {
+        "left": 140,
+        "top": 0,
+        "width": 620,
+        "height": 445
+      }
+    },
+    {
+      "id": 1,
+      "shape": "猫形团云",
+      "crop": {
+        "left": 990,
+        "top": 0,
+        "width": 740,
+        "height": 445
+      }
+    },
+    {
+      "id": 2,
+      "shape": "鲸形团云",
+      "crop": {
+        "left": 18,
+        "top": 473,
+        "width": 850,
+        "height": 410
+      }
+    },
+    {
+      "id": 3,
+      "shape": "龟形团云",
+      "crop": {
+        "left": 945,
+        "top": 487,
+        "width": 800,
+        "height": 396
+      }
+    }
+  ],
+  "cropMethod": "Manual rectangle isolation from native 2×2 sheet; all animal outlines remain cloud formations. No pixel painting, erasure, recoloring or alpha thresholding."
+}

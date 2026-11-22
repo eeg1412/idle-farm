@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "source": {
+    "path": "assets/source/art/estate-weather/clouds-v1.png",
+    "sha256": "9fdf480b12e3c72443ffca380d96e36459e6ad29dc00c1b23b5266e3b17f2ea8",
+    "width": 1774,
+    "height": 887,
+    "channels": 4,
+    "hasAlpha": true,
+    "registration": {
+      "alpha1": {
+        "bounds": {
+          "left": 0,
+          "top": 28,
+          "width": 1730,
+          "height": 845
+        },
+        "padding": {
+          "left": 0,
+          "top": 28,
+          "right": 44,
+          "bottom": 14
+        }
+      },
+      "alpha128": {
+        "bounds": {
+          "left": 222,
+          "top": 178,
+          "width": 1335,
+          "height": 565
+        },
+        "padding": {
+          "left": 222,
+          "top": 178,
+          "right": 217,
+          "bottom": 144
+        }
+      }
+    },
+    "generator": "built-in image_gen.imagegen",
+    "generationRecord": "assets/source/art/estate-weather/generation-v1.json"
+  },
+  "transform": {
+    "crop": null,
+    "width": 512,
+    "height": 256,
+    "fit": "contain",
+    "position": "centre",
+    "kernel": "nearest",
+    "background": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "alpha": 0
+    },
+    "drawingOrRetouching": false
+  },
+  "encoder": {
+    "format": "webp",
+    "quality": 70,
+    "alphaQuality": 100,
+    "effort": 6
+  },
+  "output": {
+    "path": "public/art/estate/atmosphere/clouds-v1.webp",
+    "sha256": "6ca64e4695a2efe4d6eb54f38bfecb6c1771e4624c249bf98c6866db7a9a45aa",
+    "width": 512,
+    "height": 256,
+    "channels": 4,
+    "bytes": 6494,
+    "registration": {
+      "alpha1": {
+        "bounds": {
+          "left": 62,
+          "top": 8,
+          "width": 434,
+          "height": 244
+        },
+        "padding": {
+          "left": 62,
+          "top": 8,
+          "right": 16,
+          "bottom": 4
+        }
+      },
+      "alpha128": {
+        "bounds": {
+          "left": 64,
+          "top": 51,
+          "width": 385,
+          "height": 163
+        },
+        "padding": {
+          "left": 64,
+          "top": 51,
+          "right": 63,
+          "bottom": 42
+        }
+      }
+    }
+  },
+  "reviewStatus": "独立审阅待完成；未执行运行验证"
+}

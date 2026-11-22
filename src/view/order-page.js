@@ -1,5 +1,6 @@
 import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
+import { showItemDetail } from './item-chain.js';
 import { canDeliverOrder, canReplaceOrder, orderLimit, orderReplacementLimit } from '../game/orders.js';
 
 function statusTag(world, order) {
@@ -18,15 +19,40 @@ function orderProduct(ui, order, small = false) {
     { iconSize: small ? 34 : 50, titleSize: small ? 14 : 18, badges: [statusTag(ui.w, order)] });
 }
 
+// Delivery's float comes from the action result in main.js.
+const successFloat = { replaceOrder: () => '已替换' };
+
+// The order is still active with the same product, count and reward.
+function isCurrentOrder(world, order) {
+  const current = world.orders.active.find(({ id }) => id === order.id);
+  return current && current.item === order.item && current.count === order.count && current.reward === order.reward
+    ? current : undefined;
+}
+
+function confirmAbandon(ui, order, inDetail) {
+  ui.dialog('放弃订单', (panel) => {
+    panel.text('放弃「' + catalog.items[order.item].name + '」×' + compact(order.count) + '？');
+    panel.buttons([
+      { label: '取消', onClick: panel.close },
+      { label: '放弃', tone: 'danger', onClick: async () => {
+        if (!panel.isActive() || !await panel.action('abandonOrder', order) || !panel.isActive()) return;
+        await panel.close();
+        if (inDetail && ui.isActive()) ui.close();
+      } },
+    ]);
+  }, { center: true, maxHeight: 240 });
+}
+
 function orderActions(ui, order, inDetail = false) {
   const submit = async (action) => {
     if (!ui.isActive() || !await ui.action(action, order)) return;
+    if (successFloat[action]) ui.float(successFloat[action](order));
     if (inDetail && action !== 'acceptOrder' && ui.isActive()) ui.close();
   };
   if (order.status === 'locked') return [
     { label: '交付', tone: 'gold', disabled: !canDeliverOrder(ui.w, order.id), blockCardTap: !inDetail,
       onClick: () => submit('deliverOrder') },
-    { label: '放弃', onClick: () => submit('abandonOrder') },
+    { label: '放弃', onClick: () => confirmAbandon(ui, order, inDetail) },
   ];
   const buttons = [{ label: '接受', tone: 'gold', onClick: () => submit('acceptOrder') }];
   if (canReplaceOrder(ui.w, order.id)) buttons.push({ label: '替换', onClick: () => submit('replaceOrder') });
@@ -57,14 +83,13 @@ function orderRequirements(product, count) {
   return needed;
 }
 
-function productionNodes(product, count) {
-  const needed = orderRequirements(product, count);
+function productionNodes(product, needed) {
   const nodes = new Map();
   function visit(id) {
     if (nodes.has(id)) return;
     const item = catalog.items[id];
     const requires = Object.keys(item.inputs ?? {});
-    nodes.set(id, { id, icon: id, label: item.name, requires, need: needed.get(id) ?? 0n,
+    nodes.set(id, { id, icon: id, label: item.name, requires,
       status: '需 ' + compact(needed.get(id) ?? 0n), tone: id === product ? 'done' : 'neutral' });
     requires.forEach(visit);
   }
@@ -72,36 +97,12 @@ function productionNodes(product, count) {
   return [...nodes.values()];
 }
 
-function showProductionNode(ui, id, nodes) {
-  const item = catalog.items[id];
-  ui.dialog(item.name, (panel) => {
-    panel.item(id, item.name, item.sources.join(' · '));
-    const node = nodes.find((entry) => entry.id === id);
-    if (node) panel.row('本单需要', compact(node.need) + ' 件', { compact: true });
-    panel.row('当前库存', compact(panel.w.inventory[id] ?? 0n) + ' 件', { compact: true });
-    const materials = Object.entries(item.inputs ?? {});
-    if (materials.length) {
-      panel.heading('生产材料', { size: 17 });
-      panel.detailRows(materials.map(([input, count]) => ({
-        icon: input, label: catalog.items[input].name, value: '每批 ' + compact(count) + ' 件',
-        onClick: () => showProductionNode(panel, input, nodes),
-      })), { variant: 'stack' });
-    }
-    const uses = nodes.filter((node) => node.requires.includes(id));
-    if (uses.length) {
-      panel.heading('用于生产', { size: 17 });
-      panel.detailRows(uses.map((node) => ({
-        icon: node.icon, label: node.label, onClick: () => showProductionNode(panel, node.id, nodes),
-      })), { variant: 'stack' });
-    }
-  });
-}
-
 function showOrder(ui, order) {
-  const nodes = productionNodes(order.item, BigInt(order.count));
+  const needs = orderRequirements(order.item, BigInt(order.count));
+  const nodes = productionNodes(order.item, needs);
   ui.dialog('订单详情', (dlg) => {
-    const current = dlg.w.orders.active.find(({ id }) => id === order.id);
-    if (!current || current.item !== order.item || current.count !== order.count || current.reward !== order.reward) {
+    const current = isCurrentOrder(dlg.w, order);
+    if (!current) {
       dlg.text('订单已结束', { muted: true });
       return;
     }
@@ -111,7 +112,7 @@ function showOrder(ui, order) {
     const view = dlg.local.productionTree ??= {};
     dlg.tree({
       nodes, production: true, view,
-      onSelect: (id) => showProductionNode(dlg, id, nodes),
+      onSelect: (id) => showItemDetail(dlg, id, { needs, isCurrent: (world) => Boolean(isCurrentOrder(world, order)) }),
     });
     dlg.footer((footer) => footer.buttons(orderActions(dlg, current, true)));
   });

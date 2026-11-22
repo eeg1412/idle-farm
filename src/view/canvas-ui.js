@@ -11,6 +11,8 @@ import managerPortraits from '../content/manager-portraits.json' with { type: 'j
 import { compact } from './numbers.js';
 import { gameHistory, pageForRoute, routeForPage } from './navigation.js';
 import { mountEstateMap } from './estate-map.js';
+import { createEstateWeatherSession } from './estate-weather.js';
+import { estateCloudAssetUrl } from './estate-clouds.js';
 import { createLoadingTasks, loadWithDeadline } from './loading-tasks.js';
 import { createLoadingScreen } from './loading-screen.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
@@ -391,6 +393,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let estateMap;
   let parkedEstateAtmosphere;
   let parkedEstateResearch;
+  let parkedEstateWeather;
   let lastResearchReady;
   // Any change to the stage sets this; the stage is rendered only on dirty frames (plus a slow
   // safety refresh), never skipped when something may have changed.
@@ -398,6 +401,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let lastRenderAt = -Infinity;
   const markDirty = () => { frameDirty = true; };
   const openingTasks = createLoadingTasks(markDirty);
+  const weatherCloudUrl = estateCloudAssetUrl();
+  const estateWeatherSession = createEstateWeatherSession();
   let openingScreen;
   let progressTiming;
   let progressEpoch;
@@ -589,7 +594,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   openingScreen = createLoadingScreen(app, {
     tasks: openingTasks, load: loadOpeningImage, markDirty, retry: retryOpeningResources,
     retryStartup: () => saveManagement.retryInitialization?.(),
-    onComplete: () => { syncPlotVisibility?.(); requestRender(); },
+    onComplete: () => {
+      const now = performance.now();
+      estateWeatherSession.start(now);
+      syncPlotVisibility?.();
+      requestRender();
+    },
   });
 
   // Animation scenes (crop plants, livestock, fish, workshop) load through here and are pinned.
@@ -598,7 +608,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return loadImage(url);
   }
 
-  // Birds may download with the current map while the opening is visible, but
+  // Map decorations may download while the opening is visible, but
   // optional decoration cannot add opening requirements, failures, or retries.
   function loadOptionalAnimationImage(url) {
     pinnedImages.add(url);
@@ -3032,7 +3042,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const minimum = iconsOnly ? 48 : largeType ? 131 : 99;
         const limit = iconsOnly ? 8 : largeType ? 2 : 4;
         const columns = clamp(Math.floor((width + 7) / (minimum + 7)), 1, limit);
-        const hasMarket = iconsOnly && items.some((item) => item.marketRate);
         const padding = 6;
         const iconSize = 32;
         const titleGap = 2;
@@ -3044,8 +3053,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const detailWidth = cellWidth - 8;
         const tagOptions = { size: 10, align: 'center', color: palette.green, weight: '800', wrap: false };
         const tagLine = Math.ceil(tagOptions.size * 1.36) + 2;
-        const tagRows = items.reduce((max, item) => Math.max(max, item.orderTags?.length ?? 0), 0);
-        let heights = 49 + (hasMarket ? 19 : 0) + tagRows * tagLine;
+        // Icon-only cells stack the market mark and order tags as equal lines; each grid row takes its tallest stack.
+        const infoLine = 18;
+        const infoLines = (item) => (item.marketRate ? 1 : 0) + (item.orderTags?.length ?? 0);
+        let heights = [];
+        if (iconsOnly) {
+          for (const [index, item] of items.entries()) {
+            const row = Math.floor(index / columns);
+            heights[row] = Math.max(heights[row] ?? 0, 49 + infoLines(item) * infoLine);
+          }
+        }
         if (!iconsOnly) {
           const style = new TextStyle(textStyle(titleWidth, titleOptions));
           const unwrapped = new TextStyle(textStyle(titleWidth, { ...titleOptions, align: 'left', wrap: false }));
@@ -3081,12 +3098,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const tags = item.orderTags ?? [];
           if (iconsOnly) {
             drawImage(layer, item.icon ?? item.id, left + (span - iconSize) / 2, top + 8, iconSize, iconSize, false, false);
+            let line = top + 44;
             if (item.marketRate) {
               const mark = marketMark(layer, span - 8, item.marketRate, 12, false);
-              mark.layer.position.set(left + (span - mark.width) / 2, top + 44);
+              mark.layer.position.set(left + (span - mark.width) / 2, line + (infoLine - mark.height) / 2);
+              line += infoLine;
             }
-            tags.forEach((tag, index) => textNode(layer, tag, left, top + 44 + (hasMarket ? 19 : 0) + index * tagLine,
-              span, tagOptions));
+            for (const tag of tags) {
+              const label = textNode(layer, tag, left, line, span, tagOptions);
+              label.y = line + (infoLine - label.height) / 2;
+              line += infoLine;
+            }
             return;
           }
           const content = new Container({ label: 'picker-content:' + item.id });
@@ -3482,6 +3504,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function estateArea(parent, researchReady, claimableReturns) {
     const { width, height } = frame;
+    // The shadow atlas is shared and pinned, but is optional map decoration:
+    // direct-linked subpages neither request it nor wait for it at opening.
+    loadOptionalAnimationImage(weatherCloudUrl);
     const body = new Container();
     body.label = 'estate-map';
     const mask = inkGraphics().rect(0, 0, width, height).fill(0xffffff);
@@ -3506,6 +3531,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       markDirty,
       retainedAtmosphere: parkedEstateAtmosphere,
       retainedResearch: parkedEstateResearch,
+      retainedWeather: parkedEstateWeather,
+      weatherSession: estateWeatherSession,
+      getWeatherCloud: () => textures.get(weatherCloudUrl),
       merchantUnlocked: merchantStatus(world).unlocked,
       ordersReady: hasDeliverableOrder(world),
       researchReady,
@@ -3516,6 +3544,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     });
     parkedEstateAtmosphere = undefined;
     parkedEstateResearch = undefined;
+    parkedEstateWeather = undefined;
     const map = estateMap;
     setupScrollTarget(parent, body, locals[homePage], 0, width, 0, height, map.height, undefined,
       [(scroll) => map.setViewport(scroll, height)]);
@@ -3631,11 +3660,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const surface = panel(tile, 2, 2, Math.max(1, columnWidth - 4), rowHeight - 4,
         focused ? palette.selection : palette.card, focused ? palette.green : palette.line, 8);
       drawImage(tile, icon, (columnWidth - iconSize) / 2, 6, iconSize, iconSize, false, false);
-      const name = textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
+      textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
         size: labelSize, align: 'center', weight: '750', wrap: false,
       });
-      if (claimableReturns.has(page) || page === '角色管理' && claimableReturns.size > 0) drawIndicator(tile, columnWidth - 2, 2);
-      if (page === '订单中心' && hasDeliverableOrder(world)) drawIndicator(tile, name.x + 4, name.y);
+      if (claimableReturns.has(page) || page === '角色管理' && claimableReturns.size > 0 ||
+          page === '订单中心' && hasDeliverableOrder(world)) drawIndicator(tile, columnWidth - 2, 2);
       hitAt(surface, tile, 0, 0, columnWidth, rowHeight, () => go(page, { menu: true }));
     }
     setupScrollTarget(layer, body, navigationMenu, x, right, y, height, contentHeight, undefined, []);
@@ -3672,9 +3701,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
     });
     title.y = y + (height - title.height) / 2;
-    if (hasWorld && current === '订单中心' && hasDeliverableOrder(content)) {
-      drawIndicator(parent, title.x + title.width + 17, title.y + 4);
-    }
     const menu = hasWorld ? navigationMenuButton(parent, x + w, y + 12) : undefined;
     if (developmentToolsEnabled && current === '设置' && content && !waiting && !status?.busy && !modal && !pendingModal) {
       const titleHit = inkGraphics();
@@ -3781,6 +3807,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       parkedEstateAtmosphere = undefined;
       parkedEstateResearch?.destroy();
       parkedEstateResearch = undefined;
+      parkedEstateWeather?.destroy();
+      parkedEstateWeather = undefined;
       building = false;
     }
     drawn = { layout, world, status, epoch: progressTiming?.epoch };
@@ -3831,6 +3859,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     imagesInUse = new Set();
     parkedEstateAtmosphere = estateMap?.parkAtmosphere();
     parkedEstateResearch = estateMap?.parkResearch();
+    parkedEstateWeather = estateMap?.parkWeather();
     for (const child of root.removeChildren()) child.destroy({ children: true });
     controls = [];
     scrollTarget = undefined;
@@ -4125,6 +4154,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     // Browsers may suspend the ticker while hidden, so reset at the visibility
     // event as well as inactive ticks instead of counting any background gap.
     estateMap?.pauseAnimations();
+    estateWeatherSession.pause();
   });
   // Input, focus, viewport and context events may change what is shown (hover, gestures in the
   // research tree, sliders, text entry); each marks the next frame dirty.
@@ -4142,6 +4172,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (notices || floating) drawFeedback();
     const now = performance.now();
     openingScreen.update(now, !needsRender && !pendingRender && !building);
+    const weatherMapActive = Boolean(estateMap && !document.hidden && !modal && !pendingModal &&
+      openingScreen.complete && !status?.busy);
+    estateWeatherSession.update(now, !document.hidden && openingScreen.complete, weatherMapActive);
+    audio.setRain?.(current === homePage && world && !status?.busy && openingScreen.complete && !document.hidden
+      ? estateWeatherSession.rain : 0);
     const speechVisible = !openingScreen.blocking && managerSpeechMount?.visible() && !document.hidden && !status?.busy &&
       !navigationMenu;
     if (!speechVisible && managerSpeechWasVisible) pauseManagerSpeech();

@@ -51,17 +51,25 @@
 | 页签与分组 | 玩家标签 | 精确来源 |
 | --- | --- | --- |
 | 现在·产销 | 出售前累计产值 | `world.productionValue` |
-| 现在·产销 | 仓库销售收入 | `world.stats.revenue` |
+| 现在·产销 | 本轮经营收入 | `world.stats.revenue`（仓库、行脚商与订单交付合计） |
+| 现在·产销 | 仓库销售收入 | `world.stats.warehouseRevenue` |
 | 现在·产销 | 行脚商销售收入 | `world.merchant.directSales` |
+| 现在·产销 | 订单收入 | `world.stats.orderRevenue`，本周目订单交付报酬合计，售庄清零 |
 | 现在·产销 | 库存估值 | 各物品现有库存乘当前 `marketUnitPrice` 后求和，包含保留库存 |
-| 现在·产线 | 田地、畜牧、鱼池、矿洞、加工、精制 | 各类当前总数，并列生产中、待安排、缺材料的数量；仅加工及精制使用缺材料状态 |
+| 现在·订单 | 订单 | 现存订单数；小状态行为「今日订单 已生成／上限 · 今日替换 已用／上限」与「未接受 · 待备货 · 可交付」件数，取 `world.orders`、`orderLimit`、`orderReplacementLimit` 与 `canDeliverOrder` |
+| 现在·产线 | 田地、畜牧、鱼塘、矿洞、加工、精制 | 各类当前总数，并列生产中、待安排、缺材料的数量；仅加工及精制使用缺材料状态 |
 | 累计 | 累计生产总值 | `world.lifetimeProductionValue`，已含当前经营产值，不再相加 |
 | 累计 | 生产完成件数 | `world.stats.produced` 的数量求和 |
-| 累计 | 仓库累计收入 | `world.stats.lifetimeRevenue` |
-| 累计 | 仓库卖出件数 | `world.stats.sold` |
+| 累计 | 累计经营收入 | `world.stats.lifetimeRevenue` |
+| 累计 | 累计出货件数 | `world.stats.sold`（含订单交付件数） |
+| 累计 | 累计完成订单 | `world.stats.ordersCompleted` |
+| 累计 | 累计订单收入 | `world.stats.lifetimeOrderRevenue` |
 | 累计 | 出售庄园次数 | `world.completedRuns` |
 | 累计 | 已研发物品 | 有效 `world.unlocked` 数量与当前目录总数 |
 | 累计 | 品质提升次数 | `world.qualityDraws` |
+| 累计 | 永久科技等级 | 已购等级与 `techTotalLevels` |
+
+`orderRevenue`、`lifetimeOrderRevenue` 为订单交付时与 `revenue`、`lifetimeRevenue` 同一事务累加的可选存档字段，十进制字符串；旧档缺失按 0 读取，不补算更新前已交付的订单。读档校验两者分别不超过 `revenue`、`lifetimeRevenue`。
 
 用两列信息卡，左标签右数值。产线每类单卡，小状态行放在数字下，避免一行塞多个长标签。金额和件数按全局缩写规范，BigInt 计算，不转成浮点数后求和。当前行情、生产、卖出、领取和切换页面后使用新值，不为统计额外结算生产。库存估值与聚合只在相关状态变化后重算，不逐帧遍历全目录。
 

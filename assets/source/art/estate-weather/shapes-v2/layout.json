@@ -1,0 +1,124 @@
+{
+  "version": 2,
+  "source": "assets/source/art/estate-weather/shapes-v2/cloud-shapes-v2-r3.png",
+  "sourceCanvas": {
+    "width": 1983,
+    "height": 793
+  },
+  "atlas": {
+    "width": 1280,
+    "height": 256,
+    "columns": 5,
+    "rows": 2,
+    "cellWidth": 256,
+    "cellHeight": 128,
+    "order": "row-major",
+    "innerBox": {
+      "width": 244,
+      "height": 116
+    }
+  },
+  "clouds": [
+    {
+      "id": 0,
+      "shape": "低矮五瓣",
+      "crop": {
+        "left": 10,
+        "top": 150,
+        "width": 380,
+        "height": 190
+      }
+    },
+    {
+      "id": 1,
+      "shape": "高耸单峰",
+      "crop": {
+        "left": 440,
+        "top": 115,
+        "width": 320,
+        "height": 238
+      }
+    },
+    {
+      "id": 2,
+      "shape": "双峰谷口",
+      "crop": {
+        "left": 800,
+        "top": 150,
+        "width": 365,
+        "height": 202
+      }
+    },
+    {
+      "id": 3,
+      "shape": "左峰右尾",
+      "crop": {
+        "left": 1188,
+        "top": 112,
+        "width": 355,
+        "height": 245
+      }
+    },
+    {
+      "id": 4,
+      "shape": "扁薄长云",
+      "crop": {
+        "left": 1575,
+        "top": 187,
+        "width": 395,
+        "height": 130
+      }
+    },
+    {
+      "id": 5,
+      "shape": "三峰塔云",
+      "crop": {
+        "left": 16,
+        "top": 458,
+        "width": 375,
+        "height": 260
+      }
+    },
+    {
+      "id": 6,
+      "shape": "紧凑圆团",
+      "crop": {
+        "left": 456,
+        "top": 465,
+        "width": 280,
+        "height": 255
+      }
+    },
+    {
+      "id": 7,
+      "shape": "右峰阶梯左翼",
+      "crop": {
+        "left": 790,
+        "top": 463,
+        "width": 365,
+        "height": 250
+      }
+    },
+    {
+      "id": 8,
+      "shape": "宽平冠下瓣",
+      "crop": {
+        "left": 1175,
+        "top": 487,
+        "width": 390,
+        "height": 218
+      }
+    },
+    {
+      "id": 9,
+      "shape": "连续小团链",
+      "crop": {
+        "left": 1568,
+        "top": 535,
+        "width": 410,
+        "height": 150
+      }
+    }
+  ],
+  "cropMethod": "Manual rectangular isolation from one native 5×2 sheet, retaining the complete cloud bodies; no program painting, erasing, recoloring or alpha thresholding."
+}

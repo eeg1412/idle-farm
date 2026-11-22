@@ -1,6 +1,7 @@
 import { catalog, stationRequirements } from '../game/world.js';
 import { marketRate } from '../game/market.js';
 import { merchantStatus } from '../game/merchant.js';
+import { hasDeliverableOrder } from '../game/orders.js';
 import { managerAffinityThresholds, managerGiftLimit, managerGiftRemaining, managerStatus, quoteManagerGift } from '../game/managers.js';
 import { managerCharacters } from './manager-dialogue.js';
 import { managerTutorial, managerUpgradeMessages, managerResearchHelp, managerContextHelp } from './manager-help.js';
@@ -136,6 +137,14 @@ function managerContextMessages(ui, id, character, researchReady, gender) {
     return tab === '品种配方' && researchReady ? [characterHelpMessage(character.help(), ['品种配方'])] : [];
   }
   if (id === 'merchant' && !merchantStatus(world).unlocked) return [characterHelpMessage(character.help(), ['开摊条件'])];
+  if (id === 'orders') {
+    const { active } = world.orders;
+    if (!active.length) return [characterHelpMessage(character.help('none'))];
+    return [
+      hasDeliverableOrder(world) ? characterHelpMessage(character.help('ready')) : null,
+      active.some(({ status }) => status !== 'locked') ? characterHelpMessage(character.help('pending')) : null,
+    ].filter(Boolean);
+  }
   return [];
 }
 

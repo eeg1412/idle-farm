@@ -2,6 +2,7 @@ import { catalog } from '../game/world.js';
 import { purchasedTechLevels, techTotalLevels } from '../game/advancement.js';
 import { marketUnitPrice } from '../game/market.js';
 import { compact } from './numbers.js';
+import { canDeliverOrder, orderLimit, orderReplacementLimit } from '../game/orders.js';
 
 const silent = { muted: true, fontSize: 14 };
 const money = (value) => compact(value ?? 0n) + ' 金币';
@@ -36,8 +37,19 @@ export function renderStatistics(ui) {
       { label: '本轮经营收入', value: money(world.stats.revenue) },
       { label: '仓库销售收入', value: money(world.stats.warehouseRevenue ?? world.stats.revenue) },
       { label: '行脚商销售收入', value: money(world.merchant.directSales) },
+      { label: '订单收入', value: money(world.stats.orderRevenue) },
       { label: '库存估值', value: money(inventoryEstimate(world)) },
     ].map((entry) => ({ ...entry, noWrap: true })));
+    const { active, generated, replaced } = world.orders;
+    const offered = active.filter((order) => order.status !== 'locked').length;
+    const ready = active.filter((order) => order.status === 'locked' && canDeliverOrder(world, order.id)).length;
+    ui.card((card) => {
+      card.row('订单', count(active.length), { compact: true });
+      card.text('今日订单 ' + count(generated) + ' / ' + count(orderLimit(world)) +
+        ' · 今日替换 ' + count(replaced) + ' / ' + count(orderReplacementLimit(world)), silent);
+      card.text('未接受 ' + count(offered) + ' · 待备货 ' + count(active.length - offered - ready) +
+        ' · 可交付 ' + count(ready), silent);
+    });
     for (const line of productionSummary(world)) ui.card((card) => {
       card.row(line.name, count(line.total), { compact: true });
       card.text('生产中 ' + count(line.active) + ' · 待安排 ' + count(line.empty) +
@@ -50,6 +62,7 @@ export function renderStatistics(ui) {
       { label: '累计经营收入', value: money(world.stats.lifetimeRevenue) },
       { label: '累计出货件数', value: count(world.stats.sold) },
       { label: '累计完成订单', value: count(world.stats.ordersCompleted) },
+      { label: '累计订单收入', value: money(world.stats.lifetimeOrderRevenue) },
       { label: '出售庄园次数', value: count(world.completedRuns) },
       { label: '已研发物品', value: count(world.unlocked.filter((id) => catalog.items[id]).length) + ' / ' + count(Object.keys(catalog.items).length) },
       { label: '品质提升次数', value: count(world.qualityDraws) },

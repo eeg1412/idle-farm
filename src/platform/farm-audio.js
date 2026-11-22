@@ -19,6 +19,63 @@ export function createFarmAudio() {
   let effectsBus;
   let lastTyping = -Infinity;
   let typingPulse;
+  let rainAmount = 0;
+  let rainBuffer;
+  let rainVoice;
+
+  function syncRain() {
+    const active = audio?.state === 'running' && visible && volume.sound > 0 && rainAmount > 0;
+    if (!active) {
+      if (!rainVoice || rainVoice.stopping) return;
+      rainVoice.stopping = true;
+      const now = audio.currentTime;
+      rainVoice.gain.gain.setTargetAtTime(0, now, 0.02);
+      rainVoice.source.stop(now + 0.1);
+      return;
+    }
+    // A stopped BufferSource cannot be restarted. Let its short fade finish
+    // before replacing it, including rapid page/volume/visibility changes.
+    if (rainVoice?.stopping) return;
+    if (!rainVoice) {
+      if (!rainBuffer) {
+        rainBuffer = audio.createBuffer(1, audio.sampleRate * 4, audio.sampleRate);
+        const samples = rainBuffer.getChannelData(0);
+        for (let index = 0; index < samples.length; index += 1) samples[index] = Math.random() * 2 - 1;
+      }
+      const source = audio.createBufferSource();
+      const highpass = audio.createBiquadFilter();
+      const lowpass = audio.createBiquadFilter();
+      const gain = audio.createGain();
+      source.buffer = rainBuffer;
+      source.loop = true;
+      highpass.type = 'highpass';
+      highpass.frequency.value = 180;
+      highpass.Q.value = 0.5;
+      lowpass.type = 'lowpass';
+      lowpass.frequency.value = 1800;
+      lowpass.Q.value = 0.5;
+      gain.gain.value = 0;
+      source.connect(highpass).connect(lowpass).connect(gain).connect(effectsBus);
+      const voice = { source, highpass, lowpass, gain, level: -1, stopping: false };
+      rainVoice = voice;
+      source.onended = () => {
+        source.disconnect();
+        highpass.disconnect();
+        lowpass.disconnect();
+        gain.disconnect();
+        if (rainVoice === voice) {
+          rainVoice = undefined;
+          syncRain();
+        }
+      };
+      source.start();
+    }
+    if (rainVoice.level !== rainAmount) {
+      const increasing = rainAmount > rainVoice.level;
+      rainVoice.level = rainAmount;
+      rainVoice.gain.gain.setTargetAtTime(rainAmount * 0.006, audio.currentTime, increasing ? 0.8 : 0.055);
+    }
+  }
 
   function note(value, start, duration, bus, type, level, attack = 0.035) {
     const oscillator = audio.createOscillator();
@@ -50,8 +107,12 @@ export function createFarmAudio() {
   }
 
   return {
-    configure(settings) { volume = { music: settings.music, sound: settings.sound }; applyVolume(); },
-    setVisible(next) { visible = next; applyVolume(); },
+    configure(settings) { volume = { music: settings.music, sound: settings.sound }; applyVolume(); syncRain(); },
+    setVisible(next) { visible = next; applyVolume(); syncRain(); },
+    setRain(amount) {
+      rainAmount = Number.isFinite(amount) ? Math.round(Math.max(0, Math.min(1, amount)) * 100) / 100 : 0;
+      syncRain();
+    },
     setTrack(next) { if (track !== next) { track = next; cursor = 0; } },
     async unlock() {
       if (!audio) {
@@ -67,6 +128,7 @@ export function createFarmAudio() {
         } catch { return; }
       }
       await audio.resume().catch(() => {});
+      syncRain();
       timer ??= setInterval(musicBeat, 560);
     },
     play(name) {
