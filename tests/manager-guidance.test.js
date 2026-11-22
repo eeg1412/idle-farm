@@ -142,7 +142,7 @@ test('active tutorials and blocked production take precedence over affordable up
 
 test('all estate subpages reuse one role and give a page description', () => {
   const w = establishedWorld();
-  for (const page of ['管理员管理', '统计', '出售庄园历史', '图鉴', '出售庄园']) {
+  for (const page of ['角色管理', '统计', '出售庄园历史', '图鉴', '出售庄园']) {
     assert.equal(managerPages[page], 'estate');
     const view = pageFixture(w);
     renderManager(view.ui, 'estate', false, page);
@@ -179,7 +179,7 @@ test('gift quota stays legible and gift callbacks preserve the visible source wi
       renderManagerDirectory(page.ui);
       open = page.calls.find(([method]) => method === 'buttons')[1][0].find(({ label }) => label === '送礼').onClick;
     } else {
-      renderManager(page.ui, 'estate', false, '管理员管理');
+      renderManager(page.ui, 'estate', false, '角色管理');
       open = page.find('managerBanner')[0].actions.find(({ label }) => label === '送礼').onClick;
     }
     open();

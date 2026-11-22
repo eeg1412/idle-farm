@@ -68,22 +68,59 @@ function validWater(water) {
   }, 0);
   return Math.abs(area) > 0;
 }
-function onProjectedFurrow(root, projection, points) {
-  const origin = projection.vanishingPoint;
-  const ray = { x: projection.columns[root.column].x - origin.x, y: projection.referenceY - origin.y };
-  const cross = (a, b) => a.x * b.y - a.y * b.x;
-  return points.slice(1).some((end, index) => {
-    const start = points[index];
-    const segment = { x: end[0] - start[0], y: end[1] - start[1] };
-    const denominator = cross(ray, segment);
-    if (Math.abs(denominator) < 1e-8) return false;
-    const offset = { x: start[0] - origin.x, y: start[1] - origin.y };
-    const alongRay = cross(offset, segment) / denominator;
-    const alongSegment = cross(offset, ray) / denominator;
-    return alongRay >= 0 && alongSegment >= -1e-8 && alongSegment <= 1 + 1e-8 &&
-      Math.abs(root.x - (origin.x + alongRay * ray.x)) <= 1 &&
-      Math.abs(root.y - (origin.y + alongRay * ray.y)) <= 1;
-  });
+// Mirrors export-crop-animation.mjs: medium/large roots are nodes of the
+// measured ground homography (rows = ridge crests toward the row vanishing
+// point, columns parallel to the real field sides toward the column vanishing
+// point), kept inside the measured soil outline.
+function fieldPoint(geometry, u, v) {
+  const depth = geometry.depthPerUnit;
+  const w = depth * (u + v) + 1;
+  return [
+    (depth * (u * geometry.rowVanishingPoint[0] + v * geometry.columnVanishingPoint[0]) + geometry.origin[0]) / w,
+    (depth * (u * geometry.rowVanishingPoint[1] + v * geometry.columnVanishingPoint[1]) + geometry.origin[1]) / w,
+  ];
+}
+function fieldGrid(geometry, columnSpacingU, columnInsetU = geometry.inset.u) {
+  const { field, inset, ridgeOffset } = geometry;
+  const rows = [];
+  for (let v = Math.ceil(field.v[0] + inset.v - ridgeOffset) + ridgeOffset; v <= field.v[1] - inset.v + 1e-9; v += 1) {
+    rows.push({ index: rows.length, v });
+  }
+  const first = field.u[0] + columnInsetU;
+  const span = field.u[1] - columnInsetU - first;
+  const steps = Math.max(1, Math.round(span / columnSpacingU));
+  const columns = [];
+  for (let index = 0; index <= steps; index += 1) {
+    columns.push({ index, u: Math.round((first + span * index / steps) * 1e6) / 1e6 });
+  }
+  return { rows, columns };
+}
+function outlineY(points, x) {
+  for (let index = 1; index < points.length; index += 1) {
+    const [rightX, rightY] = points[index];
+    const [leftX, leftY] = points[index - 1];
+    if (x <= rightX) return leftY + (rightY - leftY) * (x - leftX) / (rightX - leftX);
+  }
+  return points.at(-1)[1];
+}
+function onSoil(geometry, x, y) {
+  const { top, bottom, marginPx } = geometry.soilOutline;
+  return y >= outlineY(top, x) + marginPx && y <= outlineY(bottom, x) - marginPx;
+}
+function validFieldGeometry(geometry) {
+  const point = (value) => Array.isArray(value) && value.length === 2 && value.every(Number.isFinite);
+  const outline = (points) => Array.isArray(points) && points.length >= 2 && points.every(point) &&
+    points.every((value, index) => !index || value[0] > points[index - 1][0]) &&
+    points[0][0] <= 0 && points.at(-1)[0] >= 319;
+  return geometry?.source === 'public/art/plot/ground.webp' && Array.isArray(geometry.method) && geometry.method.length > 0 &&
+    point(geometry.rowVanishingPoint) && point(geometry.columnVanishingPoint) && point(geometry.origin) &&
+    Number.isFinite(geometry.depthPerUnit) && geometry.depthPerUnit !== 0 &&
+    point(geometry.field?.u) && point(geometry.field?.v) &&
+    geometry.field.u[0] < geometry.field.u[1] && geometry.field.v[0] < geometry.field.v[1] &&
+    Number.isFinite(geometry.ridgeOffset) && Number.isFinite(geometry.inset?.u) && Number.isFinite(geometry.inset?.v) &&
+    geometry.inset.u >= 0 && geometry.inset.v >= 0 &&
+    Number.isFinite(geometry.soilOutline?.marginPx) && geometry.soilOutline.marginPx >= 0 &&
+    outline(geometry.soilOutline.top) && outline(geometry.soilOutline.bottom);
 }
 async function cropPlantFile(id, stage, phase, sourcePath) {
   if (stage?.phase !== phase || stage.path !== `art/plot/plants/${id}/${phase}.webp` ||
@@ -192,50 +229,78 @@ for (const id of crops) {
     }
     continue;
   }
+  const originalRoots = definition.size === 'small';
+  const geometry = cropLayout.fieldGeometry;
+  const columnSpacingU = cropLayout.sizes[definition.size]?.columnSpacingU;
+  const columnInsetU = cropLayout.sizes[definition.size]?.columnInsetU;
+  const expectedGrid = originalRoots ? undefined :
+    validFieldGeometry(geometry) && Number.isFinite(columnSpacingU) && columnSpacingU > 0 &&
+      (columnInsetU === undefined || (Number.isFinite(columnInsetU) && columnInsetU >= 0))
+      ? fieldGrid(geometry, columnSpacingU, columnInsetU ?? geometry.inset.u) : { rows: [], columns: [] };
   if (definition.mode !== 'individual' || !Array.isArray(definition.roots) || !definition.roots.length ||
-      definition.planting?.source !== 'assets/plot/furrows.json' || definition.planting.rows !== furrows.length ||
+      definition.planting?.source !== (originalRoots ? 'assets/plot/furrows.json' : 'assets/plot/crop-layout.json#fieldGeometry') ||
+      definition.planting.rows !== (originalRoots ? furrows.length : expectedGrid.rows.length) ||
       !definition.planting.projection || typeof definition.planting.projection !== 'object' ||
       !Array.isArray(definition.stages) || definition.stages.length !== cropPhases.length) {
     throw new Error(`非小麦作物必须登记逐株资源、完整田垄根位和四个阶段：${id}`);
   }
   const projection = definition.planting.projection;
-  const originalRoots = definition.size === 'small';
-  const boundaryColumns = [
-    { from: furrows[0][0], to: furrows.at(-1)[0] },
-    { from: furrows[0].at(-1), to: furrows.at(-1).at(-1) },
-  ];
   if (originalRoots ? projection.mode !== 'original-roots' :
-      !Number.isFinite(projection.vanishingPoint?.x) || !Number.isFinite(projection.vanishingPoint?.y) ||
-      !Number.isFinite(projection.referenceY) || projection.referenceY === projection.vanishingPoint.y ||
-      !Array.isArray(projection.columns) || !projection.columns.length ||
-      projection.columns.some((column, index) => column.index !== index || !Number.isFinite(column.x)) ||
-      JSON.stringify(projection.sourceBoundaryColumns) !== JSON.stringify(boundaryColumns)) {
-    throw new Error(`作物列族必须登记真实田界、消失点及完整投影参数：${id}`);
+      projection.mode !== 'field-homography' || !validFieldGeometry(geometry) ||
+      !Number.isFinite(columnSpacingU) || columnSpacingU <= 0 || projection.columnSpacingU !== columnSpacingU ||
+      projection.columnInsetU !== columnInsetU ||
+      JSON.stringify(projection.rowVanishingPoint) !== JSON.stringify(geometry.rowVanishingPoint) ||
+      JSON.stringify(projection.columnVanishingPoint) !== JSON.stringify(geometry.columnVanishingPoint) ||
+      JSON.stringify(projection.origin) !== JSON.stringify(geometry.origin) ||
+      projection.depthPerUnit !== geometry.depthPerUnit ||
+      JSON.stringify(projection.rows) !== JSON.stringify(expectedGrid.rows) ||
+      JSON.stringify(projection.columns) !== JSON.stringify(expectedGrid.columns)) {
+    throw new Error(`作物列族必须按实测田地侧边与田垄透视登记完整投影参数：${id}`);
   }
+  const rowCount = originalRoots ? furrows.length : expectedGrid.rows.length;
   for (const root of definition.roots) {
     if (!Number.isFinite(root.x) || root.x < 0 || root.x > 320 ||
         !Number.isFinite(root.y) || root.y < 0 || root.y > 320 ||
         !Number.isFinite(root.scale) || root.scale <= 0 ||
         !Number.isFinite(root.maxHeight) || root.maxHeight <= 0 ||
-        !Number.isInteger(root.row) || root.row < 0 || root.row >= furrows.length ||
+        !Number.isInteger(root.row) || root.row < 0 || root.row >= rowCount ||
         !Number.isInteger(root.column) || root.column < 0) {
       throw new Error(`作物逐株根位、投影比例或行列登记无效：${id}`);
     }
     if (originalRoots) {
       const point = furrows[root.row][root.column];
       if (!point || root.x !== point[0] || root.y !== point[1]) throw new Error(`小型作物必须沿用原田垄根位：${id}`);
-    } else if (root.column >= projection.columns.length || !onProjectedFurrow(root, projection, furrows[root.row])) {
-      throw new Error(`作物根位未落在对应列射线与真实田垄的交点：${id}`);
+    } else {
+      const column = expectedGrid.columns[root.column];
+      const [x, y] = column ? fieldPoint(geometry, column.u, expectedGrid.rows[root.row].v) : [NaN, NaN];
+      if (root.x !== Math.round(x) || root.y !== Math.round(y)) {
+        throw new Error(`作物根位未落在实测田垄与侧边透视列的交点：${id}`);
+      }
+      if (!onSoil(geometry, root.x, root.y)) throw new Error(`作物根脚越出实测田面进入草地或栅栏：${id}`);
     }
   }
   if (new Set(definition.roots.map(({ row, column }) => row + ':' + column)).size !== definition.roots.length) {
     throw new Error(`作物同一田垄和列族不能重复登记根位：${id}`);
   }
-  if (new Set(definition.roots.map(({ row }) => row)).size !== furrows.length) {
+  if (new Set(definition.roots.map(({ row }) => row)).size !== rowCount) {
     throw new Error(`作物逐株布局必须覆盖每一条已登记田垄：${id}`);
   }
   if (originalRoots && definition.roots.length !== furrows.reduce((sum, row) => sum + row.length, 0)) {
     throw new Error(`小型作物不得遗漏原田垄根位：${id}`);
+  }
+  if (!originalRoots) {
+    // Full coverage: every grid node inside the frame and the soil outline
+    // must be planted, so edges are not left empty to avoid frame cropping.
+    let expectedRoots = 0;
+    for (const row of expectedGrid.rows) {
+      for (const column of expectedGrid.columns) {
+        const [x, y] = fieldPoint(geometry, column.u, row.v);
+        const rootX = Math.round(x);
+        const rootY = Math.round(y);
+        if (rootX >= 0 && rootX <= 320 && rootY >= 0 && rootY <= 320 && onSoil(geometry, rootX, rootY)) expectedRoots += 1;
+      }
+    }
+    if (definition.roots.length !== expectedRoots) throw new Error(`中、大型作物必须铺满实测可种田面直到画框边缘：${id}`);
   }
   const frames = [];
   for (const [index, phase] of cropPhases.entries()) {

@@ -6,7 +6,7 @@
 
 | 入口 | 打开的页面 |
 | --- | --- |
-| 管理员管理 | [管理员与经营记录](../../tasks/2026-11-19-manager-expansion.md#管理员管理) |
+| 角色管理 | [管理员与经营记录](../../tasks/2026-11-19-manager-expansion.md#管理员管理) |
 | 统计 | [产销与累计统计](../../tasks/2026-11-19-manager-expansion.md#统计) |
 | 出售庄园历史 | [出售时间与产值](../../tasks/2026-11-19-manager-expansion.md#出售庄园历史) |
 | 图鉴 | [图鉴与收集](catalog.md) |

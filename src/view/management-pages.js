@@ -11,7 +11,7 @@ const complexityTabs = ['全部', '单类', '双类', '三类', '四类'];
 const facilityTabs = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞' };
 
 const managementEntries = [
-  { page: '管理员管理', icon: 'manager-directory', description: '查看管理员、送礼与切换角色' },
+  { page: '角色管理', icon: 'manager-directory', description: '查看管理员、送礼与切换角色' },
   { page: '统计', icon: 'statistics', description: '查看产出、收入与经营进度' },
   { page: '出售庄园历史', icon: 'sale-history', description: '查看历次出售时间与产值' },
   { page: '图鉴', icon: 'nav-catalog', description: '查阅物品、配方与来源' },
@@ -22,7 +22,7 @@ export function renderManagement(ui) {
   for (const { page, icon, description } of managementEntries) {
     ui.card((card) => card.item(icon, page, description), {
       padding: 16, gap: 12, style: 'navigation', onClick: () => ui.go(page),
-      indicator: page === '管理员管理' && managerIds.some((id) => managerStatus(ui.w, id).claim),
+      indicator: page === '角色管理' && managerIds.some((id) => managerStatus(ui.w, id).claim),
     });
   }
 }

@@ -30,60 +30,100 @@ function alphaBounds(pixels, width, height, threshold = 1, minY = 0) {
   return right < left ? null : { left, top, width: right - left + 1, height: bottom - top + 1 };
 }
 
-function columnLine({ from, to }) {
-  const slope = (to[0] - from[0]) / (to[1] - from[1]);
-  return { slope, intercept: from[0] - slope * from[1] };
+// Medium/large planting grid. `fieldGeometry` holds the ground measured once
+// from public/art/plot/ground.webp (method recorded beside the numbers): a
+// plane homography whose rows follow the measured furrows toward
+// rowVanishingPoint and whose columns follow the real left/right field sides
+// toward columnVanishingPoint. Equal (u, v) steps therefore give smoothly
+// growing on-screen spacing with no jumps between hand-marked furrows.
+const geometry = layout.fieldGeometry;
+
+function fieldPoint(fieldGeometry, u, v) {
+  const [rowX, rowY] = fieldGeometry.rowVanishingPoint;
+  const [columnX, columnY] = fieldGeometry.columnVanishingPoint;
+  const [originX, originY] = fieldGeometry.origin;
+  const depth = fieldGeometry.depthPerUnit;
+  const w = depth * (u + v) + 1;
+  return [(depth * (u * rowX + v * columnX) + originX) / w, (depth * (u * rowY + v * columnY) + originY) / w];
 }
 
-const boundaryLines = layout.columnProjection.sourceBoundaryColumns.map(columnLine);
-const vanishingY = (boundaryLines[1].intercept - boundaryLines[0].intercept)
-  / (boundaryLines[0].slope - boundaryLines[1].slope);
-const vanishingPoint = {
-  x: boundaryLines[0].slope * vanishingY + boundaryLines[0].intercept,
-  y: vanishingY,
-};
+function fieldGrid(fieldGeometry, columnSpacingU, columnInsetU = fieldGeometry.inset.u) {
+  const { field, inset, ridgeOffset } = fieldGeometry;
+  const rows = [];
+  // Every ridge crest (trough + 0.5) inside the measured far/near edges.
+  for (let v = Math.ceil(field.v[0] + inset.v - ridgeOffset) + ridgeOffset; v <= field.v[1] - inset.v + 1e-9; v += 1) {
+    rows.push({ index: rows.length, v });
+  }
+  // Columns span both measured field sides: the first and last columns sit
+  // `columnInsetU` (a size may override `inset.u`) inside the left/right
+  // sides, and the target spacing is rounded so no strip at either side is
+  // left unplanted.
+  const first = field.u[0] + columnInsetU;
+  const span = field.u[1] - columnInsetU - first;
+  const steps = Math.max(1, Math.round(span / columnSpacingU));
+  const columns = [];
+  for (let index = 0; index <= steps; index += 1) {
+    columns.push({ index, u: Math.round((first + span * index / steps) * 1e6) / 1e6 });
+  }
+  return { rows, columns };
+}
+
+function outlineY(points, x) {
+  for (let index = 1; index < points.length; index += 1) {
+    const [rightX, rightY] = points[index];
+    const [leftX, leftY] = points[index - 1];
+    if (x <= rightX) return leftY + (rightY - leftY) * (x - leftX) / (rightX - leftX);
+  }
+  return points.at(-1)[1];
+}
+
+// The measured soil outline keeps roots off the grass fringe and fence; only
+// its top/bottom curves count, the x=0/x=320 frame sides are not field edges.
+function onSoil(fieldGeometry, x, y) {
+  const { top, bottom, marginPx } = fieldGeometry.soilOutline;
+  return y >= outlineY(top, x) + marginPx && y <= outlineY(bottom, x) - marginPx;
+}
 
 function plantingRoots(category) {
   if (category === 'small') return {
-    projection: { mode: 'original-roots' },
+    planting: { source: 'assets/plot/furrows.json', rows: furrows.length, projection: { mode: 'original-roots' } },
     roots: furrows.flatMap((row, rowIndex) => row.map(([x, y], column) => ({ x, y, row: rowIndex, column }))),
   };
   const profile = layout.sizes[category];
+  const columnInsetU = profile.columnInsetU ?? geometry.inset.u;
+  const { rows, columns } = fieldGrid(geometry, profile.columnSpacingU, columnInsetU);
   const projection = {
-    vanishingPoint,
-    referenceY: layout.columnProjection.referenceY,
-    sourceBoundaryColumns: layout.columnProjection.sourceBoundaryColumns,
-    columns: [],
+    mode: 'field-homography',
+    rowVanishingPoint: geometry.rowVanishingPoint,
+    columnVanishingPoint: geometry.columnVanishingPoint,
+    origin: geometry.origin,
+    depthPerUnit: geometry.depthPerUnit,
+    columnSpacingU: profile.columnSpacingU,
+    // Recorded only when a size overrides the shared inset (medium phase).
+    ...(profile.columnInsetU !== undefined ? { columnInsetU } : {}),
+    rows,
+    columns,
   };
   const roots = [];
-  for (let index = layout.columnProjection.firstColumn; index <= layout.columnProjection.lastColumn; index += 1) {
-    const column = projection.columns.length;
-    const referenceX = index * profile.columnSpacing;
-    projection.columns.push({ index: column, x: referenceX });
-    const slope = (referenceX - vanishingPoint.x) / (projection.referenceY - vanishingPoint.y);
-    const intercept = vanishingPoint.x - slope * vanishingPoint.y;
-    for (const [rowIndex, row] of furrows.entries()) {
-      for (let segment = 0; segment < row.length - 1; segment += 1) {
-        const [leftX, leftY] = row[segment];
-        const [rightX, rightY] = row[segment + 1];
-        const rowSlope = (rightY - leftY) / (rightX - leftX);
-        const rowIntercept = leftY - rowSlope * leftX;
-        const x = (intercept + slope * rowIntercept) / (1 - slope * rowSlope);
-        if (x < leftX - 1e-8 || x > rightX + 1e-8) continue;
-        roots.push({ x: Math.round(x), y: Math.round(rowSlope * x + rowIntercept), row: rowIndex, column });
-        break;
-      }
-      // Columns enter or leave at the real field edges; no grass/sky roots.
+  for (const row of rows) {
+    for (const column of columns) {
+      const [x, y] = fieldPoint(geometry, column.u, row.v);
+      // Roots stay inside the measured field and the 320 frame; crowns of
+      // edge plants may still be cropped by the frame.
+      const rootX = Math.round(x);
+      const rootY = Math.round(y);
+      if (!(rootX >= 0 && rootX <= size && rootY >= 0 && rootY <= size) || !onSoil(geometry, rootX, rootY)) continue;
+      roots.push({ x: rootX, y: rootY, row: row.index, column: column.index });
     }
   }
-  return { projection, roots };
+  return { planting: { source: 'assets/plot/crop-layout.json#fieldGeometry', rows: rows.length, projection }, roots };
 }
 
 function cropPlanting(category) {
   const profile = layout.sizes[category];
-  const { projection, roots } = plantingRoots(category);
+  const { planting, roots } = plantingRoots(category);
   return {
-    planting: { source: 'assets/plot/furrows.json', rows: furrows.length, projection },
+    planting,
     roots: roots.map((point) => {
       let scale = 0.72 + (point.y - 65) * (0.38 / 225);
       let maxHeight = Math.max(2, point.y - 8);
@@ -230,7 +270,14 @@ async function exportReview(crop, visual, repeat = false) {
     }
     await canvas(size * stages.length, size).composite(registered).png().toFile(path.join(directory, `${crop}-adult-registration.png`));
   }
-  const ridges = furrows.map((row) => `<polyline points="${row.map((point) => point.join(',')).join(' ')}" />`).join('');
+  const projection = visual.planting.projection;
+  const line = (from, to) => `<polyline points="${from.join(',')} ${to.join(',')}" />`;
+  // Medium/large overlays show the measured ridge rows and side-parallel
+  // columns actually used; small crops keep the hand-marked furrow points.
+  const ridges = projection.mode === 'field-homography'
+    ? [...projection.rows.map(({ v }) => line(fieldPoint(geometry, -2, v), fieldPoint(geometry, 8, v))),
+      ...projection.columns.map(({ u }) => line(fieldPoint(geometry, u, -2), fieldPoint(geometry, u, 9)))].join('')
+    : furrows.map((row) => `<polyline points="${row.map((point) => point.join(',')).join(' ')}" />`).join('');
   const rootPoints = visual.roots.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="2.5" />`).join('');
   const overlay = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320">`
     + `<g stroke="#2de4ed" stroke-width="1" fill="none">${ridges}</g><g fill="#ff3838">${rootPoints}</g></svg>`);

@@ -45,7 +45,7 @@ const pages = {
   鱼塘: (ui) => renderProduction(ui, 'F'), 矿洞: (ui) => renderProduction(ui, 'M'),
   加工: (ui) => renderWorkshop(ui, 'I'), 精制: (ui) => renderWorkshop(ui, 'P'),
   仓库: renderWarehouse, 行脚商: renderMerchant, 研究: renderResearch, 经营: renderManagement,
-  管理员管理: renderManagerDirectory, 统计: renderStatistics, 出售庄园历史: renderFarmSaleHistory,
+  角色管理: renderManagerDirectory, 统计: renderStatistics, 出售庄园历史: renderFarmSaleHistory,
   图鉴: renderCatalog, 任务: renderTasks, 出售庄园: renderFarmSale, 设置: renderSettings,
 };
 const menuPages = Object.keys(pages);
@@ -53,7 +53,7 @@ const menuIcons = {
   [homePage]: 'menu-map', 田地: 'menu-field', 畜牧: 'menu-livestock', 鱼塘: 'menu-fish', 矿洞: 'menu-mine',
   加工: 'menu-processing', 精制: 'menu-refining', 仓库: 'menu-warehouse', 行脚商: 'menu-merchant',
   研究: 'menu-research', 经营: 'menu-operations', 图鉴: 'menu-catalog', 任务: 'menu-tasks',
-  管理员管理: 'manager-directory', 统计: 'statistics', 出售庄园历史: 'sale-history',
+  角色管理: 'manager-directory', 统计: 'statistics', 出售庄园历史: 'sale-history',
   出售庄园: 'menu-farm-sale', 设置: 'menu-settings',
 };
 const estateDestinations = {
@@ -338,6 +338,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let linkedEntryParent;
   let navigationEpoch = 0;
   let navigation = gameHistory(browser);
+  // Direct links add their parent entries on the first user activation, so browsers keep them.
+  let directLinkParentsPending;
   let merchantDialogEpoch = 0;
   const managerConversations = new Map();
   const managerDailyLines = new WeakMap();
@@ -1442,7 +1444,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function defaultParent(page) {
-    const parent = ['图鉴', '出售庄园', '管理员管理', '统计', '出售庄园历史'].includes(page) ? '经营' : homePage;
+    const parent = ['图鉴', '出售庄园', '角色管理', '统计', '出售庄园历史'].includes(page) ? '经营' : homePage;
     return {
       page: parent, local: copyViewState(locals[parent]), modal: undefined,
       parent: parent === homePage ? undefined : defaultParent(parent), epoch: navigationEpoch,
@@ -1577,6 +1579,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function restoreRoute(initial = false) {
     if (!navigation) return;
+    directLinkParentsPending = undefined;
     if (!initial && modal?.flow === 'game-update' && modal.updateAccepting) {
       navigation.write(routeSnapshot(), modal, true, locals[current].scroll, captureContext());
       return;
@@ -1636,8 +1639,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     focusIndex = -1;
     if (!initial) redraw();
     applyingRoute = false;
-    if (initial && !entry.key && entry.position === undefined && pageParent) addDirectLinkParents();
-    else if (!entry.key || (entry.modal && !modal)) recordRoute(true);
+    if (initial && !entry.key && entry.position === undefined && pageParent) {
+      recordRoute(true);
+      directLinkParentsPending = navigation.active;
+    } else if (!entry.key || (entry.modal && !modal)) recordRoute(true);
     else rememberContext();
   }
 
@@ -2224,7 +2229,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (selection && selection.candidates !== JSON.stringify(messages)) managerSelections.delete(speech);
         speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
         let suppressed = false;
-        if (!receive && current === '管理员管理' && local.managerReplyRole) {
+        if (!receive && current === '角色管理' && local.managerReplyRole) {
           const replyRole = local.managerReplyRole;
           const cardSpeech = managerConversations.get(local.managerSpeechKeys?.[managerSpeechKey(replyRole, true)]);
           suppressed = Boolean(cardSpeech?.replying && cardSpeech.gender === managerStatus(world, replyRole).gender);
@@ -3580,7 +3585,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
         size: labelSize, align: 'center', weight: '750', wrap: false,
       });
-      if (claimableReturns.has(page) || page === '管理员管理' && claimableReturns.size > 0) drawIndicator(tile, columnWidth - 2, 2);
+      if (claimableReturns.has(page) || page === '角色管理' && claimableReturns.size > 0) drawIndicator(tile, columnWidth - 2, 2);
       hitAt(surface, tile, 0, 0, columnWidth, rowHeight, () => go(page, { menu: true }));
     }
     setupScrollTarget(layer, body, navigationMenu, x, right, y, height, contentHeight, undefined, []);
@@ -3985,6 +3990,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     scrollWheelEvent = undefined;
   });
 
+  // Window capture runs before Pixi's canvas/document listeners and the canvas keydown handler.
+  // Only activation-triggering input counts: mouse pointerdown, other pointerup, non-Escape keydown.
+  function addPendingDirectLinkParents(event) {
+    if (!directLinkParentsPending || event.target !== app.canvas) return;
+    if (event.type === 'keydown' ? event.key === 'Escape'
+      : (event.pointerType === 'mouse') !== (event.type === 'pointerdown')) return;
+    const pending = directLinkParentsPending;
+    directLinkParentsPending = undefined;
+    if (navigation?.active === pending && !navigation.returning && pageParent) addDirectLinkParents();
+  }
+  for (const type of ['pointerdown', 'pointerup', 'keydown']) {
+    window.addEventListener(type, addPendingDirectLinkParents, { capture: true });
+  }
+
   app.canvas.addEventListener('keydown', (event) => {
     if (openingScreen?.blocking) {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openingScreen.retryFailed(); }
@@ -4185,6 +4204,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     point = undefined;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     // A new history session leaves old browser entries unable to restore stale dialogs.
+    directLinkParentsPending = undefined;
     navigation = gameHistory(browser);
     recordRoute(true);
     onNavigate?.(current);

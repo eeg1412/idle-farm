@@ -31,7 +31,7 @@
 
 C02 起的每个条目为 `{mode: 'individual', size, harvestMode, planting, roots, stages, repeatBare?}`：
 
-- `roots` 每根记录 `{x, y, scale, maxHeight, row, column}`，使用 320×320 场景空间。四期共用这些固定根位，row／column 对应真实田垄和统一透视列，不随阶段重新抽样。
+- `roots` 每根记录 `{x, y, scale, maxHeight, row, column}`，使用 320×320 场景空间。四期共用这些固定根位，不随阶段重新抽样。中、大型的 row／column 对应 `fieldGeometry` 实测田垄脊线与平行于田地侧边的透视列（`planting.projection.mode: field-homography`，登记两个消失点、原点、深度系数及各排 v、各列 u）；小型对应 `furrows.json` 原根位。
 - `stages` 按 `sown/seedling/growing/mature` 排列，每期记录 `{phase, path, width, height, anchorX, anchorY, baseScale, source: {path, bounds}}`。`path` 是 public 相对路径 `art/plot/plants/<ID>/<phase>.webp`；`source.path` 指向 `assets/plot/crops/<ID>/<phase>.png`，`bounds` 是该源图一次导出时的 trim 区域。
 - `anchorX/anchorY` 使用 trim 后单株纹理内的根脚像素，种子使用中心；导出时登记一次，运行不逐帧测 bbox 或重居中。
 - 每根的独立容器定位在 root.x/y，内部各建一个 Sprite，pivot 使用该期 anchor；纹理可以由全田同阶段 Sprite 共享。阶段切换只换纹理、登记的 pivot 和尺度，不改根容器位置。
@@ -68,7 +68,7 @@ C02 起的每个条目为 `{mode: 'individual', size, harvestMode, planting, roo
 | 喷头原画、网格、提示词 | `assets/plot/sprinkler/sprinkler-raw.png`、`sprinkler-sheet.png`、`sprinkler-prompt.txt` |
 | 发布共用层 | `public/art/plot/sky.webp`、`ground.webp`、`sprinkler-base.webp`、`sprinkler-ne.webp`、`sprinkler-se.webp`、`sprinkler-sw.webp`、`sprinkler-nw.webp` |
 
-每条可种田垄都应布植，列沿统一透视网格对齐，并覆盖实际 ground 的完整可种范围，只给必要边缘和洒水器空间；不能仅用两列窄条或不贴底图的规则表格交付。交接必须包含根位、列与真实 ground 叠图，不能只凭根数、九排或公式宣布铺满。四期用同一根位。图层顺序是天空、田地、后排单株 Sprite、洒水器底座、同轴喷头、水滴与落地飞溅、前排单株 Sprite。共用层可复用，但不能省略来源与完整性核对。
+每条可种田垄都应布植。中、大型列族按底图实测的田地左右侧边做透视，排沿实测田垄、排距平滑递增；铺满可见可种田面直到画面左右与近端边缘，边缘植株允许被130／320画框裁切，远端树冠不被上缘截断，根脚须在实测土面轮廓内、不进草地或栅栏。不能用手标田垄端点当列边界、为避免裁切空出边缘、仅用两列窄条或不贴底图的规则表格交付。交接必须包含根位、列与真实 ground 叠图，不能只凭根数、九排或公式宣布铺满。四期用同一根位。图层顺序是天空、田地、后排单株 Sprite、洒水器底座、同轴喷头、水滴与落地飞溅、前排单株 Sprite。共用层可复用，但不能省略来源与完整性核对。
 
 ## 导出与集成边界
 

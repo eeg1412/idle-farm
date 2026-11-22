@@ -5,7 +5,7 @@ const routes = {
   行脚商: ['merchant', { 买入: 'buy', 卖出: 'sell' }],
   研究: ['research', { 品种配方: 'recipes', 品质: 'quality', 经营改良: 'efficiency' }],
   经营: ['management', {}],
-  管理员管理: ['managers', {}],
+  角色管理: ['managers', {}],
   统计: ['statistics', {}],
   出售庄园历史: ['farm-sale-history', {}],
   图鉴: ['catalog', { 用途: 'uses' }],

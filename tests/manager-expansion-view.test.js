@@ -22,7 +22,7 @@ test('all appearances have a stable name and ten distinct replies for each event
 });
 
 test('management routes retain their canonical identity', () => {
-  for (const [page, hash] of [['管理员管理', '#/managers'], ['统计', '#/statistics'], ['出售庄园历史', '#/farm-sale-history']]) {
+  for (const [page, hash] of [['角色管理', '#/managers'], ['统计', '#/statistics'], ['出售庄园历史', '#/farm-sale-history']]) {
     assert.equal(gameHash({ page }), hash);
     assert.equal(parseGameHash(hash).page, page);
   }

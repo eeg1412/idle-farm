@@ -1,31 +1,506 @@
 {
   "foregroundRootY": 191,
-  "columnProjection": {
-    "sourceBoundaryColumns": [
-      {
-        "from": [
-          221,
-          67
-        ],
-        "to": [
-          24,
-          230
+  "fieldGeometry": {
+    "source": "public/art/plot/ground.webp",
+    "space": "320x320 scene pixels, same as roots",
+    "measuredOn": "2026-11-22",
+    "method": [
+      "Soil mask: flood fill from (160,170) over opaque ground pixels with r>g+18, r>b+25, g<170; grass, fence and sky stay outside.",
+      "Troughs: per 4px column, luminance (0.3R+0.59G+0.11B) averaged over x+-3 inside the mask and smoothed over y+-2; local minima darker than 72 within +-7px are trough samples, linked across columns from seeds x=14..302, then least-squares lines y=a+bx (n>=12 samples, rms<2px, duplicates within 5px at x=160 merged).",
+      "Row vanishing point: weighted least-squares intersection of the eight trough lines (weight = sample count).",
+      "Left field side: least-squares line through the soil mask top boundary for x=4..222 (upper-left grass/soil edge). Far edge: same for x=236..318.",
+      "Column vanishing point: the trough lines intersect the left side at x_k; x_k=(A+Bk)/(1+Ck) fitted by linear least squares (max residual 0.95px); its limit B/C on the left side is the column vanishing point, so trough spacing and column convergence come from one projective map.",
+      "Homography p(u,v) ~ depthPerUnit*u*rowVP + depthPerUnit*v*columnVP + origin (homogeneous, origin = trough 0 on the left side). v=k is trough k, v=k+0.5 is the ridge crest between troughs; u is measured along the ridges from the left side (u=0).",
+      "Field bounds in (u,v): medians of the soil-mask boundary mapped through the inverse homography: left side top boundary x=4..222, far edge x=236..318, near edge bottom boundary x=0..150, right side = rightmost soil pixel for y=205..292 (lower-right grass edge).",
+      "Soil outline: the soil mask with enclosed stone/shadow holes filled; top = first soil pixel per x, bottom = first pair of non-soil pixels below it (y>=150), sampled every 8px after a +-4px conservative max/min filter. Roots must stay marginPx inside top/bottom; the x=0 and x=320 frame sides are not field edges."
+    ],
+    "measurements": {
+      "troughLines": [
+        {
+          "a": 34.415,
+          "b": 0.1644,
+          "samples": 27,
+          "rmsPx": 0.31,
+          "xRange": [
+            210,
+            314
+          ]
+        },
+        {
+          "a": 48.582,
+          "b": 0.1736,
+          "samples": 39,
+          "rmsPx": 1.35,
+          "xRange": [
+            158,
+            314
+          ]
+        },
+        {
+          "a": 60.463,
+          "b": 0.2042,
+          "samples": 46,
+          "rmsPx": 1.29,
+          "xRange": [
+            122,
+            314
+          ]
+        },
+        {
+          "a": 76.934,
+          "b": 0.2357,
+          "samples": 55,
+          "rmsPx": 0.74,
+          "xRange": [
+            98,
+            314
+          ]
+        },
+        {
+          "a": 99.553,
+          "b": 0.2602,
+          "samples": 64,
+          "rmsPx": 0.94,
+          "xRange": [
+            58,
+            314
+          ]
+        },
+        {
+          "a": 126.03,
+          "b": 0.3031,
+          "samples": 57,
+          "rmsPx": 1.2,
+          "xRange": [
+            14,
+            242
+          ]
+        },
+        {
+          "a": 159.253,
+          "b": 0.3454,
+          "samples": 39,
+          "rmsPx": 1.2,
+          "xRange": [
+            6,
+            174
+          ]
+        },
+        {
+          "a": 201.343,
+          "b": 0.3692,
+          "samples": 13,
+          "rmsPx": 1.22,
+          "xRange": [
+            6,
+            62
+          ]
+        }
+      ],
+      "leftSide": {
+        "a": 134.3765,
+        "b": -0.32616,
+        "rmsPx": 1.61,
+        "xRange": [
+          4,
+          222
         ]
       },
-      {
-        "from": [
-          303,
+      "farEdge": {
+        "a": 31.73,
+        "b": 0.13324,
+        "rmsPx": 0.51,
+        "xRange": [
+          236,
+          318
+        ]
+      },
+      "troughsOnLeftSide": {
+        "x": [
+          203.8,
+          171.7,
+          139.4,
+          102.2,
+          59.4,
+          13.3,
+          -37,
+          -96.3
+        ],
+        "A": 203.477,
+        "B": -38.528,
+        "C": -0.0444738,
+        "maxResidualPx": 0.95
+      },
+      "boundaryMedians": {
+        "leftSideU": -0.02,
+        "farEdgeV": -0.79,
+        "nearEdgeV": 7.62,
+        "rightSideU": 5.19
+      }
+    },
+    "rowVanishingPoint": [
+      -697.049,
+      -81.083
+    ],
+    "columnVanishingPoint": [
+      866.308,
+      -148.178
+    ],
+    "origin": [
+      203.477,
+      68.01
+    ],
+    "depthPerUnit": -0.0444738,
+    "field": {
+      "u": [
+        0,
+        5.19
+      ],
+      "v": [
+        -0.79,
+        7.62
+      ]
+    },
+    "ridgeOffset": 0.5,
+    "inset": {
+      "u": 0.3,
+      "v": 0.12
+    },
+    "soilOutline": {
+      "marginPx": 3,
+      "top": [
+        [
+          0,
+          136
+        ],
+        [
+          8,
+          134
+        ],
+        [
+          16,
+          134
+        ],
+        [
+          24,
+          130
+        ],
+        [
+          32,
+          125
+        ],
+        [
+          40,
+          123
+        ],
+        [
+          48,
+          120
+        ],
+        [
+          56,
+          119
+        ],
+        [
+          64,
+          115
+        ],
+        [
+          72,
+          111
+        ],
+        [
+          80,
+          108
+        ],
+        [
+          88,
+          107
+        ],
+        [
+          96,
+          104
+        ],
+        [
+          104,
+          101
+        ],
+        [
+          112,
+          97
+        ],
+        [
+          120,
+          95
+        ],
+        [
+          128,
+          92
+        ],
+        [
+          136,
+          91
+        ],
+        [
+          144,
+          87
+        ],
+        [
+          152,
+          84
+        ],
+        [
+          160,
+          83
+        ],
+        [
+          168,
+          80
+        ],
+        [
+          176,
           78
         ],
-        "to": [
+        [
           184,
-          281
+          76
+        ],
+        [
+          192,
+          73
+        ],
+        [
+          200,
+          72
+        ],
+        [
+          208,
+          71
+        ],
+        [
+          216,
+          67
+        ],
+        [
+          224,
+          65
+        ],
+        [
+          232,
+          64
+        ],
+        [
+          240,
+          65
+        ],
+        [
+          248,
+          66
+        ],
+        [
+          256,
+          66
+        ],
+        [
+          264,
+          67
+        ],
+        [
+          272,
+          68
+        ],
+        [
+          280,
+          69
+        ],
+        [
+          288,
+          71
+        ],
+        [
+          296,
+          72
+        ],
+        [
+          304,
+          73
+        ],
+        [
+          312,
+          74
+        ],
+        [
+          319,
+          74
         ]
-      }
-    ],
-    "referenceY": 180,
-    "firstColumn": -4,
-    "lastColumn": 9
+      ],
+      "bottom": [
+        [
+          0,
+          242
+        ],
+        [
+          8,
+          243
+        ],
+        [
+          16,
+          245
+        ],
+        [
+          24,
+          246
+        ],
+        [
+          32,
+          255
+        ],
+        [
+          40,
+          262
+        ],
+        [
+          48,
+          260
+        ],
+        [
+          56,
+          261
+        ],
+        [
+          64,
+          261
+        ],
+        [
+          72,
+          276
+        ],
+        [
+          80,
+          277
+        ],
+        [
+          88,
+          277
+        ],
+        [
+          96,
+          275
+        ],
+        [
+          104,
+          288
+        ],
+        [
+          112,
+          289
+        ],
+        [
+          120,
+          292
+        ],
+        [
+          128,
+          288
+        ],
+        [
+          136,
+          289
+        ],
+        [
+          144,
+          293
+        ],
+        [
+          152,
+          294
+        ],
+        [
+          160,
+          293
+        ],
+        [
+          168,
+          288
+        ],
+        [
+          176,
+          282
+        ],
+        [
+          184,
+          279
+        ],
+        [
+          192,
+          271
+        ],
+        [
+          200,
+          272
+        ],
+        [
+          208,
+          270
+        ],
+        [
+          216,
+          270
+        ],
+        [
+          224,
+          266
+        ],
+        [
+          232,
+          262
+        ],
+        [
+          240,
+          263
+        ],
+        [
+          248,
+          256
+        ],
+        [
+          256,
+          243
+        ],
+        [
+          264,
+          243
+        ],
+        [
+          272,
+          246
+        ],
+        [
+          280,
+          238
+        ],
+        [
+          288,
+          233
+        ],
+        [
+          296,
+          231
+        ],
+        [
+          304,
+          213
+        ],
+        [
+          312,
+          206
+        ],
+        [
+          319,
+          209
+        ]
+      ]
+    }
   },
   "families": {
     "blade": {
@@ -163,12 +638,13 @@
     "medium": {
       "height": 112,
       "width": 74,
-      "columnSpacing": 48
+      "columnSpacingU": 0.55,
+      "columnInsetU": 0.2
     },
     "large": {
       "height": 180,
       "width": 116,
-      "columnSpacing": 66,
+      "columnSpacingU": 0.8,
       "perspective": {
         "farY": 65,
         "nearY": 285,

@@ -9,10 +9,10 @@ import { compact } from './numbers.js';
 export const managerPages = {
   任务: 'tasks', 经营: 'estate', 畜牧: 'livestock', 田地: 'field', 矿洞: 'mine', 鱼塘: 'fish',
   加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 行脚商: 'merchant',
-  管理员管理: 'estate', 统计: 'estate', 出售庄园历史: 'estate', 图鉴: 'estate', 出售庄园: 'estate',
+  角色管理: 'estate', 统计: 'estate', 出售庄园历史: 'estate', 图鉴: 'estate', 出售庄园: 'estate',
 };
 
-const estateIntroductionPages = new Set(['管理员管理', '统计', '出售庄园历史', '图鉴', '出售庄园']);
+const estateIntroductionPages = new Set(['角色管理', '统计', '出售庄园历史', '图鉴', '出售庄园']);
 
 const facilities = { field: 'C', livestock: 'L', fish: 'F', mine: 'M' };
 const facilityHelpEmphasis = {

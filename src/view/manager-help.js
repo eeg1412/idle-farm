@@ -201,7 +201,7 @@ export function managerResearchHelp(world, tab, speaker) {
 export function managerContextHelp(role, gender, type, details = {}) {
   const text = contextHelpCopy(role, gender, type, details);
   if (!text) return null;
-  const introductionEmphasis = { 管理员管理: ['好感', '今日心愿', '送礼', '切换角色'],
+  const introductionEmphasis = { 角色管理: ['好感', '今日心愿', '送礼', '切换角色'],
     统计: ['生产状态', '库存估值', '累计收入'], 出售庄园历史: ['时间', '产值'],
     图鉴: ['材料', '来源', '用途', '研发条件'], 出售庄园: ['高级研发点', '新一轮配置'] };
   const emphasis = type === 'introduction' ? introductionEmphasis[details.page] ?? []

@@ -604,10 +604,11 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
     ui.card((card) => (card ?? ui).text(instruction, { muted: true }), { style: 'production' });
   }
   const quote = facilityOffer(ui.w, kind);
-  ui.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
+  // Fixed page footer: must stay the last draw call of the page.
+  ui.footer((footer) => footer.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
     style: 'production', tone: 'gold',
     disabled: !quote?.affordable,
-  });
+  }));
 }
 
 function workshopRecipes(ui, kind, source) {
@@ -914,7 +915,8 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
     }, { columns: compactMode ? 'auto' : 1, focusIndex });
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
-  ui.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
+  // Fixed page footer: must stay the last draw call of the page.
+  ui.footer((footer) => footer.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
     style: 'production', tone: 'gold', disabled: !quote?.affordable,
-  });
+  }));
 }

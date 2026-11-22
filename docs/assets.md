@@ -45,7 +45,7 @@ python3 scripts/export-item-icons.py --check
 
 透明5×5原画、提示词和裁切登记在 `assets/plot/crop-atlases/`，早期原稿在 `early-atlases/`，真实四期单株在 `assets/plot/crops/<ID>/`，派生透明PNG在 `assets/plot/plants/<ID>/`。`node scripts/export-crop-animation.mjs` 是唯一生产转换逻辑；旧Python入口仅标准库转发Node。导出元数据保留源路径／裁切bounds、每期根点与尺寸，运行不按bbox重测。C01沿用wheat-0..3.png及既有原画来源，不要求普通单株目录。完整清单见 [farm-crops](../.agents/skills/farm-crops/SKILL.md)。
 
-种植点沿底图真实垄脊布置，完整透视列族与各条田垄求交，列在田界自然进退，每排覆盖可种两端，不能只摆两列窄条。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片；这些证据图仅本地保存、不提交，同目录 json 照常提交。
+种植点沿底图真实垄脊布置。中、大型按 `assets/plot/crop-layout.json` 的 `fieldGeometry` 实测田面透视：列平行于田地左右侧边，排沿田垄、排距平滑递增，铺满可种田面直到画面左右与近端边缘，边缘植株允许被画框裁切，远端树冠完整，根脚不出实测土面轮廓；不能只摆两列窄条或为避裁切空出边缘。小型沿用 `furrows.json` 原根位。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片；这些证据图仅本地保存、不提交，同目录 json 照常提交。
 
 `src/content/crop-harvest.json` 逐ID区分整株和保留植株采收，记录采收部分、真实成长期／成熟期审图依据及成年采后素材可否复用。`assets/plot/reviews/repeat-harvest/` 的对照图由本地程序拼接已有原画，仅用于审阅，不能称作内置绘图工具新绘原画；它与 `crop-harvest.json` 记录路径的其他配对证据图一样仅本地保存、不提交。需补画的成年采后状态使用内置 `image_gen` 编辑成熟单株，保留原成年枝冠／根脚与各ID来源；需要绘制原画的任务不能用程序擦除或放大小苗代替。`crop-visuals.json` 的保留植株条目新增 `harvestMode:'retainedPlant'` 与完整单株 `repeatBare` metadata，发布 `public/art/plot/plants/<ID>/bare.webp`；原四期继续用于首次换种，后续使用成年采后纹理和成熟纹理。
 

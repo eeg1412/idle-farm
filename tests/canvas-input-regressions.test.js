@@ -830,7 +830,7 @@ test('the navigation menu loads icons above every destination and opens the corr
     ['行脚商', 'menu-merchant', '#/merchant'],
     ['研究', 'menu-research', '#/research'],
     ['经营', 'menu-operations', '#/management'],
-    ['管理员管理', 'manager-directory', '#/managers'],
+    ['角色管理', 'manager-directory', '#/managers'],
     ['统计', 'statistics', '#/statistics'],
     ['出售庄园历史', 'sale-history', '#/farm-sale-history'],
     ['图鉴', 'menu-catalog', '#/catalog'],

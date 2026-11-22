@@ -218,7 +218,7 @@ function showQualityDrawResults(ui, result) {
 }
 
 function renderQuality(ui) {
-  ui.balance('普通研发点', ui.w.basicResearchPoints, { variant: 'efficiency', icon: 'research-point-basic' });
+  ui.balance('普通研发点', ui.w.basicResearchPoints, { variant: 'efficiency', icon: 'research-point-basic', inspectable: false });
   ui.researchProgress();
   ui.text(`每小时发放 ${basicResearchHourlyRate(ui.w)} 普通研发点。每抽消耗 ${qualityDrawCost} 点，随机提升一个已研发品项的品质。`,
     { muted: true });
@@ -447,7 +447,7 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
     renderQuality(ui);
     return;
   }
-  if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point' });
+  if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point', inspectable: false });
   const panels = local.researchPanels ?? (local.researchPanels = {});
   const panel = panels[active] ?? (panels[active] = { all: {}, ready: {} });
   const nodes = efficiency ? techNodes(ui.w) : researchNodes(ui.w);
