@@ -89,8 +89,12 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
     return { id: material, sprite };
   });
   const productTexture = textures.get(id);
-  const product = itemSprite(outputItems, productTexture, layout.output.size, itemAnchorY(id, productTexture));
-  product.visible = false;
+  // Fixed child order: a later pool slot holds a later emission and draws over the earlier one.
+  const products = Array.from({ length: layout.output.capacity }, () => {
+    const sprite = itemSprite(outputItems, productTexture, layout.output.size, itemAnchorY(id, productTexture));
+    sprite.visible = false;
+    return sprite;
+  });
 
   const machineLayer = layer(scene, 'workshop-machine-layer');
   const [chimneyX, chimneyY] = layout.chimney.position;
@@ -116,7 +120,7 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
 
   const phase = motion ?? { id };
   if (phase.id !== id) {
-    Object.assign(phase, { id, clock: 0, lastClock: undefined, batch: undefined, outputStart: undefined });
+    Object.assign(phase, { id, clock: 0, lastClock: undefined, batch: undefined, outputs: [] });
   }
   let destroyed = false;
   function update({ clock }) {
@@ -125,8 +129,9 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
     scene.visible = (station?.batch?.id ?? station?.recipe) === id;
     if (!scene.visible) return;
     const running = syncWorkshopMotion(phase, station, clock);
-    const outputElapsed = phase.outputStart === undefined ? undefined : clock - phase.outputStart;
-    const frame = workshopMotionFrame(layout, phase.clock, { running, outputElapsed });
+    // Belt surface uses the active-only phase clock; items follow the real station clock.
+    const frame = workshopMotionFrame(layout, phase.clock,
+      { running, now: clock, batch: phase.batch, outputs: phase.outputs });
     surfaces.forEach((surface, index) => surface.tilePosition.set(...frame.surfaceOffsets[index]));
     inputs.forEach((packet, index) => {
       const { sprite } = packet;
@@ -142,8 +147,11 @@ export function mountWorkshopAnimation(parent, textures, box, reference, readSta
       }
       sprite.position.set(...item.position);
     });
-    product.visible = frame.output.visible;
-    if (product.visible) product.position.set(...frame.output.position);
+    products.forEach((sprite, index) => {
+      const item = frame.outputs[index];
+      sprite.visible = Boolean(item?.visible);
+      if (sprite.visible) sprite.position.set(...item.position);
+    });
     machineLayer.position.set(...frame.machineOffset);
     gear.rotation = frame.gearAngle;
     smoke.forEach((sprite, index) => {

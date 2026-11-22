@@ -33,11 +33,10 @@
     },
     "underlap": 20,
     "inputSize": 49,
-    "inputSpacing": 113,
-    "packetSpacing": 28,
-    "maxPerEvent": 3,
+    "inputGap": 7,
     "contactY": 99,
-    "outputSize": 54
+    "outputSize": 54,
+    "outputOverlap": 0.5
   },
   "effects": {
     "gear": {

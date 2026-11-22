@@ -22,11 +22,11 @@ export function workshopTextureSources(kind, config = visuals) {
   const { x, y, width, height } = machine?.placement ?? {};
   if (!Object.values(sources).every((asset) => asset?.path && sizePair(asset.size))
       || ![stage?.width, stage?.height, width, height, tread.logicalWidth, conveyor.speed, conveyor.inputSize,
-        conveyor.inputSpacing, conveyor.packetSpacing, conveyor.outputSize, conveyor.underlap, gear.diameter,
+        conveyor.outputSize, conveyor.underlap, gear.diameter,
         gear.periodMs, smoke.intervalMs, smoke.lifetimeMs, smoke.startSize, smoke.endSize].every(positive)
       || ![x, y, base.y, tread.y, conveyor.contactY,
         smoke.maxAlpha, smoke.rise, smoke.drift, smoke.sway].every(Number.isFinite)
-      || !Number.isInteger(conveyor.maxPerEvent) || conveyor.maxPerEvent < 2
+      || !(Number.isFinite(conveyor.inputGap) && conveyor.inputGap >= 0) ||!(conveyor.outputOverlap >= 0 && conveyor.outputOverlap < 1)
       || !finitePair(gear.position)
       || !finitePair(chimney.position) || !finitePair(chimney.mouth) || !sizePair(chimney.logicalSize)) return [];
   const [frameX, frameY, frameWidth, frameHeight] = tread.frame ?? [];
@@ -46,28 +46,79 @@ function randomSequence(key) {
   };
 }
 
-export function workshopMaterialOrder(materials, recipeId, cycle) {
-  const random = randomSequence(recipeId + ':' + cycle);
-  const order = [...materials];
-  for (let index = order.length - 1; index > 0; index -= 1) {
-    const other = Math.floor(random() * (index + 1));
-    [order[index], order[other]] = [order[other], order[index]];
+// Economy quantities are BigInt (or their decimal strings). Display counts are capped before
+// becoming Numbers: any count above the cap is far beyond the densest pace a batch can show.
+const countCap = 1_000_000_000n;
+export function workshopDisplayCount(value) {
+  try {
+    const count = BigInt(value ?? 0);
+    return count <= 0n ? 0 : Number(count > countCap ? countCap : count);
+  } catch {
+    return 0;
   }
-  return order;
 }
 
-export function workshopInputEvent(stream, serial) {
-  if (serial < 0 || !stream.materials.length) return [];
-  const cycle = Math.floor(serial / stream.materials.length);
-  const eventIndex = serial % stream.materials.length;
-  const order = workshopMaterialOrder(stream.materials, stream.recipeId, cycle);
-  const random = randomSequence(stream.recipeId + ':group:' + serial);
-  const count = 2 + Math.floor(random() * (stream.maxPerEvent - 1));
-  return Array.from({ length: count }, (_, packet) => {
-    const id = order[(eventIndex + packet) % order.length];
-    return { id, event: serial, cycle, packet,
-      origin: [stream.spawnX - packet * stream.packetSpacing, stream.contactY] };
+// Output pace: spread `count` items evenly over `duration` ms, but never closer than `gap`
+// logical px at belt `speed`. Past that density the belt runs continuously at `gap` and shows
+// fewer items.
+export function workshopConveyorPace(count, duration, speed, gap) {
+  if (!(count > 0) || !(duration > 0)) return { count: 0, interval: 0 };
+  const even = duration / count;
+  const tightest = gap / speed;
+  if (even >= tightest) return { count, interval: even };
+  return { count: Math.max(1, Math.floor(duration / tightest)), interval: tightest };
+}
+
+// Input schedule, front-loaded: every batch's items enter from wholly outside the left edge,
+// the first one at batch start, then one per minimum gap (`interval` = gap / speed), so item k
+// (1..count) reaches the machine at start + travel + (k − 1)·interval. Only items that reach the
+// machine by the batch end are shown, so nothing appears or vanishes mid-belt: count =
+// min(total, floor((duration − travel) / interval) + 1), and 0 when duration < travel.
+export function workshopInputSchedule(total, duration, speed, gap, travel) {
+  const interval = gap / speed;
+  if (!(total > 0) || !(duration >= travel)) return { count: 0, interval, travel };
+  return { count: Math.min(total, Math.floor((duration - travel) / interval) + 1), interval, travel };
+}
+
+// Scale the real per-material counts to the shown count (largest remainder, every material
+// kept once when there is room), so a saturated belt still carries the batch's material mix.
+function materialQuotas(counts, total, shown) {
+  if (shown >= total) return counts;
+  const reserved = shown >= counts.length ? 1 : 0;
+  const spread = shown - reserved * counts.length;
+  const shares = counts.map(([id, count], index) => {
+    const exact = spread * count / total;
+    return { id, index, quota: reserved + Math.floor(exact), rest: exact - Math.floor(exact) };
   });
+  let left = shown - shares.reduce((sum, { quota }) => sum + quota, 0);
+  for (const share of [...shares].sort((a, b) => b.rest - a.rest || a.index - b.index)) {
+    if (left <= 0) break;
+    share.quota += 1;
+    left -= 1;
+  }
+  return shares.filter(({ quota }) => quota > 0).map(({ id, quota }) => [id, quota]);
+}
+
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+
+// Stable mixed order of an exact multiset without building it: an affine permutation of the
+// slots (offset from the recipe and batch start) indexes the cumulative material buckets.
+export function workshopMaterialMix(counts, recipeId, start, shown) {
+  const total = counts.reduce((sum, [, count]) => sum + count, 0);
+  if (!(shown > 0) || !total) return () => undefined;
+  const quotas = materialQuotas(counts, total, shown);
+  const random = randomSequence(recipeId + ':' + start);
+  let step = Math.max(1, Math.round(shown * 0.6180339887));
+  while (gcd(step, shown) !== 1) step += 1;
+  const offset = Math.floor(random() * shown);
+  return (slot) => {
+    let bucket = (step * slot + offset) % shown;
+    for (const [id, quota] of quotas) {
+      if (bucket < quota) return id;
+      bucket -= quota;
+    }
+    return quotas.at(-1)[0];
+  };
 }
 
 export function workshopSceneLayout(id, kind, config = visuals) {
@@ -83,8 +134,11 @@ export function workshopSceneLayout(id, kind, config = visuals) {
   const outputHalf = conveyor.outputSize / 2;
   const coverX = inputMaskEnd + inputHalf;
   const materials = Object.keys(item.inputs ?? {});
-  const groupTail = (conveyor.maxPerEvent - 1) * conveyor.packetSpacing;
-  const eventSlots = materials.length ? Math.ceil((coverX + inputHalf + groupTail) / conveyor.inputSpacing) : 0;
+  const spawnX = -inputHalf;
+  const inputGap = conveyor.inputSize + conveyor.inputGap;
+  const outputStartX = outputMaskStart - outputHalf;
+  const outputEndX = stage.width + outputHalf;
+  const outputGap = conveyor.outputSize * (1 - conveyor.outputOverlap);
 
   function surface(fromX, toX) {
     return {
@@ -98,24 +152,31 @@ export function workshopSceneLayout(id, kind, config = visuals) {
     smoke: { ...effects.smoke, mouth: effects.chimney.mouth, recipeId: id,
       capacity: Math.ceil(effects.smoke.lifetimeMs / effects.smoke.intervalMs) },
     surfaceRegions: [surface(0, inputMaskEnd), surface(outputMaskStart, stage.width)],
+    // Pools are bounded by belt length ÷ minimum spacing (+1 item at each end).
     inputStream: {
-      recipeId: id, materials, size: conveyor.inputSize,
-      spacing: conveyor.inputSpacing, packetSpacing: conveyor.packetSpacing,
-      maxPerEvent: conveyor.maxPerEvent, coverX, spawnX: -inputHalf, contactY: conveyor.contactY,
-      eventSlots, capacity: eventSlots * conveyor.maxPerEvent,
+      recipeId: id, materials, size: conveyor.inputSize, gap: inputGap,
+      coverX, spawnX, contactY: conveyor.contactY,
+      capacity: materials.length ? Math.floor((coverX - spawnX) / inputGap) + 2 : 0,
     },
     itemMasks: {
       input: { x: 0, y: 0, width: inputMaskEnd, height: stage.height },
       output: { x: outputMaskStart, y: 0, width: stage.width - outputMaskStart, height: stage.height },
     },
-    output: { id, size: conveyor.outputSize, startX: outputMaskStart - outputHalf,
-      endX: stage.width + outputHalf, y: conveyor.contactY },
+    output: { id, size: conveyor.outputSize, gap: outputGap, startX: outputStartX, endX: outputEndX,
+      y: conveyor.contactY, capacity: Math.floor((outputEndX - outputStartX) / outputGap) + 2 },
     surfaceSpeed: conveyor.speed, surfacePeriod: conveyor.tread.logicalWidth,
   };
 }
 
+const outputMemoryMs = 60_000;
+const outputWindowLimit = 4;
+const batchInputs = (inputs) => Object.entries(inputs ?? {})
+  .map(([id, value]) => [id, workshopDisplayCount(value)]).filter(([, count]) => count > 0);
+
 // Read activity from the existing station snapshots. An expired batch can still
 // be attached to the last snapshot, so the animation waits for a rollover.
+// `motion.batch` keeps the running batch's capped input counts and amount; each settled batch
+// leaves an output window { start: its end, duration, amount } in `motion.outputs`.
 export function syncWorkshopMotion(motion, station, clock) {
   const id = station?.batch?.id ?? station?.recipe;
   if (!id || id !== motion.id) return false;
@@ -133,9 +194,14 @@ export function syncWorkshopMotion(motion, station, clock) {
       motion.clock += Math.max(0, Math.min(observedClock, next.end) - from);
     }
     if (previous && clock >= previous.end && (!next || next.start >= previous.end)) {
-      motion.outputStart = previous.end;
+      motion.outputs = [...motion.outputs ?? [], {
+        start: previous.end, duration: previous.end - previous.start, amount: previous.amount ?? 0,
+      }].filter(({ start, duration }) => clock - start - duration < outputMemoryMs).slice(-outputWindowLimit);
     }
-    motion.batch = next && { start: next.start, end: next.end };
+    motion.batch = next && { start: next.start, end: next.end,
+      amount: workshopDisplayCount(next.amount), inputs: batchInputs(next.inputs) };
+  } else {
+    motion.batch.amount = workshopDisplayCount(next.amount);
   }
   motion.lastClock = observedClock;
   return Boolean(next && clock >= next.start && clock < next.end);
@@ -167,34 +233,70 @@ function smokeFrame(smoke, clock) {
   });
 }
 
-export function workshopMotionFrame(layout, clock, { started = true, running = true, outputElapsed } = {}) {
+// Inputs of the running batch only (no look-ahead into a batch that may never start): item k
+// sits at coverX − v·(arrival − now) while 0 < arrival − now < travel, i.e. between entering
+// at spawnX and passing under the machine mask. After the last one the belt runs empty.
+function inputFrame(layout, batch, now) {
+  const stream = layout.inputStream;
+  const speed = layout.surfaceSpeed;
+  const total = batch.inputs.reduce((sum, [, count]) => sum + count, 0);
+  const travel = (stream.coverX - stream.spawnX) / speed;
+  const { count, interval } = workshopInputSchedule(total, batch.end - batch.start, speed, stream.gap, travel);
+  const items = [];
+  if (!count) return items;
+  const material = workshopMaterialMix(batch.inputs, stream.recipeId, batch.start, count);
+  const since = now - batch.start;
+  const first = Math.max(1, Math.floor((since - travel) / interval) + 1);
+  const last = Math.min(count, Math.ceil(since / interval) + 1);
+  for (let k = first; k <= last && items.length < stream.capacity; k += 1) {
+    const ahead = travel + (k - 1) * interval - since;
+    if (ahead <= 0 || ahead >= travel) continue;
+    items.push({ id: material(k - 1), visible: true,
+      position: [stream.coverX - speed * ahead, stream.contactY] });
+  }
+  return items;
+}
+
+// Products of settled batches: window { start, duration T, amount Q } emits item k (0..m−1) at
+// start + k·Δ (first one at completion), then it rides right at belt speed until past endX.
+// A window stops emitting one minimum gap before the next one begins. Older emissions come first, so the pool
+// draws each later product on top of the previous one.
+function outputFrame(layout, outputs, now) {
+  const { startX, endX, y, gap, capacity } = layout.output;
+  const speed = layout.surfaceSpeed;
+  const travel = (endX - startX) / speed;
+  const items = [];
+  outputs.forEach((settled, index) => {
+    // Back-to-back windows already keep the minimum gap; this only trims a window that a
+    // shorter following batch would otherwise crowd (e.g. after a speed-up).
+    const limit = (outputs[index + 1]?.start ?? Infinity) - gap / speed + 1e-6;
+    const pace = workshopConveyorPace(settled.amount, settled.duration, speed, gap);
+    if (!pace.count) return;
+    const first = Math.max(0, Math.floor((now - travel - settled.start) / pace.interval));
+    const last = Math.min(pace.count - 1, Math.floor((now - settled.start) / pace.interval));
+    for (let k = first; k <= last; k += 1) {
+      const emitted = settled.start + k * pace.interval;
+      const elapsed = now - emitted;
+      if (emitted > limit || elapsed < 0 || elapsed >= travel) continue;
+      items.push({ visible: true, position: [clamp(startX + speed * elapsed, startX, endX), y], alpha: 1 });
+    }
+  });
+  return items.slice(-capacity);
+}
+
+// `clock` is the active-only display clock (belt surface, gear, shake, smoke). Inputs and
+// outputs follow the real station clock `now`, the same base as batch start/end.
+export function workshopMotionFrame(layout, clock, { running = true, now = clock, batch, outputs = [] } = {}) {
   const travel = clock * layout.surfaceSpeed;
   const displacement = travel % layout.surfacePeriod;
-  const stream = layout.inputStream;
-  const latest = Math.floor(travel / stream.spacing);
-  const inputs = [];
-  if (running && started) {
-    for (let eventOffset = 0; eventOffset < stream.eventSlots; eventOffset += 1) {
-      const serial = latest - eventOffset;
-      const distance = travel - serial * stream.spacing;
-      const packets = workshopInputEvent(stream, serial);
-      for (let index = 0; index < stream.maxPerEvent; index += 1) {
-        const packet = packets[index];
-        const x = packet ? packet.origin[0] + distance : 0;
-        inputs.push({ ...packet, visible: Boolean(packet && x > stream.spawnX && x < stream.coverX),
-          position: [x, packet?.origin[1] ?? 0] });
-      }
-    }
-  }
-  const { startX, endX, y } = layout.output;
-  const outputX = startX + (outputElapsed ?? 0) * layout.surfaceSpeed;
+  const inputs = running && batch?.inputs?.length && layout.inputStream.capacity
+    ? inputFrame(layout, batch, now) : [];
   return {
     surfaceOffsets: layout.surfaceRegions.map(({ bounds }) => [displacement - bounds.x, 0]),
     inputs,
-    output: { visible: outputElapsed >= 0 && outputX < endX,
-      position: [clamp(outputX, startX, endX), y], alpha: 1 },
+    outputs: outputFrame(layout, outputs, now),
     machineOffset: machineOffsetAt(clock),
     gearAngle: Math.PI * 2 * (clock % layout.gear.periodMs) / layout.gear.periodMs,
-    smoke: running && started ? smokeFrame(layout.smoke, clock) : [],
+    smoke: running ? smokeFrame(layout.smoke, clock) : [],
   };
 }

@@ -874,7 +874,7 @@ function stationCard(ui, kind, index, station, source) {
     bleedWorkshopArt: Boolean(item),
     cornerAction: item ? {
       label: '清空' + stationNames[kind],
-      outline: kind === 'I' ? 0xffffff : undefined,
+      outline: 0xffffff,
       onClick: () => clearProduction(ui, 'clearStation', kind, index, stationNames[kind]),
     } : undefined,
   });

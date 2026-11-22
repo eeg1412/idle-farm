@@ -1,0 +1,8 @@
+# 精制卡清空叉号补白色描边
+
+PM：主代理。单一输出、单一所有者（refining_clear_outline，新建上下文）。未授权测试、预览或推送；最终编译由 PM 执行。
+
+- 用户原话：精制的清空叉叉没有白色描边，补上，和加工一样。
+- 根因：`src/view/production-pages.js` 工位卡 `cornerAction` 写 `outline: kind === 'I' ? 0xffffff : undefined`，按现行 `docs/ui/pages/workshop.md:13`「加工卡的叉号带白色描边」只给加工。
+- 改动：加工、精制工位卡叉号都用白色描边；田地／养殖／鱼塘／矿洞设施卡不变。文档第 13 行改为「加工与精制卡的叉号带白色描边」。
+- 阶段：代码立即；文档第 13 行待传送带任务 WS-1 释放 `docs/ui/pages/workshop.md` 后由 PM 修改。

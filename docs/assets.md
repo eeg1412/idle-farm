@@ -192,7 +192,7 @@ CG以纵向近景叙事构图确保人物可辨；顶部Logo和底部进度控�
 
 新增public/art/estate/merchant-closed.webp、merchant-pennant-1.webp至-4.webp、merchant-lantern.webp。旗四帧共84×90裁切画布、同杆脚[10,84]，源车挂点[421,38]；按0.18秒切帧，保留原绘布褶变化，非整车缩放或摇摆。灯36×81保留长挂钩，挂点[375,91]、pivot[18,1]，3.2秒周期±0.055rad小摆。当前手机车宽390下70.2px、320下57.6px，部件与源车等比。
 
-registration.json的runtime对象原样转入小型src/content/estate-merchant-visuals.json；新estate-merchant.js直接消费，参数不另维护。canvas地图只传merchantStatus(world).unlocked，未达条件闭车、不建旗灯；已达条件即开放，空货架不误判未开放。编辑器缺世界状态时默认开放预览。部件位于商车之上、既有飞鸟和木牌之下，不接收输入；沿共享有限新纹理缓存、原视口预载和可见ticker，后台／弹窗／菜单暂停、离图销毁、迟到回调查destroy。基图未加载成功时holder隐藏，防止旗灯先到悬空；基图挂好才放行部件。
+registration.json的runtime对象原样转入小型src/content/estate-merchant-visuals.json；新estate-merchant.js直接消费，参数不另维护。canvas地图只传merchantStatus(world).unlocked，未达条件闭车、不建旗灯；已达条件即开放，空货架不误判未开放。编辑器缺世界状态时默认开放预览。部件位于商车之上、既有飞鸟和木牌之下，不接收输入；沿共享有限新纹理缓存、原视口预载和可见ticker，后台／弹窗暂停、右上菜单展开时照常运动、离图销毁、迟到回调查destroy。基图未加载成功时holder隐藏，防止旗灯先到悬空；基图挂好才放行部件。
 
 新开闭、手机实际比例、四帧与代码路径见[本轮静态独审](art-reviews/2026-11-19-merchant-states.md)。源码／分镜结论不代替真实Pixi循环和运行体验，用户认可另记。
 
