@@ -4,7 +4,7 @@ import { managerGiftRemaining } from '../src/game/managers.js';
 import { objectives, settleTaskRewards } from '../src/game/objectives.js';
 import {
   acceptOrder, canDeliverOrder, canReplaceOrder, deliverOrder, hasDeliverableOrder,
-  orderItemTags, recordOrderAcquisition, replaceOrder,
+  orderItemTags, raiseOrderCapacity, replaceOrder,
 } from '../src/game/orders.js';
 import {
   advanceWorld, arrangeStation, buyStation, farmSaleOffer, newWorld, sellFarm, updateWorldWallTime,
@@ -87,7 +87,8 @@ test('an offline half-hour offer cannot see a later pending completion in the sa
   const world = newWorld(afternoon);
   world.unlocked.push('I02', 'I03', 'P01', 'P02', 'P03');
   world.inventory = { I01: 2n, I02: 1n, I03: 1n, P01: 0n };
-  recordOrderAcquisition(world, 'P01');
+  // P01 was produced earlier this run and is out of stock; its recorded peak keeps it a candidate.
+  raiseOrderCapacity(world, [{ id: 'P01', produced: 10_000n }]);
   assert.ok(arrangeStation(world, 'P', 0, 'P02'));
   updateWorldWallTime(world, afternoon + 64_000);
   const due = world.orders.nextAttemptMs;
@@ -120,7 +121,10 @@ test('migration keeps zero-stock products and long tasks without starting the ti
   assert.equal(objectives(loaded).active, false);
   assert.equal(objectives(loaded).guide.find(({ id }) => id === 'firstOrder').done, false);
   assert.deepEqual(loaded.orders.candidates, ['P02', 'P03']);
+  assert.deepEqual(loaded.orders.capacity, {});
   assert.equal(loaded.orders.nextAttemptMs, null);
+  // Legacy candidates only become eligible once a peak is recorded for them.
+  raiseOrderCapacity(loaded, [{ id: 'P02', produced: 10_000n }, { id: 'P03', produced: 10_000n }]);
   assert.ok(arrangeStation(loaded, 'P', 0, 'P01'));
   advanceWorld(loaded, 31_000);
   const [first] = loaded.orders.active;
@@ -142,4 +146,25 @@ test('migration keeps zero-stock products and long tasks without starting the ti
   advanceWorld(loaded, end);
   assert.deepEqual(loaded.orders.active, []);
   assert.equal(loaded.orders.nextAttemptMs, end + halfHour);
+});
+
+test('order size is the smaller of half the run value and 8-24 hours of the peak output', () => {
+  const world = newWorld(afternoon);
+  world.unlocked.push('P01');
+  world.inventory = { I01: 1n };
+  // A huge run value would ask for millions of loaves without the capacity cap.
+  world.productionValue = world.lifetimeProductionValue = 10n ** 15n;
+  assert.ok(arrangeStation(world, 'P', 0, 'P01'));
+  const peak = world.orders.capacity.P01;
+  assert.ok(peak > 0n);
+  assert.deepEqual(world.orders.candidates, ['P01']);
+  advanceWorld(world, world.stations.P[0].batch.end);
+  const [offer] = world.orders.active;
+  assert.equal(offer.item, 'P01');
+  assert.ok(offer.count >= (peak * 8n + 99n) / 100n && offer.count <= (peak * 24n + 99n) / 100n);
+  // The recorded peak survives a save round trip and is cleared by selling the farm.
+  const restored = decodeWorldRecord(encodeWorldRecord(world));
+  assert.equal(restored.orders.capacity.P01, peak);
+  assert.ok(sellFarm(restored, farmSaleOffer(restored)));
+  assert.deepEqual(restored.orders.capacity, {});
 });

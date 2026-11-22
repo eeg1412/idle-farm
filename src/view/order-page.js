@@ -31,10 +31,11 @@ function isCurrentOrder(world, order) {
 
 function confirmAbandon(ui, order, inDetail) {
   ui.dialog('放弃订单', (panel) => {
-    panel.text('放弃「' + catalog.items[order.item].name + '」×' + compact(order.count) + '？');
+    panel.text('确定放弃「' + catalog.items[order.item].name + '」×' + compact(order.count) + ' 的订单吗？');
+    panel.text('订单作废，不发报酬，今日订单名额不返还。', { muted: true, fontSize: 14 });
     panel.buttons([
-      { label: '取消', onClick: panel.close },
-      { label: '放弃', tone: 'danger', onClick: async () => {
+      { label: '再想想', onClick: panel.close },
+      { label: '确认放弃', tone: 'danger', onClick: async () => {
         if (!panel.isActive() || !await panel.action('abandonOrder', order) || !panel.isActive()) return;
         await panel.close();
         if (inDetail && ui.isActive()) ui.close();

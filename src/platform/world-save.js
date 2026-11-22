@@ -497,7 +497,9 @@ function orderRecord(world, merchant, market, convert) {
   };
   const orders = restoreOrders(world.orders, { ...world, merchant, market }, toAmount);
   if (convert === decimal) return orders;
-  return { ...orders, sequence: orders.sequence.toString(), active: orders.active.map((order) => ({
+  return { ...orders, sequence: orders.sequence.toString(),
+    capacity: Object.fromEntries(Object.entries(orders.capacity).map(([item, peak]) => [item, peak.toString()])),
+    active: orders.active.map((order) => ({
     ...order, count: order.count.toString(), reward: order.reward.toString(),
   })) };
 }

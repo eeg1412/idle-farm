@@ -7,7 +7,7 @@ import {
   newMerchant, recordMerchantProduction, recordMerchantSales, reserveMerchantSale, resetMerchantRun, synchronizeMerchant,
 } from './merchant.js';
 import {
-  activeMerchantHoldQuantity, attemptScheduledOrder, newOrders, recordOrderAcquisition, recordOrderProduction,
+  activeMerchantHoldQuantity, attemptScheduledOrder, newOrders, raiseOrderCapacity, recordOrderAcquisition, recordOrderProduction,
   resetOrderRun, synchronizeOrders,
 } from './orders.js';
 import { accrueBasicResearch } from './quality.js';
@@ -159,6 +159,12 @@ export function forecastHourlyProduction(world) {
     const consumed = roundHourlyHundredths(total.consumed, total.duration);
     return { id, produced, consumed, net: produced - consumed };
   });
+}
+
+// Order sizes cap at the products' peak arranged output this run (order spec). Call after any
+// action that may change arrangements, levels or technology, and once on load before offline settlement.
+export function recordOrderCapacity(world) {
+  return raiseOrderCapacity(world, forecastHourlyProduction(world));
 }
 
 function makeBatch(world, id, amount) {
@@ -572,6 +578,7 @@ export function upgradeProductionBatch(world, kind, indices, steps, expectedCost
   world.coins -= quote.cost;
   quote.slots.forEach((slot, index) => applyProductionUpgrade(slot, quote.upgrades[index], quote.station));
   settleProduction(world);
+  recordOrderCapacity(world);
   return true;
 }
 
@@ -581,6 +588,7 @@ export function upgradeStation(world, kind, index, steps) {
   if (!quote?.affordable) return false;
   world.coins -= quote.cost;
   applyProductionUpgrade(world.stations[kind][index], quote, true);
+  recordOrderCapacity(world);
   return true;
 }
 
@@ -616,6 +624,7 @@ export function assignProductionBatch(world, kind, indices, id) {
     slot.recipe = id;
   }
   settleProduction(world);
+  recordOrderCapacity(world);
   return true;
 }
 

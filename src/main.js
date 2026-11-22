@@ -3,7 +3,7 @@ import {
   advanceWorld, newWorld, settleProduction, catalog,
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   assignProductionBatch, clearProductionBatch, upgradeProductionBatch,
-  setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar,
+  setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar, recordOrderCapacity,
 } from './game/world.js';
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
@@ -409,6 +409,8 @@ async function initialize(recovery) {
     const anchor = performance.now();
     const base = previous ?? newWorld(now, null);
     initializeAccountSeed(base);
+    // Offline order generation reads recorded capacity; saves from before it start empty.
+    recordOrderCapacity(base);
     await settleOffline(base, now, anchor);
   } catch (error) {
     if (error.code === 'revision-conflict') { staleSave(); return; }
@@ -519,6 +521,8 @@ function dispatch(name, ...args) {
         return { ok: false, message: joinToast(message, toast) };
       }
       if (!Object.hasOwn(productionBatchActions, name) && name !== 'claimManagerGift') settleProduction(draft);
+      // Arrangements, levels and technology only change through actions; keep order size caps current.
+      recordOrderCapacity(draft);
       const toast = await commit(draft, anchor);
       if (name === 'sellFarm') {
         worldEpoch += 1;
@@ -596,6 +600,7 @@ function importSave(candidate) {
       draft.wallAnchorMs = Date.now();
       initializeAccountSeed(draft);
       synchronizeWorldCalendar(draft, draft.wallAnchorMs);
+      recordOrderCapacity(draft);
       const next = await replaceWorldSave(db, draft, world.revision);
       activateReplacement(next);
       return { ok: true, message: '存档已导入' };
