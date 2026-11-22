@@ -2,6 +2,10 @@
 
 按实际源码接入、构建和交付结果维护；未运行的验收不得记为通过。用户重新报告的问题应重新打开。
 
+## 2026-11-22（六）：清理未加载图片、审图证据不入库
+
+[任务卡](tasks/2026-11-22-cleanup-and-review-evidence.md)。CL-1 已删除 public 下 210 个不加载图片（约 5.8 MB），`export-ui-icons.py` 同步；CL-2 删除 canvas-ui 中失效的 plot-C02～C50 图标键；CL-3 删除 `workshop-effects.json`、6 个旧工坊导出／合成脚本与读取已删 feed.webp 的旧审图脚本。EV-1：`.gitignore` 按证据目录忽略图片，1,220 张（约 484 MB）已 `git rm --cached`，本地保留；审图技能、素材技能、AGENTS.md 与文档同步。待用户决定：`assets/mining/png/*-review.png`、`assets/livestock/alignment/*.png`、`assets/livestock/` 根目录总览图。PM 已核对，最终 `npm run build` 成功。未运行测试或 art:check，未提交。
+
 ## 2026-11-22（五）：精制清空叉号补白色描边
 
 [任务卡](tasks/2026-11-22-refining-clear-outline.md)。根因：工位卡叉号描边只对 `kind === 'I'` 生效，按旧文档只给加工。已改为加工与精制都用白色描边，`docs/ui/pages/workshop.md:13` 同步。PM 已核对 diff。未实测。

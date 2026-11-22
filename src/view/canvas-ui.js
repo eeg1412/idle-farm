@@ -96,7 +96,6 @@ const uiIconKeys = new Set([...Object.keys(drawnIcons), 'nav-menu', 'nav-worksho
   'facility-eel', 'facility-sea-bream', 'facility-turbot', 'facility-sturgeon',
   'settings-sound', 'settings-music', 'settings-display', 'settings-guide',
   'operation-switch', 'operation-upgrade', 'operation-sell', 'portrait-warehouse', 'warehouse-empty-v1',
-  ...Array.from({ length: 49 }, (_, index) => 'plot-C' + String(index + 2).padStart(2, '0')),
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'L').map(([id]) => 'livestock-' + id),
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'F').map(([id]) => 'fish-' + id),
 ]);

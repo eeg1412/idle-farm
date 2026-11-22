@@ -20,12 +20,12 @@
 | 新 bare 来源与注册 | `assets/plot/repeat-harvest/sources.md` 索引真实生成原稿、提示词、编辑／裁切与修订来源；`crop-layout.json` 的 `repeatBare[ID]` 记录与成熟株体一致的根脚、尺度及原稿／归一空间区别 |
 | 运行布植登记 | `src/content/crop-visuals.json`，逐 ID 登记 mode、size、harvestMode、planting、roots、四期 metadata，以及 retainedPlant 的 repeatBare stage metadata |
 | C01 例外图集 | `public/art/plot/crops/C01.webp` 与 `C01-front.webp`，640×640 透明四期整幅前景；已有源图和图集保持，不套用 C02 起的单株要求 |
-| 静态布植交接图 | `assets/plot/reviews/individual-v4/<ID>-roots.png`、`<ID>-planting.json`、`<ID>-<phase>-320.png`、`<ID>-<phase>-130x138.png` 及四期接触表；由生产入口的 `--review` 选择交付样本，仅供素材交接，不能作为 C02 起的运行前景 |
-| 成年 bare／成熟配对资料 | `assets/plot/reviews/repeat-v1/<ID>-repeat-states.png`、`<ID>-repeat-states-130x138.png`、`<ID>-adult-registration.png` 及两状态各尺寸图；供株体和根脚配对审阅，不作为运行前景 |
+| 静态布植交接图 | `assets/plot/reviews/individual-v4/<ID>-roots.png`、`<ID>-planting.json`、`<ID>-<phase>-320.png`、`<ID>-<phase>-130x138.png` 及四期接触表；由生产入口的 `--review` 选择交付样本，仅供素材交接，不能作为 C02 起的运行前景；图片为仅本地保存的证据图，不提交，`<ID>-planting.json` 照常提交 |
+| 成年 bare／成熟配对资料 | `assets/plot/reviews/repeat-v1/<ID>-repeat-states.png`、`<ID>-repeat-states-130x138.png`、`<ID>-adult-registration.png` 及两状态各尺寸图；供株体和根脚配对审阅，不作为运行前景；图片仅本地保存、不提交，`crop-harvest.json` 与审图报告记录其路径，新环境用 `export-crop-animation.mjs` 重新生成 |
 
 `C01` 是已有例外：`assets/plot/wheat/wheat-0.png` 至 `wheat-3.png` 为四张 320×320 已认可整幅透明前景，原画为 `wheat-sprites.png`，提示词为 `wheat-sprites-prompt.txt`，原合成依据在同目录 `compose.py`。`crop-visuals.json` 为 `{mode: 'fieldAtlas', size: 'small', harvestMode: 'wholePlant'}`，仍加载既有 canonical 与 front 两张 v3 图集，运行隐藏 back 副本、只绘完整前景；不重导或改原麦，不强制迁移到普通单株目录。
 
-旧 `crop-frames/<ID>.png` 以及 C02 起的 `public/art/plot/crops/<ID>.webp`、`<ID>-front.webp` 可保留历史来源或静态素材用途，但不再作为 C02 起的必交运行资源，也不能被加载器当作真实单株的替代品。`scripts/export-crop-animation.py` 现在只用 Python 标准库转发同一 Node 入口，不再生成另一套整田运行资源。只有新增或真正改画源图才调用 imagegen，复用已有单株及转换不要求再生成原画。
+旧 `crop-frames/<ID>.png` 仅保留历史来源；C02 起的整田图集 `<ID>.webp`、`<ID>-front.webp` 已从发布目录 `public/art/plot/crops/` 移除，源图仍在 assets/。它们不再作为 C02 起的必交运行资源，也不能被加载器当作真实单株的替代品。`scripts/export-crop-animation.py` 现在只用 Python 标准库转发同一 Node 入口，不再生成另一套整田运行资源。只有新增或真正改画源图才调用 imagegen，复用已有单株及转换不要求再生成原画。
 
 ## 单株 metadata 与运行方式
 

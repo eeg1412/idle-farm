@@ -27,7 +27,7 @@
 | 海河固定背景 | `assets/fish/ponds/river.png`、`sea.png`；`public/art/fish/river-pond.webp`、`sea-pond.webp` | 320×320，分别对应河鱼与海鱼；旧 `assets/fish/pond.png` 与 `public/art/fish/pond.webp` 仅保留历史 |
 | 运行视觉登记 | `src/content/fish-visuals.json` | 每 ID `{ stages: 3, size, habitat }`，与目录和布局同源 |
 | 运行水域登记 | `src/content/fish-habitats.json` | 每 habitat 为 `{ pond, water: {polygon, color, alpha} }`，水域坐标使用 320×320 场景空间 |
-| 静态审阅资料 | `assets/fish/reviews/<ID>-stages.png`、`selection-32.png`、`habitats-320.png`、`fallback-habitats-130.png` | 正常底色阶段分镜、选择图、海河背景和按 habitat 合成回退接触表；旧 `fallback-130.png` 属历史，不能代替当前背景审阅 |
+| 静态审阅资料 | `assets/fish/reviews/<ID>-stages.png`、`selection-32.png`、`habitats-320.png`、`fallback-habitats-130.png` | 正常底色阶段分镜、选择图、海河背景和按 habitat 合成回退接触表；旧 `fallback-130.png` 属历史，不能代替当前背景审阅；均为仅本地保存的证据图，不提交，由 `scripts/export-fish-animation.mjs` 重新生成 |
 
 本轮当前目录共三十个阶段、一百二十张独立 idle 帧；这是十种鱼的交付数量，不是未来扩展上限。透明原稿的头、鳍、尾应完整且与邻格隔离；主体越过名义格时先看实际透明间距，再登记裁切，不能截掉有效部位凑规格。实际背景污染、粘连或缺失由绘图工具修订，转换脚本不补画鱼体。
 

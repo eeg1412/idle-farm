@@ -8,7 +8,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/source/ui-icons"
 OUTPUT = ROOT / "public/ui-icons"
-NAVIGATION_TILES = {0: "nav-ranch", 15: "nav-management"}
+# Cells kept so the 5x5 atlas stays aligned; their sprites are no longer published.
+RETIRED = {"nav-fields"}
 SHEETS = {
     "interface": """
         nav-fields nav-workshop nav-warehouse nav-research nav-catalog
@@ -24,14 +25,12 @@ SHEETS = {
         facility-sea-bream facility-turbot facility-sturgeon settings-sound settings-music
         settings-display settings-guide operation-switch operation-upgrade operation-sell
     """.split(),
-    "plots-early": [f"plot-C{number:02}" for number in range(2, 27)],
-    "plots-late": [f"plot-C{number:02}" for number in range(27, 51)] + ["plot-generic"],
 }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("sheet", choices=[*SHEETS, "portraits", "navigation"])
+    parser.add_argument("sheet", choices=[*SHEETS, "portraits"])
     args = parser.parse_args()
     atlas = runpy.run_path(str(ROOT / "scripts/export-item-icons.py"))
     normalized = SOURCE / (args.sheet + ".png")
@@ -50,22 +49,13 @@ def main():
         preview.paste(portrait, ((144 - portrait.width) // 2, (144 - portrait.height) // 2))
         preview.save(normalized)
         icons = {"portrait-warehouse": preview}
-    elif args.sheet == "navigation":
-        atlas["normalize_sheet"](raw).save(normalized)
-        names = [NAVIGATION_TILES.get(index, f"variant-{index + 1:02d}") for index in range(25)]
-        variants = atlas["crop_sheet"](normalized, names)
-        icons = {name: variants[name] for name in NAVIGATION_TILES.values()}
-        satchel = icons["nav-management"]
-        sprite = satchel.crop(satchel.getchannel("A").getbbox())
-        sprite.thumbnail((74, 74), Image.Resampling.NEAREST)
-        balanced = Image.new("RGBA", satchel.size)
-        balanced.paste(sprite, ((balanced.width - sprite.width) // 2, (balanced.height - sprite.height) // 2))
-        icons["nav-management"] = balanced
     else:
         atlas["normalize_sheet"](raw).save(normalized)
         icons = atlas["crop_sheet"](normalized, SHEETS[args.sheet])
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for name, sprite in icons.items():
+        if name in RETIRED:
+            continue
         sprite.save(OUTPUT / (name + ".webp"), format="WEBP", quality=70, alpha_quality=100, method=6)
 
 

@@ -31,7 +31,7 @@ python3 scripts/export-item-icons.py --check
 
 ## 界面图标
 
-导航、生产设施、任务、操作和设置各使用按用途绘制的图标。庄园与经营使用 `navigation` 图集导出的新图标，绘制区域与工坊、仓库、研究统一。田地卡画作物生长中的地块，畜牧卡画栏舍和其中的牲畜，鱼塘卡画对应水域中的活鱼。产物栏和仓库中的物品使用对应品项的独立图标。
+导航、生产设施、任务、操作和设置各使用按用途绘制的图标。`navigation` 图集导出的庄园与经营图标（`nav-ranch`、`nav-management`）及 `nav-fields` 已从发布目录移除，源图仍在 assets/。田地卡画作物生长中的地块，畜牧卡画栏舍和其中的牲畜，鱼塘卡画对应水域中的活鱼。产物栏和仓库中的物品使用对应品项的独立图标。
 
 ### 设施场景
 
@@ -41,13 +41,13 @@ python3 scripts/export-item-icons.py --check
 
 #### 作物生长动画
 
-场景画布320×320，固定天空、田地与洒水器在 `public/art/plot/`。C02–C68按 `public/art/plot/plants/<ID>/{sown,seedling,growing,mature}.webp` 交付四张独立透明单株；每张只有一株，运行按 `crop-visuals.json` 根位分别创建Sprite，纹理可复用，位置／透视／遮挡逐株计算。旧C02+整田图集不再活跃加载。只有C01保留已认可640×640四期整幅前景例外，不能因统一新格式改掉原麦。
+场景画布320×320，固定天空、田地与洒水器在 `public/art/plot/`。C02–C68按 `public/art/plot/plants/<ID>/{sown,seedling,growing,mature}.webp` 交付四张独立透明单株；每张只有一株，运行按 `crop-visuals.json` 根位分别创建Sprite，纹理可复用，位置／透视／遮挡逐株计算。旧C02+整田图集不再活跃加载，已从发布目录 `public/art/plot/crops/` 移除，源图仍在 assets/。只有C01保留已认可640×640四期整幅前景例外，不能因统一新格式改掉原麦。
 
 透明5×5原画、提示词和裁切登记在 `assets/plot/crop-atlases/`，早期原稿在 `early-atlases/`，真实四期单株在 `assets/plot/crops/<ID>/`，派生透明PNG在 `assets/plot/plants/<ID>/`。`node scripts/export-crop-animation.mjs` 是唯一生产转换逻辑；旧Python入口仅标准库转发Node。导出元数据保留源路径／裁切bounds、每期根点与尺寸，运行不按bbox重测。C01沿用wheat-0..3.png及既有原画来源，不要求普通单株目录。完整清单见 [farm-crops](../.agents/skills/farm-crops/SKILL.md)。
 
-种植点沿底图真实垄脊布置，完整透视列族与各条田垄求交，列在田界自然进退，每排覆盖可种两端，不能只摆两列窄条。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片。
+种植点沿底图真实垄脊布置，完整透视列族与各条田垄求交，列在田界自然进退，每排覆盖可种两端，不能只摆两列窄条。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片；这些证据图仅本地保存、不提交，同目录 json 照常提交。
 
-`src/content/crop-harvest.json` 逐ID区分整株和保留植株采收，记录采收部分、真实成长期／成熟期审图依据及成年采后素材可否复用。`assets/plot/reviews/repeat-harvest/` 的对照图由本地程序拼接已有原画，仅用于审阅，不能称作内置绘图工具新绘原画。需补画的成年采后状态使用内置 `image_gen` 编辑成熟单株，保留原成年枝冠／根脚与各ID来源；需要绘制原画的任务不能用程序擦除或放大小苗代替。`crop-visuals.json` 的保留植株条目新增 `harvestMode:'retainedPlant'` 与完整单株 `repeatBare` metadata，发布 `public/art/plot/plants/<ID>/bare.webp`；原四期继续用于首次换种，后续使用成年采后纹理和成熟纹理。
+`src/content/crop-harvest.json` 逐ID区分整株和保留植株采收，记录采收部分、真实成长期／成熟期审图依据及成年采后素材可否复用。`assets/plot/reviews/repeat-harvest/` 的对照图由本地程序拼接已有原画，仅用于审阅，不能称作内置绘图工具新绘原画；它与 `crop-harvest.json` 记录路径的其他配对证据图一样仅本地保存、不提交。需补画的成年采后状态使用内置 `image_gen` 编辑成熟单株，保留原成年枝冠／根脚与各ID来源；需要绘制原画的任务不能用程序擦除或放大小苗代替。`crop-visuals.json` 的保留植株条目新增 `harvestMode:'retainedPlant'` 与完整单株 `repeatBare` metadata，发布 `public/art/plot/plants/<ID>/bare.webp`；原四期继续用于首次换种，后续使用成年采后纹理和成熟纹理。
 
 洒水器用固定器身与四个同轴的 64×64 喷头叠图。水滴与落地水花独立用 PixiJS 绘制，四向出水点随喷头同步。WebP 质量为 70，透明区域保留。品种首张可见的地块卡出现时按需加载对应图集，同种作物共用。加载期间及失败不显示静态图或占位图。
 
@@ -57,7 +57,7 @@ python3 scripts/export-item-icons.py --check
 | 裁切底稿 | `assets/source/ui-icons/<图组>.png`，对齐透明网格或已裁出的头像 |
 | 单张发布图 | `public/ui-icons/<界面图标键>.webp`，小图 96×96，仓库头像 144×144，WebP 质量 70，Alpha 质量 100 |
 
-按 `scripts/export-ui-icons.py` 记录的图组顺序裁切。运行 `python3 scripts/export-ui-icons.py <图组>` 可从对应原图重新生成。图组提示词与原图同层目录保留。
+按 `scripts/export-ui-icons.py` 记录的图组顺序裁切。运行 `python3 scripts/export-ui-icons.py <图组>` 可从对应原图重新生成。地块图标 `plot-C02`～`plot-C50`、`plot-generic`（原 `plots-early`／`plots-late` 图组）与 `navigation` 图组的发布图已从发布目录移除，脚本不再导出，源图仍在 assets/。图组提示词与原图同层目录保留。
 
 ### 畜牧动画与透明牲畜选择图
 
@@ -119,19 +119,19 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 | 对象 | 发布资源 | 持久PNG |
 | --- | --- | --- |
-| 木质加工机 | `public/art/workshop/processing-machine-wood-v6.webp`，165×632透明 | `assets/workshop/png/processing-machine-wood-v6.png` |
-| 木质精制机 | `public/art/workshop/refining-machine-wood-v6.webp`，158×634透明 | `assets/workshop/png/refining-machine-wood-v6.png` |
-| 无边木板履带 | `public/art/workshop/belt-surface-wood-v6.webp`，104×52不透明 | `assets/workshop/png/belt-surface-wood-v6.png` |
+| 木质加工机 | 已从发布目录移除，源图仍在 assets/（原165×632透明） | `assets/workshop/png/processing-machine-wood-v6.png` |
+| 木质精制机 | 已从发布目录移除，源图仍在 assets/（原158×634透明） | `assets/workshop/png/refining-machine-wood-v6.png` |
+| 无边木板履带 | 已从发布目录移除，源图仍在 assets/（原104×52不透明） | `assets/workshop/png/belt-surface-wood-v6.png` |
 
-`export-wood-v6.mjs` 对源图裁切、等比最近邻缩放并转换为 WebP，生成 `workshop-visuals-wood-v6-candidate.json`。
+旧导出脚本 `export-wood-v6.mjs` 已删除；原画、PNG、`registration-wood-v6.json` 与 `workshop-visuals-wood-v6-candidate.json` 保留。
 
 ### 历史素材：工坊独立烟囱与烟雾
 
-烟囱和烟雾在木质机身之上分层，不修改wood-v6机身原画。`assets/workshop/raw/chimney-smoke-v1.png`由内置image_gen真实生成透明2×2网格，烟囱顶口与三烟团分别裁出。实际提示词、输入与裁切／开口中心登记在同目录 `prompts-chimney-smoke-v1.md`、`registration-chimney-smoke-v1.json`，纯素材转换入口为 `export-chimney-smoke-v1.mjs`。
+烟囱和烟雾在木质机身之上分层，不修改wood-v6机身原画。`assets/workshop/raw/chimney-smoke-v1.png`由内置image_gen真实生成透明2×2网格，烟囱顶口与三烟团分别裁出。实际提示词、输入与裁切／开口中心登记在同目录 `prompts-chimney-smoke-v1.md`、`registration-chimney-smoke-v1.json`；旧转换脚本 `export-chimney-smoke-v1.mjs` 已删除，原画与登记保留。
 
-发布 `public/art/workshop/chimney-v1.webp`、`smoke-1-v1.webp`、`smoke-2-v1.webp`、`smoke-3-v1.webp` 均为96×96透明纹理，持久PNG位于 `assets/workshop/png/`。烟囱源顶口中心315,312经400²真实裁切归一到48,48，锚点为0.5,0.5；安装与发射点、烟团生命周期等由 `src/content/workshop-effects.json`登记。烟团保留真实Alpha轮廓，再由显示层控制全局透明度，不能把不透明程序圆或整块灰底当烟雾素材。源／成品直接图片审阅与真实漂浮、半透明叠加、130px组合分别验收，未运行部分不得记为通过。
+原发布的 `chimney-v1.webp`、`smoke-1-v1.webp`、`smoke-2-v1.webp`、`smoke-3-v1.webp`（均为96×96透明纹理）已从发布目录移除，源图仍在 assets/，持久PNG位于 `assets/workshop/png/`。烟囱源顶口中心315,312经400²真实裁切归一到48,48，锚点为0.5,0.5；现行安装与发射点、烟团生命周期等效果参数在 `src/content/workshop-visuals.json` 的 `effects` 中登记（旧 `workshop-effects.json` 已删除）。烟团保留真实Alpha轮廓，再由显示层控制全局透明度，不能把不透明程序圆或整块灰底当烟雾素材。源／成品直接图片审阅与真实漂浮、半透明叠加、130px组合分别验收，未运行部分不得记为通过。
 
-第 2 版效果配置复用烟囱与烟团纹理。工坊齿轮新增 `public/art/workshop/gear-v1.webp`（96×96 透明，旋转锚点 0.5,0.5），空仓图标采用 `public/ui-icons/warehouse-empty-v1.webp`（160×160 透明）。[源图、绘制提示和导出记录](art-reviews/2026-11-16-workshop-warehouse-assets.md)。
+第 2 版效果配置复用烟囱与烟团纹理。工坊齿轮 `gear-v1.webp`（96×96 透明，旋转锚点 0.5,0.5）已从发布目录移除，源图仍在 assets/；空仓图标采用 `public/ui-icons/warehouse-empty-v1.webp`（160×160 透明）。[源图、绘制提示和导出记录](art-reviews/2026-11-16-workshop-warehouse-assets.md)。
 
 ## 资源加载
 
@@ -141,7 +141,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 矿洞背景整幅生成，包含洞口和轨道。矿车透明单独生成，货载复用各M物品图标。`src/content/mining-visuals.json` 登记洞口原画层、内缘坐标、矿车轮脚锚点及车体可见左缘。运行时将洞口置于车体和货载下方，按洞口内缘做进出洞淡变。10张`scene-M<ID>`仅用于非动画详情/素材交付，不作为运行加载回退。矿洞导航、空设施与7项经营科技图标也单独真实绘制并发布透明WebP。页面WebP质量70，Alpha质量100，PNG原图不进dist。
 
-静态关键帧使用与Pixi相同的布局/时序输入合成；审图报告见本轮`docs/art-reviews/`，逐一分开记录原画、发布资源、合成分镜、实际运行与用户认可。素材存在或自动资源门通过不代表视觉或运行通过。
+静态关键帧使用与Pixi相同的布局/时序输入合成；审图报告见本轮`docs/art-reviews/`，逐一分开记录原画、发布资源、合成分镜、实际运行与用户认可。`assets/mining/keyframes/` 与 `assets/mining/reviews/` 的图片是仅本地保存的证据图，不提交；`keyframes.json` 等清单照常提交，新环境用 `scripts/compose-mining-keyframes.mjs` 重新生成。素材存在或自动资源门通过不代表视觉或运行通过。
 
 - PixiJS 游戏的庄园、工坊、仓库和图鉴列表连续滚动。列表只绘制进入视口的内容，并在其进入视口时按需请求对应图标和场景图。图片请求按资源 URL 合并并发请求，失败时保留名称及布局。物品图与界面图分别来自 `public/wiki/icons/` 和 `public/ui-icons/`。动画挂载和卸载遵循各场景的既有规则。
 - Service Worker 的安装清单排除所有 WebP 图片；游戏图片（`art/`、`ui-icons/`、`wiki/icons/` 下带 `?game=1` 的请求）在首次加载后按需缓存。除游戏首页外的导航走浏览器常规请求。未来添加游戏 WebP 时也应从预缓存清单排除，只预缓存启动壳和必需依赖。原图不进入 `dist/`。

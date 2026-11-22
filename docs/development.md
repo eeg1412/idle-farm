@@ -44,6 +44,7 @@
 - 大图如各页场景逐张整幅绘制。保留全幅 PNG 原图，再按页面比例裁出使用区域并转成 WebP 质量 70。
 - 每项新增作物交付一枚物品图标和一幅显示该作物长在地块中的定植场景。新增牲畜与鱼类同样各交付物品图标和设施场景；牲畜另交付独立透明选择图及完整动画资源。场景原图可按格随批维护，发布图为 `public/art/scene-<物品ID>.webp`，规格为 320×320、质量 70。逐格核对对象与 ID、边缘裁切和独立性。最终构建包含 `npm run art:check`，单独执行检查仍遵守用户验证授权。
 - 实际界面的 WebP 按需请求，浏览过的游戏图片可由离线缓存复用。源图不进入构建或预缓存。详细规则见 [图标资源与按需加载](assets.md)。
+- 审图证据图（合成、分镜、关键帧、接触表、对照图，例如 `assets/*/reviews/`、`assets/livestock/*evidence*/`、`assets/mining/keyframes/`、`assets/source/art/**/*review*/` 中的图片）每次审阅都可在本地生成，供 AI 和人审阅，不提交到仓库，`.gitignore` 已按目录忽略。`docs/art-reviews/` 报告与 json 证据清单及同目录合成脚本照常提交，记录证据图本地路径与 sha256，并注明“证据图仅本地保存”。新环境需要时用对应导出或合成脚本（如 `export-crop-animation.mjs`、`export-fish-animation.mjs`、`export-livestock-animation.mjs`、`compose-mining-keyframes.mjs`）重新生成。
 
 ### 作物成长动画
 
@@ -51,7 +52,7 @@
 
 1. 以作物目录 ID 交付种子、幼苗、成长期、成熟期四种前景。植物原画用透明 5×5 网格绘制，独立单株保留足够格间空隙。逐格核对品种、花果、根脚和透明边，再裁切。成长期和成熟期必须有该品种的整株特征，成熟期的收获物画在植株上。
 2. 全目录按 `assets/plot/crop-layout.json` 显式分大、中、小。C02–C68 使用每期独立单株图片，运行对每个根位创建一个 Sprite，不能把多棵树烘焙成一张整田前景替代逐株绘制。四期共用同一组固定根位，中、大型按真实田垄边界推导投影消失点和完整列族，与9条原垄逐排求交，列在田面边界自然进入／退出，铺到可种两端；禁止固定两列窄带或跨排筛掉整排。根脚贴合背景，近大远小，远端按可用高度保留完整树冠。小麦原图、密度与尺寸保留。图层为天空、田地、后排逐株精灵、洒水器、水滴与飞溅、前排逐株精灵，前排可遮喷水。320图、根位叠图和130×138素材合成只用于审摆位，不能作为运行前景。
-3. 唯一正式转换逻辑为 `node scripts/export-crop-animation.mjs`，Python旧入口仅以标准库转发Node，不再默认导出整田图，也不因缺Pillow阻断。C02–C68从已有 `assets/plot/crops/<ID>/{sown,seedling,growing,mature}.png` 分别导出一株；持久派生PNG在 `assets/plot/plants/<ID>/`，发布 `public/art/plot/plants/<ID>/<phase>.webp`，质量70、保留透明。`crop-visuals.json` 每ID登记 mode/size、roots（含x/y/row/column/scale/maxHeight）及每期 path/width/height/anchorX/anchorY/baseScale/source。loader加载四张独立单株，runtime逐根实例化，只在阶段切换时改各株texture/pivot/scale，根位固定；不在runtime测bbox。旧C02+整田图集仅保留历史，不能作为活跃交付。C01仍从已认可wheat-0..3.png原稿使用fieldAtlas整幅例外，仅绘完整前景，不水平截麦穗、不虚构单株目录。
+3. 唯一正式转换逻辑为 `node scripts/export-crop-animation.mjs`，Python旧入口仅以标准库转发Node，不再默认导出整田图，也不因缺Pillow阻断。C02–C68从已有 `assets/plot/crops/<ID>/{sown,seedling,growing,mature}.png` 分别导出一株；持久派生PNG在 `assets/plot/plants/<ID>/`，发布 `public/art/plot/plants/<ID>/<phase>.webp`，质量70、保留透明。`crop-visuals.json` 每ID登记 mode/size、roots（含x/y/row/column/scale/maxHeight）及每期 path/width/height/anchorX/anchorY/baseScale/source。loader加载四张独立单株，runtime逐根实例化，只在阶段切换时改各株texture/pivot/scale，根位固定；不在runtime测bbox。旧C02+整田图集已从发布目录移除，源图仍在 assets/，仅保留历史，不能作为活跃交付。C01仍从已认可wheat-0..3.png原稿使用fieldAtlas整幅例外，仅绘完整前景，不水平截麦穗、不虚构单株目录。
 4. 作物另按 `crop-harvest.json` 显式分 `wholePlant`（整株采收）和 `retainedPlant`（保留植株采果、花或叶），与大小分类独立。展示没有保底，跟随真实批次时长 T 分三档（每阶段至少1秒，另留1秒）：整株采收 T≥5秒完整四期；3秒≤T<5秒只播种子与成熟两期；T<3秒只显示成熟期，不逐批淡出。前两档成熟末尾逐株层同步300ms淡出、留空30ms再种子。保留植株首次换种按首批时长套用同样四期三档，后续展示周期只在成年采后状态与成熟状态间变化：T≥3秒两态各占半程交替，不足3秒只显示成熟状态；成年植株底层不随采收消失。必须审现有真实单株能否作为成年采后状态；幼树不能放大冒充成年无果树。需补画时使用内置绘图工具从成熟单株精确编辑，保留独立源图、来源和实际根脚／尺度。每个真实批次从自身起点开始展示，不再放慢或跨批次延续相位；展示不新增经营事件。减弱动态设置已删除。
    C设施可选 `planting:{id,start,duration}` 保存首次换种的模拟起点与首批实际时长。同品种、升级和自动续批保留，换种重置；首轮直接按 `duration` 套用三档，结束后进入成年采收循环。已安排作物的地块直接保存播种起点和首批时长。存档版本、经济产量和任务计数不变。
 5. PixiJS只为可见活跃种植卡创建动画，最近邻绘制。C02–C68按需加载该品种四张单株，四张齐全才创建逐株实例；C01仅加载原fieldAtlas。天空、田地和洒水器共用。滚出、弹窗、换页、后台卸载，加载中／资源失败／资料缺失时保留动画区域，不显示回退图标、静态设施图或程序占位；所有WebP排除启动预缓存。
@@ -105,7 +106,7 @@
 5. 按可见性挂载并沿用现有activePlots销毁：滚出、弹窗、切页、后台及重置时释放实例。异步纹理缓存不捕获旧页面节点，加载完成不能复活已经离开的产线。
 6. 最新方向反馈以本地Pixi真实采样代码为依据：正tilePosition对应右行，不凭观感直接翻负号。真实条纹间距与相位周期同步扩大，提升方向辨识，材料和成品同样右行。静态审阅或源码不算真实运行通过；用户「保持不运行」持续有效，不执行合成、运行、检查、预览或编译。
 7. 庄园和工坊的已安排动画加载中、失败、资料缺失、没有活动批次或卸载时不创建／显示／恢复任何回退图标、静态场景或程序占位。后续新增回退必须用户明确要求。保留空设施初始选择图、非动画详情图与正常材料／产物图标，不能把素材存在视为运行降级授权。
-8. 用户追加独立烟囱与半透明漂浮烟雾：在机身上依次增加烟囱层、烟雾层。小素材用内置image_gen透明网格分别交付烟囱与烟团，原稿／PNG／WebP／来源分开保留；新增`workshop-effects.json`管理纹理、安装／顶口锚点与展示参数，不把效果烘焙进木质机身。烟囱跟机身抖动，烟团从顶口发射后独立上升、横漂、轻摆、放大扩散与淡散，alpha始终小于1；运行联动、待料不冒烟。固定有界Sprite池与稳定序号／轨迹消费既有相位时钟，无新timer、DOM或经营事件。新增纹理经现有workshopTextureSources→按需loader消费，沿用stage裁切和实例销毁，不能回退旧图或复活旧页面。真正漂浮、半透明与130px用途按授权独立验收。
+8. 用户追加独立烟囱与半透明漂浮烟雾：在机身上依次增加烟囱层、烟雾层。小素材用内置image_gen透明网格分别交付烟囱与烟团，原稿／PNG／WebP／来源分开保留；纹理、安装／顶口锚点与展示参数现由`workshop-visuals.json`的`effects`管理（旧`workshop-effects.json`与旧导出脚本已删除，原画与登记保留），不把效果烘焙进机身。烟囱跟机身抖动，烟团从顶口发射后独立上升、横漂、轻摆、放大扩散与淡散，alpha始终小于1；运行联动、待料不冒烟。固定有界Sprite池与稳定序号／轨迹消费既有相位时钟，无新timer、DOM或经营事件。新增纹理经现有workshopTextureSources→按需loader消费，沿用stage裁切和实例销毁，不能回退旧图或复活旧页面。真正漂浮、半透明与130px用途按授权独立验收。
 
 ## 界面实装
 

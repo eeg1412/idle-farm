@@ -78,6 +78,7 @@
 - 局部框必须与显式 supportXRange 脚区不相交。当前 gate 在该脚区内读取 alpha≥128 的最低支撑像素，容许 y=268–272；这是固定注册点下的技术容差，不代表口部也必须落在脚区或此范围。
 - 全幅脚线下疑似投影仍在原始 PNG 和发布帧两处拒绝；仅跳过精确 mouthBounds 中的真实低嘴像素，不能把扫描范围整体缩到脚区，不能用局部框放行脚区、整片地面或烘焙椭圆影。
 - `assets/livestock/alignment/<ID>-<stage>.png` 的最新红框是该区域的静态交接资料，需连同源图、正常底色与最终 PNG／WebP 逐帧看是否只含真实嘴／喙。修正人工脚点、躯干或源格隔离后使用同次重导的新分镜，不拿旧静态图关闭新反馈。字段齐全、变换一致或门禁通过只能证明对应技术项，不能证明局部框合理、无烘焙影或真实动作连贯。
+- `assets/livestock/reviews/`、`choice-evidence/`、`choice-feed-evidence/`、`feed-evidence/` 中的合成、接触表和对照图是仅本地保存的证据图，不提交；同目录 mjs／json 照常提交。`docs/art-reviews/` 报告与 json 证据清单记录其本地路径与 sha256 并注明“证据图仅本地保存”，新环境用 `scripts/export-livestock-animation.mjs` 或同目录审阅合成脚本重新生成。
 
 ## 动画和实际使用
 
