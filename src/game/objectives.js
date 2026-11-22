@@ -1,6 +1,6 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import generatedCoinCaps from '../content/task-coin-caps.json' with { type: 'json' };
-import { techDefinitions, techTotalLevels } from './advancement.js';
+import { purchasedTechLevels, techTotalLevels } from './advancement.js';
 import { coinScale } from './coin-scale.js';
 import { qualityDrawTaskTargets } from './quality-tasks.js';
 
@@ -22,6 +22,7 @@ const baseCoinRewards = {
   firstFlour: 390n,
   breadRecipe: 460n,
   firstBread: 570n,
+  firstOrder: 570n,
   firstSale: 710n,
   firstPlot: 870n,
   firstUpgrade: 1_100n,
@@ -117,7 +118,7 @@ const maxLevel = (list) => list.reduce((highest, entry) => {
   const level = BigInt(entry.level ?? '1');
   return level > highest ? level : highest;
 }, 1n);
-const techTotal = (world) => BigInt(techDefinitions.reduce((total, { key }) => total + (world.tech[key] ?? 0), 0));
+const techTotal = (world) => BigInt(purchasedTechLevels(world));
 const allStations = (world) => [...world.stations.I, ...world.stations.P];
 const allFacilities = (world) => Object.values(world.facilities).flat();
 const unlockedCount = (world) => BigInt(world.unlocked.length);
@@ -145,7 +146,8 @@ const mainGuide = [
   ['firstFlour', '磨出面粉', '加工并入库至少 {目标} 份面粉', processing, (world) => produced(world, 'I01')],
   ['breadRecipe', '研发乡村面包', '解锁乡村面包的商品配方', research, (world) => learned(world, 'P01')],
   ['firstBread', '烤出乡村面包', '精制并入库至少 {目标} 份乡村面包', refining, (world) => produced(world, 'P01')],
-  ['firstSale', '第一次出货', '在仓库售出至少 {目标} 件物品', warehouse, (world) => world.stats.sold],
+  ['firstOrder', '完成1件订单', '成功交付至少 {目标} 张订单', destination('订单中心'), (world) => world.stats.ordersCompleted ?? 0n],
+  ['firstSale', '第一次出货', '通过仓库或订单出货至少 {目标} 件', warehouse, (world) => world.stats.sold],
   ['firstPlot', '扩建田地', plotCondition, field, (world) => world.stats.plots],
   ['firstUpgrade', '田地升级', fieldLevelCondition, field, (world) => maxLevel(world.facilities.C), 2n],
   ['firstSeed', '研发甘蔗', '解锁甘蔗种子', research, (world) => learned(world, 'C02')],
@@ -278,17 +280,21 @@ function progress(world, [id, name, condition, location, count, required = 1n, b
     rewarded, ...(branch && { branch }) };
 }
 
+// Only the save migration calls this against a world predating orders.
+export function legacyGuideCompleted(world) {
+  return mainGuide.every((task) => task[0] === 'firstOrder' || progress(world, task).done);
+}
+
 export function objectives(world) {
   const guide = mainGuide.map((task) => progress(world, task));
-  const active = guide.some((task) => !task.done);
+  const active = !world.legacyGuideCompleted && guide.some((task) => !task.done);
   if (world.stats.sold > 0n) guide.push(...introductionBranches.map((task) => progress(world, task)));
   return { guide, active, long: longTerm.map((task) => progress(world, task)) };
 }
 
 // Same task as objectives(world): `active ? guide.find((task) => !task.done && !task.branch) : null`.
-// Branch entries always carry a non-empty branch, so only main-guide tasks qualify, and `active`
-// holds exactly when some main-guide task is undone; the first undone main task is the answer.
 export function activeGuideTask(world) {
+  if (world.legacyGuideCompleted) return null;
   for (const task of mainGuide) {
     const entry = progress(world, task);
     if (!entry.done) return entry;

@@ -2,6 +2,7 @@ import { activeGuideTask, objectives } from '../game/objectives.js';
 import { catalog, facilityOffer, stationOffer, stationUpgradeOffer, stationRequirements } from '../game/world.js';
 import { techDefinitions, techOffer } from '../game/advancement.js';
 import { qualityDrawOffer } from '../game/quality.js';
+import { hasDeliverableOrder } from '../game/orders.js';
 import { helpVoice, productionHelpCopy, taskHelpCopy, tutorialDestination, otherStationCopy, researchHelpCopy, contextHelpCopy } from './manager-help-copy.js';
 
 const facilityKinds = { 田地: 'C', 畜牧: 'L', 鱼塘: 'F', 矿洞: 'M' };
@@ -83,6 +84,14 @@ function taskInstruction(world, task, page, speaker) {
   switch (task.id) {
     case 'firstHarvest': return assignStep(world, 'C', 'C01', speaker);
     case 'firstFlour': return assignStep(world, 'I', 'I01', speaker);
+    case 'firstOrder': {
+      if (!world.orders.active.length) {
+        return taskHelpCopy(speaker, world.orders.nextAttemptMs === null ? 'orderProduction' : 'orderWaiting');
+      }
+      if (hasDeliverableOrder(world)) return taskHelpCopy(speaker, 'orderReady');
+      if (world.orders.active.some((order) => order.status === 'locked')) return taskHelpCopy(speaker, 'orderStock');
+      return taskHelpCopy(speaker, 'firstOrder');
+    }
     case 'breadRecipe': case 'firstSale': case 'firstSeed': case 'reserveStock': case 'recipeTrio': case 'codex20':
     case 'firstTech': case 'delegationTech': return taskHelpCopy(speaker, task.id);
     case 'firstBread': return assignStep(world, 'P', 'P01', speaker);
@@ -123,7 +132,7 @@ function taskInstruction(world, task, page, speaker) {
 }
 
 const pageRoles = { 任务: 'tasks', 田地: 'field', 畜牧: 'livestock', 鱼塘: 'fish', 矿洞: 'mine',
-  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 图鉴: 'estate', 出售庄园: 'estate' };
+  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 图鉴: 'estate', 出售庄园: 'estate', 订单中心: 'orders' };
 const speakerKey = (speaker) => speaker.role + ':' + speaker.gender;
 
 export function managerTutorial(world, page, speaker) {

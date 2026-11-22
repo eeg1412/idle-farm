@@ -17,8 +17,8 @@ test('all appearances have a stable name and ten distinct replies for each event
       assert.equal(new Set(appearance[event]).size, 10);
     }
   }
-  assert.equal(names.length, 22);
-  assert.equal(new Set(names).size, 22);
+  assert.equal(names.length, 24);
+  assert.equal(new Set(names).size, 24);
 });
 
 test('management routes retain their canonical identity', () => {

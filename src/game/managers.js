@@ -1,10 +1,11 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { accountRandom } from './account-random.js';
 import { marketUnitPrice, validCalendarDay } from './market.js';
+import { recordOrderAcquisition } from './orders.js';
 import { availableToProduce, settleProduction } from './world.js';
 
 export const managerIds = Object.freeze(['tasks', 'estate', 'livestock', 'field', 'mine', 'fish',
-  'processing', 'refining', 'warehouse', 'research', 'merchant']);
+  'processing', 'refining', 'warehouse', 'research', 'merchant', 'orders']);
 export const managerDefaultGenders = Object.freeze({
   tasks: 'female',
   estate: 'male',
@@ -17,6 +18,7 @@ export const managerDefaultGenders = Object.freeze({
   warehouse: 'female',
   research: 'male',
   merchant: 'female',
+  orders: 'male',
 });
 export const managerDailyCap = 30_000n;
 export const managerWishUnlockCount = 10;
@@ -37,7 +39,7 @@ function newRelationship(gender) {
 export function newManagers(day = null, { legacyAllFemale = false } = {}) {
   return { day: validCalendarDay(day) ? day : null, spent: 0n, affinitySpent: 0n,
     roles: Object.fromEntries(managerIds.map((id) =>
-      [id, newRelationship(legacyAllFemale ? 'female' : managerDefaultGenders[id])])) };
+      [id, newRelationship(legacyAllFemale && id !== 'orders' ? 'female' : managerDefaultGenders[id])])) };
 }
 
 function managerLevel(affinity) {
@@ -112,7 +114,7 @@ export function synchronizeManagerCalendar(world, day) {
   const previous = world.managers;
   const nextDay = previous.day === null || day > previous.day;
   const effectiveDay = nextDay ? day : previous.day;
-  const pendingWishes = nextDay || previous.roles[managerIds[0]].wants.length === 0;
+  const pendingWishes = nextDay || managerIds.some((id) => previous.roles[id].wants.length === 0);
   const candidates = pendingWishes && world.accountSeed ? Object.keys(world.merchant.produced) : [];
   const draw = candidates.length > managerWishUnlockCount;
   if (!nextDay && !draw) return;
@@ -121,7 +123,8 @@ export function synchronizeManagerCalendar(world, day) {
     const role = previous.roles[id];
     const current = nextDay ? { ...role, dailyGain: 0n, affinityRemainder: 0n, wants: [],
       currentReturn: 0n, readyReturn: role.readyReturn + role.currentReturn } : role;
-    return [id, draw ? { ...current, wants: drawWants(world, id, effectiveDay, candidates) } : current];
+    return [id, draw && current.wants.length === 0
+      ? { ...current, wants: drawWants(world, id, effectiveDay, candidates) } : current];
   }));
   world.managers = { ...previous, day: effectiveDay, roles };
 }
@@ -133,7 +136,7 @@ export function resetManagerRun(world) {
 }
 
 export function managerGiftRemaining(world) {
-  const balance = world.stats.revenue - world.managers.spent;
+  const balance = world.stats.warehouseRevenue - world.managers.spent;
   return balance > 0n ? balance : 0n;
 }
 
@@ -241,6 +244,7 @@ export function claimManagerGift(world, expected) {
   const inventory = { ...world.inventory };
   for (const { itemId, count } of items) inventory[itemId] = (inventory[itemId] ?? 0n) + count;
   world.inventory = inventory;
+  for (const { itemId } of items) recordOrderAcquisition(world, itemId);
   setRelationship(world, id, { ...role, readyReturn: balance, sequence });
   settleProduction(world);
   return { id, items, value };

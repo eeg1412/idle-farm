@@ -86,8 +86,9 @@ function fieldGrid(geometry, columnSpacingU, columnInsetU = geometry.inset.u) {
   for (let v = Math.ceil(field.v[0] + inset.v - ridgeOffset) + ridgeOffset; v <= field.v[1] - inset.v + 1e-9; v += 1) {
     rows.push({ index: rows.length, v });
   }
-  const first = field.u[0] + columnInsetU;
-  const span = field.u[1] - columnInsetU - first;
+  const [leftInsetU, rightInsetU] = Array.isArray(columnInsetU) ? columnInsetU : [columnInsetU, columnInsetU];
+  const first = field.u[0] + leftInsetU;
+  const span = field.u[1] - rightInsetU - first;
   const steps = Math.max(1, Math.round(span / columnSpacingU));
   const columns = [];
   for (let index = 0; index <= steps; index += 1) {
@@ -107,6 +108,87 @@ function onSoil(geometry, x, y) {
   const { top, bottom, marginPx } = geometry.soilOutline;
   return y >= outlineY(top, x) + marginPx && y <= outlineY(bottom, x) - marginPx;
 }
+function nearEdgeClear(geometry, u, v, x, y) {
+  const { clearanceRowFraction, minClearancePx } = geometry.nearEdge;
+  const [farX, farY] = fieldPoint(geometry, u, v - 1);
+  const [nearX, nearY] = fieldPoint(geometry, u, v);
+  const clearance = Math.max(minClearancePx, clearanceRowFraction * Math.hypot(nearX - farX, nearY - farY));
+  return y <= outlineY(geometry.soilOutline.bottom, x) - clearance;
+}
+// Mirrors placeFieldRoots in export-crop-animation.mjs: grid nodes that land in
+// the foreground grass or within the near-edge clearance are pulled back along
+// their own column (never closer than minRowGapV to the previous root there).
+function placeFieldRoots(geometry, rows, columns) {
+  const { minRowGapV, searchStepV } = geometry.nearEdge;
+  const candidate = (u, v) => {
+    const [x, y] = fieldPoint(geometry, u, v);
+    const rootX = Math.round(x);
+    const rootY = Math.round(y);
+    return { x: rootX, y: rootY, inFrame: rootX >= 0 && rootX <= 320 && rootY >= 0 && rootY <= 320,
+      onSoil: onSoil(geometry, rootX, rootY), clear: nearEdgeClear(geometry, u, v, rootX, rootY) };
+  };
+  const roots = [];
+  const dropped = [];
+  for (const column of columns) {
+    let previousV;
+    for (const row of rows) {
+      const grid = candidate(column.u, row.v);
+      if (!grid.inFrame || grid.y < outlineY(geometry.soilOutline.top, grid.x) + geometry.soilOutline.marginPx) continue;
+      let placed;
+      if (grid.onSoil && grid.clear) placed = { ...grid, v: row.v };
+      else {
+        const limit = (previousV ?? row.v - 1) + minRowGapV;
+        for (let step = 1; row.v - step * searchStepV >= limit - 1e-9; step += 1) {
+          const v = Math.round((row.v - step * searchStepV) * 1e6) / 1e6;
+          const moved = candidate(column.u, v);
+          if (moved.inFrame && moved.onSoil && moved.clear) { placed = { ...moved, v }; break; }
+        }
+      }
+      if (!placed) { dropped.push({ row: row.index, column: column.index, x: grid.x, y: grid.y }); continue; }
+      roots.push({ x: placed.x, y: placed.y, row: row.index, column: column.index, v: placed.v,
+        ...(placed.v !== row.v ? { pulledBackFrom: { x: grid.x, y: grid.y } } : {}) });
+      previousV = placed.v;
+    }
+  }
+  // Side-edge fallback, mirrored: smallest pull-back plus shift along the ridge
+  // (<= maxShiftColumnFraction of the column pitch), keeping minNeighborFraction
+  // of the local column pitch from every placed root.
+  const { maxShiftColumnFraction, frameOverhangPx, minNeighborFraction } = geometry.sideEdge;
+  const maxShiftU = columns.length > 1 ? maxShiftColumnFraction * (columns[1].u - columns[0].u) : 0;
+  for (const node of dropped) {
+    const column = columns[node.column];
+    const row = rows[node.row];
+    const previous = roots.filter((root) => root.column === node.column && root.row < node.row).at(-1);
+    const limit = (previous?.v ?? row.v - 1) + minRowGapV;
+    const [gridX, gridY] = fieldPoint(geometry, column.u, row.v);
+    const [pitchX, pitchY] = fieldPoint(geometry, column.u - (columns[1].u - columns[0].u), row.v);
+    const minNeighbor = minNeighborFraction * Math.hypot(gridX - pitchX, gridY - pitchY);
+    let best;
+    for (let shiftStep = 0; shiftStep * searchStepV <= maxShiftU + 1e-9; shiftStep += 1) {
+      const u = Math.round((column.u - shiftStep * searchStepV) * 1e6) / 1e6;
+      for (let step = 0; row.v - step * searchStepV >= limit - 1e-9; step += 1) {
+        const v = Math.round((row.v - step * searchStepV) * 1e6) / 1e6;
+        const [x, y] = fieldPoint(geometry, u, v);
+        const rootX = Math.round(x);
+        const rootY = Math.round(y);
+        if (rootX < 0 || rootX > 320 + frameOverhangPx || rootY < 0 || rootY > 320) continue;
+        if (!onSoil(geometry, rootX, rootY) || !nearEdgeClear(geometry, u, v, rootX, rootY)) continue;
+        if (roots.some((root) => Math.hypot(root.x - rootX, root.y - rootY) < minNeighbor)) continue;
+        const distance = Math.hypot(x - gridX, y - gridY);
+        if (!best || distance < best.distance - 1e-9) best = { x: rootX, y: rootY, u, v, distance };
+        break;
+      }
+    }
+    if (!best) continue;
+    roots.push({ x: best.x, y: best.y, row: node.row, column: node.column, v: best.v,
+      ...(best.u !== column.u ? { u: best.u } : {}), pulledBackFrom: { x: node.x, y: node.y } });
+  }
+  return roots;
+}
+function validColumnInset(value) {
+  const valid = (inset) => Number.isFinite(inset) && inset >= 0;
+  return value === undefined || valid(value) || (Array.isArray(value) && value.length === 2 && value.every(valid));
+}
 function validFieldGeometry(geometry) {
   const point = (value) => Array.isArray(value) && value.length === 2 && value.every(Number.isFinite);
   const outline = (points) => Array.isArray(points) && points.length >= 2 && points.every(point) &&
@@ -120,7 +202,17 @@ function validFieldGeometry(geometry) {
     Number.isFinite(geometry.ridgeOffset) && Number.isFinite(geometry.inset?.u) && Number.isFinite(geometry.inset?.v) &&
     geometry.inset.u >= 0 && geometry.inset.v >= 0 &&
     Number.isFinite(geometry.soilOutline?.marginPx) && geometry.soilOutline.marginPx >= 0 &&
-    outline(geometry.soilOutline.top) && outline(geometry.soilOutline.bottom);
+    outline(geometry.soilOutline.top) && outline(geometry.soilOutline.bottom) &&
+    Number.isFinite(geometry.nearEdge?.clearanceRowFraction) && geometry.nearEdge.clearanceRowFraction > 0 &&
+    Number.isFinite(geometry.nearEdge.minClearancePx) && geometry.nearEdge.minClearancePx >= geometry.soilOutline.marginPx &&
+    Number.isFinite(geometry.nearEdge.minRowGapV) && geometry.nearEdge.minRowGapV > 0 && geometry.nearEdge.minRowGapV < 1 &&
+    Number.isFinite(geometry.nearEdge.searchStepV) && geometry.nearEdge.searchStepV > 0 &&
+    typeof geometry.nearEdge.reason === 'string' && geometry.nearEdge.reason.trim().length > 0 &&
+    Number.isFinite(geometry.sideEdge?.maxShiftColumnFraction) && geometry.sideEdge.maxShiftColumnFraction >= 0 &&
+    geometry.sideEdge.maxShiftColumnFraction <= 0.5 &&
+    Number.isFinite(geometry.sideEdge.frameOverhangPx) && geometry.sideEdge.frameOverhangPx >= 0 &&
+    Number.isFinite(geometry.sideEdge.minNeighborFraction) && geometry.sideEdge.minNeighborFraction > 0 &&
+    typeof geometry.sideEdge.reason === 'string' && geometry.sideEdge.reason.trim().length > 0;
 }
 async function cropPlantFile(id, stage, phase, sourcePath) {
   if (stage?.phase !== phase || stage.path !== `art/plot/plants/${id}/${phase}.webp` ||
@@ -235,7 +327,7 @@ for (const id of crops) {
   const columnInsetU = cropLayout.sizes[definition.size]?.columnInsetU;
   const expectedGrid = originalRoots ? undefined :
     validFieldGeometry(geometry) && Number.isFinite(columnSpacingU) && columnSpacingU > 0 &&
-      (columnInsetU === undefined || (Number.isFinite(columnInsetU) && columnInsetU >= 0))
+      validColumnInset(columnInsetU)
       ? fieldGrid(geometry, columnSpacingU, columnInsetU ?? geometry.inset.u) : { rows: [], columns: [] };
   if (definition.mode !== 'individual' || !Array.isArray(definition.roots) || !definition.roots.length ||
       definition.planting?.source !== (originalRoots ? 'assets/plot/furrows.json' : 'assets/plot/crop-layout.json#fieldGeometry') ||
@@ -248,7 +340,7 @@ for (const id of crops) {
   if (originalRoots ? projection.mode !== 'original-roots' :
       projection.mode !== 'field-homography' || !validFieldGeometry(geometry) ||
       !Number.isFinite(columnSpacingU) || columnSpacingU <= 0 || projection.columnSpacingU !== columnSpacingU ||
-      projection.columnInsetU !== columnInsetU ||
+      JSON.stringify(projection.columnInsetU) !== JSON.stringify(columnInsetU) ||
       JSON.stringify(projection.rowVanishingPoint) !== JSON.stringify(geometry.rowVanishingPoint) ||
       JSON.stringify(projection.columnVanishingPoint) !== JSON.stringify(geometry.columnVanishingPoint) ||
       JSON.stringify(projection.origin) !== JSON.stringify(geometry.origin) ||
@@ -259,7 +351,8 @@ for (const id of crops) {
   }
   const rowCount = originalRoots ? furrows.length : expectedGrid.rows.length;
   for (const root of definition.roots) {
-    if (!Number.isFinite(root.x) || root.x < 0 || root.x > 320 ||
+    const overhang = originalRoots ? 0 : geometry?.sideEdge?.frameOverhangPx ?? 0;
+    if (!Number.isFinite(root.x) || root.x < 0 || root.x > 320 + overhang ||
         !Number.isFinite(root.y) || root.y < 0 || root.y > 320 ||
         !Number.isFinite(root.scale) || root.scale <= 0 ||
         !Number.isFinite(root.maxHeight) || root.maxHeight <= 0 ||
@@ -272,11 +365,20 @@ for (const id of crops) {
       if (!point || root.x !== point[0] || root.y !== point[1]) throw new Error(`小型作物必须沿用原田垄根位：${id}`);
     } else {
       const column = expectedGrid.columns[root.column];
-      const [x, y] = column ? fieldPoint(geometry, column.u, expectedGrid.rows[root.row].v) : [NaN, NaN];
-      if (root.x !== Math.round(x) || root.y !== Math.round(y)) {
-        throw new Error(`作物根位未落在实测田垄与侧边透视列的交点：${id}`);
+      const row = expectedGrid.rows[root.row];
+      // u differs from the column only for a registered side-edge shift.
+      const u = root.u ?? column?.u;
+      const maxShiftU = geometry.sideEdge.maxShiftColumnFraction * (expectedGrid.columns[1]?.u - expectedGrid.columns[0]?.u);
+      const [x, y] = column && Number.isFinite(root.v) && Number.isFinite(u) ? fieldPoint(geometry, u, root.v) : [NaN, NaN];
+      // Same column; v is the ridge crest or a near-edge pull-back toward the far side.
+      if (root.x !== Math.round(x) || root.y !== Math.round(y) || root.v > row.v || root.v <= row.v - 1 ||
+          (root.u !== undefined && (root.u >= column.u || column.u - root.u > maxShiftU + 1e-9))) {
+        throw new Error(`作物根位未落在实测田垄与侧边透视列上：${id}`);
       }
       if (!onSoil(geometry, root.x, root.y)) throw new Error(`作物根脚越出实测田面进入草地或栅栏：${id}`);
+      if (!nearEdgeClear(geometry, u, root.v, root.x, root.y)) {
+        throw new Error(`作物近端根脚须离土面下沿保持登记的距离：${id}`);
+      }
     }
   }
   if (new Set(definition.roots.map(({ row, column }) => row + ':' + column)).size !== definition.roots.length) {
@@ -289,18 +391,13 @@ for (const id of crops) {
     throw new Error(`小型作物不得遗漏原田垄根位：${id}`);
   }
   if (!originalRoots) {
-    // Full coverage: every grid node inside the frame and the soil outline
-    // must be planted, so edges are not left empty to avoid frame cropping.
-    let expectedRoots = 0;
-    for (const row of expectedGrid.rows) {
-      for (const column of expectedGrid.columns) {
-        const [x, y] = fieldPoint(geometry, column.u, row.v);
-        const rootX = Math.round(x);
-        const rootY = Math.round(y);
-        if (rootX >= 0 && rootX <= 320 && rootY >= 0 && rootY <= 320 && onSoil(geometry, rootX, rootY)) expectedRoots += 1;
-      }
+    // Full coverage: every in-frame grid node is planted at its ridge or pulled
+    // back along its column; edges are not left empty to avoid frame cropping.
+    const key = ({ x, y, row, column, u, v, pulledBackFrom }) => JSON.stringify([row, column, x, y, u ?? null, v, pulledBackFrom ?? null]);
+    const expectedRoots = placeFieldRoots(geometry, expectedGrid.rows, expectedGrid.columns).map(key).sort();
+    if (JSON.stringify(definition.roots.map(key).sort()) !== JSON.stringify(expectedRoots)) {
+      throw new Error(`中、大型作物必须铺满实测可种田面并按近端规则后收：${id}`);
     }
-    if (definition.roots.length !== expectedRoots) throw new Error(`中、大型作物必须铺满实测可种田面直到画框边缘：${id}`);
   }
   const frames = [];
   for (const [index, phase] of cropPhases.entries()) {

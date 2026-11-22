@@ -1,4 +1,5 @@
 import { catalog } from '../game/world.js';
+import { purchasedTechLevels, techTotalLevels } from '../game/advancement.js';
 import { marketUnitPrice } from '../game/market.js';
 import { compact } from './numbers.js';
 
@@ -32,7 +33,8 @@ export function renderStatistics(ui) {
   if (tab === '现在') {
     ui.detailRows([
       { label: '出售前累计产值', value: money(world.productionValue) },
-      { label: '仓库销售收入', value: money(world.stats.revenue) },
+      { label: '本轮经营收入', value: money(world.stats.revenue) },
+      { label: '仓库销售收入', value: money(world.stats.warehouseRevenue ?? world.stats.revenue) },
       { label: '行脚商销售收入', value: money(world.merchant.directSales) },
       { label: '库存估值', value: money(inventoryEstimate(world)) },
     ].map((entry) => ({ ...entry, noWrap: true })));
@@ -45,11 +47,13 @@ export function renderStatistics(ui) {
     ui.detailRows([
       { label: '累计生产总值', value: money(world.lifetimeProductionValue) },
       { label: '生产完成件数', value: count(Object.values(world.stats.produced).reduce((sum, value) => sum + value, 0n)) },
-      { label: '仓库累计收入', value: money(world.stats.lifetimeRevenue) },
-      { label: '仓库卖出件数', value: count(world.stats.sold) },
+      { label: '累计经营收入', value: money(world.stats.lifetimeRevenue) },
+      { label: '累计出货件数', value: count(world.stats.sold) },
+      { label: '累计完成订单', value: count(world.stats.ordersCompleted) },
       { label: '出售庄园次数', value: count(world.completedRuns) },
       { label: '已研发物品', value: count(world.unlocked.filter((id) => catalog.items[id]).length) + ' / ' + count(Object.keys(catalog.items).length) },
       { label: '品质提升次数', value: count(world.qualityDraws) },
+      { label: '永久科技等级', value: count(purchasedTechLevels(world)) + ' / ' + count(techTotalLevels) },
     ].map((entry) => ({ ...entry, noWrap: true })));
   }
 }

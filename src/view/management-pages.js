@@ -600,7 +600,7 @@ const taskArt = {
   fishIntro: 'scene-fish', buildFish: 'scene-fish', collectFish: 'scene-fish',
   miningIntro: 'mining-tab', buildMine: 'mining-tab', collectMining: 'mining-tab',
   miningUpgrade: 'mining-tab', miningTop: 'mining-tab', miningProduct: 'mining-tab',
-  firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
+  firstOrder: 'tech-order-negotiation', firstSale: 'nav-warehouse', farmIncome: 'nav-warehouse',
   recipeCollection: 'nav-research', qualityCollection: 'nav-research', qualityMaster: 'nav-research',
   newFarm: 'sale-retain', itemCollection: 'nav-catalog',
   firstUpgrade: 'scene-wheat', firstSeed: 'nav-research', firstSwitch: 'scene-wheat',
@@ -637,7 +637,7 @@ export function renderTasks(ui) {
   }, { keepScroll: true, sticky: true, style: 'segmented' });
   const finished = taskTab === '已完成';
   const stage = active ? guide : [
-    ...guide.filter((goal) => goal.branch),
+    ...guide.filter((goal) => goal.branch || !goal.done),
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
     ...long.filter((goal) => !featuredGoals.includes(goal.id)),
   ];
@@ -972,7 +972,7 @@ function farmDetails(ui, offer) {
     ui.card((card) => card.row(label, value, { icon, style: 'metric', compact: true, divider: false }),
       { padding: 8, gap: 6 });
   }
-  ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered', inspectable: false });
+  ui.balance('预计获得高级研发点', offer.reward, { variant: 'centered' });
   const newRun = [{ label: '2 块空田、基础 ' + compact(startingCoins) + ' 金币' }];
   if (offer.completedRuns === 0 && !ui.w.taskRewards?.includes('newFarm') &&
     (ui.w.lifetimeProductionValue ?? 0n) >= taskProductionGates.newFarm) {

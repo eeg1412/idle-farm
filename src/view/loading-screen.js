@@ -5,6 +5,11 @@ import { managerIds, managerDefaultGenders } from '../game/managers.js';
 
 const fontFamily = 'system-ui, "PingFang SC", "Microsoft YaHei", sans-serif';
 const assetUrl = (path, version = '') => new URL(`./${path}?game=1${version ? `&v=${version}` : ''}`, document.baseURI).href;
+const sceneVersions = {
+  'refining-male': 'refining-male-v3',
+  'orders-female': 'orders-female-redesign-v3',
+  'orders-male': 'orders-male-redesign-v3',
+};
 
 // A single Pixi overlay shares the game's canvas; it never pauses page construction.
 export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryStartup, onComplete }) {
@@ -123,9 +128,9 @@ export function createLoadingScreen(app, { tasks, load, markDirty, retry, retryS
     art.forEach((sprite, index) => {
       if (sprite.visible) return;
       if (index === 0 && !selectedScene) return;
-      const url = index === 0 ? assetUrl(selectedScene.path,
-        selectedScene.id === 'refining-male' ? 'refining-male-v3' : LOADING_ART_VERSION) : assetUrl('art/loading/logo.webp');
-      load(url).then((texture) => {
+      const scene = index === 0 ? selectedScene : undefined;
+      const url = scene ? assetUrl(scene.path, sceneVersions[scene.id] ?? LOADING_ART_VERSION) : assetUrl('art/loading/logo.webp');
+      load(url, scene?.role === 'orders' ? 'nearest' : 'linear').then((texture) => {
         if (!texture || texture.destroyed || done || sprite.destroyed) return;
         sprite.texture = texture;
         sprite.visible = true;

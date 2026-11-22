@@ -1,0 +1,350 @@
+{
+  "method": "Static sharp image composition; no game preview",
+  "script": "docs/art-reviews/2026-11-22-order-art-redesign-v2-static.mjs",
+  "records": [
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-v3-320x568.png",
+      "sha256": "a42122e2050bb7d3cbc0e584186b2ee806370e54bf2e3b2c6565ac75227f710d",
+      "inputs": [
+        "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.png",
+        "public/art/loading/logo.webp",
+        "src/view/loading-layout.js"
+      ],
+      "geometry": {
+        "viewport": [
+          320,
+          568
+        ],
+        "layout": {
+          "scene": {
+            "x": -29.333333333333343,
+            "y": 0,
+            "width": 378.6666666666667,
+            "height": 568,
+            "scale": 0.3697916666666667
+          },
+          "face": {
+            "x": 93.06770833333333,
+            "y": 172.69270833333334,
+            "width": 81.35416666666667,
+            "height": 76.91666666666667
+          },
+          "crop": {
+            "x": 79.32394366197185,
+            "y": 0,
+            "width": 865.3521126760563,
+            "height": 1536
+          },
+          "logo": {
+            "x": 25.599999999999994,
+            "y": 0.40749999999999886,
+            "width": 268.8,
+            "height": 105
+          },
+          "logoInk": {
+            "x": 25.599999999999994,
+            "y": 22.72,
+            "width": 268.8,
+            "height": 57.75
+          },
+          "bar": {
+            "x": 41.6,
+            "y": 511,
+            "width": 236.8,
+            "height": 11
+          },
+          "label": {
+            "x": 160,
+            "y": 529,
+            "width": 288,
+            "fontSize": 12.48
+          },
+          "caption": {
+            "x": 6.400000000000006,
+            "y": 526,
+            "width": 307.2,
+            "height": 26
+          },
+          "retry": {
+            "x": 95,
+            "y": 514,
+            "width": 130,
+            "height": 38
+          },
+          "problem": {
+            "x": 234,
+            "y": 533,
+            "width": 140,
+            "height": 34
+          }
+        },
+        "faceBounds": {
+          "x": 331,
+          "y": 467,
+          "width": 220,
+          "height": 208
+        },
+        "faceBoundsStatus": "measured source"
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-v3-390x844.png",
+      "sha256": "a6a58a94f8ba0e4982cdd9f912f306d469ff26d9389ae9208eff603c3186e6ea",
+      "inputs": [
+        "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.png",
+        "public/art/loading/logo.webp",
+        "src/view/loading-layout.js"
+      ],
+      "geometry": {
+        "viewport": [
+          390,
+          844
+        ],
+        "layout": {
+          "scene": {
+            "x": -86.33333333333331,
+            "y": 0,
+            "width": 562.6666666666666,
+            "height": 844,
+            "scale": 0.5494791666666666
+          },
+          "face": {
+            "x": 95.54427083333334,
+            "y": 256.6067708333333,
+            "width": 120.88541666666666,
+            "height": 114.29166666666666
+          },
+          "crop": {
+            "x": 157.11848341232226,
+            "y": 0,
+            "width": 709.7630331753555,
+            "height": 1536
+          },
+          "logo": {
+            "x": 23.400000000000006,
+            "y": 5.271718749999998,
+            "width": 343.2,
+            "height": 134.0625
+          },
+          "logoInk": {
+            "x": 23.400000000000006,
+            "y": 33.76,
+            "width": 343.2,
+            "height": 73.734375
+          },
+          "bar": {
+            "x": 50.7,
+            "y": 781.9,
+            "width": 288.6,
+            "height": 11
+          },
+          "label": {
+            "x": 195,
+            "y": 799.9,
+            "width": 351,
+            "fontSize": 15.21
+          },
+          "caption": {
+            "x": 7.800000000000011,
+            "y": 796.9,
+            "width": 374.4,
+            "height": 26
+          },
+          "retry": {
+            "x": 130,
+            "y": 784.9,
+            "width": 130,
+            "height": 38
+          },
+          "problem": {
+            "x": 269,
+            "y": 803.9,
+            "width": 140,
+            "height": 34
+          }
+        },
+        "faceBounds": {
+          "x": 331,
+          "y": 467,
+          "width": 220,
+          "height": 208
+        },
+        "faceBoundsStatus": "measured source"
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-v3-414x896.png",
+      "sha256": "d7374439b1206fe1435713fd2edc1384b662acbef3c703243463f8a01ffc08a1",
+      "inputs": [
+        "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.png",
+        "public/art/loading/logo.webp",
+        "src/view/loading-layout.js"
+      ],
+      "geometry": {
+        "viewport": [
+          414,
+          896
+        ],
+        "layout": {
+          "scene": {
+            "x": -91.66666666666669,
+            "y": 0,
+            "width": 597.3333333333334,
+            "height": 896,
+            "scale": 0.5833333333333334
+          },
+          "face": {
+            "x": 101.41666666666666,
+            "y": 272.4166666666667,
+            "width": 128.33333333333334,
+            "height": 121.33333333333334
+          },
+          "crop": {
+            "x": 157.14285714285717,
+            "y": 0,
+            "width": 709.7142857142857,
+            "height": 1536
+          },
+          "logo": {
+            "x": 24.840000000000003,
+            "y": 5.598593750000003,
+            "width": 364.32,
+            "height": 142.3125
+          },
+          "logoInk": {
+            "x": 24.840000000000003,
+            "y": 35.84,
+            "width": 364.32,
+            "height": 78.271875
+          },
+          "bar": {
+            "x": 53.82,
+            "y": 832.6,
+            "width": 306.36,
+            "height": 11
+          },
+          "label": {
+            "x": 207,
+            "y": 850.6,
+            "width": 372.6,
+            "fontSize": 16.146
+          },
+          "caption": {
+            "x": 8.699999999999989,
+            "y": 847.6,
+            "width": 396.6,
+            "height": 26
+          },
+          "retry": {
+            "x": 142,
+            "y": 835.6,
+            "width": 130,
+            "height": 38
+          },
+          "problem": {
+            "x": 281,
+            "y": 854.6,
+            "width": 140,
+            "height": 34
+          }
+        },
+        "faceBounds": {
+          "x": 331,
+          "y": 467,
+          "width": 220,
+          "height": 208
+        },
+        "faceBoundsStatus": "measured source"
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-v3-180x390.png",
+      "sha256": "3fc7f4d9c655052dc5fd43b4360ffef119e0e06fa20fc5137ff742831d54d61f",
+      "inputs": [
+        "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.png",
+        "public/art/loading/logo.webp",
+        "src/view/loading-layout.js"
+      ],
+      "geometry": {
+        "viewport": [
+          180,
+          390
+        ],
+        "layout": {
+          "scene": {
+            "x": -40,
+            "y": 0,
+            "width": 260,
+            "height": 390,
+            "scale": 0.25390625
+          },
+          "face": {
+            "x": 44.04296875,
+            "y": 118.57421875,
+            "width": 55.859375,
+            "height": 52.8125
+          },
+          "crop": {
+            "x": 157.53846153846155,
+            "y": 0,
+            "width": 708.9230769230769,
+            "height": 1536
+          },
+          "logo": {
+            "x": 14.400000000000006,
+            "y": 7.449218750000002,
+            "width": 151.2,
+            "height": 59.06249999999999
+          },
+          "logoInk": {
+            "x": 14.400000000000006,
+            "y": 20,
+            "width": 151.2,
+            "height": 32.484375
+          },
+          "bar": {
+            "x": 23.400000000000002,
+            "y": 333,
+            "width": 133.2,
+            "height": 11
+          },
+          "label": {
+            "x": 90,
+            "y": 351,
+            "width": 162,
+            "fontSize": 11
+          },
+          "caption": {
+            "x": 3.6000000000000085,
+            "y": 348,
+            "width": 172.79999999999998,
+            "height": 26
+          },
+          "retry": {
+            "x": 25,
+            "y": 336,
+            "width": 130,
+            "height": 38
+          },
+          "problem": {
+            "x": 164,
+            "y": 355,
+            "width": 140,
+            "height": 34
+          }
+        },
+        "faceBounds": {
+          "x": 331,
+          "y": 467,
+          "width": 220,
+          "height": 208
+        },
+        "faceBoundsStatus": "measured source"
+      },
+      "localOnly": true
+    }
+  ]
+}

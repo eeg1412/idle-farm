@@ -500,6 +500,19 @@
           209
         ]
       ]
+    },
+    "nearEdge": {
+      "clearanceRowFraction": 0.25,
+      "minClearancePx": 8,
+      "minRowGapV": 0.5,
+      "searchStepV": 0.01,
+      "reason": "CG-3 (user: front-row roots sat on the soil/grass seam and one apple was dropped). Measured on ground.webp: near rows (v=6.5..7.5) have a 50-75px row pitch along a column and the old 3px bottom margin left trunks 2-6px above the first grass pixel, i.e. on the seam. A quarter of the local row pitch (about 16-18px on the near rows, whose pitch is 63-73px; never under 8px) puts the foot on the visible lit face of the last ridge instead. Nodes that miss it are pulled back along their own column in 0.01v steps; at least half a row (0.5v) from the previous root of that column keeps trunks from stacking. Per-size right insets (large 0.6u, medium 0.5u) keep the rightmost column off the lower-right grass side so the near corner can be pulled back instead of dropped."
+    },
+    "sideEdge": {
+      "maxShiftColumnFraction": 0.35,
+      "frameOverhangPx": 0,
+      "minNeighborFraction": 0.55,
+      "reason": "CG-3 r4 (review CG-2-02): widening the right column inset to clear the lower-right grass left a column-wide bare strip, so both sizes keep their original insets (large 0.3u, medium 0.2u). Only nodes that still miss the near-edge clearance after the column pull-back (they lie in the lower-right corner where the outermost column runs along the grass side) get the smallest combined move: pull back along the column (>= nearEdge.minRowGapV behind the previous root) plus a shift along their ridge toward the field of at most 0.35 column pitch, so the column still reads straight. A moved root keeps at least 0.55 of the local column pitch (px) from every other root. Letting roots sit outside the 320 frame was evaluated and gave identical roots, so frameOverhangPx stays 0. Nodes with no such position are dropped and reported by the exporter."
     }
   },
   "families": {
@@ -639,7 +652,8 @@
       "height": 112,
       "width": 74,
       "columnSpacingU": 0.55,
-      "columnInsetU": 0.2
+      "columnInsetU": 0.2,
+      "columnSpacingNote": "Target only. Actual pitch = usable width / round(width / target) so the first and last columns land exactly on the left/right insets: large (5.19-0.3-0.3)/6 = 0.765u (7 columns), medium (5.19-0.2-0.2)/9 = 0.532u (10 columns). projection.columns records the actual u values."
     },
     "large": {
       "height": 180,
@@ -651,7 +665,9 @@
         "farScale": 0.42,
         "nearScale": 1.1,
         "availableHeightFraction": 0.8
-      }
+      },
+      "columnInsetU": 0.3,
+      "columnSpacingNote": "Target only. Actual pitch = usable width / round(width / target) so the first and last columns land exactly on the left/right insets: large (5.19-0.3-0.3)/6 = 0.765u (7 columns), medium (5.19-0.2-0.2)/9 = 0.532u (10 columns). projection.columns records the actual u values."
     }
   },
   "crops": {

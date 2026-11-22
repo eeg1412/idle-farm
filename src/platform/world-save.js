@@ -4,7 +4,8 @@ import { managerAffinityThresholds, managerDailyCap, managerIds, managerWishUnlo
   validManagerAffinityRemainder } from '../game/managers.js';
 import { validCalendarDay, validMarketRate } from '../game/market.js';
 import { merchantItemTier, merchantProductionGate, merchantPurchaseMultipliers, merchantSalesGate, newMerchant } from '../game/merchant.js';
-import { taskCoinRewards } from '../game/objectives.js';
+import { legacyGuideCompleted, taskCoinRewards } from '../game/objectives.js';
+import { restoreOrders } from '../game/orders.js';
 import { facilitySnapshotOutput, updateWorldWallTime, worldSchemaVersion } from '../game/world.js';
 import { prestigeLedgerVersion } from '../game/prestige-ledger.js';
 
@@ -252,11 +253,16 @@ function quantityMap(value, field, convert) {
 
 function recordStats(value, convert) {
   const stats = object(value, 'stats');
+  const revenue = convert(stats.revenue, 'stats.revenue');
+  const warehouseRevenue = Object.hasOwn(stats, 'warehouseRevenue')
+    ? convert(stats.warehouseRevenue, 'stats.warehouseRevenue') : revenue;
+  valid(BigInt(warehouseRevenue) <= BigInt(revenue), 'stats.warehouseRevenue');
   return {
     produced: quantityMap(stats.produced, 'stats.produced', convert),
     sold: convert(stats.sold, 'stats.sold'),
     plots: convert(stats.plots, 'stats.plots'),
-    revenue: convert(stats.revenue, 'stats.revenue'),
+    revenue, warehouseRevenue,
+    ordersCompleted: convert(Object.hasOwn(stats, 'ordersCompleted') ? stats.ordersCompleted : '0', 'stats.ordersCompleted'),
     lifetimeRevenue: convert(stats.lifetimeRevenue, 'stats.lifetimeRevenue'),
     boughtL: convert(stats.boughtL, 'stats.boughtL'),
     boughtF: convert(stats.boughtF, 'stats.boughtF'),
@@ -318,7 +324,7 @@ function marketRecord(value, unlocked, seed) {
   return { day, sequence, used, rates: Object.fromEntries(entries) };
 }
 
-function merchantRecord(value, world, market, seed, convert) {
+function merchantRecord(value, world, market, seed, warehouseRevenue, convert) {
   const legacy = !Object.hasOwn(world, 'merchant');
   const source = legacy ? newMerchant(market?.day ?? null) : object(value, 'merchant');
   const { day, freeUsed, manualUsed, sequence, version, produced, sales, batch } = source;
@@ -344,7 +350,7 @@ function merchantRecord(value, world, market, seed, convert) {
   const salesByTier = Object.fromEntries([1, 2, 3].map((tier) => [tier, amount(totals[tier], 'sales.' + tier)]));
   const salesLevel12 = BigInt(salesByTier[1]) + BigInt(salesByTier[2]);
   const warehouseSales = salesLevel12 + BigInt(salesByTier[3]);
-  valid(warehouseSales <= BigInt(world.stats.revenue), 'merchant.sales');
+  valid(warehouseSales <= BigInt(warehouseRevenue), 'merchant.sales');
   const directSales = amount(barter ? '0' : source.directSales, 'directSales');
   const state = { day, freeUsed, manualUsed, sequence: savedSequence, version: savedVersion,
     produced: Object.fromEntries(entries), sales: salesByTier, directSales, batch: null };
@@ -404,42 +410,50 @@ function merchantRecord(value, world, market, seed, convert) {
   return state;
 }
 
-function managerRecord(world, merchant, seed, convert) {
+function managerRecord(world, merchant, seed, warehouseRevenue, convert) {
   const legacy = !Object.hasOwn(world, 'managers');
   const managers = legacy ? newManagers(merchant.day, { legacyAllFemale: true }) : object(world.managers, 'managers');
   const { day, spent, roles } = managers;
   valid(day === null || validCalendarDay(day), 'managers.day');
   const amount = (value, field) => convert(legacy ? String(value) : value, `managers.${field}`);
   const savedSpent = amount(spent, 'spent');
-  valid(BigInt(savedSpent) <= BigInt(world.stats.revenue), 'managers.spent');
+  valid(BigInt(savedSpent) <= BigInt(warehouseRevenue), 'managers.spent');
   const affinitySpent = amount(Object.hasOwn(managers, 'affinitySpent') ? managers.affinitySpent : '0', 'affinitySpent');
   valid(BigInt(affinitySpent) <= BigInt(savedSpent) && BigInt(affinitySpent) <= BigInt(world.productionValue),
     'managers.affinitySpent');
   object(roles, 'managers.roles');
-  valid(Object.keys(roles).length === managerIds.length, 'managers.roles');
+  const addOrdersRole = !Object.hasOwn(world, 'orders') && !Object.hasOwn(roles, 'orders');
+  const existingIds = addOrdersRole ? managerIds.filter((id) => id !== 'orders') : managerIds;
+  valid(Object.keys(roles).length === existingIds.length && existingIds.every((id) => Object.hasOwn(roles, id)),
+    'managers.roles');
   const savedRoles = Object.fromEntries(managerIds.map((id) => {
     const field = `roles.${id}`;
-    const role = object(roles[id], `managers.${field}`);
+    const added = addOrdersRole && id === 'orders';
+    const role = added ? newManagers(day).roles.orders : object(roles[id], `managers.${field}`);
+    const roleAmount = (value, key) => amount(added ? String(value) : value, `${field}.${key}`);
     const { gender, affinity, dailyGain, wants, currentReturn, readyReturn, sequence } = role;
     valid(gender === 'female' || gender === 'male', `managers.${field}.gender`);
-    const savedAffinity = amount(affinity, `${field}.affinity`);
-    const savedDailyGain = amount(dailyGain, `${field}.dailyGain`);
+    const savedAffinity = roleAmount(affinity, 'affinity');
+    const savedDailyGain = roleAmount(dailyGain, 'dailyGain');
     valid(BigInt(savedAffinity) <= managerAffinityThresholds.at(-1), `managers.${field}.affinity`);
     valid(BigInt(savedDailyGain) <= managerDailyCap && BigInt(savedDailyGain) <= BigInt(savedAffinity),
       `managers.${field}.dailyGain`);
-    const affinityRemainder = amount(Object.hasOwn(role, 'affinityRemainder') ? role.affinityRemainder : '0',
-      `${field}.affinityRemainder`);
+    const affinityRemainder = roleAmount(Object.hasOwn(role, 'affinityRemainder') ? role.affinityRemainder : '0',
+      'affinityRemainder');
     valid(validManagerAffinityRemainder(BigInt(savedAffinity), BigInt(savedDailyGain), BigInt(affinityRemainder)) &&
       (day !== null || BigInt(affinityRemainder) === 0n), `managers.${field}.affinityRemainder`);
     valid(Array.isArray(wants) && wants.length <= 3 && new Set(wants).size === wants.length &&
       wants.every((itemId) => typeof itemId === 'string' && Object.hasOwn(merchant.produced, itemId)),
     `managers.${field}.wants`);
     return [id, { gender, affinity: savedAffinity, dailyGain: savedDailyGain, affinityRemainder, wants: [...wants],
-      currentReturn: amount(currentReturn, `${field}.currentReturn`),
-      readyReturn: amount(readyReturn, `${field}.readyReturn`), sequence: amount(sequence, `${field}.sequence`) }];
+      currentReturn: roleAmount(currentReturn, 'currentReturn'),
+      readyReturn: roleAmount(readyReturn, 'readyReturn'), sequence: roleAmount(sequence, 'sequence') }];
   }));
   const hasWishes = Object.values(savedRoles).filter(({ wants }) => wants.length > 0).length;
-  valid(!hasWishes || hasWishes === managerIds.length && day !== null && seed !== null &&
+  // A pre-order-center save can have the day's wishes for every original role.
+  // The new role draws its own wishes when the existing calendar next synchronizes.
+  const pendingOrdersWishes = hasWishes === managerIds.length - 1 && savedRoles.orders.wants.length === 0;
+  valid(!hasWishes || (hasWishes === managerIds.length || pendingOrdersWishes) && day !== null && seed !== null &&
     Object.keys(merchant.produced).length > managerWishUnlockCount, 'managers.wants');
   return { day, spent: savedSpent, affinitySpent, roles: savedRoles };
 }
@@ -459,18 +473,38 @@ function farmSaleHistoryRecords(world, convert) {
   });
 }
 
+function orderRecord(world, merchant, market, convert) {
+  // On disk every quantity must be a decimal string. Live drafts already contain BigInts.
+  const toAmount = convert === decimal ? decimal : (value, field, minimum) => {
+    if (typeof value !== 'bigint') return decimal(value, field, minimum);
+    valid(value >= minimum, field);
+    return value;
+  };
+  const orders = restoreOrders(world.orders, { ...world, merchant, market }, toAmount);
+  if (convert === decimal) return orders;
+  return { ...orders, sequence: orders.sequence.toString(), active: orders.active.map((order) => ({
+    ...order, count: order.count.toString(), reward: order.reward.toString(),
+  })) };
+}
+
 function amounts(world, convert, convertSigned) {
+  const tech = object(world.tech, 'tech');
+  for (const [key, level] of Object.entries(tech)) {
+    valid(Object.hasOwn(techMaxLevels, key) && integer(level, `tech.${key}`) <= techMaxLevels[key], `tech.${key}`);
+  }
   const pendingOffline = Object.hasOwn(world, 'pendingOffline') && offlineAmounts(world.pendingOffline, convert, convertSigned);
   if (pendingOffline) valid(pendingOffline.id <= world.revision, 'pendingOffline.id');
   const { music, sound, pickerIconsOnly = false } = object(world.settings, 'settings');
   const accountSeed = Object.hasOwn(world, 'accountSeed') ? world.accountSeed : null;
   valid(accountSeed === null || typeof accountSeed === 'string' && seedPattern.test(accountSeed), 'accountSeed');
   const market = Object.hasOwn(world, 'market') ? marketRecord(world.market, world.unlocked, accountSeed) : null;
-  const merchant = merchantRecord(world.merchant, world, market, accountSeed, convert);
-  const managers = managerRecord(world, merchant, accountSeed, convert);
+  const stats = recordStats(world.stats, convert);
+  const merchant = merchantRecord(world.merchant, world, market, accountSeed, stats.warehouseRevenue, convert);
+  const managers = managerRecord(world, merchant, accountSeed, stats.warehouseRevenue, convert);
+  const orders = orderRecord(world, merchant, market, convert);
   const basicResearchElapsedMs = Object.hasOwn(world, 'basicResearchElapsedMs')
     ? integer(world.basicResearchElapsedMs, 'basicResearchElapsedMs') : 0;
-  return {
+  const result = {
     schemaVersion: world.schemaVersion,
     revision: world.revision,
     clockMs: world.clockMs,
@@ -480,7 +514,7 @@ function amounts(world, convert, convertSigned) {
     prestigeLedgerVersion: world.prestigeLedgerVersion,
     unlocked: world.unlocked,
     quality: world.quality,
-    tech: world.tech,
+    tech,
     facilities: facilityRecords(world),
     settings: { music, sound, pickerIconsOnly },
     taskRewards: taskRewardIds(world),
@@ -495,14 +529,21 @@ function amounts(world, convert, convertSigned) {
     market,
     merchant,
     managers,
+    orders,
     lifetimeProductionValue: convert(world.lifetimeProductionValue, 'lifetimeProductionValue'),
     prestigeCredit: convert(world.prestigeCredit, 'prestigeCredit'),
     inventory: quantityMap(world.inventory, 'inventory', convert),
     reserves: quantityMap(world.reserves, 'reserves', convert),
-    stats: recordStats(world.stats, convert),
+    stats,
     stations: stationBatches(world.stations, convert),
     ...(pendingOffline && { pendingOffline }),
   };
+  // Freeze the old guide's stage once, while its original receipt and progress evidence is available.
+  const oldGuide = Object.hasOwn(world, 'legacyGuideCompleted') ? world.legacyGuideCompleted
+    : !Object.hasOwn(world, 'orders') && legacyGuideCompleted(result);
+  valid(typeof oldGuide === 'boolean', 'legacyGuideCompleted');
+  result.legacyGuideCompleted = oldGuide;
+  return result;
 }
 
 function facilityRecords(world) {
@@ -607,9 +648,6 @@ function validateWorld(world) {
   valid(unlocked.size === world.unlocked.length && world.unlocked.every((id) => typeof id === 'string' &&
     Object.hasOwn(catalog.items, id)) && catalog.initial.every((id) => unlocked.has(id)), 'unlocked');
   quantityMap(world.quality, 'quality', (value, field) => decimal(value, field, 1n));
-  for (const [key, level] of Object.entries(object(world.tech, 'tech'))) {
-    valid(Object.hasOwn(techMaxLevels, key) && integer(level, `tech.${key}`) <= techMaxLevels[key], `tech.${key}`);
-  }
   if (world.market) valid(world.market.used <= (world.tech.marketManipulation ?? 0), 'market.used');
   const settings = object(world.settings, 'settings');
   if (Object.hasOwn(settings, 'pickerIconsOnly')) {

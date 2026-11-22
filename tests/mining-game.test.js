@@ -62,7 +62,7 @@ test('legacy saves default absent mining fields and preserve earned full-tech re
     'lifetimeProductionValue', 'prestigeCredit']) assert.deepEqual(loaded[key], world[key]);
   assert.deepEqual(loaded.facilities.C, world.facilities.C);
   const full = objectives(loaded).long.find(({ id }) => id === 'techLevel1200');
-  assert.equal(full.required, 1694n);
+  assert.equal(full.required, 1_762n);
   assert.equal(full.done, true);
   assert.equal(full.rewarded, true);
   assert.equal(settleTaskRewards(loaded).ids.includes('techLevel1200'), false);
@@ -142,10 +142,10 @@ test('mining contributes identically to direct and wall-time offline advancement
 });
 
 test('mining tech keeps the seven water-sector budgets, prerequisites and combined speed cap', () => {
-  assert.equal(techDefinitions.length, 39);
-  assert.equal(techTotalLevels, 1694);
+  assert.equal(techDefinitions.length, 42);
+  assert.equal(techTotalLevels, 1_762);
   const budget = techDefinitions.reduce((sum, { costs }) => sum + costs.reduce((a, b) => a + b, 0n), 0n);
-  assert.equal(budget, 6_508_060n);
+  assert.equal(budget, 6_723_660n);
   const mining = techDefinitions.filter(({ source }) => source === '矿业');
   assert.equal(mining.length, 7);
   for (const definition of mining) assert.equal(definition.maxLevel, 50);

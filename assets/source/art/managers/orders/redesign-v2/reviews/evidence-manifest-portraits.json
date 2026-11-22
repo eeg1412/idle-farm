@@ -1,0 +1,1174 @@
+{
+  "method": "Static sharp image composition; no game preview",
+  "script": "docs/art-reviews/2026-11-22-order-art-redesign-v2-static.mjs",
+  "records": [
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-smile-normal.png",
+      "sha256": "373dc6c2825d30d5e3f187b3686de3c157e88d5e3a168cf0051a62ad646b7769",
+      "inputs": [
+        "assets/source/art/managers/orders/redesign-v2/male-smile.png"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-smile-portrait.png",
+      "sha256": "31dbf0bd11351d6bef37f45329af81c12dc3b042b4aef70c7c8af1c409e9141f",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-happy-normal.png",
+      "sha256": "274ac211a94b51800148bce76fc8ff1e9c831c39e97588c688023b9986f3e688",
+      "inputs": [
+        "assets/source/art/managers/orders/redesign-v2/male-happy.png"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-happy-portrait.png",
+      "sha256": "4c61e6b03264efd1ea5df65b781d0e610716e250cdec54425cce7be61039a52e",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-angry-normal.png",
+      "sha256": "355bd9ed065d9d7d0b86030faded3ddb1af00fdeaa612ea6857b32145e639826",
+      "inputs": [
+        "assets/source/art/managers/orders/redesign-v2/male-angry.png"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-angry-portrait.png",
+      "sha256": "e51d887c28989492eb251e31d57f20c2458d6198890c829ad5280cddb6aafb54",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-sad-normal.png",
+      "sha256": "a02b785cbf77774fd2941061cae105d2edec1ab2c069a7b2bf8fa0be5c48a6de",
+      "inputs": [
+        "assets/source/art/managers/orders/redesign-v2/male-sad.png"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-sad-portrait.png",
+      "sha256": "7bf99be933bf1d9a14ed294f977bfb703905b6a1e94725dee16f986ab3507d85",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp"
+      ],
+      "geometry": {},
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-180-orders-smile.png",
+      "sha256": "19460ae9830c6734fdd946d198106b4e7e244cdece0f1468131d2cdd6597df06",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 180,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 160,
+        "height": 72,
+        "dialogueX": 61,
+        "portraitScale": 0.23875432525951557,
+        "portraitLeft": -27
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-180-smile.png",
+      "sha256": "b6d156c04ae854d16aebc186cfaaf22ab9fb4f30905e0677258de442360032c1",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 122,
+        "artHeight": 138,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-180-smile.png",
+      "sha256": "7a5b0e57b12db8946272bf3b043cc156acf3eae69cd35b9ced8251ee393b7851",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 135,
+        "artHeight": 151,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-180-orders-happy.png",
+      "sha256": "8512243dd960599624d0722d8f15d585c2a3d93b4878564112b62951a45e5ba8",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 180,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 160,
+        "height": 72,
+        "dialogueX": 61,
+        "portraitScale": 0.23875432525951557,
+        "portraitLeft": -27
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-180-happy.png",
+      "sha256": "5825064e1a7ccd386cb78c25cfab50d6c06df0eb83098913e1471f41cb1981c4",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 122,
+        "artHeight": 138,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-180-happy.png",
+      "sha256": "e75500f1d9d5a504ad68fb5c78316ccb9b3d93dd5965650e2bedee4fbd612086",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 135,
+        "artHeight": 151,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-180-orders-angry.png",
+      "sha256": "58815512b594961bd8a5d89c3ca20eae07cf96494757d6912632d17746efaf9c",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 180,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 160,
+        "height": 72,
+        "dialogueX": 61,
+        "portraitScale": 0.23875432525951557,
+        "portraitLeft": -27
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-180-angry.png",
+      "sha256": "27164f7ffb78d488e8c13d14ed6cb245c58d531fbd165d5c4e99b0bafb5a7a26",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 122,
+        "artHeight": 138,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-180-angry.png",
+      "sha256": "b0ad855beb5c8c93e456502e8a02623aeb755ee37bfb3154a5fcef473a94adba",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 135,
+        "artHeight": 151,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-180-orders-sad.png",
+      "sha256": "b3c5d0766027aa43f5e317b25fffbead5dcd20179d9ebcf3db2cce806d1796d5",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 180,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 160,
+        "height": 72,
+        "dialogueX": 61,
+        "portraitScale": 0.23875432525951557,
+        "portraitLeft": -27
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-180-sad.png",
+      "sha256": "764446419b4647e317d5a4c1e3465202da4ff129ab6e38aa15a47f41a7eb6d21",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 122,
+        "artHeight": 138,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-180-sad.png",
+      "sha256": "43a30c066fdc23d71edf1fb6a643559578fea54d83c9b3cc86347239c14e560a",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 135,
+        "artHeight": 151,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-180-warehouse-smile.png",
+      "sha256": "be5b0fe4137ebdbe6aa8f6ef76be706bae66b164e5f32de74a16c2dbe0cd8d3a",
+      "inputs": [
+        "public/art/managers/portraits/warehouse/male-smile.webp",
+        "public/art/managers/backgrounds/warehouse.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 180,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 160,
+        "height": 72,
+        "dialogueX": 61,
+        "portraitScale": 0.23875432525951557,
+        "portraitLeft": -25
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-180-tasks-smile.png",
+      "sha256": "01ac4544a9265d33a140cf84becc74247f36d68e24dd0db558fa4f7600cd3513",
+      "inputs": [
+        "public/art/managers/portraits/tasks/female-smile.webp",
+        "public/art/managers/backgrounds/tasks.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 180,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 160,
+        "height": 72,
+        "dialogueX": 61,
+        "portraitScale": 0.23875432525951557,
+        "portraitLeft": -23
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-320-orders-smile.png",
+      "sha256": "c90750ec778ed7aef658b4059c8438d210eb5d206a2fa27c0061d0901671ad63",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 320,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 300,
+        "height": 135,
+        "dialogueX": 125,
+        "portraitScale": 0.45674740484429066,
+        "portraitLeft": -48
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-320-smile.png",
+      "sha256": "cc1e262edbb9569b96fcea61675dc180bc244274b1f9209fc3c52a60d21c6eca",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 89,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-320-smile.png",
+      "sha256": "9ab1cb75d19113527e82bba1177aa338d2bac6ac36201a90c78f25ab82da8b11",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 90,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-320-orders-happy.png",
+      "sha256": "a46870afb5d8090bd9f572c5a10409de477bb6d4608120a116c8813b0aefb8dc",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 320,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 300,
+        "height": 135,
+        "dialogueX": 125,
+        "portraitScale": 0.45674740484429066,
+        "portraitLeft": -48
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-320-happy.png",
+      "sha256": "9f871b11778c4c99fdb53f791e093de014b352269cca35f8bca3fe1cd2fccf9f",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 89,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-320-happy.png",
+      "sha256": "78013a2951589be05439bf31814e4e9ebe92c111f0c086a5ce1349428568c189",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 90,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-320-orders-angry.png",
+      "sha256": "a08bdc2ce7094f4fd7713cec7e12795729025ed0927d4d563caa485b8e2a340e",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 320,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 300,
+        "height": 135,
+        "dialogueX": 125,
+        "portraitScale": 0.45674740484429066,
+        "portraitLeft": -48
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-320-angry.png",
+      "sha256": "bb5d6420c28102fe5bcb9dcfe51aa91a002cf1f8d7147c7c7642fb659b75ac75",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 89,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-320-angry.png",
+      "sha256": "15db624c9e3524ea68ed1b2f2b0989e4d7a700f178b1b13bc5287ad57cf30e70",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 90,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-320-orders-sad.png",
+      "sha256": "62354bd688f686b18b3f4521f7b98e64a513aac26f63c2e3409497b1b9502aba",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 320,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 300,
+        "height": 135,
+        "dialogueX": 125,
+        "portraitScale": 0.45674740484429066,
+        "portraitLeft": -48
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-320-sad.png",
+      "sha256": "6784b3894b3825d21fe23a39736f02d998e81864a9858e9aa7aaa996e4de7465",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 89,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-320-sad.png",
+      "sha256": "f19194b5b0f6ba5baf3c1a1517bd7aff94ba623d011285906233155cba3ca307",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 90,
+        "artHeight": 101,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-320-warehouse-smile.png",
+      "sha256": "f865072da425a058bcc01b65417a712f1a4907fe72081a1a796cc6d3fb601d85",
+      "inputs": [
+        "public/art/managers/portraits/warehouse/male-smile.webp",
+        "public/art/managers/backgrounds/warehouse.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 320,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 300,
+        "height": 135,
+        "dialogueX": 125,
+        "portraitScale": 0.45674740484429066,
+        "portraitLeft": -44
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-320-tasks-smile.png",
+      "sha256": "812db5625a5840c26fe8f12f943b48362493abf228bd1c9abf82d5a9d041db54",
+      "inputs": [
+        "public/art/managers/portraits/tasks/female-smile.webp",
+        "public/art/managers/backgrounds/tasks.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 320,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 300,
+        "height": 135,
+        "dialogueX": 125,
+        "portraitScale": 0.45674740484429066,
+        "portraitLeft": -40
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-smile.png",
+      "sha256": "ae79f7fb41627fef0d5ad9997d6e05ac70957d8c9f1cf056481da4bab0f9e14b",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 390,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 370,
+        "height": 167,
+        "dialogueX": 152,
+        "portraitScale": 0.5674740484429066,
+        "portraitLeft": -62
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-smile.png",
+      "sha256": "674034fa44d8720fbe32b5ec561325fcd5179be72e7b2939cd25b230225141ba",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 112,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-smile.png",
+      "sha256": "ebdf3df907f7f84f4fed6b301d74b962ed4708c70706060ffd1bd4c3078dc447",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 113,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-happy.png",
+      "sha256": "336e20a7c73a901d567856bb1799f3b3b42b2a425a459476b3e71db07d6e6ee6",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 390,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 370,
+        "height": 167,
+        "dialogueX": 152,
+        "portraitScale": 0.5674740484429066,
+        "portraitLeft": -62
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-happy.png",
+      "sha256": "352d13c718f68d1d680a259375c668b091d6109f24a755bc804d54b95b622953",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 112,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-happy.png",
+      "sha256": "12721d9fb1c42bb600c3ad5bb6cf336af14cc7086276fa7f78b444fb6562b4a6",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 113,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-angry.png",
+      "sha256": "96e868bc802ffc5e7da040ba618c8bc2f09fd4da2af467f74663a51238823c0d",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 390,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 370,
+        "height": 167,
+        "dialogueX": 152,
+        "portraitScale": 0.5674740484429066,
+        "portraitLeft": -62
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-angry.png",
+      "sha256": "f9942f9d63674132beee66d8442c75811066f0f73462edac6382b28dbcd3c5e5",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 112,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-angry.png",
+      "sha256": "cabe6bfdb87e310a2f397b5124096be3caed8d43637255e10a793daa43a0fff9",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 113,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-sad.png",
+      "sha256": "550c2f36448dadebc55dac02a749547a2869815725046421db6cc300216b2958",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 390,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 370,
+        "height": 167,
+        "dialogueX": 152,
+        "portraitScale": 0.5674740484429066,
+        "portraitLeft": -62
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-sad.png",
+      "sha256": "9da06eea08e5d885c6403d5e3ae4b6e2f77bfd5719d92fe69f5377acfd6d9438",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 112,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-sad.png",
+      "sha256": "85118866f32d6e5e55bbbbbaf5025f962a814f56b2c10d3a4fec3e0394d06d98",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 113,
+        "artHeight": 127,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-warehouse-smile.png",
+      "sha256": "c2ee30b3a58ac0bddec2fd5a1d1323b8852540f114d495e17b02c86ee7efec3e",
+      "inputs": [
+        "public/art/managers/portraits/warehouse/male-smile.webp",
+        "public/art/managers/backgrounds/warehouse.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 390,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 370,
+        "height": 167,
+        "dialogueX": 152,
+        "portraitScale": 0.5674740484429066,
+        "portraitLeft": -56
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-tasks-smile.png",
+      "sha256": "1c761676220763886330b67883b7abe3e135b0f53de9af2e94455b449f101ddd",
+      "inputs": [
+        "public/art/managers/portraits/tasks/female-smile.webp",
+        "public/art/managers/backgrounds/tasks.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 390,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 370,
+        "height": 167,
+        "dialogueX": 152,
+        "portraitScale": 0.5674740484429066,
+        "portraitLeft": -52
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-414-orders-smile.png",
+      "sha256": "2996396fba764abd3b6e369b6fe4a45fefb563a4153f4b9cac01ead53222bc29",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 414,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 394,
+        "height": 177,
+        "dialogueX": 161,
+        "portraitScale": 0.6020761245674741,
+        "portraitLeft": -66
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-414-smile.png",
+      "sha256": "19b0d23d147293ea3a0b8b2f7fdb975f84a7691b7a11472dbcf040238d60f448",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 121,
+        "artHeight": 137,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-414-smile.png",
+      "sha256": "2246d86140452cfabae694c508aa8b5fcd7b0a22b8a580dac2ccd59b559976f7",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 120,
+        "artHeight": 134,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-414-orders-happy.png",
+      "sha256": "67310835705dc71dea2444dca2960da6c9d6bbeddc9b2a85b0ecb9f2d7eaaab4",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 414,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 394,
+        "height": 177,
+        "dialogueX": 161,
+        "portraitScale": 0.6020761245674741,
+        "portraitLeft": -66
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-414-happy.png",
+      "sha256": "26003864909ec509913aa6f541176019c27d5a3edb185b9c5b227f05501309c4",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 121,
+        "artHeight": 137,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-414-happy.png",
+      "sha256": "4cc5abaeca8ace94e1b1fda25b0c0f527b5e8424f0234cd4c7fecca43c290f98",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 120,
+        "artHeight": 134,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-414-orders-angry.png",
+      "sha256": "23c8a5ab24afa7a668e3a1a3671eefe1433bf71698fcc62013f6852440924624",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 414,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 394,
+        "height": 177,
+        "dialogueX": 161,
+        "portraitScale": 0.6020761245674741,
+        "portraitLeft": -66
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-414-angry.png",
+      "sha256": "b9095cd6cd4e82de47249d0fcaf9a8d7050922dda7a992d7b2f0be8193294340",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 121,
+        "artHeight": 137,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-414-angry.png",
+      "sha256": "28cbc2ab8a69f71c837915456f5106bb838d50f1e33938bd21fa0aebcad23e9e",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 120,
+        "artHeight": 134,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-414-orders-sad.png",
+      "sha256": "49e9fdd314532c52acad11fd59f997f0429535c7762f3eb9289696a6db294ec7",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "public/art/managers/backgrounds/orders.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 414,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 394,
+        "height": 177,
+        "dialogueX": 161,
+        "portraitScale": 0.6020761245674741,
+        "portraitLeft": -66
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/profile-414-sad.png",
+      "sha256": "c985cdf114d74e224bb61aadeb40b5c7d171b6500fab90eb38504d21b5452c6a",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 121,
+        "artHeight": 137,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/directory-414-sad.png",
+      "sha256": "1dbbcb82a27d85ae9b638b69be997de025aa82b5b80b0a0d5e43cfed3c7cd5df",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-sad.webp",
+        "src/view/canvas-ui.js",
+        "src/view/manager-page.js"
+      ],
+      "geometry": {
+        "artWidth": 120,
+        "artHeight": 134,
+        "cover": true,
+        "uiZoom": 1,
+        "safeInsets": 0
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-414-warehouse-smile.png",
+      "sha256": "445a4e1cc9a190fac25cab2d11c22bf9de4cdf4f355cf57f1b1f419c4f620be8",
+      "inputs": [
+        "public/art/managers/portraits/warehouse/male-smile.webp",
+        "public/art/managers/backgrounds/warehouse.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 414,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 394,
+        "height": 177,
+        "dialogueX": 161,
+        "portraitScale": 0.6020761245674741,
+        "portraitLeft": -60
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-414-tasks-smile.png",
+      "sha256": "e512c7e0a440eb85f5bb8d123727e815c545709e5a085af812cd8b96aa2e2ae5",
+      "inputs": [
+        "public/art/managers/portraits/tasks/female-smile.webp",
+        "public/art/managers/backgrounds/tasks.webp",
+        "src/view/canvas-ui.js",
+        "src/content/manager-portraits.json"
+      ],
+      "geometry": {
+        "viewport": 414,
+        "uiZoom": 1,
+        "x": 10,
+        "width": 394,
+        "height": 177,
+        "dialogueX": 161,
+        "portraitScale": 0.6020761245674741,
+        "portraitLeft": -55
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-comparison.png",
+      "sha256": "a29777ff042ce847b648ff380d6cd2fa44df84f70bfc24a611ba2653e3bf8bf5",
+      "inputs": [
+        "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-smile.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-happy.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-angry.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-orders-sad.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-warehouse-smile.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/banner-390-tasks-smile.png"
+      ],
+      "geometry": {
+        "scale": 1
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/cards-390-comparison.png",
+      "sha256": "a366c015838bac2b24ff9e4f0cd830dc2c9ba01e12b0ebd51c34b0ca2a1814c9",
+      "inputs": [
+        "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-smile.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-smile.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-happy.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-happy.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-angry.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-angry.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/profile-390-sad.png",
+        "assets/source/art/managers/orders/redesign-v2/reviews/directory-390-sad.png"
+      ],
+      "geometry": {
+        "scale": 1
+      },
+      "localOnly": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/redesign-v2/reviews/male-four-portraits.png",
+      "sha256": "3f2fd0c7879e317f8557896a43b85cbaf871d959b7af1235fc528a2ef3db75d7",
+      "inputs": [
+        "public/art/managers/portraits/orders/male-smile.webp",
+        "public/art/managers/portraits/orders/male-happy.webp",
+        "public/art/managers/portraits/orders/male-angry.webp",
+        "public/art/managers/portraits/orders/male-sad.webp"
+      ],
+      "geometry": {
+        "scale": 1
+      },
+      "localOnly": true
+    }
+  ]
+}

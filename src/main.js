@@ -8,6 +8,7 @@ import {
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
+import { acceptOrder, deliverOrder, abandonOrder, replaceOrder } from './game/orders.js';
 import { claimManagerGift, giftManager, switchManagerAppearance } from './game/managers.js';
 import { drawQuality } from './game/quality.js';
 import { objectives, settleTaskRewards } from './game/objectives.js';
@@ -71,11 +72,13 @@ function updateSettings(draft, partial) {
 }
 
 const productionBatchActions = { assignProductionBatch, clearProductionBatch, upgradeProductionBatch };
+const orderActions = { acceptOrder, deliverOrder, abandonOrder, replaceOrder };
 const actions = {
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   ...productionBatchActions,
   setStationPriority, reserve, sell, sellBatch, sellFarm, research, drawQuality, upgradeTech, resetMarket, updateSettings,
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
+  ...orderActions,
   giftManager, claimManagerGift, switchManagerAppearance,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
@@ -114,8 +117,8 @@ function paint() {
   if (live) {
     const now = performance.now();
     display = projectWorld(world);
-    advanceForeground(display, false, now);
     const wallAt = Date.now();
+    advanceForeground(display, false, now, wallAt);
     if (!display.managers.day || localCalendarDay(wallAt) > display.managers.day) synchronizeWorldCalendar(display, wallAt);
     // The projection stores whole milliseconds; keep the remaining frame phase in its anchor.
     anchor = frontAnchor + (display.clockMs - world.clockMs);
@@ -134,6 +137,7 @@ function paint() {
   }
   // Reproject at the actual production boundary, even between regular snapshots.
   nextDisplayAt = anchor + Math.min(displayRefreshMs, nextEnd - display.clockMs,
+    (display.orders.nextAttemptMs ?? Infinity) - display.clockMs,
     researchHourMs - display.basicResearchElapsedMs);
 }
 function resize() {
@@ -163,15 +167,15 @@ function requestViewportResize() {
   app.ticker.addOnce(resize, undefined, UPDATE_PRIORITY.HIGH);
 }
 
-function advanceForeground(draft, deferFinalStarts, anchor) {
+function advanceForeground(draft, deferFinalStarts, anchor, wallAt) {
   anchor = Math.max(anchor, frontAnchor);
   const elapsed = Math.max(0, Math.floor(anchor - frontAnchor));
-  advanceWorld(draft, draft.clockMs + elapsed, { deferFinalStarts });
+  advanceWorld(draft, draft.clockMs + elapsed, { deferFinalStarts, orderWallStartMs: wallAt - elapsed });
   return anchor;
 }
 
 function foreground(draft, deferFinalStarts = false, anchor = performance.now(), wallAt = Date.now()) {
-  const advanced = advanceForeground(draft, deferFinalStarts, anchor);
+  const advanced = advanceForeground(draft, deferFinalStarts, anchor, wallAt);
   draft.wallAnchorMs = Math.max(draft.wallAnchorMs, wallAt);
   const held = draft.merchantHold;
   synchronizeWorldCalendar(draft, wallAt);
@@ -204,7 +208,7 @@ function changeMerchantReservation(hold, anchorAt, wallAt) {
   if (unchanged || hold === null && !previous) return { ok: true };
   // Match a normal action's production boundary without issuing an IndexedDB write for every selection.
   const draft = projectWorld(world);
-  advanceForeground(draft, true, anchorAt);
+  advanceForeground(draft, true, anchorAt, wallAt);
   draft.wallAnchorMs = Math.max(draft.wallAnchorMs, wallAt);
   const ok = reserveMerchantSale(draft, hold);
   settleProduction(draft);
@@ -357,7 +361,7 @@ async function settleOffline(base, now, anchor) {
   } else draft = settleLocally(snapshot, now);
   if (release && !endsOffline) {
     const elapsed = Math.floor(release.anchorAt - anchor);
-    advanceWorld(draft, draft.clockMs + elapsed, { deferFinalStarts: true });
+    advanceWorld(draft, draft.clockMs + elapsed, { deferFinalStarts: true, orderWallStartMs: release.wallAt - elapsed });
     reserveMerchantSale(draft, null);
     draft.wallAnchorMs = Math.max(draft.wallAnchorMs, release.wallAt);
     synchronizeWorldCalendar(draft, release.wallAt);
@@ -426,7 +430,9 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'restockMerchant') return { sound: 'success' };
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
-  if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
+  if (name === 'sell' || name === 'sellBatch' || name === 'deliverOrder') {
+    return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
+  }
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
   if (name === 'upgradeFacility' || name === 'upgradeStation' || name === 'upgradeProductionBatch') {
@@ -436,6 +442,17 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'clearProductionBatch') return { float: '已清空' };
   if (name === 'reserve') return { float: '已保存保留量' };
   return {};
+}
+
+function applyAction(name, draft, args, wallAt) {
+  if (Object.hasOwn(orderActions, name)) {
+    const [shown] = args;
+    const order = draft.orders.active.find((entry) => entry.id === shown?.id);
+    if (!order || order.status !== shown.status || order.item !== shown.item ||
+        order.count !== shown.count || order.reward !== shown.reward) return false;
+    return orderActions[name](draft, order.id);
+  }
+  return name === 'sellFarm' ? actions[name](draft, ...args, wallAt) : actions[name](draft, ...args);
 }
 
 function dispatch(name, ...args) {
@@ -456,7 +473,7 @@ function dispatch(name, ...args) {
       const anchor = foreground(draft, true, anchorAt, wallAt);
       // Feedback reads only the revenue before the action; a BigInt needs no copy.
       const revenueBefore = draft.stats.revenue;
-      const actionResult = name === 'sellFarm' ? actions[name](draft, ...args, wallAt) : actions[name](draft, ...args);
+      const actionResult = applyAction(name, draft, args, wallAt);
       if (actionResult === false) {
         settleProduction(draft);
         const toast = await commit(draft, anchor);

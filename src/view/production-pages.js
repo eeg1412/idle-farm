@@ -3,6 +3,7 @@ import {
   stationRequirements, stationUpgradeOffer, unitPrice,
 } from '../game/world.js';
 import { marketRate, marketUnitPrice } from '../game/market.js';
+import { orderItemTags } from '../game/orders.js';
 import { hoursLabel, productComplexity, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
@@ -113,8 +114,10 @@ function replacementChoices(dialog, kind, choices, isSelected, onSelect) {
       if (recipe) assignments.set(recipe, (assignments.get(recipe) ?? 0) + 1);
     }
   }
+  const { products, materials } = orderItemTags(dialog.w);
   const items = choices.map((id) => ({
     ...productionChoice(dialog.w, kind, id),
+    orderTags: [products.has(id) && '订单商品', materials.has(id) && '订单原料'].filter(Boolean),
     selected: isSelected(id),
     ...(assignments && { assignmentSummary: '已安排 ' + compact(assignments.get(id) ?? 0) + ' 条' }),
   }));

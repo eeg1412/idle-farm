@@ -26,8 +26,12 @@ function readDraft(defaults) {
   try {
     const draft = JSON.parse(window.localStorage.getItem(draftKey));
     if (draft?.schemaVersion !== 1 || draft.mapAspect !== estateMapAspect ||
-      !Array.isArray(draft.buildings) || draft.buildings.length !== defaults.length) return copyLayout(defaults);
+      !Array.isArray(draft.buildings)) return copyLayout(defaults);
     const saved = new Map(draft.buildings.map((building) => [building.id, building]));
+    // Keep the player's existing placements when opening an eleven-site draft.
+    if (draft.buildings.length === defaults.length - 1 && !saved.has('orders')) {
+      saved.set('orders', defaults.find(({ id }) => id === 'orders'));
+    } else if (draft.buildings.length !== defaults.length) return copyLayout(defaults);
     const restored = defaults.map(({ id }) => saved.get(id));
     const valid = restored.every((building) => {
       if (!Array.isArray(building?.center) || building.center.length !== 2) return false;
@@ -91,7 +95,7 @@ export async function startEstateEditor(canvas) {
   const initialWidths = new Map(defaults.map(({ id, widthRatio }) => [id, widthRatio]));
   let buildings = readDraft(defaults);
   const undo = [];
-  // The estate map is a fixed set of 22 textures, including the ten animated props.
+  // Keep editor textures across layout rebuilds while dragging or changing scale.
   const textures = new Map();
   const loading = new Map();
   const panel = app.stage.addChild(new Container({ label: 'estate-editor' }));

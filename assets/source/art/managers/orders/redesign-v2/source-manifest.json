@@ -1,0 +1,474 @@
+{
+  "task": "OR-ART redesign-v2 portraits + CG v3",
+  "generator": "built-in image_gen; no CLI",
+  "exportScript": "scripts/export-order-redesign-v2.mjs",
+  "portraits": [
+    {
+      "id": "male-smile",
+      "source": {
+        "path": "assets/source/art/managers/orders/redesign-v2/male-smile.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": true,
+        "sha256": "c0ba1c149dda5ef565c5b82916e979e32333681262926f559c4a1ab7b63a5720"
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-efe79e2d-7de3-4207-9b65-0245554771d8.png",
+      "prompt": "assets/source/art/managers/orders/redesign-v2/male-smile.prompt.txt",
+      "identityReference": null,
+      "output": {
+        "path": "public/art/managers/portraits/orders/male-smile.webp",
+        "width": 500,
+        "height": 289,
+        "hasAlpha": true,
+        "sha256": "688f1507cf7554596041962c973751a78c0b2136354e4e54a7532ebaa4562021"
+      }
+    },
+    {
+      "id": "male-happy",
+      "source": {
+        "path": "assets/source/art/managers/orders/redesign-v2/male-happy.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": true,
+        "sha256": "73133eca45445a3b7544fe2f11b7091c73093c9f87983af73900a67545bc1fff"
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-ecfd2078-d765-4994-9da9-ea0e5b926d10.png",
+      "prompt": "assets/source/art/managers/orders/redesign-v2/male-happy.prompt.txt",
+      "identityReference": "assets/source/art/managers/orders/redesign-v2/male-smile.png",
+      "output": {
+        "path": "public/art/managers/portraits/orders/male-happy.webp",
+        "width": 500,
+        "height": 289,
+        "hasAlpha": true,
+        "sha256": "8b9154683b025c293eb1166e5345e62c80b3bf3bfb862bee19bbc76c13a9d506"
+      }
+    },
+    {
+      "id": "male-angry",
+      "source": {
+        "path": "assets/source/art/managers/orders/redesign-v2/male-angry.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": true,
+        "sha256": "b009d303a69e85dc12c60e81a03bb3b702362b9d52c13d15e28afee874ac9897"
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-3de6537b-c4af-4aad-99c9-f424f4f54c19.png",
+      "prompt": "assets/source/art/managers/orders/redesign-v2/male-angry.prompt.txt",
+      "identityReference": "assets/source/art/managers/orders/redesign-v2/male-smile.png",
+      "output": {
+        "path": "public/art/managers/portraits/orders/male-angry.webp",
+        "width": 500,
+        "height": 289,
+        "hasAlpha": true,
+        "sha256": "edbaa90a562c97f3053ff81defdebb332adb0a921216dea6321feccc7f3e2356"
+      }
+    },
+    {
+      "id": "male-sad",
+      "source": {
+        "path": "assets/source/art/managers/orders/redesign-v2/male-sad.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": true,
+        "sha256": "efed365a25f78cea2d634492814580c4adb8835c9003ed7f25ca278e2eb8d9c7"
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-dafc5da4-99d4-4c66-b663-2b4f272f02e1.png",
+      "prompt": "assets/source/art/managers/orders/redesign-v2/male-sad.prompt.txt",
+      "identityReference": "assets/source/art/managers/orders/redesign-v2/male-smile.png",
+      "output": {
+        "path": "public/art/managers/portraits/orders/male-sad.webp",
+        "width": 500,
+        "height": 289,
+        "hasAlpha": true,
+        "sha256": "009f69e650891a4e64dece92445556022f5ecfe7924ad8c988577b1e5dfa4e83"
+      }
+    }
+  ],
+  "portraitTransform": {
+    "sourceCrop": [
+      95,
+      0,
+      929,
+      472
+    ],
+    "resized": [
+      500,
+      283
+    ],
+    "paddingTop": 6,
+    "sampling": "nearest",
+    "webpQuality": 88,
+    "alphaQuality": 100
+  },
+  "maleAnchor": {
+    "width": 500,
+    "height": 289,
+    "faceX": 242.80575539568346,
+    "inkLeft": 81,
+    "inkRight": 350
+  },
+  "scenes": [
+    {
+      "id": "orders-female",
+      "source": {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-v3.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "4d43906b4a904ede55fcd7c78999a515dde91cdb6b9387d7e3be39e49e15614b"
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-ab767e23-7ee0-4fe5-b29e-740b7b32e840.png",
+      "prompt": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-v3.prompt.txt",
+      "identityReference": "assets/source/art/managers/orders/anime/female-smile.png",
+      "inputImages": [
+        "assets/source/art/managers/orders/anime/female-smile.png"
+      ],
+      "generationMode": "new scene from identity only; no rejected CG input",
+      "faceBounds": {
+        "x": 376,
+        "y": 624,
+        "width": 254,
+        "height": 186
+      },
+      "output": {
+        "path": "public/art/loading/scenes/orders-female.webp",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "57bb0bbeab275b6c67890127d4da3cd96643aea1d6c5d6b8636f792dc6f7aecb"
+      }
+    },
+    {
+      "id": "orders-male",
+      "source": {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "04181df5044a0f3774a8c01cde9bce5d252d5b66b18e54b41acb176f707b5c1f"
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-2db61edd-c100-4427-bcab-7d4c2da22111.png",
+      "prompt": "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.prompt.txt",
+      "identityReference": "assets/source/art/managers/orders/redesign-v2/male-smile.png",
+      "inputImages": [
+        "assets/source/art/managers/orders/redesign-v2/male-smile.png"
+      ],
+      "generationMode": "new scene from identity only; no rejected CG input",
+      "faceBounds": {
+        "x": 331,
+        "y": 467,
+        "width": 220,
+        "height": 208
+      },
+      "output": {
+        "path": "public/art/loading/scenes/orders-male.webp",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "da17c52bce33a61d4f7de7e12888fb24d96c41acc39e21d7369999790329ca5b"
+      }
+    }
+  ],
+  "sceneTransform": {
+    "resampling": "none",
+    "webpQuality": 90
+  },
+  "rejectedScenes": [
+    {
+      "id": "orders-female",
+      "source": {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "45b9178ea21278ff0a52f2b1b197cfb6461eb53e2f8472e09f236c5376fbc235",
+        "deleted": true,
+        "available": false
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-1d09e65d-97ad-401d-a0a0-eac1c578d556.png",
+      "prompt": "assets/source/art/loading/solo/orders/redesign-v2/female-scene.prompt.txt",
+      "faceBounds": {
+        "x": 425,
+        "y": 546,
+        "width": 240,
+        "height": 178
+      },
+      "output": {
+        "path": "public/art/loading/scenes/orders-female.webp",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "bf1a55d94d35db96e82a622bfcacfcfff9eb4e52c153071930a6d590513e4082"
+      },
+      "status": "user rejected",
+      "reason": "User: 男女订单中心管理员的开屏画面重新绘制，重新想一个场景",
+      "outputMetadataHistorical": true,
+      "consumed": false,
+      "promptDeleted": true,
+      "promptAvailable": false
+    },
+    {
+      "id": "orders-male",
+      "source": {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/male-scene.png",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "aec134b10e2a0ae68ce2006e61fbc99327549425e77c083df14c06b6db0ddb42",
+        "deleted": true,
+        "available": false
+      },
+      "generator": "built-in image_gen",
+      "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-3a644039-db98-4c9b-8f28-380cfeef428f.png",
+      "prompt": "assets/source/art/loading/solo/orders/redesign-v2/male-scene.prompt.txt",
+      "faceBounds": {
+        "x": 450,
+        "y": 468,
+        "width": 198,
+        "height": 190
+      },
+      "output": {
+        "path": "public/art/loading/scenes/orders-male.webp",
+        "width": 1024,
+        "height": 1536,
+        "hasAlpha": false,
+        "sha256": "455e77f507b79bf657ab854634ed8bd9072915b50a098aa93e9053049ceaa5f0"
+      },
+      "status": "user rejected",
+      "reason": "User: 男女订单中心管理员的开屏画面重新绘制，重新想一个场景",
+      "outputMetadataHistorical": true,
+      "consumed": false,
+      "promptDeleted": true,
+      "promptAvailable": false
+    }
+  ],
+  "rejectedRevision": {
+    "source": {
+      "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-rejected-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false,
+      "sha256": "20b0e20e43a9a204cefe492b3cffb19f2080de75fd6492ced76990e3fb6575a8",
+      "deleted": true,
+      "available": false
+    },
+    "generator": "built-in image_gen",
+    "generatedOriginal": "C:/Users/eeg14/.codex/generated_images/01a2030b-a5e9-74d3-b743-9a743111abce/exec-32f971f7-16f5-46e9-acaa-93787dd428da.png",
+    "prompt": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-rejected-v1.prompt.txt",
+    "reason": "OR-V2-01: tall center-cover layouts cropped the outer working hand",
+    "revisedTo": "assets/source/art/loading/solo/orders/redesign-v2/female-scene.png",
+    "promptDeleted": true,
+    "promptAvailable": false
+  },
+  "referencePolicy": "Current v3 CGs each use only the matching female-smile or new male-smile identity image. Neither rejected indoor CG is a generation input. Historical v2 source chains remain in rejectedScenes and rejectedRevision.",
+  "reviewScope": "Sources and static outputs reviewed separately by order_art_review; game runtime unverified.",
+  "finalBuild": "PM responsibility. No tests, preview, runtime checks or build executed by asset owner.",
+  "cleanup": {
+    "date": "2026-11-22",
+    "task": "OR-CLEAN",
+    "owner": "order_art",
+    "status": "deleted",
+    "authorization": "User explicitly requested 清除废案文件; PM assigned this exact single-owner cleanup scope.",
+    "deletedFiles": 26,
+    "deletedBytes": 32406211,
+    "removedEmptyDirectories": 3,
+    "deleted": true,
+    "available": false,
+    "files": [
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/angry.png",
+        "bytes": 2722746,
+        "sha256": "78b48360260d3aa5d75b9bbca468eff8e1f471c67aaa1ad39078a1e0ed0cd837",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/chest-smile.png",
+        "bytes": 1975569,
+        "sha256": "216d304e476ea553dbff6e7ec4e8ccb4c50e383224f4154687fb9865d8f29117",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/happy.png",
+        "bytes": 2724801,
+        "sha256": "d6875b6075421fab05f920d5dee7f85e8358b5f5af3f481816afdf275ac8ae92",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/sad.png",
+        "bytes": 2723888,
+        "sha256": "934d290726056f701d76a81fc5170ae20b0a1e6231e9727d59dc72a4d3d1c152",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/reviews/compare.cjs",
+        "bytes": 2351,
+        "sha256": "b076fef0eca3e05b1b9584b52e01a8ee1775d693652c5828340ca33e84460454",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/reviews/controls.cjs",
+        "bytes": 1190,
+        "sha256": "0e615fa7eb323d211e750560d3466a5a210ddd6882d7314a0f605752cfccc91f",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/seal-clerk/reviews/warehouse-olin-controls-390.png",
+        "bytes": 163494,
+        "sha256": "44439b4c2e8be5df6fd4db7ea5a818fee3e98d41b66de0b70dd1f4c963752e0a",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/seal-clerk/scene.png",
+        "bytes": 3281081,
+        "sha256": "2b18d52ded78745d22528424f4985afefe09b26475867f2f1c65fe09f6a0be99",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/female.png",
+        "bytes": 3467612,
+        "sha256": "9151ffa48d9127f4dbed90d99235cce3775bb53c0b19648911a74fa21d2de6da",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/female.prompt.txt",
+        "bytes": 6796,
+        "sha256": "3272806ba0dbb74c1da113423bc704ad7464a3edd1aea72bacff9141c182e6c0",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene.png",
+        "bytes": 3095774,
+        "sha256": "45b9178ea21278ff0a52f2b1b197cfb6461eb53e2f8472e09f236c5376fbc235",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene.prompt.txt",
+        "bytes": 1644,
+        "sha256": "9564d6af97fc044f1876bf2a9b2716e36ef42d0dee04e0dfafa1a3551c6b38a1",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/male-scene.png",
+        "bytes": 3283257,
+        "sha256": "aec134b10e2a0ae68ce2006e61fbc99327549425e77c083df14c06b6db0ddb42",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/male-scene.prompt.txt",
+        "bytes": 3103,
+        "sha256": "0709639440a80a0147a5261f56d96ac2bde423b1da94d3440ffea356bc89813b",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-rejected-v1.png",
+        "bytes": 3397718,
+        "sha256": "20b0e20e43a9a204cefe492b3cffb19f2080de75fd6492ced76990e3fb6575a8",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-rejected-v1.prompt.txt",
+        "bytes": 3067,
+        "sha256": "48fa9a4c4a94b0ed6b371fe03ea40b0b356f957bc0fedd6de59331b7456fae5c",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-source-180x390.png",
+        "bytes": 203381,
+        "sha256": "03794a8a554b79b18d6c99c4d7215f10804f99adf2e2939738051f7eaba2a036",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-source-320x568.png",
+        "bytes": 533232,
+        "sha256": "9a1b3cd8aa8a1e5876ab44fd091bd58c6f7941b77262f83a90e95b910caa0f00",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-source-390x844.png",
+        "bytes": 963220,
+        "sha256": "b0381209bda4b81e40745f7b2d1065aa947520f54b233563152e09b644df8ada",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-source-414x896.png",
+        "bytes": 1085348,
+        "sha256": "bd5fdde3b14f61f139085c8d46f3cf6b392828590c663ae0f5bdfdcfd64dc1e3",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-current-180x390.png",
+        "bytes": 201971,
+        "sha256": "e87243f11295bc3430b6d9cbfa75f72ea58398063aa3d318e5a971b21efc97e0",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-current-320x568.png",
+        "bytes": 528597,
+        "sha256": "bbb8c73b0654e5e0dba7b1f37222f9189192e9129ab8636e70fb9903add30eef",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-current-390x844.png",
+        "bytes": 949626,
+        "sha256": "33c5273969cf75b86c33b6fb661c9e8a4874279164a2d42800df5e22782c7e85",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/female-current-414x896.png",
+        "bytes": 1069313,
+        "sha256": "fb144e683e116b996ada8c68567554d2cfe9a3cdfe59ec4f887e4367b2ab483e",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/evidence-manifest-female-current.json",
+        "bytes": 8694,
+        "sha256": "e956d3c6137e0f9c234b6e094d0d39efc0ad0a739acb22d771c40b9670f684d1",
+        "deleted": true,
+        "available": false
+      },
+      {
+        "path": "assets/source/art/managers/orders/redesign-v2/reviews/evidence-manifest-female-rejected.json",
+        "bytes": 8738,
+        "sha256": "d640e33d01fa1ad42c7e506e186226dbf6dc46233082d2cdc4c5933da3fcae06",
+        "deleted": true,
+        "available": false
+      }
+    ],
+    "preserved": "Current female anime four originals, male redesign-v2 four originals and prompts, two v3 CG originals and prompts, anchors, current public/src/dist, final v3/loading/portrait/banner/profile evidence.",
+    "externalGeneratedImages": "Not touched; external generatedImage paths are historical provenance, not a promise of local availability.",
+    "history": "Deleted draft source/prompt/evidence paths and hashes are historical only. Removed source files and their evidence cannot be regenerated from deleted drafts.",
+    "validation": "No tests, checks, preview, build, syntax or runtime validation executed for this cleanup; normal file reads, property/hash reads and deletion/write operations only.",
+    "userApproval": "Cleanup authorization is not approval of the current artwork."
+  }
+}

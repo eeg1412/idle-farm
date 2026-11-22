@@ -1,0 +1,16 @@
+{
+  "female": {
+    "width": 493,
+    "height": 289,
+    "faceX": 256.5,
+    "inkLeft": 141,
+    "inkRight": 397
+  },
+  "male": {
+    "width": 500,
+    "height": 289,
+    "faceX": 242.80575539568346,
+    "inkLeft": 81,
+    "inkRight": 350
+  }
+}

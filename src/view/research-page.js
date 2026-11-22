@@ -10,7 +10,7 @@ const techTab = '经营改良';
 const tabs = [recipeTab, qualityTab, techTab];
 const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
 const kinds = ['全部', '原料', '中间产物', '商品'];
-const techSources = ['全部', '通用', ...sources.slice(1), '市场'];
+const techSources = ['全部', '通用', ...sources.slice(1), '市场', '行脚商', '订单'];
 // Crop uses include new recipes made with previously available ingredients.
 const cropUseRanges = {
   纺织与染料: [['C', 51, 52], ['C', 57, 61], ['I', 101, 102], ['I', 109, 117],
@@ -59,6 +59,9 @@ const techArt = {
   premiumSales: 'tech-premium-sales',
   merchantRestock: 'tech-merchant-restock',
   merchantBargaining: 'tech-merchant-bargaining',
+  orderExpansion: 'tech-order-expansion',
+  orderNegotiation: 'tech-order-negotiation',
+  orderPremium: 'tech-order-premium',
 };
 const techEffectLabels = {
   recipeDiscount: '商品配方研发材料减免',
@@ -100,6 +103,9 @@ const techEffectLabels = {
   premiumSales: '新行情最高售价倍率',
   merchantRestock: '行脚商每日手动换货次数',
   merchantBargaining: '行脚商售价相对仓库价',
+  orderExpansion: '每日新单及并存订单上限',
+  orderNegotiation: '每日可替换订单次数',
+  orderPremium: '新订单报酬倍率',
 };
 
 function itemKind(item) {
@@ -218,7 +224,7 @@ function showQualityDrawResults(ui, result) {
 }
 
 function renderQuality(ui) {
-  ui.balance('普通研发点', ui.w.basicResearchPoints, { variant: 'efficiency', icon: 'research-point-basic', inspectable: false });
+  ui.balance('普通研发点', ui.w.basicResearchPoints, { variant: 'efficiency', icon: 'research-point-basic' });
   ui.researchProgress();
   ui.text(`每小时发放 ${basicResearchHourlyRate(ui.w)} 普通研发点。每抽消耗 ${qualityDrawCost} 点，随机提升一个已研发品项的品质。`,
     { muted: true });
@@ -360,11 +366,11 @@ function techNodes(w) {
   });
 }
 
-function showNodeFinder(ui, active, readyOnly, onFocus) {
+export function showNodeFinder(ui, active, readyOnly, onFocus, productionNodes) {
   const efficiency = active === techTab;
   const recipes = active === recipeTab;
   ui.dialog('查找节点', (dialog) => {
-    const nodes = efficiency ? techNodes(dialog.w) : researchNodes(dialog.w);
+    const nodes = productionNodes ?? (efficiency ? techNodes(dialog.w) : researchNodes(dialog.w));
     const local = dialog.local;
     const source = local.source ?? sources[0];
     const kind = local.kind ?? kinds[0];
@@ -447,7 +453,7 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
     renderQuality(ui);
     return;
   }
-  if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point', inspectable: false });
+  if (efficiency) ui.balance('高级研发点', ui.w.researchPoints, { variant: 'efficiency', icon: 'research-point' });
   const panels = local.researchPanels ?? (local.researchPanels = {});
   const panel = panels[active] ?? (panels[active] = { all: {}, ready: {} });
   const nodes = efficiency ? techNodes(ui.w) : researchNodes(ui.w);

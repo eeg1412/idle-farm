@@ -284,9 +284,10 @@ function drawCard(parent, place, cardWidth, { inkGraphics, drawImage, textNode }
 
 export function mountResearchTree({ parent, x, y, width, height, nodes, view, drawImage, textNode, buttonAt,
   transitionNode, inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, comparison, groups,
-  readyOnly, onToggleStatus, textScale = 1 }) {
+  readyOnly, onToggleStatus, production = false, textScale = 1 }) {
   const compact = height < 210;
-  const plotTop = compact ? 50 : 77;
+  // The production chain has no toolbar or legend; its plot starts at the paper edge.
+  const plotTop = production ? 8 : compact ? 50 : 77;
   const plot = { x: 7, y: plotTop, width: width - 14, height: Math.max(1, height - plotTop - 8) };
   const cardWidth = comparison ? clamp(Math.floor((plot.width - 48) / 2), 84, 144) : 110;
   const columnGap = comparison ? 34 : (groups || readyOnly ? 24 : 42);
@@ -294,7 +295,12 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const columns = Math.max(1, Math.floor((plot.width - 20 + columnGap) / (cardWidth + columnGap)));
   const graph = comparison ? comparisonLayout(nodes, cardWidth, columnGap, rowGap) : groups
     ? groupedLayout(nodes, groups, columns, cardWidth, columnGap, rowGap)
-    : atlasLayout(nodes, cardWidth, columnGap, rowGap, readyOnly ? columns : undefined);
+    : atlasLayout(nodes, cardWidth, columnGap, rowGap, production ? Infinity : readyOnly ? columns : undefined);
+  if (production) {
+    // A link that skips a level may run along the outside of the first or last column.
+    for (const place of graph.places) place.x += columnGap / 2;
+    graph.width += columnGap;
+  }
   const viewport = new Container({ label: 'research-map' });
   viewport.position.set(x, y);
   viewport.eventMode = 'static';
@@ -305,6 +311,13 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
 
   const content = new Container({ label: 'research-map-content' });
   content.eventMode = 'none';
+  if (production) {
+    // Each recipe is drawn once: its materials join above the product and one arrow enters it.
+    const recipeEdges = content.addChild(new Container({ label: 'production-dependencies' }));
+    for (const place of graph.places) {
+      drawConnections(recipeEdges, place, place.before, true, cardWidth, columnGap, rowGap, inkGraphics);
+    }
+  }
   const edgeLayer = new Container({ label: 'research-map-edges' });
   content.addChild(edgeLayer);
   for (const { label, y } of graph.headings ?? []) {
@@ -352,8 +365,9 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   }
 
   function paintEdges(visible, selected, detail) {
-    const highlighted = detail !== 'marker' && !comparison && selected;
-    const local = detail !== 'marker' && !highlighted ? graph.edges.filter(({ from, to }) =>
+    // The production chain keeps its static recipe edges and has no selection overlay.
+    const highlighted = !production && detail !== 'marker' && !comparison && selected;
+    const local = !production && detail !== 'marker' && !highlighted ? graph.edges.filter(({ from, to }) =>
       visible.has(from) && visible.has(to) &&
       (comparison || (from.x === to.x && to.y - from.y === cardHeight + rowGap))) : [];
     const signature = highlighted ? selected.key : local.map(({ from, to }) => `${from.key}:${to.key}`).join(',');
@@ -374,7 +388,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     content.position.set(view.x, view.y);
     content.scale.set(view.scale);
     const detail = view.scale >= 0.66 ? 'full' : view.scale >= 0.34 ? 'icon' : 'marker';
-    if (nodes.length && !compact) {
+    if (nodes.length && !compact && !production) {
       const label = comparison ? comparison[0] : readyOnly ? `仅显示当前${groups ? '可升级' : '可研发'}项目`
         : detail === 'marker'
         ? `绿块已完成 · 金块${groups ? '可升级' : '可研发'} · 共 ${nodes.length} 项`
@@ -395,7 +409,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     const bottom = (plot.y + plot.height - view.y) / view.scale;
     const visible = new Set(graph.places.filter((place) =>
       place.x + cardWidth > left && place.x < right && place.y + cardHeight > top && place.y < bottom));
-    const selected = graph.byId.get(view.node);
+    const selected = production ? undefined : graph.byId.get(view.node);
     const before = selected?.before ?? [];
     const after = selected?.after ?? [];
     const relation = (place) => place.node.id === selected?.node.id ? 'selected'
@@ -424,7 +438,11 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const requested = graph.byId.get(view.focus);
   delete view.focus;
   if (requested) focus(requested);
-  else if (!Number.isFinite(view.scale)) start();
+  else if (!Number.isFinite(view.scale)) {
+    start();
+    // A chain opens at normal zoom on the ordered product, so any part beyond the plot can be panned.
+    if (production && nodes.length) focus(graph.byId.get(nodes[0].id));
+  }
   else if (view.plotCenter) {
     view.x += center.x - view.plotCenter.x;
     view.y += center.y - view.plotCenter.y;
@@ -444,7 +462,9 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const railWidth = width - 2 * inset;
   const keyWidth = Math.min(41, Math.floor(railWidth * 0.14));
   const filterWidth = onToggleStatus ? Math.floor(railWidth * 0.30) : 0;
-  const searchWidth = railWidth - 2 * keyWidth - filterWidth - (onToggleStatus ? 3 : 2) * gap;
+  const searchWidth = onFind ? railWidth - 2 * keyWidth - filterWidth - (onToggleStatus ? 3 : 2) * gap : 0;
+  // Without a finder the zoom keys share the rail left by the optional status filter.
+  const zoomWidth = onFind ? keyWidth : (railWidth - filterWidth - (onToggleStatus ? 2 : 1) * gap) / 2;
   const toolbar = { style: 'research-map' };
   const top = 8;
   let toolX = inset;
@@ -453,12 +473,14 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     toolX += size + gap;
   }
 
-  control('查找节点', searchWidth, onFind);
-  if (onToggleStatus) control(readyOnly ? '全部状态' : '可研发', filterWidth, onToggleStatus,
-    readyOnly ? { ...toolbar, tone: 'green' } : toolbar);
-  const zoomOptions = { ...toolbar, disabled: !nodes.length };
-  control('－', keyWidth, () => zoomAt(view.scale / 1.32, center), zoomOptions);
-  control('＋', keyWidth, () => zoomAt(view.scale * 1.32, center), zoomOptions);
+  if (!production) {
+    if (onFind) control('查找节点', searchWidth, onFind);
+    if (onToggleStatus) control(readyOnly ? '全部状态' : '可研发', filterWidth, onToggleStatus,
+      readyOnly ? { ...toolbar, tone: 'green' } : toolbar);
+    const zoomOptions = { ...toolbar, disabled: !nodes.length };
+    control('－', zoomWidth, () => zoomAt(view.scale / 1.32, center), zoomOptions);
+    control('＋', zoomWidth, () => zoomAt(view.scale * 1.32, center), zoomOptions);
+  }
 
   function activate(place) {
     view.node = place.node.id;

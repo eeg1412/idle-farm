@@ -6,6 +6,10 @@ import { newManagers, resetManagerRun, synchronizeManagerCalendar } from './mana
 import {
   newMerchant, recordMerchantProduction, recordMerchantSales, reserveMerchantSale, resetMerchantRun, synchronizeMerchant,
 } from './merchant.js';
+import {
+  activeMerchantHoldQuantity, attemptScheduledOrder, newOrders, recordOrderAcquisition, recordOrderProduction,
+  resetOrderRun, synchronizeOrders,
+} from './orders.js';
 import { accrueBasicResearch } from './quality.js';
 import { newPrestigeLedger, prestigeLedgerOffer, productionContributionBatch, settlePrestigeLedger } from './prestige-ledger.js';
 
@@ -172,11 +176,12 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
     researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
     accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(day),
-    managers: newManagers(day), productionValue: 0n, completedRuns: 0, farmSaleHistory: [],
+    managers: newManagers(day), orders: newOrders(day), productionValue: 0n, completedRuns: 0, farmSaleHistory: [],
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
-    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, lifetimeRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
-    taskRewards: [], settings: { music: 0, sound: 0, pickerIconsOnly: false },
+    stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, warehouseRevenue: 0n, lifetimeRevenue: 0n,
+      ordersCompleted: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
+    taskRewards: [], legacyGuideCompleted: false, settings: { music: 0, sound: 0, pickerIconsOnly: false },
   };
   settleProduction(world);
   return world;
@@ -185,11 +190,7 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
 export const quantity = (world, id) => world.inventory[id] ?? 0n;
 
 export function availableToProduce(world, id) {
-  const hold = world.merchantHold;
-  const batch = hold && world.merchant?.batch;
-  const temporary = hold && hold.id === id && hold.run === world.completedRuns &&
-    hold.batchId === batch?.id && batch?.wanted?.id === id ? hold.count : 0n;
-  const available = quantity(world, id) - (world.reserves[id] ?? 0n) - temporary;
+  const available = quantity(world, id) - (world.reserves[id] ?? 0n) - activeMerchantHoldQuantity(world, id);
   return available > 0n ? available : 0n;
 }
 
@@ -363,7 +364,16 @@ function popEvent(heap) {
   return result;
 }
 
-export function advanceWorld(world, targetMs, { deferFinalStarts = false, wallStartMs = world.wallAnchorMs } = {}) {
+// Local dates can have 23 or 25 hours. Resolve the next day in the device's calendar.
+function nextOrderMidnight(clockMs, wallMs) {
+  const midnight = new Date(wallMs);
+  const distance = midnight.setHours(24, 0, 0, 0) - wallMs;
+  return distance > 0 ? clockMs + distance : Infinity;
+}
+
+export function advanceWorld(world, targetMs, {
+  deferFinalStarts = false, wallStartMs = world.wallAnchorMs, orderWallStartMs = wallStartMs,
+} = {}) {
   if (!Number.isSafeInteger(targetMs) || targetMs < world.clockMs) return;
   const startMs = world.clockMs;
   const elapsed = targetMs - startMs;
@@ -379,20 +389,43 @@ export function advanceWorld(world, targetMs, { deferFinalStarts = false, wallSt
     restart([], []);
   }
   const contributions = productionContributionBatch(world);
+  synchronizeOrders(world, localCalendarDay(orderWallStartMs));
+  let midnight = nextOrderMidnight(startMs, orderWallStartMs);
   try {
-    while (heap.length && heap[0].batch.end <= targetMs) {
-      const completedAt = heap[0].batch.end;
-      world.clockMs = completedAt;
+    while (true) {
+      const eventAt = Math.min(heap[0]?.batch.end ?? Infinity, world.orders.nextAttemptMs ?? Infinity, midnight);
+      if (eventAt > targetMs) break;
+      world.clockMs = eventAt;
+      if (eventAt === midnight) {
+        const wallAt = orderWallStartMs + (eventAt - startMs);
+        synchronizeOrders(world, localCalendarDay(wallAt));
+        midnight = nextOrderMidnight(eventAt, wallAt);
+      }
+      // Keep the existing deposit/merchant and restart order. Only the first order's
+      // item uses the permanent station position to break ties among finished goods.
       const completed = [];
       const depositedIds = new Set();
-      do {
+      let firstProduct = null;
+      let firstStation = null;
+      while (heap[0]?.batch.end === eventAt) {
         const entry = popEvent(heap);
-        deposit(world, entry.batch, contributions, wallStartMs + completedAt - startMs);
-        depositedIds.add(entry.batch.id);
+        const { id } = entry.batch;
+        deposit(world, entry.batch, contributions, wallStartMs + (eventAt - startMs));
+        if (recordOrderAcquisition(world, id) && world.orders.nextAttemptMs === null) {
+          // Old saves can contain equal order numbers. The saved product-slot list breaks that tie.
+          if (!firstStation || entry.order < firstStation.order ||
+              (entry.order === firstStation.order && world.stations.P.indexOf(entry) < world.stations.P.indexOf(firstStation))) {
+            firstProduct = id;
+            firstStation = entry;
+          }
+        }
+        depositedIds.add(id);
         entry.batch = null;
         completed.push(entry);
-      } while (heap[0]?.batch.end === completedAt);
-      if (completedAt !== targetMs || !deferFinalStarts) restart(completed, depositedIds);
+      }
+      if (firstProduct !== null) recordOrderProduction(world, firstProduct, eventAt);
+      else if (world.orders.nextAttemptMs === eventAt) attemptScheduledOrder(world, eventAt);
+      if (completed.length && (eventAt !== targetMs || !deferFinalStarts)) restart(completed, depositedIds);
     }
   } finally {
     contributions.flush();
@@ -406,16 +439,19 @@ export function updateWorldWallTime(world, now) {
   const elapsed = Math.max(0, Math.min(delegationMilliseconds(world), now - world.wallAnchorMs));
   const startMs = world.clockMs;
   const target = startMs + elapsed;
+  const orderWallStartMs = Math.min(world.wallAnchorMs, now);
   // A page change during inactivity can end a hold partway through the offline interval.
   // Advance in two runs so the second run checks every waiting station under the released hold.
   const holdEndsAt = world.merchantHoldEndsAt;
   delete world.merchantHoldEndsAt;
   if (world.merchantHold && holdEndsAt !== undefined) {
     const untilRelease = Math.max(0, holdEndsAt - world.wallAnchorMs);
-    advanceWorld(world, world.clockMs + Math.min(elapsed, untilRelease), { deferFinalStarts: untilRelease <= elapsed });
+    advanceWorld(world, world.clockMs + Math.min(elapsed, untilRelease),
+      { deferFinalStarts: untilRelease <= elapsed, orderWallStartMs });
     reserveMerchantSale(world, null);
   }
-  advanceWorld(world, target, { wallStartMs: world.wallAnchorMs + world.clockMs - startMs });
+  const advanced = world.clockMs - startMs;
+  advanceWorld(world, target, { wallStartMs: world.wallAnchorMs + advanced, orderWallStartMs: orderWallStartMs + advanced });
   world.wallAnchorMs = Math.max(world.wallAnchorMs, now);
   const held = world.merchantHold;
   synchronizeWorldCalendar(world, now);
@@ -425,6 +461,7 @@ export function updateWorldWallTime(world, now) {
 
 export function synchronizeWorldCalendar(world, wallMs) {
   const day = localCalendarDay(wallMs);
+  synchronizeOrders(world, day);
   synchronizeMarket(world, day);
   synchronizeMerchant(world, day);
   synchronizeManagerCalendar(world, day);
@@ -629,6 +666,7 @@ export function clearStation(world, kind, index) {
 function cancelStationBatch(world, station) {
   for (const [material, count] of Object.entries(station.batch.inputs)) {
     world.inventory[material] = quantity(world, material) + count;
+    recordOrderAcquisition(world, material);
   }
   station.batch = null;
 }
@@ -688,6 +726,7 @@ export function sellBatch(world, selections) {
     world.coins += gain;
     world.stats.sold += count;
     world.stats.revenue += gain;
+    world.stats.warehouseRevenue += gain;
     world.stats.lifetimeRevenue += gain;
   }
   recordMerchantSales(world, quotes);
@@ -726,6 +765,8 @@ export function sellFarm(world, expectedOffer, soldAt = world.wallAnchorMs) {
   world.coins = startingCoins;
   world.productionValue = 0n;
   world.stats.revenue = 0n;
+  world.stats.warehouseRevenue = 0n;
+  resetOrderRun(world);
   resetMerchantRun(world);
   resetManagerRun(world);
   world.inventory = {};

@@ -63,6 +63,8 @@ def export_portraits():
                 'width': width, 'height': 289, 'faceX': (center - left) / 2,
                 'inkLeft': min(box[0] for box in visible), 'inkRight': max(box[2] for box in visible),
             }
+    # The order desk portraits are exported from their own full-body originals.
+    anchors['orders'] = json.loads((SOURCE / 'orders' / 'anchors.json').read_text(encoding='utf-8'))
     (ROOT / 'src' / 'content' / 'manager-portraits.json').write_text(
         json.dumps(anchors, indent=2) + '\n', encoding='utf-8')
 

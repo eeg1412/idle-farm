@@ -4,6 +4,7 @@ import { researchHourMs } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
 import { managerStatus } from '../game/managers.js';
 import { merchantStatus } from '../game/merchant.js';
+import { hasDeliverableOrder } from '../game/orders.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import workshopVisuals from '../content/workshop-visuals.json' with { type: 'json' };
 import managerPortraits from '../content/manager-portraits.json' with { type: 'json' };
@@ -26,6 +27,7 @@ import { mountMiningAnimation } from './mining-animation.js';
 import { renderResearch, researchReadyTabs } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import { renderMerchant } from './merchant-page.js';
+import { renderOrders } from './order-page.js';
 import { managerPages, renderManager, renderManagerDirectory } from './manager-page.js';
 import { renderStatistics, renderFarmSaleHistory } from './management-records.js';
 import { createManagerSpeechQueue, fitManagerSpeech } from './manager-speech.js';
@@ -44,21 +46,21 @@ const pages = {
   田地: (ui) => renderProduction(ui, 'C'), 畜牧: (ui) => renderProduction(ui, 'L'),
   鱼塘: (ui) => renderProduction(ui, 'F'), 矿洞: (ui) => renderProduction(ui, 'M'),
   加工: (ui) => renderWorkshop(ui, 'I'), 精制: (ui) => renderWorkshop(ui, 'P'),
-  仓库: renderWarehouse, 行脚商: renderMerchant, 研究: renderResearch, 经营: renderManagement,
+  仓库: renderWarehouse, 订单中心: renderOrders, 行脚商: renderMerchant, 研究: renderResearch, 经营: renderManagement,
   角色管理: renderManagerDirectory, 统计: renderStatistics, 出售庄园历史: renderFarmSaleHistory,
   图鉴: renderCatalog, 任务: renderTasks, 出售庄园: renderFarmSale, 设置: renderSettings,
 };
 const menuPages = Object.keys(pages);
 const menuIcons = {
   [homePage]: 'menu-map', 田地: 'menu-field', 畜牧: 'menu-livestock', 鱼塘: 'menu-fish', 矿洞: 'menu-mine',
-  加工: 'menu-processing', 精制: 'menu-refining', 仓库: 'menu-warehouse', 行脚商: 'menu-merchant',
+  加工: 'menu-processing', 精制: 'menu-refining', 仓库: 'menu-warehouse', 订单中心: 'menu-orders', 行脚商: 'menu-merchant',
   研究: 'menu-research', 经营: 'menu-operations', 图鉴: 'menu-catalog', 任务: 'menu-tasks',
   角色管理: 'manager-directory', 统计: 'statistics', 出售庄园历史: 'sale-history',
   出售庄园: 'menu-farm-sale', 设置: 'menu-settings',
 };
 const estateDestinations = {
   field: '田地', livestock: '畜牧', fish: '鱼塘', mine: '矿洞', processing: '加工', refining: '精制',
-  warehouse: '仓库', research: '研究', operations: '经营', tasks: '任务', merchant: '行脚商',
+  warehouse: '仓库', orders: '订单中心', research: '研究', operations: '经营', tasks: '任务', merchant: '行脚商',
 };
 const noResearchReadyTabs = new Set();
 const defaultDialogSampleEveryMs = 3000;
@@ -90,6 +92,7 @@ const uiIconKeys = new Set([...Object.keys(drawnIcons), 'nav-menu', 'nav-worksho
   'sale-retain', 'sale-reset', 'tech-water', 'tech-farm', 'tech-livestock', 'tech-workshop',
   'tech-market-forecast', 'tech-market-manipulation', 'tech-market-promotion', 'tech-premium-sales', 'tech-basic-research-rate',
   'tech-merchant-restock', 'tech-merchant-bargaining',
+  'tech-order-expansion', 'tech-order-negotiation', 'tech-order-premium',
   'facility-buffalo', 'facility-mallard', 'facility-goat', 'facility-goose', 'facility-pig',
   'facility-rabbit', 'facility-sheep', 'facility-muscovy', 'facility-cattle',
   'facility-carp', 'facility-sea-bass', 'facility-trout', 'facility-mandarin-fish', 'facility-salmon',
@@ -103,7 +106,7 @@ const path = (name) => new URL(name, document.baseURI).href;
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const managerAsset = (id) => typeof id === 'string' && id.startsWith('manager-art:') ? id.slice(12) : undefined;
-const managerPortraitVersion = (role) => role === 'refining' ? 4 : 2;
+const managerPortraitVersion = (role) => role === 'orders' ? 5 : role === 'refining' ? 4 : 2;
 const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id) || Boolean(managerAsset(id));
 const marketLabelGap = 4;
 const marketRateText = (rate) => '×' + ((100 + rate) / 100);
@@ -272,7 +275,7 @@ function managerBubblePath(g, x, y, width, height) {
     .lineTo(x, y + radius).quadraticCurveTo(x, y, x + radius, y).closePath();
 }
 
-function managerCaption(layer, speech, x, y, width, height, preferredSize) {
+function managerCaption(layer, speech, x, y, width, height, preferredSize, maxLines = 3) {
   for (const child of layer.removeChildren()) child.destroy();
   if (!speech) return () => false;
   const styles = new Map();
@@ -280,7 +283,7 @@ function managerCaption(layer, speech, x, y, width, height, preferredSize) {
     if (!styles.has(size)) styles.set(size, new TextStyle(textStyle(width, { size, weight: '700', wrap: false })));
     return CanvasTextMetrics.measureText(text, styles.get(size));
   };
-  const { size, lines, lineText } = fitManagerSpeech(speech.glyphs, width, height, preferredSize, measure);
+  const { size, lines, lineText } = fitManagerSpeech(speech.glyphs, width, height, preferredSize, measure, maxLines);
   const top = y + (height - measure(lineText.join('\n'), size).height) / 2;
   const lineHeight = styles.get(size).lineHeight;
   const runs = [];
@@ -539,10 +542,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return openingTasks.run('textures:' + key, work).catch(() => {});
   }
 
-  function loadOpeningImage(url) {
+  function loadOpeningImage(url, scaleMode = 'linear') {
     // Opening URLs belong only to this overlay. Its two selected textures have
     // no icon/scene LRU category and retain the existing cache ownership.
-    smoothImages.add(url);
+    if (scaleMode === 'linear') smoothImages.add(url);
     return loadImage(url);
   }
 
@@ -1122,6 +1125,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       return;
     }
     if (!disabled) hitAt(g, parent, x, y, width, height, fn);
+    else if (options.blockCardTap) {
+      // A disabled action on a clickable card still owns its part of the card surface.
+      g.eventMode = 'static';
+      g.hitArea = new Rectangle(x, y, width, height);
+    }
   }
 
   function sampleDialog(now) {
@@ -1531,16 +1539,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return true;
   }
 
-  function showExactNumber(label, value) {
-    setDialog(label, (dialog) => {
-      dialog.fullNumber(value);
-      dialog.button('复制数值', async () => {
-        try { await navigator.clipboard.writeText(value.toString()); float('已复制'); }
-        catch { toast('无法复制，请查看上方数值。'); }
-      });
-    }, { center: true });
-  }
-
   function routeSnapshot() {
     const local = locals[current];
     const tab = current === '图鉴' ? (local.showUses || local.tab === '用途' ? '用途' : undefined) : local.tab;
@@ -1764,6 +1762,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const dialogContent = Boolean(options.captureFooter);
     let methodDepth = 0;
     let trailingButtons = [];
+    // A production tree in a scroll area is mounted after the fixed footer is measured.
+    const fillers = options.fillTree ? [] : undefined;
     const rowGap = 7;
     const resetScroll = () => { local.scroll = 0; redraw(); };
     const choiceGap = (columns) => columns > 1 ? 7 : 4;
@@ -1876,6 +1876,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
       return title;
     }
+    function badgeColors(tone) {
+      return {
+        text: tone === 'blocked' ? 0xffffff : tone === 'danger' ? palette.red :
+          tone === 'green' ? palette.cream : palette.ink,
+        fill: tone === 'blocked' ? palette.red : tone === 'gold' ? palette.gold :
+          tone === 'green' ? palette.green : tone === 'blue' ? 0xbad9eb : palette.pale,
+      };
+    }
     const ui = {
       w: world, local, width, height: availableHeight, refresh, back, action, float, toast,
       currentWorld: () => world, reserveMerchantSale, switchMerchantTab,
@@ -1884,19 +1892,29 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       saveManagement, saveAction,
       dialog: setDialog, close: closeDialog, closeManagerGift, queueManagerSpeech, advanceManagerSpeech,
       tree(options) {
-        const treeHeight = Math.max(120, availableHeight - cursor - 5);
-        mountResearchTree({
-          ...options, parent, x, y: cursor, width, height: treeHeight,
+        const owner = parent;
+        const top = cursor;
+        const mount = (treeHeight) => mountResearchTree({
+          ...options, parent: owner, x, y: top, width, height: treeHeight,
           // The tree manages its own viewport as its content moves and zooms.
           drawImage: (layer, id, left, top, w, h) => drawImage(layer, id, left, top, w, h, false, false),
           textNode, transitionNode, buttonAt, inkGraphics, requestRender, textScale: scale(),
-          isWaiting: () => waiting || Boolean(modal),
+          isWaiting: () => waiting || (local.routeKey ? modal !== local : Boolean(modal)),
           markGesture(active) {
             treeGesture = active;
             if (active) coast = null;
             else if (needsRender) requestRender();
           },
         });
+        if (options.production && fillers) {
+          const minimum = 170;
+          fillers.push({ top, minimum, mount });
+          cursor += minimum;
+          return;
+        }
+        const treeHeight = options.production ? Math.max(170, Math.floor(availableHeight * 0.66))
+          : Math.max(120, availableHeight - cursor - 5);
+        mount(treeHeight);
         cursor += treeHeight;
       },
       heading(value, { aside, asideNoWrap = false, style, size = style === 'production' ? 27 : 22, marketRate } = {}) {
@@ -2183,7 +2201,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (sticky && pinTabs) cursor += pinTabs(cursor, choices, buttonOptions);
         else ui.buttons(choices, buttonOptions);
       },
-      badges(entries, { style } = {}) {
+      badges(entries, { style, center = false } = {}) {
         const gap = 6;
         let left = x;
         let height = 0;
@@ -2192,16 +2210,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const transition = from != null && to != null;
           const summary = transition ? number(from) + ' 至 ' + number(to) : label;
           const w = Math.min(width, Math.ceil(Math.max(minCharacters, Array.from(String(summary)).length) * size) + 16);
+          if (center && entries.length === 1) left = x + (width - w) / 2;
           if (left + w > x + width) { cursor += height + gap; left = x; height = 0; }
-          const color = tone === 'blocked' ? 0xffffff : tone === 'danger' ? palette.red :
-            tone === 'green' ? palette.cream : palette.ink;
+          const { text: color, fill } = badgeColors(tone);
           const caption = transition
             ? transitionNode(parent, from, to, left + 5, cursor + 3, w - 10, { size, color, align: 'center' })
             : textNode(parent, label, left + 5, cursor + 3, w - 10, { size, color, align: 'center' });
           const h = caption.height + 6;
-          const bg = panel(parent, left, cursor, w, h,
-            tone === 'blocked' ? palette.red : tone === 'gold' ? palette.gold :
-              tone === 'green' ? palette.green : palette.pale, null, 9);
+          const bg = panel(parent, left, cursor, w, h, fill, null, 9);
           parent.setChildIndex(bg, parent.getChildIndex(caption));
           height = Math.max(height, h);
           left += w + gap;
@@ -2228,14 +2244,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const selection = managerSelections.get(speech);
         if (selection && selection.candidates !== JSON.stringify(messages)) managerSelections.delete(speech);
         speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
-        let suppressed = false;
         if (!receive && current === '角色管理' && local.managerReplyRole) {
           const replyRole = local.managerReplyRole;
           const cardSpeech = managerConversations.get(local.managerSpeechKeys?.[managerSpeechKey(replyRole, true)]);
-          suppressed = Boolean(cardSpeech?.replying && cardSpeech.gender === managerStatus(world, replyRole).gender);
-          if (!suppressed) delete local.managerReplyRole;
+          if (!cardSpeech?.replying || cardSpeech.gender !== managerStatus(world, replyRole).gender) delete local.managerReplyRole;
         }
-        if (!suppressed) managerSpeech = speech;
+        managerSpeech = speech;
         const height = Math.max(66, Math.min(205, Math.round(width * 0.45)));
         const bleed = fullBleed;
         const span = width + bleed * 2;
@@ -2291,20 +2305,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         };
         const bubbleY = top + (tight ? 4 : 8);
         const bubbleHeight = Math.max(18, buttonsTop - bubbleY - (tight ? 3 : 6));
-        const bubble = parent.addChild(managerBubblePath(inkGraphics(), dialogueX, bubbleY, dialogueWidth, bubbleHeight)
+        parent.addChild(managerBubblePath(inkGraphics(), dialogueX, bubbleY, dialogueWidth, bubbleHeight)
           .fill(palette.card)
           .stroke({ color: palette.border, width: 1.25 }));
-        bubble.visible = !suppressed;
         const bubbleWidth = Math.max(1, dialogueWidth - 20);
         const claimHeight = receive ? Math.min(24, Math.max(12, bubbleHeight - 19)) : 0;
         const caption = parent.addChild(new Container({ label: 'manager-dialogue' }));
         caption.eventMode = 'none';
-        caption.visible = !suppressed;
         let reveal;
         let bubbleVisible = false;
         const startLine = () => {
           reveal = managerCaption(caption, speech.line, dialogueX + 10, bubbleY + 3, bubbleWidth,
-            bubbleHeight - claimHeight - 6, width < 350 ? 14 : 16);
+            bubbleHeight - claimHeight - 6, width < 350 ? 14 : 16, Infinity);
           reveal(speech.shown);
           showPortrait();
           updateManagerPortraits(speech);
@@ -2316,11 +2328,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           startLine,
           reveal: () => { if (reveal(speech.shown)) markDirty(); },
         };
-        if (!suppressed) managerSpeechMount = mount;
+        managerSpeechMount = mount;
         startLine();
-        let lastScroll = local.scroll ?? 0;
         const observe = (scroll) => {
-          lastScroll = scroll;
           const viewport = options.viewport ?? { height: availableHeight };
           portraitVisible = withinScrollViewport(top, top + height, scroll, viewport, left, right);
           portrait.visible = portraitVisible && portrait.texture !== Texture.EMPTY && !portrait.texture.destroyed;
@@ -2328,47 +2338,34 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const pinnedY = pinned ? Math.max(scroll, pinned.top) : Infinity;
           const covered = pinned && dialogueX < pinned.right && dialogueX + dialogueWidth > pinned.left &&
             bubbleY < pinnedY + pinned.height && bubbleY + bubbleHeight > pinnedY;
-          bubbleVisible = !suppressed && !covered && bubbleY >= scroll && bubbleY + bubbleHeight <= scroll + viewport.height;
+          bubbleVisible = !covered && bubbleY >= scroll && bubbleY + bubbleHeight <= scroll + viewport.height;
           if (!bubbleVisible) speech.pause();
           showPortrait();
         };
         if (options.observeScroll) options.observeScroll(observe);
         else observe(0);
-        const claimNodes = [];
         const claimTop = bubbleY + bubbleHeight - claimHeight - 3;
-        const bubbleHits = [];
         if (!waiting) {
           const bodyHit = parent.addChild(inkGraphics());
           bodyHit.label = '换管理员对白';
           const bodyHeight = claimHeight ? Math.max(1, claimTop - bubbleY) : bubbleHeight;
           hitAt(bodyHit, parent, dialogueX, bubbleY, dialogueWidth, bodyHeight,
-            () => { if (!suppressed) advanceManagerSpeech(role, gender, { messages, nextGreeting }); });
-          bubbleHits.push(bodyHit);
+            () => advanceManagerSpeech(role, gender, { messages, nextGreeting }));
         }
         if (claimHeight) {
           const claim = parent.addChild(new Container());
-          claimNodes.push(claim);
           buttonAt(claim, dialogueX + 6, claimTop, dialogueWidth - 12, claimHeight - 2, '收回礼',
-            () => { if (!suppressed) receive(); }, { tone: 'plain', icon: receiveIcon, compactLabel: true });
+            () => receive(), { tone: 'plain', icon: receiveIcon, compactLabel: true });
         }
-        const setSuppressed = (value) => {
-          suppressed = value;
-          bubble.visible = !suppressed;
-          for (const node of [caption, ...claimNodes, ...bubbleHits]) node.visible = !suppressed;
-          observe(lastScroll);
-          markDirty();
-        };
         managerBannerMount = {
           urgent: Boolean(receive),
           restore() {
             speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
-            setSuppressed(false);
             managerSpeech = speech;
             managerSpeechMount = mount;
             startLine();
           },
         };
-        setSuppressed(suppressed);
         if (!waiting) {
           const portraitHit = parent.addChild(inkGraphics());
           portraitHit.label = '换管理员对白';
@@ -2399,7 +2396,51 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         amount.position.set(x + width - amount.width, top + (height - amount.height) / 2);
         cursor += height + rowGap;
       },
-      item(id, title, description, { marketRate } = {}) {
+      item(id, title, description, { marketRate, iconSize, badges, titleSize = 18 } = {}) {
+        if (iconSize != null || badges) {
+          // Icon on the left; title, description and badges stacked on the right and centered on the icon.
+          const top = cursor;
+          const size = hasIcon(id) ? iconSize ?? 52 : 0;
+          const textX = x + (size ? size + 10 : 0);
+          const textWidth = Math.max(1, width - (textX - x));
+          const nodes = [];
+          const label = marketLabel(parent, title ?? data.items[id]?.name ?? '', textX, top, textWidth,
+            marketRate, { size: titleSize * scale(), weight: '800' });
+          nodes.push(label);
+          let textHeight = label.height;
+          if (description != null) {
+            const note = textNode(parent, description, textX, top + textHeight + 2, textWidth,
+              { size: 13 * scale(), color: palette.muted });
+            nodes.push(note);
+            textHeight += note.height + 2;
+          }
+          if (badges?.length) {
+            const gap = 6;
+            const fontSize = 13 * scale();
+            let left = textX;
+            let rowTop = top + textHeight + 4;
+            let rowHeight = 0;
+            for (const { label: tag, tone } of badges) {
+              const w = Math.min(textWidth, Math.ceil(Array.from(String(tag)).length * fontSize) + 16);
+              if (left > textX && left + w > textX + textWidth) { rowTop += rowHeight + gap; left = textX; rowHeight = 0; }
+              const { text: color, fill } = badgeColors(tone);
+              const caption = textNode(parent, tag, left + 5, rowTop + 3, w - 10, { size: fontSize, color, align: 'center' });
+              const h = caption.height + 6;
+              const bg = panel(parent, left, rowTop, w, h, fill, null, 9);
+              parent.setChildIndex(bg, parent.getChildIndex(caption));
+              nodes.push(caption, bg);
+              rowHeight = Math.max(rowHeight, h);
+              left += w + gap;
+            }
+            textHeight = rowTop + rowHeight - top;
+          }
+          const height = Math.max(size, textHeight);
+          const shift = (height - textHeight) / 2;
+          if (shift) for (const node of nodes) node.y += shift;
+          if (size) drawImage(parent, id, x, top + (height - size) / 2, size, size);
+          cursor += height + rowGap;
+          return;
+        }
         const icon = hasIcon(id) ? 60 : 0;
         if (icon) drawImage(parent, id, x, cursor, 52, 52);
         const label = marketLabel(parent, title ?? data.items[id]?.name ?? '', x + icon, cursor,
@@ -2483,7 +2524,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (local.managerReplyRole === role && speech.replying) {
             const replyTop = drawY + copy.y;
             const replyWidth = Math.max(1, width - (drawX - x));
-            const replyHeight = Math.max(1, child.bottom - drawY - rowGap);
+            const replyHeight = Math.max(1, top + height - replyTop);
             const bubble = parent.addChild(managerBubblePath(inkGraphics(), drawX + 5, replyTop, Math.max(1, replyWidth - 5), replyHeight)
               .fill(palette.card).stroke({ color: palette.border, width: 1.1 }));
             bubble.eventMode = 'none';
@@ -2511,7 +2552,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
                 return;
               }
               reveal = managerCaption(caption, speech.line, drawX + 13, replyTop + 5,
-                Math.max(1, replyWidth - 23), Math.max(1, replyHeight - 10), 14);
+                Math.max(1, replyWidth - 23), Math.max(1, replyHeight - 10), 14, Infinity);
               reveal(speech.shown);
               markDirty();
             };
@@ -2527,6 +2568,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
               managerCardSpeech = speech;
               managerCardSpeechMount = mount;
             } else {
+              // Keep the banner's shown text while the card owns playback.
+              managerSpeech?.pause();
               managerSpeech = speech;
               managerSpeechMount = mount;
             }
@@ -2569,20 +2612,19 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           cursor += height + rowGap;
         }
       },
-      balance(label, value, { variant, accent, inline = false, icon, inspectable = true } = {}) {
+      balance(label, value, { variant, accent, inline = false, icon } = {}) {
         const top = cursor;
         const research = variant === 'quality' || variant === 'efficiency';
         if (research) {
           const pad = Math.min(9, Math.max(3, (width - 288) / 2));
-          const accessible = inspectable && scale() > 1.5 && width >= 236;
           const iconSize = icon && hasIcon(icon) ? 26 : 0;
           const marker = variant === 'efficiency' ? 14 : 0;
           const titleInset = iconSize ? iconSize + 4 : marker;
           const left = x + pad + titleInset;
           const title = textNode(parent, label, left, top + 6,
-            width - pad * 2 - titleInset - (accessible ? 112 : 0),
+            width - pad * 2 - titleInset,
             { size: Math.min(34, 27 * scale()), weight: '800' });
-          const titleHeight = Math.max(accessible ? 49 : 38, title.height + 12);
+          const titleHeight = Math.max(38, title.height + 12);
           const line = top + titleHeight;
           if (iconSize) drawImage(parent, icon, x + pad, top + (titleHeight - iconSize) / 2, iconSize, iconSize);
           else if (marker) parent.addChild(inkGraphics().roundRect(x + pad + 2, top + 10, 5, 25, 2).fill(palette.green));
@@ -2593,10 +2635,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const height = amount.y + amount.height - top + 5;
           const panelBg = panel(parent, x, top, width, height, palette.card, palette.border, 9);
           parent.setChildIndex(panelBg, parent.getChildIndex(title));
-          if (accessible) buttonAt(parent, x + width - 111, top + 2, 105, 46, '查看完整数值',
-            () => showExactNumber(label, value));
-          else if (inspectable && !waiting) hitAt(panelBg, parent, x, top, width, height,
-            () => showExactNumber(label, value));
           cursor += height + rowGap + 3;
           return;
         }
@@ -2610,17 +2648,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           return;
         }
         const exact = typeof value === 'bigint';
-        const canInspect = exact && inspectable;
         const horizontal = exact ? 2 : 9;
         const size = Math.min(31, (variant ? 22 : 15) * scale());
-        const detail = canInspect && width >= 236 && (!variant || scale() > 1.5);
-        const center = !exact || (variant === 'centered' && !detail);
-        const a = textNode(parent, label, x + horizontal, top + 6, width - (detail ? 116 : horizontal * 2),
+        const center = !exact || variant === 'centered';
+        const a = textNode(parent, label, x + horizontal, top + 6, width - horizontal * 2,
           { size, align: center ? 'center' : 'left', weight: '800' });
-        const labelHeight = detail ? Math.max(52, a.height + 6) : a.height + 6;
-        if (detail) {
-          buttonAt(parent, x + width - 110, top + 2, 108, 48, '查看完整数值', () => showExactNumber(label, value));
-        }
+        const labelHeight = a.height + 6;
         const options = { size: (variant === 'centered' ? 49 : variant === 'research' ? 37 : 28) * scale(),
           align: center ? 'center' : 'right', weight: '800' };
         const b = (exact ? compactLabel : textNode)(parent, value, x + horizontal, top + labelHeight + 2,
@@ -2630,8 +2663,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const bg = panel(parent, x, top, width, height, accent ? palette.pale : palette.card,
           variant ? palette.border : null, 9);
         parent.setChildIndex(bg, parent.getChildIndex(a));
-        if (canInspect && !detail && !waiting) hitAt(bg, parent, x, top, width, height,
-          () => showExactNumber(label, value));
         cursor += height + rowGap;
       },
       fullNumber(value) {
@@ -2778,7 +2809,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         drawImage(parent, id, artX, top + 8, size, size);
         cursor += height + rowGap;
       },
-      card(draw, { padding = 10, gap = 9, style, onClick, cornerAction, footer, bleedWorkshopArt = false, indicator = false } = {}) {
+      card(draw, { padding = 10, gap = 9, style, onClick, showArrow = true, cornerAction, footer, bleedWorkshopArt = false, indicator = false } = {}) {
         const top = cursor;
         const layer = new Container();
         parent.addChild(layer);
@@ -2786,7 +2817,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const cornerSize = 30;
         const cornerX = x + width - padding - cornerSize;
         const cornerY = top + Math.max(1, padding - 3);
-        const contentWidth = width - padding * 2 - (onClick ? 24 : 0);
+        const contentWidth = width - padding * 2 - (onClick && showArrow ? 24 : 0);
         const child = layoutUI(layer, x + padding, top + padding, contentWidth, local, availableHeight, 0, undefined,
           { registerPlot: options.registerPlot, observeScroll: options.observeScroll, viewport: options.viewport, headingClearance: cornerAction
             ? { right: cornerX - 6, bottom: cornerY + cornerSize } : undefined,
@@ -2808,7 +2839,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const bg = layer.addChildAt(inkGraphics(), 1);
         const border = bleedWorkshopArt ? layer.addChild(inkGraphics()) : undefined;
         if (border) border.label = 'workshop-card-outline';
-        const arrow = onClick ? directionIcon(layer, 'right',
+        const arrow = onClick && showArrow ? directionIcon(layer, 'right',
           x + width - padding - 18, top + (height - 22) / 2, 18, 22, { color: palette.green }) : undefined;
         const control = onClick && !waiting ? hitAt(bg, layer, x, top, width, height, onClick) : undefined;
         const surface = (rowHeight) => {
@@ -3011,7 +3042,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const cellWidth = choiceCellWidth(columns);
         const titleWidth = Math.max(1, cellWidth - 10);
         const detailWidth = cellWidth - 8;
-        let heights = 49 + (hasMarket ? 19 : 0);
+        const tagOptions = { size: 10, align: 'center', color: palette.green, weight: '800', wrap: false };
+        const tagLine = Math.ceil(tagOptions.size * 1.36) + 2;
+        const tagRows = items.reduce((max, item) => Math.max(max, item.orderTags?.length ?? 0), 0);
+        let heights = 49 + (hasMarket ? 19 : 0) + tagRows * tagLine;
         if (!iconsOnly) {
           const style = new TextStyle(textStyle(titleWidth, titleOptions));
           const unwrapped = new TextStyle(textStyle(titleWidth, { ...titleOptions, align: 'left', wrap: false }));
@@ -3019,7 +3053,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const markStyle = new TextStyle(textStyle(titleWidth, { size: markSize, weight: '800', wrap: false }));
           const detailStyle = new TextStyle(textStyle(detailWidth, detailOptions));
           heights = [];
-          for (const [index, { label, marketRate, duration, assignmentSummary }] of items.entries()) {
+          for (const [index, { label, marketRate, duration, assignmentSummary, orderTags }] of items.entries()) {
             const name = number(label);
             const title = CanvasTextMetrics.measureText(name, style);
             let titleHeight = title.height;
@@ -3034,7 +3068,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             const cycle = CanvasTextMetrics.measureText(number(duration), detailStyle);
             const assignmentHeight = assignmentSummary
               ? detailGap + CanvasTextMetrics.measureText(assignmentSummary, detailStyle).height : 0;
-            const height = Math.ceil(padding * 2 + iconSize + titleGap + titleHeight + detailGap + cycle.height + assignmentHeight);
+            const height = Math.ceil(padding * 2 + iconSize + titleGap + titleHeight + detailGap +
+              cycle.height + assignmentHeight + (orderTags?.length ?? 0) * tagLine);
             const row = Math.floor(index / columns);
             heights[row] = Math.max(heights[row] ?? 0, height);
           }
@@ -3043,12 +3078,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const card = panel(layer, left, top, span, height,
             item.selected ? palette.selection : palette.card, item.selected ? palette.green : palette.line, 11);
           card.label = 'picker-choice:' + item.id;
+          const tags = item.orderTags ?? [];
           if (iconsOnly) {
             drawImage(layer, item.icon ?? item.id, left + (span - iconSize) / 2, top + 8, iconSize, iconSize, false, false);
             if (item.marketRate) {
               const mark = marketMark(layer, span - 8, item.marketRate, 12, false);
               mark.layer.position.set(left + (span - mark.width) / 2, top + 44);
             }
+            tags.forEach((tag, index) => textNode(layer, tag, left, top + 44 + (hasMarket ? 19 : 0) + index * tagLine,
+              span, tagOptions));
             return;
           }
           const content = new Container({ label: 'picker-content:' + item.id });
@@ -3060,7 +3098,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const last = item.assignmentSummary
             ? textNode(content, item.assignmentSummary, 4, duration.y + duration.height + detailGap, detailWidth, detailOptions)
             : duration;
-          content.position.set(left, top + (height - last.y - last.height) / 2);
+          const tagTop = last.y + last.height;
+          tags.forEach((tag, index) => textNode(content, tag, 0, tagTop + 2 + index * tagLine, span, tagOptions));
+          content.position.set(left, top + (height - tagTop - tags.length * tagLine) / 2);
         });
       },
       selectionGrid(items, onSelect) {
@@ -3153,6 +3193,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       },
       get bottom() { return cursor; },
       get footerBlocks() { return trailingButtons; },
+      get fillers() { return fillers ?? []; },
     };
     if (options.captureFooter) {
       for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(ui))) {
@@ -3338,7 +3379,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const images = [];
     const ui = layoutUI(body, x + 2, 0, width - 4, state, height, bleed ? bleed + 2 : 0, pinTabs,
       {
-        captureFooter, viewport,
+        captureFooter, viewport, fillTree: true,
         observeScroll: (observe) => scrollObservers.push(observe),
         registerPlot: state === locals[current] ? (plot) => plots.push(plot) : undefined,
       });
@@ -3359,6 +3400,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       panel(parent, x - bleed, y + height, width + bleed * 2, footerHeight, palette.card, null, 0);
       parent.addChild(footer);
       for (const block of footerBlocks) footer.addChild(block.layer);
+    }
+    // Fill the visible space between the content above and the fixed footer.
+    let fillBottom = 0;
+    for (const { top, minimum, mount } of ui.fillers) {
+      const treeHeight = Math.max(minimum, Math.floor(height - top - 5));
+      mount(treeHeight);
+      fillBottom = Math.max(fillBottom, top + treeHeight);
     }
     const bodyImages = [];
     for (const image of images) {
@@ -3385,7 +3433,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     });
     setupScrollTarget(parent, body, state, x - bleed, x + width + bleed, y, height,
-      (footerTop ?? ui.bottom) + 5, pinned, scrollObservers);
+      Math.max(footerTop ?? ui.bottom, fillBottom) + 5, pinned, scrollObservers);
     if (plots.length) {
       syncPlotVisibility = observePlots(plots, scrollTarget);
       scrollObservers.push(syncPlotVisibility);
@@ -3459,6 +3507,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       retainedAtmosphere: parkedEstateAtmosphere,
       retainedResearch: parkedEstateResearch,
       merchantUnlocked: merchantStatus(world).unlocked,
+      ordersReady: hasDeliverableOrder(world),
       researchReady,
       returnGiftSites: new Set(Object.entries(estateDestinations)
         .filter(([, page]) => claimableReturns.has(page)).map(([site]) => site)),
@@ -3582,10 +3631,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const surface = panel(tile, 2, 2, Math.max(1, columnWidth - 4), rowHeight - 4,
         focused ? palette.selection : palette.card, focused ? palette.green : palette.line, 8);
       drawImage(tile, icon, (columnWidth - iconSize) / 2, 6, iconSize, iconSize, false, false);
-      textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
+      const name = textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
         size: labelSize, align: 'center', weight: '750', wrap: false,
       });
       if (claimableReturns.has(page) || page === '角色管理' && claimableReturns.size > 0) drawIndicator(tile, columnWidth - 2, 2);
+      if (page === '订单中心' && hasDeliverableOrder(world)) drawIndicator(tile, name.x + 4, name.y);
       hitAt(surface, tile, 0, 0, columnWidth, rowHeight, () => go(page, { menu: true }));
     }
     setupScrollTarget(layer, body, navigationMenu, x, right, y, height, contentHeight, undefined, []);
@@ -3622,6 +3672,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       size: Math.min(30, 25 * scale(), titleRoom / current.length), align: 'center', weight: '850',
     });
     title.y = y + (height - title.height) / 2;
+    if (hasWorld && current === '订单中心' && hasDeliverableOrder(content)) {
+      drawIndicator(parent, title.x + title.width + 17, title.y + 4);
+    }
     const menu = hasWorld ? navigationMenuButton(parent, x + w, y + 12) : undefined;
     if (developmentToolsEnabled && current === '设置' && content && !waiting && !status?.busy && !modal && !pendingModal) {
       const titleHit = inkGraphics();

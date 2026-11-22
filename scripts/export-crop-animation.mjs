@@ -58,8 +58,9 @@ function fieldGrid(fieldGeometry, columnSpacingU, columnInsetU = fieldGeometry.i
   // `columnInsetU` (a size may override `inset.u`) inside the left/right
   // sides, and the target spacing is rounded so no strip at either side is
   // left unplanted.
-  const first = field.u[0] + columnInsetU;
-  const span = field.u[1] - columnInsetU - first;
+  const [leftInsetU, rightInsetU] = Array.isArray(columnInsetU) ? columnInsetU : [columnInsetU, columnInsetU];
+  const first = field.u[0] + leftInsetU;
+  const span = field.u[1] - rightInsetU - first;
   const steps = Math.max(1, Math.round(span / columnSpacingU));
   const columns = [];
   for (let index = 0; index <= steps; index += 1) {
@@ -84,6 +85,96 @@ function onSoil(fieldGeometry, x, y) {
   return y >= outlineY(top, x) + marginPx && y <= outlineY(bottom, x) - marginPx;
 }
 
+// Near-edge rule: a root must keep `clearanceRowFraction` of the local row
+// pitch (measured along its own column) above the bottom soil outline, so the
+// front row does not sit on the soil/grass seam. A node that would land in
+// the foreground grass or too close to it is pulled back along its column
+// toward the far side in `searchStepV` steps, but never closer than
+// `minRowGapV` to the previous root of that column; only then is it dropped.
+function nearEdgeClear(fieldGeometry, u, v, x, y) {
+  const { clearanceRowFraction, minClearancePx } = fieldGeometry.nearEdge;
+  const [farX, farY] = fieldPoint(fieldGeometry, u, v - 1);
+  const [nearX, nearY] = fieldPoint(fieldGeometry, u, v);
+  const clearance = Math.max(minClearancePx, clearanceRowFraction * Math.hypot(nearX - farX, nearY - farY));
+  return y <= outlineY(fieldGeometry.soilOutline.bottom, x) - clearance;
+}
+
+function placeFieldRoots(fieldGeometry, rows, columns) {
+  const { minRowGapV, searchStepV } = fieldGeometry.nearEdge;
+  const candidate = (u, v) => {
+    const [x, y] = fieldPoint(fieldGeometry, u, v);
+    const rootX = Math.round(x);
+    const rootY = Math.round(y);
+    return { x: rootX, y: rootY, inFrame: rootX >= 0 && rootX <= size && rootY >= 0 && rootY <= size,
+      onSoil: onSoil(fieldGeometry, rootX, rootY), clear: nearEdgeClear(fieldGeometry, u, v, rootX, rootY) };
+  };
+  const roots = [];
+  const dropped = [];
+  for (const column of columns) {
+    let previousV;
+    for (const row of rows) {
+      const grid = candidate(column.u, row.v);
+      // Off-frame or far-edge nodes keep the original rule: skipped, not moved.
+      if (!grid.inFrame || grid.y < outlineY(fieldGeometry.soilOutline.top, grid.x) + fieldGeometry.soilOutline.marginPx) continue;
+      let placed;
+      if (grid.onSoil && grid.clear) placed = { ...grid, v: row.v };
+      else {
+        const limit = (previousV ?? row.v - 1) + minRowGapV;
+        for (let step = 1; row.v - step * searchStepV >= limit - 1e-9; step += 1) {
+          const v = Math.round((row.v - step * searchStepV) * 1e6) / 1e6;
+          const moved = candidate(column.u, v);
+          if (moved.inFrame && moved.onSoil && moved.clear) { placed = { ...moved, v }; break; }
+        }
+      }
+      if (!placed) { dropped.push({ row: row.index, column: column.index, x: grid.x, y: grid.y }); continue; }
+      roots.push({ x: placed.x, y: placed.y, row: row.index, column: column.index, v: placed.v,
+        ...(placed.v !== row.v ? { pulledBackFrom: { x: grid.x, y: grid.y } } : {}) });
+      previousV = placed.v;
+    }
+  }
+  // Side-edge fallback (CG-3 r4): a few nodes of the outermost column run along
+  // the lower-right grass side or the 320 frame, so pulling back along the
+  // column never clears the near edge. Instead of insetting the whole column,
+  // only those nodes get the smallest in-field move: back along the column
+  // (>= minRowGapV behind the previous root) combined with a shift along the
+  // ridge toward the field (<= maxShiftColumnFraction of the column pitch), and the root may sit up to
+  // frameOverhangPx outside the right frame so the plant is cropped by it.
+  // A moved root must keep minNeighborFraction of the local column pitch from
+  // every placed root, so straightened columns never bunch up.
+  const { maxShiftColumnFraction, frameOverhangPx, minNeighborFraction } = fieldGeometry.sideEdge;
+  const maxShiftU = columns.length > 1 ? maxShiftColumnFraction * (columns[1].u - columns[0].u) : 0;
+  const stillDropped = [];
+  for (const node of dropped) {
+    const column = columns[node.column];
+    const row = rows[node.row];
+    const previous = roots.filter((root) => root.column === node.column && root.row < node.row).at(-1);
+    const limit = (previous?.v ?? row.v - 1) + minRowGapV;
+    const [gridX, gridY] = fieldPoint(fieldGeometry, column.u, row.v);
+    const [pitchX, pitchY] = fieldPoint(fieldGeometry, column.u - (columns[1].u - columns[0].u), row.v);
+    const minNeighbor = minNeighborFraction * Math.hypot(gridX - pitchX, gridY - pitchY);
+    let best;
+    for (let shiftStep = 0; shiftStep * searchStepV <= maxShiftU + 1e-9; shiftStep += 1) {
+      const u = Math.round((column.u - shiftStep * searchStepV) * 1e6) / 1e6;
+      for (let step = 0; row.v - step * searchStepV >= limit - 1e-9; step += 1) {
+        const v = Math.round((row.v - step * searchStepV) * 1e6) / 1e6;
+        const [x, y] = fieldPoint(fieldGeometry, u, v);
+        const rootX = Math.round(x);
+        const rootY = Math.round(y);
+        if (rootX < 0 || rootX > size + frameOverhangPx || rootY < 0 || rootY > size) continue;
+        if (!onSoil(fieldGeometry, rootX, rootY) || !nearEdgeClear(fieldGeometry, u, v, rootX, rootY)) continue;
+        if (roots.some((root) => Math.hypot(root.x - rootX, root.y - rootY) < minNeighbor)) continue;
+        const distance = Math.hypot(x - gridX, y - gridY);
+        if (!best || distance < best.distance - 1e-9) best = { x: rootX, y: rootY, u, v, distance };
+        break; // larger pull-back at this u only moves farther away
+      }
+    }
+    if (!best) { stillDropped.push(node); continue; }
+    roots.push({ x: best.x, y: best.y, row: node.row, column: node.column, v: best.v,
+      ...(best.u !== column.u ? { u: best.u } : {}), pulledBackFrom: { x: node.x, y: node.y } });
+  }
+  return { roots, dropped: stillDropped };
+}
+
 function plantingRoots(category) {
   if (category === 'small') return {
     planting: { source: 'assets/plot/furrows.json', rows: furrows.length, projection: { mode: 'original-roots' } },
@@ -104,18 +195,8 @@ function plantingRoots(category) {
     rows,
     columns,
   };
-  const roots = [];
-  for (const row of rows) {
-    for (const column of columns) {
-      const [x, y] = fieldPoint(geometry, column.u, row.v);
-      // Roots stay inside the measured field and the 320 frame; crowns of
-      // edge plants may still be cropped by the frame.
-      const rootX = Math.round(x);
-      const rootY = Math.round(y);
-      if (!(rootX >= 0 && rootX <= size && rootY >= 0 && rootY <= size) || !onSoil(geometry, rootX, rootY)) continue;
-      roots.push({ x: rootX, y: rootY, row: row.index, column: column.index });
-    }
-  }
+  const { roots, dropped } = placeFieldRoots(geometry, rows, columns);
+  if (dropped.length) console.log(`${category}: dropped near-edge nodes ${JSON.stringify(dropped)}`);
   return { planting: { source: 'assets/plot/crop-layout.json#fieldGeometry', rows: rows.length, projection }, roots };
 }
 

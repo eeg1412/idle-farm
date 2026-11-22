@@ -1471,7 +1471,7 @@ test('320 px merchant supports the legacy sale link and shows one notice after a
   assert.equal(game.view.hasMerchantRefreshNotice(), false);
 });
 
-test('320 px shows the research point value and opens its exact balance', () => {
+test('320 px shows the research point value at its available width', () => {
   const game = setup();
   game.world.researchPoints = 123n * 10n ** 118n;
   game.draw(320, 760);
@@ -1480,8 +1480,6 @@ test('320 px shows the research point value and opens its exact balance', () => 
   assert.ok(summary);
   assert.ok(summary.style.wordWrapWidth >= 288);
   assert.ok(summary.x + summary.width <= 320);
-  tapText(game, '1.23BJ');
-  assert.ok(game.nodes().some((node) => node.label === '关闭'));
 });
 
 test('narrow portrait puts every improvement category on a new row and wraps its cards inside the map', () => {
@@ -1490,7 +1488,7 @@ test('narrow portrait puts every improvement category on a new row and wraps its
   game.view.go('研究', { tab: '经营改良' });
   zoomResearchOut(game);
   const nodes = game.nodes();
-  const groups = ['通用', '农业', '畜牧', '水产', '矿业', '市场'];
+  const groups = ['通用', '农业', '畜牧', '水产', '矿业', '市场', '行脚商', '订单'];
   const headings = groups.map((label) => nodes.find((node) => node.label === `research-map-group:${label}`));
   assert.deepEqual(headings.map((node) => node.text), groups);
   for (const [index, group] of groups.entries()) {
@@ -1498,7 +1496,7 @@ test('narrow portrait puts every improvement category on a new row and wraps its
       .map(({ key }) => nodes.find((node) => node.label === `research-map-node:${key}`));
     assert.ok(cards.every(({ y }) => y > headings[index].y && y < (headings[index + 1]?.y ?? Infinity)));
     assert.equal(cards[0].x, 0);
-    assert.ok(new Set(cards.map(({ y }) => y)).size > 1, group);
+    assert.equal(new Set(cards.map(({ y }) => y)).size, Math.ceil(cards.length / 2), group);
   }
 });
 

@@ -1,0 +1,692 @@
+{
+  "date": "2026-11-22",
+  "scope": "订单中心原稿、发布素材与按消费几何制作的静态合成。实际游戏运行未验证。",
+  "storage": "证据图仅本地保存。现存六张为地图、建筑与图标。首轮人物、胸像、开屏及相关合成图已退回并删除。inputs 和 evidenceImages 中相应名称与 SHA-256 为历史记录。",
+  "directory": "assets/source/art/proposals/order-center/review",
+  "sha256Encoding": "hex",
+  "inputs": [
+    {
+      "path": "assets/source/art/loading/solo/orders/female.png",
+      "sha256": "c1e8503f72694e17a6bb0fcf6da54955b118d1b720461234237ce9817ab717fd",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "assets/source/art/loading/solo/orders/male-v1.png",
+      "sha256": "06f78cb03fb9057a96fe209723233a083748ac4e705e457684ffe1fdf6f2e26f",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "assets/source/art/loading/solo/orders/male.png",
+      "sha256": "c630d153e28b2c4105ac214fb4ab2b4d806ec9c09d475ce7b29a1c494aeb8ff2",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "assets/source/art/managers/orders/background.png",
+      "sha256": "bbcc362afc1b5b65cae852091c292b4add3203de90c65cbad83250c7758f6f2e",
+      "width": 2172,
+      "height": 724,
+      "hasAlpha": false
+    },
+    {
+      "path": "assets/source/art/managers/orders/female-angry.png",
+      "sha256": "32a31fa7606daf74851904fa3e0f565f46eca6ea432d8b23969b7e49ec14a8f5",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/female-happy.png",
+      "sha256": "aaa5c3c2d203b715b047f9ad50103e0da0d20e8495ad99316e1a27b3f33e7447",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/female-sad.png",
+      "sha256": "b28e519a69c73f75b8a6ca954b727a111f0f0484e16e2eac97ff6550bc440ddb",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/female-smile.png",
+      "sha256": "4fd9ca0cfffaacbcbcf5c69e7dcf550a837d190905402da7949e06ca9b50fbfa",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/male-angry.png",
+      "sha256": "549b80ce138d3aecce8275812568153c4d227d99cf1733c3c7555b7fb8f0a388",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/male-base-v1.png",
+      "sha256": "1edbe272a00c62b0c277098bec1186d3435438a74b0570a272f0a32dcf950465",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/male-happy.png",
+      "sha256": "1cda0df3b66d5b66d96fb197cf6c62af35344e8dc2f13a312e42e374fa6e5c27",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/male-sad.png",
+      "sha256": "60d19894fb447a9829f300a9ac76d04edeebe0ea0e70c52f8d674e75a43641f7",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/managers/orders/male-smile.png",
+      "sha256": "87f79a902da5568e87f6daf53895dcff7ca9fe99680c459ff745c93e0e2a2822",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/order-center/building.png",
+      "sha256": "f4bbc96efa551b090bc75c62ac0f6739d0e898d0504d37b39a76eca34cbb0d7d",
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/order-center/icon-grid.png",
+      "sha256": "4b75ac3e29c4d841dd12ce5ab3cb913a6ab1266fbc840c621e469bc7248e1fc2",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true
+    },
+    {
+      "path": "assets/source/art/order-center/pendant.png",
+      "sha256": "a024810eac9687374d1870955e7785a4021686523fc8514c581888e9d7824f33",
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/background.webp",
+      "sha256": "e7c2ce1e9f4d71ab7ad5c6b2928012f227c22c7a0978bd805062915508cda803",
+      "width": 816,
+      "height": 1926,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/estate/field.webp",
+      "sha256": "fb734f59a0c224910e46e86cd32ff3d701370a819166fee2c895a558200e2874",
+      "width": 536,
+      "height": 320,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/fish.webp",
+      "sha256": "12ce99008fcebb736679a9f24d766f28c88ca0c81caebc63502e3cbae1d0a1c6",
+      "width": 536,
+      "height": 320,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/mine-motion.webp",
+      "sha256": "ce2255df8c1d0900881f1676953442097b187a810a58f9c0970704b177ac7831",
+      "width": 166,
+      "height": 145,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/mine.webp",
+      "sha256": "0725674ddc8479c27e9a60f58aaddcd40bc5ed9d9d081738a5d3338671b46be8",
+      "width": 536,
+      "height": 320,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/orders-motion.webp",
+      "sha256": "706ba428b766079e0e0e50912495b8e84561bda9a404516206c65bbd26fc0839",
+      "width": 92,
+      "height": 84,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/orders.webp",
+      "sha256": "f4dd198555441fa6038dd822b5bb095b1f013f6e210b8e74e0e8226db868f8f7",
+      "width": 536,
+      "height": 320,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/sign.webp",
+      "sha256": "22a26aec0c839a4fb1882ebc6dcb0f21f1cb44d1a6bba060d854de980b9c6c7f",
+      "width": 516,
+      "height": 110,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/estate/tasks.webp",
+      "sha256": "c9b836d3d63f25c92b57b713c77910dd65dd4e12455acc187b9133af178c5c89",
+      "width": 536,
+      "height": 320,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/loading/logo.webp",
+      "sha256": "feac002f24120b11b1071c2a9523b81e76aec511fb74cb3f944d49d35a60f488",
+      "width": 1024,
+      "height": 400,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/loading/scenes/orders-female.webp",
+      "sha256": "c176783f4cd9d5ae289755d81f93c6745878e7d0de17a9fae0038da33429d19a",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/loading/scenes/orders-male.webp",
+      "sha256": "52a0e0e24b23bea6dbd5e73d7d513276fa3b1b9f47014476a505b6118f00d60c",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/loading/scenes/tasks-female.webp",
+      "sha256": "dc77a3f731ff2600a5dbe950e2b6a3f7b125263e618cc07ce2ea04b3801fc638",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/loading/scenes/warehouse-male.webp",
+      "sha256": "1ced23849aacce493a74aec78326bc6674c561d33ae3eadc1b77b082dff569ba",
+      "width": 1024,
+      "height": 1536,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/managers/backgrounds/orders.webp",
+      "sha256": "9369c5320fe8dc671ee8793f0084d4f6bd33aebc7ec2ffa252c190bc6bbe3666",
+      "width": 960,
+      "height": 320,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/managers/backgrounds/tasks.webp",
+      "sha256": "3b8e62ebc7e0a0df22ab361dacf1fe58c8442179ac25d074efb281b7019cd836",
+      "width": 960,
+      "height": 320,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/managers/backgrounds/warehouse.webp",
+      "sha256": "1117d07562b579c33dfd4b63a5f00aa0fac32e868c692fd4d5cd786211386d76",
+      "width": 960,
+      "height": 320,
+      "hasAlpha": false
+    },
+    {
+      "path": "public/art/managers/portraits/orders/female-angry.webp",
+      "sha256": "03ffc9eea4700c8c2210e15307e3e53cc2ead77a000e34527cd8f2c4083eddd5",
+      "width": 448,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/female-happy.webp",
+      "sha256": "bb109492620ff88eb4a34dfcff7d038a648a68f3f4c2d274037622767858a5eb",
+      "width": 448,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/female-sad.webp",
+      "sha256": "df360825cc22dc5d8a344745cdf2c51fdadb5cea9d07c085f7461912dc5f5ab5",
+      "width": 448,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/female-smile.webp",
+      "sha256": "714d2f24749379499edaa0eb16fc4fda929bbb2980869d8dcc988592cf4ade53",
+      "width": 448,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/male-angry.webp",
+      "sha256": "735c4d54510489c9313ce6536c893efb8af05a839c63dbf6a173cb8ac1085f6d",
+      "width": 499,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/male-happy.webp",
+      "sha256": "dd4ab1ec0018b172202928be97bc5a3c62f0243f0ba8a467739568968f70015b",
+      "width": 499,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/male-sad.webp",
+      "sha256": "423fbe64d6b521b1fa62c26f2a59eb696e24b55c1a0397200d112c46ae933126",
+      "width": 499,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/orders/male-smile.webp",
+      "sha256": "afc339ddf4469c67c1ef93d42728e57387c17bd5bdde6a7b73715cd36ccfbd47",
+      "width": 499,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/tasks/female-smile.webp",
+      "sha256": "b15ba856f5011b944b8cadd1f83e93431d5c19f863bc80e5cee8de17e4746d0f",
+      "width": 461,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/art/managers/portraits/warehouse/male-smile.webp",
+      "sha256": "1c62cae5a8a2e62a09204328a20b647758eb8ba69557a3345423cf3744e8e6dc",
+      "width": 503,
+      "height": 289,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/ui-icons/menu-merchant.webp",
+      "sha256": "ef09fd51875014d78a7551e330acf4d87e1031c1c851fcd72be896d384bd2065",
+      "width": 96,
+      "height": 96,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/ui-icons/menu-orders.webp",
+      "sha256": "26961977a5fa134f0648ea5ea34c07303bb07de3c9ac799e9dec7d6d6a78e47d",
+      "width": 96,
+      "height": 96,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/ui-icons/tech-merchant-bargaining.webp",
+      "sha256": "e8d66adb00c30b1371fb5a5fe18384f1762ba7fb8b38a642db171009f7b6b8e7",
+      "width": 96,
+      "height": 96,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/ui-icons/tech-order-expansion.webp",
+      "sha256": "c0bc4a0cd342c4db64a57b080114dbafc681d39884cb0efb7ca1352982882f69",
+      "width": 96,
+      "height": 96,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/ui-icons/tech-order-negotiation.webp",
+      "sha256": "e3bca361d5ebfd12187dc8c82e15fc40256d460fee8b0f4acf98367f89af1634",
+      "width": 96,
+      "height": 96,
+      "hasAlpha": true
+    },
+    {
+      "path": "public/ui-icons/tech-order-premium.webp",
+      "sha256": "e4f39d54c1f306f110ce474dfae9c0a73e28698357c40886f621fc2b128ead41",
+      "width": 96,
+      "height": 96,
+      "hasAlpha": true
+    }
+  ],
+  "evidenceImages": [
+    {
+      "path": "assets/source/art/proposals/order-center/review/icons.png",
+      "sha256": "63197f91a50d0f986bf514a2c7478a607d8702794663691dfdff681a0de30f1a",
+      "width": 576,
+      "height": 182
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/map-320.png",
+      "sha256": "225bd666340bcc33898623072965cf9b1416826d7a00c42103e0fe6b58e02bb3",
+      "width": 960,
+      "height": 218
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/map-390.png",
+      "sha256": "c2a3223abdc923448022b35024ce23667ba0f40aa04ec9da4ee21b60c3f9cb9c",
+      "width": 1170,
+      "height": 265
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/map-414.png",
+      "sha256": "84bacea219894a0d6829b9823c4d4631a23cc1da128573259e1084bb9e5ca636",
+      "width": 1242,
+      "height": 282
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/source-map.png",
+      "sha256": "d0410864b63b99db25e5de5fc839a34a5c3ae2a087e78d58325527d1ac764c31",
+      "width": 1000,
+      "height": 485
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/edges.png",
+      "sha256": "08a096673a4431ddf817a0dee930ad1bb4531ac81797c4b06ca7d4a910608fdc",
+      "width": 879,
+      "height": 330
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/base-poses.png",
+      "sha256": "a8a01f25798c4dae4a854f6adc645206d22db8c7a3c435c009512426a7e9efea",
+      "width": 750,
+      "height": 375
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/full-female.png",
+      "sha256": "6c420f69e6cb9e0f3a46e3c4dbda4b680646b9b7cc7dd82e56de298c9fc1af2b",
+      "width": 1024,
+      "height": 384
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/faces-female.png",
+      "sha256": "458572e5b1440bf4919dd1cf1a530bef9fe6c9fd1ca8c3f20da6d053249f3aac",
+      "width": 960,
+      "height": 160
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/portraits-female.png",
+      "sha256": "29ebe1da2c87ff7a0f3e10cb7b71d8e8cb36ace44476e6c7ba8708cc384fd7c7",
+      "width": 896,
+      "height": 289
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/banners-female-320.png",
+      "sha256": "a00678d3543f67fe8444cca03ebc61683b27697ac48ab83972ae953c887b4508",
+      "width": 320,
+      "height": 675
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/banners-female-390.png",
+      "sha256": "701c3148c508f331065c62101b7c4034e14eea546853ede7568c1dd2316915a8",
+      "width": 390,
+      "height": 835
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/banners-female-414.png",
+      "sha256": "36b6bb1b19e3fa226c774855ed30b0853bf1f0891713a86c81ab8920992b52c9",
+      "width": 414,
+      "height": 885
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/full-male.png",
+      "sha256": "77778b485e3fa6e31b5a1f8546dbc7c30096182297d1d70bb8544b8dfe10aa67",
+      "width": 1024,
+      "height": 384
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/faces-male.png",
+      "sha256": "5f41f5e4d9510b71acf4adf4d4f0b0e6dc8aa1ab64baf6a886c7e46d4508ba5a",
+      "width": 960,
+      "height": 160
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/portraits-male.png",
+      "sha256": "d2e6e18a7ff74e62670a117120258ae3914d0f11a51dee599fad728f0ecb8622",
+      "width": 896,
+      "height": 289
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/banners-male-320.png",
+      "sha256": "013da1d28b4080de118008326a8c28c838c3f501fa54ed86cadcd4ef9df74650",
+      "width": 320,
+      "height": 675
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/banners-male-390.png",
+      "sha256": "3cebdb6f8497907b675b97ac9c566e36e8dfbf93c3d71f4d33a2741f8f7a1614",
+      "width": 390,
+      "height": 835
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/banners-male-414.png",
+      "sha256": "084774884a733a493b4b426b1bee325f86e9a452d6a80d696cd593130f6ec7e5",
+      "width": 414,
+      "height": 885
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/cg-source-female.png",
+      "sha256": "727cad7f3027324357db6142903562668f803f6a74ab4eb7bca6ee3f67c0603f",
+      "width": 800,
+      "height": 300
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/cg-composition-female.png",
+      "sha256": "d254c3c676faf60fb646ca10374009277c388d0e9298a63dd3cb023f1bf649b4",
+      "width": 1304,
+      "height": 896,
+      "geometry": [
+        {
+          "width": 320,
+          "height": 568,
+          "face": {
+            "x": 420,
+            "y": 309,
+            "width": 235,
+            "height": 240
+          },
+          "logoInkToFace": 33.8
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "face": {
+            "x": 420,
+            "y": 309,
+            "width": 235,
+            "height": 240
+          },
+          "logoInkToFace": 62.29
+        },
+        {
+          "width": 414,
+          "height": 896,
+          "face": {
+            "x": 420,
+            "y": 309,
+            "width": 235,
+            "height": 240
+          },
+          "logoInkToFace": 66.14
+        },
+        {
+          "width": 180,
+          "height": 390,
+          "face": {
+            "x": 420,
+            "y": 309,
+            "width": 235,
+            "height": 240
+          },
+          "logoInkToFace": 25.97
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/cg-source-male.png",
+      "sha256": "4c808940267514170bb2cd3151e2bf3fe8340fa399fe81c30f483142c196c516",
+      "width": 800,
+      "height": 300
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/cg-composition-male.png",
+      "sha256": "3d5a2679382e7cba6d6a5ac11b0b26db7f81f59f0581d31996525977833618c3",
+      "width": 1304,
+      "height": 896,
+      "geometry": [
+        {
+          "width": 320,
+          "height": 568,
+          "face": {
+            "x": 400,
+            "y": 332,
+            "width": 224,
+            "height": 215
+          },
+          "logoInkToFace": 42.3
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "face": {
+            "x": 400,
+            "y": 332,
+            "width": 224,
+            "height": 215
+          },
+          "logoInkToFace": 74.93
+        },
+        {
+          "width": 414,
+          "height": 896,
+          "face": {
+            "x": 400,
+            "y": 332,
+            "width": 224,
+            "height": 215
+          },
+          "logoInkToFace": 79.55
+        },
+        {
+          "width": 180,
+          "height": 390,
+          "face": {
+            "x": 400,
+            "y": 332,
+            "width": 224,
+            "height": 215
+          },
+          "logoInkToFace": 31.81
+        }
+      ]
+    },
+    {
+      "path": "assets/source/art/proposals/order-center/review/male-cg-revision.png",
+      "sha256": "3a441c4e255da0ca63a6451bd9b5721f701b4c83d981e40ff8d8257911c7ad88",
+      "width": 720,
+      "height": 360
+    }
+  ],
+  "reproduction": {
+    "tool": "Node.js + 项目开发依赖 sharp@0.34.5，通过 librsvg 合成本地静态证据，未执行游戏代码。",
+    "usage": "从仓库根目录运行 Node CommonJS。common 和 recipes 的每个数组均按换行拼接。在 common 后拼接换行、(async()=>{、所选 runs 条目的 variables、对应 recipes 内容与 })();，各段用换行分隔。map 生成 icons 和三档 map，detail 生成 source-map 和 edges。",
+    "common": [
+      "const sharp = require('sharp');",
+      "const fs = require('node:fs/promises');",
+      "const crypto = require('node:crypto');",
+      "const dir = 'assets/source/art/proposals/order-center/review';",
+      "const digest = value => crypto.createHash('sha256').update(value).digest('hex');",
+      "const result = [];",
+      "const tracked = new Map();",
+      "const images = new Map();",
+      "async function read(path) {",
+      "  if (!images.has(path)) {",
+      "    const bytes = await fs.readFile(path);",
+      "    const image = sharp(bytes);",
+      "    const {width, height, hasAlpha} = await image.metadata();",
+      "    tracked.set(path, {path, sha256:digest(bytes), width, height, hasAlpha});",
+      "    const png = await image.png().toBuffer();",
+      "    images.set(path, 'data:image/png;base64,'+png.toString('base64'));",
+      "  }",
+      "  return images.get(path);",
+      "}",
+      "const rect = (x,y,w,h,fill) => '<rect x=\"'+x+'\" y=\"'+y+'\" width=\"'+w+'\" height=\"'+h+'\" fill=\"'+fill+'\"/>';",
+      "const group = (at,html) => '<g transform=\"'+at+'\">'+html+'</g>';",
+      "async function stamp(path,x,y,w,h,fit='none'){",
+      " return '<image x=\"'+x+'\" y=\"'+y+'\" width=\"'+w+'\" height=\"'+h+'\" preserveAspectRatio=\"'+fit+'\" href=\"'+await read(path)+'\"/>';",
+      "}",
+      "async function emit(name,w,h,html){",
+      " const svg='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"'+w+'\" height=\"'+h+'\" viewBox=\"0 0 '+w+' '+h+'\">'+html+'</svg>';",
+      " const out = await sharp(Buffer.from(svg)).png().toBuffer();",
+      " await fs.mkdir(dir,{recursive:true}); const path=dir+'/'+name+'.png'; await fs.writeFile(path,out);",
+      " result.push({path,sha256:digest(out),width:w,height:h});",
+      "}"
+    ],
+    "recipes": {
+      "map": [
+        "const art='public/art/estate/', icons='public/ui-icons/';",
+        "const iconIds=['menu-merchant','menu-orders','tech-order-expansion','tech-order-negotiation','tech-order-premium','tech-merchant-bargaining'];",
+        "let iconsHtml=rect(0,0,576,182,'#f2e3c1');",
+        "for(const [i,id] of iconIds.entries()){",
+        " for(const [y,s] of [[0,96],[103,32],[142,26]]) iconsHtml+=await stamp(icons+id+'.webp',i*96+(96-s)/2,y,s,s);",
+        "}",
+        "await emit('icons',576,182,iconsHtml);",
+        "const sites=[",
+        " ['field',[0.6731,0.8245],[39,18,497,310],0.51],",
+        " ['fish',[0.6584,1.2769],[11,126,528,309],0.504,164],",
+        " ['mine',[0.235,1.385],[27,37,508,309],0.38],",
+        " ['orders',[0.213,1.117],[34,27,502,308],0.258],",
+        "];",
+        "for(const w of [320,390,414]){",
+        " const height=Math.round(w*2.36),cropY=Math.round(w*0.91),h=Math.round(w*0.68);",
+        " let strips='';",
+        " for(const [i,angle] of [-0.095,0,0.095].entries()){",
+        "  const field=await stamp(art+'background.webp',0,0,w,height);",
+        "  let buildings='', signs='';",
+        "  for(const [id,center,f,ratio,signX=(f[0]+f[2])/2] of sites){",
+        "    const u=w*ratio/(f[2]-f[0]),x=Math.round(w*center[0]),y=Math.round(w*center[1]),left=x-268*u,top=y-160*u;",
+        "    buildings+=await stamp(art+id+'.webp',left,top,536*u,320*u);",
+        "    if(id==='orders'){",
+        "       const px=left+199*u, py=top+79*u;",
+        "       buildings+=group('rotate('+(angle*180/Math.PI)+' '+px+' '+py+')',await stamp(art+'orders-motion.webp',px-46*u,py-4*u,92*u,84*u));",
+        "    }",
+        "    if(id==='mine'){",
+        "       const p=132*u,meta=await sharp(art+'mine-motion.webp').metadata(), scale=p/Math.max(meta.width,meta.height);",
+        "       buildings+=await stamp(art+'mine-motion.webp',left+328*u-0.5*meta.width*scale,top+263*u-0.93*meta.height*scale,meta.width*scale,meta.height*scale);",
+        "    }",
+        "    const sw=Math.round(w*.224), sh=sw*110/516, sy=top+f[3]*u+Math.max(2,Math.round(w*.009));",
+        "    signs+=await stamp(art+'sign.webp',Math.round(left+signX*u)-sw/2,sy,sw,sh);",
+        "  }",
+        "  strips+='<svg x=\"'+i*w+'\" y=\"0\" width=\"'+w+'\" height=\"'+h+'\" viewBox=\"0 '+cropY+' '+w+' '+h+'\">'+field+buildings+signs+'</svg>';",
+        " }",
+        " await emit('map-'+w,w*3,h,strips);",
+        "}"
+      ],
+      "detail": [
+        "const src='assets/source/art/order-center/';",
+        "let comparison=rect(0,0,1000,485,'#efe2cc');",
+        "comparison+=await stamp('public/art/estate/tasks.webp',0,0,210,135,'xMidYMid meet');",
+        "comparison+=await stamp('public/art/estate/mine.webp',0,155,210,135,'xMidYMid meet');",
+        "comparison+=await stamp(src+'building.png',210,0,340,240,'xMidYMid meet');",
+        "comparison+=await stamp(src+'pendant.png',240,245,227,227,'xMidYMid meet');",
+        "comparison+=await stamp(src+'icon-grid.png',550,0,450,450,'xMidYMid meet');",
+        "await emit('source-map',1000,485,comparison);",
+        "const edgeBase=await sharp('public/art/estate/orders.webp').extract({left:166,top:16,width:105,height:110}).resize(315,330,{kernel:'nearest'}).flatten({background:'#e8dcbd'}).png().toBuffer();",
+        "const edgeMotion=await sharp('public/art/estate/orders-motion.webp').resize(276,252,{kernel:'nearest'}).flatten({background:'#e8dcbd'}).png().toBuffer();",
+        "const edgeIcon=await sharp('public/ui-icons/menu-orders.webp').resize(288,288,{kernel:'nearest'}).flatten({background:'#e8dcbd'}).png().toBuffer();",
+        "const embed=(bytes,x,y,w,h)=>'<image x=\"'+x+'\" y=\"'+y+'\" width=\"'+w+'\" height=\"'+h+'\" href=\"data:image/png;base64,'+bytes.toString('base64')+'\"/>';",
+        "await emit('edges',879,330,rect(0,0,879,330,'#e8dcbd')+embed(edgeBase,0,0,315,330)+embed(edgeMotion,315,0,276,252)+embed(edgeIcon,591,0,288,288));"
+      ]
+    },
+    "runs": [
+      {
+        "recipe": "map",
+        "variables": ""
+      },
+      {
+        "recipe": "detail",
+        "variables": ""
+      }
+    ]
+  }
+}

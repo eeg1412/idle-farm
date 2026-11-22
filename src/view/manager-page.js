@@ -8,7 +8,7 @@ import { compact } from './numbers.js';
 
 export const managerPages = {
   任务: 'tasks', 经营: 'estate', 畜牧: 'livestock', 田地: 'field', 矿洞: 'mine', 鱼塘: 'fish',
-  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 行脚商: 'merchant',
+  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 行脚商: 'merchant', 订单中心: 'orders',
   角色管理: 'estate', 统计: 'estate', 出售庄园历史: 'estate', 图鉴: 'estate', 出售庄园: 'estate',
 };
 
@@ -371,7 +371,7 @@ export function renderManager(ui, id, researchReady = false, page = Object.keys(
 
 
 export const managerDirectoryOrder = ['tasks', 'estate', 'field', 'livestock', 'fish', 'mine',
-  'processing', 'refining', 'warehouse', 'research', 'merchant'];
+  'processing', 'refining', 'warehouse', 'research', 'merchant', 'orders'];
 
 export function renderManagerDirectory(ui) {
   ui.scrollList(managerDirectoryOrder, (cell, id) => {

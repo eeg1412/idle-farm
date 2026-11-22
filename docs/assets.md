@@ -45,7 +45,7 @@ python3 scripts/export-item-icons.py --check
 
 透明5×5原画、提示词和裁切登记在 `assets/plot/crop-atlases/`，早期原稿在 `early-atlases/`，真实四期单株在 `assets/plot/crops/<ID>/`，派生透明PNG在 `assets/plot/plants/<ID>/`。`node scripts/export-crop-animation.mjs` 是唯一生产转换逻辑；旧Python入口仅标准库转发Node。导出元数据保留源路径／裁切bounds、每期根点与尺寸，运行不按bbox重测。C01沿用wheat-0..3.png及既有原画来源，不要求普通单株目录。完整清单见 [farm-crops](../.agents/skills/farm-crops/SKILL.md)。
 
-种植点沿底图真实垄脊布置。中、大型按 `assets/plot/crop-layout.json` 的 `fieldGeometry` 实测田面透视：列平行于田地左右侧边，排沿田垄、排距平滑递增，铺满可种田面直到画面左右与近端边缘，边缘植株允许被画框裁切，远端树冠完整，根脚不出实测土面轮廓；不能只摆两列窄条或为避裁切空出边缘。小型沿用 `furrows.json` 原根位。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片；这些证据图仅本地保存、不提交，同目录 json 照常提交。
+种植点沿底图真实垄脊布置。中、大型按 `assets/plot/crop-layout.json` 的 `fieldGeometry` 实测田面透视：列平行于田地左右侧边，排沿田垄、排距平滑递增，铺满可种田面直到画面左右与近端边缘，边缘植株允许被画框裁切，远端树冠完整，根脚不出实测土面轮廓；近端根脚离土面下沿至少 1/4 当地排距，贴边或落草的点沿列向远端后收，外侧少数点再沿田垄向田内小幅平移，不整列内缩；不能只摆两列窄条或为避裁切空出边缘。小型沿用 `furrows.json` 原根位。四期共用种植点，切期根位不动。`assets/plot/reviews/individual-v4/` 带背景、根位和130×138合成图只用于素材摆位审阅，不作为运行图片；这些证据图仅本地保存、不提交，同目录 json 照常提交。
 
 `src/content/crop-harvest.json` 逐ID区分整株和保留植株采收，记录采收部分、真实成长期／成熟期审图依据及成年采后素材可否复用。`assets/plot/reviews/repeat-harvest/` 的对照图由本地程序拼接已有原画，仅用于审阅，不能称作内置绘图工具新绘原画；它与 `crop-harvest.json` 记录路径的其他配对证据图一样仅本地保存、不提交。需补画的成年采后状态使用内置 `image_gen` 编辑成熟单株，保留原成年枝冠／根脚与各ID来源；需要绘制原画的任务不能用程序擦除或放大小苗代替。`crop-visuals.json` 的保留植株条目新增 `harvestMode:'retainedPlant'` 与完整单株 `repeatBare` metadata，发布 `public/art/plot/plants/<ID>/bare.webp`；原四期继续用于首次换种，后续使用成年采后纹理和成熟纹理。
 
@@ -148,13 +148,21 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 游戏大幅场景分别保留在 `assets/source/art/*.png`，各页发布图在 `public/art/*.webp`。游戏按当前页面的可见内容请求相应横幅、场景及图标，并沿用已访问发布图片的缓存。
 
-## 管理员场景CG开屏（2026-11-20现行）
+## 管理员场景 CG 开屏
 
-运行素材为 `public/art/loading/scenes/{role}-{gender}.webp` 共22张完整人物场景CG与原 `public/art/loading/logo.webp`。人物和背景同一张画，不再加载旧群像与背景两层；原素材留存不作运行回退。22形象沿当前立绘身份与设定，各自新绘符合性格的动作及环境；完整生成原图、提示词、身份参考和场景登记存于 `assets/source/art/loading/solo/{role}/`。使用内置绘图，每幅独立生成，禁止程序拼立绘或纯色背景替代。源图与质量70的WebP保留；运行CG与logo采用linear平滑采样，其他素材不变。
+运行素材为 `public/art/loading/scenes/{role}-{gender}.webp` 共 24 张完整人物场景 CG 与原 `public/art/loading/logo.webp`。人物与环境绘在同一张画中，按当前立绘和角色性格设计工作动作。各幅独立使用内置绘图生成，源文件位于 `assets/source/art/loading/solo/{role}/`。订单中心两张场景采用 nearest 采样，各自使用 `orders-female-redesign-v3`、`orders-male-redesign-v3` 缓存版本。其余开屏图和 Logo 沿用 linear 采样。
 
-每次启动等存档恢复或新档建立后，从11岗位各已选gender中均匀选一张并锁定；新档沿用 `managerDefaultGenders` 的6女5男，既有存档不改。只加载这张CG及logo，与当前可见页面资源并行，不能预读22张CG或图鉴。真实加载任务全成功且完整开屏可见至少1000ms后，以300ms淡出。失败继续原重试/查看存档问题，后台页面持续准备；开屏期间原对白/输入阻断保持。
+每次启动等存档恢复或新档建立后，从 12 个岗位各自已选形象中均匀选一张并锁定。新档按 `managerDefaultGenders` 默认六女六男，订单中心选男性；旧档保留已有岗位选择，缺订单岗位时补男性。只加载抽中的 CG 和 Logo，与当前可见页面资源并行。真实加载任务全成功且完整开屏可见至少 1000ms 后，以 300ms 淡出。失败继续原重试／查看存档问题，后台页面持续准备；开屏期间原对白与输入阻断保持。
 
-CG以纵向近景叙事构图确保人物可辨；顶部Logo和底部进度控件不遮脸。允许身体与环境在视口边缘裁切，不要求全身。Logo区域也有自然的天光、窗、景深等环境，禁止拿纯色填充糊弄。`loading-layout.js` 为运行与静态渲染共享几何，manifest登记实际尺寸与faceBounds。源图、成品、四尺寸开屏渲染分别由视觉子代理对照22身份审阅，具体证据与运行限制记于本轮 `docs/art-reviews/2026-11-20-solo-manager-loading.md`；静态合成不冒称浏览器实测。
+CG 采用纵向近景构图。顶部 Logo 和底部进度控件避开脸部，画面边缘可裁切身体与环境。Logo 区域保留窗、天光等自然环境。`loading-layout.js` 为运行与静态渲染共享几何，manifest 登记实际尺寸与 faceBounds。分别对照角色身份、源图、成品及四尺寸开屏画面审图，运行验收单列。[原 22 套开屏审图](art-reviews/2026-11-20-solo-manager-loading.md) · [订单男女新设计审图](art-reviews/2026-11-22-order-art-redesign-v2.md)
+
+订单两张开屏原画位于 `assets/source/art/loading/solo/orders/redesign-v2/{female,male}-scene-v3.png`，均为 1024×1536 独立完整场景，各自以对应人物全身立绘作为身份输入。茜梨在室外突风中抬手压住帽子，另一手抓住包裹的蓝签；奥林在乡路篷车旁系稳货物的防雨罩。两场景分别呈现茜梨护好货物的细心和奥林守住交付承诺的耐心。`src/content/loading-scenes.json` 分别登记发布图 `art/loading/scenes/orders-female.webp` 和 `art/loading/scenes/orders-male.webp`，faceBounds 按各自新原画登记。
+
+茜梨以 `assets/source/art/managers/orders/anime/female-{smile,happy,angry,sad}.png` 四张全身原图导出胸像。角色页和管理员列表按岗位、性别与表情读取 `public/art/managers/portraits/orders/{gender}-{expression}.webp`；窗口背景为 `public/art/managers/backgrounds/orders.webp`。[茜梨原画及导出记录](../assets/source/art/managers/orders/anime/female-source.md)
+
+奥林的微笑、高兴、生气和失落全身原画位于 `assets/source/art/managers/orders/redesign-v2/male-{smile,happy,angry,sad}.png`。四表情共用裁切范围，以 nearest 缩至 500×283，顶部透明留 6 像素，发布为 500×289 胸像。`assets/source/art/managers/orders/anchors.json` 的 male 字段与 `src/content/manager-portraits.json` 的 orders.male 保持同一登记。订单胸像缓存版本为 5。四张全身原图、两张 CG 的提示词、真实生成来源、裁切参数及发布图对应记录在 [source-manifest.json](../assets/source/art/managers/orders/redesign-v2/source-manifest.json)，专用导出入口为 `scripts/export-order-redesign-v2.mjs`。
+
+旧群像与背景两层仅作历史留存，运行开屏不以它们回退。独立场景 CG 须保留真实背景、角色身份参考与场景登记，禁止程序拼立绘或用纯色背景替代。
 
 ### 认可近景群像与地图气氛（2026-11-19历史接入）
 
@@ -184,7 +192,7 @@ CG以纵向近景叙事构图确保人物可辨；顶部Logo和底部进度控�
 
 新增`public/art/estate/merchant.webp`，536×320透明画布、WebP90/Alpha100，原生绘图源1647×955等比nearest fit居中；源图/真实prompt/引用/生成记录/footprint与根脚登记保存在`assets/source/art/estate-merchant-cart/`，转换脚本`scripts/export-estate-merchant.mjs`。对象为布篷木轮旅行货车与货物，不是房屋，原图无人物或文字招牌。成品SHA256 `2fb3b18ccdaacf700d19c8c1f1cf23ed3fc84cf852e115f72860e850e8162232`，alpha128主体footprint[54,15,497,307]。
 
-地图追加末尾静态merchant；用户红圈返修后center[0.51,0.485]、widthRatio0.18，位于三叉路右侧中央草地、明显左于经营。两轮根脚在红圈草地内，篷/拉杆/木牌外缘可局部越红线，木牌避开支路；390地图宽实际主体70.2px。同款木牌“行脚商”，点车/牌进入原行脚商页面，不改变解锁。现已追加独立小旗／挂灯动件与未解锁盖布收摊图；沿原缓存/视口/毁后守卫，原十建筑几何、动画索引与飞鸟上层不变。原画来源见[历史素材报告](art-reviews/2026-11-19-estate-merchant-cart.md)，现行红框位置见[最新静态独审](art-reviews/2026-11-19-merchant-redbox.md)，不代替实际游戏运行。
+地图追加末尾静态merchant；现行center[0.4923,0.504]、widthRatio0.198（摆放编辑器导出）。两轮根脚在红圈草地内，篷/拉杆/木牌外缘可局部越红线，木牌避开支路；390地图宽实际主体70.2px。同款木牌“行脚商”，点车/牌进入原行脚商页面，不改变解锁。现已追加独立小旗／挂灯动件与未解锁盖布收摊图；沿原缓存/视口/毁后守卫，原十建筑几何、动画索引与飞鸟上层不变。原画来源见[历史素材报告](art-reviews/2026-11-19-estate-merchant-cart.md)，现行红框位置见[最新静态独审](art-reviews/2026-11-19-merchant-redbox.md)，不代替实际游戏运行。
 
 ### 行脚商开闭状态与独立动件（2026-11-19）
 

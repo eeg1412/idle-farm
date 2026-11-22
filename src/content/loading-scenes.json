@@ -352,6 +352,38 @@
         "height": 196
       },
       "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "orders-male",
+      "role": "orders",
+      "gender": "male",
+      "path": "art/loading/scenes/orders-male.webp",
+      "source": "assets/source/art/loading/solo/orders/redesign-v2/male-scene-v3.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 331,
+        "y": 467,
+        "width": 220,
+        "height": 208
+      },
+      "faceBoundsStatus": "reviewed-source"
+    },
+    {
+      "id": "orders-female",
+      "role": "orders",
+      "gender": "female",
+      "path": "art/loading/scenes/orders-female.webp",
+      "source": "assets/source/art/loading/solo/orders/redesign-v2/female-scene-v3.png",
+      "width": 1024,
+      "height": 1536,
+      "faceBounds": {
+        "x": 376,
+        "y": 624,
+        "width": 254,
+        "height": 186
+      },
+      "faceBoundsStatus": "reviewed-source"
     }
   ]
 }

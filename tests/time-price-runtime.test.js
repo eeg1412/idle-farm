@@ -347,9 +347,9 @@ test('research discounts only the generated physical costs and a declined quote 
 
 test('per-technology costs use exact segment quotas, prerequisites and task scope', () => {
   const world = newWorld(0);
-  world.researchPoints = 6_508_060n;
-  assert.equal(techDefinitions.length, 39);
-  assert.equal(techTotalLevels, 1_694);
+  world.researchPoints = 6_723_660n;
+  assert.equal(techDefinitions.length, 42);
+  assert.equal(techTotalLevels, 1_762);
   assert.equal(techOffer(world, 'qualityDiscount'), null);
   assert.equal(upgradeTech(world, 'fishQuality'), false);
   assert.equal(upgradeTech(world, 'livestockYield'), false);
@@ -386,13 +386,15 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
     delete world.tech[prerequisite];
   }
   const sum = (values) => values.reduce((a, b) => a + b, 0n);
-  const marketCosts = {
+  const fixedCosts = {
     marketForecast: [60n],
     marketManipulation: [50n, 450n, 2_500n],
     marketPromotion: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n],
     premiumSales: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n],
     merchantRestock: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n],
     merchantBargaining: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n],
+    orderExpansion: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n],
+    orderNegotiation: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n],
   };
   const miningBudgets = {
     miningBuy: 125_000n, miningUpgrade: 125_000n, miningYield: 420_000n,
@@ -422,7 +424,7 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
         }
       }
     }
-    if (Object.hasOwn(marketCosts, key)) assert.deepEqual(costs, marketCosts[key], key);
+    if (Object.hasOwn(fixedCosts, key)) assert.deepEqual(costs, fixedCosts[key], key);
     for (let level = 0; level < maxLevel; level += 1) {
       const before = world.researchPoints;
       assert.ok(upgradeTech(world, key), key);
@@ -433,11 +435,11 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
   }
   assert.equal(world.researchPoints, 0n);
   const tasks = objectives(world);
-  assert.equal(tasks.guide.length, 16);
+  assert.equal(tasks.guide.length, 17);
   assert.equal(tasks.long.length, 38);
-  assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').current, 1_494n);
+  assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').current, 1_762n);
   assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').done, true);
   world.stats.sold = 1n;
-  assert.equal(objectives(world).guide.length, 35);
+  assert.equal(objectives(world).guide.length, 36);
   assert.equal(Object.values(taskResearchPointRewards).reduce((total, amount) => total + amount, 0n), 40_152n);
 });

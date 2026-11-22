@@ -137,7 +137,7 @@ function groupForLineBreak(glyphs) {
   return tokens;
 }
 
-export function fitManagerSpeech(glyphs, width, height, preferredSize, measure) {
+export function fitManagerSpeech(glyphs, width, height, preferredSize, measure, maxLines = 3) {
   const tokens = groupForLineBreak(glyphs);
   for (let size = preferredSize; size >= 7; size -= 1) {
     const lines = [[]];
@@ -154,7 +154,7 @@ export function fitManagerSpeech(glyphs, width, height, preferredSize, measure) 
       }
     }
     const lineText = lines.map((line) => line.map((glyph) => glyph.text).join('').trimEnd());
-    if (size === 7 || (lines.length <= 3 && measure(lineText.join('\n'), size).height <= height)) {
+    if (size === 7 || (lines.length <= maxLines && measure(lineText.join('\n'), size).height <= height)) {
       return { lines, lineText, size };
     }
   }

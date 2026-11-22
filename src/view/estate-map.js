@@ -23,7 +23,7 @@ function cycle(time, period) {
 // Props use position and longest side in the same 536 × 320 source space.
 // A sign anchor can follow a facade axis or a distinct part of the footprint.
 const sites = [
-  { id: 'operations', label: '经营', center: [0.7357, 0.3163], footprint: [9, 27, 527, 311],
+  { id: 'operations', label: '经营', center: [0.7621, 0.3134], footprint: [9, 27, 527, 311],
     widthRatio: 0.38, prop: [329, 194, 65], pivot: [0.5, 0.09], signAnchorX: 250,
     animate(sprite, time, unit, scale) {
       const phase = turn * cycle(time, 2.7);
@@ -42,8 +42,8 @@ const sites = [
     animate(sprite, time, unit, scale) {
       sprite.scale.y = scale * (1 + 0.078 * Math.sin(turn * cycle(time, 2.8)));
     } },
-  { id: 'field', label: '田地', center: [0.6731, 0.8245], footprint: [39, 18, 497, 310],
-    widthRatio: 0.51, prop: [398, 221, 89], pivot: [0.513, 0.982],
+  { id: 'field', label: '田地', center: [0.7484, 0.7758], footprint: [39, 18, 497, 310],
+    widthRatio: 0.408, prop: [398, 221, 89], pivot: [0.513, 0.982],
     animate(sprite, time) {
       sprite.rotation = 0.12 * Math.sin(turn * cycle(time, 3.5));
     } },
@@ -60,7 +60,7 @@ const sites = [
       sprite.scale.x = phase < 0.5 ? scale : -scale;
       sprite.alpha = 0.8;
     } },
-  { id: 'mine', label: '矿洞', center: [0.235, 1.385], footprint: [27, 37, 508, 309],
+  { id: 'mine', label: '矿洞', center: [0.2262, 1.385], footprint: [27, 37, 508, 309],
     widthRatio: 0.38, prop: [328, 263, 132], pivot: [0.5, 0.93],
     animate(sprite, time, unit, scale, x, y) {
       const angle = turn * cycle(time, 7.5);
@@ -83,15 +83,20 @@ const sites = [
 
   { id: 'research', label: '研发', center: [0.2596, 2.1034], footprint: estateResearchFootprint,
     widthRatio: 0.344, signAnchorX: 228 },
-  { id: 'warehouse', label: '仓库', center: [0.7469, 2.0221], footprint: [30, 21, 506, 309],
+  { id: 'warehouse', label: '仓库', center: [0.7205, 1.94], footprint: [30, 21, 506, 309],
     widthRatio: 0.37, prop: [484, 118, 106], pivot: [0.51, 0.08],
     animate(sprite, time, unit, scale) {
       const lift = (1 + Math.cos(turn * cycle(time, 6.7))) / 2;
       sprite.scale.y = scale * (0.72 + 0.28 * lift);
     } },
   // Append the travelling cart so the existing motion phases keep their indices.
-  { id: 'merchant', label: '行脚商', center: [0.51, 0.485], footprint: [54, 15, 497, 307],
-    widthRatio: 0.18 },
+  { id: 'merchant', label: '行脚商', center: [0.4923, 0.504], footprint: [54, 15, 497, 307],
+    widthRatio: 0.198 },
+  { id: 'orders', label: '订单中心', center: [0.5017, 0.9955], footprint: [34, 27, 502, 308],
+    widthRatio: 0.258, prop: [199, 79, 92], pivot: [0.5, 4 / 84],
+    animate(sprite, time) {
+      sprite.rotation = 0.095 * Math.sin(turn * cycle(time, 3.8));
+    } },
 ];
 
 export function getEstateLayout() {
@@ -148,7 +153,7 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
 
 export function mountEstateMap(parent, {
   width, insetTop, onOpen, bind, markDirty, getImage, loadImage, loadAtmosphereImage = loadImage,
-  researchReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere, retainedResearch,
+  researchReady, ordersReady, returnGiftSites, guideTaskName, focusedIndex, layoutOverrides, retainedAtmosphere, retainedResearch,
   merchantUnlocked = true,
 }) {
   const height = Math.round(width * estateMapAspect);
@@ -250,7 +255,9 @@ export function mountEstateMap(parent, {
     text.y = sign.y;
     plaque.addChild(text);
 
-    if (returnGiftSites?.has(id) || (id === 'research' && researchReady)) {
+    if (id === 'orders') text.scale.set(Math.min(1, Math.max(1, signWidth - 10) / Math.max(1, text.width)));
+
+    if (returnGiftSites?.has(id) || (id === 'research' && researchReady) || (id === 'orders' && ordersReady)) {
       const marker = new Graphics().circle(signWidth / 2 - 7, signTop + 7, 5)
         .fill(0xd85b37).stroke({ color: 0xfff1cf, width: 1.5 });
       plaque.addChild(marker);

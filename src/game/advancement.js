@@ -55,10 +55,15 @@ export const techDefinitions = [
     costs: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n] },
   { key: 'premiumSales', name: '溢价销售', source: '市场',
     costs: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n] },
-  { key: 'merchantRestock', name: '商路调度', source: '市场',
+  { key: 'merchantRestock', name: '商路调度', source: '行脚商',
     costs: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n, 3_400n] },
-  { key: 'merchantBargaining', name: '采购议价', source: '市场',
+  { key: 'merchantBargaining', name: '采购议价', source: '行脚商',
     costs: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n, 6_000n] },
+  { key: 'orderExpansion', name: '商路拓展', source: '订单',
+    costs: [30n, 50n, 80n, 160n, 300n, 580n, 1_100n, 1_800n, 2_500n] },
+  { key: 'orderNegotiation', name: '客户协商', source: '订单',
+    costs: [40n, 60n, 90n, 210n, 400n, 800n, 1_500n, 2_400n, 3_500n] },
+  { key: 'orderPremium', name: '订单溢价', source: '订单', budget: 200_000n },
 ].map((definition) => {
   const costs = definition.costs ?? techCostCurve(definition);
   return { ...definition, costs, maxLevel: costs.length, budget: definition.budget ?? costs.reduce((a, b) => a + b, 0n) };
@@ -88,6 +93,7 @@ function techCostCurve({ key, budget, baseCost = 25n }) {
 const techByKey = Object.fromEntries(techDefinitions.map((definition) => [definition.key, definition]));
 export const techMaxLevels = Object.fromEntries(techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
 export const techTotalLevels = techDefinitions.reduce((sum, { maxLevel }) => sum + maxLevel, 0);
+export const purchasedTechLevels = (world) => techDefinitions.reduce((sum, { key }) => sum + (world.tech[key] ?? 0), 0);
 const yieldKeys = { C: 'cropYield', L: 'livestockYield', F: 'fishYield', M: 'miningYield' };
 const researchKeys = { C: 'cropResearch', I: 'cropResearch', L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch',
   M: 'miningResearch', IM: 'miningResearch' };
@@ -123,6 +129,9 @@ const effectDefinitions = {
   premiumSales: ['最高售价倍率', 100 + marketBaseMaximumIncrease, marketMaximumIncreasePerLevel, '倍', 100],
   merchantRestock: ['每日手动进货次数', 0, 1, '次'],
   merchantBargaining: ['商人售价倍率', merchantBaseMarkup, -merchantMarkupReduction, '倍', 100],
+  orderExpansion: ['每日生成及并存上限', 3, 1, '单'],
+  orderNegotiation: ['每日可替换次数', 1, 1, '次'],
+  orderPremium: ['新订单报酬倍率', 50, 1, '倍', 10],
 };
 
 const techLevel = (world, key) => world.tech[key] ?? 0;

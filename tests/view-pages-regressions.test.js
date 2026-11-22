@@ -448,7 +448,7 @@ test('research keeps the recipe and tech camera state and separates both point b
   const improvement = redraw('经营改良');
   assert.notEqual(improvement.view, recipes.view);
   assert.deepEqual(improvement.nodes.find(({ id }) => id === 'fishCycle').requires, ['fishYield']);
-  assert.deepEqual(improvement.groups, ['通用', '农业', '畜牧', '水产', '矿业', '市场']);
+  assert.deepEqual(improvement.groups, ['通用', '农业', '畜牧', '水产', '矿业', '市场', '行脚商', '订单']);
   assert.equal(improvement.nodes.length, techDefinitions.length);
   assert.ok(improvement.nodes.every(({ group }) => improvement.groups.includes(group)));
   assert.deepEqual(points(), ['高级研发点', world.researchPoints, { variant: 'efficiency', icon: 'research-point' }]);
@@ -482,7 +482,10 @@ test('research exposes the same market nodes in the full tree and finder filter'
   const [tree] = view.find('tree', () => true);
   const market = tree.nodes.filter(({ group }) => group === '市场');
   assert.deepEqual(market.map(({ id }) => id).sort(),
-    ['marketForecast', 'marketManipulation', 'marketPromotion', 'merchantBargaining', 'merchantRestock', 'premiumSales']);
+    ['marketForecast', 'marketManipulation', 'marketPromotion', 'premiumSales']);
+  const idsInGroup = (name) => tree.nodes.filter(({ group }) => group === name).map(({ id }) => id).sort();
+  assert.deepEqual(idsInGroup('行脚商'), ['merchantBargaining', 'merchantRestock']);
+  assert.deepEqual(idsInGroup('订单'), ['orderExpansion', 'orderNegotiation', 'orderPremium']);
   tree.onFind();
   const [, draw] = view.find('dialog', (title) => title === '查找节点');
   const finder = pageFixture(view.ui.w);
