@@ -24,6 +24,7 @@
 7. [平衡模型与验收](07-balance-validation.md)
 8. [纤维、药草与酿造](08-crop-uses.md)
 9. [矿业与跨产业配方](09-mining.md)
+10. [时空胶囊](10-time-capsule.md)
 
 ## 分类
 

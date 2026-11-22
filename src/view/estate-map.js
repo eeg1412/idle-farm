@@ -1,14 +1,16 @@
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
 import { mountEstateAtmosphere } from './estate-atmosphere.js';
 import { mountEstateWeather } from './estate-weather.js';
-import { estateMerchantAsset, estateMerchantMotionBounds, mountEstateMerchant } from './estate-merchant.js';
 import {
-  estateResearchAsset, estateResearchFootprint, estateResearchMotionBounds, mountEstateResearch,
+  estateMerchantAsset, estateMerchantAssetNames, estateMerchantMotionBounds, mountEstateMerchant,
+} from './estate-merchant.js';
+import {
+  estateResearchAsset, estateResearchAssetNames, estateResearchFootprint, estateResearchMotionBounds, mountEstateResearch,
 } from './estate-research.js';
+import { assetUrl } from './asset-url.js';
 
-// Keep the revised asset URLs in sync with the offline precache.
-const assetVersions = { background: 7, fish: 2, field: 2, 'field-motion': 2, research: 2, 'research-motion': 3, operations: 2 };
-export const estateAssetUrl = (name) => new URL(`./art/estate/${name}.webp?game=1&v=${assetVersions[name] ?? 1}`, document.baseURI).href;
+const estateAssetPath = (name) => `art/estate/${name}.webp`;
+export const estateAssetUrl = (name) => assetUrl(estateAssetPath(name));
 export const estateMapAspect = 2.36;
 const buildingArtWidth = 536;
 const buildingArtHeight = 320;
@@ -100,6 +102,17 @@ const sites = [
       sprite.rotation = 0.095 * Math.sin(turn * cycle(time, 3.8));
     } },
 ];
+
+// Every art/estate image the map can request through applyImage (build-time manifest check).
+export function estateMapAssetPaths() {
+  const names = new Set(['background', 'sign', ...estateMerchantAssetNames(), ...estateResearchAssetNames()]);
+  for (const site of sites) {
+    if (site.id !== 'merchant' && site.id !== 'research') names.add(site.id);
+    if (site.prop && site.animate) names.add(`${site.id}-motion`);
+    if (site.smoke) names.add('refining-motion');
+  }
+  return [...names].map(estateAssetPath);
+}
 
 export function getEstateLayout() {
   return sites.map(({ id, label, center, widthRatio }) => ({ id, label, center: [...center], widthRatio }));

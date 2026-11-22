@@ -74,3 +74,10 @@ assets/source/art/proposals/*/review/**/*.jpeg
 !assets/source/art/loading/review-v2/baseline/*.webp
 !assets/source/art/loading/review-all22/references/*.png
 !assets/source/art/proposals/2026-11-19-map-ensemble/review/identity22-reference.jpg
+assets/source/items/time-capsule/reviews/**/*.png
+assets/source/items/time-capsule/reviews/**/*.webp
+assets/source/items/time-capsule/reviews/**/*.jpg
+assets/source/items/time-capsule/reviews/**/*.jpeg
+
+# Build output: hashed static asset manifest (scripts/build-asset-manifest.mjs)
+src/content/asset-manifest.json

@@ -2,7 +2,7 @@ import { Container, Graphics, Rectangle, Sprite, Text, TextStyle, CanvasTextMetr
 import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
-import { managerStatus } from '../game/managers.js';
+import { managerIds, managerStatus } from '../game/managers.js';
 import { merchantStatus } from '../game/merchant.js';
 import { hasDeliverableOrder } from '../game/orders.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
@@ -10,11 +10,13 @@ import workshopVisuals from '../content/workshop-visuals.json' with { type: 'jso
 import managerPortraits from '../content/manager-portraits.json' with { type: 'json' };
 import { compact } from './numbers.js';
 import { gameHistory, pageForRoute, routeForPage } from './navigation.js';
-import { mountEstateMap } from './estate-map.js';
+import { estateMapAssetPaths, mountEstateMap } from './estate-map.js';
 import { createEstateWeatherSession } from './estate-weather.js';
-import { estateCloudAssetUrl } from './estate-clouds.js';
+import { estateAnimalCloudAssetPath, estateCloudAssetPath, estateCloudAssetUrl } from './estate-clouds.js';
+import { estateBirdAssetPath } from './estate-atmosphere.js';
 import { createLoadingTasks, loadWithDeadline } from './loading-tasks.js';
-import { createLoadingScreen } from './loading-screen.js';
+import { createLoadingScreen, openingAssetPaths } from './loading-screen.js';
+import { assetUrl, normalizeAssetPath, reportAssetLoadFailure } from './asset-url.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
 import { mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
 import {
@@ -104,12 +106,92 @@ const uiIconKeys = new Set([...Object.keys(drawnIcons), 'nav-menu', 'nav-worksho
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'L').map(([id]) => 'livestock-' + id),
   ...Object.entries(data.items).filter(([, item]) => item.kind === 'F').map(([id]) => 'fish-' + id),
 ]);
-const path = (name) => new URL(name, document.baseURI).href;
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const managerAsset = (id) => typeof id === 'string' && id.startsWith('manager-art:') ? id.slice(12) : undefined;
-const managerPortraitVersion = (role) => role === 'orders' ? 5 : role === 'refining' ? 4 : 2;
 const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id) || Boolean(managerAsset(id));
+
+// public/ paths of runtime images; assetUrl() turns them into (hashed) URLs.
+const plotSharedPath = (key) => `art/plot/${key}.webp`;
+const cropAtlasPath = (id, layer = '') => `art/plot/crops/${id}${layer}.webp`;
+const livestockBarnPath = 'art/livestock/barn.webp';
+const livestockAtlasPath = (id) => `art/livestock/animals/${id}.webp`;
+const fishAtlasPath = (id) => `art/fish/animals/${id}.webp`;
+const itemIconPath = (id) => `wiki/icons/${id}.webp`;
+const managerPortraitPath = (role, gender, expression) => `art/managers/portraits/${role}/${gender}-${expression}.webp`;
+const miningSources = (item) => ({ background: miningVisuals.background.path, foreground: miningVisuals.foreground.path,
+  cart: miningVisuals.cart.path, icon: item.icon });
+
+// The public path drawImage loads for an id; undefined when drawImage draws nothing.
+function imageAssetPath(id) {
+  const manager = managerAsset(id);
+  const hero = heroKeys.has(id);
+  const scene = sceneKeys.has(id);
+  if (!hero && !scene && !hasIcon(id)) return undefined;
+  if (manager) return 'art/managers/' + manager + '.webp';
+  const source = id === 'mining' ? miningVisuals.background?.path : undefined;
+  if (source) return source;
+  const directory = hero || scene ? 'art/' : uiIconKeys.has(id) ? 'ui-icons/' : 'wiki/icons/';
+  return directory + (id === 'merchant-banner' ? 'merchant' : id) + '.webp';
+}
+
+// Manager art reachable through 'manager-art:' ids and speech portraits: expressions used by
+// manager lines (manager-help.js, manager-page.js) plus the delivered angry set, and the
+// manager-page.js actionIcon() names.
+const managerGenders = ['female', 'male'];
+const managerExpressions = ['smile', 'happy', 'sad', 'angry'];
+const managerActionIcons = ['gift', 'info', 'receive', 'switch'];
+
+// Every public/ path the runtime can derive from catalog and visual data. The build fails when
+// one of them is missing from the hashed asset manifest (scripts/build-asset-manifest.mjs).
+export function runtimeAssetPaths() {
+  const paths = new Set();
+  const add = (path) => { if (path) paths.add(normalizeAssetPath(path)); };
+  for (const id of new Set([...heroKeys, ...sceneKeys, ...uiIconKeys, ...Object.keys(data.items)])) {
+    if (!Object.hasOwn(drawnIcons, id)) add(imageAssetPath(id));
+  }
+  // Animation loaders request item icons directly (workshop inputs/outputs, livestock products).
+  for (const id of Object.keys(data.items)) add(itemIconPath(id));
+  for (const role of managerIds) {
+    add(imageAssetPath('manager-art:backgrounds/' + role));
+    for (const gender of managerGenders) {
+      for (const expression of managerExpressions) add(managerPortraitPath(role, gender, expression));
+    }
+  }
+  for (const name of managerActionIcons) add(imageAssetPath('manager-art:icons/' + name));
+  for (const key of plotSharedTextureKeys) add(plotSharedPath(key));
+  for (const [id, visual] of Object.entries(cropVisuals)) {
+    if (visual?.mode === 'individual') {
+      for (const stage of visual.stages ?? []) add(stage.path);
+      add(visual.repeatBare?.path);
+    } else if (id === 'C01') {
+      add(cropAtlasPath(id));
+      add(cropAtlasPath(id, '-front'));
+    }
+  }
+  for (const [id, species] of Object.entries(livestockSpecies)) {
+    add(livestockBarnPath);
+    add(livestockAtlasPath(id));
+    if (species?.product?.icon) add(itemIconPath(species.product.icon));
+    add(species?.feedTexture?.path);
+  }
+  for (const [id, species] of Object.entries(fishSpecies)) {
+    add(fishHabitats[species?.habitat]?.pond);
+    add(fishAtlasPath(id));
+  }
+  for (const kind of ['I', 'P']) for (const source of workshopTextureSources(kind) ?? []) add(source.path);
+  if (miningVisuals.background?.path && miningVisuals.foreground?.path && miningVisuals.cart?.path) {
+    for (const item of Object.values(miningVisuals.items ?? {})) {
+      for (const source of Object.values(miningSources(item))) add(source);
+    }
+  }
+  for (const path of estateMapAssetPaths()) add(path);
+  add(estateBirdAssetPath);
+  add(estateCloudAssetPath);
+  add(estateAnimalCloudAssetPath);
+  for (const path of openingAssetPaths()) add(path);
+  return paths;
+}
 const marketLabelGap = 4;
 const marketRateText = (rate) => '×' + ((100 + rate) / 100);
 const marketMarkSize = (size) => Math.min(15, size);
@@ -537,6 +619,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const request = requiredForOpening ? openingTasks.run('image:' + url, fetchTexture) : fetchTexture();
     const pending = request.catch(() => {
       failedImages.add(url);
+      // A hashed image missing from the server usually means a newer build replaced this one.
+      reportAssetLoadFailure();
     }).finally(() => loadingImages.delete(url));
     loadingImages.set(url, pending);
     return pending;
@@ -655,7 +739,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const crop = { loadingKey: 'textures:crop:' + id };
     cropPlots.set(id, crop);
     plotSharedLoad ??= Promise.all(plotSharedTextureKeys.map(async (key) => [
-      key, await loadAnimationImage(path(`./art/plot/${key}.webp?game=1&v=5`)),
+      key, await loadAnimationImage(assetUrl(plotSharedPath(key))),
     ])).then((entries) => entries.every(([, texture]) => texture) ? new Map(entries) : undefined);
 
     if (individual) {
@@ -663,9 +747,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const retained = visual.harvestMode === 'retainedPlant';
       if (retained && !visual.repeatBare) return unavailableTextures('crop:' + id);
       const plantLoad = Promise.all(visual.stages.map((stage) =>
-        loadAnimationImage(path('./' + stage.path + '?game=1&v=4'))));
+        loadAnimationImage(assetUrl(stage.path))));
       const bareLoad = retained
-        ? loadAnimationImage(path('./' + visual.repeatBare.path + '?game=1&v=5')) : Promise.resolve(undefined);
+        ? loadAnimationImage(assetUrl(visual.repeatBare.path)) : Promise.resolve(undefined);
       prepareTextures('crop:' + id, () => Promise.all([plotSharedLoad, plantLoad, bareLoad]).then(([shared, plants, bare]) => {
         if (!shared || plants.some((texture, index) => !texture ||
             texture.width !== visual.stages[index].width || texture.height !== visual.stages[index].height)) throw new Error('作物纹理无效');
@@ -676,8 +760,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       return;
     }
 
-    const atlasLoad = loadAnimationImage(path(`./art/plot/crops/${id}.webp?game=1&v=3`));
-    const frontLoad = loadAnimationImage(path(`./art/plot/crops/${id}-front.webp?game=1&v=3`));
+    const atlasLoad = loadAnimationImage(assetUrl(cropAtlasPath(id)));
+    const frontLoad = loadAnimationImage(assetUrl(cropAtlasPath(id, '-front')));
     prepareTextures('crop:' + id, () => Promise.all([plotSharedLoad, atlasLoad, frontLoad]).then(([shared, atlas, front]) => {
       const size = plotFrameSize;
       if (!shared || !atlas || !front || atlas.width !== size * 2 || atlas.height !== size * 2 ||
@@ -701,10 +785,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const entry = { loadingKey: 'textures:livestock:' + id };
     livestockTextures.set(id, entry);
     prepareTextures('livestock:' + id, () => Promise.all([
-      loadAnimationImage(path('./art/livestock/barn.webp?game=1&v=1')),
-      loadAnimationImage(path(`./art/livestock/animals/${id}.webp?game=1&v=4`)),
-      loadAnimationImage(path(`./wiki/icons/${species.product.icon}.webp?game=1`)),
-      loadAnimationImage(path(feedTexture.path + '?game=1&v=1')),
+      loadAnimationImage(assetUrl(livestockBarnPath)),
+      loadAnimationImage(assetUrl(livestockAtlasPath(id))),
+      loadAnimationImage(assetUrl(itemIconPath(species.product.icon))),
+      loadAnimationImage(assetUrl(feedTexture.path)),
     ]).then(([barn, atlas, product, feed]) => {
       const size = livestockFrameSize;
       const rows = species.stages;
@@ -747,8 +831,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const entry = { loadingKey: 'textures:fish:' + id };
     fishTextures.set(id, entry);
     prepareTextures('fish:' + id, () => Promise.all([
-      loadAnimationImage(path(habitat.pond.replace(/^public\//, './') + '?game=1&v=1')),
-      loadAnimationImage(path(`./art/fish/animals/${id}.webp?game=1&v=1`)),
+      loadAnimationImage(assetUrl(habitat.pond)),
+      loadAnimationImage(assetUrl(fishAtlasPath(id))),
     ]).then(([pond, atlas]) => {
       const size = fishFrameSize;
       const rows = fishSpecies[id].stages;
@@ -786,10 +870,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     workshopTextures.set(key, entry);
     prepareTextures('workshop:' + key, () => Promise.all([
       ...workshopIconIds(id).map(async (iconId) => [iconId,
-        await loadAnimationImage(path('./wiki/icons/' + iconId + '.webp?game=1')),
+        await loadAnimationImage(assetUrl(itemIconPath(iconId))),
       ]),
       ...sources.map(async (source) => [source.key,
-        await loadAnimationImage(path(source.path + '?game=1')),
+        await loadAnimationImage(assetUrl(source.path)),
       ]),
     ]).then((assets) => {
       if (assets.some(([, texture]) => !texture)) throw new Error('动画图片未载入');
@@ -813,10 +897,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (existing) return existing.textures;
     const entry = { loadingKey: 'textures:mining:' + id };
     miningTextures.set(id, entry);
-    const sources = { background: miningVisuals.background.path, foreground: miningVisuals.foreground.path,
-      cart: miningVisuals.cart.path, icon: item.icon };
+    const sources = miningSources(item);
     prepareTextures('mining:' + id, () => Promise.all(Object.entries(sources).map(async ([key, source]) => [key,
-      await loadAnimationImage(path('./' + source.replace(/^(?:public\/|\.\/)/, '') + '?game=1')),
+      await loadAnimationImage(assetUrl(source)),
     ])).then((assets) => {
       if (assets.some(([, texture]) => !texture)) throw new Error('动画图片未载入');
       const loaded = Object.fromEntries(assets);
@@ -902,17 +985,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const hero = heroKeys.has(id);
     const scene = sceneKeys.has(id);
     if (!hero && !scene && !hasIcon(id)) return;
-    const directory = hero || scene ? './art/' : uiIconKeys.has(id) ? './ui-icons/' : './wiki/icons/';
-    const livestockChoice = id.startsWith('livestock-') && data.items[id.slice(10)]?.kind === 'L';
-    const livestockScene = id.startsWith('scene-') && data.items[id.slice(6)]?.kind === 'L';
-    const version = livestockChoice ? '&v=4' : livestockScene ? '&v=4' : '';
-    const source = id === 'mining' ? miningVisuals.background?.path : undefined;
-    const file = id === 'merchant-banner' ? 'merchant' : id;
-    const managerVersion = manager?.startsWith('portraits/') ? '&v=' + managerPortraitVersion(manager.split('/')[1])
-      : manager === 'backgrounds/refining' ? '&v=3' : '';
-    const url = manager ? path('./art/managers/' + manager + '.webp?game=1' + managerVersion)
-      : source ? path('./' + source.replace(/^public\//, '') + '?game=1')
-      : path(directory + file + '.webp?game=1' + version);
+    const url = assetUrl(imageAssetPath(id));
     touchImage(url, scene || manager && !manager.startsWith('icons/') ? 'scene' : hero ? undefined : 'icon');
     if (trackViewport && scrollImages) {
       const layer = new Container();
@@ -985,7 +1058,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const show = () => {
       if (!visible || portrait.destroyed) return;
       const expression = speech.line?.expression ?? 'smile';
-      const url = path('./art/managers/portraits/' + speech.role + '/' + speech.gender + '-' + expression + '.webp?game=1&v=' + managerPortraitVersion(speech.role));
+      const url = assetUrl(managerPortraitPath(speech.role, speech.gender, expression));
       portraitUrl = url;
       touchImage(url, 'scene');
       const mount = (texture) => {
@@ -2291,7 +2364,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const showPortrait = () => {
           if (!portraitVisible) return;
           const expression = speech.line?.expression ?? 'smile';
-          const url = path('./art/managers/portraits/' + role + '/' + gender + '-' + expression + '.webp?game=1&v=' + managerPortraitVersion(role));
+          const url = assetUrl(managerPortraitPath(role, gender, expression));
           portraitUrl = url;
           touchImage(url, 'scene');
           const mount = (texture) => {

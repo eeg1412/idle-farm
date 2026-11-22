@@ -38,9 +38,22 @@
 
 ## 6. 构建与发布（`scripts/build-offline.mjs`）
 
-1. **路径统一用正斜杠。** 不要用 `node:path` 的 `join` 拼发布路径。在 Windows 上它会产生反斜杠，导致 `startsWith('dist/…')` 过滤失效，`sw.js` 自己也被列进预缓存。
+1. **路径统一用正斜杠。** 不要用 `node:path` 的 `join` 拼发布路径。在 Windows 上它会产生反斜杠，导致路径过滤与清单匹配失效，`sw.js` 自己也被列进预缓存。
 2. **只预缓存首屏必需的文件。** WebGPU、Canvas 渲染器和无障碍分块只在需要时加载，不预缓存，但保留在 `dist` 中。升级 Vite 或 Pixi 后要核对分块名是否还能匹配。
-3. **不发布运行时不加载的资源。** C02 起的作物旧图集按 `loadPlotTextures` 的规则从 `dist` 中删除，源文件不动。修改加载规则时必须同步修改这里的删除规则。
+3. **不发布运行时不加载的资源。** C02 起的作物旧图集按 `loadPlotTextures` 的规则从 `dist` 中删除，源文件不动。删除规则位于 `scripts/asset-manifest.mjs`，修改加载规则时必须同步修改。
+4. **构建顺序固定为清单 → Vite → 离线处理。** `npm run build` 依次运行 `scripts/build-asset-manifest.mjs`、`vite build`、`scripts/build-offline.mjs`。
+   - 清单步骤按[发布文件名与资源网址](assets.md#发布文件名与资源网址)生成 `src/content/asset-manifest.json`，并用 `runtimeAssetPaths()` 核对，缺项即失败；发布名与其他发布名或源文件同名时同样失败。
+   - 离线步骤重新计算清单，与打包进 JS 的清单不一致时失败；随后删除不发布文件，把 `dist/` 中的非固定名文件改为哈希发布名。
+5. **缓存名由发布内容决定。** 缓存名为 `idle-farm-` 加 sha256 前 16 位十六进制，输入依次为 `site-service-worker.js` 源码，以及 `dist/` 中除 `sw.js`、`index.html` 外每个文件的路径（以 `\0` 结尾）和内容，路径按字典序。同一缓存名只对应同一内容。缓存名以 `<meta name="idle-farm-build" content="<缓存名>">` 写入 `dist/index.html` 的 `</head>` 前；`dist/sw.js` 开头注入 `cacheName`、`assets`（安装清单）与 `hashedAssets`（全部哈希发布名）。
+6. **Service Worker 注册与缓存。**
+   - `src/main.js` 读取首页 meta，注册 `./sw.js?v=<缓存名>`；首页缺少该 meta 时注册 `./sw.js`。
+   - 安装清单包含 `dist/` 中除 `index.html`、`sw.js`、Cloudflare Pages 配置文件、按需分块与哈希发布文件外的全部文件，另加 `art/estate/` 下的哈希发布图。地图图在 worker 首次接管页面前就可能被请求，所以预缓存。
+   - `hashedAssets` 中的路径按路径名匹配，优先读缓存；缓存中没有时请求网络，成功且未重定向的响应写入当前缓存。失败响应原样返回，不写缓存。
+   - 激活时删除其他以 `idle-farm-` 或 `tianjian-workshop-` 开头的缓存。
+7. **更新检查与提示。** `src/platform/pwa-update.js` 在前台每 15 分钟检查一次，回到前台时距上次检查满 60 秒才检查。
+   - 带哈希资源加载失败（`canvas-ui.js` 图片加载失败调用 `reportAssetLoadFailure()`）或 Vite 按需 JS 块触发 `vite:preloadError` 时，调用 `checkNow()` 立即检查一次：绕过 60 秒前台间隔；已有检查进行中时并入该检查；10 秒内最多发起一次；页面隐藏或注册未完成时不检查。发现新版本时走现有更新提示；未发现新版本时不提示，资源保持原有加载失败表现，动画区域不新增回退图。
+   - 等待中的 worker 注册地址的 `?v=` 与本页 meta 相同时，它提供的就是本页正在运行的版本：直接激活，不弹提示、不重载。接受更新重载后的新页面以新 `?v=` 注册，会遇到这种情况。其他仍在旧版本的标签页照常收到更新提示。
+8. **已知缺口。** 后台旧页面在另一标签页已激活新版后，旧缓存已删除、服务器只有新哈希名；该旧页面之后请求的、此前未加载过的旧哈希图片返回 404，且其更新检查找不到比当前激活版本更新的 worker，不弹提示。玩家须手动刷新页面。
 
 ## 7. 提交性能改动的要求
 

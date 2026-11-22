@@ -22,6 +22,7 @@ import { startPwaUpdates } from './platform/pwa-update.js';
 import { createSaveTransfer, saveFormatMessage, saveTransferError } from './platform/save-transfer.js';
 import { compact } from './view/numbers.js';
 import { createGameView } from './view/canvas-ui.js';
+import { onAssetLoadFailure } from './view/asset-url.js';
 import { createFarmAudio } from './platform/farm-audio.js';
 
 extensions.remove(AccessibilitySystem);
@@ -698,9 +699,12 @@ document.addEventListener('visibilitychange', () => {
 });
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  startPwaUpdates({
+  // scripts/build-offline.mjs writes this build's cache name into the page.
+  const build = document.querySelector('meta[name="idle-farm-build"]')?.content || undefined;
+  const updates = startPwaUpdates({
     serviceWorker: navigator.serviceWorker,
-    scriptURL: new URL('./sw.js', document.baseURI),
+    scriptURL: new URL(build ? './sw.js?v=' + encodeURIComponent(build) : './sw.js', document.baseURI),
+    build,
     save: () => enqueueCurrent(() => saveForeground(undefined, undefined, true)),
     canPrompt: () => Boolean(world && visible && !status?.busy && !saveQueue.pending),
     showPrompt: (request) => {
@@ -718,4 +722,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
     },
     reload: () => window.location.reload(),
   });
+  // A failed hashed image or on-demand JS chunk can mean this build was replaced: check now.
+  onAssetLoadFailure(() => { void updates.checkNow(); });
+  window.addEventListener('vite:preloadError', () => { void updates.checkNow(); });
 }

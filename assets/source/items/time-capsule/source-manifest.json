@@ -1,0 +1,73 @@
+{
+  "asset": "time-capsule",
+  "status": "asset-only; no catalog or runtime integration",
+  "generatedAt": "2026-11-22",
+  "tool": "image_gen.imagegen (built-in)",
+  "originalToolPath": "C:/Users/eeg14/.codex/generated_images/01a2037d-9e46-7e50-b08a-84bcb6026c15/exec-662e98c9-07fb-4318-a223-968674bb3e8f.png",
+  "transparentBackground": true,
+  "referenceRole": "P01.webp and PM01.webp viewed for inventory pixel-art style; not edit targets",
+  "references": [
+    "public/wiki/icons/P01.webp",
+    "public/wiki/icons/PM01.webp"
+  ],
+  "promptFile": "assets/source/items/time-capsule/prompt.txt",
+  "fullPrompt": "Use case: stylized-concept\nAsset type: one transparent pixel-art inventory item sprite for an existing cozy farm game, designed for a final 96 x 96 icon.\nPrimary request: draw ONE complete sealed time capsule device, with warm brass / copper end caps, a cyan-teal transparent glass core, and a clearly readable simple hourglass symbol inside the core. It must communicate time, not medicine.\nStyle/medium: authentic hand-placed pixel-art sprite style matching the viewed inventory references P01 (paper-wrapped bread) and PM01 (small black stove). Clearly visible grouped color pixels, hard stair-step silhouette, a restrained palette, discrete planes of shading, a dark warm outline. Draw the pixel art natively; do not make a smooth 3D illustration with a pixel filter. Logical sprite detail is around 64 pixels across. The hourglass consists of two clear gold triangles meeting at a narrow waist, with a dark outline, no tiny text.\nSubject: a sturdy small cylindrical fantasy time container, compact but distinctly mechanical: broad flat-edged brass sealed caps on both ends, thick rim collars, central transparent blue-green chamber. The two end caps and central chamber form one connected solid object. The hourglass floats visibly within the chamber. Closed end caps with simple highlights; no lid open and no liquid spilling. The capsule must NOT resemble a pill, medicine ampoule or flashlight.\nComposition/framing: square canvas; show the entire object alone in three-quarter view, tilted naturally slightly clockwise (long axis runs from upper left toward lower right), with a centered balanced silhouette. Capsule overall visible bounds should occupy about 66% of both canvas width and height, with generous completely transparent margin on all sides; no clipping. One device only, no extra props.\nLighting/color: warm amber and brass caps, deep brown shadow pixels, cyan and teal glass core with compact pale highlights. Softly cheerful readable game object, no bloom. Use a few clean chunky glass highlight pixels, not dense sparkles.\nScene/backdrop: genuine transparent alpha background; no floor, no scenery, no ground/contact/drop shadow.\nText: no letters, no numbers, no labels.\nAvoid: smooth gradients, photorealism, painterly rendering, anti-aliased vector look, complicated gears, detailed markings, large glowing aura or halo, particles outside the object, UI frame, checkerboard drawn into the image, background, floor, drop shadow, multiple variants or sprite sheet.\n",
+  "source": {
+    "path": "assets/source/items/time-capsule/raw-v1.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "53b5e3712e21254901f38b73236898936a83ffd27dfa8d014821cc2265421247"
+  },
+  "conversion": {
+    "script": "scripts/export-time-capsule-icon.mjs",
+    "crop": {
+      "left": 128,
+      "top": 213,
+      "width": 984,
+      "height": 850
+    },
+    "boundsAlphaThreshold": 128,
+    "originalPixelPadding": 2,
+    "alphaInsideCrop": "preserved from source",
+    "kernel": "nearest",
+    "targetContentSize": [
+      64,
+      55
+    ],
+    "contentPlacement": [
+      16,
+      20
+    ],
+    "canvas": [
+      96,
+      96
+    ],
+    "webpQuality": 70,
+    "alphaQuality": 100,
+    "operations": [
+      "crop transparent outer margin",
+      "nearest-neighbor resize",
+      "center with transparent padding",
+      "PNG/WebP encoding"
+    ],
+    "redrawingOrPixelFilter": false
+  },
+  "outputs": [
+    {
+      "path": "assets/source/items/time-capsule/time-capsule-96.png",
+      "sha256": "db7774a02439eba152653f2aab85180dff4f3b6ca369cf167a1bf7f759a60590"
+    },
+    {
+      "path": "public/wiki/icons/time-capsule.webp",
+      "sha256": "94f4c23607b1744e71b5701f4a41f4ff0c509bea9daef60183623a6e62236fb6"
+    }
+  ],
+  "localReviewEvidence": [
+    {
+      "path": "assets/source/items/time-capsule/reviews/96-beige.png",
+      "sha256": "bda995612b2ebd008dcadaa9849f9fbac9dde6c96e838716bd482bed1fab8df6",
+      "note": "证据图仅本地保存；96px PNG composited on beige #f5eddc; no game preview."
+    }
+  ],
+  "verification": "No tests, game preview, art checks or builds run; ordinary source conversion only. Visual review recorded separately by PM."
+}

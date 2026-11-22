@@ -1,13 +1,17 @@
 const checkIntervalMs = 15 * 60 * 1000;
 const foregroundCheckGapMs = 60 * 1000;
+// Asset load failures arrive in bursts; they trigger at most one immediate check per gap.
+const failureCheckGapMs = 10 * 1000;
 const takeoverTimeoutMs = 12000;
 const staleMessage = '版本已变化，请稍后再试。';
 
 // Updates are optional: registration/check failures must never block the game.
-export function startPwaUpdates({ serviceWorker, scriptURL, save, canPrompt, showPrompt, reload }) {
+// `build` is this page's build (the ?v= of its worker URL). Returns { checkNow }.
+export function startPwaUpdates({ serviceWorker, scriptURL, build, save, canPrompt, showPrompt, reload }) {
   let registration;
   let checking;
   let lastCheckAt = -Infinity;
+  let lastFailureCheckAt = -Infinity;
   let candidate;
   let prompt;
   let promptTimer;
@@ -15,9 +19,30 @@ export function startPwaUpdates({ serviceWorker, scriptURL, save, canPrompt, sho
   let reloaded = false;
   const watched = new WeakSet();
   const prompted = new WeakSet();
+  const adopted = new WeakSet();
 
-  const waiting = () => registration?.waiting?.state === 'installed' && serviceWorker.controller
+  // A worker registered under this page's own ?v= serves exactly the build already running here.
+  // It appears after an accepted update reloads into the new page, whose registration URL differs
+  // from the one the update was found under. It replaces the identical worker without a prompt
+  // or reload; any other tab still on an older build keeps its normal update prompt.
+  const sameBuild = (worker) => {
+    if (!build || !worker?.scriptURL) return false;
+    try { return new URL(worker.scriptURL).searchParams.get('v') === build; }
+    catch { return false; }
+  };
+  function adopt(worker) {
+    if (adopted.has(worker)) return;
+    adopted.add(worker);
+    try { worker.postMessage({ type: 'IDLE_MANOR_ACTIVATE_UPDATE' }); }
+    catch { adopted.delete(worker); }
+  }
+
+  const installed = () => registration?.waiting?.state === 'installed' && serviceWorker.controller
     ? registration.waiting : undefined;
+  const waiting = () => {
+    const worker = installed();
+    return worker && !sameBuild(worker) ? worker : undefined;
+  };
   const isCurrent = (worker) => waiting() === worker;
   const isTakingOver = (worker) => registration?.active === worker &&
     (worker.state === 'activating' || worker.state === 'activated');
@@ -46,6 +71,8 @@ export function startPwaUpdates({ serviceWorker, scriptURL, save, canPrompt, sho
   }
 
   function refresh(schedule = true) {
+    const current = installed();
+    if (current && sameBuild(current)) adopt(current);
     // A known update remains actionable after another tab activates it. Never
     // manufacture a candidate from active alone: that would offer first installs.
     const next = waiting() ?? (candidate && isTakingOver(candidate) ? candidate : undefined);
@@ -119,15 +146,31 @@ export function startPwaUpdates({ serviceWorker, scriptURL, save, canPrompt, sho
     }
   }
 
-  async function check() {
-    if (!registration || checking || document.hidden) return;
-    if (performance.now() - lastCheckAt < foregroundCheckGapMs) { refresh(); return; }
+  function update() {
     lastCheckAt = performance.now();
     checking = registration.update().catch(() => {}).finally(() => {
       checking = undefined;
       refresh();
     });
-    await checking;
+    return checking;
+  }
+
+  async function check() {
+    if (!registration || checking || document.hidden) return;
+    if (performance.now() - lastCheckAt < foregroundCheckGapMs) { refresh(); return; }
+    await update();
+  }
+
+  // Immediate check after a hashed asset failed to load. It bypasses the foreground gap, joins a
+  // check already in flight, and runs at most once per failureCheckGapMs. A newer build found here
+  // uses the normal prompt; no newer build means no prompt. Before registration completes, the
+  // initial check after registering covers the failure.
+  function checkNow() {
+    if (!registration || document.hidden) return Promise.resolve();
+    if (checking) return checking;
+    if (performance.now() - lastFailureCheckAt < failureCheckGapMs) return Promise.resolve();
+    lastFailureCheckAt = performance.now();
+    return update();
   }
 
   serviceWorker.addEventListener('controllerchange', refresh);
@@ -146,4 +189,5 @@ export function startPwaUpdates({ serviceWorker, scriptURL, save, canPrompt, sho
     refresh();
     void check();
   }).catch(() => {});
+  return { checkNow };
 }

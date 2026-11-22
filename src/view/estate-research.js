@@ -4,6 +4,8 @@ import visuals from '../content/estate-research-visuals.json' with { type: 'json
 export const estateResearchAsset = visuals.base.assetName;
 export const estateResearchFootprint = visuals.base.footprint;
 export const estateResearchMotionBounds = visuals.bubbles.animationBBox;
+// Every estate asset name this building can request (build-time manifest check).
+export const estateResearchAssetNames = () => [visuals.base.assetName, visuals.bubbles.assetName];
 
 // The base building and its large beaker stay fixed. Only the independently
 // painted transparent bubble frames change, in the same building coordinates.

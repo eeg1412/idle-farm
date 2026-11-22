@@ -3,8 +3,10 @@ const home = new URL('./', scope);
 const indexPath = new URL('./index.html', scope).pathname;
 const staticAssets = assets.map((asset) => new URL(asset, scope).href);
 const staticURLs = new Set(staticAssets);
-const imageDirectories = ['./art/', './ui-icons/', './wiki/icons/']
-  .map((path) => new URL(path, scope).pathname);
+// Content-hashed public files injected by scripts/build-offline.mjs. A hashed name never changes
+// content, so these are served cache-first and kept after their first load.
+const hashedPaths = new Set((typeof hashedAssets === 'undefined' ? [] : hashedAssets)
+  .map((asset) => new URL(asset, scope).pathname));
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -69,7 +71,6 @@ self.addEventListener('fetch', (event) => {
     if (url.pathname === home.pathname || url.pathname === indexPath) event.respondWith(navigate(request));
     return;
   }
-  const gameImage = url.searchParams.get('game') === '1' && url.pathname.endsWith('.webp') &&
-    imageDirectories.some((directory) => url.pathname.startsWith(directory));
-  if (gameImage || staticURLs.has(url.href)) event.respondWith(loadAsset(request, gameImage));
+  const hashed = hashedPaths.has(url.pathname);
+  if (hashed || staticURLs.has(url.href)) event.respondWith(loadAsset(request, hashed));
 });

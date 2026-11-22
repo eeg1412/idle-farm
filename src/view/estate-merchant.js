@@ -5,6 +5,10 @@ export function estateMerchantAsset(unlocked) {
   return unlocked ? 'merchant' : visuals.closed.assetName;
 }
 
+// Every estate asset name this cart can request (build-time manifest check).
+export const estateMerchantAssetNames = () => [estateMerchantAsset(true), estateMerchantAsset(false),
+  ...visuals.pennant.assetNames, visuals.lantern.assetName];
+
 export function estateMerchantMotionBounds() {
   const boxes = [visuals.pennant.animationBBox, visuals.lantern.animationBBox];
   return [Math.min(...boxes.map((box) => box[0])), Math.min(...boxes.map((box) => box[1])),

@@ -2,6 +2,7 @@ import { Container, Rectangle, Sprite, Texture } from 'pixi.js';
 import {
   estateBirdCount, estateBirdPassAt, estateBirdPose, estateBirdRoute,
 } from './estate-atmosphere-layout.js';
+import { assetUrl } from './asset-url.js';
 
 // Session-wide visible flight clock. A map instance may be destroyed when a
 // non-map page is built and recreated on return or rotation; the clock and the
@@ -10,9 +11,7 @@ import {
 // texture-ready map ticks advance it; it is never persisted.
 const estateBirdSession = { elapsed: 0, startedPass: -1, advancedAt: undefined };
 
-export const estateAtmosphereAssetUrl = (name) => new URL(
-  `./art/estate/atmosphere/${name}.webp?game=1&v=1`, document.baseURI,
-).href;
+export const estateBirdAssetPath = 'art/estate/atmosphere/birds.webp';
 
 // The fixed bird URL uses the existing pinned animation/Assets cache. This instance
 // owns only its sprites and four Texture views, never their shared source.
@@ -49,7 +48,7 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
     requested = true;
     // Failure is optional decoration: do not register atlas preparation or
     // revive the already completed opening task registry.
-    Promise.resolve(loadImage(estateAtmosphereAssetUrl('birds'))).then((texture) => {
+    Promise.resolve(loadImage(assetUrl(estateBirdAssetPath))).then((texture) => {
       if (!disposed && !layer.destroyed && texture?.width === 512 && texture.height === 128) {
         birdTexture = texture;
         markDirty();

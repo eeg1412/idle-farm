@@ -1,0 +1,29 @@
+{
+  "task": "TC-REVIEW",
+  "date": "2026-11-22",
+  "reviewer": "PM, independent of capsule_art",
+  "result": "source and 96px output static review passed",
+  "assetOnly": true,
+  "runtimeIntegrated": false,
+  "userApproved": false,
+  "generationManifest": "assets/source/items/time-capsule/source-manifest.json",
+  "viewed": [
+    "public/wiki/icons/P01.webp",
+    "public/wiki/icons/PM01.webp",
+    "assets/source/items/time-capsule/raw-v1.png",
+    "public/wiki/icons/time-capsule.webp",
+    "assets/source/items/time-capsule/reviews/96-beige.png"
+  ],
+  "output": {
+    "path": "public/wiki/icons/time-capsule.webp",
+    "sha256": "94f4c23607b1744e71b5701f4a41f4ff0c509bea9daef60183623a6e62236fb6"
+  },
+  "evidence": [{
+    "path": "assets/source/items/time-capsule/reviews/96-beige.png",
+    "sha256": "bda995612b2ebd008dcadaa9849f9fbac9dde6c96e838716bd482bed1fab8df6",
+    "note": "证据图仅本地保存",
+    "generator": "scripts/export-time-capsule-icon.mjs"
+  }],
+  "checksRun": [],
+  "unverified": ["warehouse runtime display", "user acceptance"]
+}

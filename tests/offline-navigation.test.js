@@ -32,7 +32,7 @@ async function navigationResult({ request, response }) {
   return result;
 }
 
-function createWorker() {
+function createWorker({ hashedAssets } = {}) {
   const listeners = new Map();
   const cacheKeys = new Set([oldCache, 'another-app']);
   const fetched = [];
@@ -71,7 +71,10 @@ function createWorker() {
       return { request, response };
     },
   };
-  runInNewContext(`const cacheName = ${JSON.stringify(cacheName)};\nconst assets = ${JSON.stringify(assets)};\n${workerSource}`, {
+  // scripts/build-offline.mjs prepends these declarations to dist/sw.js. hashedAssets is optional
+  // here so the form without it keeps working.
+  const hashedDeclaration = hashedAssets ? `const hashedAssets = ${JSON.stringify(hashedAssets)};\n` : '';
+  runInNewContext(`const cacheName = ${JSON.stringify(cacheName)};\nconst assets = ${JSON.stringify(assets)};\n${hashedDeclaration}${workerSource}`, {
     URL, Headers, Response,
     self: {
       location: new URL('sw.js', scope),
@@ -165,4 +168,64 @@ test('the worker bypasses unknown and cross-origin navigations', () => {
   }
   assert.equal(worker.request(scope, 'navigate', 'POST').response, undefined);
   assert.deepEqual(worker.fetched, []);
+});
+
+const hashedIcon = './wiki/icons/A01-1a2b3c4d.webp';
+const hashedScene = './art/estate/background-5e6f7a8b.webp';
+
+test('hashed public images are served from the network once, then cache-first', async () => {
+  const worker = createWorker({ hashedAssets: [hashedIcon, hashedScene] });
+  const url = new URL(hashedIcon, scope).href;
+  worker.fetch = async () => markResponse(new Response('icon-bytes', {
+    headers: { 'Content-Type': 'image/webp' },
+  }), { redirected: false, type: 'basic', url });
+
+  const first = await worker.request(url, 'no-cors').response;
+  assert.equal(await first.text(), 'icon-bytes');
+  assert.equal(worker.fetched.length, 1);
+
+  // A hashed name always has the same content: later requests never reach the network.
+  worker.fetch = async () => { throw new Error('offline'); };
+  const second = await worker.request(url, 'no-cors').response;
+  assert.equal(await second.text(), 'icon-bytes');
+  assert.equal(worker.fetched.length, 1);
+});
+
+test('a failed hashed image response is returned but not retained', async () => {
+  const worker = createWorker({ hashedAssets: [hashedIcon] });
+  const url = new URL(hashedIcon, scope).href;
+  worker.fetch = async () => new Response('Not found', { status: 404 });
+  const missing = await worker.request(url, 'no-cors').response;
+  assert.equal(missing.status, 404);
+
+  worker.fetch = async () => new Response('icon-bytes', { headers: { 'Content-Type': 'image/webp' } });
+  const retried = await worker.request(url, 'no-cors').response;
+  assert.equal(await retried.text(), 'icon-bytes');
+  assert.equal(worker.fetched.length, 2);
+});
+
+test('only injected hashed names are intercepted; source names and the old ?game=1 marker are not', async () => {
+  const worker = createWorker({ hashedAssets: [hashedIcon] });
+  for (const url of [
+    `${scope}wiki/icons/A01.webp`,
+    `${scope}wiki/icons/A01.webp?game=1`,
+    `${scope}art/estate/background.webp?game=1&v=7`,
+    `${scope}wiki/icons/A01-00000000.webp`,
+    'https://another.example/workshop/wiki/icons/A01-1a2b3c4d.webp',
+  ]) {
+    assert.equal(worker.request(url, 'no-cors').response, undefined, url);
+  }
+  const hashedUrl = new URL(hashedIcon, scope).href;
+  assert.equal(worker.request(hashedUrl, 'no-cors', 'POST').response, undefined);
+  const intercepted = worker.request(hashedUrl, 'no-cors').response;
+  assert.ok(intercepted);
+  // The default worker fetch is offline; the uncached hashed image reports that failure.
+  await assert.rejects(intercepted, /offline/);
+});
+
+test('injected hashed names are not precached unless listed in the shell assets', async () => {
+  const worker = createWorker({ hashedAssets: [hashedIcon, hashedScene] });
+  worker.fetch = async () => new Response('<canvas></canvas>', { headers: { 'Content-Type': 'text/html' } });
+  await worker.dispatch('install');
+  assert.deepEqual(worker.precached, [`${scope}assets/game.js`]);
 });

@@ -144,13 +144,25 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 静态关键帧使用与Pixi相同的布局/时序输入合成；审图报告见本轮`docs/art-reviews/`，逐一分开记录原画、发布资源、合成分镜、实际运行与用户认可。`assets/mining/keyframes/` 与 `assets/mining/reviews/` 的图片是仅本地保存的证据图，不提交；`keyframes.json` 等清单照常提交，新环境用 `scripts/compose-mining-keyframes.mjs` 重新生成。素材存在或自动资源门通过不代表视觉或运行通过。
 
 - PixiJS 游戏的庄园、工坊、仓库和图鉴列表连续滚动。列表只绘制进入视口的内容，并在其进入视口时按需请求对应图标和场景图。图片请求按资源 URL 合并并发请求，失败时保留名称及布局。物品图与界面图分别来自 `public/wiki/icons/` 和 `public/ui-icons/`。动画挂载和卸载遵循各场景的既有规则。
-- Service Worker 的安装清单排除所有 WebP 图片；游戏图片（`art/`、`ui-icons/`、`wiki/icons/` 下带 `?game=1` 的请求）在首次加载后按需缓存。除游戏首页外的导航走浏览器常规请求。未来添加游戏 WebP 时也应从预缓存清单排除，只预缓存启动壳和必需依赖。原图不进入 `dist/`。
+- Service Worker 只预缓存启动壳和必需依赖；带哈希的 `public/` 发布文件除 `art/estate/` 地图图外不进入安装清单，首次加载成功后按发布路径缓存并优先读缓存。除游戏首页外的导航走浏览器常规请求。原图不进入 `dist/`。
 
 游戏大幅场景分别保留在 `assets/source/art/*.png`，各页发布图在 `public/art/*.webp`。游戏按当前页面的可见内容请求相应横幅、场景及图标，并沿用已访问发布图片的缓存。
 
+### 发布文件名与资源网址
+
+- `public/` 中的源文件保持原名。生产构建把每个非固定名文件发布为 `name-<8位内容哈希>.ext`，哈希取文件内容 sha256 的前 8 位十六进制；内容不变则发布名不变，同名覆盖图片后发布名随之改变。
+- 运行时的全部 `public/` 资源网址一律经 `src/view/asset-url.js` 的 `assetUrl(path)` 生成，`path` 写 `public/` 下的源路径（接受 `art/x.webp`、`./art/x.webp`、`public/art/x.webp`）。生产构建从打包进 JS 的清单取发布名；路径不在清单中时抛错，不退回无哈希原路径。`npm run dev` 不使用清单，直接返回原路径。禁止在网址上手写 `?v=` 版本号或其他缓存标记，换图后不需要任何手动版本操作。
+- 清单为 `src/content/asset-manifest.json`，由 `scripts/build-asset-manifest.mjs` 在 `vite build` 前生成，属于构建生成物，已列入 `.gitignore`，不提交。生成规则位于 `scripts/asset-manifest.mjs`。
+- 固定名文件保持原名、不入清单：`index.html`、`sw.js`、`manifest.webmanifest`、`favicon.ico`、`icons/` 目录全部文件、`index.html` 的 `href`／`src` 与 `manifest.webmanifest` 的 `icons`／`screenshots`／`shortcuts` 直接引用的本地文件，以及 Cloudflare Pages 配置文件 `_headers`、`_redirects`、`_routes.json`。
+- 运行时不请求的文件不入清单，并由构建从 `dist/` 删除：`art/plot/crops/` 中已登记作物的旧整田图集（C01 未改为单株模式时除外）、`art/loading/background.webp` 与 `art/loading/managers.webp`。调整这些加载规则时同步修改 `scripts/asset-manifest.mjs`。
+- 新增运行时资源时，其路径必须能由 `src/view/canvas-ui.js` 的 `runtimeAssetPaths()` 推导。构建逐一核对该集合与清单，缺项即构建失败。该函数从物品、作物、牲畜、鱼类、矿业、工坊、管理员、开屏场景、地图建筑与地图气氛的目录及视觉登记推导路径；以下两组是写在 `canvas-ui.js` 中的固定名单，不由数据推导，新增对应资源时必须同步改名单：
+  - 管理员表情：`managerExpressions`（`smile`、`happy`、`sad`、`angry`）× `managerGenders`（`female`、`male`），对应 `art/managers/portraits/<role>/<gender>-<expression>.webp`。
+  - 管理员行动图标：`managerActionIcons`（`gift`、`info`、`receive`、`switch`），对应 `art/managers/icons/<name>.webp`。
+- 资源加载失败、Service Worker 缓存与更新提示规则见[性能规约 §6](performance.md#6-构建与发布scriptsbuild-offlinemjs)。
+
 ## 管理员场景 CG 开屏
 
-运行素材为 `public/art/loading/scenes/{role}-{gender}.webp` 共 24 张完整人物场景 CG 与原 `public/art/loading/logo.webp`。人物与环境绘在同一张画中，按当前立绘和角色性格设计工作动作。各幅独立使用内置绘图生成，源文件位于 `assets/source/art/loading/solo/{role}/`。订单中心两张场景采用 nearest 采样，各自使用 `orders-female-redesign-v3`、`orders-male-redesign-v3` 缓存版本。其余开屏图和 Logo 沿用 linear 采样。
+运行素材为 `public/art/loading/scenes/{role}-{gender}.webp` 共 24 张完整人物场景 CG 与原 `public/art/loading/logo.webp`。人物与环境绘在同一张画中，按当前立绘和角色性格设计工作动作。各幅独立使用内置绘图生成，源文件位于 `assets/source/art/loading/solo/{role}/`。订单中心两张场景采用 nearest 采样，其余开屏图和 Logo 沿用 linear 采样。
 
 每次启动等存档恢复或新档建立后，从 12 个岗位各自已选形象中均匀选一张并锁定。新档按 `managerDefaultGenders` 默认六女六男，订单中心选男性；旧档保留已有岗位选择，缺订单岗位时补男性。只加载抽中的 CG 和 Logo，与当前可见页面资源并行。真实加载任务全成功且完整开屏可见至少 1000ms 后，以 300ms 淡出。失败继续原重试／查看存档问题，后台页面持续准备；开屏期间原对白与输入阻断保持。
 
@@ -160,7 +172,7 @@ CG 采用纵向近景构图。顶部 Logo 和底部进度控件避开脸部，�
 
 茜梨以 `assets/source/art/managers/orders/anime/female-{smile,happy,angry,sad}.png` 四张全身原图导出胸像。角色页和管理员列表按岗位、性别与表情读取 `public/art/managers/portraits/orders/{gender}-{expression}.webp`；窗口背景为 `public/art/managers/backgrounds/orders.webp`。[茜梨原画及导出记录](../assets/source/art/managers/orders/anime/female-source.md)
 
-奥林的微笑、高兴、生气和失落全身原画位于 `assets/source/art/managers/orders/redesign-v2/male-{smile,happy,angry,sad}.png`。四表情共用裁切范围，以 nearest 缩至 500×283，顶部透明留 6 像素，发布为 500×289 胸像。`assets/source/art/managers/orders/anchors.json` 的 male 字段与 `src/content/manager-portraits.json` 的 orders.male 保持同一登记。订单胸像缓存版本为 5。四张全身原图、两张 CG 的提示词、真实生成来源、裁切参数及发布图对应记录在 [source-manifest.json](../assets/source/art/managers/orders/redesign-v2/source-manifest.json)，专用导出入口为 `scripts/export-order-redesign-v2.mjs`。
+奥林的微笑、高兴、生气和失落全身原画位于 `assets/source/art/managers/orders/redesign-v2/male-{smile,happy,angry,sad}.png`。四表情共用裁切范围，以 nearest 缩至 500×283，顶部透明留 6 像素，发布为 500×289 胸像。`assets/source/art/managers/orders/anchors.json` 的 male 字段与 `src/content/manager-portraits.json` 的 orders.male 保持同一登记。四张全身原图、两张 CG 的提示词、真实生成来源、裁切参数及发布图对应记录在 [source-manifest.json](../assets/source/art/managers/orders/redesign-v2/source-manifest.json)，专用导出入口为 `scripts/export-order-redesign-v2.mjs`。
 
 旧群像与背景两层仅作历史留存，运行开屏不以它们回退。独立场景 CG 须保留真实背景、角色身份参考与场景登记，禁止程序拼立绘或用纯色背景替代。
 
@@ -170,7 +182,7 @@ CG 采用纵向近景构图。顶部 Logo 和底部进度控件避开脸部，�
 
 当时群像直接采用用户认可的1024×1536透明原稿，不加旧1344高padding；版本key为`all22-v3-approved-closeup`，满视口宽等比显示并延伸至底边之外。背景和LOGO原字节保留，1秒完整显示与300ms淡出不变。来源、旧版及导出登记见`assets/source/art/loading/`。
 
-认可地图底图以816×1926、WebP90接入`public/art/estate/background.webp`，请求与离线版本同步v7；建筑/门牌/动件和几何不变。`public/art/estate/atmosphere/`新增512×1024透明暖阳与512×128横排四帧飞鸟，均由内置绘图原生生成，WebP70/Alpha100；代码仅裁帧、统一身体锚点、播放及平移，不程序画鸟或旋转静图冒充振翅。源图、提示和导出记录见`assets/source/art/estate-atmosphere/`。
+认可地图底图以816×1926、WebP90接入`public/art/estate/background.webp`；建筑/门牌/动件和几何不变。`public/art/estate/atmosphere/`新增512×1024透明暖阳与512×128横排四帧飞鸟，均由内置绘图原生生成，WebP70/Alpha100；代码仅裁帧、统一身体锚点、播放及平移，不程序画鸟或旋转静图冒充振翅。源图、提示和导出记录见`assets/source/art/estate-atmosphere/`。
 
 暖阳单独linear，鸟nearest；层位在建筑上、门牌与控制下，不接收输入。复用固定纹理缓存、既有ticker及3鸟池，开屏complete且地图可见时才加载/推进；后台、弹窗、忙碌暂停并在恢复后续飞原趟，右上菜单展开时照常推进与绘制，离图销毁。飞行时钟为本次运行会话级共享，只在地图活动且纹理就绪时推进：开屏结束后首次进图必飞首趟，之后按会话级定时器每19.2秒一趟；切页回图、旋转或尺寸重建不触发新趟，若时钟正处某趟飞行中，新实例跳过该趟剩余部分。单鸟2.45秒、错开190ms。只增量改Sprite，不改玩法、数值、存档或建筑动画路径。静态分镜与只读源码结论见[本轮独审](art-reviews/2026-11-19-approved-art-atmosphere.md)，不代替实际运行体验。
 
@@ -210,4 +222,4 @@ registration.json的runtime对象原样转入小型src/content/estate-merchant-v
 
 scripts/export-pwa-icons-v2.mjs仅从真实源等比转换正式PNG32/48/180/192/512及独立maskable512，封装32/48 ICO；不重新绘画主体。public/icons/manor-v2-*使用新文件名，旧6PNG移除，index.html的favicon、manifest引用同步版本化，Apple使用v2的180图。所有正式PNG满幅不透明，关键房屋/麦穗在maskable中央安全圆内；主体、圆/圆角裁切与小尺寸均实际审阅。只保留短审阅报告，临时图板置于项目外，不入源码包。
 
-manifest仍为放置庄园，id=idle-manor、start_url=./#/farm、scope=./、standalone及主题不改，不重新建立应用身份。新图地址让浏览器识别图标变更；已安装图标的最终替换仍受浏览器及系统策略影响，可能需要用户在系统提供的更新入口确认，不能由游戏UI保证立即变更。生产Service Worker/离线构建沿现有非WebP资源遍历收录manifest/ICO/PNG，不另建缓存体系；用户授权的新版本提示在游戏UI中处理，安装提示不在本轮范围。
+manifest仍为放置庄园，id=idle-manor、start_url=./#/farm、scope=./、standalone及主题不改，不重新建立应用身份。新图地址让浏览器识别图标变更；已安装图标的最终替换仍受浏览器及系统策略影响，可能需要用户在系统提供的更新入口确认，不能由游戏UI保证立即变更。manifest、ICO与`icons/`下PNG为固定名文件，不加内容哈希，由生产Service Worker安装清单预缓存，不另建缓存体系；用户授权的新版本提示在游戏UI中处理，安装提示不在本轮范围。

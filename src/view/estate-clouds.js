@@ -1,13 +1,12 @@
 import { Rectangle, Texture } from 'pixi.js';
+import { assetUrl } from './asset-url.js';
 
 export const estateCloudVariantCount = 10;
 export const estateAnimalCloudVariantCount = 4;
-export const estateCloudAssetUrl = () => new URL(
-  './art/estate/atmosphere/cloud-shapes-v2.webp?game=1&v=1', document.baseURI,
-).href;
-export const estateAnimalCloudAssetUrl = () => new URL(
-  './art/estate/atmosphere/animal-clouds-v1.webp?game=1&v=2', document.baseURI,
-).href;
+export const estateCloudAssetPath = 'art/estate/atmosphere/cloud-shapes-v2.webp';
+export const estateAnimalCloudAssetPath = 'art/estate/atmosphere/animal-clouds-v1.webp';
+export const estateCloudAssetUrl = () => assetUrl(estateCloudAssetPath);
+export const estateAnimalCloudAssetUrl = () => assetUrl(estateAnimalCloudAssetPath);
 
 // Frame-local alpha>=128 bounds, copied from frames[].png.registration in:
 // assets/source/art/estate-weather/shapes-v2/conversion.json (published WebP

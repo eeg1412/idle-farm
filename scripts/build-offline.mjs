@@ -1,56 +1,52 @@
 import { createHash } from 'node:crypto';
-import { readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { createAssetManifest, listFiles, manifestFile, platformFiles } from './asset-manifest.mjs';
 
-// All paths use forward slashes so filters and the service-worker asset list behave the same on Windows.
-async function files(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  return (await Promise.all(entries.map(async (entry) => {
-    const path = `${dir}/${entry.name}`;
-    return entry.isDirectory() ? files(path) : [path];
-  }))).flat();
+// All paths are relative to dist/ and use forward slashes, so filters and the service-worker
+// asset list behave the same on Windows.
+
+// The bundled manifest must describe exactly the public/ files this build publishes.
+const bundled = JSON.parse(await readFile(manifestFile, 'utf8'));
+const { manifest, isUnpublished } = await createAssetManifest();
+const entries = Object.entries(manifest);
+if (Object.keys(bundled).length !== entries.length ||
+    entries.some(([source, published]) => bundled[source] !== published)) {
+  throw new Error(`${manifestFile} 与 public/ 不一致，请重新运行 npm run build。`);
 }
 
-// Legacy field atlases are only loaded for C01 while it is not an individual-plant crop (see loadPlotTextures).
-// Remove the unused copies from the build output before hashing; public/ sources stay untouched.
-const cropVisuals = JSON.parse(await readFile(new URL('../src/content/crop-visuals.json', import.meta.url), 'utf8'));
-const cropAtlasDir = 'dist/art/plot/crops';
-const cropAtlasPattern = /^(C\d+)(?:-front)?\.webp$/;
-const loadsCropAtlas = (id) => id === 'C01' && cropVisuals[id]?.mode !== 'individual';
-const cropAtlasFiles = await readdir(cropAtlasDir).catch(() => []);
-await Promise.all(cropAtlasFiles.map((name) => {
-  const id = cropAtlasPattern.exec(name)?.[1];
-  if (!id || !(id in cropVisuals) || loadsCropAtlas(id)) return null;
-  return rm(`${cropAtlasDir}/${name}`);
-}));
-
-// The opening now requests one complete scene and the original logo. Keep the
-// superseded three-layer art in public/source only, outside the published build.
-await Promise.all(['background', 'managers'].map((name) => rm(`dist/art/loading/${name}.webp`, { force: true })));
+// Vite copies public/ into dist/ under the original names. Remove the files the runtime never
+// requests (legacy crop atlases, superseded loading layers; see scripts/asset-manifest.mjs) and
+// give every other non-fixed public file its content-hashed name. public/ sources stay untouched.
+await Promise.all((await listFiles('dist')).filter(isUnpublished).map((path) => rm(`dist/${path}`)));
+for (const [source, published] of entries) await rename(`dist/${source}`, `dist/${published}`);
 
 // PixiJS chunks only fetched on demand (no WebGL, or accessibility enabled) stay in dist but are not precached.
-const onDemandChunk = /^dist\/assets\/(?:WebGPURenderer|CanvasRenderer|AccessibilitySystem)-[\w-]+\.js$/;
+const onDemandChunk = /^assets\/(?:WebGPURenderer|CanvasRenderer|AccessibilitySystem)-[\w-]+\.js$/;
 
-const published = (await files('dist')).filter((path) => path !== 'dist/sw.js').sort();
-const paths = published.filter((path) => !path.endsWith('.webp') &&
-  !onDemandChunk.test(path));
-const imagePaths = published.filter((path) => path.endsWith('.webp') &&
-  ['dist/art/', 'dist/ui-icons/', 'dist/wiki/icons/'].some((directory) => path.startsWith(directory)));
+const hashed = new Set(entries.map(([, published]) => published));
+const published = (await listFiles('dist')).filter((path) => path !== 'sw.js').sort();
+// The shell and its dependencies are precached; hashed public images load on demand, except the
+// estate map art, which the default page can request before the worker claims its first client.
+const assets = published.filter((path) => path !== 'index.html' && !platformFiles.has(path) &&
+  !onDemandChunk.test(path) && (!hashed.has(path) || path.startsWith('art/estate/')))
+  .map((path) => './' + path);
+const hashedAssets = [...hashed].sort().map((path) => './' + path);
+
+// One cache name per published content: worker source plus every published file except index.html.
 const worker = await readFile(new URL('../src/platform/site-service-worker.js', import.meta.url), 'utf8');
 const hash = createHash('sha256');
 hash.update(worker);
-for (const path of [...paths, ...imagePaths]) {
+for (const path of published) {
+  if (path === 'index.html') continue;
   hash.update(path + '\0');
-  hash.update(await readFile(path));
+  hash.update(await readFile(`dist/${path}`));
 }
 const cache = 'idle-farm-' + hash.digest('hex').slice(0, 16);
-const assets = paths.filter((path) => path !== 'dist/index.html').map((path) => './' + path.slice(5));
-// The default map can load before the worker claims its first client. Match estate-map.js's request URL.
-const estateAssetVersions = { background: 7, fish: 2, field: 2, 'field-motion': 2, research: 2, 'research-motion': 3, operations: 2, 'atmosphere/animal-clouds-v1': 2 };
-for (const path of imagePaths) {
-  if (!path.startsWith('dist/art/estate/')) continue;
-  const asset = path.slice('dist/art/estate/'.length, -'.webp'.length);
-  const version = estateAssetVersions[asset] ?? 1;
-  assets.push(`./${path.slice(5)}?game=1&v=${version}`);
-}
-await writeFile('dist/sw.js',
-  `const cacheName = ${JSON.stringify(cache)};\nconst assets = ${JSON.stringify(assets)};\n` + worker);
+await writeFile('dist/sw.js', `const cacheName = ${JSON.stringify(cache)};\n` +
+  `const assets = ${JSON.stringify(assets)};\nconst hashedAssets = ${JSON.stringify(hashedAssets)};\n` + worker);
+
+// src/main.js registers ./sw.js?v=<cache> from this tag.
+const html = await readFile('dist/index.html', 'utf8');
+if (!html.includes('</head>')) throw new Error('dist/index.html 缺少 </head>，无法写入构建版本。');
+await writeFile('dist/index.html',
+  html.replace('</head>', `  <meta name="idle-farm-build" content="${cache}">\n  </head>`));
