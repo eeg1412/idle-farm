@@ -1,5 +1,7 @@
 // Pure display geometry and clock shared by Pixi and the offline keyframe compositor.
 // This module never reads or mutates the economic world.
+// Minimum real batch time for the full trip (2 s entry/exit, 300 ms unload, 1 s stay).
+// Shorter batches show only the arrival frame; the batch is never stretched.
 export const minMiningAnimationMs = 5300;
 export const miningTravelMs = 2000;
 export const miningUnloadMs = 300;
@@ -12,15 +14,18 @@ export function smoothstep(value) {
 
 export function sampleMiningAnimation({ session, batch, clock }) {
   const startedAt = session?.startedAt ?? batch.start;
-  const actualDuration = batch.end - batch.start;
-  const short = actualDuration < minMiningAnimationMs;
-  const duration = Math.max(actualDuration, minMiningAnimationMs);
+  const duration = batch.end - batch.start;
   const elapsed = Math.max(0, clock - startedAt);
-  // Long batches track the live saved economic window, including future speed changes.
-  // Short batches keep the persistent session clock through any number of real harvests.
   const batchElapsed = Math.max(0, clock - batch.start);
-  const first = short ? elapsed < duration : batch.start === startedAt && batchElapsed < duration;
-  const phase = (short ? elapsed : batchElapsed) % duration;
+  // Below the minimum display time the cart is not driven at all: it stays at
+  // the unloading station with its cargo, the frame of arrival. No entry,
+  // travel or unload fade plays, so consecutive short batches never flash.
+  if (duration < minMiningAnimationMs) {
+    return { duration, elapsed, phase: batchElapsed, first: false, position: 1, cargoAlpha: 1, stage: 'arrived' };
+  }
+  // Batches of at least 5.3 s track the live saved economic window, including future speed changes.
+  const first = batch.start === startedAt && batchElapsed < duration;
+  const phase = batchElapsed % duration;
   let position = 0; // 0: inside the mine, 1: unloading station.
   let cargoAlpha = 0;
   let stage = 'inside';

@@ -316,7 +316,7 @@ test('each crop, livestock and fish facility requests its own art', () => {
   const groups = [
     ['C', '田地', 'scene-empty-field'],
     ['L', '畜牧', 'scene-empty-barn'],
-    ['F', '鱼池', 'scene-empty-pond'],
+    ['F', '鱼塘', 'scene-empty-pond'],
   ];
   for (const [kind, tab, emptyArt] of groups) {
     const ids = Object.keys(catalog.items).filter((id) => catalog.items[id].kind === kind);

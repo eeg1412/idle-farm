@@ -427,7 +427,7 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'upgradeTech') return { toast: '改良已生效', sound: 'success' };
   if (name === 'sellFarm') return { toast: '新一轮经营已开始', sound: 'prestige' };
   if (name === 'sell' || name === 'sellBatch') return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
-  if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼池', M: '购买矿洞' })[args[0]], sound: 'success' };
+  if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
   if (name === 'upgradeFacility' || name === 'upgradeStation' || name === 'upgradeProductionBatch') {
     return { float: '已升级', sound: 'success' };

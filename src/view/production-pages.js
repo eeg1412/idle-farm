@@ -7,11 +7,11 @@ import { hoursLabel, productComplexity, reservePanel } from './management-pages.
 import { compact } from './numbers.js';
 
 const sources = ['全部', '农业', '畜牧', '水产', '矿业'];
-const facilityTabs = { 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M' };
-const facilityNames = { C: '田地', L: '养殖场', F: '鱼池', M: '矿洞' };
+const facilityTabs = { 田地: 'C', 畜牧: 'L', 鱼塘: 'F', 矿洞: 'M' };
+const facilityNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞' };
 const facilityArtAspects = { C: 1.06, L: 1.11, F: 1.20, M: 1 };
 const emptyFacilityArt = { C: 'scene-empty-field', L: 'scene-empty-barn', F: 'scene-empty-pond', M: 'facility-empty-mine' };
-const purchaseLabels = { C: '购地', L: '购买养殖场', F: '购买鱼池', M: '购买矿洞' };
+const purchaseLabels = { C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' };
 const stationNames = { I: '加工位', P: '精制位' };
 const emptyStationArt = { I: 'facility-mill', P: 'facility-kitchen' };
 const upgradeOptions = [

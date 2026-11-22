@@ -13,12 +13,12 @@ import { mountEstateMap } from './estate-map.js';
 import { createLoadingTasks, loadWithDeadline } from './loading-tasks.js';
 import { createLoadingScreen } from './loading-screen.js';
 import { renderProduction, renderWorkshop } from './production-pages.js';
-import { minPlotAnimationMs, mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
+import { mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot-animation.js';
 import {
-  livestockFrameSize, livestockIdleFrames, livestockSpecies, minLivestockAnimationMs, mountLivestockAnimation,
+  livestockFrameSize, livestockIdleFrames, livestockSpecies, mountLivestockAnimation,
 } from './livestock-animation.js';
 import {
-  fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, minFishAnimationMs, mountFishAnimation,
+  fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, mountFishAnimation,
 } from './fish-animation.js';
 import { mountWorkshopAnimation, syncWorkshopMotion, workshopIconIds, workshopTextureSources } from './workshop-animation.js';
 import miningVisuals from '../content/mining-visuals.json' with { type: 'json' };
@@ -42,7 +42,7 @@ const homePage = '庄园';
 const pages = {
   [homePage]: null,
   田地: (ui) => renderProduction(ui, 'C'), 畜牧: (ui) => renderProduction(ui, 'L'),
-  鱼池: (ui) => renderProduction(ui, 'F'), 矿洞: (ui) => renderProduction(ui, 'M'),
+  鱼塘: (ui) => renderProduction(ui, 'F'), 矿洞: (ui) => renderProduction(ui, 'M'),
   加工: (ui) => renderWorkshop(ui, 'I'), 精制: (ui) => renderWorkshop(ui, 'P'),
   仓库: renderWarehouse, 行脚商: renderMerchant, 研究: renderResearch, 经营: renderManagement,
   管理员管理: renderManagerDirectory, 统计: renderStatistics, 出售庄园历史: renderFarmSaleHistory,
@@ -50,14 +50,14 @@ const pages = {
 };
 const menuPages = Object.keys(pages);
 const menuIcons = {
-  [homePage]: 'menu-map', 田地: 'menu-field', 畜牧: 'menu-livestock', 鱼池: 'menu-fish', 矿洞: 'menu-mine',
+  [homePage]: 'menu-map', 田地: 'menu-field', 畜牧: 'menu-livestock', 鱼塘: 'menu-fish', 矿洞: 'menu-mine',
   加工: 'menu-processing', 精制: 'menu-refining', 仓库: 'menu-warehouse', 行脚商: 'menu-merchant',
   研究: 'menu-research', 经营: 'menu-operations', 图鉴: 'menu-catalog', 任务: 'menu-tasks',
   管理员管理: 'manager-directory', 统计: 'statistics', 出售庄园历史: 'sale-history',
   出售庄园: 'menu-farm-sale', 设置: 'menu-settings',
 };
 const estateDestinations = {
-  field: '田地', livestock: '畜牧', fish: '鱼池', mine: '矿洞', processing: '加工', refining: '精制',
+  field: '田地', livestock: '畜牧', fish: '鱼塘', mine: '矿洞', processing: '加工', refining: '精制',
   warehouse: '仓库', research: '研究', operations: '经营', tasks: '任务', merchant: '行脚商',
 };
 const noResearchReadyTabs = new Set();
@@ -407,7 +407,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const activePlots = new Set();
   const visiblePlotIds = new Set();
   const cropPlots = new Map();
-  const shortPlotStarts = new Map();
   const livestockTextures = new Map();
   const livestockBatches = new Map();
   const fishTextures = new Map();
@@ -715,12 +714,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       present.add(key);
       const previous = livestockBatches.get(key);
       if (previous?.id === batch.id && previous.start === batch.start && previous.end === batch.end) continue;
-      const shortBatch = batch.end - batch.start < minLivestockAnimationMs;
       const sameAnimal = previous?.id === batch.id;
       livestockBatches.set(key, {
         id: batch.id, start: batch.start, end: batch.end,
-        animationStart: shortBatch && sameAnimal ? previous.animationStart : batch.start,
-        previousHarvestAt: !shortBatch && sameAnimal && previous.end === batch.start ? batch.start : undefined,
+        previousHarvestAt: sameAnimal && previous.end === batch.start ? batch.start : undefined,
       });
     }
     for (const key of livestockBatches.keys()) if (!present.has(key)) livestockBatches.delete(key);
@@ -742,7 +739,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const size = fishFrameSize;
       const rows = fishSpecies[id].stages;
       if (!pond || !atlas || pond.width !== size || pond.height !== size ||
-          atlas.width !== size * fishIdleFrames || atlas.height !== size * rows) throw new Error('鱼池图集无效');
+          atlas.width !== size * fishIdleFrames || atlas.height !== size * rows) throw new Error('鱼塘图集无效');
       const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: fishIdleFrames }, (_, frame) =>
         new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
       entry.textures = { pond, stages };
@@ -758,11 +755,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       present.add(index);
       const previous = fishBatches.get(index);
       if (previous?.id === batch.id && previous.start === batch.start && previous.end === batch.end) continue;
-      const shortBatch = batch.end - batch.start < minFishAnimationMs;
-      fishBatches.set(index, {
-        id: batch.id, start: batch.start, end: batch.end,
-        animationStart: shortBatch && previous?.id === batch.id ? previous.animationStart : batch.start,
-      });
+      fishBatches.set(index, { id: batch.id, start: batch.start, end: batch.end });
     }
     for (const index of fishBatches.keys()) if (!present.has(index)) fishBatches.delete(index);
   }
@@ -3285,17 +3278,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const now = performance.now();
           animationFrame = { clock: progressClock(now), now };
         }
-        let animationStart = batch.start;
-        if (!livestock && !fish && batch.end - batch.start < minPlotAnimationMs) {
-          // Keep the same visual start when a fast crop finishes another real batch.
-          const previous = shortPlotStarts.get(index);
-          if (previous?.id === batch.id) animationStart = previous.start;
-          else shortPlotStarts.set(index, { id: batch.id, start: animationStart });
-        }
-        const previousFish = fish ? fishBatches.get(index) : undefined;
+        // Each animation follows its own real batch from `batch.start`; there is no display floor.
         const previousAnimal = livestock ? livestockBatches.get('L:' + index) : undefined;
-        if (fish) animationStart = previousFish?.animationStart ?? batch.start;
-        else if (livestock) animationStart = previousAnimal?.animationStart ?? batch.start;
         const previousHarvestAt = livestock ? previousAnimal?.previousHarvestAt : undefined;
         const planting = !livestock && !fish ? world.facilities.C[index]?.planting : undefined;
         // Every mount input is part of the retention check; a parked animation is reused only
@@ -3304,7 +3288,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           key: plot.type + ':' + index + ':' + batch.id + ':' + batch.start,
           textures: plotTextures,
           signature: {
-            batch: { ...batch }, animationStart, previousHarvestAt, planting: planting ?? null,
+            batch: { ...batch }, previousHarvestAt, planting: planting ?? null,
             width: plot.box.width, height: plot.box.height,
           },
         };
@@ -3314,12 +3298,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         const holder = animationHolder(plot);
         if (fish) {
-          plot.animation = mountFishAnimation(holder, plotTextures, plot.box, batch, animationStart);
+          plot.animation = mountFishAnimation(holder, plotTextures, plot.box, batch);
         } else if (livestock) {
-          plot.animation = mountLivestockAnimation(holder, plotTextures, plot.box, batch,
-            animationStart, previousHarvestAt);
-        } else plot.animation = mountPlotAnimation(holder, plotTextures, plot.box, batch, animationStart,
-          planting);
+          plot.animation = mountLivestockAnimation(holder, plotTextures, plot.box, batch, previousHarvestAt);
+        } else plot.animation = mountPlotAnimation(holder, plotTextures, plot.box, batch, planting);
         plot.retained = retained;
         plot.animation.update(animationFrame);
         activePlots.add(plot);
@@ -4125,7 +4107,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     if (estateMap) {
       const mapActive = !document.hidden && !modal && !pendingModal;
-      const atmosphereActive = mapActive && openingScreen.complete && !status?.busy && !navigationMenu;
+      const atmosphereActive = mapActive && openingScreen.complete && !status?.busy;
       if (estateMap.update(now, atmosphereActive, mapActive)) markDirty();
     }
     if (coast) markDirty();
@@ -4177,7 +4159,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     current = homePage;
     lastResearchReady = undefined;
     for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
-    shortPlotStarts.clear();
     livestockBatches.clear();
     fishBatches.clear();
     workshopMotionStates.clear();
@@ -4242,17 +4223,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         lastProgressClock = undefined;
       }
       if (nextWorld?.completedRuns !== world?.completedRuns || nextWorld?.clockMs < world?.clockMs) {
-        shortPlotStarts.clear();
         livestockBatches.clear();
         fishBatches.clear();
         workshopMotionStates.clear();
-      } else {
-        for (const [index, timeline] of shortPlotStarts) {
-          const nextBatch = nextWorld?.facilities.C[index]?.batch;
-          if (!nextBatch || nextBatch.id !== timeline.id || nextBatch.end - nextBatch.start >= minPlotAnimationMs) {
-            shortPlotStarts.delete(index);
-          }
-        }
       }
       syncLivestockBatches(nextWorld);
       syncFishBatches(nextWorld);

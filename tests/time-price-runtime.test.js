@@ -347,9 +347,9 @@ test('research discounts only the generated physical costs and a declined quote 
 
 test('per-technology costs use exact segment quotas, prerequisites and task scope', () => {
   const world = newWorld(0);
-  world.researchPoints = 5_823_060n;
-  assert.equal(techDefinitions.length, 35);
-  assert.equal(techTotalLevels, 1_494);
+  world.researchPoints = 6_508_060n;
+  assert.equal(techDefinitions.length, 39);
+  assert.equal(techTotalLevels, 1_694);
   assert.equal(techOffer(world, 'qualityDiscount'), null);
   assert.equal(upgradeTech(world, 'fishQuality'), false);
   assert.equal(upgradeTech(world, 'livestockYield'), false);
@@ -360,7 +360,7 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
   assert.equal(upgradeTech(world, 'miningCycle'), false);
   assert.equal(upgradeTech(world, 'miningRefining'), false);
   assert.equal(researchOffer(world, 'P01').eligible, true);
-  for (const id of ['C02', 'L01', 'L05', 'PL01', 'F01', 'F05', 'PF01', 'M01', 'M05', 'PM01']) world.unlocked.push(id);
+  for (const id of ['C02', 'C05', 'P01', 'L01', 'L05', 'PL01', 'F01', 'F05', 'PF01', 'M01', 'M05', 'PM01']) world.unlocked.push(id);
   world.quality.C01 = '400';
   world.tech.livestockQuality = 50;
   assert.equal(objectives(world).long.find(({ id }) => id === 'techLevel1200').current, 0n);
@@ -371,6 +371,7 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
     assert.deepEqual([offer.effect.current, offer.effect.next], [0, 2]);
   }
   for (const [key, prerequisite, item] of [
+    ['cropCycle', 'cropYield', 'C05'], ['cropRefining', 'cropProcessing', 'P01'],
     ['livestockCycle', 'livestockYield', 'L05'], ['livestockRefining', 'livestockProcessing', 'PL01'],
     ['fishCycle', 'fishYield', 'F05'], ['fishRefining', 'fishProcessing', 'PF01'],
     ['miningCycle', 'miningYield', 'M05'], ['miningRefining', 'miningProcessing', 'PM01'],

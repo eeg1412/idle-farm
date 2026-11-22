@@ -86,7 +86,7 @@ test('old records keep previous receipts and qualities while market and ordinary
   ]) assert.throws(() => decodeWorldRecord({ ...old, ...change }), { code: 'corrupt-transfer' });
 });
 
-test('full technology pays at 1494 only once and preserves an older receipt', () => {
+test('full technology pays at 1694 only once and preserves an older receipt', () => {
   const fullTechId = 'techLevel1200';
   const world = newWorld(wall, seed);
   world.tech = Object.fromEntries(techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
@@ -95,8 +95,8 @@ test('full technology pays at 1494 only once and preserves an older receipt', ()
   assert.ok(!settleTaskRewards(world).ids.includes(fullTechId));
   const before = world.coins;
   assert.ok(upgradeTech(world, 'merchantBargaining'));
-  assert.deepEqual(settleTaskRewards(world), { ids: [fullTechId], coins: 9_300_000n, researchPoints: 0n });
-  assert.equal(world.coins - before, 9_300_000n);
+  assert.deepEqual(settleTaskRewards(world), { ids: [fullTechId], coins: 10_000_000n, researchPoints: 0n });
+  assert.equal(world.coins - before, 10_000_000n);
   assert.equal(settleTaskRewards(world).coins, 0n);
 
   const old = encodeWorldRecord(world);

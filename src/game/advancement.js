@@ -20,6 +20,10 @@ export const techDefinitions = [
   { key: 'cropBuy', budget: 125_000n, name: '土地议价', source: '农业' },
   { key: 'cropUpgrade', budget: 125_000n, name: '田地改造', source: '农业' },
   { key: 'cropYield', budget: 420_000n, baseCost: 150n, name: '丰收栽培', source: '农业' },
+  { key: 'cropResearch', budget: 125_000n, name: '农业研发手册', source: '农业' },
+  { key: 'cropProcessing', budget: 100_000n, name: '农业加工提速', source: '农业' },
+  { key: 'cropCycle', budget: 230_000n, baseCost: 50n, name: '作物周期改良', source: '农业', item: 'C05', prerequisite: 'cropYield', prerequisiteLevel: 20 },
+  { key: 'cropRefining', budget: 230_000n, name: '农业精制专精', source: '农业', item: 'P01', prerequisite: 'cropProcessing', prerequisiteLevel: 20 },
   { key: 'appraisal', budget: 250_000n, baseCost: 50n, name: '经营评估', source: '通用' },
   { key: 'workshopSpeed', budget: 320_000n, baseCost: 75n, name: '工坊提速', source: '通用' },
   { key: 'delegation', budget: 140_000n, baseCost: 50n, name: '代管时长', source: '通用' },
@@ -30,8 +34,8 @@ export const techDefinitions = [
   { key: 'livestockProcessing', budget: 100_000n, name: '畜牧加工提速', source: '畜牧', item: 'L01' },
   { key: 'livestockCycle', budget: 230_000n, baseCost: 50n, name: '畜牧周期改良', source: '畜牧', item: 'L05', prerequisite: 'livestockYield', prerequisiteLevel: 20 },
   { key: 'livestockRefining', budget: 230_000n, name: '畜牧精制专精', source: '畜牧', item: 'PL01', prerequisite: 'livestockProcessing', prerequisiteLevel: 20 },
-  { key: 'fishBuy', budget: 125_000n, name: '鱼池议价', source: '水产', item: 'F01' },
-  { key: 'fishUpgrade', budget: 125_000n, name: '鱼池改造', source: '水产', item: 'F01' },
+  { key: 'fishBuy', budget: 125_000n, name: '鱼塘议价', source: '水产', item: 'F01' },
+  { key: 'fishUpgrade', budget: 125_000n, name: '鱼塘改造', source: '水产', item: 'F01' },
   { key: 'fishYield', budget: 420_000n, baseCost: 150n, name: '鱼群培育', source: '水产', item: 'F01' },
   { key: 'fishResearch', budget: 125_000n, name: '水产研发手册', source: '水产', item: 'F01' },
   { key: 'fishProcessing', budget: 100_000n, name: '水产加工提速', source: '水产', item: 'F01' },
@@ -85,11 +89,12 @@ const techByKey = Object.fromEntries(techDefinitions.map((definition) => [defini
 export const techMaxLevels = Object.fromEntries(techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
 export const techTotalLevels = techDefinitions.reduce((sum, { maxLevel }) => sum + maxLevel, 0);
 const yieldKeys = { C: 'cropYield', L: 'livestockYield', F: 'fishYield', M: 'miningYield' };
-const researchKeys = { L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch',
+const researchKeys = { C: 'cropResearch', I: 'cropResearch', L: 'livestockResearch', IL: 'livestockResearch', F: 'fishResearch', IF: 'fishResearch',
   M: 'miningResearch', IM: 'miningResearch' };
 const researchMaterialDiscount = ['研发材料费用降低', 0, discountPerLevel, '%', 100];
 const effectDefinitions = {
   recipeDiscount: researchMaterialDiscount,
+  cropResearch: researchMaterialDiscount,
   livestockResearch: researchMaterialDiscount,
   fishResearch: researchMaterialDiscount,
   miningResearch: researchMaterialDiscount,
@@ -99,12 +104,15 @@ const effectDefinitions = {
   miningYield: ['增产', 0, yieldPerLevel, '%', 100],
   appraisal: ['经营评估倍率', 10000, appraisalPerLevel, '倍', 10000],
   workshopSpeed: ['生产提速', 0, workshopPerLevel, '%', 100],
+  cropProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
   livestockProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
   fishProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
   miningProcessing: ['生产提速', 0, processingPerLevel, '%', 100],
+  cropCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
   livestockCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
   fishCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
   miningCycle: ['生产提速', 0, cyclePerLevel, '%', 100],
+  cropRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   livestockRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   fishRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   miningRefining: ['生产提速', 0, processingPerLevel, '%', 100],
@@ -145,7 +153,8 @@ export const facilityYieldBasis = (world, kind) => 10000 + yieldPerLevel * techL
 
 export function rate(world, id) {
   const item = catalog.items[id];
-  if (!item || item.kind === 'C') return 10000;
+  if (!item) return 10000;
+  if (item.kind === 'C') return 10000 + cyclePerLevel * techLevel(world, 'cropCycle');
   if (item.kind === 'L') return 10000 + cyclePerLevel * techLevel(world, 'livestockCycle');
   if (item.kind === 'F') return 10000 + cyclePerLevel * techLevel(world, 'fishCycle');
   if (item.kind === 'M') return 10000 + cyclePerLevel * techLevel(world, 'miningCycle');
@@ -154,13 +163,14 @@ export function rate(world, id) {
   if (item.kind === 'IL') return base + processingPerLevel * techLevel(world, 'livestockProcessing');
   if (item.kind === 'IF') return base + processingPerLevel * techLevel(world, 'fishProcessing');
   if (item.kind === 'IM') return base + processingPerLevel * techLevel(world, 'miningProcessing');
-  if (item.kind === 'I') return base;
+  if (item.kind === 'I') return base + processingPerLevel * techLevel(world, 'cropProcessing');
 
+  const crop = item.sources.includes('农业') ? techLevel(world, 'cropRefining') : 0;
   const livestock = item.sources.includes('畜牧') ? techLevel(world, 'livestockRefining') : 0;
   const fish = item.sources.includes('水产') ? techLevel(world, 'fishRefining') : 0;
   const mining = item.sources.includes('矿业') ? techLevel(world, 'miningRefining') : 0;
-  // Three industry sources may now coexist; keep the existing combined speed ceiling.
-  return Math.min(25000, base + processingPerLevel * (livestock + fish + mining));
+  // Four industry sources may coexist; keep the existing combined speed ceiling.
+  return Math.min(25000, base + processingPerLevel * (crop + livestock + fish + mining));
 }
 
 function discounted(amount, reduction) {

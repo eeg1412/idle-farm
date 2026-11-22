@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { Container, Graphics, Texture, TextureSource } from 'pixi.js';
 import catalog from '../src/content/game-data.json' with { type: 'json' };
 import {
-  livestockFrameSize, livestockIdleFrames, livestockSpecies, minLivestockAnimationMs,
+  livestockFrameSize, livestockIdleFrames, livestockSpecies,
   mountLivestockAnimation, sampleLivestockAnimation,
 } from '../src/view/livestock-animation.js';
 import { livestockLayout } from '../src/view/livestock-layout.js';
@@ -41,7 +41,7 @@ function mountFixture(t, id = 'L06', options = {}) {
   const parent = new Container();
   const value = batch(id, 108_000, options.start ?? 0);
   const animation = mountLivestockAnimation(parent, textures, { x: 5, y: 7, width: 130, height: 138 }, value,
-    options.animationStart ?? value.start, options.previousHarvestAt);
+    options.previousHarvestAt);
   const scene = animation.container.children[0];
   const group = scene.children[1];
   t.after(() => {
@@ -61,7 +61,6 @@ function mountFixture(t, id = 'L06', options = {}) {
 test('every livestock species uses its approved adult or three-stage animation', () => {
   const ids = Object.keys(catalog.items).filter((id) => catalog.items[id].kind === 'L');
   assert.deepEqual(Object.keys(livestockSpecies).sort(), ids.sort());
-  assert.equal(minLivestockAnimationMs, 9000);
   for (const id of ids) {
     const { stages, slaughter, grounding, product } = livestockSpecies[id];
     assert.equal(typeof slaughter, 'boolean', id);
@@ -127,13 +126,59 @@ test('predicted harvest boundaries and a replacement batch preserve the same pro
   assert.equal(sample(oldBatch, oldBatch.end + 300).productAlpha, 0);
 });
 
-test('short real batches share a continuous minimum display cycle', () => {
-  const realDuration = Math.floor(minLivestockAnimationMs / 5);
-  const original = batch('L06', realDuration);
-  const replacement = batch('L06', realDuration, realDuration * 2);
-  const clock = realDuration * 2 + Math.floor(realDuration / 2);
-  assert.deepEqual(sample(original, clock), sample(replacement, clock, { animationStart: original.start }));
-  assert.equal(sample(original, minLivestockAnimationMs).stage, 0);
+const meatId = Object.keys(livestockSpecies).find((id) => livestockSpecies[id].slaughter);
+const attachedId = Object.keys(livestockSpecies).find((id) => !livestockSpecies[id].slaughter);
+
+test('meat animals use full, first/last and last-only tiers of the real batch', () => {
+  // N = 3: full at >= 4000 ms, first/last at 3000-3999 ms, last only below 3000 ms.
+  const full = batch(meatId, 4000);
+  assert.deepEqual([0, 1333, 1334, 2667, 3999].map((clock) => sample(full, clock).stage), [0, 0, 1, 2, 2]);
+
+  const firstLast = batch(meatId, 3999);
+  assert.deepEqual([0, 1999, 2000, 3998].map((clock) => sample(firstLast, clock).stage), [0, 0, 2, 2]);
+  // The product arrives within the last shown stage, not three seconds early.
+  assert.equal(sample(firstLast, 1999).productAlpha, 0);
+  assert.equal(sample(firstLast, 2300).productAlpha, 1);
+  assert.equal(sample(firstLast, 2300).animalAlpha, 0);
+
+  const lastOnly = batch(meatId, 2999);
+  for (const clock of [0, 1500, 2998, 2999 + 100]) {
+    const value = sample(lastOnly, clock);
+    assert.equal(value.stage, 2);
+    assert.equal(value.animalAlpha, 1);
+    assert.equal(value.productAlpha, 0);
+  }
+  // No harvest fade-out flashes on consecutive last-only batches.
+  const next = batch(meatId, 2999, lastOnly.end);
+  assert.equal(sample(next, next.start + 150, { previousHarvestAt: next.start }).productAlpha, 0);
+});
+
+test('attached-product animals alternate their two states from 3 s and otherwise keep the product', () => {
+  const twoStates = batch(attachedId, 3000);
+  for (const clock of [0, 1499]) {
+    assert.equal(sample(twoStates, clock).productAlpha, 0);
+    assert.equal(sample(twoStates, clock).stage, 0);
+  }
+  assert.equal(sample(twoStates, 1800).productAlpha, 1);
+  assert.equal(sample(twoStates, 1800).animalAlpha, 1);
+
+  const lastOnly = batch(attachedId, 2999);
+  for (const clock of [0, 1500, 2998]) {
+    assert.deepEqual(sample(lastOnly, clock, { now: 0 }), { stage: 0, idleFrame: 0, animalAlpha: 1, productAlpha: 1 });
+  }
+  const next = batch(attachedId, 2999, lastOnly.end);
+  assert.equal(sample(next, next.start + 150, { previousHarvestAt: next.start }).productAlpha, 1);
+});
+
+test('short real batches start at their own start and are never stretched', () => {
+  const original = batch(meatId, 4000);
+  const replacement = batch(meatId, 4000, 6000);
+  // A stale caller-supplied start is ignored; the replacement starts with stage 0.
+  assert.deepEqual(sample(replacement, 6500, { animationStart: original.start }), sample(replacement, 6500));
+  assert.equal(sample(replacement, 6500).stage, 0);
+  assert.equal(sample(original, 6500).stage, 1);
+  // No 9 s floor: the 4 s batch has finished its mature stage by 3999 ms.
+  assert.equal(sample(original, 3999).stage, 2);
 });
 
 test('idle frames loop independently of production stage and harvest fades', () => {

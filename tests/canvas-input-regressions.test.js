@@ -9,7 +9,7 @@ import { switchManagerAppearance } from '../src/game/managers.js';
 import { createGameView } from '../src/view/canvas-ui.js';
 import { compact } from '../src/view/numbers.js';
 import { viewportLayout } from '../src/platform/layout.js';
-import { livestockSpecies, minLivestockAnimationMs } from '../src/view/livestock-animation.js';
+import { livestockSpecies } from '../src/view/livestock-animation.js';
 import { workshopTextureSources } from '../src/view/workshop-animation.js';
 
 function setup(dispatch, browser) {
@@ -268,31 +268,39 @@ test('livestock animation loads only visible species and keeps Pixi hits and lif
   assert.equal(animations().length, 0);
 });
 
-test('short livestock batches keep their display phase and switching species starts without phantom products', async (t) => {
+test('short livestock batches follow their own real batch and switching species starts without phantom products', async (t) => {
   const game = setup();
   livestockAssetFixture(t);
-  const realDuration = minLivestockAnimationMs / 9;
+  // L06 has three stages, so 4.5 s is the full tier; the product lead is one stage (1.5 s).
+  const realDuration = 4500;
   game.world.facilities.L = [livestockFacility('L06', 0, realDuration)];
   game.view.go('庄园', { tab: '畜牧' });
   game.draw(390, 844);
   await new Promise(setImmediate);
   game.flush();
   const product = () => game.nodes().find((node) => node.label === 'livestock-product');
+  const animal = () => game.nodes().find((node) => node.label === 'livestock-animal');
   assert.equal(product().alpha, 0);
-  const start = minLivestockAnimationMs - 3000;
+  // A later batch starts at its own start: no display phase carries over and nothing is stretched.
+  const start = realDuration * 3;
   game.world.facilities.L[0] = livestockFacility('L06', start, realDuration);
   game.world.clockMs = start + 150;
   game.draw(390, 844);
   game.tick();
+  assert.equal(product().alpha, 0);
+  assert.equal(animal().alpha, 1);
+  game.world.clockMs = start + 3150;
+  game.draw(390, 844);
+  game.tick();
   assert.equal(product().alpha, 0.5);
-  assert.equal(game.nodes().find((node) => node.label === 'livestock-animal').alpha, 0.5);
+  assert.equal(animal().alpha, 0.5);
 
   game.world.facilities.L[0] = livestockFacility('L01', game.world.clockMs, realDuration);
   game.draw(390, 844);
   await new Promise(setImmediate);
   game.flush();
   assert.equal(product().alpha, 0);
-  assert.equal(game.nodes().find((node) => node.label === 'livestock-animal').alpha, 1);
+  assert.equal(animal().alpha, 1);
 });
 
 test('livestock asset failure leaves the active animation region empty without a static fallback', async (t) => {
@@ -399,7 +407,7 @@ test('all manager pages share one touch header and appearance switches change th
   const game = setup((world, action, id) => ({ ok: action === 'switchManagerAppearance' && Boolean(switchManagerAppearance(world, id)) }));
   game.draw(320, 568);
   const labels = ['管理员资料', '送礼', '切换管理员形象'];
-  const managerPages = ['任务', '经营', '田地', '畜牧', '矿洞', '鱼池', '加工', '精制', '仓库', '研究', '行脚商'];
+  const managerPages = ['任务', '经营', '田地', '畜牧', '矿洞', '鱼塘', '加工', '精制', '仓库', '研究', '行脚商'];
   for (const page of managerPages) {
     game.view.go(page);
     for (const label of labels) {
@@ -814,7 +822,7 @@ test('the navigation menu loads icons above every destination and opens the corr
     ['大地图', 'menu-map', '#/farm'],
     ['田地', 'menu-field', '#/farm?tab=fields'],
     ['畜牧', 'menu-livestock', '#/farm?tab=livestock'],
-    ['鱼池', 'menu-fish', '#/farm?tab=fish'],
+    ['鱼塘', 'menu-fish', '#/farm?tab=fish'],
     ['矿洞', 'menu-mine', '#/farm?tab=mining'],
     ['加工', 'menu-processing', '#/workshop?tab=processing'],
     ['精制', 'menu-refining', '#/workshop?tab=refining'],

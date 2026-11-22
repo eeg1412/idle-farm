@@ -105,7 +105,7 @@ test('station upgrade tutorial supports either real workshop page', () => {
 });
 
 test('all six production upgrade hints use exact existing affordability quotes', () => {
-  for (const [page, kind] of Object.entries({ 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M', 加工: 'I', 精制: 'P' })) {
+  for (const [page, kind] of Object.entries({ 田地: 'C', 畜牧: 'L', 鱼塘: 'F', 矿洞: 'M', 加工: 'I', 精制: 'P' })) {
     const w = establishedWorld();
     const quote = Object.hasOwn(w.facilities, kind) ? facilityOffer : stationUpgradeOffer;
     const cost = quote(w, kind, 0, 1n).cost;

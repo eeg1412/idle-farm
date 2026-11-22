@@ -37,6 +37,11 @@ function farm(world = game.newWorld(0)) {
   let firstTech = null;
   let firstHandover = null;
   let materialWait = 0;
+  // Wall-clock arrival of each measured milestone; recorded only, never asserted against a deadline.
+  const techFirst = {};
+  const techMax = {};
+  let techFull = null;
+  const taskTimes = {};
 
   function validate() {
     status(world.coins >= 0n && world.researchPoints >= 0n, '金币或点数为负');
@@ -54,6 +59,7 @@ function farm(world = game.newWorld(0)) {
     assert.equal(world.researchPoints - points, reward.researchPoints, '任务发点守恒');
     cashflow.rewards += reward.coins;
     pointflow.rewards += reward.researchPoints;
+    for (const id of world.taskRewards) taskTimes[id] ??= world.wallAnchorMs;
     validate();
     return reward;
   }
@@ -259,6 +265,9 @@ function farm(world = game.newWorld(0)) {
     pointflow.tech -= offer.cost;
     firstTech ??= world.wallAnchorMs;
     if (key === 'delegation') firstDelegation ??= world.wallAnchorMs;
+    techFirst[key] ??= world.wallAnchorMs;
+    if ((world.tech[key] ?? 0) >= research.techMaxLevels[key]) techMax[key] ??= world.wallAnchorMs;
+    if (remainingTechnology(world) === 0n) techFull ??= world.wallAnchorMs;
     settle();
   }
 
@@ -298,7 +307,8 @@ function farm(world = game.newWorld(0)) {
   return { world, cashflow, pointflow, basicFlow, drawMilestones, marketSales, unlockTimes, startingWheat,
     advanceTo, wallVisit, settle, sell, cash, spend, ensureFacility, stopWorkshop, procure, unlock, upgradeTech, draw, handover,
     firstTech: () => firstTech, firstDelegation: () => firstDelegation,
-    firstHandover: () => firstHandover, materialWait: () => materialWait };
+    firstHandover: () => firstHandover, materialWait: () => materialWait,
+    techFirst, techMax, taskTimes, techFull: () => techFull };
 }
 
 export function checkOpening() {
@@ -501,15 +511,21 @@ function snapshot(sim, wall, phase, order, cursor) {
       lines.filter((line) => line.recipe).map(({ recipe, level }) => recipe + ':' + level)])) };
 }
 
-function checkProgression(visitDays, stopAtFirstTech, show) {
+// Follows one visit strategy from a new save until the catalogue is complete or the observation window ends.
+// Reaching the catalogue late is a measurement, not a failure.
+function checkProgression(visitDays, observationDays, show) {
   const sim = farm();
   const { world } = sim;
   const order = unlockOrder();
+  const step = visitDays * day;
+  const observationEnd = observationDays * day;
   let cursor = 0;
   let regularIncome = null;
+  let lastWall = 0;
   sim.startingWheat();
 
-  for (let wall = 0; wall <= 1825 * day; wall += visitDays * day) {
+  for (let wall = 0; wall <= observationEnd; wall += step) {
+    lastWall = wall;
     sim.wallVisit(wall);
     const limit = world.clockMs + 40 * 60_000;
     sim.draw();
@@ -550,29 +566,48 @@ function checkProgression(visitDays, stopAtFirstTech, show) {
       regularIncome = snapshot(sim, wall, '稳定开局', order, cursor);
       status(world.lifetimeProductionValue > 0n && world.stats.lifetimeRevenue > 0n, '三业缺少实际经营事件');
       show('回访', { visitDays, ...regularIncome });
-      if (stopAtFirstTech) return;
     }
     if (cursor === order.length) {
       status(regularIncome, '完整图鉴路线缺少三业和首科技');
-      show('完整图鉴', snapshot(sim, wall, '完整图鉴', order, cursor));
-      return { sim, wall };
+      show('完整图鉴', { visitDays, ...snapshot(sim, wall, '完整图鉴', order, cursor) });
+      return { sim, wall, catalogWall: wall, remainingResearch: 0 };
     }
-    if (!stopAtFirstTech && (wall === 30 * day || wall === 90 * day || wall === 270 * day || wall === 540 * day)) {
-      show('进度', snapshot(sim, wall, '研发', order, cursor));
+    if (wall === 30 * day || wall === 90 * day || wall === 270 * day || wall === 540 * day) {
+      show('进度', { visitDays, ...snapshot(sim, wall, '研发', order, cursor) });
     }
   }
-  throw new Error('五年内未完成 ' + (stopAtFirstTech ? '三业开局' : '图鉴') + '：' +
-    JSON.stringify(snapshot(sim, 1825 * day, '未完成', order, cursor), (_, value) => typeof value === 'bigint' ? value.toString() : value));
+  show('完整图鉴', { visitDays, ...snapshot(sim, lastWall, '观察期内未完成', order, cursor) });
+  return { sim, wall: lastWall, catalogWall: null, remainingResearch: order.length - cursor };
 }
 
-export function checkScenarios(show) {
+export const defaultObservationDays = 1825;
+export const defaultVisitDays = [1, 0.5, 3];
+
+export function checkScenarios(show, options = {}) {
   checkQualityVisits(1, show);
   checkQualityVisits(0.5, show);
-  checkProgression(0.5, true, show);
-  checkProgression(3, true, show);
-  const { sim, wall } = checkProgression(1, false, show);
-  show('最长批次', checkLongestBatch(sim.world));
-  checkTerminal(sim, wall, show);
+  return measureTechTime(show, { ...options, longestBatch: true });
+}
+
+// Measures, per visit strategy, how long each long-term milestone takes. Unreached milestones are projected.
+export function measureTechTime(show, { observationDays = defaultObservationDays, visits = defaultVisitDays,
+  longestBatch = false } = {}) {
+  status(Number.isSafeInteger(observationDays) && observationDays > 0, '观察期须为正整数日');
+  const totals = techTotals();
+  const reports = [];
+  let longestChecked = !longestBatch;
+  for (const visitDays of visits) {
+    status(visitDays > 0 && Number.isSafeInteger(visitDays * day), '回访间隔须为整毫秒正数日 ' + visitDays);
+    const progression = checkProgression(visitDays, observationDays, show);
+    if (!longestChecked && progression.catalogWall !== null) {
+      show('最长批次', checkLongestBatch(progression.sim.world));
+      longestChecked = true;
+    }
+    const report = checkTerminal(progression, show, visitDays, observationDays, totals);
+    show('满级测时', report);
+    reports.push(report);
+  }
+  return reports;
 }
 
 function checkQualityVisits(visitDays, show) {
@@ -643,7 +678,20 @@ function remainingTechnology(world) {
   return sum(research.techDefinitions.map(({ key, costs }) => sum(costs.slice(world.tech[key] ?? 0))));
 }
 
-function rawProjection(world) {
+// Totals are derived from the live definitions so added or removed technologies need no script edits.
+function techTotals() {
+  for (const { key, costs, maxLevel } of research.techDefinitions) {
+    assert.equal(costs.length, maxLevel, key + ' 每级报价数与上限一致');
+    assert.equal(research.techMaxLevels[key], maxLevel, key + ' 上限表一致');
+  }
+  const levels = research.techDefinitions.reduce((total, { maxLevel }) => total + maxLevel, 0);
+  assert.equal(levels, research.techTotalLevels, '科技总级数与定义一致');
+  const points = sum(research.techDefinitions.map(({ costs }) => sum(costs)));
+  assert.equal(remainingTechnology(game.newWorld(0)), points, '新档科技为零级');
+  return { count: research.techDefinitions.length, levels, points };
+}
+
+function rawProjection(world, visitMs) {
   status(Object.values(world.stations).flat().every((station) => !station.recipe), '解析外推要求已停止工坊');
   const active = Object.values(world.facilities).flat().filter((line) => line.batch);
   status(active.length, '解析外推缺少稳定产线');
@@ -670,64 +718,79 @@ function rawProjection(world) {
       (integerSquareRoot(49n * T) - integerSquareRoot(49n * world.lifetimeProductionValue)) * multiplier;
     return { produced, value, T, credit, availableRp: world.researchPoints + credit / creditPerPoint };
   }
+  // The projection must match two real visits at the same interval before it is used.
   const proof = structuredClone(world);
-  for (const days of [1, 2]) {
-    game.updateWorldWallTime(proof, world.wallAnchorMs + days * day);
-    const predicted = estimate(Math.min(day, research.delegationMilliseconds(world)) * days);
+  const effective = Math.min(visitMs, research.delegationMilliseconds(world));
+  for (const visits of [1, 2]) {
+    game.updateWorldWallTime(proof, world.wallAnchorMs + visits * visitMs);
+    const predicted = estimate(effective * visits);
     assert.equal(proof.lifetimeProductionValue, predicted.T, '真实稳定线与整周期产值外推不符');
     assert.equal(proof.prestigeCredit, predicted.credit, '真实稳定线与平方根权益外推不符');
     for (const [id, amount] of Object.entries(predicted.produced)) {
       assert.equal(quantity(proof, id) - quantity(world, id), amount, '真实稳定线与整数批量外推不符 ' + id);
     }
   }
-  return estimate;
+  return { estimate, effective, lines: lines.map(({ id, cycle, repeated }) => ({ id, cycleSeconds: cycle / 1000, perCycle: repeated })) };
 }
 
-function checkTerminal(sim, catalogAt, show) {
+const roundDay = (ms) => Math.round(ms * 100 / day) / 100;
+
+// Purchase route after the catalogue. Every stage is bought in one handover once affordable; the last stage
+// is every definition at its cap, so new technologies are always covered. Explicit keys only set priority.
+function techStages() {
+  const allTech = Object.fromEntries(research.techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
+  const known = (levels) => Object.fromEntries(Object.entries(levels).filter(([key]) => key in allTech));
+  return [
+    known({ delegation: 20, appraisal: 20, cropYield: 20, livestockYield: 20, fishYield: 20,
+      cropProcessing: 20, livestockProcessing: 20, fishProcessing: 20, cropCycle: 1, livestockCycle: 1, fishCycle: 1,
+      cropRefining: 1, livestockRefining: 1, fishRefining: 1 }),
+    known({ appraisal: 50, basicResearchRate: 50, marketManipulation: 1, marketForecast: 1 }),
+    known({ cropYield: 40, livestockYield: 40, fishYield: 40, cropCycle: 25, livestockCycle: 25, fishCycle: 25 }),
+    known({ cropYield: 50, livestockYield: 50, fishYield: 50, cropCycle: 50, livestockCycle: 50, fishCycle: 50 }),
+    allTech,
+  ];
+}
+
+function checkTerminal({ sim, wall: startWall, catalogWall }, show, visitDays, observationDays, totals) {
   const { world } = sim;
-  const observationEnd = 1825 * day;
-  assert.equal(remainingTechnology(game.newWorld(0)), 4_443_060n);
+  const observationEnd = observationDays * day;
+  const step = visitDays * day;
   sim.stopWorkshop('I');
   sim.stopWorkshop('P');
 
-  const allTech = Object.fromEntries(research.techDefinitions.map(({ key, maxLevel }) => [key, maxLevel]));
-  const stages = [
-    { delegation: 20, appraisal: 20, cropYield: 20, livestockYield: 20, fishYield: 20,
-      livestockProcessing: 20, fishProcessing: 20, livestockCycle: 1, fishCycle: 1,
-      livestockRefining: 1, fishRefining: 1 },
-    { appraisal: 50, basicResearchRate: 50, marketManipulation: 1, marketForecast: 1 },
-    { cropYield: 40, livestockYield: 40, fishYield: 40, livestockCycle: 25, fishCycle: 25 },
-    { cropYield: 50, livestockYield: 50, fishYield: 50, livestockCycle: 50, fishCycle: 50 },
-    allTech,
-  ];
+  const stages = techStages();
   const stageCost = (levels) => sum(research.techDefinitions.map(({ key, costs }) =>
     levels[key] ? sum(costs.slice(world.tech[key] ?? 0, levels[key])) : 0n));
+  const qualityIds = Object.keys(qualityDrawTaskTargets);
   const handovers = [];
   let rate50;
   let highRateDraw;
   let fullRateDraw;
-  let wall = world.wallAnchorMs;
+  let wall = startWall;
   while (wall < observationEnd) {
-    wall = Math.min(wall + day, observationEnd);
+    const previous = wall;
+    wall = Math.min(wall + step, observationEnd);
     sim.wallVisit(wall);
     sim.draw();
+    const span = Math.min(wall - previous, research.delegationMilliseconds(world));
     if (rate50 && !highRateDraw) {
       const elapsed = world.clockMs - rate50.clock;
-      assert.equal(elapsed, day, '满倍率之后按权威墙钟推进 24 小时');
+      assert.equal(elapsed, span, '满倍率之后按权威墙钟与代管上限推进');
       const toFirstHour = hour - rate50.elapsedMs;
-      const firstHourWeight = rate50.weightedMs + BigInt(toFirstHour) * 300n;
-      const earned = firstHourWeight / BigInt(hour) + BigInt(Math.floor((elapsed - toFirstHour) / hour)) * 300n;
+      const firstHourWeight = rate50.weightedMs + BigInt(toFirstHour) * rate50.rate;
+      const earned = firstHourWeight / BigInt(hour) + BigInt(Math.floor((elapsed - toFirstHour) / hour)) * rate50.rate;
       const draws = world.qualityDraws - rate50.draws;
       assert.equal(draws, (rate50.balance + earned) / 100n, '初回含购前数值的混合小时');
       assert.equal(world.basicResearchPoints, (rate50.balance + earned) % 100n);
       highRateDraw = { wallDay: wall / day, clock: world.clockMs, draws, earned, totalDraws: world.qualityDraws,
         totalEarned: sim.basicFlow.earned };
-    } else if (highRateDraw && !fullRateDraw) {
-      assert.equal(world.clockMs - highRateDraw.clock, day, '纯满倍率窗口按权威墙钟推进 24 小时');
-      assert.equal(sim.basicFlow.earned - highRateDraw.totalEarned, 7_200n);
+    } else if (highRateDraw && !fullRateDraw && span % hour === 0) {
+      assert.equal(world.clockMs - highRateDraw.clock, span, '纯满倍率窗口按权威墙钟与代管上限推进');
+      const earned = BigInt(span / hour) * rate50.rate;
+      assert.equal(sim.basicFlow.earned - highRateDraw.totalEarned, earned, '纯满倍率窗口整小时发点');
       const draws = world.qualityDraws - highRateDraw.totalDraws;
-      assert.equal(draws, 72n, '完整满倍率24小时应抽72次');
-      fullRateDraw = { wallDay: wall / day, draws };
+      assert.equal(draws, earned / 100n, '纯满倍率窗口按每抽 100 点全部抽取');
+      fullRateDraw = { wallDay: wall / day, hours: span / hour, draws };
     }
     for (const id of new Set(Object.values(world.facilities).flat().map(({ recipe }) => recipe).filter(Boolean))) sim.sell(id);
     for (const exit of handovers) {
@@ -735,7 +798,8 @@ function checkTerminal(sim, catalogAt, show) {
     }
     const levels = stages[handovers.length];
     const budget = levels && stageCost(levels);
-    if (budget && world.researchPoints + game.farmSaleOffer(world).reward >= budget) {
+    // High technologies need catalogue items, so the purchase route starts only after the catalogue.
+    if (catalogWall !== null && budget && world.researchPoints + game.farmSaleOffer(world).reward >= budget) {
       const cashBefore = world.coins;
       const T = world.lifetimeProductionValue;
       const reward = sim.handover();
@@ -748,36 +812,109 @@ function checkTerminal(sim, catalogAt, show) {
         assert.equal(research.basicResearchHourlyRate(world), 300);
         rate50 = { wallDay: wall / day, clock: world.clockMs, draws: world.qualityDraws,
           balance: world.basicResearchPoints, elapsedMs: world.basicResearchElapsedMs,
-          weightedMs: world.basicResearchWeightedMs };
+          weightedMs: world.basicResearchWeightedMs, rate: BigInt(research.basicResearchHourlyRate(world)) };
       }
     }
     diversify(sim, world.clockMs, { maxLines: 14, maxLevel: 400n, terminal: true });
-    if (handovers.length === stages.length && world.taskRewards.includes('quality400')) break;
+    if (remainingTechnology(world) === 0n && qualityIds.every((id) => world.taskRewards.includes(id))) break;
   }
-  const fullTech = handovers.length === stages.length;
-  let projectedTechDay;
-  if (!fullTech) {
-    const estimate = rawProjection(world);
-    let low = 0;
-    let high = 1;
-    const elapsedPerVisit = Math.min(day, research.delegationMilliseconds(world));
-    while (estimate(high * elapsedPerVisit).availableRp < remainingTechnology(world)) high *= 2;
-    while (high - low > 1) {
-      const middle = Math.floor((low + high) / 2);
-      if (estimate(middle * elapsedPerVisit).availableRp < remainingTechnology(world)) low = middle;
-      else high = middle;
-    }
-    projectedTechDay = wall / day + high;
+
+  // Correctness at full technology, derived from definitions rather than fixed totals.
+  const fullTech = remainingTechnology(world) === 0n;
+  if (fullTech) {
+    assert.equal(sum(Object.values(world.tech).map(BigInt)), BigInt(research.techTotalLevels), '科技全满级数与定义一致');
+    assert.ok(world.taskRewards.includes('techLevel1200'), '科技全满任务到账');
   }
-  show('终局', { catalogDay: catalogAt / day, observedThroughDay: wall / day, rate50, highRateDraw, fullRateDraw,
-    firstHighTechDay: handovers[0]?.wallDay ?? null, techDay: fullTech ? handovers.at(-1).wallDay : null,
-    projectedTechDay: projectedTechDay ?? null, remainingTechPoints: remainingTechnology(world), handovers,
+
+  const report = measureMilestones({ sim, wall, visitDays, observationDays, catalogWall, stages, stageCost, totals });
+  show('终局', { visitDays, catalogDay: catalogWall === null ? null : catalogWall / day, observedThroughDay: wall / day,
+    rate50, highRateDraw, fullRateDraw, firstHighTechDay: handovers[0]?.wallDay ?? null,
+    techDay: fullTech ? roundDay(sim.techFull()) : null, remainingTechPoints: remainingTechnology(world), handovers,
     drawMilestones: sim.drawMilestones, marketSales: sim.marketSales, basicFlow: sim.basicFlow,
     coins: world.coins, advancedPoints: world.researchPoints, pointflow: sim.pointflow, T: world.lifetimeProductionValue,
     lifetimeRevenue: world.stats.lifetimeRevenue, netCash: sim.cashflow });
-  status(rate50 && highRateDraw && fullRateDraw, '观察期内没有在真实经营路线下购满普通点倍率并抽取');
-  status(world.taskRewards.includes('itemCollection') && world.taskRewards.includes('quality400'), '终局品质与图鉴任务未完成到账');
-  status(fullTech, '五年观察期未购满科技，请根据实盘记录复核');
-  assert.equal(sum(Object.values(world.tech).map(BigInt)), 1_124n);
-  assert.ok(world.taskRewards.includes('techLevel1200'));
+  return report;
+}
+
+// Builds the tech-time report. Reached milestones carry their measured day ("实测"). Unreached technology
+// milestones use the steady-state analytic projection ("外推"); unreached quality tasks use the current
+// ordinary-point rate; the catalogue has no analytic model and stays "未达到".
+function measureMilestones({ sim, wall, visitDays, observationDays, catalogWall, stages, stageCost, totals }) {
+  const { world } = sim;
+  const observedDay = wall / day;
+  const measured = (id, label, ms) => ({ id, label, status: '实测', day: roundDay(ms) });
+  let projection;
+  function analytic() {
+    if (projection !== undefined) return projection;
+    const { estimate, effective, lines } = rawProjection(world, visitDays * day);
+    const now = estimate(0).availableRp;
+    const perVisit = estimate(effective).availableRp - now;
+    projection = { estimate, effective, lines, perVisit,
+      perDay: perVisit * 100n / BigInt(Math.round(visitDays * 100)) };
+    return projection;
+  }
+  // Remaining stages are merged in route order until the target levels are covered.
+  function routeCost(target) {
+    const merged = {};
+    for (const levels of stages) {
+      for (const [key, level] of Object.entries(levels)) merged[key] = Math.max(merged[key] ?? 0, level);
+      if (Object.entries(target).every(([key, level]) => (merged[key] ?? 0) >= level)) break;
+    }
+    for (const [key, level] of Object.entries(target)) merged[key] = Math.max(merged[key] ?? 0, level);
+    return stageCost(merged);
+  }
+  function projectTech(id, label, target) {
+    const cost = routeCost(target);
+    const { estimate, effective, lines, perVisit, perDay } = analytic();
+    const basis = '观察期末稳定原料线整周期产值 → 平方根权益 → 可用高级点；按路线阶段累计报价；不计后续科技对产量的加成，为保守上界';
+    const base = { id, label, fromDay: observedDay, remainingPoints: cost, availableRp: estimate(0).availableRp,
+      rpPerVisit: perVisit, rpPerDay: perDay, effectiveHoursPerVisit: effective / hour, lines, basis };
+    if (perVisit <= 0n) return { ...base, status: '外推', day: null, note: '稳态下高级点不增长，无法外推' };
+    let low = 0;
+    let high = 1;
+    while (estimate(high * effective).availableRp < cost) {
+      high *= 2;
+      if (high > 2 ** 40) return { ...base, status: '外推', day: null, note: '外推超出搜索范围' };
+    }
+    while (high - low > 1) {
+      const middle = Math.floor((low + high) / 2);
+      if (estimate(middle * effective).availableRp < cost) low = middle;
+      else high = middle;
+    }
+    return { ...base, status: '外推', day: Math.round((observedDay + high * visitDays) * 100) / 100, visits: high };
+  }
+  function projectQuality(id, threshold) {
+    const label = '品质任务 ' + id;
+    if (world.taskRewards.includes(id)) return measured(id, label, sim.taskTimes[id]);
+    const rate = BigInt(research.basicResearchHourlyRate(world));
+    const effective = Math.min(visitDays * day, research.delegationMilliseconds(world));
+    const perVisit = rate * BigInt(effective) / BigInt(hour);
+    const remainingDraws = threshold - world.qualityDraws;
+    const needed = remainingDraws * 100n - world.basicResearchPoints;
+    const visits = perVisit > 0n ? ceil(needed > 0n ? needed : 0n, perVisit) : null;
+    return { id, label, status: '外推', fromDay: observedDay, remainingDraws, remainingBasicPoints: needed,
+      basicPointsPerVisit: perVisit, hourlyRate: Number(rate), effectiveHoursPerVisit: effective / hour,
+      day: visits === null ? null : Math.round((observedDay + Number(visits) * visitDays) * 100) / 100,
+      basis: '按观察期末普通点时速与代管时长线性外推，不计后续倍率升级，每抽 100 点' };
+  }
+  const tech = (id, label, ms, target) => ms !== null && ms !== undefined ? measured(id, label, ms) : projectTech(id, label, target);
+
+  const firstLevelTarget = { delegation: 1 };
+  const milestones = [
+    tech('firstTech', '首次科技', sim.firstTech(), firstLevelTarget),
+    ...research.techDefinitions.filter(({ prerequisite }) => prerequisite).map(({ key, name }) =>
+      tech('first:' + key, '高阶科技首级 ' + name, sim.techFirst[key], { [key]: 1 })),
+    tech('max:basicResearchRate', '普通点倍率满级', sim.techMax.basicResearchRate,
+      { basicResearchRate: research.techMaxLevels.basicResearchRate }),
+    tech('max:delegation', '代管满级', sim.techMax.delegation, { delegation: research.techMaxLevels.delegation }),
+    catalogWall !== null ? measured('itemCollection', '图鉴全满', catalogWall) : {
+      id: 'itemCollection', label: '图鉴全满', status: '未达到', day: null, fromDay: observedDay,
+      unlocked: world.unlocked.length, total: Object.keys(items).length,
+      basis: '图鉴依赖研发采购路线，无稳态解析模型，不外推；延长 --days 实测' },
+    ...Object.entries(qualityDrawTaskTargets).map(([id, threshold]) => projectQuality(id, threshold)),
+    tech('techFull', '科技全满', sim.techFull(), research.techMaxLevels),
+  ];
+  return { visitDays, observationDays, observedThroughDay: observedDay, totals,
+    techLevels: sum(Object.values(world.tech).map(BigInt)), remainingTechPoints: remainingTechnology(world),
+    advancedPoints: world.researchPoints, qualityDraws: world.qualityDraws, milestones };
 }

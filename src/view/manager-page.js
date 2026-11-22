@@ -7,7 +7,7 @@ import { managerTutorial, managerUpgradeMessages, managerResearchHelp, managerCo
 import { compact } from './numbers.js';
 
 export const managerPages = {
-  任务: 'tasks', 经营: 'estate', 畜牧: 'livestock', 田地: 'field', 矿洞: 'mine', 鱼池: 'fish',
+  任务: 'tasks', 经营: 'estate', 畜牧: 'livestock', 田地: 'field', 矿洞: 'mine', 鱼塘: 'fish',
   加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 行脚商: 'merchant',
   管理员管理: 'estate', 统计: 'estate', 出售庄园历史: 'estate', 图鉴: 'estate', 出售庄园: 'estate',
 };
@@ -18,11 +18,11 @@ const facilities = { field: 'C', livestock: 'L', fish: 'F', mine: 'M' };
 const facilityHelpEmphasis = {
   field: ['购地', '播下种子', '种子下地', '添块田'],
   livestock: ['购买养殖场', '选只小家伙', '合适的动物', '盖座养殖场', '添个养殖场'],
-  fish: ['购买鱼池', '挑种鱼', '鱼种', '建个鱼池', '添个鱼池'],
+  fish: ['购买鱼塘', '挑种鱼', '鱼种', '建个鱼塘', '添个鱼塘'],
   mine: ['购买矿洞', '选矿', '矿种', '买一座矿洞', '准备矿洞'],
 };
 const workshops = { processing: 'I', refining: 'P' };
-const contextPlaceNames = { field: '田地', livestock: '养殖场', fish: '鱼池', mine: '矿洞', processing: '加工位', refining: '精制位' };
+const contextPlaceNames = { field: '田地', livestock: '养殖场', fish: '鱼塘', mine: '矿洞', processing: '加工位', refining: '精制位' };
 const assignmentNames = { field: '播种', livestock: '安排养殖', fish: '安排养殖', mine: '开采', processing: '选择配方', refining: '选择配方' };
 const silent = { muted: true, fontSize: 14 };
 const produceForAffinity = '多生产一些物品，就能继续提高好感。';

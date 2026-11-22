@@ -17,7 +17,22 @@ const directions = [
 ];
 const harvestFadeMs = 300;
 const harvestGapMs = 30;
-export const minPlotAnimationMs = 5000;
+// There is no display floor: every crop animation follows the real batch duration.
+const plotStageCount = 4;
+// Short-batch tiers: each shown stage needs at least `stageMinMs`, plus one
+// spare second. Full: N stages; first/last: stages 0 and N-1; else last only.
+const stageMinMs = 1000;
+const tierSpareMs = 1000;
+
+function shownStages(duration, count) {
+  if (duration >= count * stageMinMs + tierSpareMs) return Array.from({ length: count }, (_, index) => index);
+  if (count > 1 && duration >= 2 * stageMinMs + tierSpareMs) return [0, count - 1];
+  return [count - 1];
+}
+
+function stageAt(shown, phase, duration) {
+  return shown[Math.min(shown.length - 1, Math.floor(phase * shown.length / duration))];
+}
 export const plotSharedTextureKeys = [
   'sky', 'ground', 'sprinkler-base', ...directions.map(({ key }) => key),
 ];
@@ -108,33 +123,45 @@ function smoothstep(progress) {
   return bounded * bounded * (3 - 2 * bounded);
 }
 
-export function samplePlotAnimation({ batch, clock, animationStart = batch.start, plantingSession, harvestMode }) {
-  const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
+// The phase always follows the real batch (`batch.start`/`batch.end`, or the
+// persistent first-planting window).
+export function samplePlotAnimation({ batch, clock, plantingSession, harvestMode }) {
+  const duration = Math.max(1, batch.end - batch.start);
+  const last = plotStageCount - 1;
   if (harvestMode === 'retainedPlant') {
-    const firstDuration = Math.max(plantingSession.duration, minPlotAnimationMs);
+    const firstDuration = Math.max(1, plantingSession.duration);
     const firstElapsed = Math.max(0, clock - plantingSession.start);
     if (firstElapsed >= firstDuration) {
-      const repeatStart = plantingSession.start + firstDuration;
-      const phase = Math.max(0, clock - repeatStart) % duration;
+      // Repeats have two states, bare adult then fruit/flower. Below 3 s only
+      // the mature state stays, without a per-batch fade.
+      if (shownStages(duration, 2).length === 1) {
+        return { stage: last, wholeAlpha: 1, matureAlpha: 1, bareVisible: true, repeated: true };
+      }
+      const phase = Math.max(0, clock - batch.start) % duration;
       const appears = smoothstep((phase - duration / 2) / harvestFadeMs);
       const disappears = smoothstep((phase - (duration - harvestGapMs - harvestFadeMs)) / harvestFadeMs);
-      return { stage: 3, wholeAlpha: 1, matureAlpha: appears * (1 - disappears), bareVisible: true, repeated: true };
+      return { stage: last, wholeAlpha: 1, matureAlpha: appears * (1 - disappears), bareVisible: true, repeated: true };
     }
-    const stage = Math.floor(firstElapsed * 4 / firstDuration);
+    const shown = shownStages(firstDuration, plotStageCount);
+    const stage = stageAt(shown, firstElapsed, firstDuration);
+    if (shown.length === 1) return { stage, wholeAlpha: 1, matureAlpha: 1, bareVisible: true, repeated: false };
     const remaining = firstDuration - firstElapsed;
     const harvestAlpha = 1 - smoothstep(1 - (remaining - harvestGapMs) / harvestFadeMs);
-    return { stage, wholeAlpha: 1, matureAlpha: stage === 3 ? harvestAlpha : 1, bareVisible: stage === 3, repeated: false };
+    return { stage, wholeAlpha: 1, matureAlpha: stage === last ? harvestAlpha : 1, bareVisible: stage === last, repeated: false };
   }
-  const phase = Math.max(0, clock - animationStart) % duration;
-  const stage = Math.floor(phase * 4 / duration);
+  const shown = shownStages(duration, plotStageCount);
+  const phase = Math.max(0, clock - batch.start) % duration;
+  const stage = stageAt(shown, phase, duration);
+  // Last-only batches keep the mature crop opaque; fading it every batch would flash.
+  if (shown.length === 1) return { stage, wholeAlpha: 1, matureAlpha: 1, bareVisible: false, repeated: false };
   const remaining = duration - phase;
   return {
-    stage, wholeAlpha: stage === 3 ? 1 - smoothstep(1 - (remaining - harvestGapMs) / harvestFadeMs) : 1,
+    stage, wholeAlpha: stage === last ? 1 - smoothstep(1 - (remaining - harvestGapMs) / harvestFadeMs) : 1,
     matureAlpha: 1, bareVisible: false, repeated: false,
   };
 }
 
-function mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart, plantingSession) {
+function mountIndividualPlants(parent, textures, { x, y, width, height }, batch, plantingSession) {
   const { shared, plants, visual, bare } = textures;
   const container = new Container();
   container.label = 'plot-animation';
@@ -223,7 +250,7 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
     growthStage = index;
   };
   applyStage(samplePlotAnimation({
-    batch, clock: batch.start, animationStart, plantingSession, harvestMode: visual.harvestMode,
+    batch, clock: batch.start, plantingSession, harvestMode: visual.harvestMode,
   }).stage);
   parent.addChild(container);
   const particles = [];
@@ -232,7 +259,7 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
   return {
     container,
     update({ clock, now }) {
-      const sample = samplePlotAnimation({ batch, clock, animationStart, plantingSession, harvestMode: visual.harvestMode });
+      const sample = samplePlotAnimation({ batch, clock, plantingSession, harvestMode: visual.harvestMode });
       applyStage(sample.stage);
       for (const { plant, barePlant } of instances) {
         plant.alpha = sample.matureAlpha;
@@ -261,12 +288,13 @@ function mountIndividualPlants(parent, textures, { x, y, width, height }, batch,
   };
 }
 
-export function mountPlotAnimation(parent, textures, { x, y, width, height }, batch, animationStart = batch.start, plantingSession) {
+export function mountPlotAnimation(parent, textures, { x, y, width, height }, batch, plantingSession) {
   if (textures.visual?.mode === 'individual') {
-    return mountIndividualPlants(parent, textures, { x, y, width, height }, batch, animationStart, plantingSession);
+    return mountIndividualPlants(parent, textures, { x, y, width, height }, batch, plantingSession);
   }
   const { shared, stages, frontStages } = textures;
-  const duration = Math.max(batch.end - batch.start, minPlotAnimationMs);
+  const duration = Math.max(1, batch.end - batch.start);
+  const shown = shownStages(duration, stages.length);
   const container = new Container();
   container.label = 'plot-animation';
   container.eventMode = 'none';
@@ -305,16 +333,17 @@ export function mountPlotAnimation(parent, textures, { x, y, width, height }, ba
   return {
     container,
     update({ clock, now }) {
-      const elapsed = Math.max(0, clock - animationStart);
+      const elapsed = Math.max(0, clock - batch.start);
       const elapsedInCycle = elapsed % duration;
-      const growthIndex = Math.floor(elapsedInCycle * stages.length / duration);
+      const growthIndex = stageAt(shown, elapsedInCycle, duration);
       const growthTexture = stages[growthIndex];
       if (crop.texture !== growthTexture) crop.texture = growthTexture;
       const foregroundTexture = frontStages[growthIndex];
       if (foreground.texture !== foregroundTexture) foreground.texture = foregroundTexture;
 
       let cropAlpha = 1;
-      if (growthIndex === stages.length - 1) {
+      // Last-only batches keep the mature crop opaque instead of fading every batch.
+      if (shown.length > 1 && growthIndex === stages.length - 1) {
         const remaining = duration - elapsedInCycle;
         const progress = Math.max(0, Math.min(1, 1 - (remaining - harvestGapMs) / harvestFadeMs));
         cropAlpha = 1 - progress * progress * (3 - 2 * progress);

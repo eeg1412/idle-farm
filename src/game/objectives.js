@@ -7,7 +7,7 @@ import { qualityDrawTaskTargets } from './quality-tasks.js';
 const destination = (target, tab) => tab ? { target, tab } : { target };
 const field = destination('庄园', '田地');
 const livestock = destination('庄园', '畜牧');
-const fish = destination('庄园', '鱼池');
+const fish = destination('庄园', '鱼塘');
 const mining = destination('庄园', '矿洞');
 const processing = destination('工坊', '加工');
 const refining = destination('工坊', '精制');
@@ -135,7 +135,7 @@ const fieldLevelCondition = '将任意一块田地升到 {目标} 级';
 const stationLevelCondition = '将任意加工位或精制位升到 {目标} 级';
 const recipeCondition = '研发至少 {目标} 种商品配方';
 const codexCondition = '解锁至少 {目标} 种图鉴物品';
-const facilityLevelCondition = '将任意田地、养殖场、鱼池或矿洞升到 {目标} 级';
+const facilityLevelCondition = '将任意田地、养殖场、鱼塘或矿洞升到 {目标} 级';
 const techCondition = '永久科技的总等级达到 {目标} 级';
 const runCondition = '累计出售庄园至少 {目标} 次';
 
@@ -163,7 +163,7 @@ const mainGuide = [
 
 // Displayed after the first sale. Tasks moved here keep their IDs, conditions and receipts.
 const buyLivestockCondition = '累计购买至少 {目标} 座养殖场';
-const buyFishCondition = '累计购买至少 {目标} 座鱼池';
+const buyFishCondition = '累计购买至少 {目标} 座鱼塘';
 const buyMineCondition = '累计购买至少 {目标} 座矿洞';
 const introductionBranches = [
   ['livestockIntro', '建造第一座养殖场', buyLivestockCondition, livestock, (world) => world.stats.boughtL, 1n, '畜牧'],
@@ -174,11 +174,11 @@ const introductionBranches = [
     (world) => maxLevel(world.facilities.L), 5n, '畜牧'],
   ['firstLivestockProcessing', '加工畜牧原料', '加工并入库至少 {目标} 份畜牧中间产物', processing,
     (world) => sumProduced(world, (item) => item?.kind === 'IL'), 1n, '畜牧'],
-  ['fishIntro', '建造第一座鱼池', buyFishCondition, fish, (world) => world.stats.boughtF, 1n, '水产'],
-  ['buildFish', '建造鱼池', buyFishCondition, fish, (world) => world.stats.boughtF, 1n, '水产'],
+  ['fishIntro', '建造第一座鱼塘', buyFishCondition, fish, (world) => world.stats.boughtF, 1n, '水产'],
+  ['buildFish', '建造鱼塘', buyFishCondition, fish, (world) => world.stats.boughtF, 1n, '水产'],
   ['collectFish', '鱼类入库', '养殖并入库至少 {目标} 条鱼', fish,
     (world) => sumProduced(world, (item) => item?.kind === 'F'), 1n, '水产'],
-  ['fishUpgrade', '鱼池升级', '将任意一座鱼池升到 {目标} 级', fish, (world) => maxLevel(world.facilities.F), 5n, '水产'],
+  ['fishUpgrade', '鱼塘升级', '将任意一座鱼塘升到 {目标} 级', fish, (world) => maxLevel(world.facilities.F), 5n, '水产'],
   ['firstFishProcessing', '加工水产原料', '加工并入库至少 {目标} 份水产中间产物', processing,
     (world) => sumProduced(world, (item) => item?.kind === 'IF'), 1n, '水产'],
   ['miningIntro', '建造第一座矿洞', buyMineCondition, mining, (world) => world.stats.boughtM, 1n, '矿业'],
@@ -235,7 +235,7 @@ const longTerm = [
   ['runs50', '五十次交接', runCondition, farmSale, runs, 50n],
   ['runs100', '百次交接', runCondition, farmSale, runs, 100n],
   ['livestockTop', '牛肉庄园', '解锁肉用黄牛品种', research, (world) => learned(world, 'L10')],
-  ['fishTop', '鲟鱼鱼池', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
+  ['fishTop', '鲟鱼鱼塘', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
   ['miningTop', '宝石矿洞', '解锁宝石原矿', research, (world) => learned(world, 'M10')],
   ['miningProduct', '锡衬铜盘鲈鱼片', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PM14')],
 ];

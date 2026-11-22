@@ -8,7 +8,7 @@ const entries = Object.entries(catalog.items);
 const typeTabs = ['全部', '原料', '中间产物', '商品'];
 const sourceTabs = ['全部', '农业', '畜牧', '水产', '矿业'];
 const complexityTabs = ['全部', '单类', '双类', '三类', '四类'];
-const facilityTabs = { C: '田地', L: '畜牧', F: '鱼池', M: '矿洞' };
+const facilityTabs = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞' };
 
 const managementEntries = [
   { page: '管理员管理', icon: 'manager-directory', description: '查看管理员、送礼与切换角色' },
@@ -521,7 +521,7 @@ function renderCatalogDetail(ui, id) {
   }, { padding: 8, gap: 7 });
   const materials = Object.entries(item.inputs);
   if (!materials.length) {
-    ui.card((card) => card.row('获取方式', { C: '农田收获', L: '养殖场产出', F: '鱼池养殖', M: '矿洞开采' }[item.kind]));
+    ui.card((card) => card.row('获取方式', { C: '农田收获', L: '养殖场产出', F: '鱼塘养殖', M: '矿洞开采' }[item.kind]));
   } else {
     const needed = materials.reduce((sum, [, amount]) => sum + BigInt(amount), 0n);
     ui.card((card) => {
@@ -678,7 +678,7 @@ export function renderTasks(ui) {
 
 const instructions = [
   ['田地', '新庄园先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
-  ['畜牧、鱼池和矿洞', '购买设施，再安排已研发的牲畜、鱼或矿种。更换对象立即开始新周期。'],
+  ['畜牧、鱼塘和矿洞', '购买设施，再安排已研发的牲畜、鱼或矿种。更换对象立即开始新周期。'],
   ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出随工位等级增长（1+j+⌊j²/64⌋ 倍），材料投入同比放大；升级工位从下一批起生效。'],
   ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。每累计一小时有效时间发放普通研发点。消耗 100 普通研发点随机提升一个已研发品项的品质。'],
   ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。行情生效时，按当天倍率出货。'],
@@ -981,7 +981,7 @@ function farmDetails(ui, offer) {
   const changes = [
     ['保留', [{ label: '已研发品项、品质、普通研发点、经营改良、任务进度' }]],
     ['清空', [
-      { label: '田地、养殖场、鱼池、矿洞' },
+      { label: '田地、养殖场、鱼塘、矿洞' },
       { label: '库存、金币' },
     ]],
     ['工坊重置', [

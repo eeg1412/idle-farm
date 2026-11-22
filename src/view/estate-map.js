@@ -48,7 +48,7 @@ const sites = [
       sprite.rotation = 0.12 * Math.sin(turn * cycle(time, 3.5));
     } },
 
-  { id: 'fish', label: '鱼池', center: [0.6584, 1.2769], footprint: [11, 126, 528, 309],
+  { id: 'fish', label: '鱼塘', center: [0.6584, 1.2769], footprint: [11, 126, 528, 309],
     // Center the plaque on the inland pond; the offshore cages share its entry.
     widthRatio: 0.504, prop: [147, 245, 64], signAnchorX: 164,
     // Give the mine the narrow decorative fringe shared by their hit boxes.

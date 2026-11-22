@@ -15,7 +15,7 @@
 ## 1. 式样（目录所有者）
 
 1. `docs/expansion/02-livestock-fish.md`「## 水产业」对象表，F10 后追加 `| F11 | <鱼种> | <鱼种> |`。
-2. 同页「### 鱼池背景分类」把 F11 加到 `river` 或 `sea` 行。
+2. 同页「### 鱼塘背景分类」把 F11 加到 `river` 或 `sea` 行。
 3. `docs/expansion/05-catalog.md`「## 原料」表在 F10 后追加 `| F11 | <鱼种> | <s> | — |`，产物名与 02 一致。
 4. `docs/expansion/06-research.md` 在 F10 后追加 `| F11 | <鱼种> | <上一档F>、I01 | <上一档F>、I01 |`。
 5. 计数文字：02 首段「10 种鱼」、README、08 第 8 行总数、07 §7.1/§7.5 与新增 ID 记录、01。`kindCounts.F` +1。

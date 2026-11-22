@@ -4,10 +4,10 @@ import { techDefinitions, techOffer } from '../game/advancement.js';
 import { qualityDrawOffer } from '../game/quality.js';
 import { helpVoice, productionHelpCopy, taskHelpCopy, tutorialDestination, otherStationCopy, researchHelpCopy, contextHelpCopy } from './manager-help-copy.js';
 
-const facilityKinds = { 田地: 'C', 畜牧: 'L', 鱼池: 'F', 矿洞: 'M' };
+const facilityKinds = { 田地: 'C', 畜牧: 'L', 鱼塘: 'F', 矿洞: 'M' };
 const stationKinds = { 加工: 'I', 精制: 'P' };
-const placeNames = { C: '田地', L: '养殖场', F: '鱼池', M: '矿洞', I: '加工位', P: '精制位' };
-const purchaseNames = { C: '购地', L: '购买养殖场', F: '购买鱼池', M: '购买矿洞', I: '增设加工位', P: '增设精制位' };
+const placeNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞', I: '加工位', P: '精制位' };
+const purchaseNames = { C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞', I: '增设加工位', P: '增设精制位' };
 const assignmentNames = { C: '播种', L: '安排养殖', F: '安排养殖', M: '开采', I: '选择配方', P: '选择配方' };
 const replacementNames = { C: '换种', L: '更换品种', F: '更换品种', M: '更换矿种', I: '更换配方', P: '更换配方' };
 const taskCache = new WeakMap();
@@ -122,7 +122,7 @@ function taskInstruction(world, task, page, speaker) {
   }
 }
 
-const pageRoles = { 任务: 'tasks', 田地: 'field', 畜牧: 'livestock', 鱼池: 'fish', 矿洞: 'mine',
+const pageRoles = { 任务: 'tasks', 田地: 'field', 畜牧: 'livestock', 鱼塘: 'fish', 矿洞: 'mine',
   加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 图鉴: 'estate', 出售庄园: 'estate' };
 const speakerKey = (speaker) => speaker.role + ':' + speaker.gender;
 

@@ -4,10 +4,20 @@ import { livestockFeedLayout, livestockLayout } from './livestock-layout.js';
 
 export const livestockFrameSize = 320;
 export const livestockIdleFrames = 4;
-export const minLivestockAnimationMs = 9000;
+// There is no display floor: the stage timeline follows the real batch.
 export const livestockSpecies = livestockVisuals;
 
 const idleFrameMs = 300;
+// Short-batch tiers: each shown state needs at least `stageMinMs`, plus one
+// spare second. Full: N states; first/last: states 0 and N-1; else last only.
+const stageMinMs = 1000;
+const tierSpareMs = 1000;
+
+function shownStages(duration, count) {
+  if (duration >= count * stageMinMs + tierSpareMs) return Array.from({ length: count }, (_, index) => index);
+  if (count > 1 && duration >= 2 * stageMinMs + tierSpareMs) return [0, count - 1];
+  return [count - 1];
+}
 // Spread the three possible placements across the loop, including between frame ticks.
 const idlePlacementStepMs = idleFrameMs * livestockIdleFrames / 3;
 const harvestLeadMs = 3000;
@@ -37,17 +47,34 @@ function positionFeed(feed, shadow, feeding, texture, { animalScale, left, top }
     .fill({ color: 0x2b2118, alpha: ground.alpha });
 }
 
+// The phase always follows the real batch.
 export function sampleLivestockAnimation({
-  batch, animationStart = batch.start, clock, now = clock, previousHarvestAt,
+  batch, clock, now = clock, previousHarvestAt,
 }) {
   const species = livestockSpecies[batch.id];
-  const duration = Math.max(batch.end - batch.start, minLivestockAnimationMs);
-  const elapsed = Math.max(0, clock - animationStart);
+  const duration = Math.max(1, batch.end - batch.start);
+  const lastStage = species.stages - 1;
+  // Meat animals show their growth stages. Attached-product animals add one
+  // state after their adult stage: adult without product, then with product.
+  const shown = shownStages(duration, species.slaughter ? species.stages : species.stages + 1);
+  if (shown.length === 1) {
+    // Last-only: a steady mature animal (meat) or adult with its product
+    // (attached); no per-batch harvest fade, so nothing flashes.
+    return {
+      stage: lastStage, idleFrame: idleFrameAt(now),
+      animalAlpha: 1, productAlpha: species.slaughter ? 0 : 1,
+    };
+  }
+  const elapsed = Math.max(0, clock - batch.start);
   const cycle = Math.floor(elapsed / duration);
   const phase = elapsed % duration;
-  const harvestProgress = phase - (duration - harvestLeadMs);
+  const state = shown[Math.min(shown.length - 1, Math.floor(phase * shown.length / duration))];
+  // The product arrives within the last shown state: 3 s when it lasts that
+  // long, otherwise the whole last state.
+  const leadMs = Math.min(harvestLeadMs, duration / shown.length);
+  const harvestProgress = phase - (duration - leadMs);
   const productAppeared = smoothstep(harvestProgress / transitionMs);
-  const predictedHarvestAt = cycle > 0 ? animationStart + cycle * duration : -Infinity;
+  const predictedHarvestAt = cycle > 0 ? batch.start + cycle * duration : -Infinity;
   const lastHarvestAt = Math.max(previousHarvestAt ?? -Infinity, predictedHarvestAt);
   const sinceHarvest = clock - lastHarvestAt;
   let productAlpha = productAppeared;
@@ -56,7 +83,7 @@ export function sampleLivestockAnimation({
   }
 
   return {
-    stage: Math.floor(phase * species.stages / duration),
+    stage: Math.min(state, lastStage),
     idleFrame: idleFrameAt(now),
     animalAlpha: species.slaughter ? 1 - productAppeared : 1,
     productAlpha,
@@ -64,7 +91,7 @@ export function sampleLivestockAnimation({
 }
 
 export function mountLivestockAnimation(
-  parent, textures, { x, y, width, height }, batch, animationStart = batch.start, previousHarvestAt,
+  parent, textures, { x, y, width, height }, batch, previousHarvestAt,
 ) {
   const species = livestockSpecies[batch.id];
   const container = new Container();
@@ -175,7 +202,7 @@ export function mountLivestockAnimation(
   return {
     container,
     update({ clock, now = clock }) {
-      const sample = sampleLivestockAnimation({ batch, animationStart, clock, now, previousHarvestAt });
+      const sample = sampleLivestockAnimation({ batch, clock, now, previousHarvestAt });
       const stageTextures = textures.stages[sample.stage];
       updateGroundLayers(sample.stage);
       for (const { animal, shadow, product, productShadow, idleOffsetMs } of animals) {

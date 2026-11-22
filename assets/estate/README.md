@@ -26,7 +26,7 @@ await sharp('assets/source/art/proposals/2026-11-19-map-ensemble/map/background-
 | --- | --- | --- |
 | `field` | 种植区 | 稻草人 |
 | `livestock` | 畜棚 | 绵羊 |
-| `fish` | 鱼池 | 锦鲤和水波 |
+| `fish` | 鱼塘 | 锦鲤和水波 |
 | `mine` | 矿洞 | 矿车 |
 | `processing` | 加工坊 | 水车 |
 | `refining` | 精制坊 | 烟柱 |
@@ -71,7 +71,7 @@ Edit the uploaded exact transparent field sprite with a single small patch edit:
 
 ## 五组庄园地图间距返修
 
-基于 `background-groups.png` 原画裁去首尾空景，鱼池海湾及其上方段落保留原比例。海湾下方的陆地沿纵向均匀收紧，让加工、精制、研发和仓库之间的距离随底图缩短。源图与输出的行区间均含起始行、不含结束行，宽度全程为 756 px。
+基于 `background-groups.png` 原画裁去首尾空景，鱼塘海湾及其上方段落保留原比例。海湾下方的陆地沿纵向均匀收紧，让加工、精制、研发和仓库之间的距离随底图缩短。源图与输出的行区间均含起始行、不含结束行，宽度全程为 756 px。
 
 | 源图行区间 | 输出行区间 | 处理 |
 | --- | --- | --- |
@@ -89,7 +89,7 @@ magick \( assets/estate/background-groups.png -crop 756x1141+0+57 +repage \) \
 
 ## 五组庄园地图
 
-`background-groups.png`（756 × 2079，内置图像生成 `exec-e496e09f-f0e0-4576-8b7c-3e8cd1d89261`）以 `background-coast.png` 的配色、镜头和像素笔触为参考，整幅重画。曲折步道依次连接经营与任务、畜牧与田地、鱼池与矿洞、加工与精制、研发与仓库五组场地。海水只从鱼池旁接入右侧的沙岸小湾，矿洞旁保留带岩壁的陆地。
+`background-groups.png`（756 × 2079，内置图像生成 `exec-e496e09f-f0e0-4576-8b7c-3e8cd1d89261`）以 `background-coast.png` 的配色、镜头和像素笔触为参考，整幅重画。曲折步道依次连接经营与任务、畜牧与田地、鱼塘与矿洞、加工与精制、研发与仓库五组场地。海水只从鱼塘旁接入右侧的沙岸小湾，矿洞旁保留带岩壁的陆地。
 
 按原图尺寸导出 `public/art/estate/background.webp`。
 
@@ -108,7 +108,7 @@ No architecture, crops, ponds, grain, nets, docks, props, animals, people, lette
 
 ## 放大版海岸庄园地图
 
-两段地景均使用 `background-coast.png` 作为风格参考，由内置图像生成工具各自重绘。北段绘制任务、田地、畜牧、鱼池和加工坊对应的地形，南段绘制矿洞、精制、仓库、研发和经营对应的地形。底图为无建筑和门牌的地景，主路贯穿上下段。鱼池位置保留缓坡沙岸，独立鱼场图的淡水塘落在岸内，两座网箱叠在外海。
+两段地景均使用 `background-coast.png` 作为风格参考，由内置图像生成工具各自重绘。北段绘制任务、田地、畜牧、鱼塘和加工坊对应的地形，南段绘制矿洞、精制、仓库、研发和经营对应的地形。底图为无建筑和门牌的地景，主路贯穿上下段。鱼塘位置保留缓坡沙岸，独立鱼场图的淡水塘落在岸内，两座网箱叠在外海。
 
 | 原稿 | 原图尺寸 | 生成编号 |
 | --- | --- | --- |

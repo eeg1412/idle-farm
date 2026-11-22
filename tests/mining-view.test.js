@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { gameHash, parseGameHash } from '../src/view/navigation.js';
 
 test('mine route round trips and existing farm routes retain their tabs', () => {
-  for (const [tab, slug] of [['田地', 'fields'], ['畜牧', 'livestock'], ['鱼池', 'fish'], ['矿洞', 'mining']]) {
+  for (const [tab, slug] of [['田地', 'fields'], ['畜牧', 'livestock'], ['鱼塘', 'fish'], ['矿洞', 'mining']]) {
     const route = { page: '庄园', tab, id: tab === '矿洞' ? 'M10' : 'C01' };
     const hash = '#/farm?tab=' + slug + '&item=' + route.id;
     assert.equal(gameHash(route), hash);

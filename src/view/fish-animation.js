@@ -5,11 +5,21 @@ import { fishRegistration, fishSizeLayouts } from './fish-layout.js';
 
 export const fishFrameSize = 320;
 export const fishIdleFrames = 4;
-export const minFishAnimationMs = 9000;
+// There is no display floor: the stage timeline follows the real batch.
 export const fishSpecies = fishVisuals;
 export const fishHabitats = habitatVisuals;
 
 const idleFrameMs = 300;
+// Short-batch tiers: each shown stage needs at least `stageMinMs`, plus one
+// spare second. Full: N stages; first/last: fry and mature; else mature only.
+const stageMinMs = 1000;
+const tierSpareMs = 1000;
+
+function shownStages(duration, count) {
+  if (duration >= count * stageMinMs + tierSpareMs) return Array.from({ length: count }, (_, index) => index);
+  if (count > 1 && duration >= 2 * stageMinMs + tierSpareMs) return [0, count - 1];
+  return [count - 1];
+}
 const transitionMs = 300;
 const waterFrameMs = 1000 / 30;
 const rippleCycleMs = 3600;
@@ -88,17 +98,22 @@ function showRipples(rippleGraphics, slots, bounds, color, waterFrame, now) {
   }
 }
 
+// The phase always follows the real batch.
 export function sampleFishAnimation({
-  batch, animationStart = batch.start, clock, now = clock,
+  batch, clock, now = clock,
 }) {
   const species = fishSpecies[batch.id];
-  const duration = Math.max(batch.end - batch.start, minFishAnimationMs);
-  const elapsed = Math.max(0, clock - animationStart);
+  const duration = Math.max(1, batch.end - batch.start);
+  const shown = shownStages(duration, species.stages);
+  const idleFrame = Math.floor(Math.max(0, now) / idleFrameMs) % fishIdleFrames;
+  // Last-only: the mature fish stays opaque; no per-batch fade, so nothing flashes.
+  if (shown.length === 1) return { stage: shown[0], idleFrame, alpha: 1 };
+  const elapsed = Math.max(0, clock - batch.start);
   const phase = elapsed % duration;
 
   return {
-    stage: Math.floor(phase * species.stages / duration),
-    idleFrame: Math.floor(Math.max(0, now) / idleFrameMs) % fishIdleFrames,
+    stage: shown[Math.min(shown.length - 1, Math.floor(phase * shown.length / duration))],
+    idleFrame,
     // The mature fish finishes fading before the next cycle's fry fades in.
     // Only one stage is present, so the two silhouettes never overlap.
     alpha: smoothstep(phase / transitionMs) * smoothstep((duration - phase) / transitionMs),
@@ -106,7 +121,7 @@ export function sampleFishAnimation({
 }
 
 export function mountFishAnimation(
-  parent, textures, { x, y, width, height }, batch, animationStart = batch.start,
+  parent, textures, { x, y, width, height }, batch,
 ) {
   const species = fishSpecies[batch.id];
   const layout = fishSizeLayouts[species.size];
@@ -194,7 +209,7 @@ export function mountFishAnimation(
   return {
     container,
     update({ clock, now }) {
-      const sample = sampleFishAnimation({ batch, animationStart, clock, now });
+      const sample = sampleFishAnimation({ batch, clock, now });
       const texture = textures.stages[sample.stage][sample.idleFrame];
       for (const sprite of fish) {
         if (sprite.texture !== texture) sprite.texture = texture;

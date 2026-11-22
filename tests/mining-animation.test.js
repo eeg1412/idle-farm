@@ -21,12 +21,27 @@ test('mine entry, unloading and empty return follow the cycle clock', () => {
   assert.equal(sample(18000).cargoAlpha, 1);
 });
 
-test('fast economic batches do not restart the independent 5.3 second display', () => {
+test('batches shorter than 5.3 seconds show only the static loaded arrival frame', () => {
   const shortSession = { ...session, durationMs: 200 };
-  const a = sampleMiningAnimation({ session: shortSession, batch: { ...batch, end: 300 }, clock: 1750 });
-  const b = sampleMiningAnimation({ session: shortSession, batch: { ...batch, start: 1700, end: 1900 }, clock: 1750 });
-  assert.deepEqual(a, b);
-  assert.equal(a.duration, 5300);
+  const shortBatches = [
+    { ...batch, end: 300 }, { ...batch, start: 1700, end: 1900 }, { ...batch, start: 100, end: 5399 },
+  ];
+  for (const value of shortBatches) {
+    for (const clock of [value.start, value.start + 100, value.end, value.end + 2000]) {
+      const result = sampleMiningAnimation({ session: shortSession, batch: value, clock });
+      // Never stretched to 5.3 s, never entering, travelling or unloading.
+      assert.equal(result.duration, value.end - value.start);
+      assert.equal(result.position, 1);
+      assert.equal(result.cargoAlpha, 1);
+      assert.equal(result.stage, 'arrived');
+      assert.equal(result.first, false);
+    }
+  }
+  // Exactly 5.3 s keeps the full trip, starting with the first entry.
+  const minimum = { ...batch, end: batch.start + 5300 };
+  const full = sampleMiningAnimation({ session, batch: minimum, clock: minimum.start + 1000 });
+  assert.equal(full.stage, 'first-entry');
+  assert.equal(full.position, 0.5);
 });
 
 test('a faster next long batch keeps unloading then reaches its real saved end', () => {

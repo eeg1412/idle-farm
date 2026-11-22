@@ -5,7 +5,7 @@
 | `src/content/game-data.json` | 574 项品类、产出、配方和 572 项研发 |
 | `src/content/livestock-visuals.json` | 由畜牧布局生成的全部牲畜视觉登记，显式分类与阶段，不进入经营状态 |
 | `src/game/world.js` | 四类设施及两类工位、事件调度、库存与保留量、报价与周回 |
-| `src/game/advancement.js` | 品种与配方研发、品质计价、35 项经营改良及叠加规则 |
+| `src/game/advancement.js` | 品种与配方研发、品质计价、39 项经营改良及叠加规则 |
 | `src/game/quality.js` | 普通点整小时加权发放、抽取报价与事务 |
 | `src/game/market.js` | 有效自然日、三轮行情、市场科技效果、倍率校验、重置与预测、成交计价 |
 | `src/game/managers.js` | 各岗位好感、每日心愿、共用送礼额度、送礼报价和回礼结算 |
@@ -18,10 +18,10 @@
 | `src/view/manager-page.js`、`src/view/manager-dialogue.js` | 各岗位关系区、统一管理列表、资料、送收礼及 22 套姓名与独立对白 |
 | `src/view/manager-speech.js` | 对白抢占与基础进度恢复、逐字时序、红色标记和中文换行 |
 | `src/view/manager-help.js` | 按当前任务选择单条教学步骤，按既有报价提供六类产线升级指导 |
-| `src/view/production-pages.js` | 田地、畜牧、鱼池、矿洞、加工与精制 |
-| `src/view/livestock-animation.js` | 全部牲畜的阶段、idle 换帧、9 秒保底和产品淡入淡出，按视觉登记分类，接收显示时钟而不改变经营数据 |
+| `src/view/production-pages.js` | 田地、畜牧、鱼塘、矿洞、加工与精制 |
+| `src/view/livestock-animation.js` | 全部牲畜的阶段、idle 换帧、按真实批次时长的完整／首末／末帧三档和产品淡入淡出，按视觉登记分类，接收显示时钟而不改变经营数据 |
 | `src/view/research-page.js` | 品种与配方、品质、经营改良 |
-| `src/view/mining-animation.js`、`src/view/mining-layout.js` | 矿车共用时序/布局、分层遮挡、5.3秒展示保底；不产生经营事件 |
+| `src/view/mining-animation.js`、`src/view/mining-layout.js` | 矿车共用时序/布局、分层遮挡；真实时长不足5.3秒最低展示时长时只显示载矿到站帧；不产生经营事件 |
 | `src/content/mining-visuals.json` | 矿洞原画路径、轨道/车轮/货载锚点与源登记 |
 | `scripts/export-mining-art.mjs`、`scripts/compose-mining-keyframes.mjs` | 矿业素材转换、复用运行时序与布局的关键帧交付 |
 | `src/view/research-tree.js` | 研究节点布局、可见范围和拖动缩放 |

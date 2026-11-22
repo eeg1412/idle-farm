@@ -11,7 +11,7 @@
 | 大地图 | 右上菜单 | `#/farm` |
 | 田地 | 田地建筑或路牌 | `#/farm?tab=fields` |
 | 畜牧 | 畜牧建筑或路牌 | `#/farm?tab=livestock` |
-| 鱼池 | 鱼池建筑或路牌 | `#/farm?tab=fish` |
+| 鱼塘 | 鱼塘建筑或路牌 | `#/farm?tab=fish` |
 | 矿洞 | 矿洞建筑或路牌 | `#/farm?tab=mining` |
 | 加工 | 加工建筑或路牌 | `#/workshop?tab=processing` |
 | 精制 | 精制建筑或路牌 | `#/workshop?tab=refining` |
