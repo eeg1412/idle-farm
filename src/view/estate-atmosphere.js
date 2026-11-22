@@ -3,6 +3,13 @@ import {
   estateBirdCount, estateBirdPassAt, estateBirdPose, estateBirdRoute,
 } from './estate-atmosphere-layout.js';
 
+// Session-wide visible flight clock. A map instance may be destroyed when a
+// non-map page is built and recreated on return or rotation; the clock and the
+// highest pass ever started survive that, so only the first post-opening map
+// guarantees pass zero and later passes follow passEveryMs. Only active,
+// texture-ready map ticks advance it; it is never persisted.
+const estateBirdSession = { elapsed: 0, startedPass: -1, advancedAt: undefined };
+
 export const estateAtmosphereAssetUrl = (name) => new URL(
   `./art/estate/atmosphere/${name}.webp?game=1&v=1`, document.baseURI,
 ).href;
@@ -30,7 +37,10 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
   const flightRoute = {};
   const routeSamples = Array(5).fill(0);
   let flightPass = -1;
-  let elapsed = 0;
+  // A recreated instance never replays a pass already started by an earlier
+  // instance; if that pass is still in its window, this instance stays hidden
+  // until the next timer pass.
+  const minPass = estateBirdSession.startedPass + 1;
   let lastNow;
   let lastPaint = -Infinity;
 
@@ -97,16 +107,21 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
         }));
       }
       // Download and atlas preparation do not consume visible flight time. The
-      // first ready, active map tick therefore starts pass zero even after a
-      // slow request, a hidden tab, a modal, or an equivalent map rebuild.
+      // first ready, active post-opening map tick of the session therefore
+      // starts pass zero even after a slow request.
       if (!frames) {
         lastNow = undefined;
         return false;
       }
       // Reset on every inactive tick. Also cap an unobserved browser suspension
       // so restoration never fast-forwards a flock across the map.
-      if (lastNow !== undefined) elapsed += Math.max(0, Math.min(80, now - lastNow));
+      // The shared clock advances at most once per frame timestamp.
+      if (lastNow !== undefined && estateBirdSession.advancedAt !== now) {
+        estateBirdSession.elapsed += Math.max(0, Math.min(80, now - lastNow));
+      }
+      estateBirdSession.advancedAt = now;
       lastNow = now;
+      const elapsed = estateBirdSession.elapsed;
       if (elapsed - lastPaint < 1000 / 30) return false;
       lastPaint = elapsed;
       let changed = false;
@@ -114,8 +129,9 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
         // Pin a pass to the map location where it started. Scrolling moves the
         // world beneath the shared viewport mask instead of dragging the birds.
         const pass = estateBirdPassAt(elapsed);
-        if (pass >= 0 && pass !== flightPass) {
+        if (pass >= minPass && pass !== flightPass) {
           flightPass = pass;
+          if (pass > estateBirdSession.startedPass) estateBirdSession.startedPass = pass;
           // Display-only randomness is sampled once, never during this pass's
           // motion, and is independent of game seeds and saved state.
           for (let index = 0; index < routeSamples.length; index += 1) routeSamples[index] = Math.random();
@@ -126,7 +142,12 @@ export function mountEstateAtmosphere(parent, { width, height, loadImage, markDi
         }
         for (let index = 0; index < birds.length; index += 1) {
           const bird = birds[index];
-          if (pass < 0) continue;
+          if (pass < minPass) {
+            // Skipped remainder of a pass that began before this instance.
+            if (bird.visible) changed = true;
+            bird.visible = false;
+            continue;
+          }
           const pose = estateBirdPose(elapsed, index, width, flightRoute, birdPoses[index]);
           if (bird.visible !== pose.visible) changed = true;
           bird.visible = pose.visible;

@@ -263,13 +263,17 @@ export const taskCoinRewards = Object.freeze(Object.fromEntries(Object.entries({
 })));
 
 function progress(world, [id, name, condition, location, count, required = 1n, branch]) {
-  const current = count(world);
+  // A task whose reward has been issued stays complete forever: later drops in its count
+  // (selling the farm resets facilities, stations and fields) never reopen it. Displayed
+  // progress is clamped to the target so it never exceeds it.
+  const raw = BigInt(count(world));
   const gate = taskProductionGates[id] ?? null;
   const gateMet = gate === null || (world.lifetimeProductionValue ?? 0n) >= gate;
   const rewarded = world.taskRewards?.includes(id) ?? false;
-  const completedLegacy = rewarded && (Object.hasOwn(qualityDrawTaskTargets, id) || id === 'techLevel1200');
-  return { id, name, condition, ...location, current: completedLegacy && current < required ? required : current,
-    required, gate, gateMet, done: completedLegacy || current >= required && gateMet,
+  const done = rewarded || raw >= required && gateMet;
+  const current = rewarded || raw >= required ? required : raw;
+  return { id, name, condition, ...location, current,
+    required, gate, gateMet, done,
     rewardCoins: taskCoinRewards[id], rewardResearchPoints: taskResearchPointRewards[id] ?? 0n,
     rewarded, ...(branch && { branch }) };
 }

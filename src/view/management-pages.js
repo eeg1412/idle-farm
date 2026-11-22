@@ -617,6 +617,7 @@ const taskArt = {
   techLevel1200: 'tech-farm', runs5: 'sale-reset', runs20: 'sale-reset', runs50: 'sale-reset', runs100: 'sale-reset',
   livestockTop: 'scene-L10', fishTop: 'scene-F10',
 };
+const taskTabs = ['未完成', '已完成'];
 const featuredGoals = ['buildLivestock', 'collectFish', 'firstLivestockProcessing', 'firstMixedProduct'];
 const taskItems = { firstHarvest: 'C01', firstFlour: 'I01', breadRecipe: 'P01', firstBread: 'P01',
   milleCrepe: 'P150', threeSectorGift: 'PT50', miningTop: 'M10', miningProduct: 'PM14' };
@@ -626,10 +627,28 @@ export function renderTasks(ui) {
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
   ui.text('任务完成后自动发奖，每项只发一次。', { muted: true });
-  const goals = active ? guide : [
+  const taskTab = taskTabs.includes(ui.local.tab) ? ui.local.tab : taskTabs[0];
+  ui.local.tab = taskTab;
+  ui.tabs(taskTabs, taskTab, (next) => {
+    if (next === taskTab) return;
+    ui.local.tab = next;
+    ui.local.scroll = 0;
+    ui.refresh();
+  }, { keepScroll: true, sticky: true, style: 'segmented' });
+  const finished = taskTab === '已完成';
+  const stage = active ? guide : [
+    ...guide.filter((goal) => goal.branch),
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
     ...long.filter((goal) => !featuredGoals.includes(goal.id)),
   ];
+  const goals = finished
+    ? [...guide, ...long].filter((goal, index, all) =>
+      goal.done && all.findIndex((other) => other.id === goal.id) === index)
+    : stage.filter((goal) => !goal.done);
+  if (!goals.length) {
+    ui.text(finished ? '暂无已完成任务。' : '全部任务已完成。', { muted: true });
+    return;
+  }
   ui.scrollList(goals, (cell, goal) => {
     cell.card((entry) => entry.feature(taskArt[goal.id], (card) => {
       card.heading(goal.name);
@@ -644,7 +663,7 @@ export function renderTasks(ui) {
         (researchPoints > 0n ? ' + ' + compact(researchPoints) + ' 高级研发点' : '');
       const gate = goal.gate != null && !goal.gateMet ? ' · 需累计产值 ' + compact(goal.gate) : '';
       card.text(reward + gate + (goal.rewarded ? ' · 已到账' : ''), { muted: !goal.rewarded });
-      const progress = compact(goal.current) + ' / ' + required;
+      const progress = (goal.done ? required : compact(goal.current)) + ' / ' + required;
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
       const tab = earnForLand ? undefined : goal.tab;

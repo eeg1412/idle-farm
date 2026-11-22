@@ -9,7 +9,7 @@ const routes = {
   统计: ['statistics', {}],
   出售庄园历史: ['farm-sale-history', {}],
   图鉴: ['catalog', { 用途: 'uses' }],
-  任务: ['tasks', {}],
+  任务: ['tasks', { 未完成: 'active', 已完成: 'done' }],
   设置: ['settings', {}],
   出售庄园: ['farm-sale', {}],
 };
@@ -81,9 +81,10 @@ export function gameHistory(browser) {
     },
     write(route, modal, replace = false, scroll = 0, context) {
       const hash = gameHash(route);
-      // Research and merchant tabs are single destinations. Keep dialog entries layered.
+      // Research, merchant and task tabs are single destinations. Keep dialog entries layered.
       if (!modal && !active?.modal && !route.dialog && !active?.route.dialog &&
-          (route.page === '研究' || route.page === '行脚商') && active?.route.page === route.page &&
+          (route.page === '研究' || route.page === '行脚商' || route.page === '任务') &&
+          active?.route.page === route.page &&
           route.tab !== active.route.tab) replace = true;
       const previous = replace ? active?.previous : active?.key;
       const key = replace && active ? active.key : ++sequence;
