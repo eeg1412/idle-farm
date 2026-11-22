@@ -156,14 +156,15 @@ test('a later day rolls over the return once and receiving enough items starts a
 
   const produced = structuredClone(world.stats.produced);
   const productionValue = world.productionValue;
-  updateWorldWallTime(world, fifthDay);
+  updateWorldWallTime(world, nextDay);
   assert.equal(managerStatus(world, 'field').currentReturn, 0n);
   assert.equal(managerStatus(world, 'field').readyReturn, 3_750n);
   assert.equal(managerStatus(world, 'field').dailyGain, 0n);
   synchronizeWorldCalendar(world, nextDay);
   const { claim } = managerStatus(world, 'field');
   assert.ok(claim);
-  assert.deepEqual(claimManagerGift(world, claim), { id: 'field', itemId: 'C01', count: 2n, value: 3_000n });
+  assert.deepEqual(claimManagerGift(world, claim), { id: 'field', items: [{ itemId: 'C01', count: 2n, value: 3_000n }], value: 3_000n,
+    capsules: { added: 0n, remaining: 0n } });
   assert.equal(world.stations.I[0].batch.id, 'I01');
   assert.deepEqual(world.stats.produced, produced);
   assert.equal(world.productionValue, productionValue);
@@ -175,6 +176,12 @@ test('a later day rolls over the return once and receiving enough items starts a
   assert.ok(managerStatus(world, 'field').claim);
   assert.equal(claimManagerGift(world, claim), false);
   assert.ok(claimManagerGift(world, managerStatus(world, 'field').claim));
+
+  // An unclaimed return expires once more than one day passes.
+  world.managers.roles.field.readyReturn = 750n;
+  updateWorldWallTime(world, fifthDay);
+  assert.equal(managerStatus(world, 'field').readyReturn, 0n);
+  assert.equal(managerStatus(world, 'field').claim, null);
 });
 
 test('time and prestige preserve relationships and already-earned returns while clearing quota and current candidates', () => {

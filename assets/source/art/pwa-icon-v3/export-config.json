@@ -1,0 +1,12 @@
+{
+  "backgroundColor": "#F28C28",
+  "layoutAlphaThreshold": 128,
+  "layoutPaddingPixels": 2,
+  "regular": {
+    "maximumExtentFraction": 0.9
+  },
+  "maskable": {
+    "safeZoneDiameterFraction": 0.8,
+    "radiusMarginFraction": 0.04
+  }
+}

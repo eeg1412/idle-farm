@@ -81,3 +81,7 @@ assets/source/items/time-capsule/reviews/**/*.jpeg
 
 # Build output: hashed static asset manifest (scripts/build-asset-manifest.mjs)
 src/content/asset-manifest.json
+assets/source/art/pwa-icon-v3/reviews/**/*.png
+assets/source/art/pwa-icon-v3/reviews/**/*.webp
+assets/source/art/pwa-icon-v3/reviews/**/*.jpg
+assets/source/art/pwa-icon-v3/reviews/**/*.jpeg

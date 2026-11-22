@@ -32,7 +32,7 @@ const livestockArt = {
   L05: 'facility-goose',
   L06: 'facility-pig',
   L07: 'facility-rabbit',
-  L08: 'facility-sheep',
+  L08: 'livestock-L08',
   L09: 'facility-muscovy',
   L10: 'facility-cattle',
 };

@@ -177,6 +177,7 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
     accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(day),
     managers: newManagers(day), orders: newOrders(day), productionValue: 0n, completedRuns: 0, farmSaleHistory: [],
+    capsules: 0n, pendingTaskCapsules: 0n,
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, warehouseRevenue: 0n, lifetimeRevenue: 0n,
@@ -202,13 +203,13 @@ export function stationRequirements(world, id, level = 1n) {
   }));
 }
 
-function orderedStations(world) {
+export function orderedStations(world) {
   const stations = [...world.stations.I, ...world.stations.P];
   return stations.sort((a, b) => Number(b.priority) - Number(a.priority) || a.order - b.order);
 }
 
 // Caller guarantees the facility is idle and has a recipe.
-function startFacility(world, kind, facility, onStart) {
+export function startFacility(world, kind, facility, onStart) {
   const base = catalogOutput(facility.recipe);
   const yieldBasis = facilityYieldBasis(world, kind);
   const count = multiplyFacilityYield(base, yieldBasis, facility.level);
@@ -241,8 +242,9 @@ function startStation(world, station, onStart) {
   return true;
 }
 
-function startProduction(world, stations, onStart) {
-  for (const [kind, facilities] of Object.entries(world.facilities)) {
+// `facilityGroups` defaults to every facility; a capsule fast-forward passes only its own slots.
+function startProduction(world, stations, onStart, facilityGroups = world.facilities) {
+  for (const [kind, facilities] of Object.entries(facilityGroups)) {
     for (const facility of facilities) {
       if (facility.batch || !facility.recipe) continue;
       startFacility(world, kind, facility, onStart);
@@ -259,10 +261,10 @@ function startProduction(world, stations, onStart) {
 // completed, and an idle station that failed its input check can only pass again once one of its
 // input IDs has been deposited (between scans inventory otherwise only decreases; reserves,
 // merchant holds, levels and recipes are fixed during an advance).
-function productionRestarter(world, stations, onStart) {
+export function productionRestarter(world, stations, onStart, facilityGroups = world.facilities) {
   const facilityKinds = new Map();
   let facilityCount = 0;
-  for (const [kind, facilities] of Object.entries(world.facilities)) {
+  for (const [kind, facilities] of Object.entries(facilityGroups)) {
     for (const facility of facilities) facilityKinds.set(facility, { kind, rank: facilityCount++ });
   }
   const stationRanks = new Map(stations.map((station, rank) => [station, rank]));
@@ -285,7 +287,7 @@ function productionRestarter(world, stations, onStart) {
 
   return (completed, depositedIds) => {
     if (!distinct || !scanned) {
-      startProduction(world, stations, onStart);
+      startProduction(world, stations, onStart, facilityGroups);
       if (!distinct) return;
       scanned = true;
       waiting.clear();
@@ -317,7 +319,7 @@ export function settleProduction(world) {
   startProduction(world, orderedStations(world));
 }
 
-function deposit(world, batch, contributions, wallAt) {
+export function deposit(world, batch, contributions, wallAt) {
   const { id } = batch;
   const count = BigInt(batch.amount);
   world.inventory[id] = quantity(world, id) + count;
@@ -337,7 +339,7 @@ function deposit(world, batch, contributions, wallAt) {
   }
 }
 
-function pushEvent(heap, entry) {
+export function pushEvent(heap, entry) {
   let index = heap.length;
   while (index > 0) {
     const parent = Math.floor((index - 1) / 2);
@@ -348,7 +350,7 @@ function pushEvent(heap, entry) {
   heap[index] = entry;
 }
 
-function popEvent(heap) {
+export function popEvent(heap) {
   const result = heap[0];
   const tail = heap.pop();
   if (heap.length === 0) return result;

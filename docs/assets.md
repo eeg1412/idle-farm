@@ -216,10 +216,12 @@ registration.json的runtime对象原样转入小型src/content/estate-merchant-v
 
 新开闭、手机实际比例、四帧与代码路径见[本轮静态独审](art-reviews/2026-11-19-merchant-states.md)。源码／分镜结论不代替真实Pixi循环和运行体验，用户认可另记。
 
-### 网页图标与PWA图标（2026-11-20重绘）
+### 网页图标与PWA图标
 
-正式安装图标为内置绘图工具新绘的庄园门楼与金色麦穗徽记，深绿满幅底、橙红屋顶和亮窗，主体大且适配小尺寸，无文字。不是旧operations建筑裁切。原生普通与maskable两张1254×1254源图及完整提示词分别保留在assets/source/art/pwa-icon-v2/，独立maskable由图工具保持主体身份并原生延展背景；禁止用程序渐变补画遮住接缝。
+图标主体由内置绘图工具绘制为透明前景，原图与完整提示词保存在 `assets/source/art/pwa-icon-v3/`。庄园徽记采用砖红屋顶、奶油白墙、明亮窗户、金黄麦穗及底部绿叶，无文字，按32／48像素辨识设计。
 
-scripts/export-pwa-icons-v2.mjs仅从真实源等比转换正式PNG32/48/180/192/512及独立maskable512，封装32/48 ICO；不重新绘画主体。public/icons/manor-v2-*使用新文件名，旧6PNG移除，index.html的favicon、manifest引用同步版本化，Apple使用v2的180图。所有正式PNG满幅不透明，关键房屋/麦穗在maskable中央安全圆内；主体、圆/圆角裁切与小尺寸均实际审阅。只保留短审阅报告，临时图板置于项目外，不入源码包。
+`scripts/export-pwa-icons-v3.mjs` 将同一透明主体等比居中，程序合成纯色背景，导出 `public/icons/manor-v3-*` 的32／48／180／192／512 PNG及maskable512，并将32／48封装为 `public/favicon.ico`。背景色由 `assets/source/art/pwa-icon-v3/export-config.json` 的 `backgroundColor` 设置，默认橙色 `#F28C28`；更换配置后重新导出即可换色，原稿保持透明。正式PNG满幅不透明，maskable关键内容位于中央80%直径安全圆内。HTML和manifest使用v3图标引用，应用身份、启动地址和页面主题设定保持原值。
+
+静态审图报告与来源、尺寸、变换和哈希登记保留在仓库，证据图片仅在 `assets/source/art/pwa-icon-v3/reviews/` 本地保存并忽略；图像静态审阅不代表实际安装图标刷新已经验证。
 
 manifest仍为放置庄园，id=idle-manor、start_url=./#/farm、scope=./、standalone及主题不改，不重新建立应用身份。新图地址让浏览器识别图标变更；已安装图标的最终替换仍受浏览器及系统策略影响，可能需要用户在系统提供的更新入口确认，不能由游戏UI保证立即变更。manifest、ICO与`icons/`下PNG为固定名文件，不加内容哈希，由生产Service Worker安装清单预缓存，不另建缓存体系；用户授权的新版本提示在游戏UI中处理，安装提示不在本轮范围。

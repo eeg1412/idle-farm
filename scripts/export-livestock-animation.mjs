@@ -9,9 +9,11 @@ import { exportLivestockFeed, livestockFeedRegistrationPath } from '../assets/li
 const selectedOptions = process.argv.filter((argument) => argument.startsWith('--species='));
 const selectedId = selectedOptions[0]?.slice('--species='.length);
 const selective = selectedOptions.length > 0;
+const selectedChoices = selective && process.argv.includes('--choices-only');
 if (selectedOptions.length > 1 || (selective && (!selectedId ||
-  ['--feed-only', '--choices-only', '--choices-feed-only'].some((argument) => process.argv.includes(argument))))) {
-  throw new Error('Use one --species=<ID> alone with optional --refresh-scenes.');
+  ['--feed-only', '--choices-feed-only'].some((argument) => process.argv.includes(argument)) ||
+  (selectedChoices && process.argv.includes('--refresh-scenes'))))) {
+  throw new Error('Use one --species=<ID> with optional --refresh-scenes or --choices-only.');
 }
 if (process.argv.includes('--feed-only')) {
   await exportLivestockFeed();
@@ -19,7 +21,7 @@ if (process.argv.includes('--feed-only')) {
 }
 
 let choiceExport;
-if (!selective) choiceExport = await exportLivestockChoices();
+if (!selective || selectedChoices) choiceExport = await exportLivestockChoices(selectedId);
 if (process.argv.includes('--choices-only')) {
   console.log('Exported new current-V5-referenced neutral portraits only; feeding frames, feed and fallbacks are untouched.');
   process.exit(0);
@@ -218,6 +220,12 @@ const manifest = selective ? structuredClone(previousManifest) : {
   sceneSize: size, idleFrames: layout.idleFrames, animalRoot: layout.animalRoot,
   species: {},
 };
+if (selective) {
+  for (const [key, source] of sources) manifest.sources[key] = {
+    file: source.file, sha256: createHash('sha256').update(source.originalBytes).digest('hex'),
+    originalSize: [source.info.width, source.info.height], normalized: `normalized/${key}.png`,
+  };
+}
 
 async function exists(file) {
   try { return (await stat(file)).isFile(); }
@@ -382,9 +390,10 @@ for (const [id, species] of Object.entries(layout.species)) {
         .composite([{ input: scene, left: 0, top: 0 }, { input: guide, left: 0, top: 0 }]).png().toBuffer();
       alignmentLayers.push({ input: panel, left: frameIndex * size, top: 0 });
     }
-    await mkdir(resolve(sourceRoot, 'alignment'), { recursive: true });
+    const alignmentRoot = selective ? resolve(sourceRoot, 'reviews', selectedId, 'alignment') : resolve(sourceRoot, 'alignment');
+    await mkdir(alignmentRoot, { recursive: true });
     await transparent(size * layout.idleFrames, size).composite(alignmentLayers).png()
-      .toFile(resolve(sourceRoot, 'alignment', `${id}-${stage.name}.png`));
+      .toFile(resolve(alignmentRoot, `${id}-${stage.name}.png`));
   }
   if (!choicesFeedOnly) {
     const atlas = await transparent(size * layout.idleFrames, size * species.stages.length)
@@ -442,7 +451,8 @@ for (const [id, species] of Object.entries(layout.species)) {
 
 await mkdir(resolve(sourceRoot, 'normalized'), { recursive: true });
 for (const [key, grid] of (choicesFeedOnly ? [] : sourceGrids)) {
-  const existing = selective ? await readFile(resolve(sourceRoot, 'normalized', `${key}.png`)) : null;
+  const normalizedPath = resolve(sourceRoot, 'normalized', `${key}.png`);
+  const existing = selective && await exists(normalizedPath) ? await readFile(normalizedPath) : null;
   let normalized = existing ? sharp(existing) : transparent(size * columns, size * rows);
   if (selective) {
     const stageRows = new Set(layout.species[selectedId].stages

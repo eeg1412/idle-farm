@@ -1,0 +1,11 @@
+Use case: precise-object-edit
+Asset type: transparent pixel-art PWA foreground, one targeted leaf-only color correction.
+Input images:
+Image 1 (foreground.png, brick-red roof and gold leaves) is the ONLY EDIT TARGET. Preserve this image.
+Image 2 (history/r1-green/foreground.png) is reference ONLY for the natural green colors of the BOTTOM LEAVES. Do not copy its green roof.
+Primary request: on Image 1 change ONLY the broad decorative leaves at the bottom left and bottom right of the house from gold/ochre back to natural green, matching the lower leaf palette of Image 2. Keep the exact leaf shapes, sizes, positions, outlines and pixel clusters.
+Keep the wheat ears, grains and stalks GOLDEN YELLOW exactly as in Image 1. The wheat grains must NOT become green.
+Keep EVERY roof surface BRICK RED / TERRACOTTA exactly as in Image 1: main roof, side roof tiles, gable ridge, porch roof, chimney cap. No green on the roof or building.
+Strict invariants: do not alter the house structure, composition, silhouette, dimensions, placement, cream walls, brown timber, wooden door, bright yellow window, golden wheat or red roofs. Do not redesign anything, add objects, remove objects or change the framing. Crisp pixel art and grouped shading remain.
+Background: preserve genuine transparent RGBA alpha and the existing transparent margin. No solid background, orange plate, scene, frame, disc, ground, cast shadow, halo, text or watermark.
+Perform ONLY the bottom-leaf color correction.

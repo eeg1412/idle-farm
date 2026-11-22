@@ -109,7 +109,10 @@ const uiIconKeys = new Set([...Object.keys(drawnIcons), 'nav-menu', 'nav-worksho
 const number = (value) => typeof value === 'bigint' ? compact(value) : String(value ?? '—');
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const managerAsset = (id) => typeof id === 'string' && id.startsWith('manager-art:') ? id.slice(12) : undefined;
-const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id) || Boolean(managerAsset(id));
+// Account resources drawn from wiki/icons/ that are not catalog items (time capsules, spec 10.1).
+const resourceIconKeys = new Set(['time-capsule']);
+const hasIcon = (id) => uiIconKeys.has(id) || Object.hasOwn(data.items, id) || resourceIconKeys.has(id) ||
+  Boolean(managerAsset(id));
 
 // public/ paths of runtime images; assetUrl() turns them into (hashed) URLs.
 const plotSharedPath = (key) => `art/plot/${key}.webp`;
@@ -152,6 +155,7 @@ export function runtimeAssetPaths() {
   }
   // Animation loaders request item icons directly (workshop inputs/outputs, livestock products).
   for (const id of Object.keys(data.items)) add(itemIconPath(id));
+  for (const id of resourceIconKeys) add(imageAssetPath(id));
   for (const role of managerIds) {
     add(imageAssetPath('manager-art:backgrounds/' + role));
     for (const gender of managerGenders) {
@@ -706,6 +710,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     imageUse.set(url, category);
   }
 
+  // Whenever a manager or merchant portrait is shown, load the plain portrait first and then
+  // the gift-reaction one ('happy' for a wished item), so the rebuild after a gift finds both
+  // cached and the portrait never blanks while a new expression downloads.
+  function preloadGiftPortraits(role, gender) {
+    const [plain, wished] = ['smile', 'happy'].map((expression) => assetUrl(managerPortraitPath(role, gender, expression)));
+    for (const url of [plain, wished]) touchImage(url, 'scene');
+    if (textures.has(plain) && textures.has(wished)) return;
+    void loadImage(plain, false).then(() => loadImage(wished, false));
+  }
+
   // Evicts least recently drawn icons and scenes beyond their limits. Only loaded textures that
   // no animation uses and the current page has not drawn are candidates.
   function trimImages() {
@@ -987,6 +1001,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!hero && !scene && !hasIcon(id)) return;
     const url = assetUrl(imageAssetPath(id));
     touchImage(url, scene || manager && !manager.startsWith('icons/') ? 'scene' : hero ? undefined : 'icon');
+    const portraitOf = manager?.match(/^portraits\/([^/]+)\/(female|male)-/);
+    if (portraitOf) preloadGiftPortraits(portraitOf[1], portraitOf[2]);
     if (trackViewport && scrollImages) {
       const layer = new Container();
       layer.eventMode = 'none';
@@ -1039,6 +1055,47 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
   }
 
+  // Flows text segments ({ text }) and icon + amount items ({ icon, value }) left to right, wrapping
+  // to new lines at `width`; icons are about 1.2× the font size. Returns the height used.
+  function rewardFlow(parent, entries, x, y, width, { size, color, align = 'left', trackViewport = true }) {
+    const iconSize = Math.round(size * 1.2);
+    const iconGap = Math.max(2, Math.round(size * 0.2));
+    const itemGap = Math.round(size * 0.8);
+    const minLine = Math.max(iconSize, Math.ceil(size * 1.36));
+    const cells = entries.map((entry) => {
+      const icon = entry.icon && hasIcon(entry.icon) ? entry.icon : undefined;
+      const label = textNode(parent, icon || entry.icon ? compact(entry.value) : entry.text, 0, 0, width,
+        { size, color, weight: icon ? '700' : '600', wrap: false });
+      const offset = icon ? iconSize + iconGap : 0;
+      if (offset + label.width > width) {
+        label.style.wordWrap = true;
+        label.style.breakWords = true;
+        label.style.wordWrapWidth = Math.max(8, width - offset);
+      }
+      return { icon, label, offset, width: offset + label.width, height: Math.max(icon ? iconSize : 0, label.height) };
+    });
+    const lines = [];
+    for (const cell of cells) {
+      const line = lines.at(-1);
+      if (line && line.width + itemGap + cell.width <= width) {
+        line.width += itemGap + cell.width;
+        line.cells.push(cell);
+      } else lines.push({ width: cell.width, cells: [cell] });
+    }
+    let top = y;
+    for (const line of lines) {
+      const height = Math.max(minLine, ...line.cells.map((cell) => cell.height));
+      let left = x + (align === 'center' ? Math.max(0, (width - line.width) / 2) : align === 'right' ? Math.max(0, width - line.width) : 0);
+      for (const cell of line.cells) {
+        if (cell.icon) drawImage(parent, cell.icon, left, top + (height - iconSize) / 2, iconSize, iconSize, false, trackViewport);
+        cell.label.position.set(left + cell.offset, top + (height - cell.label.height) / 2);
+        left += cell.width + itemGap;
+      }
+      top += height + (line === lines.at(-1) ? 0 : 3);
+    }
+    return top - y;
+  }
+
   function updateManagerPortraits(speech) {
     for (const show of managerPortraitMounts.get(speech) ?? []) show();
   }
@@ -1061,6 +1118,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const url = assetUrl(managerPortraitPath(speech.role, speech.gender, expression));
       portraitUrl = url;
       touchImage(url, 'scene');
+      preloadGiftPortraits(speech.role, speech.gender);
       const mount = (texture) => {
         if (!texture || texture.destroyed || portrait.destroyed || portraitUrl !== url || !visible) return;
         const factor = (crop ? Math.max : Math.min)(width / texture.width, height / texture.height);
@@ -1182,8 +1240,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? iconSize + 4 : 0;
       const baseSize = options.emphasis ? 23 : 18;
       const captionWidth = Math.max(1, width - 8 - icon - trailing);
+      // Half-width characters (digits, Latin letters, spaces) take about 0.6 of a full-width glyph.
+      const labelUnits = Array.from(String(label)).reduce((units, char) => units + (char.charCodeAt(0) < 0x2e80 ? 0.6 : 1), 0);
       const size = options.compactLabel ? 15 * scale() : Math.min(baseSize * scale(),
-        (captionWidth - 2) / Math.max(2, Array.from(String(label)).length));
+        (captionWidth - 2) / Math.max(2, labelUnits));
       const caption = textNode(parent, label, 0, 0, captionWidth,
         { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink,
           weight: '750', wrap: !options.compactLabel });
@@ -2084,6 +2144,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         tail.x = prefix.x + prefix.width;
         cursor += Math.max(prefix.height, tail.height) + rowGap;
       },
+      // One flowing row of icon + amount items, optionally followed by short { text } tags.
+      rewards(entries, { fontSize = 15, muted = false, align } = {}) {
+        if (!entries.length) return;
+        const size = fontSize * scale();
+        cursor += rewardFlow(parent, entries, x, cursor, width,
+          { size, color: muted ? palette.muted : palette.ink, align }) + rowGap;
+      },
       sampleProgress(label) {
         if (modal !== local || !local.sample) return;
         const top = cursor;
@@ -2367,6 +2434,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const url = assetUrl(managerPortraitPath(role, gender, expression));
           portraitUrl = url;
           touchImage(url, 'scene');
+          preloadGiftPortraits(role, gender);
           const mount = (texture) => {
             if (!texture || texture.destroyed || portrait.destroyed || portraitUrl !== url) return;
             portrait.texture = texture;
@@ -3707,7 +3775,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const columns = width >= 270 ? 3 : width >= 152 ? 2 : 1;
     const padding = 6;
     const rowHeight = 64;
-    const contentHeight = Math.ceil(menuPages.length / columns) * rowHeight + padding * 2;
+    // Settings takes a full row of its own below the grid.
+    const gridRows = Math.ceil((menuPages.length - 1) / columns);
+    const contentHeight = (gridRows + 1) * rowHeight + padding * 2;
     const height = Math.max(1, Math.min(contentHeight, frame.height - layout.inset.bottom - 8 - y));
     panel(layer, x, y, width, height, palette.card, palette.border, 11);
 
@@ -3722,23 +3792,26 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const columnWidth = Math.max(1, (width - padding * 2 - (height < contentHeight ? 6 : 0)) / columns);
     const iconSize = Math.min(32, Math.max(1, columnWidth - 8));
     const labelSize = Math.min(14, Math.max(6, (columnWidth - 8) / 4));
-    for (const [index, page] of menuPages.entries()) {
+    const gridPages = menuPages.filter((page) => page !== '设置');
+    for (const [index, page] of [...gridPages, '设置'].entries()) {
       const icon = menuIcons[page];
+      const fullRow = page === '设置';
+      const tileWidth = fullRow ? columnWidth * columns : columnWidth;
       const tile = new Container();
       tile.label = icon;
-      tile.position.set(x + padding + (index % columns) * columnWidth,
-        padding + Math.floor(index / columns) * rowHeight);
+      tile.position.set(x + padding + (fullRow ? 0 : (index % columns) * columnWidth),
+        padding + (fullRow ? gridRows : Math.floor(index / columns)) * rowHeight);
       body.addChild(tile);
       const focused = navigationMenu.focusIndex === controls.length;
-      const surface = panel(tile, 2, 2, Math.max(1, columnWidth - 4), rowHeight - 4,
+      const surface = panel(tile, 2, 2, Math.max(1, tileWidth - 4), rowHeight - 4,
         focused ? palette.selection : palette.card, focused ? palette.green : palette.line, 8);
-      drawImage(tile, icon, (columnWidth - iconSize) / 2, 6, iconSize, iconSize, false, false);
-      textNode(tile, page === homePage ? '大地图' : page, 4, 40, columnWidth - 8, {
+      drawImage(tile, icon, (tileWidth - iconSize) / 2, 6, iconSize, iconSize, false, false);
+      textNode(tile, page === homePage ? '大地图' : page, 4, 40, tileWidth - 8, {
         size: labelSize, align: 'center', weight: '750', wrap: false,
       });
       if (claimableReturns.has(page) || page === '角色管理' && claimableReturns.size > 0 ||
-          page === '订单中心' && hasDeliverableOrder(world)) drawIndicator(tile, columnWidth - 2, 2);
-      hitAt(surface, tile, 0, 0, columnWidth, rowHeight, () => go(page, { menu: true }));
+          page === '订单中心' && hasDeliverableOrder(world)) drawIndicator(tile, tileWidth - 2, 2);
+      hitAt(surface, tile, 0, 0, tileWidth, rowHeight, () => go(page, { menu: true }));
     }
     setupScrollTarget(layer, body, navigationMenu, x, right, y, height, contentHeight, undefined, []);
     layer.addChild(trigger);
@@ -3749,15 +3822,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const menuRight = frame.width - right - 8;
     const balanceHeight = 36;
     const balanceTop = top + 12;
-    const coinWidth = Math.min(158, menuRight - coinX - 43);
-    if (coinWidth >= 48) {
-      const coinSurface = panel(parent, coinX, balanceTop, coinWidth, balanceHeight,
-        palette.pale, palette.line, 18);
-      coinSurface.label = 'estate-coin-balance';
-      drawImage(parent, 'coin', coinX + 7, balanceTop + 5, 25, 25);
-      const amount = compactLabel(parent, content.coins, coinX + 36, balanceTop, coinWidth - 42,
-        { size: 22, weight: '800' });
+    // Coins, then time capsules (spec 10.4); both fit beside the menu button at 320 wide.
+    const room = menuRight - coinX - 43;
+    const gap = 6;
+    const capsuleWidth = Math.min(100, Math.floor((room - gap) * 0.42));
+    const coinWidth = Math.min(128, room - gap - capsuleWidth);
+    const balance = (x, w, icon, value, label) => {
+      const surface = panel(parent, x, balanceTop, w, balanceHeight, palette.pale, palette.line, 18);
+      surface.label = label;
+      drawImage(parent, icon, x + 7, balanceTop + 5, 25, 25);
+      const amount = compactLabel(parent, value, x + 36, balanceTop, w - 42, { size: 22, weight: '800' });
       amount.y = balanceTop + (balanceHeight - amount.height) / 2;
+    };
+    if (coinWidth >= 48) balance(coinX, coinWidth, 'coin', content.coins, 'estate-coin-balance');
+    if (coinWidth >= 48 && capsuleWidth >= 48) {
+      balance(coinX + coinWidth + gap, capsuleWidth, 'time-capsule', content.capsules ?? 0n, 'estate-capsule-balance');
     }
     return navigationMenuButton(parent, menuRight, balanceTop);
   }
@@ -3808,10 +3887,24 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const inset = layout.inset.top;
         const width = frame.width - 28;
         const top = inset + 69;
-        const bubble = textNode(layer, source.message, 23, top, width - 66,
-          { size: 15 * Math.min(1.45, scale()), color: palette.cream, align: 'center' });
-        const height = Math.max(48, bubble.height + 15);
-        bubble.y = top + (height - bubble.height) / 2;
+        const size = 15 * Math.min(1.45, scale());
+        let bubble;
+        let contentHeight;
+        if (source.message && typeof source.message === 'object') {
+          // Task reward toasts: leading text, then the 「任务奖励」 label and icon + amount items.
+          const { text, reward } = source.message;
+          bubble = layer.addChild(new Container());
+          bubble.eventMode = 'none';
+          const entries = [...(text ? [{ text: text + ' ·' }] : []), { text: reward.label }, ...reward.items];
+          contentHeight = rewardFlow(bubble, entries, 23, 0, width - 66,
+            { size, color: palette.cream, align: 'center', trackViewport: false });
+        } else {
+          bubble = textNode(layer, source.message, 23, top, width - 66,
+            { size, color: palette.cream, align: 'center' });
+          contentHeight = bubble.height;
+        }
+        const height = Math.max(48, contentHeight + 15);
+        bubble.y = top + (height - contentHeight) / 2;
         const bg = panel(layer, 14, top, width, height, palette.dark, null);
         bg.eventMode = 'none';
         layer.setChildIndex(bg, 0);
@@ -3884,7 +3977,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       parkedEstateWeather = undefined;
       building = false;
     }
-    drawn = { layout, world, status, epoch: progressTiming?.epoch };
+    drawn = { layout, world, status, epoch: progressTiming?.epoch,
+      homeKey: current === homePage && world && !status?.busy ? homeViewKey(world) : undefined };
     if (pendingModal) {
       const next = pendingModal;
       pendingModal = undefined;
@@ -3906,6 +4000,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       lastResearchReady = { inputs, tabs: researchReadyTabs(world) };
     }
     return lastResearchReady.tabs;
+  }
+
+  // Every value the estate map and its HUD read from `world` (build's home branch). Production
+  // completions change inventory and statistics but none of these, so they keep the drawn map.
+  function homeViewKey(world) {
+    return {
+      waiting: Boolean(waiting),
+      coins: world.coins,
+      capsules: world.capsules ?? 0n,
+      researchReady: !waiting && cachedResearchReadyTabs(world).size > 0,
+      claims: Object.entries(managerPages).flatMap(([page, role]) => managerStatus(world, role)?.claim ? [page] : []),
+      ordersReady: hasDeliverableOrder(world),
+      guideTaskName: activeGuideTask(world)?.name,
+      merchantUnlocked: merchantStatus(world).unlocked,
+    };
   }
 
   function build() {
@@ -4418,9 +4527,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // moved, countdowns, progress bars and animations follow `world` frame by frame. A new
       // commit (such as the 5-second autosave) whose data equal the drawn world, apart from
       // the clock fields and save revision, needs no rebuild either (S1).
-      const structural = !drawn || nextLayout !== layout || drawn.layout !== nextLayout ||
+      let structural = !drawn || nextLayout !== layout || drawn.layout !== nextLayout ||
         nextStatus !== drawn.status ||
         nextProgressTiming?.epoch !== drawn.epoch || !sameState(nextWorld, drawn.world, clockOnlyFields);
+      // The bare estate map draws only `homeViewKey`; dialogs and the menu read more of `world`.
+      if (structural && drawn?.homeKey && current === homePage && nextWorld && !nextStatus?.busy &&
+          !modal && !pendingModal && !navigationMenu && nextLayout === layout && drawn.layout === nextLayout &&
+          nextStatus === drawn.status && nextProgressTiming?.epoch === drawn.epoch &&
+          sameState(homeViewKey(nextWorld), drawn.homeKey)) {
+        structural = false;
+        drawn.world = nextWorld;
+      }
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;

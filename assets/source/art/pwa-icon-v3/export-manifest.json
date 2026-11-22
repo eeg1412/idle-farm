@@ -1,0 +1,191 @@
+{
+  "source": {
+    "path": "assets/source/art/pwa-icon-v3/foreground.png",
+    "bytes": 1065713,
+    "sha256": "7b2c4ec169000842e34ae6128f07438c80640a756e88dd14983f0ff5ead61bbc",
+    "width": 1254,
+    "height": 1254,
+    "transparentPixels": 617125,
+    "translucentPixels": 952811,
+    "alphaBounds": {
+      "left": 0,
+      "top": 3,
+      "right": 1215,
+      "bottom": 1191
+    },
+    "layoutAlphaThreshold": 128,
+    "layoutPaddingPixels": 2,
+    "layoutBounds": {
+      "left": 43,
+      "top": 115,
+      "width": 1170,
+      "height": 1076
+    },
+    "layoutCenter": {
+      "x": 628,
+      "y": 653
+    },
+    "layoutVisibleRadius": 676.0310643750034
+  },
+  "config": {
+    "path": "assets/source/art/pwa-icon-v3/export-config.json",
+    "sha256": "a5b0fa2ce95da51db21f5b12f2336ad55cec1c2bb371261d3e13724498c4594a",
+    "backgroundColor": "#F28C28",
+    "layoutAlphaThreshold": 128,
+    "layoutPaddingPixels": 2,
+    "regular": {
+      "maximumExtentFraction": 0.9
+    },
+    "maskable": {
+      "safeZoneDiameterFraction": 0.8,
+      "radiusMarginFraction": 0.04
+    }
+  },
+  "conversion": {
+    "command": "node scripts/export-pwa-icons-v3.mjs",
+    "sharpVersion": "0.34.5",
+    "kernel": "lanczos3",
+    "blend": "source-over",
+    "background": "opaque solid fill",
+    "sourceModified": false
+  },
+  "outputs": [
+    {
+      "path": "public/icons/manor-v3-32.png",
+      "width": 32,
+      "height": 32,
+      "alpha": false,
+      "bytes": 2103,
+      "sha256": "5844378b7095b271c0d3900d8f0dc54177c318feb0a603f9bbdb9df8597b141a",
+      "composition": {
+        "sourceBounds": {
+          "left": 43,
+          "top": 115,
+          "width": 1170,
+          "height": 1076
+        },
+        "requestedScale": 0.024615384615384615,
+        "resizedWidth": 28,
+        "resizedHeight": 26,
+        "left": 2,
+        "top": 3
+      }
+    },
+    {
+      "path": "public/icons/manor-v3-48.png",
+      "width": 48,
+      "height": 48,
+      "alpha": false,
+      "bytes": 4396,
+      "sha256": "b044c18ed8194b40c3c4541629db1bd7db01d5e8f0389b7b7332aaadff71bd73",
+      "composition": {
+        "sourceBounds": {
+          "left": 43,
+          "top": 115,
+          "width": 1170,
+          "height": 1076
+        },
+        "requestedScale": 0.036923076923076927,
+        "resizedWidth": 42,
+        "resizedHeight": 39,
+        "left": 3,
+        "top": 4
+      }
+    },
+    {
+      "path": "public/icons/manor-v3-180.png",
+      "width": 180,
+      "height": 180,
+      "alpha": false,
+      "bytes": 49177,
+      "sha256": "85c2ab2ce11c5aad28e78c436a60a15e5f1671ac8dac30d6c9fa71430af7abbc",
+      "composition": {
+        "sourceBounds": {
+          "left": 43,
+          "top": 115,
+          "width": 1170,
+          "height": 1076
+        },
+        "requestedScale": 0.13846153846153847,
+        "resizedWidth": 161,
+        "resizedHeight": 148,
+        "left": 9,
+        "top": 16
+      }
+    },
+    {
+      "path": "public/icons/manor-v3-192.png",
+      "width": 192,
+      "height": 192,
+      "alpha": false,
+      "bytes": 54886,
+      "sha256": "102744ea206df91d407d28bc946ff588e6b2fe533b39503b25709bc57a31128f",
+      "composition": {
+        "sourceBounds": {
+          "left": 43,
+          "top": 115,
+          "width": 1170,
+          "height": 1076
+        },
+        "requestedScale": 0.1476923076923077,
+        "resizedWidth": 172,
+        "resizedHeight": 158,
+        "left": 10,
+        "top": 17
+      }
+    },
+    {
+      "path": "public/icons/manor-v3-512.png",
+      "width": 512,
+      "height": 512,
+      "alpha": false,
+      "bytes": 295801,
+      "sha256": "ed0fe3c1d8e734fb2a1d81671484e9b932f0f4995c2156fd23d975ef0e6ad13a",
+      "composition": {
+        "sourceBounds": {
+          "left": 43,
+          "top": 115,
+          "width": 1170,
+          "height": 1076
+        },
+        "requestedScale": 0.39384615384615385,
+        "resizedWidth": 460,
+        "resizedHeight": 423,
+        "left": 26,
+        "top": 44
+      }
+    },
+    {
+      "path": "public/icons/manor-v3-maskable-512.png",
+      "width": 512,
+      "height": 512,
+      "alpha": false,
+      "bytes": 180461,
+      "sha256": "4385cef02aedd29436dc7da51ff193311f66c289a2d9bf6eebde1a4b81b4adad",
+      "composition": {
+        "sourceBounds": {
+          "left": 43,
+          "top": 115,
+          "width": 1170,
+          "height": 1076
+        },
+        "requestedScale": 0.2908268722558863,
+        "resizedWidth": 339,
+        "resizedHeight": 312,
+        "left": 86,
+        "top": 100,
+        "safeRadius": 204.8,
+        "radiusMarginFraction": 0.04
+      }
+    },
+    {
+      "path": "public/favicon.ico",
+      "sizes": [
+        32,
+        48
+      ],
+      "bytes": 6537,
+      "sha256": "f673b6644665b7e8a7031be3da68c965a0e080bc24bd40b2e55c29b14ffb3789"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-22",
+  "task": "PWA-REVIEW",
+  "reviewer": "PM, independent of art and export owners",
+  "revision": "R3 brick-red roofs, green leaves",
+  "result": "source/output/small-size/maskable static review passed",
+  "backgroundColor": "#F28C28",
+  "source": {
+    "path": "assets/source/art/pwa-icon-v3/foreground.png",
+    "sha256": "7b2c4ec169000842e34ae6128f07438c80640a756e88dd14983f0ff5ead61bbc",
+    "transparent": true,
+    "generator": "built-in image_gen"
+  },
+  "exportManifest": "assets/source/art/pwa-icon-v3/export-manifest.json",
+  "viewed": [
+    "assets/source/art/pwa-icon-v3/foreground.png",
+    "public/icons/manor-v3-192.png",
+    "assets/source/art/pwa-icon-v3/reviews/native-32-48.png",
+    "assets/source/art/pwa-icon-v3/reviews/maskable-safe-circle-80.png"
+  ],
+  "evidence": [
+    {"path":"assets/source/art/pwa-icon-v3/reviews/native-32-48.png","sha256":"8916d5d5be6bf507f98d3db2e325dd495beaf3b0ff8d4f910f263d3b5b9f49c3"},
+    {"path":"assets/source/art/pwa-icon-v3/reviews/maskable-circle-512.png","sha256":"269f509eae01355f09e4c1148e999b23e94b04d050018b548eff0c635f9d61a9"},
+    {"path":"assets/source/art/pwa-icon-v3/reviews/maskable-safe-circle-80.png","sha256":"e6f10990a325b1b7e89890ebbc20dc31e07a868d7c12107dc6af6284a204755f"}
+  ],
+  "evidencePolicy": "证据图仅本地保存",
+  "checksRun": [],
+  "unverified": ["installed PWA refresh", "browser/system rendering", "user acceptance"],
+  "superseded": ["history/r1-green", "history/r2-red-gold"]
+}

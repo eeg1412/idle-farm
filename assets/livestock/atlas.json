@@ -92,6 +92,15 @@
         1254
       ],
       "normalized": "normalized/cattle.png"
+    },
+    "small-tailed-han-v1": {
+      "file": "raw/l08-small-tailed-han-v1/feeding-r9.png",
+      "sha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
+      "originalSize": [
+        1402,
+        1122
+      ],
+      "normalized": "normalized/small-tailed-han-v1.png"
     }
   },
   "grid": {
@@ -6544,28 +6553,28 @@
       }
     },
     "L08": {
-      "subject": "肉用绵羊",
-      "product": "绵羊肉",
+      "subject": "小尾寒羊",
+      "product": "羊肉",
       "slaughter": true,
       "animation": "feeding",
       "feeding": [
         {
-          "x": 177,
-          "y": 280,
+          "x": 173,
+          "y": 271,
           "radiusX": 13,
           "radiusY": 4,
           "kind": "hay"
         },
         {
-          "x": 193,
-          "y": 287,
+          "x": 191,
+          "y": 270,
           "radiusX": 20,
           "radiusY": 5,
           "kind": "hay"
         },
         {
-          "x": 210,
-          "y": 280,
+          "x": 203,
+          "y": 261,
           "radiusX": 24,
           "radiusY": 6,
           "kind": "hay"
@@ -6573,68 +6582,68 @@
       ],
       "feedingSources": [
         {
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "referenceFrame": 0,
           "sourceMouth": [
-            181,
-            244
+            235,
+            209
           ],
           "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
           "mouthBounds": {
-            "x": 164,
-            "y": 266,
+            "x": 160,
+            "y": 259,
             "width": 24,
-            "height": 16
+            "height": 15
           },
           "sourceMouthBounds": {
-            "x": 159.491,
-            "y": 226.309,
-            "width": 40.145,
-            "height": 26.764
+            "x": 205,
+            "y": 189,
+            "width": 54.545,
+            "height": 34.091
           },
           "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
         },
         {
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "referenceFrame": 0,
           "sourceMouth": [
-            191,
-            492
+            238,
+            433
           ],
           "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
           "mouthBounds": {
-            "x": 173,
-            "y": 266,
+            "x": 170,
+            "y": 258,
             "width": 37,
-            "height": 23
+            "height": 16
           },
           "sourceMouthBounds": {
-            "x": 163.651,
-            "y": 467.554,
-            "width": 50.373,
-            "height": 31.313
+            "x": 204.663,
+            "y": 418.627,
+            "width": 59.735,
+            "height": 25.831
           },
           "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
         },
         {
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "referenceFrame": 0,
           "sourceMouth": [
-            210,
-            744
+            246,
+            670
           ],
           "method": "Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.",
           "mouthBounds": {
-            "x": 185,
-            "y": 266,
+            "x": 179,
+            "y": 250,
             "width": 44,
-            "height": 16
+            "height": 24
           },
           "sourceMouthBounds": {
-            "x": 177.548,
-            "y": 729.762,
-            "width": 57.619,
-            "height": 20.952
+            "x": 210.673,
+            "y": 657.891,
+            "width": 64.04,
+            "height": 34.931
           },
           "mouthBoundsMethod": "A compact common local region of the low mouth/beak near/below the foot plane across the four drawn feeding poses; raised head areas above the foot plane are not exempt. Bounds are kept strictly in front of the explicit foot supportXRange, with a small lower-lip margin, and inverse-mapped to reference source frame 0 for static review."
         }
@@ -6652,54 +6661,54 @@
         {
           "stage": "young",
           "frame": 0,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             0,
             0
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/young-0.png",
-            "sha256": "956eed435399bab4e3728c760fda0a74dd1905fa4095edbb1576aa80f0f7eb98"
+            "sha256": "592e05d5eb1dee2725229761c53d7b8434b8007242e745bb7b87df7922bc9b02"
           },
           "sourceRectangle": {
-            "left": 41,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 35,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "sourceIsolation": {
-            "left": 41,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 35,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 184,
-            "height": 139
+            "width": 250,
+            "height": 176
           },
           "root": [
-            75,
-            119
+            120,
+            158
           ],
           "sourceAnchor": [
-            116,
-            233
+            155,
+            214
           ],
-          "stageScale": 0.5978260869565217,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.44,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -75,
-            "top": -119,
-            "width": 184,
-            "height": 139
+            "left": -120,
+            "top": -158,
+            "width": 250,
+            "height": 176
           },
           "grounding": {
-            "x": 137,
-            "y": 270.5,
-            "radiusX": 29,
+            "x": 125,
+            "y": 268,
+            "radiusX": 32,
             "radiusY": 5
           },
           "footprint": {
@@ -6715,54 +6724,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              163
+              159
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 110,
+              "x": 95,
               "y": 258,
-              "width": 54,
-              "height": 13
+              "width": 60,
+              "height": 11
             },
             "contacts": [
               {
-                "x": 116,
-                "y": 270,
+                "x": 100.5,
+                "y": 269,
                 "bounds": {
-                  "x": 110,
+                  "x": 95,
                   "y": 258,
-                  "width": 12,
-                  "height": 12
+                  "width": 11,
+                  "height": 11
+                }
+              },
+              {
+                "x": 116.5,
+                "y": 267,
+                "bounds": {
+                  "x": 111,
+                  "y": 258,
+                  "width": 11,
+                  "height": 9
                 }
               },
               {
                 "x": 136.5,
-                "y": 271,
+                "y": 269,
                 "bounds": {
-                  "x": 127,
+                  "x": 131,
                   "y": 258,
-                  "width": 19,
-                  "height": 13
+                  "width": 11,
+                  "height": 11
                 }
               },
               {
-                "x": 158,
-                "y": 271,
+                "x": 149.5,
+                "y": 267,
                 "bounds": {
-                  "x": 152,
+                  "x": 144,
                   "y": 258,
-                  "width": 12,
-                  "height": 13
+                  "width": 11,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            93,
-            199,
+            85,
+            200,
             110,
-            83
+            77
           ],
           "fixedGround": [
             138,
@@ -6772,54 +6791,54 @@
         {
           "stage": "young",
           "frame": 1,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             1,
             0
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/young-1.png",
-            "sha256": "039f5a3ce340f012d80830007f10e7833ece4af5aeef63997ebfbb1c7731409e"
+            "sha256": "df479660dae0db3cf79f2e9be6bd2257e594df4d42c297722d3cada884d99087"
           },
           "sourceRectangle": {
-            "left": 285,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 317,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "sourceIsolation": {
-            "left": 285,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 317,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 184,
-            "height": 139
+            "width": 250,
+            "height": 176
           },
           "root": [
-            75,
-            119
+            120,
+            158
           ],
           "sourceAnchor": [
-            360,
-            233
+            437,
+            214
           ],
-          "stageScale": 0.5978260869565217,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.44,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -75,
-            "top": -119,
-            "width": 184,
-            "height": 139
+            "left": -120,
+            "top": -158,
+            "width": 250,
+            "height": 176
           },
           "grounding": {
-            "x": 137,
-            "y": 270.5,
-            "radiusX": 29,
+            "x": 125,
+            "y": 268,
+            "radiusX": 32,
             "radiusY": 5
           },
           "footprint": {
@@ -6835,54 +6854,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              163
+              159
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 110,
+              "x": 95,
               "y": 258,
-              "width": 54,
-              "height": 13
+              "width": 60,
+              "height": 11
             },
             "contacts": [
               {
-                "x": 116,
-                "y": 270,
+                "x": 100.5,
+                "y": 269,
                 "bounds": {
-                  "x": 110,
+                  "x": 95,
                   "y": 258,
-                  "width": 12,
-                  "height": 12
+                  "width": 11,
+                  "height": 11
+                }
+              },
+              {
+                "x": 116.5,
+                "y": 267,
+                "bounds": {
+                  "x": 111,
+                  "y": 258,
+                  "width": 11,
+                  "height": 9
                 }
               },
               {
                 "x": 136.5,
-                "y": 271,
+                "y": 269,
                 "bounds": {
-                  "x": 127,
+                  "x": 131,
                   "y": 258,
-                  "width": 19,
-                  "height": 13
+                  "width": 11,
+                  "height": 11
                 }
               },
               {
-                "x": 158,
-                "y": 271,
+                "x": 149.5,
+                "y": 267,
                 "bounds": {
-                  "x": 152,
+                  "x": 144,
                   "y": 258,
-                  "width": 12,
-                  "height": 13
+                  "width": 11,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            93,
-            199,
+            85,
+            200,
             110,
-            83
+            77
           ],
           "fixedGround": [
             138,
@@ -6892,54 +6921,54 @@
         {
           "stage": "young",
           "frame": 2,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             2,
             0
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/young-2.png",
-            "sha256": "b29bf9f55781d627102ca5c7613fd6f7b2e5ab86083f0609d3bbdd68ed5f9dff"
+            "sha256": "616a04c476bfd858fcd35450ceefc02a080ff5602d58b96788829f05902a4c93"
           },
           "sourceRectangle": {
-            "left": 530,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 600,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "sourceIsolation": {
-            "left": 530,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 600,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 184,
-            "height": 139
+            "width": 250,
+            "height": 176
           },
           "root": [
-            75,
-            119
+            120,
+            158
           ],
           "sourceAnchor": [
-            605,
-            233
+            720,
+            214
           ],
-          "stageScale": 0.5978260869565217,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.44,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -75,
-            "top": -119,
-            "width": 184,
-            "height": 139
+            "left": -120,
+            "top": -158,
+            "width": 250,
+            "height": 176
           },
           "grounding": {
-            "x": 137,
-            "y": 270.5,
-            "radiusX": 29,
+            "x": 125,
+            "y": 268,
+            "radiusX": 32,
             "radiusY": 5
           },
           "footprint": {
@@ -6955,54 +6984,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              163
+              159
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 110,
+              "x": 95,
               "y": 258,
-              "width": 54,
-              "height": 13
+              "width": 60,
+              "height": 11
             },
             "contacts": [
               {
-                "x": 116,
-                "y": 270,
+                "x": 100.5,
+                "y": 269,
                 "bounds": {
-                  "x": 110,
+                  "x": 95,
                   "y": 258,
-                  "width": 12,
-                  "height": 12
+                  "width": 11,
+                  "height": 11
+                }
+              },
+              {
+                "x": 116.5,
+                "y": 267,
+                "bounds": {
+                  "x": 111,
+                  "y": 258,
+                  "width": 11,
+                  "height": 9
                 }
               },
               {
                 "x": 136.5,
-                "y": 271,
+                "y": 269,
                 "bounds": {
-                  "x": 127,
+                  "x": 131,
                   "y": 258,
-                  "width": 19,
-                  "height": 13
+                  "width": 11,
+                  "height": 11
                 }
               },
               {
-                "x": 158,
-                "y": 271,
+                "x": 149.5,
+                "y": 267,
                 "bounds": {
-                  "x": 152,
+                  "x": 144,
                   "y": 258,
-                  "width": 12,
-                  "height": 13
+                  "width": 11,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            93,
-            199,
+            85,
+            200,
             110,
-            83
+            77
           ],
           "fixedGround": [
             138,
@@ -7012,54 +7051,54 @@
         {
           "stage": "young",
           "frame": 3,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             3,
             0
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/young-3.png",
-            "sha256": "3a63a86fa0a7ac1516e1c76a998afa3cebe0c59cc3d8d9cf23588eb4a0f4e117"
+            "sha256": "89159cc32dff444d692d3b89b6d05bb06ca3e45cdffc5e8a593eba7fe2a72842"
           },
           "sourceRectangle": {
-            "left": 775,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 883,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "sourceIsolation": {
-            "left": 775,
-            "top": 114,
-            "width": 184,
-            "height": 139
+            "left": 883,
+            "top": 56,
+            "width": 250,
+            "height": 176
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 184,
-            "height": 139
+            "width": 250,
+            "height": 176
           },
           "root": [
-            75,
-            119
+            120,
+            158
           ],
           "sourceAnchor": [
-            850,
-            233
+            1003,
+            214
           ],
-          "stageScale": 0.5978260869565217,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.44,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -75,
-            "top": -119,
-            "width": 184,
-            "height": 139
+            "left": -120,
+            "top": -158,
+            "width": 250,
+            "height": 176
           },
           "grounding": {
-            "x": 137,
-            "y": 270.5,
-            "radiusX": 29,
+            "x": 125,
+            "y": 268,
+            "radiusX": 32,
             "radiusY": 5
           },
           "footprint": {
@@ -7075,54 +7114,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              163
+              159
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 110,
+              "x": 95,
               "y": 258,
-              "width": 54,
-              "height": 13
+              "width": 60,
+              "height": 11
             },
             "contacts": [
               {
-                "x": 116,
-                "y": 270,
+                "x": 100.5,
+                "y": 269,
                 "bounds": {
-                  "x": 110,
+                  "x": 95,
                   "y": 258,
-                  "width": 12,
-                  "height": 12
+                  "width": 11,
+                  "height": 11
+                }
+              },
+              {
+                "x": 116.5,
+                "y": 267,
+                "bounds": {
+                  "x": 111,
+                  "y": 258,
+                  "width": 11,
+                  "height": 9
                 }
               },
               {
                 "x": 136.5,
-                "y": 271,
+                "y": 269,
                 "bounds": {
-                  "x": 127,
+                  "x": 131,
                   "y": 258,
-                  "width": 19,
-                  "height": 13
+                  "width": 11,
+                  "height": 11
                 }
               },
               {
-                "x": 158,
-                "y": 271,
+                "x": 149.5,
+                "y": 267,
                 "bounds": {
-                  "x": 152,
+                  "x": 144,
                   "y": 258,
-                  "width": 12,
-                  "height": 13
+                  "width": 11,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            93,
-            199,
+            85,
+            200,
             110,
-            83
+            77
           ],
           "fixedGround": [
             138,
@@ -7132,55 +7181,55 @@
         {
           "stage": "growing",
           "frame": 0,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             0,
             1
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/growing-0.png",
-            "sha256": "1cf096ff0ecdf54b4051ed409683c99a8dc485d3d51a7b4e4a903ec7ddd3d701"
+            "sha256": "fd10a386c20c0da0a8a91f30ca89984c2d54b56093bfb7b468764a3bf6e29e44"
           },
           "sourceRectangle": {
-            "left": 17,
-            "top": 320,
-            "width": 226,
-            "height": 177
+            "left": 25,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "sourceIsolation": {
-            "left": 17,
-            "top": 320,
-            "width": 226,
-            "height": 177
+            "left": 25,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 226,
-            "height": 177
+            "width": 268,
+            "height": 192
           },
           "root": [
-            99,
-            153
+            128,
+            175
           ],
           "sourceAnchor": [
-            116,
-            473
+            153,
+            438
           ],
-          "stageScale": 0.7345132743362832,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.6194029850746269,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -99,
-            "top": -153,
-            "width": 226,
-            "height": 177
+            "left": -128,
+            "top": -175,
+            "width": 268,
+            "height": 192
           },
           "grounding": {
-            "x": 132,
-            "y": 271.5,
-            "radiusX": 43,
-            "radiusY": 7
+            "x": 119,
+            "y": 268.5,
+            "radiusX": 47,
+            "radiusY": 8
           },
           "footprint": {
             "referenceFrame": 0,
@@ -7195,54 +7244,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              172
+              169
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 91,
+              "x": 74,
               "y": 258,
-              "width": 82,
-              "height": 15
+              "width": 90,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 100,
+                "x": 82.5,
                 "y": 270,
                 "bounds": {
-                  "x": 91,
+                  "x": 74,
                   "y": 258,
-                  "width": 18,
+                  "width": 17,
                   "height": 12
                 }
               },
               {
-                "x": 138.5,
-                "y": 273,
+                "x": 105,
+                "y": 268,
                 "bounds": {
-                  "x": 119,
+                  "x": 97,
                   "y": 258,
-                  "width": 39,
-                  "height": 15
+                  "width": 16,
+                  "height": 10
                 }
               },
               {
-                "x": 167,
-                "y": 273,
+                "x": 136.5,
+                "y": 270,
                 "bounds": {
-                  "x": 161,
+                  "x": 128,
                   "y": 258,
-                  "width": 12,
-                  "height": 15
+                  "width": 17,
+                  "height": 12
+                }
+              },
+              {
+                "x": 156,
+                "y": 267,
+                "bounds": {
+                  "x": 148,
+                  "y": 258,
+                  "width": 16,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            65,
-            158,
+            59,
+            162,
             166,
-            130
+            119
           ],
           "fixedGround": [
             138,
@@ -7252,55 +7311,55 @@
         {
           "stage": "growing",
           "frame": 1,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             1,
             1
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/growing-1.png",
-            "sha256": "0d246dbc6f3bb2b66289eb37f4f0d1c37fe7cef30f1ad191d2ee78e2362b576d"
+            "sha256": "ff445838f8f776764f03c4ec7ba3c03711d97bc6ef359aeeabcff6f2c4479ff0"
           },
           "sourceRectangle": {
-            "left": 262,
-            "top": 320,
-            "width": 226,
-            "height": 177
+            "left": 308,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "sourceIsolation": {
-            "left": 262,
-            "top": 320,
-            "width": 226,
-            "height": 177
+            "left": 308,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 226,
-            "height": 177
+            "width": 268,
+            "height": 192
           },
           "root": [
-            99,
-            153
+            128,
+            175
           ],
           "sourceAnchor": [
-            361,
-            473
+            436,
+            438
           ],
-          "stageScale": 0.7345132743362832,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.6194029850746269,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -99,
-            "top": -153,
-            "width": 226,
-            "height": 177
+            "left": -128,
+            "top": -175,
+            "width": 268,
+            "height": 192
           },
           "grounding": {
-            "x": 132,
-            "y": 271.5,
-            "radiusX": 43,
-            "radiusY": 7
+            "x": 119,
+            "y": 268.5,
+            "radiusX": 47,
+            "radiusY": 8
           },
           "footprint": {
             "referenceFrame": 0,
@@ -7315,54 +7374,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              172
+              169
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 91,
+              "x": 74,
               "y": 258,
-              "width": 82,
-              "height": 15
+              "width": 90,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 100,
+                "x": 82.5,
                 "y": 270,
                 "bounds": {
-                  "x": 91,
+                  "x": 74,
                   "y": 258,
-                  "width": 18,
+                  "width": 17,
                   "height": 12
                 }
               },
               {
-                "x": 138.5,
-                "y": 273,
+                "x": 105,
+                "y": 268,
                 "bounds": {
-                  "x": 119,
+                  "x": 97,
                   "y": 258,
-                  "width": 39,
-                  "height": 15
+                  "width": 16,
+                  "height": 10
                 }
               },
               {
-                "x": 167,
-                "y": 273,
+                "x": 136.5,
+                "y": 270,
                 "bounds": {
-                  "x": 161,
+                  "x": 128,
                   "y": 258,
-                  "width": 12,
-                  "height": 15
+                  "width": 17,
+                  "height": 12
+                }
+              },
+              {
+                "x": 156,
+                "y": 267,
+                "bounds": {
+                  "x": 148,
+                  "y": 258,
+                  "width": 16,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            65,
-            158,
+            59,
+            162,
             166,
-            130
+            119
           ],
           "fixedGround": [
             138,
@@ -7372,55 +7441,55 @@
         {
           "stage": "growing",
           "frame": 2,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             2,
             1
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/growing-2.png",
-            "sha256": "afde9b3fe5eaf046a1e974a003d96b7a5043a2b97e343bc167b48ef3cf93c179"
+            "sha256": "697bfb0201d66710ba08cf18b72412fba69b445e00265156ce46c9f266cc9577"
           },
           "sourceRectangle": {
-            "left": 507,
-            "top": 320,
-            "width": 226,
-            "height": 177
+            "left": 592,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "sourceIsolation": {
-            "left": 510,
-            "top": 320,
-            "width": 223,
-            "height": 177
+            "left": 592,
+            "top": 263,
+            "width": 266,
+            "height": 192
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 226,
-            "height": 177
+            "width": 268,
+            "height": 192
           },
           "root": [
-            99,
-            153
+            128,
+            175
           ],
           "sourceAnchor": [
-            606,
-            473
+            720,
+            438
           ],
-          "stageScale": 0.7345132743362832,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.6194029850746269,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -99,
-            "top": -153,
-            "width": 226,
-            "height": 177
+            "left": -128,
+            "top": -175,
+            "width": 268,
+            "height": 192
           },
           "grounding": {
-            "x": 132,
-            "y": 271.5,
-            "radiusX": 43,
-            "radiusY": 7
+            "x": 119,
+            "y": 268.5,
+            "radiusX": 47,
+            "radiusY": 8
           },
           "footprint": {
             "referenceFrame": 0,
@@ -7435,54 +7504,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              172
+              169
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 91,
+              "x": 74,
               "y": 258,
-              "width": 82,
-              "height": 15
+              "width": 90,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 100,
+                "x": 82.5,
                 "y": 270,
                 "bounds": {
-                  "x": 91,
+                  "x": 74,
                   "y": 258,
-                  "width": 18,
+                  "width": 17,
                   "height": 12
                 }
               },
               {
-                "x": 138.5,
-                "y": 273,
+                "x": 105,
+                "y": 268,
                 "bounds": {
-                  "x": 119,
+                  "x": 97,
                   "y": 258,
-                  "width": 39,
-                  "height": 15
+                  "width": 16,
+                  "height": 10
                 }
               },
               {
-                "x": 167,
-                "y": 273,
+                "x": 136.5,
+                "y": 270,
                 "bounds": {
-                  "x": 161,
+                  "x": 128,
                   "y": 258,
-                  "width": 12,
-                  "height": 15
+                  "width": 17,
+                  "height": 12
+                }
+              },
+              {
+                "x": 156,
+                "y": 267,
+                "bounds": {
+                  "x": 148,
+                  "y": 258,
+                  "width": 16,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            65,
-            158,
+            59,
+            162,
             166,
-            130
+            119
           ],
           "fixedGround": [
             138,
@@ -7492,55 +7571,55 @@
         {
           "stage": "growing",
           "frame": 3,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             3,
             1
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/growing-3.png",
-            "sha256": "b3e8f53b5e335916c94786cdb926fab209f3a35d75953f19d3de88722db0eaf5"
+            "sha256": "8553b1a63505e3e0911b9bacce9e496c4143a15d524e79ecb22053b801dda360"
           },
           "sourceRectangle": {
-            "left": 753,
-            "top": 320,
-            "width": 226,
-            "height": 177
+            "left": 873,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "sourceIsolation": {
-            "left": 764,
-            "top": 320,
-            "width": 215,
-            "height": 177
+            "left": 873,
+            "top": 263,
+            "width": 268,
+            "height": 192
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 226,
-            "height": 177
+            "width": 268,
+            "height": 192
           },
           "root": [
-            99,
-            153
+            128,
+            175
           ],
           "sourceAnchor": [
-            852,
-            473
+            1001,
+            438
           ],
-          "stageScale": 0.7345132743362832,
-          "anchorMethod": "V5 feeding artwork: manually registered stance-center x and foreground supporting toe/hoof sole y from the anatomical planted feet; every idle frame shares one sourceCanvas and stageScale, without per-frame bbox fitting or whole-animal rotation. Mouth/head movement remains drawn in the source.",
+          "stageScale": 0.6194029850746269,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -99,
-            "top": -153,
-            "width": 226,
-            "height": 177
+            "left": -128,
+            "top": -175,
+            "width": 268,
+            "height": 192
           },
           "grounding": {
-            "x": 132,
-            "y": 271.5,
-            "radiusX": 43,
-            "radiusY": 7
+            "x": 119,
+            "y": 268.5,
+            "radiusX": 47,
+            "radiusY": 8
           },
           "footprint": {
             "referenceFrame": 0,
@@ -7555,54 +7634,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              172
+              169
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 91,
+              "x": 74,
               "y": 258,
-              "width": 82,
-              "height": 15
+              "width": 90,
+              "height": 12
             },
             "contacts": [
               {
-                "x": 100,
+                "x": 82.5,
                 "y": 270,
                 "bounds": {
-                  "x": 91,
+                  "x": 74,
                   "y": 258,
-                  "width": 18,
+                  "width": 17,
                   "height": 12
                 }
               },
               {
-                "x": 138.5,
-                "y": 273,
+                "x": 105,
+                "y": 268,
                 "bounds": {
-                  "x": 119,
+                  "x": 97,
                   "y": 258,
-                  "width": 39,
-                  "height": 15
+                  "width": 16,
+                  "height": 10
                 }
               },
               {
-                "x": 167,
-                "y": 273,
+                "x": 136.5,
+                "y": 270,
                 "bounds": {
-                  "x": 161,
+                  "x": 128,
                   "y": 258,
-                  "width": 12,
-                  "height": 15
+                  "width": 17,
+                  "height": 12
+                }
+              },
+              {
+                "x": 156,
+                "y": 267,
+                "bounds": {
+                  "x": 148,
+                  "y": 258,
+                  "width": 16,
+                  "height": 9
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            65,
-            158,
+            59,
+            162,
             166,
-            130
+            119
           ],
           "fixedGround": [
             138,
@@ -7612,54 +7701,54 @@
         {
           "stage": "mature",
           "frame": 0,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             0,
             2
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/mature-0.png",
-            "sha256": "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550"
+            "sha256": "770329b519e1d7d24cc1221d2cd66ce125d8e96d6a3a2879b67bac73d3c9642a"
           },
           "sourceRectangle": {
             "left": 6,
-            "top": 534,
-            "width": 244,
-            "height": 220
+            "top": 489,
+            "width": 294,
+            "height": 216
           },
           "sourceIsolation": {
             "left": 6,
-            "top": 534,
-            "width": 244,
-            "height": 220
+            "top": 489,
+            "width": 288,
+            "height": 216
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 244,
-            "height": 220
+            "width": 294,
+            "height": 216
           },
           "root": [
-            110,
-            201
+            145,
+            198
           ],
           "sourceAnchor": [
-            116,
-            735
+            151,
+            687
           ],
-          "stageScale": 0.7636363636363637,
-          "anchorMethod": "L08 mature front-hoof registration r1: the lowest retained planted front-hoof pixels in source frames 0–3 are y734, 735, 734, 734 (source alpha >=200). Register the same lower sole boundary at y735, 736, 735, 735 with one relative 244x220 source canvas and the existing stage scale. The source window tops are y534, 535, 534, 534. The drawn head and mouth are retained.",
+          "stageScale": 0.6870748299319728,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -110,
-            "top": -201,
-            "width": 244,
-            "height": 220
+            "left": -145,
+            "top": -198,
+            "width": 294,
+            "height": 216
           },
           "grounding": {
-            "x": 131.5,
-            "y": 267.5,
-            "radiusX": 55.5,
+            "x": 115,
+            "y": 268,
+            "radiusX": 56,
             "radiusY": 9
           },
           "footprint": {
@@ -7675,64 +7764,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              184
+              178
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 78,
+              "x": 61,
               "y": 258,
-              "width": 107,
+              "width": 108,
               "height": 12
             },
             "contacts": [
               {
-                "x": 89,
-                "y": 266,
-                "bounds": {
-                  "x": 78,
-                  "y": 258,
-                  "width": 22,
-                  "height": 8
-                }
-              },
-              {
-                "x": 129,
+                "x": 70.5,
                 "y": 270,
                 "bounds": {
-                  "x": 113,
+                  "x": 61,
                   "y": 258,
-                  "width": 32,
+                  "width": 19,
                   "height": 12
                 }
               },
               {
-                "x": 157,
-                "y": 265,
+                "x": 97.5,
+                "y": 266,
                 "bounds": {
-                  "x": 147,
+                  "x": 89,
                   "y": 258,
-                  "width": 20,
-                  "height": 7
+                  "width": 17,
+                  "height": 8
                 }
               },
               {
-                "x": 182,
-                "y": 266,
+                "x": 135.5,
+                "y": 270,
                 "bounds": {
-                  "x": 179,
+                  "x": 126,
                   "y": 258,
-                  "width": 6,
-                  "height": 8
+                  "width": 19,
+                  "height": 12
+                }
+              },
+              {
+                "x": 160,
+                "y": 268,
+                "bounds": {
+                  "x": 151,
+                  "y": 258,
+                  "width": 18,
+                  "height": 10
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            54,
-            117,
-            186,
-            168
+            38,
+            134,
+            202,
+            148
           ],
           "fixedGround": [
             138,
@@ -7742,54 +7831,54 @@
         {
           "stage": "mature",
           "frame": 1,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             1,
             2
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/mature-1.png",
-            "sha256": "f3f8c686546f56a62cd49582a7000e52eeecf2856c4d7a545f6814f3620c9290"
+            "sha256": "4d7661908ff603189284a8da6b705fa3923bc6b52b3f0557aa00671bd4f34831"
           },
           "sourceRectangle": {
-            "left": 254,
-            "top": 535,
-            "width": 244,
-            "height": 220
+            "left": 288,
+            "top": 489,
+            "width": 294,
+            "height": 216
           },
           "sourceIsolation": {
-            "left": 260,
-            "top": 535,
-            "width": 238,
-            "height": 220
+            "left": 294,
+            "top": 489,
+            "width": 282,
+            "height": 216
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 244,
-            "height": 220
+            "width": 294,
+            "height": 216
           },
           "root": [
-            110,
-            201
+            145,
+            198
           ],
           "sourceAnchor": [
-            364,
-            736
+            433,
+            687
           ],
-          "stageScale": 0.7636363636363637,
-          "anchorMethod": "L08 mature front-hoof registration r1: the lowest retained planted front-hoof pixels in source frames 0–3 are y734, 735, 734, 734 (source alpha >=200). Register the same lower sole boundary at y735, 736, 735, 735 with one relative 244x220 source canvas and the existing stage scale. The source window tops are y534, 535, 534, 534. The drawn head and mouth are retained.",
+          "stageScale": 0.6870748299319728,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -110,
-            "top": -201,
-            "width": 244,
-            "height": 220
+            "left": -145,
+            "top": -198,
+            "width": 294,
+            "height": 216
           },
           "grounding": {
-            "x": 131.5,
-            "y": 267.5,
-            "radiusX": 55.5,
+            "x": 115,
+            "y": 268,
+            "radiusX": 56,
             "radiusY": 9
           },
           "footprint": {
@@ -7805,64 +7894,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              184
+              178
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 78,
+              "x": 61,
               "y": 258,
-              "width": 107,
+              "width": 108,
               "height": 12
             },
             "contacts": [
               {
-                "x": 89,
-                "y": 266,
-                "bounds": {
-                  "x": 78,
-                  "y": 258,
-                  "width": 22,
-                  "height": 8
-                }
-              },
-              {
-                "x": 129,
+                "x": 70.5,
                 "y": 270,
                 "bounds": {
-                  "x": 113,
+                  "x": 61,
                   "y": 258,
-                  "width": 32,
+                  "width": 19,
                   "height": 12
                 }
               },
               {
-                "x": 157,
-                "y": 265,
+                "x": 97.5,
+                "y": 266,
                 "bounds": {
-                  "x": 147,
+                  "x": 89,
                   "y": 258,
-                  "width": 20,
-                  "height": 7
+                  "width": 17,
+                  "height": 8
                 }
               },
               {
-                "x": 182,
-                "y": 266,
+                "x": 135.5,
+                "y": 270,
                 "bounds": {
-                  "x": 179,
+                  "x": 126,
                   "y": 258,
-                  "width": 6,
-                  "height": 8
+                  "width": 19,
+                  "height": 12
+                }
+              },
+              {
+                "x": 160,
+                "y": 268,
+                "bounds": {
+                  "x": 151,
+                  "y": 258,
+                  "width": 18,
+                  "height": 10
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            54,
-            117,
-            186,
-            168
+            38,
+            134,
+            202,
+            148
           ],
           "fixedGround": [
             138,
@@ -7872,54 +7961,54 @@
         {
           "stage": "mature",
           "frame": 2,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             2,
             2
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/mature-2.png",
-            "sha256": "59d81bda96afd212cf1e81d98c2d9f0ac22d01ad8b54aeb01ff6513fa13270af"
+            "sha256": "45080a4919fdea957ec54bc04bdcc4031909a9b64db4afce5dab9800ffabe6c5"
           },
           "sourceRectangle": {
-            "left": 500,
-            "top": 534,
-            "width": 244,
-            "height": 220
+            "left": 571,
+            "top": 489,
+            "width": 294,
+            "height": 216
           },
           "sourceIsolation": {
-            "left": 510,
-            "top": 534,
-            "width": 234,
-            "height": 220
+            "left": 576,
+            "top": 489,
+            "width": 282,
+            "height": 216
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 244,
-            "height": 220
+            "width": 294,
+            "height": 216
           },
           "root": [
-            110,
-            201
+            145,
+            198
           ],
           "sourceAnchor": [
-            610,
-            735
+            716,
+            687
           ],
-          "stageScale": 0.7636363636363637,
-          "anchorMethod": "L08 mature front-hoof registration r1: the lowest retained planted front-hoof pixels in source frames 0–3 are y734, 735, 734, 734 (source alpha >=200). Register the same lower sole boundary at y735, 736, 735, 735 with one relative 244x220 source canvas and the existing stage scale. The source window tops are y534, 535, 534, 534. The drawn head and mouth are retained.",
+          "stageScale": 0.6870748299319728,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -110,
-            "top": -201,
-            "width": 244,
-            "height": 220
+            "left": -145,
+            "top": -198,
+            "width": 294,
+            "height": 216
           },
           "grounding": {
-            "x": 131.5,
-            "y": 267.5,
-            "radiusX": 55.5,
+            "x": 115,
+            "y": 268,
+            "radiusX": 56,
             "radiusY": 9
           },
           "footprint": {
@@ -7935,64 +8024,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              184
+              178
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 78,
+              "x": 61,
               "y": 258,
-              "width": 107,
+              "width": 108,
               "height": 12
             },
             "contacts": [
               {
-                "x": 89,
-                "y": 266,
-                "bounds": {
-                  "x": 78,
-                  "y": 258,
-                  "width": 22,
-                  "height": 8
-                }
-              },
-              {
-                "x": 129,
+                "x": 70.5,
                 "y": 270,
                 "bounds": {
-                  "x": 113,
+                  "x": 61,
                   "y": 258,
-                  "width": 32,
+                  "width": 19,
                   "height": 12
                 }
               },
               {
-                "x": 157,
-                "y": 265,
+                "x": 97.5,
+                "y": 266,
                 "bounds": {
-                  "x": 147,
+                  "x": 89,
                   "y": 258,
-                  "width": 20,
-                  "height": 7
+                  "width": 17,
+                  "height": 8
                 }
               },
               {
-                "x": 182,
-                "y": 266,
+                "x": 135.5,
+                "y": 270,
                 "bounds": {
-                  "x": 179,
+                  "x": 126,
                   "y": 258,
-                  "width": 6,
-                  "height": 8
+                  "width": 19,
+                  "height": 12
+                }
+              },
+              {
+                "x": 160,
+                "y": 268,
+                "bounds": {
+                  "x": 151,
+                  "y": 258,
+                  "width": 18,
+                  "height": 10
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            54,
-            117,
-            186,
-            168
+            38,
+            134,
+            202,
+            148
           ],
           "fixedGround": [
             138,
@@ -8002,54 +8091,54 @@
         {
           "stage": "mature",
           "frame": 3,
-          "source": "sheep",
+          "source": "small-tailed-han-v1",
           "sourceCell": [
             3,
             2
           ],
-          "sourceSha256": "f7e3fe5ee17befd1ae0436b17907cc6d5fdc60e37af1cb17fdb901811f04d251",
+          "sourceSha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
           "frameAsset": {
             "path": "assets/livestock/animals/L08/mature-3.png",
-            "sha256": "4309ef30cbdb8fc554898bb30502dfd20332241e70a0a9e0436e509956b0050e"
+            "sha256": "785d36f53298b38dda409c1989d9b0007f7e727acdee00d05f9de90e3c9fa0cd"
           },
           "sourceRectangle": {
-            "left": 748,
-            "top": 534,
-            "width": 244,
-            "height": 220
+            "left": 853,
+            "top": 489,
+            "width": 294,
+            "height": 216
           },
           "sourceIsolation": {
-            "left": 764,
-            "top": 534,
-            "width": 228,
-            "height": 220
+            "left": 858,
+            "top": 489,
+            "width": 289,
+            "height": 216
           },
           "crop": {
             "left": 0,
             "top": 0,
-            "width": 244,
-            "height": 220
+            "width": 294,
+            "height": 216
           },
           "root": [
-            110,
-            201
+            145,
+            198
           ],
           "sourceAnchor": [
-            858,
-            735
+            998,
+            687
           ],
-          "stageScale": 0.7636363636363637,
-          "anchorMethod": "L08 mature front-hoof registration r1: the lowest retained planted front-hoof pixels in source frames 0–3 are y734, 735, 734, 734 (source alpha >=200). Register the same lower sole boundary at y735, 736, 735, 735 with one relative 244x220 source canvas and the existing stage scale. The source window tops are y534, 535, 534, 534. The drawn head and mouth are retained.",
+          "stageScale": 0.6870748299319728,
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed.",
           "sourceCanvas": {
-            "left": -110,
-            "top": -201,
-            "width": 244,
-            "height": 220
+            "left": -145,
+            "top": -198,
+            "width": 294,
+            "height": 216
           },
           "grounding": {
-            "x": 131.5,
-            "y": 267.5,
-            "radiusX": 55.5,
+            "x": 115,
+            "y": 268,
+            "radiusX": 56,
             "radiusY": 9
           },
           "footprint": {
@@ -8065,64 +8154,64 @@
             "supportMaterial": "opaque-feet",
             "supportXRange": [
               0,
-              184
+              178
             ],
             "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
             "bounds": {
-              "x": 78,
+              "x": 61,
               "y": 258,
-              "width": 107,
+              "width": 108,
               "height": 12
             },
             "contacts": [
               {
-                "x": 89,
-                "y": 266,
-                "bounds": {
-                  "x": 78,
-                  "y": 258,
-                  "width": 22,
-                  "height": 8
-                }
-              },
-              {
-                "x": 129,
+                "x": 70.5,
                 "y": 270,
                 "bounds": {
-                  "x": 113,
+                  "x": 61,
                   "y": 258,
-                  "width": 32,
+                  "width": 19,
                   "height": 12
                 }
               },
               {
-                "x": 157,
-                "y": 265,
+                "x": 97.5,
+                "y": 266,
                 "bounds": {
-                  "x": 147,
+                  "x": 89,
                   "y": 258,
-                  "width": 20,
-                  "height": 7
+                  "width": 17,
+                  "height": 8
                 }
               },
               {
-                "x": 182,
-                "y": 266,
+                "x": 135.5,
+                "y": 270,
                 "bounds": {
-                  "x": 179,
+                  "x": 126,
                   "y": 258,
-                  "width": 6,
-                  "height": 8
+                  "width": 19,
+                  "height": 12
+                }
+              },
+              {
+                "x": 160,
+                "y": 268,
+                "bounds": {
+                  "x": 151,
+                  "y": 258,
+                  "width": 18,
+                  "height": 10
                 }
               }
             ],
             "method": "Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged."
           },
           "scenePlacement": [
-            54,
-            117,
-            186,
-            168
+            38,
+            134,
+            202,
+            148
           ],
           "fixedGround": [
             138,
@@ -8148,9 +8237,9 @@
       },
       "atlasAsset": {
         "source": "assets/livestock/atlases/L08.png",
-        "sourceSha256": "8a5e0cfbf6424bedb09c1f39b64d51eb6b53cea6ea7261ec6d18bdc0c7b7acab",
+        "sourceSha256": "d292c50705f76c82d413f55244dd01b729068e36d44d5e45b4eaeb85b18113b1",
         "path": "public/art/livestock/animals/L08.webp",
-        "sha256": "8d530035bb5bcfd60f2f817a48ef9ae4db9d949308cb15952d28e854d78bd6a2"
+        "sha256": "23840a562af337ead607f93cfd1f97a29c98e5bbafafc1865a47abbb4ea080c8"
       },
       "historicalProductCell": {
         "source": "raw/pixel-v4-sheep.png",
@@ -8166,8 +8255,8 @@
       },
       "animalIcon": {
         "path": "public/ui-icons/livestock-L08.webp",
-        "source": "raw/choice-v7/L08.png",
-        "sourceSha256": "d156eac24dae19c9b0bd8667396e1279c91c651adf9099e6bd37a7eb9a195fdf",
+        "source": "raw/l08-small-tailed-han-v1/choice-r9.png",
+        "sourceSha256": "c5cd370fe7122d4cda3dc84a9759959ae86415f822852ae1da81b569b0f5bd1c",
         "registration": "assets/livestock/choice-registration-v7.json",
         "pose": "head-up",
         "stage": "mature",
@@ -8176,54 +8265,54 @@
           0
         ],
         "sourceRectangle": {
-          "left": 298,
-          "top": 426,
-          "width": 635,
-          "height": 637
+          "left": 208,
+          "top": 341,
+          "width": 758,
+          "height": 721
         },
         "generatedWith": "built-in image_gen",
         "referenceFrames": [
           {
-            "path": "assets/livestock/choice-input-archive/v7/L08/mature-0.png",
-            "sha256": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8",
+            "path": "assets/livestock/raw/l08-small-tailed-han-v1/choice-inputs-r9/mature-0.png",
+            "sha256": "770329b519e1d7d24cc1221d2cd66ce125d8e96d6a3a2879b67bac73d3c9642a",
             "archiveOf": "assets/livestock/animals/L08/mature-0.png",
             "originalInputPath": "assets/livestock/animals/L08/mature-0.png",
-            "inputHash": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8",
-            "archivedAt": "2026-11-16",
-            "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L08 front-hoof sole."
+            "inputHash": "770329b519e1d7d24cc1221d2cd66ce125d8e96d6a3a2879b67bac73d3c9642a",
+            "archivedAt": "2026-11-23",
+            "archiveReason": "Exact actual current R9 mature frame used as identity input to built-in image_gen for this new neutral head-up choice; frozen original old sheep is also an actual color reference input."
           },
           {
-            "path": "assets/livestock/choice-input-archive/v7/L08/mature-3.png",
-            "sha256": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644",
+            "path": "assets/livestock/raw/l08-small-tailed-han-v1/choice-inputs-r9/mature-3.png",
+            "sha256": "785d36f53298b38dda409c1989d9b0007f7e727acdee00d05f9de90e3c9fa0cd",
             "archiveOf": "assets/livestock/animals/L08/mature-3.png",
             "originalInputPath": "assets/livestock/animals/L08/mature-3.png",
-            "inputHash": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644",
-            "archivedAt": "2026-11-16",
-            "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L08 front-hoof sole."
+            "inputHash": "785d36f53298b38dda409c1989d9b0007f7e727acdee00d05f9de90e3c9fa0cd",
+            "archivedAt": "2026-11-23",
+            "archiveReason": "Exact actual current R9 mature frame used as identity input to built-in image_gen for this new neutral head-up choice; frozen original old sheep is also an actual color reference input."
           }
         ],
-        "promptFile": "assets/livestock/choice-prompts-v7.md",
+        "promptFile": "assets/livestock/raw/l08-small-tailed-han-v1/prompts-r9.md",
         "crop": {
           "method": "New image_gen neutral portrait from this ID current V5 adult/mature frames 0 and 3; alpha isolation, transparent trim and nearest inside 88px. Rejected V4 portraits are not consumed."
         }
       },
       "grounding": [
         {
-          "x": 137,
-          "y": 270.5,
-          "radiusX": 29,
+          "x": 125,
+          "y": 268,
+          "radiusX": 32,
           "radiusY": 5
         },
         {
-          "x": 132,
-          "y": 271.5,
-          "radiusX": 43,
-          "radiusY": 7
+          "x": 119,
+          "y": 268.5,
+          "radiusX": 47,
+          "radiusY": 8
         },
         {
-          "x": 131.5,
-          "y": 267.5,
-          "radiusX": 55.5,
+          "x": 115,
+          "y": 268,
+          "radiusX": 56,
           "radiusY": 9
         }
       ],
@@ -8241,44 +8330,54 @@
           "supportMaterial": "opaque-feet",
           "supportXRange": [
             0,
-            163
+            159
           ],
           "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
           "bounds": {
-            "x": 110,
+            "x": 95,
             "y": 258,
-            "width": 54,
-            "height": 13
+            "width": 60,
+            "height": 11
           },
           "contacts": [
             {
-              "x": 116,
-              "y": 270,
+              "x": 100.5,
+              "y": 269,
               "bounds": {
-                "x": 110,
+                "x": 95,
                 "y": 258,
-                "width": 12,
-                "height": 12
+                "width": 11,
+                "height": 11
+              }
+            },
+            {
+              "x": 116.5,
+              "y": 267,
+              "bounds": {
+                "x": 111,
+                "y": 258,
+                "width": 11,
+                "height": 9
               }
             },
             {
               "x": 136.5,
-              "y": 271,
+              "y": 269,
               "bounds": {
-                "x": 127,
+                "x": 131,
                 "y": 258,
-                "width": 19,
-                "height": 13
+                "width": 11,
+                "height": 11
               }
             },
             {
-              "x": 158,
-              "y": 271,
+              "x": 149.5,
+              "y": 267,
               "bounds": {
-                "x": 152,
+                "x": 144,
                 "y": 258,
-                "width": 12,
-                "height": 13
+                "width": 11,
+                "height": 9
               }
             }
           ],
@@ -8297,44 +8396,54 @@
           "supportMaterial": "opaque-feet",
           "supportXRange": [
             0,
-            172
+            169
           ],
           "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
           "bounds": {
-            "x": 91,
+            "x": 74,
             "y": 258,
-            "width": 82,
-            "height": 15
+            "width": 90,
+            "height": 12
           },
           "contacts": [
             {
-              "x": 100,
+              "x": 82.5,
               "y": 270,
               "bounds": {
-                "x": 91,
+                "x": 74,
                 "y": 258,
-                "width": 18,
+                "width": 17,
                 "height": 12
               }
             },
             {
-              "x": 138.5,
-              "y": 273,
+              "x": 105,
+              "y": 268,
               "bounds": {
-                "x": 119,
+                "x": 97,
                 "y": 258,
-                "width": 39,
-                "height": 15
+                "width": 16,
+                "height": 10
               }
             },
             {
-              "x": 167,
-              "y": 273,
+              "x": 136.5,
+              "y": 270,
               "bounds": {
-                "x": 161,
+                "x": 128,
                 "y": 258,
-                "width": 12,
-                "height": 15
+                "width": 17,
+                "height": 12
+              }
+            },
+            {
+              "x": 156,
+              "y": 267,
+              "bounds": {
+                "x": 148,
+                "y": 258,
+                "width": 16,
+                "height": 9
               }
             }
           ],
@@ -8353,54 +8462,54 @@
           "supportMaterial": "opaque-feet",
           "supportXRange": [
             0,
-            184
+            178
           ],
           "supportSelection": "Opaque supporting hooves/paws in the registered lower-foot region.",
           "bounds": {
-            "x": 78,
+            "x": 61,
             "y": 258,
-            "width": 107,
+            "width": 108,
             "height": 12
           },
           "contacts": [
             {
-              "x": 89,
-              "y": 266,
-              "bounds": {
-                "x": 78,
-                "y": 258,
-                "width": 22,
-                "height": 8
-              }
-            },
-            {
-              "x": 129,
+              "x": 70.5,
               "y": 270,
               "bounds": {
-                "x": 113,
+                "x": 61,
                 "y": 258,
-                "width": 32,
+                "width": 19,
                 "height": 12
               }
             },
             {
-              "x": 157,
-              "y": 265,
+              "x": 97.5,
+              "y": 266,
               "bounds": {
-                "x": 147,
+                "x": 89,
                 "y": 258,
-                "width": 20,
-                "height": 7
+                "width": 17,
+                "height": 8
               }
             },
             {
-              "x": 182,
-              "y": 266,
+              "x": 135.5,
+              "y": 270,
               "bounds": {
-                "x": 179,
+                "x": 126,
                 "y": 258,
-                "width": 6,
-                "height": 8
+                "width": 19,
+                "height": 12
+              }
+            },
+            {
+              "x": 160,
+              "y": 268,
+              "bounds": {
+                "x": 151,
+                "y": 258,
+                "width": 18,
+                "height": 10
               }
             }
           ],
@@ -8415,8 +8524,8 @@
         "path": "public/art/scene-L08.webp",
         "source": "assets/source/art/scene-L08.png",
         "animation": "feeding",
-        "sourceSha256": "b9613127acc5ea8bc1559a37145405e27a9a9dba89f7e0c61c847048838acffe",
-        "sha256": "8e0b1725162cb9799501469899b7bdbc94e18851a3c23102ef9257bddbe4f2f6",
+        "sourceSha256": "81f5f0103cd1e61de29643afd11d042f72020c3427859f09f5078236d2889f6c",
+        "sha256": "5ebc29c90153080cf9c1992620220782ae34ea5a1e9d3c47a7888a19d71c8ebb",
         "feedTexture": {
           "path": "./art/livestock/feed-v8.webp",
           "size": [

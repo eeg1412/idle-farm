@@ -1,0 +1,9 @@
+Use case: precise-object-edit
+Asset type: transparent pixel-art PWA foreground, targeted color/material revision.
+Input image: the supplied foreground.png is the EDIT TARGET, not a loose style reference.
+Primary request: change all green and teal parts of this exact cottage icon into a brick-red / terracotta palette, preserving everything else.
+Edit boundaries: keep the exact cottage structure, silhouette, size, placement, roof shapes and tile groupings, door, bright yellow window, cream walls, brown timber, wheat, pixel-art cluster style and transparent margin. Keep the same complete compact composition.
+Replace the green/teal on EVERY roof surface, roof ridge, main gable trim, side roof tiles, small porch roof and chimney cap with rich brick-red and terracotta tile colors, using deep red-brown shadows and warm muted red highlights. The roof should read as red brick/terracotta, not orange, green, teal or turquoise.
+Replace the green decorative leaves at the lower sides with the SAME shapes in mature harvest-gold and warm ochre tones. Keep the golden wheat as it is. Remove every green/teal accent from the artwork; no green remains anywhere.
+Preserve crisp stepped pixel edges, strong brown outlines and deliberate large color clusters. Do not redesign or add details, objects, windows, plants or roof pieces.
+Background: genuinely transparent alpha as in the input. No solid-color panel, no orange background, no scene, no disc, no frame, no ground, no shadows or exterior glow, no text or watermark. Only the targeted artwork color/material edit; all other visual elements remain unchanged.

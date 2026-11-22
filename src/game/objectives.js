@@ -3,6 +3,7 @@ import generatedCoinCaps from '../content/task-coin-caps.json' with { type: 'jso
 import { purchasedTechLevels, techTotalLevels } from './advancement.js';
 import { coinScale } from './coin-scale.js';
 import { qualityDrawTaskTargets } from './quality-tasks.js';
+import { grantCapsules } from './capsules.js';
 
 const destination = (target, tab) => tab ? { target, tab } : { target };
 const field = destination('庄园', '田地');
@@ -91,7 +92,6 @@ const baseCoinRewards = {
 // Fixed research-point rewards. They are committed with the task settlement and never
 // enter T/credit or the appraisal multiplier.
 export const taskResearchPointRewards = Object.freeze({
-  firstSale: 1n,
   collection200: 500n,
   collection300: 2_000n,
   collection400: 6_000n,
@@ -101,6 +101,57 @@ export const taskResearchPointRewards = Object.freeze({
   runs50: 3_000n,
   runs100: 8_000n,
 });
+
+// Time-capsule rewards (expansion spec 10.6). Tasks not listed here grant none.
+export const taskCapsuleRewards = Object.freeze({
+  firstSale: 300n,
+  collectLivestock: 500n,
+  collectFish: 500n,
+  collectMining: 1_000n,
+  firstMixedProduct: 1_000n,
+  newFarm: 1_000n,
+  firstTech: 500n,
+  moreFields: 1_000n,
+  recipeCollection: 1_000n,
+  farmIncome: 3_000n,
+  facilityLevel50: 1_000n,
+  facilityLevel100: 2_000n,
+  facilityLevel200: 4_000n,
+  facilityLevel400: 8_000n,
+  stationLevel10: 500n,
+  stationLevel50: 1_500n,
+  stationLevel100: 3_000n,
+  stationLevel200: 6_000n,
+  techLevel25: 1_000n,
+  techLevel100: 2_000n,
+  techLevel300: 4_000n,
+  techLevel600: 6_000n,
+  techLevel900: 8_000n,
+  techLevel1200: 20_000n,
+  runs5: 2_000n,
+  runs20: 6_000n,
+  runs50: 12_000n,
+  runs100: 24_000n,
+  collection100: 1_000n,
+  collection200: 2_000n,
+  collection300: 4_000n,
+  collection400: 8_000n,
+  itemCollection: 20_000n,
+  qualityCollection: 300n,
+  quality25: 1_000n,
+  quality50: 2_000n,
+  qualityMaster: 3_000n,
+  quality200: 5_000n,
+  quality400: 8_000n,
+  milleCrepe: 2_000n,
+  threeSectorGift: 3_000n,
+  miningProduct: 2_000n,
+  livestockTop: 1_000n,
+  fishTop: 1_000n,
+  miningTop: 2_000n,
+});
+export const taskCapsuleRewardTotal = Object.values(taskCapsuleRewards).reduce((total, value) => total + value, 0n);
+if (taskCapsuleRewardTotal !== 186_100n) throw new Error('任务胶囊奖励合计须为 186,100');
 
 // Lifetime production value T (prestige ledger) each gated task needs before it counts as done.
 export const taskProductionGates = Object.freeze({
@@ -277,7 +328,7 @@ function progress(world, [id, name, condition, location, count, required = 1n, b
   return { id, name, condition, ...location, current,
     required, gate, gateMet, done,
     rewardCoins: taskCoinRewards[id], rewardResearchPoints: taskResearchPointRewards[id] ?? 0n,
-    rewarded, ...(branch && { branch }) };
+    rewardCapsules: taskCapsuleRewards[id] ?? 0n, rewarded, ...(branch && { branch }) };
 }
 
 // Only the save migration calls this against a world predating orders.
@@ -316,15 +367,37 @@ export function settleTaskRewards(world) {
   const ids = [];
   let coins = 0n;
   let researchPoints = 0n;
+  let capsuleReward = 0n;
   for (const task of tasks) {
     if (!task.done || rewarded.has(task.id)) continue;
     rewarded.add(task.id);
     ids.push(task.id);
     coins += task.rewardCoins;
     researchPoints += task.rewardResearchPoints;
+    capsuleReward += task.rewardCapsules;
   }
   world.taskRewards = [...previous, ...ids];
   world.coins += coins;
   world.researchPoints += researchPoints;
-  return { ids, coins, researchPoints };
+  // Only receipts issued in this settlement grant capsules; what exceeds the holding cap
+  // waits in pendingTaskCapsules instead of being discarded.
+  let capsules = 0n;
+  let capsuleOverflow = 0n;
+  if (capsuleReward > 0n) {
+    const granted = grantCapsules(world, capsuleReward);
+    capsules = granted.added;
+    capsuleOverflow = granted.remaining;
+    if (capsuleOverflow > 0n) world.pendingTaskCapsules = (world.pendingTaskCapsules ?? 0n) + capsuleOverflow;
+  }
+  return { ids, coins, researchPoints, capsules, capsuleOverflow };
+}
+
+// Moves pending task capsules into holdings up to the cap; the rest keeps waiting.
+// Returns false when nothing is pending.
+export function claimTaskCapsules(world) {
+  const pending = world.pendingTaskCapsules ?? 0n;
+  if (pending <= 0n) return false;
+  const granted = grantCapsules(world, pending);
+  world.pendingTaskCapsules = pending - granted.added;
+  return { added: granted.added, remaining: world.pendingTaskCapsules };
 }

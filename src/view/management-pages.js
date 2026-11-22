@@ -627,6 +627,10 @@ export function renderTasks(ui) {
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
   ui.text('任务完成后自动发奖，每项只发一次。', { muted: true });
+  const pendingCapsules = ui.w.pendingTaskCapsules ?? 0n;
+  if (pendingCapsules > 0n) {
+    ui.titleBar('待领时空胶囊 ' + compact(pendingCapsules), '领取', () => ui.action('claimTaskCapsules'), { compact: true });
+  }
   const taskTab = taskTabs.includes(ui.local.tab) ? ui.local.tab : taskTabs[0];
   ui.local.tab = taskTab;
   ui.tabs(taskTabs, taskTab, (next) => {
@@ -652,17 +656,15 @@ export function renderTasks(ui) {
   ui.scrollList(goals, (cell, goal) => {
     cell.card((entry) => entry.feature(taskArt[goal.id], (card) => {
       card.heading(goal.name);
-      if (goal.id === 'techLevel1200' && goal.rewarded) {
-        card.row('完成', '已到账');
-        return;
-      }
       const required = compact(goal.required);
       card.text(goal.condition.replace('{目标}', required));
-      const researchPoints = goal.rewardResearchPoints ?? 0n;
-      const reward = '奖励 ' + compact(goal.rewardCoins) + ' 金币' +
-        (researchPoints > 0n ? ' + ' + compact(researchPoints) + ' 高级研发点' : '');
-      const gate = goal.gate != null && !goal.gateMet ? ' · 需累计产值 ' + compact(goal.gate) : '';
-      card.text(reward + gate + (goal.rewarded ? ' · 已到账' : ''), { muted: !goal.rewarded });
+      // A claimed full-technology card shows no reward amount (docs/ui/pages/tasks.md).
+      if (goal.id !== 'techLevel1200' || !goal.rewarded) {
+        const rewards = [['coin', goal.rewardCoins], ['research-point', goal.rewardResearchPoints],
+          ['time-capsule', goal.rewardCapsules]].filter(([, value]) => value > 0n).map(([icon, value]) => ({ icon, value }));
+        if (goal.gate != null && !goal.gateMet) rewards.push({ text: '需累计产值 ' + compact(goal.gate) });
+        card.rewards(rewards, { muted: !goal.rewarded });
+      }
       const progress = (goal.done ? required : compact(goal.current)) + ' / ' + required;
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
       const target = earnForLand ? '仓库' : goal.target;
@@ -673,40 +675,6 @@ export function renderTasks(ui) {
           compact: true, disabled: goal.done, tone: goal.done ? 'plain' : 'gold',
         });
     }, { ratio: 0.32 }), { padding: 8, gap: 6 });
-  });
-}
-
-const instructions = [
-  ['田地', '新庄园先点击空田的「播种」，选择已研发的种子安排种植。换种立即开始新的生长周期。购地增加可同时生产的作物，升级立即增加当前批次及之后的收成。'],
-  ['畜牧、鱼塘和矿洞', '购买设施，再安排已研发的牲畜、鱼或矿种。更换对象立即开始新周期。'],
-  ['工坊', '更换配方立即退回旧批次已记录的材料，并开始检查新配方。材料齐备自动开工。每批产出随工位等级增长（1+j+⌊j²/64⌋ 倍），材料投入同比放大；升级工位从下一批起生效。'],
-  ['研究', '满足前置并备齐金币和实物，点击研发立即解锁。每累计一小时有效时间发放普通研发点。消耗 100 普通研发点随机提升一个已研发品项的品质。'],
-  ['出货', '在仓库选择物品，拖动百分比滑条。确认前可以查看出售数量和预计得款。行情生效时，按当天倍率出货。'],
-  ['出售庄园', '首次出货任务奖励 1 点高级研发点。生产积累的高级研发点在出售庄园时领取，未满一点的收益跨轮保留。任意产值均可出售。出售后保留已研发品项、品质、普通研发点、经营改良和任务进度。工坊重置为加工位、精制位各 1 个（均为 1 级），需重新安排配方，原优先生产与未完成批次清空。'],
-];
-
-function showInstructions(ui) {
-  let index = 0;
-  ui.dialog('操作说明', (panel) => {
-    panel.row(instructions[index][0], (index + 1) + ' / ' + instructions.length);
-    panel.text(instructions[index][1]);
-    panel.buttons([
-      {
-        label: '上一步', disabled: index === 0,
-        onClick: () => { index -= 1; panel.refresh(); },
-      },
-      {
-        label: index + 1 === instructions.length ? '完成' : '下一步', tone: 'gold',
-        onClick: () => {
-          if (index + 1 === instructions.length) {
-            panel.close();
-          } else {
-            index += 1;
-            panel.refresh();
-          }
-        },
-      },
-    ]);
   });
 }
 
@@ -947,9 +915,6 @@ export function renderSettings(ui) {
         right.settingToggle('静音', value === 0, () => save(value === 0 ? lastAudible[key] ?? fallbackVolume : 0));
       }, { ratio: 0.65, divider: key === 'music' });
     }
-  });
-  ui.section('操作说明', 'settings-guide', (card) => {
-    card.button('重看操作说明', () => showInstructions(ui), { trailingIcon: 'chevron-right' });
   });
   ui.section('存档管理', 'nav-warehouse', (card) => {
     card.buttons([

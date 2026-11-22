@@ -402,22 +402,22 @@
     },
     "feeding": [
       {
-        "x": 177,
-        "y": 280,
+        "x": 173,
+        "y": 271,
         "radiusX": 13,
         "radiusY": 4,
         "kind": "hay"
       },
       {
-        "x": 193,
-        "y": 287,
+        "x": 191,
+        "y": 270,
         "radiusX": 20,
         "radiusY": 5,
         "kind": "hay"
       },
       {
-        "x": 210,
-        "y": 280,
+        "x": 203,
+        "y": 261,
         "radiusX": 24,
         "radiusY": 6,
         "kind": "hay"
@@ -425,21 +425,21 @@
     ],
     "grounding": [
       {
-        "x": 137,
-        "y": 270.5,
-        "radiusX": 29,
+        "x": 125,
+        "y": 268,
+        "radiusX": 32,
         "radiusY": 5
       },
       {
-        "x": 132,
-        "y": 271.5,
-        "radiusX": 43,
-        "radiusY": 7
+        "x": 119,
+        "y": 268.5,
+        "radiusX": 47,
+        "radiusY": 8
       },
       {
-        "x": 131.5,
-        "y": 267.5,
-        "radiusX": 55.5,
+        "x": 115,
+        "y": 268,
+        "radiusX": 56,
         "radiusY": 9
       }
     ],

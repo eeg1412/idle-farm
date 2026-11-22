@@ -35,7 +35,7 @@ function beginFlour() {
   return world;
 }
 
-test('the first warehouse sale grants exactly one advanced point and leaves ordinary points unchanged', () => {
+test('the first warehouse sale grants task coins only and leaves both research point balances unchanged', () => {
   const world = beginWheat();
   advanceWorld(world, 12_000);
   assert.equal(world.inventory.C01, 4n);
@@ -49,12 +49,13 @@ test('the first warehouse sale grants exactly one advanced point and leaves ordi
   assert.deepEqual(settleTaskRewards(world).ids, []);
   assert.ok(sell(world, 'C01', 25, quote));
   assert.equal(world.researchPoints, 0n);
-  assert.deepEqual(settleTaskRewards(world), { ids: ['firstSale'], coins: 710n * coinScale, researchPoints: 1n });
+  assert.deepEqual(settleTaskRewards(world), { ids: ['firstSale'], coins: 710n * coinScale, researchPoints: 0n,
+    capsules: 300n, capsuleOverflow: 0n });
   assert.equal(world.coins, 1_680n * coinScale);
-  assert.equal(world.researchPoints, 1n);
+  assert.equal(world.researchPoints, 0n);
   assert.equal(world.lifetimeProductionValue, 4n * wheatPrice);
   assert.equal(world.prestigeCredit, activityRoot(4n * wheatPrice) * 10_000n);
-  assert.deepEqual(settleTaskRewards(world), { ids: [], coins: 0n, researchPoints: 0n });
+  assert.deepEqual(settleTaskRewards(world), { ids: [], coins: 0n, researchPoints: 0n, capsules: 0n, capsuleOverflow: 0n });
 
   assert.equal(world.basicResearchPoints, 0n);
   assert.equal(qualityDrawOffer(world).affordable, false);
@@ -441,5 +442,5 @@ test('per-technology costs use exact segment quotas, prerequisites and task scop
   assert.equal(tasks.long.find(({ id }) => id === 'techLevel1200').done, true);
   world.stats.sold = 1n;
   assert.equal(objectives(world).guide.length, 36);
-  assert.equal(Object.values(taskResearchPointRewards).reduce((total, amount) => total + amount, 0n), 40_152n);
+  assert.equal(Object.values(taskResearchPointRewards).reduce((total, amount) => total + amount, 0n), 40_151n);
 });

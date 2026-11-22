@@ -7,7 +7,7 @@ export const livestockSizeById = {
   L05: 'medium', // 产蛋鹅
   L06: 'large', // 黑猪
   L07: 'small', // 肉兔
-  L08: 'large', // 肉用绵羊
+  L08: 'large', // 小尾寒羊
   L09: 'medium', // 番鸭
   L10: 'large', // 肉用黄牛
 };

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "task": "2026-11-22-pwa-transparent-orange",
+  "revision": "R3-brick-red-roof-green-leaves",
+  "date": "2026-11-22",
+  "asset": "assets/source/art/pwa-icon-v3/foreground.png",
+  "sha256": "7b2c4ec169000842e34ae6128f07438c80640a756e88dd14983f0ff5ead61bbc",
+  "tool": "image_gen.imagegen",
+  "mode": "built-in precise-object-edit",
+  "transparent_background": true,
+  "originalToolOutput": "C:/Users/eeg14/.codex/generated_images/01a20393-5fbf-7542-b7aa-e927b966fa77/exec-6d763c49-0ea4-4aa0-9891-68289e00c09f.png",
+  "sourcePreservation": "Native tool output copied unchanged to canonical foreground.png. No programmatic recolor, redraw, extraction, resizing, background fill or pixel modification.",
+  "promptFile": "assets/source/art/pwa-icon-v3/prompt.txt",
+  "promptSha256": "f7206023f83ae4dc09d26226daf60646688c6bc3c957ea5b994a5905ac79bd8c",
+  "fullPrompt": "Use case: precise-object-edit\nAsset type: transparent pixel-art PWA foreground, one targeted leaf-only color correction.\nInput images:\nImage 1 (foreground.png, brick-red roof and gold leaves) is the ONLY EDIT TARGET. Preserve this image.\nImage 2 (history/r1-green/foreground.png) is reference ONLY for the natural green colors of the BOTTOM LEAVES. Do not copy its green roof.\nPrimary request: on Image 1 change ONLY the broad decorative leaves at the bottom left and bottom right of the house from gold/ochre back to natural green, matching the lower leaf palette of Image 2. Keep the exact leaf shapes, sizes, positions, outlines and pixel clusters.\nKeep the wheat ears, grains and stalks GOLDEN YELLOW exactly as in Image 1. The wheat grains must NOT become green.\nKeep EVERY roof surface BRICK RED / TERRACOTTA exactly as in Image 1: main roof, side roof tiles, gable ridge, porch roof, chimney cap. No green on the roof or building.\nStrict invariants: do not alter the house structure, composition, silhouette, dimensions, placement, cream walls, brown timber, wooden door, bright yellow window, golden wheat or red roofs. Do not redesign anything, add objects, remove objects or change the framing. Crisp pixel art and grouped shading remain.\nBackground: preserve genuine transparent RGBA alpha and the existing transparent margin. No solid background, orange plate, scene, frame, disc, ground, cast shadow, halo, text or watermark.\nPerform ONLY the bottom-leaf color correction.",
+  "inputImages": [
+    {
+      "role": "Image 1: only edit target",
+      "toolReferencedImagePath": "D:/myProject/idle-farm/tianjian-workshop/assets/source/art/pwa-icon-v3/foreground.png",
+      "preservedPath": "assets/source/art/pwa-icon-v3/history/r2-red-gold/foreground.png",
+      "sha256": "0952f3855e3ea14cc29446b6a54d0ca18d5a67052c1af81eac24e02c500a3156",
+      "viewedBeforeEdit": true
+    },
+    {
+      "role": "Image 2: bottom-leaf color reference only; green roof explicitly excluded",
+      "toolReferencedImagePath": "D:/myProject/idle-farm/tianjian-workshop/assets/source/art/pwa-icon-v3/history/r1-green/foreground.png",
+      "sha256": "1da316a76dec853e3ec3f879ab786d3999520082fe1a19bb894bbada40e9ece1",
+      "viewedEarlierInSameArtworkTask": true
+    }
+  ],
+  "previousRevision": {
+    "path": "assets/source/art/pwa-icon-v3/history/r2-red-gold/",
+    "files": [
+      "foreground.png",
+      "prompt.txt",
+      "generation.json"
+    ],
+    "preservation": "All three previous canonical files copied byte-for-byte before R3 editing."
+  },
+  "revisionAuthority": "User corrected the overbroad removal of green: the bottom wheat leaves may be green. R3 only restores bottom decorative leaves to natural green; all roofs remain brick red, wheat remains gold, and other structure and transparency remain.",
+  "revisionGenerationCount": 1,
+  "artworkObservation": "Directly viewed native edit output: natural green decorative leaves at the lower left and right, golden wheat ears and stalks, brick-red/terracotta main roof, side roofs, ridge, porch roof and chimney cap. Complete cottage, bright window, cream walls and brown timber retained. No background panel, scene, frame or ground added.",
+  "reviewState": {
+    "sourceArt": "Generated and directly viewed by ART owner; independent PM review pending.",
+    "exports": "PWA-CODE ownership; waiting for PM instruction to export revised source.",
+    "runtime": "Not verified. No tests, game/browser preview, syntax/runtime checks or build performed."
+  }
+}

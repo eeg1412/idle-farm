@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "task": "2026-11-22-pwa-transparent-orange",
+  "date": "2026-11-22",
+  "asset": "assets/source/art/pwa-icon-v3/foreground.png",
+  "sha256": "1da316a76dec853e3ec3f879ab786d3999520082fe1a19bb894bbada40e9ece1",
+  "tool": "image_gen.imagegen",
+  "mode": "built-in generate",
+  "transparent_background": true,
+  "originalToolOutput": "C:/Users/eeg14/.codex/generated_images/01a20393-5fbf-7542-b7aa-e927b966fa77/exec-4e536f1a-1b06-41dc-b321-6c41ee939cb2.png",
+  "sourcePreservation": "Copied native tool PNG unchanged into the assigned project asset path. No programmatic redraw, extraction, resizing, background fill, or post-generation pixel modification.",
+  "promptFile": "assets/source/art/pwa-icon-v3/prompt.txt",
+  "promptSha256": "1f51d55b8bcad4a19470d016846e0d699b53a1a3f03a08b295f77d5cbc1b08a5",
+  "fullPrompt": "Use case: logo-brand\nAsset type: a single transparent raster foreground for the pixel-art idle manor game's PWA app icon.\nPrimary request: newly draw one compact, instantly recognizable manor cottage emblem. A broad dark teal / deep green gabled roof, cream ivory walls, one bright warm window and simple welcoming central doorway. Include only a few bold golden wheat grains and green leaves tucked close against the lower sides of the cottage. This is a new design, not a crop of a reference.\nStyle/medium: authentic crisp pixel art with clearly stepped pixel silhouettes and deliberate chunky color clusters, limited palette, strong dark outline, clean grouped light and shade. Shape hierarchy must remain recognizable when reduced to 32 and 48 pixels. Do not use smooth vector outlines or soft painting.\nComposition/framing: square canvas. One complete isolated centered emblem, compact rounded overall silhouette. Cottage occupies most of the object; roof, house, wheat and leaves form a single clear readable cluster, no detached particles. Leave transparent margin around the entire object. Keep all essential cottage features close to center so code can place this same source within an app icon's central 80%-diameter circular mask-safe area. Make the source roughly as tall as wide, without long protruding stems.\nColor palette: deep teal and green roof, light cream walls, dark brown outlines, bright warm yellow window, small golden wheat accents and green leaves. The final destination will have a solid orange background added by code, so ensure a strong cool roof and light wall contrast. Do not paint orange or red roof tiles.\nScene/backdrop: genuinely transparent background, RGBA alpha, empty everywhere outside the isolated foreground. No scene or environment.\nText: none.\nConstraints: render only the foreground artwork. No solid-color background, no background plate, no circle/disc, no enclosing frame or border, no ground, no platform, no ground/cast shadow, no vignette, no halo, no glow behind the object, no gradient, no checkerboard baked into pixels, no lettering, no watermark. Bright windows may have internal shading but must not cast a glow outside the house. Preserve complete roof and all wheat tips.",
+  "referenceImages": [
+    {
+      "path": "public/icons/manor-v2-512.png",
+      "role": "Opened with view_image for pixel-art style reference only; not passed as an edit target or copied/cropped into the new source."
+    }
+  ],
+  "designAuthority": "The manor cottage, teal roof, cream walls, lit window, wheat and leaves are the PM's implementation design selection; the user's required behavior is a redesigned PWA icon with transparent art and a replaceable code-composited solid background.",
+  "generationCount": 1,
+  "selectedGeneration": 1,
+  "artworkObservation": "Directly viewed native generation: centered complete cottage silhouette, dark teal roof, cream walls, bright yellow window, wheat and leaves at the lower sides, no painted scene/background/ground shadow/frame/text.",
+  "reviewState": {
+    "sourceArt": "Generated and directly viewed by the ART owner; independent PM review pending.",
+    "exports": "Owned by PWA-CODE; ART owner did not export or inspect final 32/48/maskable assets.",
+    "runtime": "Not verified; no tests, game/browser preview, syntax/runtime checks or build performed."
+  }
+}

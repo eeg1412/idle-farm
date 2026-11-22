@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "task": "2026-11-22-pwa-transparent-orange",
+  "revision": "R2-brick-red-no-green",
+  "date": "2026-11-22",
+  "asset": "assets/source/art/pwa-icon-v3/foreground.png",
+  "sha256": "0952f3855e3ea14cc29446b6a54d0ca18d5a67052c1af81eac24e02c500a3156",
+  "tool": "image_gen.imagegen",
+  "mode": "built-in precise-object-edit",
+  "transparent_background": true,
+  "originalToolOutput": "C:/Users/eeg14/.codex/generated_images/01a20393-5fbf-7542-b7aa-e927b966fa77/exec-4c4df108-954c-44bc-8e38-e60a1a3b2990.png",
+  "sourcePreservation": "Native tool output copied unchanged to canonical foreground.png. No programmatic recolor, redraw, extraction, resizing, background fill or pixel modification.",
+  "promptFile": "assets/source/art/pwa-icon-v3/prompt.txt",
+  "promptSha256": "7070cc78f9cc5b6d8c84cff878f899509ad3c9af23c0e4cd84166846faa81591",
+  "fullPrompt": "Use case: precise-object-edit\nAsset type: transparent pixel-art PWA foreground, targeted color/material revision.\nInput image: the supplied foreground.png is the EDIT TARGET, not a loose style reference.\nPrimary request: change all green and teal parts of this exact cottage icon into a brick-red / terracotta palette, preserving everything else.\nEdit boundaries: keep the exact cottage structure, silhouette, size, placement, roof shapes and tile groupings, door, bright yellow window, cream walls, brown timber, wheat, pixel-art cluster style and transparent margin. Keep the same complete compact composition.\nReplace the green/teal on EVERY roof surface, roof ridge, main gable trim, side roof tiles, small porch roof and chimney cap with rich brick-red and terracotta tile colors, using deep red-brown shadows and warm muted red highlights. The roof should read as red brick/terracotta, not orange, green, teal or turquoise.\nReplace the green decorative leaves at the lower sides with the SAME shapes in mature harvest-gold and warm ochre tones. Keep the golden wheat as it is. Remove every green/teal accent from the artwork; no green remains anywhere.\nPreserve crisp stepped pixel edges, strong brown outlines and deliberate large color clusters. Do not redesign or add details, objects, windows, plants or roof pieces.\nBackground: genuinely transparent alpha as in the input. No solid-color panel, no orange background, no scene, no disc, no frame, no ground, no shadows or exterior glow, no text or watermark. Only the targeted artwork color/material edit; all other visual elements remain unchanged.",
+  "inputImages": [
+    {
+      "role": "edit target",
+      "toolReferencedImagePath": "D:/myProject/idle-farm/tianjian-workshop/assets/source/art/pwa-icon-v3/foreground.png",
+      "preservedPath": "assets/source/art/pwa-icon-v3/history/r1-green/foreground.png",
+      "sha256": "1da316a76dec853e3ec3f879ab786d3999520082fe1a19bb894bbada40e9ece1",
+      "viewedBeforeEdit": true
+    }
+  ],
+  "previousRevision": {
+    "path": "assets/source/art/pwa-icon-v3/history/r1-green/",
+    "files": [
+      "foreground.png",
+      "prompt.txt",
+      "generation.json"
+    ],
+    "preservation": "All three previous canonical files copied byte-for-byte before R2 editing."
+  },
+  "revisionAuthority": "User requested changing the roof green to brick red and rejected retaining green. PM explicitly applied the same removal to green decorations, retaining cottage structure, bright window, cream walls, wood, wheat and transparent background.",
+  "revisionGenerationCount": 1,
+  "artworkObservation": "Directly viewed native edit output: brick-red/terracotta main roof, side roof, ridge, porch roof and chimney cap; gold/ochre former green leaves; no visible green. Complete compact cottage, bright window, cream wall, brown timber and wheat retained. No background panel, scene, frame or ground added.",
+  "reviewState": {
+    "sourceArt": "Generated and directly viewed by ART owner; independent PM review pending.",
+    "exports": "PWA-CODE ownership; waiting for PM instruction to export revised source.",
+    "runtime": "Not verified. No tests, game/browser preview, syntax/runtime checks or build performed."
+  }
+}

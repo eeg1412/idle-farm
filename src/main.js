@@ -11,7 +11,8 @@ import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitM
 import { acceptOrder, deliverOrder, abandonOrder, replaceOrder } from './game/orders.js';
 import { claimManagerGift, giftManager, switchManagerAppearance } from './game/managers.js';
 import { drawQuality } from './game/quality.js';
-import { objectives, settleTaskRewards } from './game/objectives.js';
+import { claimTaskCapsules, objectives, settleTaskRewards } from './game/objectives.js';
+import { useCapsules } from './game/capsules.js';
 import { viewportLayout } from './platform/layout.js';
 import {
   openWorldSave, readWorldSave, writeWorldSave, restoreWorldSave, settleOfflineWorld, acknowledgeOffline,
@@ -81,6 +82,7 @@ const actions = {
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
   ...orderActions,
   giftManager, claimManagerGift, switchManagerAppearance,
+  useCapsules, claimTaskCapsules,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 
@@ -189,6 +191,7 @@ async function commit(draft, anchor, options, initialBase) {
   const progressBefore = uncommittedProgress ?? before ?? initialBase;
   const rewards = settleTaskRewards(draft);
   draft.revision = await writeWorldSave(db, draft, options);
+  if (rewards?.capsuleOverflow > 0n) setTimeout(showCapsuleLimit, 0);
   world = draft;
   uncommittedProgress = undefined;
   frontAnchor = anchor;
@@ -258,16 +261,32 @@ function completedGuide(before, after) {
   return guideActive(before) && !guideActive(after);
 }
 
-function taskRewardText(rewards) {
-  const parts = [];
-  if (rewards?.coins > 0n) parts.push('+' + compact(rewards.coins) + ' 金币');
-  if (rewards?.researchPoints > 0n) parts.push('+' + compact(rewards.researchPoints) + ' 高级研发点');
-  return parts.length ? '任务奖励 ' + parts.join(' ') : '';
+// Task rewards travel as icon + amount items; the view draws them after the 「任务奖励」 label.
+function taskRewardItems(rewards) {
+  return [['coin', rewards?.coins], ['research-point', rewards?.researchPoints], ['time-capsule', rewards?.capsules]]
+    .filter(([, value]) => value > 0n).map(([icon, value]) => ({ icon, value }));
+}
+
+// Joins toast parts with 「 · 」; a part carrying task rewards keeps them after the joined text.
+function joinToast(...parts) {
+  const structured = parts.find((part) => part && typeof part === 'object');
+  const text = parts.map((part) => part && typeof part === 'object' ? part.text : part).filter(Boolean).join(' · ');
+  return structured ? { text, reward: structured.reward } : text;
+}
+
+// Capsules that do not fit stay pending (spec 10.1); tell the player to use some first.
+function showCapsuleLimit() {
+  if (!world) return;
+  view.dialog('时空胶囊', (ui) => {
+    ui.text('时空胶囊已达持有上限，请先使用后再领取。');
+    ui.button('知道了', ui.close, { tone: 'gold' });
+  }, { center: true });
 }
 
 function progressToast(before, after, rewards) {
-  return [completedGuide(before, after) ? longGoalsToast : '', taskRewardText(rewards)]
-    .filter(Boolean).join(' · ');
+  const text = completedGuide(before, after) ? longGoalsToast : '';
+  const items = taskRewardItems(rewards);
+  return items.length ? { text, reward: { label: '任务奖励', items } } : text;
 }
 
 function showOffline() {
@@ -420,8 +439,17 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'research') return { toast: '已研发：' + catalog.items[args[0]].name, sound: 'research' };
   if (name === 'drawQuality') return { sound: 'success', qualityDraw: actionResult };
   if (name === 'giftManager') return { sound: 'success', managerGift: actionResult };
-  if (name === 'claimManagerGift') return { sound: 'success', managerGift: actionResult };
+  if (name === 'claimManagerGift') {
+    if (actionResult.capsules?.remaining > 0n) setTimeout(showCapsuleLimit, 0);
+    return { sound: 'success', managerGift: actionResult };
+  }
   if (name === 'resetMarket') return { toast: '今日行情已重置', sound: 'success' };
+  if (name === 'useCapsules') return { float: '已快进 ' + actionResult.minutes + ' 分钟', sound: 'success', capsuleUse: actionResult };
+  if (name === 'claimTaskCapsules') {
+    if (actionResult.remaining > 0n) setTimeout(showCapsuleLimit, 0);
+    return { float: actionResult.added > 0n ? '+' + compact(actionResult.added) + ' 时空胶囊' : undefined,
+      sound: actionResult.added > 0n ? 'success' : undefined, capsuleClaim: actionResult };
+  }
   if (name === 'buyMerchant' || name === 'sellMerchant') {
     const { id, count, total } = args[0];
     const buying = name === 'buyMerchant';
@@ -488,7 +516,7 @@ function dispatch(name, ...args) {
         if (name === 'claimManagerGift') return { ok: false, toast };
         const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
-        return { ok: false, message: toast ? message + ' · ' + toast : message };
+        return { ok: false, message: joinToast(message, toast) };
       }
       if (!Object.hasOwn(productionBatchActions, name) && name !== 'claimManagerGift') settleProduction(draft);
       const toast = await commit(draft, anchor);
@@ -499,7 +527,7 @@ function dispatch(name, ...args) {
       }
       paint();
       const result = feedback(name, args, revenueBefore, draft, actionResult);
-      result.toast = [result.toast, toast].filter(Boolean).join(' · ');
+      result.toast = joinToast(result.toast, toast);
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };
     } catch (error) {

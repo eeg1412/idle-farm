@@ -16,6 +16,7 @@ const buildingArtWidth = 536;
 const buildingArtHeight = 320;
 const signWidthRatio = 0.224;
 const turn = Math.PI * 2;
+const mineCartTilt = 10 * Math.PI / 180;
 // Both chimneys use the same default plume dimensions in map-width units;
 // layout-editor scale overrides still scale each building's plume with it.
 // Three staggered puffs keep smoke visible across each wrap.
@@ -71,10 +72,13 @@ const sites = [
       sprite.alpha = 0.8;
     } },
   { id: 'mine', label: '矿洞', center: [0.2262, 1.385], footprint: [27, 37, 508, 309],
-    widthRatio: 0.38, prop: [328, 263, 132], pivot: [0.5, 0.93],
+    // The cart's near wheels ride the near rail: the rails fall about 1/3 to the right, so the
+    // path follows that slope and the level-drawn cart tilts 10 degrees along the track.
+    widthRatio: 0.38, prop: [328, 276, 132], pivot: [0.5, 0.93],
     animate(sprite, time, unit, scale, x, y) {
       const angle = turn * cycle(time, 7.5);
-      sprite.position.set(x + 51 * unit * Math.sin(angle), y + 14 * unit * Math.sin(angle));
+      sprite.rotation = mineCartTilt;
+      sprite.position.set(x + 51 * unit * Math.sin(angle), y + 16.5 * unit * Math.sin(angle));
     } },
 
   { id: 'processing', label: '加工', center: [0.6515, 1.6266], footprint: [32, 24, 504, 309],
@@ -149,8 +153,13 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
   const arrowX = parent.x - center;
   const arrowBase = below ? 0 : height;
   const arrowTip = below ? -3 : height + 3;
+  const lineWidth = focused ? 2 : 1;
+  // The pointer's fill reaches past the bubble border so no seam line shows at its base;
+  // only its two slanted sides are outlined.
+  const overlap = (below ? 1 : -1) * (lineWidth + 0.5);
+  frame.poly([arrowX - 5, arrowBase + overlap, arrowX, arrowTip, arrowX + 5, arrowBase + overlap]).fill(fill);
   frame.moveTo(arrowX - 5, arrowBase).lineTo(arrowX, arrowTip).lineTo(arrowX + 5, arrowBase)
-    .fill(fill).stroke({ color: border, width: focused ? 2 : 1 });
+    .stroke({ color: border, width: lineWidth });
   guide.addChild(frame);
   const caption = guide.addChild(new Text({
     text: `任务 · ${name}`,
@@ -165,6 +174,9 @@ function taskGuide(parent, name, width, height, buildingTop, signBottom, hudBott
   caption.scale.set(fit);
   return { left: center - span / 2, right: center + span / 2, top, bottom: top + height };
 }
+
+// The site whose sign is hovered by the mouse; kept across map rebuilds.
+let hoveredSite = null;
 
 export function mountEstateMap(parent, {
   width, insetTop, onOpen, bind, markDirty, getImage, loadImage, loadAtmosphereImage = loadImage,
@@ -323,8 +335,24 @@ export function mountEstateMap(parent, {
     const hotspot = new Container({ label: `estate-entry-${id}` });
     controlLayer.addChild(hotspot);
     bind(hotspot, left, hitTop, right - left, bottom - hitTop, () => onOpen(id));
-    hotspot.on('pointerover', () => { sign.tint = 0xffe2b8; markDirty(); });
-    hotspot.on('pointerout', () => { sign.tint = 0xffffff; markDirty(); });
+    // The map is rebuilt when the world changes; a still pointer gets no new pointerover, so the
+    // hovered site survives the rebuild and leaves on the next move outside its hit area.
+    const hover = (on) => {
+      if (on) hoveredSite = id;
+      else if (hoveredSite === id) hoveredSite = null;
+      const tint = on ? 0xffe2b8 : 0xffffff;
+      if (sign.destroyed || sign.tint === tint) return;
+      sign.tint = tint;
+      markDirty();
+    };
+    if (hoveredSite === id) sign.tint = 0xffe2b8;
+    hotspot.on('pointerover', () => hover(true));
+    hotspot.on('pointerout', () => hover(false));
+    hotspot.on('globalpointermove', (event) => {
+      if (hoveredSite !== id || !hotspot.hitArea) return;
+      const local = hotspot.toLocal(event.global);
+      if (!hotspot.hitArea.contains(local.x, local.y)) hover(false);
+    });
 
     applyImage('sign', (texture) => {
       if (!texture || art.destroyed) return;

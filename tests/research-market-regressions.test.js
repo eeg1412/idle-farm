@@ -95,7 +95,8 @@ test('full technology pays at 1762 only once and preserves an older receipt', ()
   assert.ok(!settleTaskRewards(world).ids.includes(fullTechId));
   const before = world.coins;
   assert.ok(upgradeTech(world, 'orderPremium'));
-  assert.deepEqual(settleTaskRewards(world), { ids: [fullTechId], coins: 11_000_000n, researchPoints: 0n });
+  assert.deepEqual(settleTaskRewards(world), { ids: [fullTechId], coins: 11_000_000n, researchPoints: 0n,
+    capsules: 20_000n, capsuleOverflow: 0n });
   assert.equal(world.coins - before, 11_000_000n);
   assert.equal(settleTaskRewards(world).coins, 0n);
 
@@ -283,5 +284,6 @@ test('market trade prices round each unit and invalidate an entire stale batch w
   assert.deepEqual([world.stats.revenue, world.stats.lifetimeRevenue], [actual, actual]);
   assert.deepEqual([world.productionValue, world.lifetimeProductionValue, world.prestigeCredit],
     [before.productionValue, before.lifetimeProductionValue, before.prestigeCredit]);
-  assert.equal(settleTaskRewards(world).researchPoints, 1n);
+  // The first-shipment task pays coins only.
+  assert.equal(settleTaskRewards(world).researchPoints, 0n);
 });

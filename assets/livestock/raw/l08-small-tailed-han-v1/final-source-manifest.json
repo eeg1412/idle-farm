@@ -1,0 +1,149 @@
+{
+  "id": "L08",
+  "revision": "original-reference-warm-cream-pixel-r9",
+  "generatedWith": "built-in image_gen",
+  "promptFile": "assets/livestock/raw/l08-small-tailed-han-v1/prompts-r9.md",
+  "feedingSource": {
+    "path": "assets/livestock/raw/l08-small-tailed-han-v1/feeding-r9.png",
+    "size": [
+      1402,
+      1122
+    ],
+    "sha256": "7e03b68e214cf9a1e9b1c4468538b6615455522bc6dffca4c58c31c9be975c5e",
+    "sourceKey": "small-tailed-han-v1",
+    "registration": "assets/livestock/feeding-registration-v5.json",
+    "generationInputs": [
+      {
+        "path": "assets/livestock/raw/l08-small-tailed-han-v1/adult-r9.png",
+        "sha256": "8f95e20bb76bb9604c212e95788dbe8e8e9ba5844051446d54b69567e819fe28",
+        "role": "R9 breed identity/proportions/clean continuous fleece."
+      },
+      {
+        "path": "assets/livestock/raw/l08-small-tailed-han-v1/style-reference-mature-0.png",
+        "sha256": "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550",
+        "role": "User-specified frozen original old sheep, actual imagegen input in every R9 drawing; warm cream/pale golden-cream lights, warm ochre/tawny-brown shadows and warm brown pixel outline only. Not old round-clump/short-leg anatomy."
+      }
+    ]
+  },
+  "animation": {
+    "frames": "assets/livestock/animals/L08/{young,growing,mature}-{0,1,2,3}.png",
+    "frameSize": [
+      320,
+      320
+    ],
+    "pngAtlas": "assets/livestock/atlases/L08.png",
+    "publishedAtlas": "public/art/livestock/animals/L08.webp",
+    "atlasSize": [
+      1280,
+      960
+    ],
+    "publishedSha256": "23840a562af337ead607f93cfd1f97a29c98e5bbafafc1865a47abbb4ea080c8",
+    "normalized": "assets/livestock/normalized/small-tailed-han-v1.png",
+    "atlasRegistration": "assets/livestock/atlas.json",
+    "runtimeRegistration": "src/content/livestock-visuals.json"
+  },
+  "choice": {
+    "source": "assets/livestock/raw/l08-small-tailed-han-v1/choice-r9.png",
+    "sourceSize": [
+      1254,
+      1254
+    ],
+    "sourceSha256": "c5cd370fe7122d4cda3dc84a9759959ae86415f822852ae1da81b569b0f5bd1c",
+    "png": "assets/livestock/icons/L08.png",
+    "published": "public/ui-icons/livestock-L08.webp",
+    "size": [
+      96,
+      96
+    ],
+    "publishedSha256": "16f96c95e8126633224630a936990ffadde16e02adbca3164215c51de78547c5",
+    "registration": "assets/livestock/choice-registration-v7.json",
+    "actualInputPaths": [
+      "assets/livestock/animals/L08/mature-0.png",
+      "assets/livestock/animals/L08/mature-3.png",
+      "assets/livestock/raw/l08-small-tailed-han-v1/style-reference-mature-0.png"
+    ],
+    "actualInputSha256": [
+      "770329b519e1d7d24cc1221d2cd66ce125d8e96d6a3a2879b67bac73d3c9642a",
+      "785d36f53298b38dda409c1989d9b0007f7e727acdee00d05f9de90e3c9fa0cd",
+      "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550"
+    ],
+    "inputArchive": "assets/livestock/raw/l08-small-tailed-han-v1/choice-inputs-r9/",
+    "identityInputPaths": [
+      "assets/livestock/animals/L08/mature-0.png",
+      "assets/livestock/animals/L08/mature-3.png"
+    ],
+    "colorReference": {
+      "path": "assets/livestock/raw/l08-small-tailed-han-v1/style-reference-mature-0.png",
+      "sha256": "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550",
+      "role": "User-specified frozen original old sheep, actual imagegen input in every R9 drawing; warm cream/pale golden-cream lights, warm ochre/tawny-brown shadows and warm brown pixel outline only. Not old round-clump/short-leg anatomy."
+    },
+    "inputArchiveScope": "Exact identity input frames0/3; frozen color reference remains unchanged at colorReference.path."
+  },
+  "historicalScene": {
+    "png": "assets/source/art/scene-L08.png",
+    "published": "public/art/scene-L08.webp",
+    "authorizesRuntimeFallback": false
+  },
+  "retained": [
+    "public/wiki/icons/L08.webp",
+    "other nine species assets and species registrations",
+    "shared barn and feed images",
+    "all economic values and production behavior"
+  ],
+  "sharedChanges": [
+    "exportLivestockChoices(selectedId) and --species=<ID> --choices-only support",
+    "selected source hash registration and new normalized-grid initialization",
+    "selected export evidence under ignored reviews directories",
+    "new small-tailed-han-v1 source record"
+  ],
+  "rejectedHistory": [
+    "feeding.png",
+    "feeding-r2.png",
+    "feeding-r3.png",
+    "choice-r3-rejected.png",
+    "registration-r3-rejected.json",
+    "feeding-r4.png",
+    "choice-r4.png",
+    "registration-r4-rejected.json",
+    "final-source-manifest-r4-rejected.json",
+    "feeding-r5.png",
+    "choice-r5.png",
+    "registration-r5-rejected.json",
+    "final-source-manifest-r5-rejected.json",
+    "feeding-r8.png",
+    "choice-r8.png",
+    "registration-r8-rejected.json",
+    "final-source-manifest-r8-rejected.json"
+  ],
+  "status": {
+    "sourceAndStaticExports": "R9 completed in authorized static scope: PM viewed exact frozen original, new mature0/3 and new96px choice together on the same neutral-gray background against original warm color temperature, plus130px twelve-frame barn/feed panels. Source and twelve-frame static geometry were independently reviewed. This is not user acceptance or game runtime validation.",
+    "userAcceptance": "not recorded for R9",
+    "gamePreviewAndDynamicLoop": "not run; not authorized",
+    "testsChecksAndBuild": "not run; not authorized"
+  },
+  "adultDesign": "assets/livestock/raw/l08-small-tailed-han-v1/adult-r9.png",
+  "adultDesignSha256": "8f95e20bb76bb9604c212e95788dbe8e8e9ba5844051446d54b69567e819fe28",
+  "breedReference": {
+    "url": "https://xmsyj.jining.gov.cn/art/2023/5/18/art_9375_277439.html",
+    "fact": "Official source describes a white coat.",
+    "rendering": "Palette follows the actual user-provided original old sheep color temperature; no invented hex palette or gray/desaturated replacement. Coordinated warm cream color family, no added bleached face/sock markings."
+  },
+  "stoppedCandidates": [
+    "adult-r6.png",
+    "feeding-r6.png",
+    "adult-r7-stopped-candidate.png"
+  ],
+  "stoppedCandidatesRegistration": "Never registered or exported as runtime source; see stopped-r6-r7.md.",
+  "colorReference": {
+    "path": "assets/livestock/raw/l08-small-tailed-han-v1/style-reference-mature-0.png",
+    "sha256": "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550",
+    "role": "User-specified frozen original old sheep, actual imagegen input in every R9 drawing; warm cream/pale golden-cream lights, warm ochre/tawny-brown shadows and warm brown pixel outline only. Not old round-clump/short-leg anatomy."
+  },
+  "adultDesignInputs": [
+    {
+      "path": "assets/livestock/raw/l08-small-tailed-han-v1/style-reference-mature-0.png",
+      "sha256": "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550",
+      "role": "User-specified frozen original old sheep, actual imagegen input in every R9 drawing; warm cream/pale golden-cream lights, warm ochre/tawny-brown shadows and warm brown pixel outline only. Not old round-clump/short-leg anatomy."
+    }
+  ]
+}

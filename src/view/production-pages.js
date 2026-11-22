@@ -4,6 +4,7 @@ import {
 } from '../game/world.js';
 import { marketRate, marketUnitPrice } from '../game/market.js';
 import { orderItemTags } from '../game/orders.js';
+import { capsuleStep, capsulesPerMinute, capsuleUseOffer, previewCapsuleUse } from '../game/capsules.js';
 import { hoursLabel, productComplexity, reservePanel } from './management-pages.js';
 import { compact } from './numbers.js';
 
@@ -22,6 +23,15 @@ const upgradeOptions = [
 const batchUpgradeSteps = [1n, 5n, 10n];
 
 const confirm = { tone: 'gold' };
+
+const capsuleCategories = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '加工', P: '精制' };
+const capsuleShortcuts = [
+  { label: '1 分钟', amount: capsulesPerMinute }, { label: '10 分钟', amount: capsulesPerMinute * 10n },
+  { label: '1 小时', amount: capsulesPerMinute * 60n }, { label: '最大', amount: 'max' },
+];
+// Footer state per displayed world and kind. capsuleUseOffer simulates the category, so it runs at
+// most once per world object, never per frame.
+const capsuleFooterStates = new WeakMap();
 
 function itemName(id) {
   return catalog.items[id]?.name ?? '';
@@ -585,6 +595,98 @@ function productionFocusIndex(local, kind, purchasedIndex, sourceId, sourceIndex
   return sourceIndex;
 }
 
+function capsuleDuration(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (!hours) return rest + ' 分钟';
+  return hours + ' 小时' + (rest ? ' ' + rest + ' 分钟' : '');
+}
+
+// Disabled when the category has no running batch, fewer capsules than one step, or a selectable
+// maximum of 0 (spec 10.4). Facilities have no stall cutoff, so only stations simulate; one step is
+// enough to tell whether the maximum is 0 (stall or guard inside the first minute).
+function capsuleUsable(world, kind) {
+  let states = capsuleFooterStates.get(world);
+  if (!states) capsuleFooterStates.set(world, states = new Map());
+  const owned = world.capsules ?? 0n;
+  const slots = isWorkshop(kind) ? world.stations[kind] : world.facilities[kind];
+  const running = slots.filter((slot) => slot.recipe && slot.batch);
+  const cached = states.get(kind);
+  if (cached?.owned === owned && cached.running === running.length) return cached.usable;
+  let usable = owned >= capsuleStep && running.length > 0;
+  if (usable && isWorkshop(kind)) usable = capsuleUseOffer({ ...world, capsules: capsuleStep }, kind).maximum > 0n;
+  states.set(kind, { owned, running: running.length, usable });
+  return usable;
+}
+
+function accelerate(ui, kind) {
+  const state = { offer: null, amount: 0n, batches: 0n, pending: false };
+  const quote = (world) => {
+    state.offer = capsuleUseOffer(world, kind);
+    const { maximum } = state.offer;
+    state.amount = state.amount > maximum ? maximum : state.amount || (maximum < capsuleStep ? maximum : capsuleStep);
+    state.batches = state.amount === maximum ? state.offer.batches : previewCapsuleUse(world, kind, state.amount).batches;
+  };
+  const choose = (dlg, amount) => {
+    if (state.pending) return;
+    const { maximum } = state.offer;
+    const next = amount === 'max' ? maximum : amount < capsuleStep ? capsuleStep : amount > maximum ? maximum : amount;
+    if (next === state.amount || next <= 0n) return;
+    const world = dlg.currentWorld();
+    const preview = previewCapsuleUse(world, kind, next);
+    if (preview.valid) {
+      state.amount = next;
+      state.batches = preview.batches;
+    } else quote(world);
+    dlg.refresh();
+  };
+  ui.dialog('加速' + capsuleCategories[kind], (dlg) => {
+    if (!state.offer) quote(dlg.currentWorld());
+    const { offer, amount } = state;
+    const usable = offer.maximum > 0n;
+    dlg.itemQuantity('time-capsule', '时空胶囊', compact(offer.owned));
+    dlg.stepper(compact(amount, 2, 10n ** 15n), () => choose(dlg, amount - capsuleStep), () => choose(dlg, amount + capsuleStep));
+    dlg.buttons(capsuleShortcuts.map((shortcut) => {
+      const target = shortcut.amount === 'max' ? offer.maximum : shortcut.amount;
+      return {
+        label: shortcut.label,
+        tone: usable && target === amount ? 'gold' : 'plain',
+        // Shortcuts beyond the selectable maximum are disabled rather than clamped.
+        disabled: state.pending || !usable || target > offer.maximum,
+        onClick: () => choose(dlg, target),
+      };
+    }));
+    dlg.detailRows([
+      { label: '快进时长', value: capsuleDuration(Number(amount / capsulesPerMinute)) },
+      { label: '消耗胶囊', value: compact(amount) },
+      { label: '预计完成批数', value: compact(state.batches) },
+    ]);
+    if (!usable) dlg.text('当前无法加速。', { muted: true });
+    dialogButtons(dlg, state.pending ? '加速中…' : '加速', async () => {
+      if (state.pending || !usable || !dlg.isActive()) return;
+      state.pending = true;
+      dlg.refresh();
+      try {
+        if (await dlg.action('useCapsules', kind, amount)) {
+          dlg.close();
+          return;
+        }
+        if (dlg.isActive()) quote(dlg.currentWorld());
+      } finally {
+        state.pending = false;
+        if (dlg.isActive()) dlg.refresh();
+      }
+    }, state.pending || !usable);
+  });
+}
+
+function capsuleFooter(ui, kind, purchase) {
+  return (footer) => footer.buttons([
+    { label: '加速', tone: 'plain', disabled: !capsuleUsable(ui.w, kind), onClick: () => accelerate(ui, kind) },
+    { tone: 'gold', ...purchase },
+  ], { style: 'production' });
+}
+
 function facilitySlots(world, kind) {
   return world.facilities[kind].map((slot, index) => ({ slot, index }));
 }
@@ -608,9 +710,8 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
   }
   const quote = facilityOffer(ui.w, kind);
   // Fixed page footer: must stay the last draw call of the page.
-  ui.footer((footer) => footer.button(purchaseLabels[kind], () => purchaseFacility(ui, kind), {
-    style: 'production', tone: 'gold',
-    disabled: !quote?.affordable,
+  ui.footer(capsuleFooter(ui, kind, {
+    label: purchaseLabels[kind], onClick: () => purchaseFacility(ui, kind), disabled: !quote?.affordable,
   }));
 }
 
@@ -919,7 +1020,7 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
   } else ui.text('没有符合筛选条件的工位。', { muted: true });
   const quote = stationOffer(ui.w, kind);
   // Fixed page footer: must stay the last draw call of the page.
-  ui.footer((footer) => footer.button('增设' + stationNames[kind], () => purchaseStation(ui, kind), {
-    style: 'production', tone: 'gold', disabled: !quote?.affordable,
+  ui.footer(capsuleFooter(ui, kind, {
+    label: '增设' + stationNames[kind], onClick: () => purchaseStation(ui, kind), disabled: !quote?.affordable,
   }));
 }

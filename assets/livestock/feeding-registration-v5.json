@@ -6,7 +6,8 @@
     "rabbit": "raw/pixel-v5-feeding-rabbit.png",
     "sheep": "raw/pixel-v5-feeding-sheep.png",
     "muscovy": "raw/pixel-v5-feeding-muscovy.png",
-    "cattle": "raw/pixel-v5-feeding-cattle-r2.png"
+    "cattle": "raw/pixel-v5-feeding-cattle-r2.png",
+    "small-tailed-han-v1": "raw/l08-small-tailed-han-v1/feeding-r9.png"
   },
   "species": {
     "L01": {
@@ -494,177 +495,180 @@
       ]
     },
     "L08": {
-      "key": "sheep",
+      "key": "small-tailed-han-v1",
       "kind": "hay",
+      "promptFile": "assets/livestock/raw/l08-small-tailed-han-v1/prompts-r9.md",
       "stages": [
         {
           "anchors": [
             [
-              116,
-              233
+              155,
+              214
             ],
             [
-              360,
-              233
+              437,
+              214
             ],
             [
-              605,
-              233
+              720,
+              214
             ],
             [
-              850,
-              233
+              1003,
+              214
             ]
           ],
           "canvas": [
-            -75,
-            -119,
-            184,
-            139
+            -120,
+            -158,
+            250,
+            176
           ],
           "mouth": [
-            181,
-            244
+            235,
+            209
           ],
           "cellRects": [
             {
               "left": 0,
-              "top": 0,
-              "width": 260,
-              "height": 1254
+              "top": 45,
+              "width": 294,
+              "height": 190
             },
             {
-              "left": 260,
-              "top": 0,
-              "width": 250,
-              "height": 1254
+              "left": 294,
+              "top": 45,
+              "width": 282,
+              "height": 190
             },
             {
-              "left": 510,
-              "top": 0,
-              "width": 254,
-              "height": 1254
+              "left": 576,
+              "top": 45,
+              "width": 282,
+              "height": 190
             },
             {
-              "left": 764,
-              "top": 0,
-              "width": 276,
-              "height": 1254
+              "left": 858,
+              "top": 45,
+              "width": 297,
+              "height": 190
             }
-          ]
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
         },
         {
           "anchors": [
             [
-              116,
-              473
+              153,
+              438
             ],
             [
-              361,
-              473
+              436,
+              438
             ],
             [
-              606,
-              473
+              720,
+              438
             ],
             [
-              852,
-              473
+              1001,
+              438
             ]
           ],
           "canvas": [
-            -99,
-            -153,
-            226,
-            177
+            -128,
+            -175,
+            268,
+            192
           ],
           "mouth": [
-            191,
-            492
+            238,
+            433
           ],
           "cellRects": [
             {
               "left": 0,
-              "top": 0,
-              "width": 260,
-              "height": 1254
+              "top": 250,
+              "width": 294,
+              "height": 210
             },
             {
-              "left": 260,
-              "top": 0,
-              "width": 250,
-              "height": 1254
+              "left": 294,
+              "top": 250,
+              "width": 282,
+              "height": 210
             },
             {
-              "left": 510,
-              "top": 0,
-              "width": 254,
-              "height": 1254
+              "left": 576,
+              "top": 250,
+              "width": 282,
+              "height": 210
             },
             {
-              "left": 764,
-              "top": 0,
-              "width": 276,
-              "height": 1254
+              "left": 858,
+              "top": 250,
+              "width": 297,
+              "height": 210
             }
-          ]
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
         },
         {
           "anchors": [
             [
-              116,
-              735
+              151,
+              687
             ],
             [
-              364,
-              736
+              433,
+              687
             ],
             [
-              610,
-              735
+              716,
+              687
             ],
             [
-              858,
-              735
+              998,
+              687
             ]
           ],
           "canvas": [
-            -110,
-            -201,
-            244,
-            220
+            -145,
+            -198,
+            294,
+            216
           ],
           "mouth": [
-            210,
-            744
+            246,
+            670
           ],
           "cellRects": [
             {
               "left": 0,
-              "top": 0,
-              "width": 260,
-              "height": 1254
+              "top": 480,
+              "width": 294,
+              "height": 225
             },
             {
-              "left": 260,
-              "top": 0,
-              "width": 250,
-              "height": 1254
+              "left": 294,
+              "top": 480,
+              "width": 282,
+              "height": 225
             },
             {
-              "left": 510,
-              "top": 0,
-              "width": 254,
-              "height": 1254
+              "left": 576,
+              "top": 480,
+              "width": 282,
+              "height": 225
             },
             {
-              "left": 764,
-              "top": 0,
-              "width": 276,
-              "height": 1254
+              "left": 858,
+              "top": 480,
+              "width": 297,
+              "height": 225
             }
           ],
-          "anchorMethod": "L08 mature front-hoof registration r1: the lowest retained planted front-hoof pixels in source frames 0–3 are y734, 735, 734, 734 (source alpha >=200). Register the same lower sole boundary at y735, 736, 735, 735 with one relative 244x220 source canvas and the existing stage scale. The source window tops are y534, 535, 534, 534. The drawn head and mouth are retained."
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
         }
       ]
     },

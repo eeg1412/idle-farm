@@ -42,8 +42,8 @@ test('development tools preserve production batches, quality, inventory and reco
 
   grantDevelopmentTools(world);
 
-  const { coins: beforeCoins, unlocked: beforeUnlocked, tech: beforeTech, ...beforeBusiness } = before;
-  const { coins, unlocked, tech, ...afterBusiness } = world;
+  const { coins: beforeCoins, unlocked: beforeUnlocked, tech: beforeTech, capsules: beforeCapsules, ...beforeBusiness } = before;
+  const { coins, unlocked, tech, capsules, ...afterBusiness } = world;
   assert.deepEqual(afterBusiness, beforeBusiness);
 });
 

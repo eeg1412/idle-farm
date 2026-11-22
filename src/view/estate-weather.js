@@ -97,9 +97,36 @@ function createShadowStream(time) {
   const targetCount = shadowCount();
   return {
     targetCount, desiredBands: selectShadowBands(allShadowBands, 0, targetCount),
-    count: 0, clouds: Array(shadowBandCount).fill(undefined),
+    count: 0, clouds: Array(shadowBandCount).fill(undefined), followers: Array(shadowBandCount).fill(undefined),
     nextCountAt: time + shadowRoundMs(), fadeAt: time, initialized: false,
   };
+}
+
+// Visible horizontal extent of a silhouette, as map-width fractions, at `time`.
+function visibleEdges(cloud, time) {
+  const bounds = cloudBounds(cloud.shape);
+  const x = cloud.x + (time - cloud.startedAt) * cloud.speed;
+  return { trailing: x + cloud.width * (bounds.left / 256 - 0.5),
+    leading: x + cloud.width * ((bounds.left + bounds.width) / 256 - 0.5) };
+}
+
+function exitTime(cloud) {
+  return cloud.startedAt + (1 - visibleEdges(cloud, cloud.startedAt).trailing) / cloud.speed;
+}
+
+// Minimum horizontal spacing between a silhouette and the one following it in its band.
+const followerGap = 0.04;
+
+// The next silhouette of a band enters at the left edge as soon as the current one starts
+// leaving on the right. Entry waits longer only when a faster follower would otherwise
+// close within `followerGap` before the current one has fully left.
+function sampleFollower(cloud, time, viewportWidth, ordinaryReady, animalReady, band) {
+  const follower = sampleShadow(0, viewportWidth, false, ordinaryReady, animalReady, band);
+  const exitedAt = exitTime(cloud);
+  const leaving = cloud.startedAt + (1 - visibleEdges(cloud, cloud.startedAt).leading) / cloud.speed;
+  const travel = 1 - followerGap - 1 / viewportWidth;
+  follower.startedAt = Math.max(time, leaving, exitedAt - travel / follower.speed, exitedAt - travel / cloud.speed);
+  return follower;
 }
 
 function advanceShadowStream(stream, time, viewportWidth, ordinaryReady, animalReady) {
@@ -107,27 +134,25 @@ function advanceShadowStream(stream, time, viewportWidth, ordinaryReady, animalR
   const initial = !stream.initialized;
   if (initial) stream.fadeAt = time;
   for (let index = 0; index < stream.clouds.length; index += 1) {
+    const wanted = Boolean(stream.desiredBands & 1 << index);
     let cloud = stream.clouds[index];
-    while (cloud) {
-      const bounds = cloudBounds(cloud.shape);
-      const exitX = 1 - cloud.width * (bounds.left / 256 - 0.5);
-      const exitedAt = cloud.startedAt + (exitX - cloud.x) / cloud.speed;
-      if (time < exitedAt) break;
-      if (!(stream.desiredBands & 1 << index)) {
-        stream.clouds[index] = undefined;
-        stream.count -= 1;
-        cloud = undefined;
-      } else {
-        // Replace just this slot at its own exit, carrying subframe time into
-        // the successor. Other silhouettes continue without a batch barrier.
-        cloud = sampleShadow(exitedAt, viewportWidth, false, ordinaryReady, animalReady, index);
-        stream.clouds[index] = cloud;
-      }
-    }
-    if (!cloud && (stream.desiredBands & 1 << index)) {
-      stream.clouds[index] = sampleShadow(time, viewportWidth, initial, ordinaryReady, animalReady, index);
+    let follower = stream.followers[index];
+    if (!cloud && wanted) {
+      cloud = sampleShadow(time, viewportWidth, initial, ordinaryReady, animalReady, index);
       stream.count += 1;
     }
+    while (cloud) {
+      // A band leaving the count keeps silhouettes already on screen but admits no new one.
+      if (!wanted && follower && follower.startedAt > time) follower = undefined;
+      if (wanted && !follower) follower = sampleFollower(cloud, time, viewportWidth, ordinaryReady, animalReady, index);
+      if (time < exitTime(cloud)) break;
+      // Each slot advances at its own exit; other silhouettes continue without a batch barrier.
+      cloud = follower;
+      follower = undefined;
+      if (!cloud) stream.count -= 1;
+    }
+    stream.clouds[index] = cloud;
+    stream.followers[index] = follower;
   }
   stream.initialized = true;
 }
@@ -190,7 +215,7 @@ export function createEstateWeatherSession() {
   };
 }
 
-// Ten pooled cloud silhouettes on the ground and 72 shared white-texture rain
+// Twenty pooled cloud silhouettes (two per band) on the ground and 72 shared white-texture rain
 // streaks. Only their transforms/alpha change; these holders survive equal-size
 // rebuilds and their source textures remain owned by the pinned Assets cache.
 export function mountEstateWeather(groundParent, foregroundParent, {
@@ -205,7 +230,8 @@ export function mountEstateWeather(groundParent, foregroundParent, {
   }
   groundParent.addChild(ground);
   foregroundParent.addChild(front);
-  const shadows = Array.from({ length: 10 }, (_, index) => {
+  // Two per band: the current silhouette and the follower that enters while it leaves.
+  const shadows = Array.from({ length: shadowBandCount * 2 }, (_, index) => {
     const sprite = ground.addChild(new Sprite({ label: `estate-cloud-shadow-${index}`, roundPixels: true }));
     sprite.anchor.set(0.5);
     sprite.tint = 0x213e4c;
@@ -293,11 +319,12 @@ export function mountEstateWeather(groundParent, foregroundParent, {
       const initialFade = stream ? Math.min(1, Math.max(0, (time - stream.fadeAt) / 2000)) : 0;
       for (let index = 0; index < shadows.length; index += 1) {
         const sprite = shadows[index];
-        const cloud = stream?.clouds[index];
+        const band = index >> 1;
+        const cloud = index & 1 ? stream?.followers[band] : stream?.clouds[band];
         const frames = cloud?.shape < estateCloudVariantCount ? cloudFrames : animalFrames;
         const variant = cloud?.shape < estateCloudVariantCount ? cloud?.shape : cloud?.shape - estateCloudVariantCount;
         const x = cloud ? cloud.x + Math.max(0, time - cloud.startedAt) * cloud.speed : 0;
-        sprite.visible = Boolean(frames && ground.visible && cloud);
+        sprite.visible = Boolean(frames && ground.visible && cloud && time >= cloud.startedAt);
         if (!sprite.visible) continue;
         sprite.texture = frames[variant];
         sprite.alpha = initialFade;

@@ -1,10 +1,11 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs, techMaxLevels } from '../game/advancement.js';
-import { managerAffinityThresholds, managerDailyCap, managerIds, managerWishUnlockCount, newManagers,
+import { capsuleHoldLimit } from '../game/capsules.js';
+import { managerDailyCap, managerIds, managerWishUnlockCount, newManagers,
   validManagerAffinityRemainder } from '../game/managers.js';
 import { validCalendarDay, validMarketRate } from '../game/market.js';
 import { merchantItemTier, merchantProductionGate, merchantPurchaseMultipliers, merchantSalesGate, newMerchant } from '../game/merchant.js';
-import { legacyGuideCompleted, taskCoinRewards } from '../game/objectives.js';
+import { legacyGuideCompleted, taskCapsuleRewardTotal, taskCoinRewards } from '../game/objectives.js';
 import { restoreOrders } from '../game/orders.js';
 import { facilitySnapshotOutput, updateWorldWallTime, worldSchemaVersion } from '../game/world.js';
 import { prestigeLedgerVersion } from '../game/prestige-ledger.js';
@@ -217,6 +218,12 @@ function object(value, field) {
 
 function integer(value, field) {
   valid(Number.isSafeInteger(value) && value >= 0, field);
+  return value;
+}
+
+// A time point on the production clock; capsule fast-forwards can move batch starts before clock zero.
+function timePoint(value, field) {
+  valid(Number.isSafeInteger(value), field);
   return value;
 }
 
@@ -442,7 +449,6 @@ function managerRecord(world, merchant, seed, warehouseRevenue, convert) {
     valid(gender === 'female' || gender === 'male', `managers.${field}.gender`);
     const savedAffinity = roleAmount(affinity, 'affinity');
     const savedDailyGain = roleAmount(dailyGain, 'dailyGain');
-    valid(BigInt(savedAffinity) <= managerAffinityThresholds.at(-1), `managers.${field}.affinity`);
     valid(BigInt(savedDailyGain) <= managerDailyCap && BigInt(savedDailyGain) <= BigInt(savedAffinity),
       `managers.${field}.dailyGain`);
     const affinityRemainder = roleAmount(Object.hasOwn(role, 'affinityRemainder') ? role.affinityRemainder : '0',
@@ -454,7 +460,9 @@ function managerRecord(world, merchant, seed, warehouseRevenue, convert) {
     `managers.${field}.wants`);
     return [id, { gender, affinity: savedAffinity, dailyGain: savedDailyGain, affinityRemainder, wants: [...wants],
       currentReturn: roleAmount(currentReturn, 'currentReturn'),
-      readyReturn: roleAmount(readyReturn, 'readyReturn'), sequence: roleAmount(sequence, 'sequence') }];
+      readyReturn: roleAmount(readyReturn, 'readyReturn'), sequence: roleAmount(sequence, 'sequence'),
+      // Ready capsules arrived with time capsules; older roles start at zero.
+      readyCapsules: roleAmount(Object.hasOwn(role, 'readyCapsules') ? role.readyCapsules : '0', 'readyCapsules') }];
   }));
   const hasWishes = Object.values(savedRoles).filter(({ wants }) => wants.length > 0).length;
   // A pre-order-center save can have the day's wishes for every original role.
@@ -509,6 +517,12 @@ function amounts(world, convert, convertSigned) {
   const merchant = merchantRecord(world.merchant, world, market, accountSeed, stats.warehouseRevenue, convert);
   const managers = managerRecord(world, merchant, accountSeed, stats.warehouseRevenue, convert);
   const orders = orderRecord(world, merchant, market, convert);
+  // Time capsules arrived without a schema bump; older records start both balances at zero.
+  const capsules = convert(Object.hasOwn(world, 'capsules') ? world.capsules : '0', 'capsules');
+  valid(BigInt(capsules) <= capsuleHoldLimit, 'capsules');
+  const pendingTaskCapsules = convert(Object.hasOwn(world, 'pendingTaskCapsules') ? world.pendingTaskCapsules : '0',
+    'pendingTaskCapsules');
+  valid(BigInt(pendingTaskCapsules) <= taskCapsuleRewardTotal, 'pendingTaskCapsules');
   const basicResearchElapsedMs = Object.hasOwn(world, 'basicResearchElapsedMs')
     ? integer(world.basicResearchElapsedMs, 'basicResearchElapsedMs') : 0;
   const result = {
@@ -533,6 +547,8 @@ function amounts(world, convert, convertSigned) {
     basicResearchWeightedMs: convert(Object.hasOwn(world, 'basicResearchWeightedMs') ? world.basicResearchWeightedMs : '0', 'basicResearchWeightedMs'),
     qualityDraws: convert(Object.hasOwn(world, 'qualityDraws') ? world.qualityDraws : '0', 'qualityDraws'),
     accountSeed,
+    capsules,
+    pendingTaskCapsules,
     market,
     merchant,
     managers,
@@ -590,7 +606,7 @@ function validatePlanting(world, slot, field) {
   }
   const planting = object(slot.planting, `${field}.planting`);
   valid(planting.id === slot.recipe, `${field}.planting.id`);
-  valid(integer(planting.start, `${field}.planting.start`) <= world.clockMs, `${field}.planting.start`);
+  valid(timePoint(planting.start, `${field}.planting.start`) <= world.clockMs, `${field}.planting.start`);
   valid(integer(planting.duration, `${field}.planting.duration`) > 0, `${field}.planting.duration`);
   valid(Number.isSafeInteger(planting.start + planting.duration), `${field}.planting.duration`);
 }
@@ -612,7 +628,7 @@ function validateFacilityLists(world, key, kinds) {
         else if (Object.hasOwn(slot, 'mining')) {
           const mining = object(slot.mining, `${field}.mining`);
           valid(mining.id === slot.recipe, `${field}.mining.id`);
-          valid(integer(mining.startedAt, `${field}.mining.startedAt`) <= world.clockMs, `${field}.mining.startedAt`);
+          valid(timePoint(mining.startedAt, `${field}.mining.startedAt`) <= world.clockMs, `${field}.mining.startedAt`);
           valid(integer(mining.durationMs, `${field}.mining.durationMs`) > 0, `${field}.mining.durationMs`);
           valid(Number.isSafeInteger(mining.startedAt + mining.durationMs), `${field}.mining.durationMs`);
         }
@@ -631,9 +647,9 @@ function validateFacilityLists(world, key, kinds) {
         valid(basis >= 10000 && basis <= 20000 && basis % 200 === 0, `${field}.batch.facilityYieldBasis`);
         valid(amount === facilitySnapshotOutput(batch, level), `${field}.batch.amount`);
       }
-      const start = integer(batch.start, `${field}.batch.start`);
+      const start = timePoint(batch.start, `${field}.batch.start`);
       const end = integer(batch.end, `${field}.batch.end`);
-      valid(start <= world.clockMs && world.clockMs < end, `${field}.batch`);
+      valid(start <= world.clockMs && world.clockMs < end && Number.isSafeInteger(end - start), `${field}.batch`);
     }
   }
 }

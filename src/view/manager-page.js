@@ -2,7 +2,7 @@ import { catalog, stationRequirements } from '../game/world.js';
 import { marketRate } from '../game/market.js';
 import { merchantStatus } from '../game/merchant.js';
 import { hasDeliverableOrder } from '../game/orders.js';
-import { managerAffinityThresholds, managerGiftLimit, managerGiftRemaining, managerStatus, quoteManagerGift } from '../game/managers.js';
+import { managerGiftLimit, managerGiftRemaining, managerStatus, quoteManagerGift } from '../game/managers.js';
 import { managerCharacters } from './manager-dialogue.js';
 import { managerTutorial, managerUpgradeMessages, managerResearchHelp, managerContextHelp } from './manager-help.js';
 import { compact } from './numbers.js';
@@ -47,16 +47,16 @@ function affinityNeedsProduction(status) {
   return status.valueToDailyCap > 0n && status.affinityFundingRemaining === 0n;
 }
 
+// Affinity levels have no cap; every level shows progress toward the next one.
+function levelProgress(status) {
+  return { progress: status.affinity - status.threshold, target: status.nextThreshold - status.threshold };
+}
+
 function giftAffinitySummary(panel, status) {
-  const atMax = status.nextThreshold == null || status.level === 10;
-  panel.row('好感等级', atMax ? '10 级 · 已满级' : status.level + ' 级', { compact: true, noWrap: true });
-  if (!atMax) {
-    const floor = managerAffinityThresholds[status.level];
-    const target = status.nextThreshold - floor;
-    const progress = status.affinity - floor;
-    panel.goalProgress(Number(progress) / Number(target));
-    panel.text('下一级进度 ' + subunits(progress, 100n) + ' / ' + subunits(target, 100n) + ' 点', silent);
-  }
+  panel.row('好感等级', status.level + ' 级', { compact: true, noWrap: true });
+  const { progress, target } = levelProgress(status);
+  panel.goalProgress(Number(progress) / Number(target));
+  panel.text('下一级进度 ' + subunits(progress, 100n) + ' / ' + subunits(target, 100n) + ' 点', silent);
   panel.row('今日好感', subunits(status.dailyGain, 100n) + ' / ' + subunits(status.dailyCap, 100n) + ' 点', {
     compact: true, noWrap: true,
   });
@@ -167,11 +167,15 @@ async function receiveGift(page, panel, status, inCard = false) {
   if (!status.claim) return;
   const result = await panel.action('claimManagerGift', status.claim);
   if (!result || result === true) return;
+  // Capsules beyond the holding cap stay ready; main.js shows the holding-limit notice.
+  const received = result.items.map(({ itemId, count }) => ({ icon: itemId, label: catalog.items[itemId].name, count }));
+  if (result.capsules?.added > 0n) received.push({ icon: 'time-capsule', label: '时空胶囊', count: result.capsules.added });
+  if (!received.length) return;
   const appearance = managerCharacters[status.id][status.gender];
   if (!inCard) showManagerFeedback(page, status.id, appearance.received, false, inCard);
   panel.dialog('收到回礼', (resultPanel) => {
-    resultPanel.scrollList(result.items, (cell, { itemId, count }) => {
-      cell.row(catalog.items[itemId].name, '+' + compact(count), { icon: itemId });
+    resultPanel.scrollList(received, (cell, { icon, label, count }) => {
+      cell.row(label, '+' + compact(count), { icon });
     });
   }, { flow: 'manager-return-result' });
 }
@@ -193,15 +197,10 @@ export function managerInfo(page, id, { inCard = false } = {}) {
         panel.advanceManagerSpeech(id, status.gender, { nextGreeting: nextGreetingFor(character) });
       },
     }), { padding: 9, gap: 7 });
-    const atMax = status.nextThreshold == null || status.level === 10;
-    panel.row('好感等级', atMax ? '10 级 · 已满级' : status.level + ' 级', { compact: true, noWrap: true });
-    if (!atMax) {
-      const floor = managerAffinityThresholds[status.level];
-      const target = status.nextThreshold - floor;
-      const progress = status.affinity - floor;
-      panel.goalProgress(Number(progress) / Number(target));
-      panel.text('距下一级 ' + subunits(target - progress, 100n) + ' 点', silent);
-    }
+    panel.row('好感等级', status.level + ' 级', { compact: true, noWrap: true });
+    const { progress, target } = levelProgress(status);
+    panel.goalProgress(Number(progress) / Number(target));
+    panel.text('距下一级 ' + subunits(target - progress, 100n) + ' 点', silent);
     panel.detailRows([
       { label: '今日好感', value: subunits(status.dailyGain, 100n) + ' / ' + subunits(status.dailyCap, 100n) },
       ...(status.valueToDailyCap > 0n
@@ -393,10 +392,7 @@ export function renderManagerDirectory(ui) {
         copy.text(role.title, silent);
         copy.text('好感 ' + status.level + ' 级', { fontSize: 15 });
         copy.row('今日好感', subunits(status.dailyGain, 100n) + ' / ' + subunits(status.dailyCap, 100n) + ' 点', { compact: true, noWrap: true });
-        if (status.nextThreshold != null && status.level < 10) {
-          const floor = managerAffinityThresholds[status.level];
-          copy.goalProgress(Number(status.affinity - floor) / Number(status.nextThreshold - floor));
-        } else copy.text('已满级', silent);
+        copy.goalProgress(Number(status.dailyGain) / Number(status.dailyCap));
       }, {
         ratio: 0.32, artAspect: 1.12, cover: true, surface: 'none',
         managerReply: { role: id, gender: status.gender },

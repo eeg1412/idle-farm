@@ -258,12 +258,12 @@
       "promptFile": "assets/livestock/choice-prompts-v7.md"
     },
     "L08": {
-      "source": "raw/choice-v7/L08.png",
+      "source": "raw/l08-small-tailed-han-v1/choice-r9.png",
       "sourceSize": [
         1254,
         1254
       ],
-      "sourceSha256": "d156eac24dae19c9b0bd8667396e1279c91c651adf9099e6bd37a7eb9a195fdf",
+      "sourceSha256": "c5cd370fe7122d4cda3dc84a9759959ae86415f822852ae1da81b569b0f5bd1c",
       "stage": "mature",
       "pose": "head-up",
       "frame": 0,
@@ -272,33 +272,38 @@
         0
       ],
       "rectangle": {
-        "left": 298,
-        "top": 426,
-        "width": 635,
-        "height": 637
+        "left": 208,
+        "top": 341,
+        "width": 758,
+        "height": 721
       },
       "generatedWith": "built-in image_gen",
       "referenceFrames": [
         {
-          "path": "assets/livestock/choice-input-archive/v7/L08/mature-0.png",
-          "sha256": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8",
+          "path": "assets/livestock/raw/l08-small-tailed-han-v1/choice-inputs-r9/mature-0.png",
+          "sha256": "770329b519e1d7d24cc1221d2cd66ce125d8e96d6a3a2879b67bac73d3c9642a",
           "archiveOf": "assets/livestock/animals/L08/mature-0.png",
           "originalInputPath": "assets/livestock/animals/L08/mature-0.png",
-          "inputHash": "e94d84c04efe6d4571f8f3a2d599fd18b23ffadb750af04517f2c9733c0120d8",
-          "archivedAt": "2026-11-16",
-          "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L08 front-hoof sole."
+          "inputHash": "770329b519e1d7d24cc1221d2cd66ce125d8e96d6a3a2879b67bac73d3c9642a",
+          "archivedAt": "2026-11-23",
+          "archiveReason": "Exact actual current R9 mature frame used as identity input to built-in image_gen for this new neutral head-up choice; frozen original old sheep is also an actual color reference input."
         },
         {
-          "path": "assets/livestock/choice-input-archive/v7/L08/mature-3.png",
-          "sha256": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644",
+          "path": "assets/livestock/raw/l08-small-tailed-han-v1/choice-inputs-r9/mature-3.png",
+          "sha256": "785d36f53298b38dda409c1989d9b0007f7e727acdee00d05f9de90e3c9fa0cd",
           "archiveOf": "assets/livestock/animals/L08/mature-3.png",
           "originalInputPath": "assets/livestock/animals/L08/mature-3.png",
-          "inputHash": "119873d4d91267ff1503a5cf928c1c57102ad21d27718f6d828f4e5f75353644",
-          "archivedAt": "2026-11-16",
-          "archiveReason": "Preserved the exact original image_gen V7 input before registering the mature L08 front-hoof sole."
+          "inputHash": "785d36f53298b38dda409c1989d9b0007f7e727acdee00d05f9de90e3c9fa0cd",
+          "archivedAt": "2026-11-23",
+          "archiveReason": "Exact actual current R9 mature frame used as identity input to built-in image_gen for this new neutral head-up choice; frozen original old sheep is also an actual color reference input."
         }
       ],
-      "promptFile": "assets/livestock/choice-prompts-v7.md"
+      "colorReference": {
+        "path": "assets/livestock/raw/l08-small-tailed-han-v1/style-reference-mature-0.png",
+        "sha256": "df80461b06f9c6a79831a3c2b3cb6c87f43f27739b7c1f2d7800f7c73c0cc550",
+        "role": "Actual third imagegen input: frozen original old sheep warm cream lights, ochre/tawny-brown shadows and brown pixel outline; color/style only, not old round-clump anatomy."
+      },
+      "promptFile": "assets/livestock/raw/l08-small-tailed-han-v1/prompts-r9.md"
     },
     "L09": {
       "source": "raw/choice-v7/L09.png",

@@ -17,14 +17,15 @@ async function portrait(input, size = 96) {
 
 // Production-only image conversion. This module never updates animation,
 // feed, fallback scenes, products or game state.
-export async function exportLivestockChoices() {
+export async function exportLivestockChoices(selectedId) {
   const registration = JSON.parse(await readFile(livestockChoiceRegistrationPath, 'utf8'));
-  const evidenceRoot = root + '/choice-evidence/v7';
+  if (selectedId && !registration.species[selectedId]) throw new Error(`Unknown livestock choice: ${selectedId}`);
+  const evidenceRoot = selectedId ? root + '/reviews/choice-v7/' + selectedId : root + '/choice-evidence/v7';
   await mkdir(evidenceRoot, { recursive: true });
   await mkdir(root + '/icons', { recursive: true });
   const records = {};
   const chooser96 = [], chooser32 = [], comparison = [], labels = [];
-  const entries = Object.entries(registration.species);
+  const entries = Object.entries(registration.species).filter(([id]) => !selectedId || id === selectedId);
   for (const [index, [id, source]] of entries.entries()) {
     const original = await readFile(root + '/' + source.source);
     const pixels = await sharp(original).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -44,7 +45,7 @@ export async function exportLivestockChoices() {
       registration: livestockChoiceRegistrationPath, pose: 'head-up', stage: source.stage,
       sourceCell: source.sourceCell, sourceRectangle: source.rectangle,
       generatedWith: source.generatedWith, referenceFrames: source.referenceFrames,
-      promptFile: registration.promptFile,
+      promptFile: source.promptFile ?? registration.promptFile,
       crop: { method: 'New image_gen neutral portrait from this ID current V5 adult/mature frames 0 and 3; alpha isolation, transparent trim and nearest inside 88px. Rejected V4 portraits are not consumed.' } };
     chooser96.push({ input: icon, left: index % 5 * 112 + 8, top: Math.floor(index / 5) * 112 + 8 });
     chooser32.push({ input: small, left: index % 5 * 48 + 8, top: Math.floor(index / 5) * 48 + 8 });
@@ -65,7 +66,7 @@ export async function exportLivestockChoices() {
   const labelSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="${entries.length * 144}">${labels.join('')}</svg>`);
   await sharp({ create: { width: 640, height: entries.length * 144, channels: 4, background: '#f5ead8' } })
     .composite([...comparison, { input: labelSvg }]).png().toFile(evidenceRoot + '/current-animation-new-portrait-published.png');
-  for (const file of ['selection-icons.png', 'selection-icons-32.png', 'selection-icons-32-enlarged.png']) {
+  for (const file of (selectedId ? [] : ['selection-icons.png', 'selection-icons-32.png', 'selection-icons-32-enlarged.png'])) {
     await writeFile(root + '/' + file, await readFile(evidenceRoot + '/' + file));
   }
   const layoutPath = root + '/layout.json';
