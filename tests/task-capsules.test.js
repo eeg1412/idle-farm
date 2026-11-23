@@ -44,23 +44,19 @@ test('tasks without a capsule reward grant none', () => {
   assert.equal(world.capsules, 0n);
 });
 
-test('overflow waits as pending and claims fill only up to the cap', () => {
+test('task capsules never overflow, and pending ones from older saves claim in full', () => {
   const world = settledWorld();
   world.capsules = 143_900n;
   world.stats.sold = 1n;
   const result = settleTaskRewards(world);
-  assert.equal(result.capsules, 100n);
-  assert.equal(result.capsuleOverflow, 200n);
-  assert.equal(world.capsules, 144_000n);
-  assert.equal(world.pendingTaskCapsules, 200n);
+  assert.equal(result.capsuleOverflow, 0n);
+  assert.equal(world.capsules, 143_900n + result.capsules);
+  assert.equal(world.pendingTaskCapsules, 0n);
 
-  assert.deepEqual(claimTaskCapsules(world), { added: 0n, remaining: 200n });
-  world.capsules = 143_950n;
-  assert.deepEqual(claimTaskCapsules(world), { added: 50n, remaining: 150n });
-  assert.equal(world.capsules, 144_000n);
-  world.capsules = 0n;
-  assert.deepEqual(claimTaskCapsules(world), { added: 150n, remaining: 0n });
-  assert.equal(world.capsules, 150n);
+  world.pendingTaskCapsules = 200n;
+  const before = world.capsules;
+  assert.deepEqual(claimTaskCapsules(world), { added: 200n, remaining: 0n });
+  assert.equal(world.capsules, before + 200n);
   assert.equal(world.pendingTaskCapsules, 0n);
   assert.equal(claimTaskCapsules(world), false);
 });

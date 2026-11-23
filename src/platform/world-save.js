@@ -1,6 +1,5 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs, techMaxLevels } from '../game/advancement.js';
-import { capsuleHoldLimit } from '../game/capsules.js';
 import { managerDailyCap, managerIds, managerWishUnlockCount, newManagers,
   validManagerAffinityRemainder } from '../game/managers.js';
 import { validCalendarDay, validMarketRate } from '../game/market.js';
@@ -511,7 +510,8 @@ function amounts(world, convert, convertSigned) {
   }
   const pendingOffline = Object.hasOwn(world, 'pendingOffline') && offlineAmounts(world.pendingOffline, convert, convertSigned);
   if (pendingOffline) valid(pendingOffline.id <= world.revision, 'pendingOffline.id');
-  const { music, sound, pickerIconsOnly = false } = object(world.settings, 'settings');
+  const { music, sound, pickerIconsOnly = false, giftAllMode = 'cap', giftAllEven = false,
+    batchUpgradeEven = false } = object(world.settings, 'settings');
   const accountSeed = Object.hasOwn(world, 'accountSeed') ? world.accountSeed : null;
   valid(accountSeed === null || typeof accountSeed === 'string' && seedPattern.test(accountSeed), 'accountSeed');
   const market = Object.hasOwn(world, 'market') ? marketRecord(world.market, world.unlocked, accountSeed) : null;
@@ -521,7 +521,6 @@ function amounts(world, convert, convertSigned) {
   const orders = orderRecord(world, merchant, market, convert);
   // Time capsules arrived without a schema bump; older records start both balances at zero.
   const capsules = convert(Object.hasOwn(world, 'capsules') ? world.capsules : '0', 'capsules');
-  valid(BigInt(capsules) <= capsuleHoldLimit, 'capsules');
   const pendingTaskCapsules = convert(Object.hasOwn(world, 'pendingTaskCapsules') ? world.pendingTaskCapsules : '0',
     'pendingTaskCapsules');
   valid(BigInt(pendingTaskCapsules) <= taskCapsuleRewardTotal, 'pendingTaskCapsules');
@@ -539,7 +538,7 @@ function amounts(world, convert, convertSigned) {
     quality: world.quality,
     tech,
     facilities: facilityRecords(world),
-    settings: { music, sound, pickerIconsOnly },
+    settings: { music, sound, pickerIconsOnly, giftAllMode, giftAllEven, batchUpgradeEven },
     taskRewards: taskRewardIds(world),
     coins: convert(world.coins, 'coins'),
     productionValue: convert(world.productionValue, 'productionValue'),
@@ -677,6 +676,13 @@ function validateWorld(world) {
   const settings = object(world.settings, 'settings');
   if (Object.hasOwn(settings, 'pickerIconsOnly')) {
     valid(typeof settings.pickerIconsOnly === 'boolean', 'settings.pickerIconsOnly');
+  }
+  if (Object.hasOwn(settings, 'giftAllEven')) valid(typeof settings.giftAllEven === 'boolean', 'settings.giftAllEven');
+  if (Object.hasOwn(settings, 'batchUpgradeEven')) {
+    valid(typeof settings.batchUpgradeEven === 'boolean', 'settings.batchUpgradeEven');
+  }
+  if (Object.hasOwn(settings, 'giftAllMode')) {
+    valid(settings.giftAllMode === 'cap' || settings.giftAllMode === 'all', 'settings.giftAllMode');
   }
   for (const key of ['music', 'sound']) {
     valid(Number.isFinite(settings[key]) && settings[key] >= 0, `settings.${key}`);

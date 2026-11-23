@@ -402,7 +402,7 @@ export function showNodeFinder(ui, active, readyOnly, onFocus, productionNodes) 
         item.kind === prefix && rank >= first && rank <= last);
       return matchesSource && matchesUse && (kind === kinds[0] || itemKind(item) === kind);
     });
-    if (!matches.length) dialog.text('没有符合筛选的节点', { muted: true });
+    if (!matches.length) dialog.empty('没有符合筛选的节点');
     dialog.indexRows(matches, (node) => {
       onFocus(node);
       dialog.close();

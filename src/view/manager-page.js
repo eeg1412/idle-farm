@@ -2,7 +2,10 @@ import { catalog, stationRequirements } from '../game/world.js';
 import { marketRate } from '../game/market.js';
 import { merchantStatus } from '../game/merchant.js';
 import { hasDeliverableOrder } from '../game/orders.js';
-import { managerGiftLimit, managerGiftRemaining, managerStatus, quoteManagerGift } from '../game/managers.js';
+import {
+  giftAllProtectedItems, managerGiftLimit, managerGiftRemaining, managerIds, managerStatus, planGiftAll, quoteGiftAll,
+  quoteManagerGift,
+} from '../game/managers.js';
 import { managerCharacters } from './manager-dialogue.js';
 import { managerTutorial, managerUpgradeMessages, managerResearchHelp, managerContextHelp } from './manager-help.js';
 import { compact } from './numbers.js';
@@ -248,14 +251,14 @@ function giftPicker(page, opener, id, inCard = false) {
     }
     const items = giftChoices(panel.w, status);
     if (!items.length) {
-      panel.text('没有可送的库存。', silent);
+      panel.empty('没有可送的库存。');
       return;
     }
     const reset = () => { panel.local.scroll = 0; delete panel.local.indexKeyboard; panel.refresh(); };
     if (items.length > 8) panel.tabs(giftTypes, state.type, (type) => { state.type = type; reset(); }, { style: 'filter', compact: true });
     const available = items.filter(({ type }) => state.type === '全部' || type === state.type);
     if (!available.length) {
-      panel.text('没有符合筛选的物品。', silent);
+      panel.empty('没有符合筛选的物品。');
       return;
     }
     const eligible = available.filter(({ maximum }) => maximum > 0n);
@@ -402,9 +405,280 @@ export function renderManagerDirectory(ui) {
         { label: '送礼', icon: actionIcon('gift'), onClick: () => giftPicker(ui, ui, id, true) },
         { label: '切换角色', icon: actionIcon('switch'), onClick: async () => {
           const changed = await ui.action('switchManagerAppearance', id);
-          if (changed) { delete ui.local.managerSpeechKeys?.[id]; delete ui.local.managerSpeechKeys?.[id + ':card']; if (ui.local.managerReplyRole === id) delete ui.local.managerReplyRole; ui.refresh(); }
+          if (changed) {
+            delete ui.local.managerSpeechKeys?.[id];
+            delete ui.local.managerSpeechKeys?.[id + ':card'];
+            const replying = ui.local.managerReplyRoles?.filter((role) => role !== id);
+            if (replying?.length) ui.local.managerReplyRoles = replying;
+            else delete ui.local.managerReplyRoles;
+            ui.refresh();
+          }
         } },
       ]);
     }, { padding: 8, gap: 5 });
   });
+  const claims = managerIds.map((id) => managerStatus(ui.w, id).claim).filter(Boolean);
+  ui.footer((footer) => footer.buttons([
+    { label: '全员收礼', tone: 'plain', icon: actionIcon('receive'), disabled: !claims.length, onClick: () => receiveAll(ui) },
+    { label: '全员送礼', tone: 'gold', icon: actionIcon('gift'), disabled: !giftAllReady(ui.w), onClick: () => giftAll(ui) },
+  ]));
+}
+
+// Claims every ready return at once and lists what arrived, like a single claim.
+async function receiveAll(ui) {
+  const claims = managerIds.map((id) => managerStatus(ui.currentWorld(), id).claim).filter(Boolean);
+  if (!claims.length) return;
+  const result = await ui.action('claimAllManagerGifts', claims);
+  if (!result || result === true) return;
+  const received = result.items.map(({ itemId, count }) => ({ icon: itemId, label: catalog.items[itemId].name, count }));
+  if (result.capsules?.added > 0n) received.push({ icon: 'time-capsule', label: '时空胶囊', count: result.capsules.added });
+  if (!received.length) return;
+  ui.dialog('收到回礼', (panel) => {
+    panel.scrollList(received, (cell, { icon, label, count }) => {
+      cell.row(label, '+' + compact(count), { icon });
+    });
+  }, { flow: 'manager-return-result' });
+}
+
+// The directory rebuilds on every production completion, so the button uses this cheap
+// precondition instead of building the plan: shared allowance left and an unprotected item that
+// can be given. It stays enabled after everyone is full today, so the dialog can still send the
+// rest of the allowance.
+function giftAllReady(world) {
+  if (managerGiftRemaining(world) <= 0n) return false;
+  const protectedItems = giftAllProtectedItems(world);
+  return Object.keys(world.inventory).some((itemId) =>
+    !protectedItems.has(itemId) && managerGiftLimit(world, itemId).maximum > 0n);
+}
+
+const giftAllModes = { 送满今日好感: 'cap', 送出全部礼物额度: 'all' };
+const savedGiftAllMode = (world) => world.settings.giftAllMode === 'all' ? 'all' : 'cap';
+// Someone can still gain affinity today; otherwise only sending the rest of the allowance applies.
+const giftAllCapOpen = (world) => managerIds.some((id) => {
+  const status = managerStatus(world, id);
+  return status.valueToDailyCap > 0n && status.affinityFundingRemaining > 0n;
+});
+// Once everyone is full today the dialog sends the remaining allowance without changing the saved preference.
+const giftAllMode = (world) => giftAllCapOpen(world) ? savedGiftAllMode(world) : 'all';
+const giftAllEven = (world) => world.settings.giftAllEven === true;
+const giftAllPlan = (world) => planGiftAll(world, giftAllMode(world), { even: giftAllEven(world) })
+  .map(({ id, itemId, count }) => ({ id, itemId, count }));
+// Entries set to zero stay in the local plan so their sliders remain; they are never quoted or sent.
+const plannedGifts = (gifts) => gifts.filter(({ count }) => count > 0n).map(({ id, itemId, count }) => ({ id, itemId, count }));
+const quotePlan = (world, gifts) => {
+  const planned = plannedGifts(gifts);
+  return planned.length ? quoteGiftAll(world, planned) : null;
+};
+const affinityChange = (before, after, cap) =>
+  subunits(before, 100n) + ' → ' + subunits(after, 100n) + ' / ' + subunits(cap, 100n) + ' 点';
+
+// Each displayed world is a fresh object, so per-item limits are reused while sliders refresh the same view.
+const giftLimits = new WeakMap();
+function cachedGiftLimit(world, itemId) {
+  if (!giftLimits.has(world)) giftLimits.set(world, new Map());
+  const limits = giftLimits.get(world);
+  if (!limits.has(itemId)) limits.set(itemId, managerGiftLimit(world, itemId));
+  return limits.get(itemId);
+}
+
+// Planned pieces per item and planned total value.
+function giftAllUsage(world, gifts) {
+  const pieces = new Map();
+  let value = 0n;
+  for (const { itemId, count } of gifts) {
+    if (count <= 0n) continue;
+    value += count * cachedGiftLimit(world, itemId).unitPrice;
+    pieces.set(itemId, (pieces.get(itemId) ?? 0n) + count);
+  }
+  return { pieces, value };
+}
+
+// Pieces of an item left for one role after other planned gifts of the same item (stock only).
+function giftAllStock(world, usage, own, itemId) {
+  const stock = cachedGiftLimit(world, itemId).available - ((usage.pieces.get(itemId) ?? 0n) - own);
+  return stock > 0n ? stock : 0n;
+}
+
+// Pieces one role can take of an item after every other planned gift has used stock and the shared allowance.
+function giftAllLimit(world, usage, own, itemId) {
+  const { available, unitPrice, remaining } = cachedGiftLimit(world, itemId);
+  if (unitPrice <= 0n) return 0n;
+  const stock = available - ((usage.pieces.get(itemId) ?? 0n) - own);
+  const budget = remaining - (usage.value - own * unitPrice);
+  const byBudget = budget > 0n ? budget / unitPrice : 0n;
+  const maximum = stock < byBudget ? stock : byBudget;
+  return maximum > 0n ? maximum : 0n;
+}
+
+// Lowers planned counts, in plan order, to what the current stock and shared allowance still cover.
+function fitGiftAllPlan(world, gifts) {
+  const used = new Map();
+  let value = 0n;
+  for (const gift of gifts) {
+    if (gift.count <= 0n) continue;
+    const { available, unitPrice, remaining } = cachedGiftLimit(world, gift.itemId);
+    const stock = available - (used.get(gift.itemId) ?? 0n);
+    const byBudget = unitPrice > 0n && remaining > value ? (remaining - value) / unitPrice : 0n;
+    const limit = stock < byBudget ? stock : byBudget;
+    if (gift.count > limit) gift.count = limit > 0n ? limit : 0n;
+    used.set(gift.itemId, (used.get(gift.itemId) ?? 0n) + gift.count);
+    value += gift.count * unitPrice;
+  }
+}
+
+function giftAll(page) {
+  const state = { gifts: giftAllPlan(page.currentWorld()), changed: false };
+  const regenerate = (world, changed) => {
+    state.gifts = giftAllPlan(world);
+    state.changed = changed;
+  };
+  page.dialog('全员送礼', (panel) => {
+    const world = panel.w;
+    let quote = quotePlan(world, state.gifts);
+    if (!quote && plannedGifts(state.gifts).length) {
+      // Production keeps consuming stock while the dialog is open; keep the player's plan and only
+      // trim the entries that now exceed stock or the allowance. Rebuild only if that still fails.
+      fitGiftAllPlan(world, state.gifts);
+      quote = quotePlan(world, state.gifts);
+    }
+    if (!quote && plannedGifts(state.gifts).length) {
+      regenerate(world, true);
+      quote = quotePlan(world, state.gifts);
+    }
+    state.shown = quote;
+    const planned = plannedGifts(state.gifts);
+    panel.row('礼物总值 / 还能赠送的礼物总值', compact(quote?.value ?? 0n) + ' / ' + compact(managerGiftRemaining(world)), {
+      compact: true, noWrap: true,
+    });
+    panel.toggle('平均分配', giftAllEven(world), async (on) => {
+      if (!await panel.quietAction('updateSettings', { giftAllEven: on })) return;
+      regenerate(panel.currentWorld(), false);
+      panel.refresh();
+    });
+    // No choice is offered once everyone is full today: the plan simply sends the rest of the allowance.
+    if (giftAllCapOpen(world)) {
+      const mode = savedGiftAllMode(world);
+      panel.tabs(Object.keys(giftAllModes), mode === 'all' ? '送出全部礼物额度' : '送满今日好感', async (label) => {
+        const next = giftAllModes[label];
+        if (next === savedGiftAllMode(panel.currentWorld())) return;
+        if (!await panel.quietAction('updateSettings', { giftAllMode: next })) return;
+        regenerate(panel.currentWorld(), false);
+        panel.refresh();
+      }, { style: 'filter', keepScroll: true });
+    }
+    if (state.changed) panel.text('条件有变化，请重新确认', silent);
+    panel.scrollList(managerDirectoryOrder, (cell, id) => {
+      const status = managerStatus(world, id);
+      const character = managerCharacters[id][status.gender];
+      const before = quote?.roles[id]?.before ?? status.dailyGain;
+      const after = quote?.roles[id]?.after ?? status.dailyGain;
+      const gifts = planned.filter((gift) => gift.id === id);
+      cell.card((card) => {
+        card.item(portrait(id, status.gender, 'smile'), character.name, '今日好感 ' + affinityChange(before, after, status.dailyCap),
+          { iconSize: 40, titleSize: 16, crop: true, smooth: true });
+        card.goalProgress(Number(after) / Number(status.dailyCap));
+        if (!gifts.length) card.text('本次不送', silent);
+        else card.rewards(gifts.flatMap(({ itemId, count }) => [
+          { icon: itemId, value: count },
+          ...(status.wants.includes(itemId) ? [{ text: '心愿', tone: 'danger' }] : []),
+        ]), { fontSize: 14 });
+      }, { padding: 8, gap: 5, onClick: () => giftAllRole(panel, state, id) });
+    });
+    panel.footer((footer) => footer.buttons([
+      { label: '取消', onClick: () => panel.close() },
+      {
+        label: '确认送礼', tone: 'gold', disabled: !quote,
+        onClick: async () => {
+          const shown = state.shown;
+          if (!shown) return;
+          const result = await panel.action('giftAllManagers', shown.gifts);
+          if (!result) {
+            // The action already toasts 「条件有变化，请重新确认」; avoid repeating it here. Keep the
+            // player's edits and trim to the current stock; the render rebuilds only if that fails.
+            fitGiftAllPlan(panel.currentWorld(), state.gifts);
+            panel.refresh();
+            return;
+          }
+          const current = panel.currentWorld();
+          const replies = (result.roles ?? []).map(({ id, wanted }) => {
+            const { gender } = managerStatus(current, id);
+            const character = managerCharacters[id][gender];
+            return {
+              role: id, gender,
+              line: { text: randomLine(wanted ? character.wantedThanks : character.thanks), expression: wanted ? 'happy' : 'smile' },
+            };
+          });
+          panel.close();
+          page.queueManagerReplies(replies);
+        },
+      },
+    ]));
+  }, { flow: 'manager-gift-all' });
+}
+
+function giftAllRole(opener, state, id) {
+  const percents = new Map();
+  const roleOrder = (gift) => managerIds.indexOf(gift.id);
+  opener.dialog(managerCharacters[id][managerStatus(opener.w, id).gender].name, (panel) => {
+    const world = panel.w;
+    const status = managerStatus(world, id);
+    // Sliders refresh on every move, so this dialog reads the plan without a full quote.
+    panel.row('今日好感', subunits(status.dailyGain, 100n) + ' / ' + subunits(status.dailyCap, 100n) + ' 点', {
+      compact: true, noWrap: true,
+    });
+    panel.goalProgress(Number(status.dailyGain) / Number(status.dailyCap));
+    panel.divider();
+    const usage = giftAllUsage(world, state.gifts);
+    const mine = state.gifts.filter((gift) => gift.id === id);
+    if (!mine.some(({ count }) => count > 0n)) panel.text('本次不送', silent);
+    for (const gift of mine) {
+      // 100% is this item's own stock left after other roles' plans, so moving one slider never
+      // moves another; the shared allowance only caps the count when a slider is raised.
+      const stock = giftAllStock(world, usage, gift.count, gift.itemId);
+      const allowed = giftAllLimit(world, usage, gift.count, gift.itemId);
+      panel.itemQuantity(gift.itemId, catalog.items[gift.itemId].name, pieces(gift.count));
+      if (status.wants.includes(gift.itemId)) panel.rewards([{ text: '心愿', tone: 'danger' }], { fontSize: 13 });
+      const shownPercent = stock > 0n ? Math.min(100, Number((gift.count * 100n + stock - 1n) / stock)) : 0;
+      panel.slider(percents.get(gift.itemId) ?? shownPercent, (percent) => {
+        const wanted = stock * BigInt(percent) / 100n;
+        gift.count = wanted < allowed ? wanted : allowed;
+        // A count held back by the allowance shows its real share of the stock instead of the drag.
+        if (gift.count === wanted) percents.set(gift.itemId, percent);
+        else percents.delete(gift.itemId);
+        state.changed = false;
+        panel.refresh();
+      }, { min: 0, bubble: true });
+    }
+    const protectedItems = giftAllProtectedItems(world);
+    const wanted = new Set(status.wants);
+    const choices = Object.entries(world.inventory).flatMap(([itemId, inventory]) => {
+      const item = catalog.items[itemId];
+      if (!item || inventory <= 0n || protectedItems.has(itemId) || mine.some((gift) => gift.itemId === itemId)) return [];
+      // Listed by stock so the list keeps its rows (and height) when the shared allowance runs out;
+      // rows the allowance can no longer cover are shown disabled.
+      const stock = giftAllStock(world, usage, 0n, itemId);
+      return stock > 0n ? [{ id: itemId, label: item.name, icon: itemId, wanted: wanted.has(itemId), stock,
+        disabled: giftAllLimit(world, usage, 0n, itemId) <= 0n }] : [];
+    }).sort((a, b) => Number(b.wanted) - Number(a.wanted) || nameOrder(a.label, b.label));
+    if (choices.length) {
+      panel.heading('添加礼物', { size: 17 });
+      panel.indexRows(choices.map((item) => ({
+        ...item, status: '可用 ' + pieces(item.stock) + (item.wanted ? ' · 心愿' : ''),
+        statusEmphasis: item.wanted ? ['心愿'] : [],
+      })), (item) => {
+        state.gifts.push({ id, itemId: item.id, count: 1n });
+        state.gifts.sort((a, b) => roleOrder(a) - roleOrder(b));
+        state.changed = false;
+        panel.refresh();
+      });
+    }
+    panel.footer((footer) => footer.buttons([
+      { label: '本次不送', onClick: () => {
+        state.gifts = state.gifts.filter((gift) => gift.id !== id);
+        state.changed = false;
+        panel.close();
+      } },
+      { label: '完成', tone: 'gold', onClick: () => panel.close() },
+    ]));
+  }, { flow: 'manager-gift-all-role' });
 }

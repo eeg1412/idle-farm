@@ -1,4 +1,4 @@
-import { Container, Graphics, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
+import { Container, Graphics, ImageSource, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
@@ -442,6 +442,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let managerSpeechMount;
   let managerCardSpeech;
   let managerCardSpeechMount;
+  // Further directory cards replying at the same time as the card above (gift to all).
+  const managerExtraCardReplies = [];
   let managerBannerMount;
   let managerPortraitMounts = new Map();
   let managerSpeechWasVisible = false;
@@ -451,6 +453,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let world;
   let status;
   let waiting = false;
+  // True while the running action is a quiet one (see quietAction).
+  let quietWaiting = false;
   let pendingRender = false;
   let navigationMenu;
   let modal;
@@ -459,6 +463,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let updateDialogSampleProgress;
   let notices;
   let floating;
+  // Whether the latest press came from a finger or pen; floats rise clear of it (see drawFeedback).
+  let lastPressTouch = false;
   let point;
   let scrollTarget;
   let focusIndex = -1;
@@ -514,6 +520,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   // Only the selected CG and logo opening URLs use smooth sampling. Keep the policy by URL
   // so a later caller/retry cannot switch a shared opening source back to nearest.
   const smoothImages = new Set();
+  // Linear, mipmapped views of nearest-sampled images for strong downscaling (shared pixels, own GPU texture).
+  const smoothTextures = new Map();
   const failedImages = new Set();
   const loadingImages = new Map();
   // LRU order (oldest first) of page icons and scenes drawn by drawImage, url -> category.
@@ -531,16 +539,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   function pauseManagerSpeech() {
     managerSpeech?.pause();
     managerCardSpeech?.pause();
+    for (const { speech } of managerExtraCardReplies) speech.pause();
     audio.stopDialogue?.();
     managerSpeechWasVisible = false;
   }
 
   function resetManagerSpeech() {
-    if (managerSpeech || managerCardSpeech) pauseManagerSpeech();
+    if (managerSpeech || managerCardSpeech || managerExtraCardReplies.length) pauseManagerSpeech();
     managerSpeech = undefined;
     managerSpeechMount = undefined;
     managerCardSpeech = undefined;
     managerCardSpeechMount = undefined;
+    managerExtraCardReplies.length = 0;
     managerBannerMount = undefined;
   }
 
@@ -733,6 +743,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             loadingImages.has(url)) continue;
         textures.delete(url);
         imageUse.delete(url);
+        smoothTextures.get(url)?.destroy(true);
+        smoothTextures.delete(url);
         count -= 1;
         // Assets.unload destroys the texture and drops it from the Assets caches; a later
         // drawImage reloads it (normally from the browser HTTP cache).
@@ -992,7 +1004,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return holder;
   }
 
-  function drawImage(parent, id, x, y, w, h, crop = false, trackViewport = true) {
+  // `smooth` draws through a linear, mipmapped copy so a large image shrunk to a small size is not jagged.
+  function smoothTexture(url, texture) {
+    let smooth = smoothTextures.get(url);
+    if (smooth?.source.resource !== texture.source.resource) {
+      smooth?.destroy(true);
+      smooth = new Texture({ source: new ImageSource({
+        resource: texture.source.resource, scaleMode: 'linear', autoGenerateMipmaps: true,
+      }) });
+      smoothTextures.set(url, smooth);
+    }
+    return smooth;
+  }
+
+  function drawImage(parent, id, x, y, w, h, crop = false, trackViewport = true, { smooth = false } = {}) {
     if (!id || w < 1 || h < 1) return;
     if (drawnIcons[id]) { drawPixelIcon(parent, drawnIcons[id], x, y, w, h); return; }
     const manager = managerAsset(id);
@@ -1003,6 +1028,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     touchImage(url, scene || manager && !manager.startsWith('icons/') ? 'scene' : hero ? undefined : 'icon');
     const portraitOf = manager?.match(/^portraits\/([^/]+)\/(female|male)-/);
     if (portraitOf) preloadGiftPortraits(portraitOf[1], portraitOf[2]);
+    const shown = (texture) => smooth ? smoothTexture(url, texture) : texture;
     if (trackViewport && scrollImages) {
       const layer = new Container();
       layer.eventMode = 'none';
@@ -1012,7 +1038,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         mount() {
           const texture = textures.get(url);
           if (texture) {
-            mountImage(layer, texture, x, y, w, h, crop, scene);
+            mountImage(layer, shown(texture), x, y, w, h, crop, scene);
             return;
           }
           const placeholder = hero || scene ? panel(layer, x, y, w, h, 0xd8e5c7, null, 0) : undefined;
@@ -1020,7 +1046,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           loadImage(url).then((asset) => {
             if (!asset || layer.destroyed) return;
             placeholder?.destroy();
-            mountImage(layer, asset, x, y, w, h, crop, scene);
+            mountImage(layer, shown(asset), x, y, w, h, crop, scene);
           });
         },
       });
@@ -1034,7 +1060,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
       return;
     }
-    mountImage(parent, texture, x, y, w, h, crop, scene);
+    mountImage(parent, shown(texture), x, y, w, h, crop, scene);
   }
 
   function mountImage(parent, texture, x, y, w, h, crop, scene) {
@@ -1065,7 +1091,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const cells = entries.map((entry) => {
       const icon = entry.icon && hasIcon(entry.icon) ? entry.icon : undefined;
       const label = textNode(parent, icon || entry.icon ? compact(entry.value) : entry.text, 0, 0, width,
-        { size, color, weight: icon ? '700' : '600', wrap: false });
+        { size, color: entry.tone === 'danger' ? palette.red : color, weight: icon ? '700' : '600', wrap: false });
       const offset = icon ? iconSize + iconGap : 0;
       if (offset + label.width > width) {
         label.style.wordWrap = true;
@@ -1207,7 +1233,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function buttonAt(parent, x, y, width, height, label, fn, options = {}) {
-    const disabled = !fn || options.disabled || waiting;
+    // A quiet action blocks input through `waiting` but keeps buttons looking as they were.
+    const disabled = !fn || options.disabled || (waiting && !quietWaiting);
     const hasIndicator = options.indicator || (!disabled && options.indicatorWhenVisible);
     const tone = options.tone ?? 'plain';
     const index = disabled ? -1 : controls.length;
@@ -1420,26 +1447,50 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return speech;
   }
 
-  function releaseManagerCardReply(owner, nextRole) {
-    const previousRole = owner.managerReplyRole;
-    if (!previousRole || previousRole === nextRole) return;
-    const previous = managerConversations.get(owner.managerSpeechKeys?.[managerSpeechKey(previousRole, true)]);
-    if (previous) {
-      previous.select(managerDailyLines.get(previous));
-      updateManagerPortraits(previous);
+  // Roles whose directory cards show a reply bubble; a plain array so view-state copies keep it.
+  const managerReplying = (owner, role) => Boolean(owner.managerReplyRoles?.includes(role));
+
+  function dropManagerReplyRole(owner, role) {
+    const roles = owner.managerReplyRoles?.filter((entry) => entry !== role);
+    if (roles?.length) owner.managerReplyRoles = roles;
+    else delete owner.managerReplyRoles;
+  }
+
+  // Ends card replies of every role not in `keep` and restores their daily line.
+  function releaseManagerCardReply(owner, keep = []) {
+    for (const previousRole of owner.managerReplyRoles ?? []) {
+      if (keep.includes(previousRole)) continue;
+      const previous = managerConversations.get(owner.managerSpeechKeys?.[managerSpeechKey(previousRole, true)]);
+      if (previous) {
+        previous.select(managerDailyLines.get(previous));
+        updateManagerPortraits(previous);
+      }
+      dropManagerReplyRole(owner, previousRole);
     }
-    delete owner.managerReplyRole;
   }
 
   function queueManagerSpeech(role, gender, line, { inCard = false } = {}) {
     const owner = modal?.managerRole === role && modal.managerFocus !== '管理员资料' ? modal : locals[current];
-    releaseManagerCardReply(owner, inCard ? role : undefined);
+    releaseManagerCardReply(owner, inCard ? [role] : []);
     const speech = conversationFor(owner, role, gender, undefined, { inCard });
-    if (inCard) owner.managerReplyRole = role;
-    else delete owner.managerReplyRole;
+    if (inCard) owner.managerReplyRoles = [role];
+    else delete owner.managerReplyRoles;
     speech.enqueue(line);
     if (managerSpeech === speech && managerSpeechMount?.inCard === inCard) markDirty();
     else requestRender();
+  }
+
+  // Several directory cards reply at once; earlier card replies of other roles end as with a single reply.
+  function queueManagerReplies(entries) {
+    if (!entries.length) return;
+    const owner = locals[current];
+    const roles = entries.map(({ role }) => role);
+    releaseManagerCardReply(owner, roles);
+    for (const { role, gender, line } of entries) {
+      conversationFor(owner, role, gender, undefined, { inCard: true }).enqueue(line);
+    }
+    owner.managerReplyRoles = roles;
+    requestRender();
   }
 
   function advanceManagerSpeech(role, gender, { messages, nextGreeting, inCard = false } = {}) {
@@ -1460,15 +1511,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const selected = another ?? (daily ? { text: daily, expression: 'smile', priority: 0 } : undefined);
     if (!selected) return;
     const returnReminder = !inCard && selected.priority === 4;
-    if (!returnReminder) releaseManagerCardReply(owner, inCard ? role : undefined);
+    if (!returnReminder) releaseManagerCardReply(owner, inCard ? [role] : []);
     if (inCard) speech.enqueue(selected);
     else {
       speech.select(selected);
       managerSelections.set(speech, { line: selected, candidates: JSON.stringify(help) });
     }
     if (daily) managerDailyLines.set(speech, selected);
-    if (inCard) owner.managerReplyRole = role;
-    else if (!returnReminder) delete owner.managerReplyRole;
+    if (inCard) owner.managerReplyRoles = [role];
+    else if (!returnReminder) delete owner.managerReplyRoles;
     pauseManagerSpeech();
     if (managerSpeech === speech && managerSpeechMount?.inCard === inCard) markDirty();
     else requestRender();
@@ -1584,7 +1635,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       local.tab = context.local.tab;
       local.scroll = context.local.merchantDialogEpoch === merchantDialogEpoch ? context.local.scroll : 0;
     } else restoreViewState(local, context.local);
-    if (changedPage) { delete local.managerSpeechKeys; delete local.managerReplyRole; }
+    if (changedPage) { delete local.managerSpeechKeys; delete local.managerReplyRoles; }
     pageParent = current === '行脚商' ? merchantMapParent(context.parent) : context.parent;
     linkedEntryParent = context.linkedEntryParent;
     pendingModal = undefined;
@@ -1638,7 +1689,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       resetManagerSpeech();
       current = page;
       delete locals[page].managerSpeechKeys;
-      delete locals[page].managerReplyRole;
+      delete locals[page].managerReplyRoles;
       onNavigate?.(current);
     }
     if (page === '图鉴') {
@@ -1749,7 +1800,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (changedPage) {
         resetManagerSpeech();
         delete locals[page].managerSpeechKeys;
-        delete locals[page].managerReplyRole;
+        delete locals[page].managerReplyRoles;
       }
       prepareMerchantNavigation(page, tab);
       if (changedPage) onNavigate?.(page);
@@ -1799,15 +1850,26 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function float(message) {
     const at = point ?? { x: frame.width / 2, y: frame.height * 0.72 };
-    floating = { message, at: { x: at.x, y: at.y }, started: performance.now() };
+    floating = { message, at: { x: at.x, y: at.y }, started: performance.now(), touch: lastPressTouch };
     drawFeedback();
   }
 
   async function action(name, ...args) {
+    return runAction(true, name, args);
+  }
+
+  // For instant commits such as a settings switch: still blocks other actions while it runs, but
+  // skips the "waiting" redraw so the open dialog's buttons do not flash disabled and back.
+  async function quietAction(name, ...args) {
+    return runAction(false, name, args);
+  }
+
+  async function runAction(showWaiting, name, args) {
     if (waiting) return false;
     waiting = true;
+    quietWaiting = !showWaiting;
     const savedPoint = point;
-    redraw();
+    if (showWaiting) redraw();
     try {
       const result = await dispatch(name, ...args);
       point = savedPoint;
@@ -1819,9 +1881,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
       if (result.float) float(result.float);
       if (result.toast) toast(result.toast);
-      return result.qualityDraw ?? result.managerGift ?? true;
+      return result.qualityDraw ?? result.managerGift ?? result.giftAll ?? true;
     } finally {
       waiting = false;
+      quietWaiting = false;
       redraw();
     }
   }
@@ -2028,12 +2091,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       };
     }
     const ui = {
-      w: world, local, width, height: availableHeight, refresh, back, action, float, toast,
+      w: world, local, width, height: availableHeight, refresh, back, action, quietAction, float, toast,
       currentWorld: () => world, reserveMerchantSale, switchMerchantTab,
       go: (page, settings) => go(page, settings, local.routeKey ? local : undefined),
       isActive: () => local.routeKey ? modal === local && local.navigationEpoch === navigationEpoch : locals[current] === local,
       saveManagement, saveAction,
-      dialog: setDialog, close: closeDialog, closeManagerGift, queueManagerSpeech, advanceManagerSpeech,
+      dialog: setDialog, close: closeDialog, closeManagerGift, queueManagerSpeech, queueManagerReplies, advanceManagerSpeech,
       tree(options) {
         const owner = parent;
         const top = cursor;
@@ -2143,6 +2206,34 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         else if (align === 'center') prefix.x += inset / 2;
         tail.x = prefix.x + prefix.width;
         cursor += Math.max(prefix.height, tail.height) + rowGap;
+      },
+      // Shared empty-list placeholder: a soft panel with a muted icon, message and optional hint.
+      empty(message, { icon, hint, height = 112 } = {}) {
+        const top = cursor;
+        const padding = 14;
+        const span = Math.max(1, width - padding * 2);
+        const background = parent.addChild(inkGraphics());
+        const iconSize = icon && (drawnIcons[icon] || hasIcon(icon)) ? 36 : 0;
+        const iconGap = iconSize ? 8 : 0;
+        const title = textNode(parent, message, x + padding, top, span,
+          { size: 15 * scale(), weight: '700', color: palette.muted, align: 'center' });
+        const note = hint ? textNode(parent, hint, x + padding, top, span,
+          { size: 13 * scale(), color: palette.muted, align: 'center' }) : null;
+        const noteGap = note ? 4 : 0;
+        const content = iconSize + iconGap + title.height + noteGap + (note?.height ?? 0);
+        const boxHeight = Math.max(height, Math.ceil(content + padding * 2));
+        let at = top + (boxHeight - content) / 2;
+        if (iconSize) {
+          const holder = parent.addChild(new Container());
+          holder.eventMode = 'none';
+          holder.alpha = 0.5;
+          drawImage(holder, icon, x + (width - iconSize) / 2, at, iconSize, iconSize);
+          at += iconSize + iconGap;
+        }
+        title.y = at;
+        if (note) note.y = at + title.height + noteGap;
+        paintPanel(background, x, top, width, boxHeight, palette.pale, palette.line, 12);
+        cursor += boxHeight + rowGap;
       },
       // One flowing row of icon + amount items, optionally followed by short { text } tags.
       rewards(entries, { fontSize = 15, muted = false, align } = {}) {
@@ -2394,10 +2485,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const selection = managerSelections.get(speech);
         if (selection && selection.candidates !== JSON.stringify(messages)) managerSelections.delete(speech);
         speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
-        if (!receive && current === '角色管理' && local.managerReplyRole) {
-          const replyRole = local.managerReplyRole;
-          const cardSpeech = managerConversations.get(local.managerSpeechKeys?.[managerSpeechKey(replyRole, true)]);
-          if (!cardSpeech?.replying || cardSpeech.gender !== managerStatus(world, replyRole).gender) delete local.managerReplyRole;
+        if (!receive && current === '角色管理' && local.managerReplyRoles) {
+          for (const replyRole of local.managerReplyRoles) {
+            const cardSpeech = managerConversations.get(local.managerSpeechKeys?.[managerSpeechKey(replyRole, true)]);
+            if (!cardSpeech?.replying || cardSpeech.gender !== managerStatus(world, replyRole).gender) dropManagerReplyRole(local, replyRole);
+          }
         }
         managerSpeech = speech;
         const height = Math.max(66, Math.min(205, Math.round(width * 0.45)));
@@ -2547,7 +2639,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         amount.position.set(x + width - amount.width, top + (height - amount.height) / 2);
         cursor += height + rowGap;
       },
-      item(id, title, description, { marketRate, iconSize, badges, titleSize = 18 } = {}) {
+      item(id, title, description, { marketRate, iconSize, badges, titleSize = 18, crop = false, smooth = false } = {}) {
         if (iconSize != null || badges) {
           // Icon on the left; title, description and badges stacked on the right and centered on the icon.
           const top = cursor;
@@ -2588,7 +2680,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const height = Math.max(size, textHeight);
           const shift = (height - textHeight) / 2;
           if (shift) for (const node of nodes) node.y += shift;
-          if (size) drawImage(parent, id, x, top + (height - size) / 2, size, size);
+          if (size) drawImage(parent, id, x, top + (height - size) / 2, size, size, crop, true, { smooth });
           cursor += height + rowGap;
           return;
         }
@@ -2667,12 +2759,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (managerReply) {
           const { role, gender } = managerReply;
           const speech = conversationFor(local, role, gender, undefined, { inCard: true });
-          if (local.managerReplyRole === role && !speech.replying) delete local.managerReplyRole;
-          if (local.managerReplyRole !== role && speech.replying) {
+          if (managerReplying(local, role) && !speech.replying) dropManagerReplyRole(local, role);
+          if (!managerReplying(local, role) && speech.replying) {
             speech.select(managerDailyLines.get(speech));
             updateManagerPortraits(speech);
           }
-          if (local.managerReplyRole === role && speech.replying) {
+          if (managerReplying(local, role) && speech.replying) {
             const replyTop = drawY + copy.y;
             const replyWidth = Math.max(1, width - (drawX - x));
             const replyHeight = Math.max(1, top + height - replyTop);
@@ -2684,13 +2776,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             let visible = !options.observeScroll;
             let reveal = () => false;
             const startLine = () => {
-              const replying = speech.replying && local.managerReplyRole === role;
+              const replying = speech.replying && managerReplying(local, role);
               copy.visible = !replying;
               bubble.visible = replying;
               caption.visible = replying;
               updateManagerPortraits(speech);
               if (!replying) {
-                if (local.managerReplyRole === role) delete local.managerReplyRole;
+                dropManagerReplyRole(local, role);
+                const extra = managerExtraCardReplies.findIndex((entry) => entry.speech === speech);
+                if (extra !== -1) managerExtraCardReplies.splice(extra, 1);
                 if (managerCardSpeech === speech) {
                   managerCardSpeech = undefined;
                   managerCardSpeechMount = undefined;
@@ -2715,7 +2809,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             };
             // A pending top return stays visible and audible; a successful card
             // reply can finish independently without taking over the banner.
-            if (managerBannerMount?.urgent) {
+            if (managerBannerMount?.urgent ? managerCardSpeechMount : managerSpeechMount?.inCard) {
+              // Another card already owns playback; this one types alongside it without sound.
+              managerExtraCardReplies.push({ speech, mount });
+            } else if (managerBannerMount?.urgent) {
               managerCardSpeech = speech;
               managerCardSpeechMount = mount;
             } else {
@@ -2851,6 +2948,33 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const filled = complete ? width : clamp(Math.round(width * fraction), 0, Math.max(0, width - 5));
         panel(parent, x, cursor, width, height, palette.line, null, height / 2);
         if (filled > 0) panel(parent, x, cursor, filled, height, complete ? palette.green : palette.gold, null, height / 2);
+        cursor += height + rowGap;
+      },
+      space(height) {
+        cursor += height;
+      },
+      divider() {
+        parent.addChild(inkGraphics().rect(x, cursor + 2, width, 1).fill(palette.line));
+        cursor += 5 + rowGap;
+      },
+      // A labelled on/off switch; the whole row toggles.
+      toggle(label, on, onChange) {
+        const height = 36;
+        const trackWidth = 44;
+        const trackHeight = 24;
+        const top = cursor;
+        const trackX = x + width - trackWidth;
+        const trackY = top + (height - trackHeight) / 2;
+        const surface = inkGraphics().rect(x, top, width, height).fill({ color: 0xffffff, alpha: 0.001 });
+        parent.addChild(surface);
+        const text = textNode(parent, label, x, top, Math.max(1, width - trackWidth - 8), { size: 15, weight: '750', wrap: false });
+        text.y = top + (height - text.height) / 2;
+        const knob = trackHeight - 6;
+        parent.addChild(inkGraphics().roundRect(trackX, trackY, trackWidth, trackHeight, trackHeight / 2)
+          .fill(on ? palette.green : palette.line)
+          .circle(on ? trackX + trackWidth - 3 - knob / 2 : trackX + 3 + knob / 2, trackY + trackHeight / 2, knob / 2)
+          .fill(0xffffff));
+        if (!waiting) hitAt(surface, parent, x, top, width, height, () => onChange(!on));
         cursor += height + rowGap;
       },
       batchProgress(batch, source) {
@@ -3159,7 +3283,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           layouts.set(item, lines);
           return Math.max(48, titleHeight + lines.length * statusHeight + 11);
         });
-        scrollChoices(items, onSelect, 1, heights, (layer, item, left, top, span, height) => {
+        // `disabled` rows keep their place and height but are dimmed and ignore taps.
+        const select = onSelect && ((item) => { if (!item.disabled) onSelect(item); });
+        scrollChoices(items, select, 1, heights, (layer, item, left, top, span, height) => {
+          if (item.disabled) layer.alpha = 0.45;
           panel(layer, left, top, span, height, palette.card, palette.line, 9);
           if (item.icon) drawImage(layer, item.icon, left + 7, top + (height - 32) / 2, 32, 32);
           const title = textNode(layer, item.label, left + 47, top + 4, span - 66,
@@ -3173,7 +3300,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
               prefix += run.text;
             }
           });
-          if (onSelect) directionIcon(layer, 'right', left + span - 20, top + (height - 18) / 2, 15, 18,
+          if (onSelect && !item.disabled) directionIcon(layer, 'right', left + span - 20, top + (height - 18) / 2, 15, 18,
             { color: palette.green });
         });
       },
@@ -3932,7 +4059,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       drop(noticeNode);
       noticeNode = undefined;
     }
-    const elapsed = floating ? (now - floating.started) / 650 : 1;
+    // A finger covers the pressed spot, so touch floats start well above it and stay a bit longer;
+    // mouse floats start just above the cursor instead of on top of it.
+    const elapsed = floating ? (now - floating.started) / (floating.touch ? 900 : 650) : 1;
     if (elapsed >= 1) {
       floating = undefined;
       drop(floatNode);
@@ -3940,7 +4069,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       return;
     }
     const w = Math.min(210, frame.width - 24);
-    const y = clamp(floating.at.y - elapsed * 25, 24, frame.height - 40);
+    const lift = floating.touch ? 70 : 36;
+    const y = clamp(floating.at.y - lift - elapsed * 25, 24, frame.height - 40);
     const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
     if (!live(floatNode, floating)) {
       drop(floatNode);
@@ -4033,6 +4163,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     managerCardSpeech?.pause();
     managerCardSpeech = undefined;
     managerCardSpeechMount = undefined;
+    for (const { speech } of managerExtraCardReplies) speech.pause();
+    managerExtraCardReplies.length = 0;
     managerBannerMount = undefined;
     managerPortraitMounts = new Map();
     for (const plot of [...activePlots]) parkPlot(plot);
@@ -4170,6 +4302,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       lastScroll: scrollTarget.state.scroll, lastTime: performance.now(), velocity: 0 };
     scrollActivity = drag.lastTime;
   }
+  // Capture phase: children that stop propagation still report the input type.
+  root.addEventListener('pointerdown', (event) => { lastPressTouch = event.pointerType !== 'mouse'; }, { capture: true });
   root.on('pointerdown', (event) => {
     if (developmentToolsEnabled && event.target !== developmentTitleTarget) settingsTitleClicks = 0;
     coast = null;
@@ -4372,6 +4506,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const cardSpeechUpdate = managerCardSpeech?.update(now, cardVisible);
     if (cardSpeechUpdate?.changed) managerCardSpeechMount?.startLine();
     else if (cardSpeechUpdate) managerCardSpeechMount?.reveal();
+    // Backwards: a finished reply removes its own entry while the loop runs.
+    for (let index = managerExtraCardReplies.length - 1; index >= 0; index -= 1) {
+      const { speech, mount } = managerExtraCardReplies[index];
+      const extraUpdate = speech.update(now, !openingScreen.blocking && mount.visible() && !document.hidden &&
+        !status?.busy && !navigationMenu);
+      if (extraUpdate?.changed) mount.startLine();
+      else if (extraUpdate) mount.reveal();
+    }
     const clock = world && !status?.busy && !document.hidden ? updateBatchDisplays(now) : undefined;
     if (sampleDialog(now)) requestRender();
     if (clock !== undefined) updateDialogSampleProgress?.(now);

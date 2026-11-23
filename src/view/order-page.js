@@ -132,7 +132,7 @@ export function renderOrders(ui) {
     { label: '缩小', disabled: small, onClick: () => setCompact(true) },
     { label: '放大', disabled: !small, onClick: () => setCompact(false) },
   ], { style: 'production' });
-  if (!active.length) ui.text('暂无订单', { muted: true });
+  if (!active.length) ui.empty('暂无订单', { icon: 'menu-orders' });
   ui.scrollList(active, (cell, order) => {
     cell.card((card) => {
       orderProduct(card, order, small);

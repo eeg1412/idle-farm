@@ -110,7 +110,7 @@ function shelf(ui, batch) {
   const { local } = ui;
   const rows = Object.keys(batch.stock).map((id) => merchantTradeOffer(ui.w, 'buy', id, 0n)).filter(Boolean);
   if (!rows.length) {
-    ui.text('货架暂时没有商品。', note);
+    ui.empty('货架暂时没有商品。', { icon: 'menu-merchant' });
     return;
   }
   const focusIndex = local.focusItem ? rows.findIndex(({ id }) => id === local.focusItem) : -1;
@@ -132,7 +132,7 @@ function shelf(ui, batch) {
 function wantedGoods(ui, wanted) {
   const offer = wanted && merchantTradeOffer(ui.w, 'sell', wanted.id, 0n);
   if (!offer) {
-    ui.text('本批没有求购品。', note);
+    ui.empty('本批没有求购品。', { icon: 'menu-merchant' });
     return;
   }
   const { id, unitPrice, inventory, remaining, maximum } = offer;
@@ -254,7 +254,7 @@ export function renderMerchant(ui) {
     ui.button('手动换货 · 剩 ' + compact(status.restocksRemaining) + ' 次', () => restockDialog(ui));
   }
   if (!status.batch) {
-    ui.text('暂未进货。', note);
+    ui.empty('暂未进货。', { icon: 'menu-merchant' });
     return;
   }
   if (tab === '买入') shelf(ui, status.batch);

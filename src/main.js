@@ -9,7 +9,9 @@ import { research, researchHourMs, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
 import { acceptOrder, deliverOrder, abandonOrder, replaceOrder } from './game/orders.js';
-import { claimManagerGift, giftManager, switchManagerAppearance } from './game/managers.js';
+import {
+  claimAllManagerGifts, claimManagerGift, giftAllManagers, giftManager, switchManagerAppearance,
+} from './game/managers.js';
 import { drawQuality } from './game/quality.js';
 import { claimTaskCapsules, objectives, settleTaskRewards } from './game/objectives.js';
 import { useCapsules } from './game/capsules.js';
@@ -65,7 +67,8 @@ const displayRefreshMs = 1000;
 function updateSettings(draft, partial) {
   if (!partial || typeof partial !== 'object') return false;
   for (const [key, value] of Object.entries(partial)) {
-    const valid = key === 'pickerIconsOnly' ? typeof value === 'boolean' :
+    const valid = ['pickerIconsOnly', 'giftAllEven', 'batchUpgradeEven'].includes(key) ? typeof value === 'boolean' :
+      key === 'giftAllMode' ? value === 'cap' || value === 'all' :
       ['music', 'sound'].includes(key) && Number.isInteger(value) && value >= 0 && value <= 100;
     if (!valid) return false;
   }
@@ -81,7 +84,7 @@ const actions = {
   setStationPriority, reserve, sell, sellBatch, sellFarm, research, drawQuality, upgradeTech, resetMarket, updateSettings,
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
   ...orderActions,
-  giftManager, claimManagerGift, switchManagerAppearance,
+  giftManager, giftAllManagers, claimManagerGift, claimAllManagerGifts, switchManagerAppearance,
   useCapsules, claimTaskCapsules,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
@@ -191,7 +194,6 @@ async function commit(draft, anchor, options, initialBase) {
   const progressBefore = uncommittedProgress ?? before ?? initialBase;
   const rewards = settleTaskRewards(draft);
   draft.revision = await writeWorldSave(db, draft, options);
-  if (rewards?.capsuleOverflow > 0n) setTimeout(showCapsuleLimit, 0);
   world = draft;
   uncommittedProgress = undefined;
   frontAnchor = anchor;
@@ -272,15 +274,6 @@ function joinToast(...parts) {
   const structured = parts.find((part) => part && typeof part === 'object');
   const text = parts.map((part) => part && typeof part === 'object' ? part.text : part).filter(Boolean).join(' · ');
   return structured ? { text, reward: structured.reward } : text;
-}
-
-// Capsules that do not fit stay pending (spec 10.1); tell the player to use some first.
-function showCapsuleLimit() {
-  if (!world) return;
-  view.dialog('时空胶囊', (ui) => {
-    ui.text('时空胶囊已达持有上限，请先使用后再领取。');
-    ui.button('知道了', ui.close, { tone: 'gold' });
-  }, { center: true });
 }
 
 function progressToast(before, after, rewards) {
@@ -441,14 +434,13 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'research') return { toast: '已研发：' + catalog.items[args[0]].name, sound: 'research' };
   if (name === 'drawQuality') return { sound: 'success', qualityDraw: actionResult };
   if (name === 'giftManager') return { sound: 'success', managerGift: actionResult };
-  if (name === 'claimManagerGift') {
-    if (actionResult.capsules?.remaining > 0n) setTimeout(showCapsuleLimit, 0);
+  if (name === 'giftAllManagers') return { sound: 'success', giftAll: actionResult };
+  if (name === 'claimManagerGift' || name === 'claimAllManagerGifts') {
     return { sound: 'success', managerGift: actionResult };
   }
   if (name === 'resetMarket') return { toast: '今日行情已重置', sound: 'success' };
   if (name === 'useCapsules') return { float: '已快进 ' + actionResult.minutes + ' 分钟', sound: 'success', capsuleUse: actionResult };
   if (name === 'claimTaskCapsules') {
-    if (actionResult.remaining > 0n) setTimeout(showCapsuleLimit, 0);
     return { float: actionResult.added > 0n ? '+' + compact(actionResult.added) + ' 时空胶囊' : undefined,
       sound: actionResult.added > 0n ? 'success' : undefined, capsuleClaim: actionResult };
   }
@@ -516,6 +508,7 @@ function dispatch(name, ...args) {
         if (name === 'buyMerchant' || name === 'sellMerchant') return { ok: false, toast };
         if (name === 'giftManager') return { ok: false, toast, staleManagerGift: true };
         if (name === 'claimManagerGift') return { ok: false, toast };
+        if (name === 'claimAllManagerGifts') return { ok: false, message: joinToast('回礼已变化，请重新领取', toast) };
         const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
         return { ok: false, message: joinToast(message, toast) };

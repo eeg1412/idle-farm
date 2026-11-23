@@ -340,7 +340,7 @@ function showHourlyProduction(ui) {
     const rows = panel.local.sampledValue ?? [];
     panel.sampleProgress('每 3 秒更新一次');
     if (!rows.length) {
-      panel.text('暂无已安排生产的设施或工位。');
+      panel.empty('暂无已安排生产的设施或工位。');
       return;
     }
     panel.scrollList(rows, (row, { id, produced, consumed, net }) => {
@@ -361,7 +361,7 @@ function showHourlyProduction(ui) {
 function marketRows(ui, rates, showPrice) {
   const changes = Object.entries(rates).filter(([, rate]) => rate !== 0);
   if (!changes.length) {
-    ui.text('暂无品项涨跌', { muted: true });
+    ui.empty('暂无品项涨跌', { height: 72 });
     return;
   }
   ui.scrollList(changes, (row, [id, rate], index) => {
@@ -549,7 +549,7 @@ function renderCatalogDetail(ui, id) {
   if (ui.local.showUses) {
     ui.heading('用于以下配方');
     if (!uses.length) {
-      ui.text('暂无生产配方使用此品项。', { muted: true });
+      ui.empty('暂无生产配方使用此品项。');
       return;
     }
     ui.scrollList(uses, (cell, [key, entry]) => cell.tile(key, entry.name, () => openDetail(key)), { columns: 'auto' });
@@ -575,7 +575,7 @@ export function renderCatalog(ui) {
   const filtered = entries.filter(([, item]) => matchesFilters(ui.local, item));
   if (ui.local.type === '商品') filtered.sort(([, left], [, right]) => left.level - right.level);
   if (!filtered.length) {
-    ui.text('此类别暂无品项。', { muted: true });
+    ui.empty('此类别暂无品项。', { icon: 'menu-catalog' });
     return;
   }
   ui.scrollList(filtered, (cell, [id, item]) => {
@@ -650,7 +650,7 @@ export function renderTasks(ui) {
       goal.done && all.findIndex((other) => other.id === goal.id) === index)
     : stage.filter((goal) => !goal.done);
   if (!goals.length) {
-    ui.text(finished ? '暂无已完成任务。' : '全部任务已完成。', { muted: true });
+    ui.empty(finished ? '暂无已完成任务。' : '全部任务已完成。', { icon: 'menu-tasks' });
     return;
   }
   ui.scrollList(goals, (cell, goal) => {

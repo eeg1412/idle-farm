@@ -188,7 +188,8 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, warehouseRevenue: 0n, lifetimeRevenue: 0n,
       ordersCompleted: 0n, orderRevenue: 0n, lifetimeOrderRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
-    taskRewards: [], legacyGuideCompleted: false, settings: { music: 0, sound: 0, pickerIconsOnly: false },
+    taskRewards: [], legacyGuideCompleted: false, settings: { music: 0, sound: 0, pickerIconsOnly: false, giftAllMode: 'cap', giftAllEven: false,
+      batchUpgradeEven: false },
   };
   settleProduction(world);
   return world;
@@ -548,20 +549,43 @@ function productionSelection(world, kind, indices) {
   return { slots, station };
 }
 
-function productionUpgradeBatchQuote(world, kind, indices, steps) {
+// Even split: the same total levels (steps × slots) go one at a time to the currently lowest
+// slot (ties in selection order), so low levels catch up first. Slots left at +0 are skipped.
+function evenUpgradeSteps(slots, total) {
+  const levels = slots.map((slot) => BigInt(slot.level));
+  const added = slots.map(() => 0n);
+  for (let left = total; left > 0n; left -= 1n) {
+    let lowest = 0;
+    for (let index = 1; index < levels.length; index += 1) if (levels[index] < levels[lowest]) lowest = index;
+    levels[lowest] += 1n;
+    added[lowest] += 1n;
+  }
+  return added;
+}
+
+function productionUpgradeBatchQuote(world, kind, indices, steps, even = false) {
   const count = asNatural(steps);
   if (count !== 1n && count !== 5n && count !== 10n) return null;
   const selection = productionSelection(world, kind, indices);
   if (!selection) return null;
   const offer = selection.station ? stationUpgradeOffer : facilityOffer;
-  const upgrades = indices.map((index) => offer(world, kind, index, count));
+  const added = even ? evenUpgradeSteps(selection.slots, count * BigInt(indices.length)) : indices.map(() => count);
+  const chosen = indices.map((index, position) => ({ index, slot: selection.slots[position], steps: added[position] }))
+    .filter(({ steps: slotSteps }) => slotSteps > 0n);
+  const upgrades = chosen.map(({ index, steps: slotSteps }) => offer(world, kind, index, slotSteps));
+  if (upgrades.some((quote) => !quote)) return null;
   const cost = upgrades.reduce((sum, quote) => sum + quote.cost, 0n);
-  return { ...selection, upgrades, cost, affordable: world.coins >= cost };
+  return { station: selection.station, slots: chosen.map(({ slot }) => slot), upgrades, cost, affordable: world.coins >= cost };
 }
 
-export function batchUpgradeOffer(world, kind, indices, steps) {
-  const quote = productionUpgradeBatchQuote(world, kind, indices, steps);
-  return quote && { cost: quote.cost, affordable: quote.affordable };
+// `levels` lists every selected slot's level after the upgrade (+0 for slots an even split skips).
+export function batchUpgradeOffer(world, kind, indices, steps, even = false) {
+  const quote = productionUpgradeBatchQuote(world, kind, indices, steps, even);
+  if (!quote) return null;
+  const targets = new Map(quote.slots.map((slot, position) => [slot, quote.upgrades[position].target]));
+  const group = quote.station ? world.stations[kind] : world.facilities[kind];
+  const levels = indices.map((index) => targets.get(group[index]) ?? BigInt(group[index].level));
+  return { cost: quote.cost, affordable: quote.affordable, levels };
 }
 
 function applyProductionUpgrade(slot, quote, station) {
@@ -572,8 +596,9 @@ function applyProductionUpgrade(slot, quote, station) {
   }
 }
 
-export function upgradeProductionBatch(world, kind, indices, steps, expectedCost) {
-  const quote = productionUpgradeBatchQuote(world, kind, indices, steps);
+export function upgradeProductionBatch(world, kind, indices, steps, expectedCost, even = false) {
+  if (typeof even !== 'boolean') return false;
+  const quote = productionUpgradeBatchQuote(world, kind, indices, steps, even);
   if (!quote?.affordable || quote.cost !== expectedCost) return false;
   world.coins -= quote.cost;
   quote.slots.forEach((slot, index) => applyProductionUpgrade(slot, quote.upgrades[index], quote.station));

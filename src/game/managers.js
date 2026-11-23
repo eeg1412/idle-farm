@@ -2,7 +2,7 @@ import catalog from '../content/game-data.json' with { type: 'json' };
 import { accountRandom } from './account-random.js';
 import { grantCapsules } from './capsules.js';
 import { marketUnitPrice, validCalendarDay } from './market.js';
-import { recordOrderAcquisition } from './orders.js';
+import { orderItemTags, recordOrderAcquisition } from './orders.js';
 import { availableToProduce, settleProduction } from './world.js';
 
 export const managerIds = Object.freeze(['tasks', 'estate', 'livestock', 'field', 'mine', 'fish',
@@ -272,6 +272,256 @@ export function giftManager(world, expected) {
   return quote;
 }
 
+// Items of accepted orders and every upstream material stay out of gifting to everyone.
+export function giftAllProtectedItems(world) {
+  const { products, materials } = orderItemTags(world);
+  return new Set([...products, ...materials]);
+}
+
+// giftManager replaces `managers` before touching its totals and mutates only `inventory`,
+// so a shallow copy with its own inventory keeps the original world untouched.
+function giftAllWorld(world) {
+  return { ...world, inventory: { ...world.inventory } };
+}
+
+// Roles still short of today's cap, largest shortfall first, then in managerIds order.
+function rolesByShortfall(world, ids) {
+  return ids.map((id) => [id, valueToDailyCap(world.managers.roles[id]), managerIds.indexOf(id)])
+    .filter(([, shortfall]) => shortfall > 0n)
+    .sort(([, a, first], [, b, second]) => a > b ? -1 : a < b ? 1 : first - second)
+    .map(([id]) => id);
+}
+
+// Unprotected items with stock to give, most available first, then by item ID.
+function giftableItems(world, protectedItems) {
+  return Object.keys(world.inventory).filter((itemId) => !protectedItems.has(itemId))
+    .map((itemId) => [itemId, managerGiftLimit(world, itemId).available])
+    .filter(([, available]) => available > 0n)
+    .sort(([first, a], [second, b]) => a > b ? -1 : a < b ? 1 : first < second ? -1 : first > second ? 1 : 0)
+    .map(([itemId]) => itemId);
+}
+
+// The fewest pieces that yield the largest gain this item can still give the role
+// (reaching the daily cap whenever stock, the shared quota and funding allow).
+function leastGiftForMostGain(world, id, itemId) {
+  const { maximum } = managerGiftLimit(world, itemId);
+  if (maximum <= 0n) return null;
+  let best = quoteManagerGift(world, id, itemId, maximum);
+  if (!best || best.gain <= 0n) return null;
+  const target = best.gain;
+  let low = 1n;
+  let high = maximum;
+  while (low < high) {
+    const middle = (low + high) / 2n;
+    const quote = quoteManagerGift(world, id, itemId, middle);
+    if (quote.gain >= target) {
+      high = middle;
+      best = quote;
+    } else {
+      low = middle + 1n;
+    }
+  }
+  return best;
+}
+
+function addPlannedGift(plan, byKey, quote) {
+  const key = quote.id + '\n' + quote.itemId;
+  const previous = byKey.get(key);
+  if (previous) {
+    previous.count += quote.count;
+    return;
+  }
+  const gift = { id: quote.id, itemId: quote.itemId, count: quote.count };
+  plan.push(gift);
+  byKey.set(key, gift);
+}
+
+// Splits what is left so every role's total gift value ends near one level: roles that received
+// least are topped up first (water filling). Whole pieces only, so a little may stay unspent.
+function evenGiftAll(simulation, items, received, give) {
+  let pool = managerGiftRemaining(simulation);
+  let stockValue = 0n;
+  for (const itemId of items) {
+    const { available, unitPrice } = managerGiftLimit(simulation, itemId);
+    stockValue += available * unitPrice;
+  }
+  if (stockValue < pool) pool = stockValue;
+  if (pool <= 0n) return;
+  const order = managerIds.map((id, index) => [id, received.get(id) ?? 0n, index])
+    .sort(([, a, first], [, b, second]) => a < b ? -1 : a > b ? 1 : first - second);
+  let level = 0n;
+  let total = pool;
+  for (let count = 1; count <= order.length; count += 1) {
+    total += order[count - 1][1];
+    level = total / BigInt(count);
+    if (count === order.length || level <= order[count][1]) break;
+  }
+  for (const [id, value] of order) {
+    let need = level - value;
+    for (const itemId of items) {
+      if (need <= 0n || managerGiftRemaining(simulation) <= 0n) break;
+      const { maximum, unitPrice } = managerGiftLimit(simulation, itemId);
+      if (maximum <= 0n || unitPrice <= 0n) continue;
+      const count = need / unitPrice < maximum ? need / unitPrice : maximum;
+      if (count <= 0n) continue;
+      const quote = quoteManagerGift(simulation, id, itemId, count);
+      if (!quote) continue;
+      give(quote);
+      need -= quote.value;
+    }
+  }
+}
+
+// Cap mode with an even split: when the allowance cannot fill everyone, the roles still short get
+// the same spend level instead of the largest shortfall first. Each role still stops at its cap and
+// uses its own wishes first; with enough allowance the result matches the normal cap plan.
+function evenGiftAllToCap(simulation, protectedItems, give, capOpen) {
+  const items = giftableItems(simulation, protectedItems);
+  let pool = managerGiftRemaining(simulation);
+  let stockValue = 0n;
+  for (const itemId of items) {
+    const { available, unitPrice } = managerGiftLimit(simulation, itemId);
+    stockValue += available * unitPrice;
+  }
+  if (stockValue < pool) pool = stockValue;
+  const needs = managerIds.map((id) => [id, valueToDailyCap(simulation.managers.roles[id])])
+    .filter(([, need]) => need > 0n);
+  const ascending = [...needs].sort(([, a], [, b]) => a < b ? -1 : a > b ? 1 : 0);
+  let level = null;
+  let rest = pool;
+  for (let index = 0; index < ascending.length; index += 1) {
+    const left = BigInt(ascending.length - index);
+    const need = ascending[index][1];
+    if (need * left > rest) {
+      level = rest / left;
+      break;
+    }
+    rest -= need;
+  }
+  for (const [id, need] of needs) {
+    let budget = level === null || need < level ? need : level;
+    const wishes = simulation.managers.roles[id].wants.filter((itemId) => !protectedItems.has(itemId));
+    for (const itemId of [...wishes, ...items]) {
+      if (budget <= 0n || !capOpen() || valueToDailyCap(simulation.managers.roles[id]) <= 0n) break;
+      const best = leastGiftForMostGain(simulation, id, itemId);
+      if (!best) continue;
+      const byBudget = budget / best.unitPrice;
+      if (byBudget <= 0n) continue;
+      const quote = byBudget < best.count ? quoteManagerGift(simulation, id, itemId, byBudget) : best;
+      if (!quote) continue;
+      give(quote);
+      budget -= quote.value;
+    }
+  }
+}
+
+export function planGiftAll(world, mode, { even = false } = {}) {
+  if ((mode !== 'cap' && mode !== 'all') || !world.managers.day) return [];
+  const simulation = giftAllWorld(world);
+  const protectedItems = giftAllProtectedItems(world);
+  const plan = [];
+  const byKey = new Map();
+  const received = new Map();
+  const give = (quote) => {
+    giftManager(simulation, quote);
+    addPlannedGift(plan, byKey, quote);
+    received.set(quote.id, (received.get(quote.id) ?? 0n) + quote.value);
+  };
+  const capOpen = () => affinityFundingRemaining(simulation) > 0n && managerGiftRemaining(simulation) > 0n;
+
+  if (mode === 'cap' && even) {
+    evenGiftAllToCap(simulation, protectedItems, give, capOpen);
+    return plan;
+  }
+
+  // Wishes first: each wished item goes to the roles wanting it, largest shortfall first.
+  const wishes = [...new Set(managerIds.flatMap((id) => simulation.managers.roles[id].wants))]
+    .filter((itemId) => !protectedItems.has(itemId)).sort();
+  for (const itemId of wishes) {
+    if (!capOpen()) break;
+    const wanting = managerIds.filter((id) => simulation.managers.roles[id].wants.includes(itemId));
+    for (const id of rolesByShortfall(simulation, wanting)) {
+      const quote = leastGiftForMostGain(simulation, id, itemId);
+      if (quote) give(quote);
+    }
+  }
+
+  // Then top up every remaining shortfall from the other giftable stock.
+  const items = giftableItems(simulation, protectedItems);
+  for (const id of rolesByShortfall(simulation, managerIds)) {
+    for (const itemId of items) {
+      if (!capOpen() || valueToDailyCap(simulation.managers.roles[id]) <= 0n) break;
+      const quote = leastGiftForMostGain(simulation, id, itemId);
+      if (quote) give(quote);
+    }
+  }
+
+  if (mode === 'all' && even) {
+    evenGiftAll(simulation, giftableItems(simulation, protectedItems), received, give);
+  } else if (mode === 'all') {
+    // Spend what is left on the highest return rates, ties in managerIds order.
+    const rates = managerIds.map((id, index) =>
+      [id, rewardLevel(managerLevel(simulation.managers.roles[id].affinity)), index])
+      .sort(([, a, first], [, b, second]) => b - a || first - second);
+    const rest = giftableItems(simulation, protectedItems);
+    for (const [id] of rates) {
+      for (const itemId of rest) {
+        if (managerGiftRemaining(simulation) <= 0n) return plan;
+        const { maximum } = managerGiftLimit(simulation, itemId);
+        if (maximum <= 0n) continue;
+        const quote = quoteManagerGift(simulation, id, itemId, maximum);
+        if (quote) give(quote);
+      }
+    }
+  }
+  return plan;
+}
+
+export function quoteGiftAll(world, gifts) {
+  if (!Array.isArray(gifts)) return null;
+  const simulation = giftAllWorld(world);
+  const roles = Object.fromEntries(managerIds.filter((id) => Object.hasOwn(world.managers.roles, id)).map((id) => {
+    const dailyGain = world.managers.roles[id].dailyGain;
+    return [id, { before: dailyGain, after: dailyGain, gain: 0n, value: 0n, returnValue: 0n, wanted: false }];
+  }));
+  const quotes = [];
+  let value = 0n;
+  for (const gift of gifts) {
+    const quote = quoteManagerGift(simulation, gift?.id, gift?.itemId, gift?.count);
+    if (!quote || !giftManager(simulation, quote) || !Object.hasOwn(roles, quote.id)) return null;
+    quotes.push(quote);
+    const role = roles[quote.id];
+    role.after = simulation.managers.roles[quote.id].dailyGain;
+    role.gain += quote.gain;
+    role.value += quote.value;
+    role.returnValue += quote.returnValue;
+    role.wanted ||= quote.wanted;
+    value += quote.value;
+  }
+  return { gifts: quotes, roles, value, remainingAfter: managerGiftRemaining(simulation) };
+}
+
+export function giftAllManagers(world, expected) {
+  if (!Array.isArray(expected) || expected.length === 0) return false;
+  // Every gift must still match its shown quote in sequence before any of them is committed.
+  const simulation = giftAllWorld(world);
+  for (const gift of expected) {
+    if (!giftManager(simulation, gift)) return false;
+  }
+  const byRole = new Map();
+  let value = 0n;
+  for (const gift of expected) {
+    const quote = giftManager(world, gift);
+    const role = byRole.get(quote.id) ?? { id: quote.id, wanted: false, gain: 0n };
+    role.wanted ||= quote.wanted;
+    role.gain += quote.gain;
+    byRole.set(quote.id, role);
+    value += quote.value;
+  }
+  const roles = managerIds.filter((id) => byRole.has(id)).map((id) => byRole.get(id));
+  return { roles, value };
+}
+
 export function claimManagerGift(world, expected) {
   const { day, roles } = world.managers;
   const id = expected?.id;
@@ -316,6 +566,35 @@ export function claimManagerGift(world, expected) {
   setRelationship(world, id, { ...role, readyReturn: balance, sequence, readyCapsules: readyCapsules - capsules.added });
   settleProduction(world);
   return { id, items, value, capsules };
+}
+
+// Claims several ready returns in one transaction. `claims` are the `managerStatus(...).claim`
+// receipts shown to the player; any stale receipt rejects the whole batch.
+export function claimAllManagerGifts(world, claims) {
+  if (!Array.isArray(claims) || claims.length === 0) return false;
+  const items = [];
+  const byItem = new Map();
+  const capsules = { added: 0n, remaining: 0n };
+  const roles = [];
+  for (const claim of claims) {
+    const result = claimManagerGift(world, claim);
+    if (!result) return false;
+    roles.push(result.id);
+    for (const { itemId, count, value } of result.items) {
+      const previous = byItem.get(itemId);
+      if (previous) {
+        previous.count += count;
+        previous.value += value;
+      } else {
+        const item = { itemId, count, value };
+        items.push(item);
+        byItem.set(itemId, item);
+      }
+    }
+    capsules.added += result.capsules.added;
+    capsules.remaining += result.capsules.remaining;
+  }
+  return { roles, items, capsules };
 }
 
 export function switchManagerAppearance(world, id) {

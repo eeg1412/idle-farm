@@ -207,7 +207,7 @@ function batchReplace(ui, kind, targets, source, action) {
     const choices = workshop ? workshopRecipes(dlg, kind, filter)
       : dlg.w.unlocked.filter((id) => catalog.items[id]?.kind === kind);
     if (!choices.length) {
-      dlg.text('暂无符合条件的已研发' + (workshop ? '配方' : '品种') + '。', { muted: true });
+      dlg.empty('暂无符合条件的已研发' + (workshop ? '配方' : '品种') + '。');
       dlg.button('前往研究', () => {
         dlg.close();
         dlg.go('研究', { tab: '品种配方' });
@@ -238,15 +238,27 @@ function batchUpgrade(ui, kind, targets) {
   let steps = batchUpgradeSteps[0];
   let pending = false;
   ui.dialog('批量升级', (dlg) => {
-    const quote = batchUpgradeOffer(dlg.w, kind, targets, steps);
+    const even = dlg.w.settings.batchUpgradeEven === true;
+    const quote = batchUpgradeOffer(dlg.w, kind, targets, steps, even);
+    // On: the same total levels go to the lowest levels first.
+    dlg.toggle('平均分配', even, async (on) => {
+      if (pending || !await dlg.quietAction('updateSettings', { batchUpgradeEven: on })) return;
+      dlg.refresh();
+    });
     dlg.row('升级数量', String(targets.length));
     if (quote) {
       const slots = isWorkshop(kind) ? dlg.w.stations[kind] : dlg.w.facilities[kind];
-      const levels = targets.map((index) => BigInt(slots[index].level));
-      const low = levels.reduce((value, level) => level < value ? level : value);
-      const high = levels.reduce((value, level) => level > value ? level : value);
-      const range = (from, to) => compact(from) + (from === to ? '' : '～' + compact(to)) + ' 级';
-      dlg.row('等级', { from: range(low, high), to: range(low + steps, high + steps) }, { style: 'comparison' });
+      const lowest = (list) => list.reduce((value, level) => level < value ? level : value);
+      const highest = (list) => list.reduce((value, level) => level > value ? level : value);
+      const before = targets.map((index) => BigInt(slots[index].level));
+      const range = (list) => {
+        const from = lowest(list);
+        const to = highest(list);
+        return compact(from) + (from === to ? '' : '～' + compact(to)) + ' 级';
+      };
+      dlg.row('等级', { from: range(before), to: range(quote.levels) }, { style: 'comparison' });
+      // The comparison row ends with a divider; keep the step buttons clear of it.
+      dlg.space(9);
     }
     dlg.buttons(batchUpgradeSteps.map((step) => ({
       label: '+' + step,
@@ -263,7 +275,7 @@ function batchUpgrade(ui, kind, targets) {
       : '升级后按新等级计算产出，进行中的批次收获时间不变。', { muted: true });
     dialogButtons(dlg, pending ? '升级中…' : '确认升级', async () => {
       if (pending || !quote?.affordable || !dlg.isActive()) return;
-      const current = batchUpgradeOffer(dlg.currentWorld(), kind, targets, steps);
+      const current = batchUpgradeOffer(dlg.currentWorld(), kind, targets, steps, even);
       if (!current?.affordable || current.cost !== quote.cost) {
         dlg.refresh();
         return;
@@ -271,7 +283,7 @@ function batchUpgrade(ui, kind, targets) {
       pending = true;
       dlg.refresh();
       try {
-        await dlg.action('upgradeProductionBatch', kind, targets, steps, quote.cost);
+        await dlg.action('upgradeProductionBatch', kind, targets, steps, quote.cost, even);
       } finally {
         pending = false;
         if (dlg.isActive()) dlg.refresh();
@@ -738,7 +750,7 @@ function chooseRecipe(ui, kind, index, source) {
       dlg.text('改用其他配方会中止本批，已扣材料退回仓库。', { muted: true });
     }
     if (!choices.length) {
-      dlg.text('暂无已研发的配方。');
+      dlg.empty('暂无已研发的配方。');
       dlg.button('前往研究', () => {
         dlg.close();
         dlg.go('研究', { tab: '品种配方' });
@@ -1017,7 +1029,7 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
       if (compactMode) compactProductionCard(cell, kind, index, slot, source);
       else stationCard(cell, kind, index, slot, source);
     }, { columns: compactMode ? 'auto' : 1, focusIndex });
-  } else ui.text('没有符合筛选条件的工位。', { muted: true });
+  } else ui.empty('没有符合筛选条件的工位。', { icon: 'nav-workshop' });
   const quote = stationOffer(ui.w, kind);
   // Fixed page footer: must stay the last draw call of the page.
   ui.footer(capsuleFooter(ui, kind, {

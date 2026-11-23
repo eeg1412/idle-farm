@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  capsuleHoldLimit, capsuleUseLimit, capsuleUseOffer, grantCapsules, previewCapsuleUse, useCapsules,
+  capsuleUseLimit, capsuleUseOffer, grantCapsules, previewCapsuleUse, useCapsules,
 } from '../src/game/capsules.js';
 import {
   advanceWorld, arrangeStation, assignFacility, buyStation, newWorld, productionDurationMs, quantity,
@@ -31,16 +31,15 @@ function chainWorld({ C02 = 40n, C03 = 10n } = {}) {
   return world;
 }
 
-test('grantCapsules stops at the holding limit and reports what is left over', () => {
+test('grantCapsules adds every capsule because holdings have no cap', () => {
   const world = newWorld(0);
   assert.equal(world.capsules, 0n);
   assert.equal(world.pendingTaskCapsules, 0n);
   assert.deepEqual(grantCapsules(world, 1_000n), { added: 1_000n, remaining: 0n });
-  assert.deepEqual(grantCapsules(world, capsuleHoldLimit), { added: capsuleHoldLimit - 1_000n, remaining: 1_000n });
-  assert.equal(world.capsules, capsuleHoldLimit);
-  assert.deepEqual(grantCapsules(world, 500n), { added: 0n, remaining: 500n });
+  assert.deepEqual(grantCapsules(world, 10n ** 9n), { added: 10n ** 9n, remaining: 0n });
   assert.deepEqual(grantCapsules(world, 0n), { added: 0n, remaining: 0n });
-  assert.equal(world.capsules, capsuleHoldLimit);
+  assert.deepEqual(grantCapsules(world, -1n), { added: 0n, remaining: 0n });
+  assert.equal(world.capsules, 10n ** 9n + 1_000n);
 });
 
 test('facility fast-forward matches a real advance of the same span without moving the clock', () => {

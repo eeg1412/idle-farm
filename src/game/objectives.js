@@ -379,8 +379,8 @@ export function settleTaskRewards(world) {
   world.taskRewards = [...previous, ...ids];
   world.coins += coins;
   world.researchPoints += researchPoints;
-  // Only receipts issued in this settlement grant capsules; what exceeds the holding cap
-  // waits in pendingTaskCapsules instead of being discarded.
+  // Only receipts issued in this settlement grant capsules. Holdings have no cap, so overflow is
+  // always 0n; pendingTaskCapsules only holds what older saves left waiting.
   let capsules = 0n;
   let capsuleOverflow = 0n;
   if (capsuleReward > 0n) {
@@ -392,7 +392,7 @@ export function settleTaskRewards(world) {
   return { ids, coins, researchPoints, capsules, capsuleOverflow };
 }
 
-// Moves pending task capsules into holdings up to the cap; the rest keeps waiting.
+// Moves capsules that older saves left pending into holdings (all of them; there is no cap).
 // Returns false when nothing is pending.
 export function claimTaskCapsules(world) {
   const pending = world.pendingTaskCapsules ?? 0n;

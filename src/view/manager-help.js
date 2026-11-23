@@ -70,10 +70,8 @@ function upgradeStep(world, kind, target, speaker) {
   let index = slots.findIndex((slot, index) => BigInt(slot.level) < target && quote(world, kind, index, 1n)?.affordable);
   if (index < 0) index = slots.findIndex((slot) => BigInt(slot.level) < target);
   if (index < 0) return otherStationCopy(speaker);
-  const empty = world.facilities[kind] && !slots[index].recipe;
-  const entry = empty ? '点第' + (index + 1) + '个' + placeNames[kind] + '的图片打开详情，再点「升级」'
-    : '点第' + (index + 1) + '个' + placeNames[kind] + '的「升级」';
-  return productionHelpCopy(speaker, 'upgrade', { index: index + 1, place: placeNames[kind], target, entry });
+  // The copy points to batch upgrade instead of naming a slot or a step count.
+  return productionHelpCopy(speaker, 'upgrade', { place: placeNames[kind], target });
 }
 
 function firstUnlocked(world, predicate) {
@@ -160,12 +158,10 @@ export function managerUpgradeMessages(world, page, speaker) {
     const facilities = Boolean(facilityKinds[page]);
     const slots = slotsFor(world, kind);
     const quote = facilities ? facilityOffer : stationUpgradeOffer;
-    for (const [index, slot] of slots.entries()) {
-      if (!quote(world, kind, index, 1n)?.affordable) continue;
-      const entry = facilities && !slot.recipe ? '点第' + (index + 1) + '个' + placeNames[kind] + '的图片打开详情，再点「升级」'
-        : '点第' + (index + 1) + '个' + placeNames[kind] + '的「升级」';
-      messages.push({ text: productionHelpCopy(speaker, 'upgradeReady', { index: index + 1, place: placeNames[kind], entry }),
-        priority: 1, emphasis: ['升级', '确认升级'], expression: 'smile' });
+    // One hint per page when anything can be upgraded; batch upgrade covers every slot at once.
+    if (slots.some((slot, index) => quote(world, kind, index, 1n)?.affordable)) {
+      messages.push({ text: productionHelpCopy(speaker, 'upgradeReady', { place: placeNames[kind] }),
+        priority: 1, emphasis: ['批量管理', '全选', '升级'], expression: 'smile' });
     }
   }
   cached.set(key, messages);

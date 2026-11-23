@@ -7,7 +7,6 @@ import {
   deposit, orderedStations, popEvent, productionDurationMs, productionRestarter, pushEvent, settleProduction, startFacility,
 } from './world.js';
 
-export const capsuleHoldLimit = 144_000n;
 export const capsulesPerMinute = 100n;
 export const capsuleUseLimit = 12_000n;
 export const capsuleStep = 100n;
@@ -21,12 +20,11 @@ const maximumMinutes = Number(capsuleUseLimit / capsulesPerMinute);
 
 const owned = (world) => world.capsules ?? 0n;
 
+// Holdings have no cap; `remaining` stays in the result shape and is always 0n.
 export function grantCapsules(world, amount) {
   if (typeof amount !== 'bigint' || amount < 0n) return { added: 0n, remaining: 0n };
-  const room = capsuleHoldLimit - owned(world);
-  const added = room <= 0n ? 0n : amount < room ? amount : room;
-  world.capsules = owned(world) + added;
-  return { added, remaining: amount - added };
+  world.capsules = owned(world) + amount;
+  return { added: amount, remaining: 0n };
 }
 
 const copyGroups = (groups) => Object.fromEntries(Object.entries(groups).map(([kind, slots]) =>
@@ -213,7 +211,7 @@ function countUntil(timeline, durationMs) {
 // Quote on a settled projection. Returns the public offer plus the station timeline for previews.
 function quote(world, kind) {
   const base = { kind, owned: owned(world), maximum: 0n, step: capsuleStep, perMinute: capsulesPerMinute,
-    useLimit: capsuleUseLimit, holdLimit: capsuleHoldLimit, minutes: 0, batches: 0n, available: false,
+    useLimit: capsuleUseLimit, minutes: 0, batches: 0n, available: false,
     stallMinutes: null, guardMinutes: null };
   if (!capsuleKinds.includes(kind)) return { offer: base, sim: null, timeline: null };
   const sim = projectProduction(world);

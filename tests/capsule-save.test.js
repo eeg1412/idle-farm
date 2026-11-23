@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { IDBFactory } from 'fake-indexeddb';
-import { capsuleHoldLimit } from '../src/game/capsules.js';
 import { managerAffinityThreshold, managerAffinityThresholds, managerStatus } from '../src/game/managers.js';
 import { taskCapsuleRewardTotal } from '../src/game/objectives.js';
 import { assignFacility, farmSaleOffer, newWorld, sellFarm } from '../src/game/world.js';
@@ -45,9 +44,9 @@ test('capsule balances and ready capsules save as decimal text and read back as 
   assert.equal(loaded.pendingTaskCapsules, 4_500n);
   assert.deepEqual(loaded.managers, decoded.managers);
   // A second write reuses the loaded world without BigInt serialization errors.
-  loaded.capsules = capsuleHoldLimit;
+  loaded.capsules = 10n ** 12n;
   loaded.revision = await writeWorldSave(db, loaded);
-  assert.equal((await readWorldSave(db)).capsules, capsuleHoldLimit);
+  assert.equal((await readWorldSave(db)).capsules, 10n ** 12n);
 });
 
 test('records from before time capsules read every capsule field as zero', () => {
@@ -62,15 +61,15 @@ test('records from before time capsules read every capsule field as zero', () =>
   assert.equal(encodeWorldRecord(decoded).capsules, '0');
 });
 
-test('capsule fields accept their limits and reject values beyond them', () => {
+test('capsule holdings have no cap; other capsule fields keep their limits', () => {
   const record = encodeWorldRecord(capsuleWorld());
   const accepted = structuredClone(record);
-  accepted.capsules = String(capsuleHoldLimit);
+  accepted.capsules = '1000000000000';
   accepted.pendingTaskCapsules = String(taskCapsuleRewardTotal);
-  assert.equal(decodeWorldRecord(accepted).capsules, 144_000n);
+  assert.equal(decodeWorldRecord(accepted).capsules, 10n ** 12n);
   assert.equal(decodeWorldRecord(accepted).pendingTaskCapsules, 186_100n);
 
-  for (const [key, value] of [['capsules', '144001'], ['capsules', '-1'], ['capsules', 5],
+  for (const [key, value] of [['capsules', '-1'], ['capsules', 5],
     ['pendingTaskCapsules', '186101'], ['pendingTaskCapsules', '-1'], ['pendingTaskCapsules', '1.5']]) {
     const invalid = structuredClone(record);
     invalid[key] = value;
@@ -82,8 +81,8 @@ test('capsule fields accept their limits and reject values beyond them', () => {
     rejects(invalid);
   }
   const live = capsuleWorld();
-  live.capsules = capsuleHoldLimit + 1n;
-  assert.throws(() => encodeWorldRecord(live));
+  live.capsules = 10n ** 12n;
+  assert.equal(decodeWorldRecord(encodeWorldRecord(live)).capsules, 10n ** 12n);
 });
 
 test('affinity above the former level-10 maximum stays readable', () => {

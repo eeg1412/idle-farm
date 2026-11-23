@@ -80,7 +80,7 @@ export function saleDate(time) {
 
 export function renderFarmSaleHistory(ui) {
   const records = ui.w.farmSaleHistory ?? [];
-  if (!records.length) { ui.text('还没有出售记录。', silent); return; }
+  if (!records.length) { ui.empty('还没有出售记录。', { icon: 'sale-history' }); return; }
   ui.scrollList([...records].reverse(), (cell, record) => cell.card((card) => {
     card.heading('第 ' + count(record.run) + ' 次出售', { size: 18 });
     card.text(saleDate(record.soldAt), silent);

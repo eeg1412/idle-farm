@@ -209,7 +209,7 @@ test('capsule draws replace the unclaimed ones the next day, clear over a gap an
   assert.equal(unseeded.managers.roles.field.readyCapsules, 0n);
 });
 
-test('claiming capsules alone credits up to the holding cap and keeps the rest ready', () => {
+test('claiming capsules alone credits all of them because holdings have no cap', () => {
   const world = managerWorld();
   synchronizeManagerCalendar(world, '2026-11-19');
   setRole(world, 'field', { readyCapsules: 500n });
@@ -220,16 +220,9 @@ test('claiming capsules alone credits up to the holding cap and keeps the rest r
   const sequence = world.managers.roles.field.sequence;
 
   const result = claimManagerGift(world, status.claim);
-  assert.deepEqual(result, { id: 'field', items: [], value: 0n, capsules: { added: 100n, remaining: 400n } });
-  assert.equal(world.capsules, 144_000n);
-  assert.equal(world.managers.roles.field.readyCapsules, 400n);
+  assert.deepEqual(result, { id: 'field', items: [], value: 0n, capsules: { added: 500n, remaining: 0n } });
+  assert.equal(world.capsules, 144_400n);
   assert.equal(world.managers.roles.field.sequence, sequence);
-  assert.ok(managerStatus(world, 'field').claim);
-
-  world.capsules = 0n;
-  const rest = claimManagerGift(world, managerStatus(world, 'field').claim);
-  assert.deepEqual(rest.capsules, { added: 400n, remaining: 0n });
-  assert.equal(world.capsules, 400n);
   assert.equal(world.managers.roles.field.readyCapsules, 0n);
   assert.equal(managerStatus(world, 'field').claim, null);
   assert.equal(claimManagerGift(world, { id: 'field', day: world.managers.day, run: 0, sequence }), false);
