@@ -286,6 +286,11 @@ function showOffline() {
   const report = world?.pendingOffline;
   // A native file window can hide the document; keep its import flow in front.
   if (!report || updatePromptOpen || view.isImportingSave() || view.hasMerchantRefreshNotice()) return;
+  // A prerendered page has a single history entry; its dialog entry would make「知道了」leave the game.
+  if (document.prerendering) {
+    document.addEventListener('prerenderingchange', showOffline, { once: true });
+    return;
+  }
   if (offlineDialogId === report.id) return;
   offlineDialogId = report.id;
   const seconds = Math.floor(report.elapsedMs / 1000);

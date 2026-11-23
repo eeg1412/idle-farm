@@ -14,6 +14,8 @@ const replacementNames = { C: '换种', L: '更换品种', F: '更换品种', M:
 const taskCache = new WeakMap();
 const upgradeCache = new WeakMap();
 const researchHelpCache = new WeakMap();
+// Every 「」 term is a button or page name and is always red; extra terms cover unquoted keywords.
+const quotedTerms = (text, extra = []) => [...new Set([...extra, ...[...text.matchAll(/「([^」]+)」/g)].map((match) => match[1])])];
 const tutorial = (text, emphasis = []) => ({ text, emphasis, priority: 2, expression: 'smile' });
 
 function guideState(world) {
@@ -143,7 +145,7 @@ export function managerTutorial(world, page, speaker) {
   const text = taskInstruction(world, task, page === '任务' ? destination : page, speaker);
   if (!text) return null;
   const spoken = page === '任务' ? tutorialDestination(speaker, destination, text) : text;
-  return { ...tutorial(spoken, [...new Set([...spoken.matchAll(/「([^」]+)」/g)].map((match) => match[1]))]), taskId: task.id };
+  return { ...tutorial(spoken, quotedTerms(spoken)), taskId: task.id };
 }
 
 export function managerUpgradeMessages(world, page, speaker) {
@@ -160,8 +162,8 @@ export function managerUpgradeMessages(world, page, speaker) {
     const quote = facilities ? facilityOffer : stationUpgradeOffer;
     // One hint per page when anything can be upgraded; batch upgrade covers every slot at once.
     if (slots.some((slot, index) => quote(world, kind, index, 1n)?.affordable)) {
-      messages.push({ text: productionHelpCopy(speaker, 'upgradeReady', { place: placeNames[kind] }),
-        priority: 1, emphasis: ['批量管理', '全选', '升级'], expression: 'smile' });
+      const text = productionHelpCopy(speaker, 'upgradeReady', { place: placeNames[kind] });
+      messages.push({ text, priority: 1, emphasis: quotedTerms(text), expression: 'smile' });
     }
   }
   cached.set(key, messages);
@@ -183,20 +185,15 @@ export function managerResearchHelp(world, tab, speaker) {
     const single = qualityDrawOffer(world, 'single');
     if (single?.affordable) {
       const all = qualityDrawOffer(world, 'all');
-      messages.push({
-        text: researchHelpCopy(speaker, 'quality', { all: all.affordable && all.count > 1n }),
-        emphasis: ['抽取一次', ...(all.affordable && all.count > 1n ? ['全部抽取'] : [])],
-        expression: 'smile', priority: 1,
-      });
+      const text = researchHelpCopy(speaker, 'quality', { all: all.affordable && all.count > 1n });
+      messages.push({ text, emphasis: quotedTerms(text), expression: 'smile', priority: 1 });
     }
   } else if (tab === '经营改良') {
     for (const definition of techDefinitions) {
       const offer = techOffer(world, definition.key);
       if (!offer?.eligible || !offer.affordable) continue;
-      messages.push({
-        text: researchHelpCopy(speaker, 'tech', { name: definition.name }),
-        emphasis: ['经营改良', definition.name, '确认升级'], expression: 'smile', priority: 1,
-      });
+      const text = researchHelpCopy(speaker, 'tech', { name: definition.name });
+      messages.push({ text, emphasis: quotedTerms(text), expression: 'smile', priority: 1 });
     }
   }
   cached.set(key, messages);
@@ -209,7 +206,6 @@ export function managerContextHelp(role, gender, type, details = {}) {
   const introductionEmphasis = { 角色管理: ['好感', '今日心愿', '送礼', '切换角色'],
     统计: ['生产状态', '库存估值', '累计收入'], 出售庄园历史: ['时间', '产值'],
     图鉴: ['材料', '来源', '用途', '研发条件'], 出售庄园: ['高级研发点', '新一轮配置'] };
-  const emphasis = type === 'introduction' ? introductionEmphasis[details.page] ?? []
-    : [...new Set([...text.matchAll(/「([^」]+)」/g)].map((match) => match[1]))];
+  const emphasis = quotedTerms(text, type === 'introduction' ? introductionEmphasis[details.page] ?? [] : []);
   return { text, emphasis, expression: type === 'missing' ? 'sad' : 'smile' };
 }
