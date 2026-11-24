@@ -5,6 +5,7 @@ const at = ({ index, place }) => '第' + index + '个' + place;
 const productionCopy = {
   tasks: say({
     buy: (d) => '要先有个生产的地方。点' + quote(d.purchase) + '，金额合适就点「确认购买」。',
+    buyMore: (d) => '再建一座吧。点' + quote(d.purchase) + '，金额合适就点「确认购买」。',
     funds: (d) => '钱还差一点，别急。先去仓库挑几样点「出售」，凑够了再点' + quote(d.purchase) + '。',
     empty: (d) => '放' + at(d) + '就好。点' + quote(d.button) + '，选' + quote(d.name) + '。',
     locked: (d) => quote(d.name) + '还没解锁呢。去研究的「品种配方」找到它，条件够了点「研发」，再回来排。',
@@ -15,6 +16,7 @@ const productionCopy = {
     upgradeReady: (d) => '有' + d.place + '能升级了，升了产得多。点「批量管理」，「全选」，「升级」，再「确认升级」。',
   }, {
     buy: (d) => '还没有生产位置。点' + quote(d.purchase) + '，金额没问题就点「确认购买」。',
+    buyMore: (d) => '再添一座。点' + quote(d.purchase) + '，金额没问题就点「确认购买」。',
     funds: (d) => '购置费不够。去仓库「出售」些货，够了再点' + quote(d.purchase) + '。',
     empty: (d) => quote(d.name) + '，放' + at(d) + '。点' + quote(d.button) + '选它。',
     locked: (d) => '先解锁' + quote(d.name) + '：研究的「品种配方」，条件齐了点「研发」，然后回来排。',
@@ -45,6 +47,7 @@ const productionCopy = {
   }),
   livestock: say({
     buy: (d) => '添个养殖场吧！点' + quote(d.purchase) + '，「确认购买」完就能挑小家伙了！',
+    buyMore: (d) => '再盖一个养殖场吧，能多养好多小家伙！点' + quote(d.purchase) + '，然后「确认购买」！',
     funds: (d) => '哎呀，钱还差点！去仓库「出售」些货，够了快回来点' + quote(d.purchase) + '！',
     empty: (d) => at(d) + '空空的！点' + quote(d.button) + '，把' + quote(d.name) + '接进来！',
     locked: (d) => '想养' + quote(d.name) + '？先去研究的「品种配方」，条件凑齐点「研发」！',
@@ -54,6 +57,7 @@ const productionCopy = {
     upgradeReady: (d) => '养殖场能升级啦！点「批量管理」，「全选」，「升级」，「确认升级」，一下全升好！',
   }, {
     buy: (d) => '先盖个养殖场，动物才有地方待。点' + quote(d.purchase) + '，看着合适就「确认购买」。',
+    buyMore: (d) => '再盖一个养殖场，地方宽敞些。点' + quote(d.purchase) + '，看着合适就「确认购买」。',
     funds: (d) => '钱差一点，不急。去仓库「出售」点货，够了再来点' + quote(d.purchase) + '。',
     empty: (d) => at(d) + '空着呢，养' + quote(d.name) + '怎么样？点' + quote(d.button) + '选它就行。',
     locked: (d) => quote(d.name) + '还得先研发。研究的「品种配方」里看看条件，够了点「研发」。',
@@ -64,6 +68,7 @@ const productionCopy = {
   }),
   fish: say({
     buy: (d) => '先把鱼塘买下，养鱼交给我！点' + quote(d.purchase) + '，然后「确认购买」！',
+    buyMore: (d) => '再来一口鱼塘，我照样养得好！点' + quote(d.purchase) + '，然后「确认购买」！',
     funds: (d) => '钱不够？那就先出货！仓库里「出售」一批，够了回来点' + quote(d.purchase) + '！',
     empty: (d) => at(d) + '就养' + quote(d.name) + '！点' + quote(d.button) + '，选它！',
     locked: (d) => quote(d.name) + '还没研发出来。去研究的「品种配方」，条件够了点「研发」，我等着！',
@@ -73,6 +78,7 @@ const productionCopy = {
     upgradeReady: (d) => '鱼塘能升级了！点「批量管理」，「全选」，「升级」，「确认升级」，一口气升上去！',
   }, {
     buy: (d) => '没鱼塘，鱼可没地方住。点' + quote(d.purchase) + '，价钱顺眼就「确认购买」。',
+    buyMore: (d) => '一口塘有点挤，再挖一口。点' + quote(d.purchase) + '，价钱顺眼就「确认购买」。',
     funds: (d) => '钱包比鱼塘还浅啊。去仓库「出售」点货，回头再点' + quote(d.purchase) + '。',
     empty: (d) => at(d) + '冷清得能听见回声，放' + quote(d.name) + '进去吧。点' + quote(d.button) + '就行。',
     locked: (d) => quote(d.name) + '还没研发，想钓也钓不着。去研究的「品种配方」，备齐点「研发」。',
@@ -83,6 +89,7 @@ const productionCopy = {
   }),
   mine: say({
     buy: (d) => '……先买矿洞。点' + quote(d.purchase) + '，「确认购买」。',
+    buyMore: (d) => '……再开一个矿洞。点' + quote(d.purchase) + '，「确认购买」。',
     funds: (d) => '钱不够。……去仓库「出售」点货，再来点' + quote(d.purchase) + '。',
     empty: (d) => at(d) + '。点' + quote(d.button) + '，选' + quote(d.name) + '。',
     locked: (d) => quote(d.name) + '……没研发。研究的「品种配方」，条件齐了点「研发」。',
@@ -92,6 +99,7 @@ const productionCopy = {
     upgradeReady: (d) => '矿洞能升级。「批量管理」，「全选」，「升级」，「确认升级」。',
   }, {
     buy: (d) => '没有矿洞不能开采。点' + quote(d.purchase) + '，金额核过再「确认购买」。',
+    buyMore: (d) => '再开一座矿洞。点' + quote(d.purchase) + '，金额核过再「确认购买」。',
     funds: (d) => '金币不足，先别买。去仓库「出售」一部分货，够了再点' + quote(d.purchase) + '。',
     empty: (d) => '开采放在' + at(d) + '。点' + quote(d.button) + '，选' + quote(d.name) + '。',
     locked: (d) => quote(d.name) + '还不能开采。研究的「品种配方」里条件满足后点「研发」，再回来安排。',

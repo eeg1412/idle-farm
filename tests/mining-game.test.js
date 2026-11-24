@@ -228,9 +228,13 @@ test('mine tasks follow successful operations once and farm handoff clears mines
   assert.ok(assignFacility(world, 'M', 0, 'M01'));
   advanceWorld(world, world.facilities.M[0].batch.end);
   const reward = settleTaskRewards(world);
-  for (const id of ['miningIntro', 'buildMine', 'collectMining', 'miningUpgrade', 'miningTop']) {
+  for (const id of ['miningIntro', 'collectMining', 'miningUpgrade', 'miningTop']) {
     assert.ok(reward.ids.includes(id));
   }
+  assert.equal(reward.ids.includes('buildMine'), false);
+  assert.deepEqual(settleTaskRewards(world).ids, []);
+  assert.ok(buyFacility(world, 'M'));
+  assert.deepEqual(settleTaskRewards(world).ids, ['buildMine']);
   assert.deepEqual(settleTaskRewards(world).ids, []);
   const recipe = 'PM21';
   for (const { id, needed } of stationRequirements(world, recipe, 1n)) world.inventory[id] = needed;
@@ -243,7 +247,7 @@ test('mine tasks follow successful operations once and farm handoff clears mines
   const receipt = [...world.taskRewards];
   const value = world.lifetimeProductionValue;
   const offer = farmSaleOffer(world);
-  assert.equal(offer.mineCount, 1);
+  assert.equal(offer.mineCount, 2);
   assert.ok(buyFacility(world, 'M'));
   assert.equal(sellFarm(world, offer), false);
   assert.ok(sellFarm(world, farmSaleOffer(world)));

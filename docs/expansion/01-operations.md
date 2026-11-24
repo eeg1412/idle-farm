@@ -200,7 +200,7 @@ W与设施M(k)同式，成本随等级按六次方项增长。以下工位金额
 | `milleCrepe`、`threeSectorGift`、`livestockTop`、`fishTop`、`miningTop`、`miningProduct` | 对应品项研发金币的一半 |
 | 六项长期品质任务 | 累计成功抽取 6／30／120／360／1,080／3,240 次，直接奖励 `100×m×抽数` 金 |
 
-矿业新增支线 `miningIntro/buildMine/collectMining/miningUpgrade/firstMiningProcessing`；长期 `miningTop` 要求研发 M10、`miningProduct` 要求 PM14 完工。两项长期金币上限分别为 M10／PM14 研发金币的一半；其他矿业任务基准对齐水产，不新增高级点奖励。
+矿业新增支线 `miningIntro/collectMining/buildMine/miningUpgrade/firstMiningProcessing`（`buildMine` 要求累计购买 2 座矿洞）；长期 `miningTop` 要求研发 M10、`miningProduct` 要求 PM14 完工。两项长期金币上限分别为 M10／PM14 研发金币的一半；其他矿业任务基准对齐水产，不新增高级点奖励。
 
 目录相关上限及品质任务金额见 `src/content/task-coin-caps.json`，研发金币取未打折原价。其余任务的金币与金额门槛由基准金额乘 m 得出。高级点奖励按任务合计 40,151 点：`collection200` 500、`collection300` 2,000、`collection400` 6,000、`itemCollection` 19,451，四项长期交接 200／1,000／3,000／8,000 点。领取 ID 与金币、高级点同事务结算。已领取的品质任务在读档后继续显示已完成。科技全满沿用已领取记录，卡片显示完成条件与「已完成」，不显示奖励行。
 

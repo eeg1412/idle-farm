@@ -43,7 +43,8 @@ function slotsFor(world, kind) {
 
 function purchaseStep(world, kind, speaker) {
   const quote = Object.hasOwn(world.facilities, kind) ? facilityOffer(world, kind) : stationOffer(world, kind);
-  return productionHelpCopy(speaker, quote && !quote.affordable ? 'funds' : 'buy', { purchase: purchaseNames[kind] });
+  const more = (kind === 'L' || kind === 'F' || kind === 'M') && world.facilities[kind].length > 0;
+  return productionHelpCopy(speaker, quote && !quote.affordable ? 'funds' : more ? 'buyMore' : 'buy', { purchase: purchaseNames[kind] });
 }
 
 function assignStep(world, kind, id, speaker) {

@@ -937,18 +937,18 @@ A = 农田／养殖场／鱼塘／矿洞 300m，加工位 750m，精制位 950m
 | 支线 | 序 | ID | 名称 | 完成条件 | 入口 | 金币 |
 | --- | ---: | --- | --- | --- | --- | ---: |
 | 畜牧 | 1 | livestockIntro | 建造第一座养殖场 | `stats.boughtL` ≥1 | 畜牧 | 70,000 |
-| 畜牧 | 2 | buildLivestock | 建造养殖场 | `stats.boughtL` ≥1 | 畜牧 | 17,500 |
-| 畜牧 | 3 | collectLivestock | 畜牧产物入库 | 历史产出L类合计 ≥1 | 畜牧 | 17,500 |
+| 畜牧 | 2 | collectLivestock | 畜牧产物入库 | 历史产出L类合计 ≥1 | 畜牧 | 17,500 |
+| 畜牧 | 3 | buildLivestock | 建造第二座养殖场 | `stats.boughtL` ≥2 | 畜牧 | 17,500 |
 | 畜牧 | 4 | livestockUpgrade | 养殖场升级 | `maxLevel(养殖场)` ≥5 | 畜牧 | 22,500 |
 | 畜牧 | 5 | firstLivestockProcessing | 加工畜牧原料 | 历史产出IL类合计 ≥1 | 工坊 · 加工 | 100,000 |
 | 水产 | 1 | fishIntro | 建造第一座鱼塘 | `stats.boughtF` ≥1 | 鱼塘 | 90,000 |
-| 水产 | 2 | buildFish | 建造鱼塘 | `stats.boughtF` ≥1 | 鱼塘 | 22,500 |
-| 水产 | 3 | collectFish | 鱼类入库 | 历史产出F类合计 ≥1 | 鱼塘 | 22,500 |
+| 水产 | 2 | collectFish | 鱼类入库 | 历史产出F类合计 ≥1 | 鱼塘 | 22,500 |
+| 水产 | 3 | buildFish | 建造第二座鱼塘 | `stats.boughtF` ≥2 | 鱼塘 | 22,500 |
 | 水产 | 4 | fishUpgrade | 鱼塘升级 | `maxLevel(鱼塘)` ≥5 | 鱼塘 | 22,500 |
 | 水产 | 5 | firstFishProcessing | 加工水产原料 | 历史产出IF类合计 ≥1 | 工坊 · 加工 | 125,000 |
 | 矿业 | 1 | miningIntro | 建造第一座矿洞 | `stats.boughtM` ≥1 | 矿洞 | 90,000 |
-| 矿业 | 2 | buildMine | 建造矿洞 | `stats.boughtM` ≥1 | 矿洞 | 22,500 |
-| 矿业 | 3 | collectMining | 矿产入库 | 历史产出M类合计 ≥1 | 矿洞 | 22,500 |
+| 矿业 | 2 | collectMining | 矿产入库 | 历史产出M类合计 ≥1 | 矿洞 | 22,500 |
+| 矿业 | 3 | buildMine | 建造第二座矿洞 | `stats.boughtM` ≥2 | 矿洞 | 22,500 |
 | 矿业 | 4 | miningUpgrade | 矿洞升级 | `maxLevel(矿洞)` ≥5 | 矿洞 | 22,500 |
 | 矿业 | 5 | firstMiningProcessing | 加工矿业原料 | 历史产出IM类合计 ≥1 | 工坊 · 加工 | 125,000 |
 | 复合 | 1 | firstMixedProduct | 制作复合商品 | 历史生产入库至少 1 份含两个或以上产业来源的商品 | 工坊 · 精制 | 350,000 |
