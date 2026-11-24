@@ -144,6 +144,10 @@ function isWorkshop(kind) {
   return Object.hasOwn(stationNames, kind);
 }
 
+function placeName(kind) {
+  return stationNames[kind] ?? facilityNames[kind];
+}
+
 function emptySlotName(kind) {
   if (kind === 'C') return '空地';
   return '空' + (stationNames[kind] ?? facilityNames[kind]);
@@ -236,7 +240,8 @@ function batchClear(ui, kind, targets) {
     const occupied = targets.map((index) => slots[index]).filter((slot) => slot?.recipe || slot?.batch || slot?.planting);
     dlg.row('待清空数量', String(occupied.length));
     batchImpact(dlg, kind, occupied.filter((slot) => slot.batch).length);
-    dialogButtons(dlg, '确认清空', () => submit(dlg, 'clearProductionBatch', [kind, targets], null, '已批量清空'), !occupied.length, undefined, '选中的位置都是空的');
+    dialogButtons(dlg, '确认清空', () => submit(dlg, 'clearProductionBatch', [kind, targets], null, '已批量清空'), !occupied.length, undefined,
+      '选中的' + placeName(kind) + '都空着');
   });
 }
 
@@ -251,7 +256,7 @@ function batchUpgrade(ui, kind, targets) {
       if (pending || !await dlg.quietAction('updateSettings', { batchUpgradeEven: on })) return;
       dlg.refresh();
     });
-    dlg.row('升级数量', quote && quote.count < targets.length ? quote.count + ' / ' + targets.length : String(targets.length));
+    dlg.row('能升级', (quote?.count ?? targets.length) + ' / ' + targets.length + ' 处');
     if (quote) {
       const slots = isWorkshop(kind) ? dlg.w.stations[kind] : dlg.w.facilities[kind];
       const lowest = (list) => list.reduce((value, level) => level < value ? level : value);
@@ -300,7 +305,7 @@ function batchUpgrade(ui, kind, targets) {
 
 function manageProduction(ui, kind, scope, source) {
   const workshop = isWorkshop(kind);
-  const place = stationNames[kind] ?? facilityNames[kind];
+  const place = placeName(kind);
   const filterLabel = workshop && source !== sources[0] ? ' · ' + source : '';
   const selected = new Set();
   ui.dialog('批量管理 · ' + place + filterLabel, (dlg) => {
@@ -316,7 +321,7 @@ function manageProduction(ui, kind, scope, source) {
         for (const { index } of list) selected.add(index);
         dlg.refresh();
       } },
-      { label: '取消选择', disabled: !targets.length, reason: '先勾选要处理的位置', onClick: () => {
+      { label: '取消选择', disabled: !targets.length, reason: '先勾选要处理的' + place, onClick: () => {
         selected.clear();
         dlg.refresh();
       } },
@@ -338,9 +343,9 @@ function manageProduction(ui, kind, scope, source) {
       dlg.refresh();
     });
     dlg.buttons([
-      { label: replaceLabel, disabled: !targets.length, reason: '先勾选要处理的位置', onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
-      { label: '清空', disabled: !canClear, reason: targets.length ? '选中的位置都是空的' : '先勾选要处理的位置', onClick: () => batchClear(dlg, kind, targets) },
-      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable, reason: targets.length ? '金币还不够' : '先勾选要处理的位置',
+      { label: replaceLabel, disabled: !targets.length, reason: '先勾选要处理的' + place, onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
+      { label: '清空', disabled: !canClear, reason: targets.length ? '选中的' + place + '都空着' : '先勾选要处理的' + place, onClick: () => batchClear(dlg, kind, targets) },
+      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable, reason: targets.length ? '金币还不够' : '先勾选要处理的' + place,
         onClick: () => batchUpgrade(dlg, kind, targets) },
     ], { style: 'production' });
   });
@@ -353,7 +358,7 @@ function productionLayout(ui, kind, list, scope, source) {
     ui.refresh();
   }
   ui.buttons([
-    { label: '批量管理', tone: 'gold', disabled: !list.length, reason: '还没有可以管理的位置', onClick: () => manageProduction(ui, kind, scope, source) },
+    { label: '批量管理', tone: 'gold', disabled: !list.length, reason: (isWorkshop(kind) && source !== sources[0] && ui.w.stations[kind].length ? '这个筛选下没有' : '还没有') + placeName(kind), onClick: () => manageProduction(ui, kind, scope, source) },
     { label: '缩小', disabled: zoomedOut, reason: '已经是缩小视图了', onClick: () => zoom(true) },
     { label: '放大', disabled: !zoomedOut, reason: '已经是放大视图了', onClick: () => zoom(false) },
   ], { style: 'production' });
@@ -646,7 +651,7 @@ function capsuleUsable(world, kind) {
 function capsuleReason(world, kind) {
   if ((world.capsules ?? 0n) < capsuleStep) return '时空胶囊不够了';
   const slots = isWorkshop(kind) ? world.stations[kind] : world.facilities[kind];
-  return slots.some((slot) => slot.recipe && slot.batch) ? '现在没有能加速的批次' : '现在没有正在生产的批次';
+  return slots.some((slot) => slot.recipe && slot.batch) ? '现在没有能加速的生产' : '现在什么都没在生产';
 }
 
 function accelerate(ui, kind) {

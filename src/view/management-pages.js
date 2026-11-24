@@ -127,7 +127,7 @@ function salePanel(ui, id) {
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
         label: '确认出售', tone: 'gold', disabled: !chosen.affordable || state.pending,
-        reason: state.pending ? undefined : chosen.inventory === 0n ? '仓库里还没有存货' : chosen.percent === 0 ? '先选个数量吧' : '再多选一点才够一件',
+        reason: state.pending ? undefined : chosen.inventory === 0n ? '仓库里还没有存货' : chosen.percent === 0 ? '先选个数量吧' : '比例太小，凑不出一件',
         onClick: async () => {
           if (state.pending) return;
           state.pending = true;
@@ -216,7 +216,7 @@ function confirmBatchSale(ui, ids) {
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
         label: '确认出售', tone: 'gold', disabled: total.count === 0n || state.pending,
-        reason: state.pending ? undefined : state.percent === 0 ? '先选个数量吧' : '再多选一点才够一件',
+        reason: state.pending ? undefined : state.percent === 0 ? '先选个数量吧' : '比例太小，凑不出一件',
         onClick: async () => {
           if (state.pending) return;
           state.pending = true;
@@ -316,7 +316,7 @@ function warehouseDetail(ui, id) {
       { label: '出售', tone: 'gold', onClick: () => salePanel(panel, id), disabled: amount <= 0n, reason: '仓库里还没有存货' },
     ]);
     panel.buttons([
-      { label: '查看生产线', onClick: () => showSource(panel, id) },
+      { label: '去生产线', onClick: () => showSource(panel, id) },
       { label: '查看生产链', onClick: () => showProductionChain(panel, id) },
     ]);
   });
@@ -539,7 +539,7 @@ function renderCatalogDetail(ui, id) {
   const hasChain = materials.length > 0 || entries.some(([, entry]) => entry.inputs[id] != null);
   ui.buttons([
     open
-      ? { label: '查看生产线', onClick: () => showSource(ui, id) }
+      ? { label: '去生产线', onClick: () => showSource(ui, id) }
       : { label: '查看研发', tone: 'gold', onClick: () => showResearch(ui, id) },
     ...(hasChain ? [{ label: '查看生产链', onClick: () => showProductionChain(ui, id) }] : []),
   ]);

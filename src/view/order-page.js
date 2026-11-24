@@ -148,9 +148,9 @@ function placeholderCard(cell, placeholder) {
       progressAtClock: (clock) => Math.min(1, Math.max(0, (clock - batch.start) / span)),
     });
   } else if (kind === 'firstProduct') cell.empty('第一件商品做好就有订单', { icon, hint: '去精制位做点商品吧' });
-  else if (kind === 'afterFirst') cell.empty('排在第一张订单之后', { icon, hint: '首单后约 ' + placeholder.afterMinutes + ' 分钟到' });
-  else if (kind === 'noCandidate') cell.empty('能接的商品种类不够', { icon, hint: '多生产几种商品，订单就会来' });
-  else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交掉或放弃一张，新单才会来' });
+  else if (kind === 'afterFirst') cell.empty('还没开始接单', { icon, hint: '第一件商品做好后，再等约 ' + placeholder.afterMinutes + ' 分钟' });
+  else if (kind === 'noCandidate') cell.empty('可下单的商品不够了', { icon, hint: '多做几种商品，就能接到更多订单' });
+  else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交付或放弃一张后，新订单才会来' });
   else if (kind === 'tomorrow') cell.empty('今天赶不上了', { icon, hint: '明天还会有新订单' });
   else cell.empty('下一张订单在路上', { icon, valueAtClock: countdownTo(dueMs) });
 }

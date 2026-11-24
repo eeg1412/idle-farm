@@ -231,7 +231,7 @@ function renderQuality(ui) {
     { muted: true });
   const single = qualityDrawOffer(ui.w, 'single');
   const all = qualityDrawOffer(ui.w, 'all');
-  const drawReason = ui.w.basicResearchPoints < qualityDrawCost ? '研发点还不够' : '还没有研发出的品种';
+  const drawReason = ui.w.basicResearchPoints < qualityDrawCost ? '研发点还不够' : '还没研发出任何品种';
   ui.buttons([
     { label: '抽取一次', tone: 'gold', disabled: !single.affordable, reason: drawReason, onClick: () => submit(single) },
     { label: `全部抽取（${compact(all.count)} 次）`, disabled: !all.affordable, reason: drawReason, onClick: () => submit(all) },

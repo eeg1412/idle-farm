@@ -181,10 +181,10 @@ function blockedReason(offer, balance) {
     if (offer.count > offer.stock) return '货架上没这么多了';
     if (offer.total > balance) return '金币还不够';
   } else {
-    if (offer.count > offer.remaining) return '他收不了这么多';
+    if (offer.count > offer.remaining) return '行脚商收不了这么多';
     if (offer.count > offer.inventory) return '你的存货不够';
   }
-  return '这个数量做不成买卖';
+  return '换个数量再试试';
 }
 
 function tradeFooter(ui, editor) {
@@ -220,7 +220,7 @@ function tradeFooter(ui, editor) {
       } },
       { label: changed ? '按新报价确认' : '确认' + label, tone: 'gold',
         disabled: Boolean(blocked || preview) || (!buy && !editor.holdReady),
-        reason: blocked ? blockedReason(offer, ui.w.coins) : preview || buy || editor.holdPending ? undefined : '存货还没留好，稍等一下',
+        reason: blocked ? blockedReason(offer, ui.w.coins) : preview || buy || editor.holdPending ? undefined : '正在给这笔买卖备货，稍等一下',
         onClick: async () => {
           if (!ui.isActive() || ui.local.editor !== editor || editor.preview ||
               (!buy && (!editor.holdReady || editor.holdCount !== offer.count))) return;
