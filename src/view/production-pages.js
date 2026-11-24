@@ -218,10 +218,7 @@ function batchReplace(ui, kind, targets, source, action) {
       : dlg.w.unlocked.filter((id) => catalog.items[id]?.kind === kind);
     if (!choices.length) {
       dlg.empty('暂无符合条件的已研发' + (workshop ? '配方' : '品种') + '。');
-      dlg.button('前往研究', () => {
-        dlg.close();
-        dlg.go('研究', { tab: '品种配方' });
-      }, confirm);
+      dlg.button('前往研究', () => dlg.go('研究', { tab: '品种配方' }), confirm);
       return;
     }
     replacementChoices(dlg, kind, choices, (id) =>
@@ -411,10 +408,7 @@ function chooseFacility(ui, kind, index) {
     if (facility.batch) dlg.text('更换品种后立即开始新一批，当前未完成的批次没有收成。', { muted: true });
     if (!choices.length) {
       dlg.text('研发对应品种后即可安排。');
-      dlg.button('前往研究', () => {
-        dlg.close();
-        dlg.go('研究', { tab: '品种配方' });
-      }, confirm);
+      dlg.button('前往研究', () => dlg.go('研究', { tab: '品种配方' }), confirm);
     } else {
       replacementChoices(dlg, kind, choices, (id) => id === facility.recipe && (!facility.batch || facility.batch.id === id),
         ({ id }) => submit(dlg, 'assignFacility', [kind, index, id], null, '已' + label));
@@ -776,10 +770,7 @@ function chooseRecipe(ui, kind, index, source) {
     }
     if (!choices.length) {
       dlg.empty('暂无已研发的配方。');
-      dlg.button('前往研究', () => {
-        dlg.close();
-        dlg.go('研究', { tab: '品种配方' });
-      }, confirm);
+      dlg.button('前往研究', () => dlg.go('研究', { tab: '品种配方' }), confirm);
     } else {
       replacementChoices(dlg, kind, choices, (id) => id === station.recipe && (!station.batch || station.batch.id === id),
         ({ id }) => submit(dlg, 'arrangeStation', [kind, index, id], null, station.batch ? '已切换配方' : '已安排配方'));
@@ -842,10 +833,7 @@ function improveStation(ui, kind, index) {
 }
 
 function sourceButton(ui, id) {
-  ui.button('查看来源 · ' + itemName(id), () => {
-    ui.close();
-    ui.go('图鉴', { id });
-  });
+  ui.button('查看来源 · ' + itemName(id), () => ui.go('图鉴', { id }));
 }
 
 function requirementRows(ui, recipe, { withLinks = false, style, level = '1' } = {}) {
