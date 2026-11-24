@@ -152,7 +152,6 @@ function placeholderCard(cell, placeholder) {
   else if (kind === 'noCandidate') cell.empty('能接的商品种类不够', { icon, hint: '多生产几种商品，订单就会来' });
   else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交掉或放弃一张，新单才会来' });
   else if (kind === 'tomorrow') cell.empty('今天赶不上了', { icon, hint: '明天还会有新订单' });
-  else if (kind === 'dailyLimit') cell.empty('今天的订单都来过了', { icon, valueAtClock: (clock) => '离明天还有 ' + remainingTime(dueMs - clock) });
   else cell.empty('下一张订单在路上', { icon, valueAtClock: countdownTo(dueMs) });
 }
 
@@ -169,7 +168,9 @@ export function renderOrders(ui) {
     { label: '缩小', disabled: small, reason: '已经是缩小视图了', onClick: () => setCompact(true) },
     { label: '放大', disabled: !small, reason: '已经是放大视图了', onClick: () => setCompact(false) },
   ], { style: 'production' });
-  const placeholders = orderPlaceholders(ui.w, nextMidnightClock(ui.w)).map((placeholder) => ({ placeholder }));
+  const forecast = orderPlaceholders(ui.w, nextMidnightClock(ui.w));
+  const dailyLimit = forecast.some(({ kind }) => kind === 'dailyLimit');
+  const placeholders = forecast.filter(({ kind }) => kind !== 'dailyLimit').map((placeholder) => ({ placeholder }));
   ui.scrollList([...active, ...placeholders], (cell, order) => {
     if (order.placeholder) return placeholderCard(cell, order.placeholder);
     cell.card((card) => {
@@ -181,4 +182,6 @@ export function renderOrders(ui) {
       }
     }, { style: 'production', showArrow: false, onClick: () => showOrder(ui, order) });
   }, { columns: small ? 'auto' : 1 });
+  // Must stay the page's last draw call.
+  if (dailyLimit) ui.footer((footer) => footer.text('今天的订单都来过了', { muted: true, align: 'center', fontSize: 13 }));
 }
