@@ -125,7 +125,7 @@ function salePanel(ui, id) {
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
         label: '确认出售', tone: 'gold', disabled: !chosen.affordable || state.pending,
-        reason: state.pending ? undefined : chosen.inventory === 0n ? '没有库存' : chosen.percent === 0 ? '未选择数量' : '数量不足',
+        reason: state.pending ? undefined : chosen.inventory === 0n ? '仓库里还没有存货' : chosen.percent === 0 ? '先选个数量吧' : '再多选一点才够一件',
         onClick: async () => {
           if (state.pending) return;
           state.pending = true;
@@ -156,11 +156,11 @@ function batchSalePanel(ui, filters) {
     }
     panel.row('已选品项', selected.size + ' / ' + quotes.length, { compact: true, noWrap: true });
     panel.buttons([
-      { label: '全选', disabled: selected.size === quotes.length, reason: quotes.length ? '已全选' : '没有库存', onClick: () => {
+      { label: '全选', disabled: selected.size === quotes.length, reason: quotes.length ? '已经全选了' : '仓库里还没有存货', onClick: () => {
         for (const id of available) selected.add(id);
         panel.refresh();
       } },
-      { label: '取消选择', disabled: selected.size === 0, reason: '未选择', onClick: () => {
+      { label: '取消选择', disabled: selected.size === 0, reason: '还没选要卖的东西', onClick: () => {
         selected.clear();
         panel.refresh();
       } },
@@ -177,7 +177,7 @@ function batchSalePanel(ui, filters) {
       });
     } else panel.text('当前筛选无可出售库存。', { muted: true });
     panel.button('批量出售', () => confirmBatchSale(panel, [...selected]), {
-      tone: 'gold', disabled: selected.size === 0, reason: '未选择',
+      tone: 'gold', disabled: selected.size === 0, reason: '还没选要卖的东西',
     });
   });
 }
@@ -214,7 +214,7 @@ function confirmBatchSale(ui, ids) {
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
         label: '确认出售', tone: 'gold', disabled: total.count === 0n || state.pending,
-        reason: state.pending ? undefined : state.percent === 0 ? '未选择数量' : '数量不足',
+        reason: state.pending ? undefined : state.percent === 0 ? '先选个数量吧' : '再多选一点才够一件',
         onClick: async () => {
           if (state.pending) return;
           state.pending = true;
@@ -263,7 +263,7 @@ export function reservePanel(ui, id) {
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
         label: '保存', tone: 'gold', disabled: state.pending || !state.digits,
-        reason: state.pending ? undefined : '请输入数量', onClick: async () => {
+        reason: state.pending ? undefined : '先输入数量吧', onClick: async () => {
           if (state.pending || !state.digits) return;
           state.pending = true;
           panel.refresh();
@@ -311,7 +311,7 @@ function warehouseDetail(ui, id) {
     }
     panel.buttons([
       { label: '加工保留量', onClick: () => reservePanel(panel, id) },
-      { label: '出售', tone: 'gold', onClick: () => salePanel(panel, id), disabled: amount <= 0n, reason: '没有库存' },
+      { label: '出售', tone: 'gold', onClick: () => salePanel(panel, id), disabled: amount <= 0n, reason: '仓库里还没有存货' },
     ]);
     panel.buttons([
       { label: '查看来源', onClick: () => showSource(panel, id) },
@@ -388,7 +388,7 @@ function showMarket(ui) {
       const remaining = marketResetsRemaining(panel.w);
       panel.row('今日剩余重置', remaining + ' 次');
       panel.button('重置今日行情', () => panel.action('resetMarket', day, sequence), {
-        tone: 'gold', disabled: remaining === 0, reason: '今日已用完',
+        tone: 'gold', disabled: remaining === 0, reason: '今天的重置次数用完了',
       });
     }
   });
@@ -423,9 +423,9 @@ export function renderWarehouse(ui) {
   };
   ui.buttons([
     { label: '批量管理', tone: 'gold', onClick: () => batchSalePanel(ui, filters),
-      disabled: !filtered.some(([id]) => quantity(ui.w, id) > 0n), reason: '没有库存' },
-    { label: '缩小', onClick: () => setCompact(true), disabled: compactView, reason: '已缩小' },
-    { label: '放大', onClick: () => setCompact(false), disabled: !compactView, reason: '已放大' },
+      disabled: !filtered.some(([id]) => quantity(ui.w, id) > 0n), reason: '仓库里还没有存货' },
+    { label: '缩小', onClick: () => setCompact(true), disabled: compactView, reason: '已经是缩小视图了' },
+    { label: '放大', onClick: () => setCompact(false), disabled: !compactView, reason: '已经是放大视图了' },
   ]);
   if (!filtered.length) {
     if (!obtained.length) {
@@ -448,7 +448,7 @@ export function renderWarehouse(ui) {
     const open = () => warehouseDetail(ui, id);
     const drawActions = (row) => row.buttons([
       { label: '详情', onClick: open },
-      { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold', disabled: amount <= 0n, reason: '没有库存' },
+      { label: '出售', onClick: () => salePanel(ui, id), tone: 'gold', disabled: amount <= 0n, reason: '仓库里还没有存货' },
     ], { style: 'production' });
     if (compactView) {
       cell.card((row) => {
@@ -675,7 +675,7 @@ export function renderTasks(ui) {
       const destination = target === '庄园' ? (tab === '畜牧' ? '养殖场' : tab ?? target) : target;
       card.titleBar(progress, goal.done ? '已完成' : earnForLand ? '前往出货' : '前往' + destination,
         () => ui.go(target, { tab, id: goal.itemId ?? taskItems[goal.id] }), {
-          compact: true, disabled: goal.done, reason: '任务已完成', tone: goal.done ? 'plain' : 'gold',
+          compact: true, disabled: goal.done, reason: '这个任务已经完成了', tone: goal.done ? 'plain' : 'gold',
         });
     }, { ratio: 0.32 }), { padding: 8, gap: 6 });
   });

@@ -21,7 +21,7 @@ function restockDialog(ui) {
     panel.buttons([
       { label: '取消', onClick: panel.close },
       { label: '确认换货', tone: 'gold', disabled: !unlocked || restocksRemaining === 0n,
-        reason: unlocked ? '今日已用完' : '尚未开摊',
+        reason: unlocked ? '今天已经换过货了' : '行脚商还没来摆摊',
         onClick: () => panel.action('restockMerchant', { day, run, version }) },
     ]);
   }, { center: true, maxHeight: 290 });
@@ -98,7 +98,7 @@ function quantityControls(card, ui, editor, available) {
     card.buttons([
       { label: '1 件', onClick: () => setQuantity(ui, editor, 1n) },
       ...[25, 50, 100].map((value) => ({
-        label: value + '%', onClick: () => setPercent(value), disabled: atPercent(maximum, value) === 0n, reason: '数量不足',
+        label: value + '%', onClick: () => setPercent(value), disabled: atPercent(maximum, value) === 0n, reason: '这个比例凑不出一件',
       })),
     ], { style: 'filter', compact: true });
   }
@@ -176,15 +176,15 @@ function unavailable(offer, balance) {
 }
 
 function blockedReason(offer, balance) {
-  if (offer.count === 0n) return '未选择数量';
+  if (offer.count === 0n) return '先选个数量吧';
   if (offer.side === 'buy') {
-    if (offer.count > offer.stock) return '货架余量不足';
-    if (offer.total > balance) return '金币不足';
+    if (offer.count > offer.stock) return '货架上没这么多了';
+    if (offer.total > balance) return '金币还不够';
   } else {
-    if (offer.count > offer.remaining) return '求购余量不足';
-    if (offer.count > offer.inventory) return '库存不足';
+    if (offer.count > offer.remaining) return '他收不了这么多';
+    if (offer.count > offer.inventory) return '你的存货不够';
   }
-  return '无法成交';
+  return '这个数量做不成买卖';
 }
 
 function tradeFooter(ui, editor) {
@@ -220,7 +220,7 @@ function tradeFooter(ui, editor) {
       } },
       { label: changed ? '按新报价确认' : '确认' + label, tone: 'gold',
         disabled: Boolean(blocked || preview) || (!buy && !editor.holdReady),
-        reason: blocked ? blockedReason(offer, ui.w.coins) : preview || buy || editor.holdPending ? undefined : '无法预留库存',
+        reason: blocked ? blockedReason(offer, ui.w.coins) : preview || buy || editor.holdPending ? undefined : '存货还没留好，稍等一下',
         onClick: async () => {
           if (!ui.isActive() || ui.local.editor !== editor || editor.preview ||
               (!buy && (!editor.holdReady || editor.holdCount !== offer.count))) return;

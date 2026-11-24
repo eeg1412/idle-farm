@@ -1410,7 +1410,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       ui.footer((footer) => footer.buttons([
         { label: '稍后', onClick: closeDialog },
         { label: '更新游戏', onClick: confirm, tone: 'gold', disabled: invalidated || !isAvailable(),
-          reason: invalidated ? '版本已变化' : '暂无法更新' },
+          reason: invalidated ? '又有新版本了，请重新打开' : '现在还不能更新' },
       ]));
     }, { center: true, flow: 'game-update', minHeight: 240, maxHeight: 310,
       available: () => !shown?.updateDismissed,
@@ -2229,7 +2229,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += Math.max(prefix.height, tail.height) + rowGap;
       },
       // Shared empty-list placeholder: a soft panel with a muted icon, message and optional hint.
-      empty(message, { icon, hint, height = 112 } = {}) {
+      // `valueAtClock` adds a live clock line under the text; `progressAtClock` a live bar at the bottom.
+      empty(message, { icon, hint, height = 112, valueAtClock, progressAtClock } = {}) {
         const top = cursor;
         const padding = 14;
         const span = Math.max(1, width - padding * 2);
@@ -2241,19 +2242,102 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const note = hint ? textNode(parent, hint, x + padding, top, span,
           { size: 13 * scale(), color: palette.muted, align: 'center' }) : null;
         const noteGap = note ? 4 : 0;
-        const content = iconSize + iconGap + title.height + noteGap + (note?.height ?? 0);
-        const boxHeight = Math.max(height, Math.ceil(content + padding * 2));
-        let at = top + (boxHeight - content) / 2;
+        let clockLine;
+        let clockText;
+        let clockHeight = 0;
+        const clockGap = valueAtClock ? 6 : 0;
+        if (valueAtClock) {
+          const clockSize = Math.round(16 * scale());
+          clockLine = parent.addChild(new Container());
+          clockLine.eventMode = 'none';
+          clockText = textNode(clockLine, '', clockSize + 4, 0, span,
+            { size: 14 * scale(), weight: '750', wrap: false });
+          clockText.text = number(valueAtClock(progressClock(performance.now())));
+          clockHeight = Math.max(clockSize, clockText.height);
+          clockText.y = (clockHeight - clockText.height) / 2;
+          drawImage(clockLine, 'clock', 0, (clockHeight - clockSize) / 2, clockSize, clockSize);
+        }
+        const barHeight = 8;
+        const barSpace = progressAtClock ? barHeight + 10 : 0;
+        const content = iconSize + iconGap + title.height + noteGap + (note?.height ?? 0) + clockGap + clockHeight;
+        const boxHeight = Math.max(height, Math.ceil(content + padding * 2 + barSpace));
+        const nodes = [title];
+        let at = top + (boxHeight - barSpace - content) / 2;
         if (iconSize) {
           const holder = parent.addChild(new Container());
           holder.eventMode = 'none';
           holder.alpha = 0.5;
           drawImage(holder, icon, x + (width - iconSize) / 2, at, iconSize, iconSize);
+          nodes.push(holder);
           at += iconSize + iconGap;
         }
         title.y = at;
-        if (note) note.y = at + title.height + noteGap;
-        paintPanel(background, x, top, width, boxHeight, palette.pale, palette.line, 12);
+        if (note) {
+          note.y = at + title.height + noteGap;
+          nodes.push(note);
+        }
+        let barTop = top + boxHeight - padding - barHeight;
+        if (clockLine) {
+          const centerClock = () => {
+            clockLine.x = x + (width - Math.min(span, clockText.x + clockText.width)) / 2;
+          };
+          clockLine.y = at + title.height + noteGap + (note?.height ?? 0) + clockGap;
+          centerClock();
+          nodes.push(clockLine);
+          bindCountdownText(clockText, valueAtClock, () => { centerClock(); markDirty(); });
+        }
+        let redrawBar;
+        if (progressAtClock) {
+          const barWidth = span;
+          const track = inkGraphics();
+          parent.addChild(track);
+          const barFill = inkGraphics();
+          parent.addChild(barFill);
+          const epoch = navigationEpoch;
+          const row = listRow?.layer;
+          let previous = -1;
+          const drawBar = () => {
+            track.clear();
+            track.roundRect(x + padding, barTop, barWidth, barHeight, barHeight / 2).fill(palette.line);
+            previous = -1;
+          };
+          drawBar();
+          const update = (clock) => {
+            if (barFill.destroyed || epoch !== navigationEpoch) return false;
+            if (row && !row.visible) return true;
+            const raw = barWidth * clamp(Number(progressAtClock(clock)) || 0, 0, 1);
+            // Redraw only when the fill moves by a whole device pixel.
+            const pixel = 1 / ((layout?.scale || 1) * (app.renderer.resolution || 1));
+            const filled = raw >= barWidth ? barWidth : Math.min(barWidth, Math.round(raw / pixel) * pixel);
+            if (filled !== previous) {
+              markDirty();
+              barFill.clear();
+              if (filled > 0) barFill.roundRect(x + padding, barTop, filled, barHeight,
+                Math.min(filled / 2, barHeight / 2)).fill(palette.gold);
+              previous = filled;
+            }
+            return true;
+          };
+          redrawBar = () => {
+            drawBar();
+            update(progressClock(performance.now()));
+          };
+          if (update(progressClock(performance.now()))) progressBars.add(update);
+        }
+        const surface = (rowHeight) => {
+          // An equal-height grid row stretches the panel; content stays centred and the bar stays at the bottom.
+          const shift = (rowHeight - boxHeight) / 2;
+          if (shift > 0) {
+            for (const node of nodes) node.y += shift;
+            if (redrawBar) {
+              barTop = top + rowHeight - padding - barHeight;
+              redrawBar();
+            }
+          }
+          paintPanel(background, x, top, width, rowHeight, palette.pale, palette.line, 12);
+        };
+        if (options.rowSurfaces) options.rowSurfaces.push({ height: boxHeight, surface });
+        else surface(boxHeight);
         cursor += boxHeight + rowGap;
       },
       // One flowing row of icon + amount items, optionally followed by short { text } tags.

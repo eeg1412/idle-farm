@@ -2,7 +2,7 @@ import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { hoursLabel } from './management-pages.js';
-import { canDeliverOrder, canReplaceOrder, orderIdleStatus, orderLimit, orderReplacementLimit } from '../game/orders.js';
+import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit } from '../game/orders.js';
 
 function statusTag(world, order) {
   if (order.status !== 'locked') return { label: '未接受', tone: 'blue' };
@@ -52,7 +52,7 @@ function orderActions(ui, order, inDetail = false) {
     if (inDetail && action !== 'acceptOrder' && ui.isActive()) ui.close();
   };
   if (order.status === 'locked') return [
-    { label: '交付', tone: 'gold', disabled: !canDeliverOrder(ui.w, order.id), reason: '库存不足', blockCardTap: !inDetail,
+    { label: '交付', tone: 'gold', disabled: !canDeliverOrder(ui.w, order.id), reason: '存货还不够交这一单', blockCardTap: !inDetail,
       onClick: () => submit('deliverOrder') },
     { label: '放弃', onClick: () => confirmAbandon(ui, order, inDetail) },
   ];
@@ -134,32 +134,26 @@ function nextMidnightClock(world) {
   return world.clockMs + Math.max(0, midnight.setHours(24, 0, 0, 0) - world.wallAnchorMs);
 }
 
-function timerRow(ui, label, dueMs) {
-  ui.row(label, undefined, {
-    compact: true, noWrap: true, icon: 'clock', valueAtClock: (clock) => remainingTime(dueMs - clock),
-  });
-}
+const countdownTo = (dueMs) => (clock) => '还要 ' + remainingTime(dueMs - clock);
 
-// Empty list: the shared empty panel plus one live reason (countdown or batch progress).
-function idleState(ui) {
-  const status = orderIdleStatus(ui.w);
+// One placeholder card per remaining order slot today; the reason, countdown and progress stay inside it.
+function placeholderCard(cell, placeholder) {
   const icon = 'menu-orders';
-  if (status.kind === 'dailyLimit') {
-    ui.empty('今日订单已满', { icon });
-    timerRow(ui, '距次日', nextMidnightClock(ui.w));
-  } else if (status.kind === 'firstProduct') {
-    ui.empty('商品产出后开始接单', { icon, hint: status.batch ? undefined : '在精制位安排商品生产' });
-    if (status.batch) {
-      ui.countdown(catalog.items[status.batch.id].name, status.source,
-        { format: remainingTime, compact: true, icon: status.batch.id });
-      ui.batchProgress(status.batch, status.source);
-    }
-  } else if (status.kind === 'noCandidate') {
-    ui.empty('暂无可接商品', { icon, hint: '安排商品生产' });
-  } else {
-    ui.empty('等待新订单', { icon });
-    timerRow(ui, '下次订单', status.dueMs);
-  }
+  const { kind, dueMs, batch } = placeholder;
+  if (kind === 'firstProduct' && batch) {
+    const span = Math.max(1, batch.end - batch.start);
+    cell.empty('第一件商品做好就有订单', {
+      icon,
+      valueAtClock: (clock) => catalog.items[batch.id].name + ' 还要 ' + remainingTime(batch.end - clock),
+      progressAtClock: (clock) => Math.min(1, Math.max(0, (clock - batch.start) / span)),
+    });
+  } else if (kind === 'firstProduct') cell.empty('第一件商品做好就有订单', { icon, hint: '去精制位做点商品吧' });
+  else if (kind === 'afterFirst') cell.empty('排在第一张订单之后', { icon, hint: '首单后约 ' + placeholder.afterMinutes + ' 分钟到' });
+  else if (kind === 'noCandidate') cell.empty('能接的商品种类不够', { icon, hint: '多生产几种商品，订单就会来' });
+  else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交掉或放弃一张，新单才会来' });
+  else if (kind === 'tomorrow') cell.empty('今天赶不上了', { icon, hint: '明天还会有新订单' });
+  else if (kind === 'dailyLimit') cell.empty('今天的订单都来过了', { icon, valueAtClock: (clock) => '离明天还有 ' + remainingTime(dueMs - clock) });
+  else cell.empty('下一张订单在路上', { icon, valueAtClock: countdownTo(dueMs) });
 }
 
 export function renderOrders(ui) {
@@ -172,11 +166,12 @@ export function renderOrders(ui) {
     ui.refresh();
   };
   ui.buttons([
-    { label: '缩小', disabled: small, reason: '已缩小', onClick: () => setCompact(true) },
-    { label: '放大', disabled: !small, reason: '已放大', onClick: () => setCompact(false) },
+    { label: '缩小', disabled: small, reason: '已经是缩小视图了', onClick: () => setCompact(true) },
+    { label: '放大', disabled: !small, reason: '已经是放大视图了', onClick: () => setCompact(false) },
   ], { style: 'production' });
-  if (!active.length) idleState(ui);
-  ui.scrollList(active, (cell, order) => {
+  const placeholders = orderPlaceholders(ui.w, nextMidnightClock(ui.w)).map((placeholder) => ({ placeholder }));
+  ui.scrollList([...active, ...placeholders], (cell, order) => {
+    if (order.placeholder) return placeholderCard(cell, order.placeholder);
     cell.card((card) => {
       orderProduct(card, order, small);
       if (small) card.text(compact(order.count) + ' 件 · ' + compact(order.reward) + ' 金币');

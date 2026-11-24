@@ -295,7 +295,7 @@ function giftQuantity(page, picker, id, item, inCard) {
   picker.dialog('送出' + item.label, (panel) => {
     const status = managerStatus(panel.w, id);
     const { maximum, unitPrice, available, remaining } = managerGiftLimit(panel.w, item.id);
-    const limitReason = remaining <= 0n ? '额度已用完' : available <= 0n ? '库存不足' : '额度不足';
+    const limitReason = remaining <= 0n ? '今天的礼已经送够了' : available <= 0n ? '这件礼物没有存货了' : '剩下的额度送不起这件';
     const actual = quote(panel.w, state.count);
     const changed = Boolean(actual) && !sameGiftQuote(state.checked, actual);
     giftAffinitySummary(panel, status);
@@ -326,7 +326,7 @@ function giftQuantity(page, picker, id, item, inCard) {
       { label: '重选物品', onClick: () => panel.close() },
       {
         label: changed ? '核对报价' : '确认送礼', tone: 'gold', disabled: !actual,
-        reason: maximum === 0n ? limitReason : '超出可送数量',
+        reason: maximum === 0n ? limitReason : '超出今天能送的数量了',
         onClick: async () => {
           if (changed) {
             state.checked = actual;
@@ -421,9 +421,9 @@ export function renderManagerDirectory(ui) {
   });
   const claims = managerIds.map((id) => managerStatus(ui.w, id).claim).filter(Boolean);
   ui.footer((footer) => footer.buttons([
-    { label: '全员收礼', tone: 'plain', icon: actionIcon('receive'), disabled: !claims.length, reason: '没有回礼', onClick: () => receiveAll(ui) },
+    { label: '全员收礼', tone: 'plain', icon: actionIcon('receive'), disabled: !claims.length, reason: '现在还没有回礼', onClick: () => receiveAll(ui) },
     { label: '全员送礼', tone: 'gold', icon: actionIcon('gift'), disabled: !giftAllReady(ui.w),
-      reason: managerGiftRemaining(ui.w) <= 0n ? '额度已用完' : '没有可送物品', onClick: () => giftAll(ui) },
+      reason: managerGiftRemaining(ui.w) <= 0n ? '今天的礼已经送够了' : '仓库里没有能送的东西', onClick: () => giftAll(ui) },
   ]));
 }
 
@@ -590,7 +590,7 @@ function giftAll(page) {
     panel.footer((footer) => footer.buttons([
       { label: '取消', onClick: () => panel.close() },
       {
-        label: '确认送礼', tone: 'gold', disabled: !quote, reason: '未选择礼物',
+        label: '确认送礼', tone: 'gold', disabled: !quote, reason: '先挑件礼物吧',
         onClick: async () => {
           const shown = state.shown;
           if (!shown) return;

@@ -202,7 +202,7 @@ function researchDetails(ui, id) {
   ui.buttons([
     {
       label: '研发', tone: 'gold', disabled: !offer.eligible || !offer.affordable,
-      reason: !offer.eligible ? '前置未研发' : ui.w.coins < offer.coins ? '金币不足' : '材料不足',
+      reason: !offer.eligible ? '先把前一项研发出来' : ui.w.coins < offer.coins ? '金币还不够' : '材料还不够',
       onClick: async () => {
         if (await ui.action('research', id)) ui.close();
       },
@@ -231,7 +231,7 @@ function renderQuality(ui) {
     { muted: true });
   const single = qualityDrawOffer(ui.w, 'single');
   const all = qualityDrawOffer(ui.w, 'all');
-  const drawReason = ui.w.basicResearchPoints < qualityDrawCost ? '研发点不足' : '尚无已研发品项';
+  const drawReason = ui.w.basicResearchPoints < qualityDrawCost ? '研发点还不够' : '还没有研发出的品种';
   ui.buttons([
     { label: '抽取一次', tone: 'gold', disabled: !single.affordable, reason: drawReason, onClick: () => submit(single) },
     { label: `全部抽取（${compact(all.count)} 次）`, disabled: !all.affordable, reason: drawReason, onClick: () => submit(all) },
@@ -310,7 +310,7 @@ function techDetails(ui, definition, state) {
   ui.buttons([
     {
       label: state.pending ? '升级中…' : '确认升级', tone: 'gold', disabled: state.pending || !offer.eligible || !offer.affordable,
-      reason: state.pending ? undefined : !offer.eligible ? '前置未满足' : '研发点不足',
+      reason: state.pending ? undefined : !offer.eligible ? '前置科技还没升够' : '研发点还不够',
       onClick: async () => {
         if (state.pending || !ui.isActive()) return;
         const current = techOffer(ui.currentWorld(), definition.key);

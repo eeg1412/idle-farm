@@ -111,7 +111,7 @@ function dialogButtons(ui, label, action, disabled = false, style, reason) {
 
 // Purchases are blocked either by the slot limit or by coins.
 function purchaseReason(quote) {
-  return quote?.atLimit ? '已达上限' : '金币不足';
+  return quote?.atLimit ? '已经建满了' : '金币还不够';
 }
 
 function replacementChoices(dialog, kind, choices, isSelected, onSelect) {
@@ -236,7 +236,7 @@ function batchClear(ui, kind, targets) {
     const occupied = targets.map((index) => slots[index]).filter((slot) => slot?.recipe || slot?.batch || slot?.planting);
     dlg.row('待清空数量', String(occupied.length));
     batchImpact(dlg, kind, occupied.filter((slot) => slot.batch).length);
-    dialogButtons(dlg, '确认清空', () => submit(dlg, 'clearProductionBatch', [kind, targets], null, '已批量清空'), !occupied.length, undefined, '没有可清空的');
+    dialogButtons(dlg, '确认清空', () => submit(dlg, 'clearProductionBatch', [kind, targets], null, '已批量清空'), !occupied.length, undefined, '选中的位置都是空的');
   });
 }
 
@@ -294,7 +294,7 @@ function batchUpgrade(ui, kind, targets) {
         pending = false;
         if (dlg.isActive()) dlg.refresh();
       }
-    }, pending || !quote?.affordable, undefined, pending ? undefined : '金币不足');
+    }, pending || !quote?.affordable, undefined, pending ? undefined : '金币还不够');
   });
 }
 
@@ -312,11 +312,11 @@ function manageProduction(ui, kind, scope, source) {
     const replaceLabel = assignmentLabel(kind, canClear);
     dlg.row('已选', targets.length + ' / ' + list.length);
     dlg.buttons([
-      { label: '全选', disabled: targets.length === list.length, reason: '已全选', onClick: () => {
+      { label: '全选', disabled: targets.length === list.length, reason: '已经全选了', onClick: () => {
         for (const { index } of list) selected.add(index);
         dlg.refresh();
       } },
-      { label: '取消选择', disabled: !targets.length, reason: '未选择', onClick: () => {
+      { label: '取消选择', disabled: !targets.length, reason: '先勾选要处理的位置', onClick: () => {
         selected.clear();
         dlg.refresh();
       } },
@@ -338,9 +338,9 @@ function manageProduction(ui, kind, scope, source) {
       dlg.refresh();
     });
     dlg.buttons([
-      { label: replaceLabel, disabled: !targets.length, reason: '未选择', onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
-      { label: '清空', disabled: !canClear, reason: targets.length ? '没有可清空的' : '未选择', onClick: () => batchClear(dlg, kind, targets) },
-      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable, reason: targets.length ? '金币不足' : '未选择',
+      { label: replaceLabel, disabled: !targets.length, reason: '先勾选要处理的位置', onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
+      { label: '清空', disabled: !canClear, reason: targets.length ? '选中的位置都是空的' : '先勾选要处理的位置', onClick: () => batchClear(dlg, kind, targets) },
+      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable, reason: targets.length ? '金币还不够' : '先勾选要处理的位置',
         onClick: () => batchUpgrade(dlg, kind, targets) },
     ], { style: 'production' });
   });
@@ -353,9 +353,9 @@ function productionLayout(ui, kind, list, scope, source) {
     ui.refresh();
   }
   ui.buttons([
-    { label: '批量管理', tone: 'gold', disabled: !list.length, reason: '列表为空', onClick: () => manageProduction(ui, kind, scope, source) },
-    { label: '缩小', disabled: zoomedOut, reason: '已缩小', onClick: () => zoom(true) },
-    { label: '放大', disabled: !zoomedOut, reason: '已放大', onClick: () => zoom(false) },
+    { label: '批量管理', tone: 'gold', disabled: !list.length, reason: '还没有可以管理的位置', onClick: () => manageProduction(ui, kind, scope, source) },
+    { label: '缩小', disabled: zoomedOut, reason: '已经是缩小视图了', onClick: () => zoom(true) },
+    { label: '放大', disabled: !zoomedOut, reason: '已经是放大视图了', onClick: () => zoom(false) },
   ], { style: 'production' });
   return zoomedOut;
 }
@@ -388,7 +388,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
     padding: 7, style: 'production',
     footer: (actions) => actions.buttons([
       { label: assignmentLabel(kind, Boolean(id)), tone: id ? 'plain' : 'green', onClick: choose },
-      { label: '升级', tone: 'gold', onClick: improve, disabled: !upgradeQuote?.affordable, reason: '金币不足' },
+      { label: '升级', tone: 'gold', onClick: improve, disabled: !upgradeQuote?.affordable, reason: '金币还不够' },
     ]),
   });
 }
@@ -477,7 +477,7 @@ function improveFacility(ui, kind, index) {
       '升至 ' + compact(quote.target) + ' 级', {
         keepOpen: true, state,
         isCurrent: () => currentUpgradeQuote(dlg, facilityOffer, kind, index, selected.steps, quote),
-      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : '金币不足');
+      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : '金币还不够');
   }, { variant: 'facility-upgrade' });
 }
 
@@ -512,7 +512,7 @@ function facilityDetails(ui, kind, index, compactMode = false) {
     } else if (!id) {
       const quote = facilityOffer(dlg.w, kind, index, 1n);
       dlg.button('升级', () => improveFacility(dlg, kind, index), {
-        ...confirm, disabled: !quote?.affordable, reason: '金币不足',
+        ...confirm, disabled: !quote?.affordable, reason: '金币还不够',
       });
     }
   });
@@ -543,7 +543,7 @@ function facilityCard(ui, kind, index, facility) {
       { label: assignmentLabel(kind, true), onClick: () => chooseFacility(ui, kind, index) },
       {
         label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index),
-        disabled: !upgradeQuote?.affordable, reason: '金币不足',
+        disabled: !upgradeQuote?.affordable, reason: '金币还不够',
       },
     ];
     body.feature(facilityImage(kind, id), (copy) => {
@@ -638,9 +638,9 @@ function capsuleUsable(world, kind) {
 }
 
 function capsuleReason(world, kind) {
-  if ((world.capsules ?? 0n) < capsuleStep) return '胶囊不足';
+  if ((world.capsules ?? 0n) < capsuleStep) return '时空胶囊不够了';
   const slots = isWorkshop(kind) ? world.stations[kind] : world.facilities[kind];
-  return slots.some((slot) => slot.recipe && slot.batch) ? '无法加速' : '没有生产中';
+  return slots.some((slot) => slot.recipe && slot.batch) ? '现在没有能加速的批次' : '现在没有正在生产的批次';
 }
 
 function accelerate(ui, kind) {
@@ -677,7 +677,7 @@ function accelerate(ui, kind) {
         tone: usable && target === amount ? 'gold' : 'plain',
         // Shortcuts beyond the selectable maximum are disabled rather than clamped.
         disabled: state.pending || !usable || target > offer.maximum,
-        reason: state.pending ? undefined : !usable ? capsuleReason(dlg.w, kind) : '超出上限',
+        reason: state.pending ? undefined : !usable ? capsuleReason(dlg.w, kind) : '用不了这么多时空胶囊',
         onClick: () => choose(dlg, target),
       };
     }));
@@ -826,7 +826,7 @@ function improveStation(ui, kind, index) {
       '升至 ' + compact(quote.target) + ' 级', {
         keepOpen: true, state,
         isCurrent: () => currentUpgradeQuote(dlg, stationUpgradeOffer, kind, index, selected.steps, quote),
-      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : '金币不足');
+      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : '金币还不够');
   }, { variant: 'facility-upgrade' });
 }
 
@@ -936,7 +936,7 @@ function stationDetails(ui, kind, index, compactMode = false) {
       },
       {
         label: '升级', tone: 'gold', onClick: () => improveStation(dlg, kind, index),
-        disabled: !quote?.affordable, reason: '金币不足',
+        disabled: !quote?.affordable, reason: '金币还不够',
       },
     ], { style: 'production' });
     if (compactMode && id) {
@@ -956,7 +956,7 @@ function stationCard(ui, kind, index, station, source) {
   const upgradeQuote = stationUpgradeOffer(ui.w, kind, index, 1n);
   const upgrade = {
     label: '升级', tone: 'gold', onClick: () => improveStation(ui, kind, index),
-    disabled: !upgradeQuote?.affordable, reason: '金币不足',
+    disabled: !upgradeQuote?.affordable, reason: '金币还不够',
   };
   ui.card((body) => {
     if (!item) {

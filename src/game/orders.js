@@ -125,17 +125,29 @@ function earliestProductBatch(world) {
   return found;
 }
 
-// Read-only reason why no order is offered right now, in priority order.
-export function orderIdleStatus(world) {
+// Read-only forecast of today's remaining order slots, one entry each, in generation order.
+// dayEndMs is the next local midnight mapped onto the operating clock (supplied by the view).
+export function orderPlaceholders(world, dayEndMs) {
   const orders = world.orders;
   const limit = orderLimit(world);
-  if (orders.generated >= limit) return { kind: 'dailyLimit', generated: orders.generated, limit };
+  if (orders.generated >= limit) return [{ kind: 'dailyLimit', dueMs: dayEndMs }];
+  const remaining = limit - orders.generated;
+  const placeholders = [];
   if (orders.nextAttemptMs === null) {
     const found = earliestProductBatch(world);
-    return { kind: 'firstProduct', batch: found?.batch ?? null, source: found?.source ?? null };
+    placeholders.push({ kind: 'firstProduct', batch: found?.batch ?? null, source: found?.source ?? null });
+    for (let i = 1; i < remaining; i += 1) placeholders.push({ kind: 'afterFirst', afterMinutes: i * intervalMs / 60000 });
+    return placeholders;
   }
-  if (!unusedCandidates(orders).length) return { kind: 'noCandidate' };
-  return { kind: 'scheduled', dueMs: orders.nextAttemptMs };
+  const unused = unusedCandidates(orders).length;
+  for (let i = 0; i < remaining; i += 1) {
+    const dueMs = orders.nextAttemptMs + i * intervalMs;
+    if (unused <= i) placeholders.push({ kind: 'noCandidate', dueMs });
+    else if (orders.active.length + i >= limit) placeholders.push({ kind: 'slotsFull', dueMs });
+    else if (dueMs >= dayEndMs) placeholders.push({ kind: 'tomorrow', dueMs });
+    else placeholders.push({ kind: 'scheduled', dueMs });
+  }
+  return placeholders;
 }
 
 const lookup = (world, id) => world.orders.active.find((order) => order.id === id);
