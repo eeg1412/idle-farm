@@ -915,7 +915,7 @@ function stationDetails(ui, kind, index, compactMode = false) {
         if (valueAdded < 0n) {
           dlg.text('当前成品售价低于材料直售价值；研发和任务仍可能需要此产物。', { muted: true });
         }
-        dlg.text('材料', { muted: true });
+        dlg.text(active ? '下批材料' : '材料', { muted: true });
         const requirements = requirementRows(dlg, station.recipe, { withLinks: true, level: station.level });
         if (compactMode && requirements.length && requirements.every(({ owned, needed }) => owned >= needed)) {
           dlg.button('查看来源', () => openSources(dlg, requirements));
@@ -992,7 +992,7 @@ function stationCard(ui, kind, index, station, source) {
       onClick: openDetails, workshopAnimation: { kind, index, id },
     });
     stationProgress(body, active, kind, index);
-    body.text('材料', { muted: true });
+    body.text(active ? '下批材料' : '材料', { muted: true });
     const requirements = requirementRows(body, station.recipe, { style: 'workshop', level: station.level });
     const actions = [{ label: '更换配方', onClick: () => chooseRecipe(ui, kind, index, source) }];
     if (requirements.length) actions.push({ label: '查看来源', onClick: () => openSources(ui, requirements) });

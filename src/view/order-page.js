@@ -2,11 +2,15 @@ import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { hoursLabel } from './management-pages.js';
-import { canDeliverOrder, canReplaceOrder, normalOrderLimit, orderLimit, orderPlaceholders, orderReplacementLimit } from '../game/orders.js';
+import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit } from '../game/orders.js';
 
 // Orders saved before order types existed are high-value orders.
 const orderType = (order) => order.type ?? 'high';
-const typeLabels = { high: '高额', normal: '普通', challenge: '挑战' };
+const typeTags = {
+  high: { label: '高额订单', tone: 'purple' },
+  normal: { label: '普通订单', tone: 'teal' },
+  challenge: { label: '挑战订单', tone: 'orange' },
+};
 const abandonNotes = {
   high: '订单作废，不发报酬，今日高额订单名额不返还。',
   normal: '订单作废，不发报酬。',
@@ -14,7 +18,7 @@ const abandonNotes = {
 };
 
 function typeTag(order) {
-  return { label: typeLabels[orderType(order)], tone: 'plain' };
+  return typeTags[orderType(order)];
 }
 
 function statusTag(world, order) {
@@ -171,7 +175,6 @@ function placeholderCard(cell, placeholder) {
 export function renderOrders(ui) {
   const { active, generated, replaced } = ui.w.orders;
   ui.row('今日高额订单', generated + ' / ' + orderLimit(ui.w));
-  ui.row('普通订单', active.filter((order) => orderType(order) === 'normal').length + ' / ' + normalOrderLimit);
   ui.row('今日替换', replaced + ' / ' + orderReplacementLimit(ui.w));
   const small = Boolean(ui.local.compactOrders);
   const setCompact = (value) => {
@@ -183,7 +186,6 @@ export function renderOrders(ui) {
     { label: '放大', disabled: !small, reason: '已经是放大视图了', onClick: () => setCompact(false) },
   ], { style: 'production' });
   const forecast = orderPlaceholders(ui.w, nextMidnightClock(ui.w));
-  const dailyLimit = forecast.some(({ kind }) => kind === 'dailyLimit');
   const placeholders = forecast.filter(({ kind }) => kind !== 'dailyLimit').map((placeholder) => ({ placeholder }));
   ui.scrollList([...active, ...placeholders], (cell, order) => {
     if (order.placeholder) return placeholderCard(cell, order.placeholder);
@@ -196,5 +198,4 @@ export function renderOrders(ui) {
       }
     }, { style: 'production', showArrow: false, onClick: () => showOrder(ui, order) });
   }, { columns: small ? 'auto' : 1 });
-  if (dailyLimit) ui.text('今天的高额订单都来过了', { muted: true, align: 'center', fontSize: 13 });
 }

@@ -2114,7 +2114,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         text: tone === 'blocked' ? 0xffffff : tone === 'danger' ? palette.red :
           tone === 'green' ? palette.cream : palette.ink,
         fill: tone === 'blocked' ? palette.red : tone === 'gold' ? palette.gold :
-          tone === 'green' ? palette.green : tone === 'blue' ? 0xbad9eb : palette.pale,
+          tone === 'green' ? palette.green : tone === 'blue' ? 0xbad9eb : tone === 'purple' ? 0xd9c8ec :
+          tone === 'teal' ? 0xb5e0d6 : tone === 'orange' ? 0xf8cfa6 : palette.pale,
       };
     }
     const ui = {
