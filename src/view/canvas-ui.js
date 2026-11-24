@@ -1194,6 +1194,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return control;
   }
 
+  // A gray button that names why it is unavailable: tapping it floats the reason in red above the
+  // tapped spot. It owns its surface like `blockCardTap` but never joins keyboard controls.
+  function reasonHitAt(g, parent, x, y, width, height, reason) {
+    g.eventMode = 'static';
+    g.hitArea = new Rectangle(x, y, width, height);
+    g.on('pointertap', (event) => {
+      if (blockTap || waiting || openingScreen?.blocking) return;
+      if (developmentToolsEnabled) settingsTitleClicks = 0;
+      if (event) point = root.toLocal(event.global);
+      else point = root.toLocal(parent.toGlobal({ x: x + width / 2, y: y + height / 2 }));
+      float(reason, { tone: 'danger' });
+    });
+  }
+
   function directionIcon(parent, direction, x, y, width, height, { arrow = false, color = palette.ink } = {}) {
     return drawPixelIcon(parent, { kind: arrow ? 'arrow' : 'chevron', direction, color }, x, y, width, height);
   }
@@ -1286,15 +1300,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const segmentInset = options.segment ? 2 : 0;
       showButtonIndicator(options, () => drawIndicator(parent, x + width - segmentInset, y + segmentInset));
     }
+    // Only a state-disabled button explains itself; the save-in-progress gray stays silent.
+    const reason = disabled && (!fn || options.disabled) && typeof options.reason === 'string' &&
+      options.reason ? options.reason : '';
     if (iconOnly) {
       g.label = label;
       const hitWidth = Math.max(options.touchSize ?? 48, width);
       const hitHeight = Math.max(options.touchSize ?? 48, height);
       if (!disabled) hitAt(g, parent, x - (hitWidth - width) / 2, y - (hitHeight - height) / 2,
         hitWidth, hitHeight, fn);
+      else if (reason) reasonHitAt(g, parent, x - (hitWidth - width) / 2, y - (hitHeight - height) / 2,
+        hitWidth, hitHeight, reason);
       return;
     }
     if (!disabled) hitAt(g, parent, x, y, width, height, fn);
+    else if (reason) reasonHitAt(g, parent, x, y, width, height, reason);
     else if (options.blockCardTap) {
       // A disabled action on a clickable card still owns its part of the card surface.
       g.eventMode = 'static';
@@ -1389,7 +1409,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (message) ui.text(message, { muted: true });
       ui.footer((footer) => footer.buttons([
         { label: '稍后', onClick: closeDialog },
-        { label: '更新游戏', onClick: confirm, tone: 'gold', disabled: invalidated || !isAvailable() },
+        { label: '更新游戏', onClick: confirm, tone: 'gold', disabled: invalidated || !isAvailable(),
+          reason: invalidated ? '版本已变化' : '暂无法更新' },
       ]));
     }, { center: true, flow: 'game-update', minHeight: 240, maxHeight: 310,
       available: () => !shown?.updateDismissed,
@@ -1848,9 +1869,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     drawFeedback();
   }
 
-  function float(message) {
+  function float(message, { tone } = {}) {
     const at = point ?? { x: frame.width / 2, y: frame.height * 0.72 };
-    floating = { message, at: { x: at.x, y: at.y }, started: performance.now(), touch: lastPressTouch };
+    floating = { message, tone, at: { x: at.x, y: at.y }, started: performance.now(), touch: lastPressTouch };
     drawFeedback();
   }
 
@@ -4075,7 +4096,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (!live(floatNode, floating)) {
       drop(floatNode);
       const label = textNode(feedbackLayer, floating.message, x, y, w, { size: 17, align: 'center', color: palette.cream, weight: '800' });
-      label.style.fill = palette.ink;
+      label.style.fill = floating.tone === 'danger' ? palette.red : palette.ink;
       label.style.stroke = { color: palette.cream, width: 4, join: 'round' };
       floatNode = { source: floating, layer: label, shift: label.x - x };
     }

@@ -575,6 +575,24 @@ function productionUpgradeBatchQuote(world, kind, indices, steps, even = false) 
   const upgrades = chosen.map(({ index, steps: slotSteps }) => offer(world, kind, index, slotSteps));
   if (upgrades.some((quote) => !quote)) return null;
   const cost = upgrades.reduce((sum, quote) => sum + quote.cost, 0n);
+  if (!even && cost > world.coins) {
+    // Each slot takes the whole step or is skipped: cheapest first (ties in selection order)
+    // while the running total fits, then keep the selection order.
+    const order = upgrades.map((quote, position) => position)
+      .sort((a, b) => (upgrades[a].cost < upgrades[b].cost ? -1 : upgrades[a].cost > upgrades[b].cost ? 1 : a - b));
+    const included = new Set();
+    let total = 0n;
+    for (const position of order) {
+      if (total + upgrades[position].cost > world.coins) break;
+      total += upgrades[position].cost;
+      included.add(position);
+    }
+    if (included.size) {
+      const kept = chosen.map((entry, position) => position).filter((position) => included.has(position));
+      return { station: selection.station, slots: kept.map((position) => chosen[position].slot),
+        upgrades: kept.map((position) => upgrades[position]), cost: total, affordable: true };
+    }
+  }
   return { station: selection.station, slots: chosen.map(({ slot }) => slot), upgrades, cost, affordable: world.coins >= cost };
 }
 
@@ -585,7 +603,7 @@ export function batchUpgradeOffer(world, kind, indices, steps, even = false) {
   const targets = new Map(quote.slots.map((slot, position) => [slot, quote.upgrades[position].target]));
   const group = quote.station ? world.stations[kind] : world.facilities[kind];
   const levels = indices.map((index) => targets.get(group[index]) ?? BigInt(group[index].level));
-  return { cost: quote.cost, affordable: quote.affordable, levels };
+  return { cost: quote.cost, affordable: quote.affordable, levels, count: quote.slots.length };
 }
 
 function applyProductionUpgrade(slot, quote, station) {

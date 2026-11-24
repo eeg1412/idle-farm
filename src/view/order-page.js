@@ -1,7 +1,8 @@
 import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
-import { canDeliverOrder, canReplaceOrder, orderLimit, orderReplacementLimit } from '../game/orders.js';
+import { hoursLabel } from './management-pages.js';
+import { canDeliverOrder, canReplaceOrder, orderIdleStatus, orderLimit, orderReplacementLimit } from '../game/orders.js';
 
 function statusTag(world, order) {
   if (order.status !== 'locked') return { label: '未接受', tone: 'blue' };
@@ -51,7 +52,7 @@ function orderActions(ui, order, inDetail = false) {
     if (inDetail && action !== 'acceptOrder' && ui.isActive()) ui.close();
   };
   if (order.status === 'locked') return [
-    { label: '交付', tone: 'gold', disabled: !canDeliverOrder(ui.w, order.id), blockCardTap: !inDetail,
+    { label: '交付', tone: 'gold', disabled: !canDeliverOrder(ui.w, order.id), reason: '库存不足', blockCardTap: !inDetail,
       onClick: () => submit('deliverOrder') },
     { label: '放弃', onClick: () => confirmAbandon(ui, order, inDetail) },
   ];
@@ -119,6 +120,48 @@ function showOrder(ui, order) {
   });
 }
 
+function remainingTime(ms) {
+  const seconds = Math.max(0, Math.ceil(ms / 1000));
+  if (seconds >= 3600) return hoursLabel(seconds);
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return minutes ? minutes + ' 分' + (remainder ? ' ' + remainder + ' 秒' : '') : seconds + ' 秒';
+}
+
+// Operating-clock time of the next local midnight; wallAnchorMs is the wall time at clockMs.
+function nextMidnightClock(world) {
+  const midnight = new Date(world.wallAnchorMs);
+  return world.clockMs + Math.max(0, midnight.setHours(24, 0, 0, 0) - world.wallAnchorMs);
+}
+
+function timerRow(ui, label, dueMs) {
+  ui.row(label, undefined, {
+    compact: true, noWrap: true, icon: 'clock', valueAtClock: (clock) => remainingTime(dueMs - clock),
+  });
+}
+
+// Empty list: the shared empty panel plus one live reason (countdown or batch progress).
+function idleState(ui) {
+  const status = orderIdleStatus(ui.w);
+  const icon = 'menu-orders';
+  if (status.kind === 'dailyLimit') {
+    ui.empty('今日订单已满', { icon });
+    timerRow(ui, '距次日', nextMidnightClock(ui.w));
+  } else if (status.kind === 'firstProduct') {
+    ui.empty('商品产出后开始接单', { icon, hint: status.batch ? undefined : '在精制位安排商品生产' });
+    if (status.batch) {
+      ui.countdown(catalog.items[status.batch.id].name, status.source,
+        { format: remainingTime, compact: true, icon: status.batch.id });
+      ui.batchProgress(status.batch, status.source);
+    }
+  } else if (status.kind === 'noCandidate') {
+    ui.empty('暂无可接商品', { icon, hint: '安排商品生产' });
+  } else {
+    ui.empty('等待新订单', { icon });
+    timerRow(ui, '下次订单', status.dueMs);
+  }
+}
+
 export function renderOrders(ui) {
   const { active, generated, replaced } = ui.w.orders;
   ui.row('今日订单', generated + ' / ' + orderLimit(ui.w));
@@ -129,10 +172,10 @@ export function renderOrders(ui) {
     ui.refresh();
   };
   ui.buttons([
-    { label: '缩小', disabled: small, onClick: () => setCompact(true) },
-    { label: '放大', disabled: !small, onClick: () => setCompact(false) },
+    { label: '缩小', disabled: small, reason: '已缩小', onClick: () => setCompact(true) },
+    { label: '放大', disabled: !small, reason: '已放大', onClick: () => setCompact(false) },
   ], { style: 'production' });
-  if (!active.length) ui.empty('暂无订单', { icon: 'menu-orders' });
+  if (!active.length) idleState(ui);
   ui.scrollList(active, (cell, order) => {
     cell.card((card) => {
       orderProduct(card, order, small);

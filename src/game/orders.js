@@ -107,6 +107,37 @@ export function attemptScheduledOrder(world, atMs = world.clockMs) {
   return generateOrder(world);
 }
 
+// The running product batch that ends first, with its slot location ({ type, kind, index }).
+function earliestProductBatch(world) {
+  let found = null;
+  const scan = (groups, type) => {
+    for (const [kind, slots] of Object.entries(groups ?? {})) {
+      slots.forEach((slot, index) => {
+        const batch = slot?.batch;
+        if (batch && isProduct(batch.id) && (!found || batch.end < found.batch.end)) {
+          found = { batch, source: { type, kind, index } };
+        }
+      });
+    }
+  };
+  scan(world.stations, 'station');
+  scan(world.facilities, 'facility');
+  return found;
+}
+
+// Read-only reason why no order is offered right now, in priority order.
+export function orderIdleStatus(world) {
+  const orders = world.orders;
+  const limit = orderLimit(world);
+  if (orders.generated >= limit) return { kind: 'dailyLimit', generated: orders.generated, limit };
+  if (orders.nextAttemptMs === null) {
+    const found = earliestProductBatch(world);
+    return { kind: 'firstProduct', batch: found?.batch ?? null, source: found?.source ?? null };
+  }
+  if (!unusedCandidates(orders).length) return { kind: 'noCandidate' };
+  return { kind: 'scheduled', dueMs: orders.nextAttemptMs };
+}
+
 const lookup = (world, id) => world.orders.active.find((order) => order.id === id);
 
 export function activeMerchantHoldQuantity(world, item) {

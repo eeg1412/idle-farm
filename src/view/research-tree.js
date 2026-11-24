@@ -477,7 +477,7 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     if (onFind) control('查找节点', searchWidth, onFind);
     if (onToggleStatus) control(readyOnly ? '全部状态' : '可研发', filterWidth, onToggleStatus,
       readyOnly ? { ...toolbar, tone: 'green' } : toolbar);
-    const zoomOptions = { ...toolbar, disabled: !nodes.length };
+    const zoomOptions = { ...toolbar, disabled: !nodes.length, reason: readyOnly ? (groups ? '无可升级项' : '无可研发项') : '暂无项目' };
     control('－', zoomWidth, () => zoomAt(view.scale / 1.32, center), zoomOptions);
     control('＋', zoomWidth, () => zoomAt(view.scale * 1.32, center), zoomOptions);
   }
