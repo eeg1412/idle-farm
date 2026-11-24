@@ -470,11 +470,21 @@ export function renderResearch(ui, readyTabs = researchReadyTabs(ui.w)) {
     focus(nodes.find((node) => node.id === id));
     select(id);
   }
+  // A technology key on the efficiency tab (task navigation) focuses that node and opens it once.
+  if (efficiency && openResearchItem && id && Object.hasOwn(techByKey, id)) {
+    focus(nodes.find((node) => node.id === id));
+    select(id);
+  }
+  // A recipe picked in the finder opens its detail once the finder has closed back to this page.
+  const found = local.foundResearchItem;
+  delete local.foundResearchItem;
+  if (!efficiency && found && Object.hasOwn(catalog.items, found)) select(found);
+  const find = efficiency ? focus : (node) => { local.foundResearchItem = node.id; };
   ui.tree({
     nodes: panel.readyOnly ? nodes.filter(({ tone }) => tone === 'ready') : nodes,
     view: viewport(), readyOnly: panel.readyOnly,
     groups: efficiency ? techSources.slice(1) : undefined,
-    onSelect: select, onFind: () => showNodeFinder(ui, active, panel.readyOnly, focus),
+    onSelect: select, onFind: () => showNodeFinder(ui, active, panel.readyOnly, find),
     onToggleStatus: () => {
       panel.readyOnly = !panel.readyOnly;
       ui.refresh();

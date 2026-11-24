@@ -603,10 +603,16 @@ function sourceSummary(ui, kind, id, note, { buttonTone = 'gold' } = {}) {
   });
 }
 
-function productionFocusIndex(local, kind, purchasedIndex, sourceId, sourceIndex) {
+function productionFocusIndex(local, kind, purchasedIndex, sourceId, sourceIndex, list) {
   if (local.focusPurchasedKind === kind) {
     delete local.focusPurchasedKind;
     return purchasedIndex;
+  }
+  // A directed slot (task navigation) is positioned once, then dropped.
+  if (local.focusSlot !== undefined) {
+    const slotIndex = list.findIndex(({ index }) => index === local.focusSlot);
+    delete local.focusSlot;
+    if (slotIndex >= 0) return slotIndex;
   }
   if (sourceIndex < 0 || local.positionedSourceId === sourceId) return -1;
   local.positionedSourceId = sourceId;
@@ -724,7 +730,7 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
   const sourceIndex = focus ? list.findIndex(({ slot }) => slot.recipe === focus || slot.batch?.id === focus) : -1;
   if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + facilityNames[kind] + '中安排生产');
   if (list.length) {
-    const focusIndex = productionFocusIndex(ui.local, kind, list.length - 1, focus, sourceIndex);
+    const focusIndex = productionFocusIndex(ui.local, kind, list.length - 1, focus, sourceIndex, list);
     ui.scrollList(list, (cell, { slot, index }) => {
       if (compactMode) compactProductionCard(cell, kind, index, slot);
       else facilityCard(cell, kind, index, slot);
@@ -1024,6 +1030,9 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
   const local = ui.local;
   const sourceKey = 'workshopSource' + kind;
   const focus = catalog.items[local.id]?.kind?.[0] === kind ? local.id : null;
+  // A directed source filter applies only without an item focus, and is consumed once.
+  if (!focus && sources.includes(local.focusSource)) local[sourceKey] = local.focusSource;
+  delete local.focusSource;
   const source = !focus && sources.includes(local[sourceKey]) ? local[sourceKey] : sources[0];
   ui.tabs(sources, source, (value) => {
     local[sourceKey] = value;
@@ -1038,7 +1047,7 @@ export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I')
   const sourceIndex = focus ? list.findIndex(({ slot }) => slot.recipe === focus || slot.batch?.id === focus) : -1;
   if (sourceIndex < 0) sourceSummary(ui, kind, focus, '在' + stationNames[kind] + '中选择对应配方', { buttonTone: 'plain' });
   if (list.length) {
-    const focusIndex = productionFocusIndex(local, kind, list.length - 1, focus, sourceIndex);
+    const focusIndex = productionFocusIndex(local, kind, list.length - 1, focus, sourceIndex, list);
     ui.scrollList(list, (cell, { slot, index }) => {
       if (compactMode) compactProductionCard(cell, kind, index, slot, source);
       else stationCard(cell, kind, index, slot, source);

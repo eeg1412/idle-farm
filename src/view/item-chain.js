@@ -23,6 +23,46 @@ function chainNodes(id, needs) {
   return [...nodes.values()];
 }
 
+// Full chain: every upstream material plus every item made directly or indirectly from it.
+function fullChainNodes(id) {
+  const keys = new Set();
+  (function visit(key) {
+    if (keys.has(key)) return;
+    keys.add(key);
+    Object.keys(catalog.items[key].inputs ?? {}).forEach(visit);
+  })(id);
+  const downstream = new Set([id]);
+  for (let grown = true; grown;) {
+    grown = false;
+    for (const [key, item] of Object.entries(catalog.items)) {
+      if (downstream.has(key) || !Object.keys(item.inputs ?? {}).some((input) => downstream.has(input))) continue;
+      downstream.add(key);
+      keys.add(key);
+      grown = true;
+    }
+  }
+  return [...keys].map((key) => {
+    const item = catalog.items[key];
+    return { id: key, icon: key, label: item.name,
+      requires: Object.keys(item.inputs ?? {}).filter((input) => keys.has(input)),
+      status: item.sources.join(' · '), tone: key === id ? 'done' : 'neutral' };
+  });
+}
+
+export function showProductionChain(ui, id) {
+  const item = catalog.items[id];
+  ui.dialog(item.name, (panel) => {
+    panel.item(id, item.name, item.sources.join(' · '));
+    panel.row('当前库存', compact(panel.w.inventory[id] ?? 0n) + ' 件', { compact: true });
+    panel.heading('生产链', { size: 17 });
+    const view = panel.local.productionChain ??= {};
+    panel.tree({
+      nodes: fullChainNodes(id), production: true, view,
+      onSelect: (next) => { if (next !== id) showProductionChain(panel, next); },
+    });
+  });
+}
+
 // Item detail dialog shared by every page; `needs` adds the order's required units
 // while `isCurrent(world)` reports the order as still active.
 export function showItemDetail(ui, id, { needs, isCurrent } = {}) {

@@ -1,7 +1,9 @@
 import { catalog, facilityOffer, farmSaleOffer, forecastHourlyProduction, quantity, startingCoins, tradeOffer } from '../game/world.js';
 import { marketForecast, marketIsActive, marketRate, marketResetsRemaining, marketUnitPrice } from '../game/market.js';
 import { objectives, taskCoinRewards, taskProductionGates } from '../game/objectives.js';
+import { qualityDrawTaskTargets } from '../game/quality-tasks.js';
 import { compact } from './numbers.js';
+import { showProductionChain } from './item-chain.js';
 import { managerIds, managerStatus } from '../game/managers.js';
 
 const entries = Object.entries(catalog.items);
@@ -314,8 +316,8 @@ function warehouseDetail(ui, id) {
       { label: '出售', tone: 'gold', onClick: () => salePanel(panel, id), disabled: amount <= 0n, reason: '仓库里还没有存货' },
     ]);
     panel.buttons([
-      { label: '查看来源', onClick: () => showSource(panel, id) },
-      { label: '查看用途', onClick: () => panel.go('图鉴', { id, tab: '用途' }) },
+      { label: '查看生产线', onClick: () => showSource(panel, id) },
+      { label: '查看生产链', onClick: () => showProductionChain(panel, id) },
     ]);
   });
 }
@@ -474,7 +476,6 @@ export function renderWarehouse(ui) {
 function catalogViewSnapshot(local) {
   return {
     catalogId: local.catalogId ?? null,
-    showUses: Boolean(local.showUses),
     scroll: local.scroll ?? 0,
     type: local.type,
     source: local.source,
@@ -503,7 +504,6 @@ function renderCatalogDetail(ui, id) {
     if (key === id) return;
     (ui.local.catalogTrail ??= []).push(catalogViewSnapshot(ui.local));
     ui.local.catalogId = key;
-    ui.local.showUses = false;
     ui.local.scroll = 0;
     ui.refresh();
   };
@@ -536,27 +536,13 @@ function renderCatalogDetail(ui, id) {
       })), { variant: 'recipe' });
     }, { padding: 8, gap: 7 });
   }
-  const uses = entries.filter(([, entry]) => entry.inputs[id] != null);
+  const hasChain = materials.length > 0 || entries.some(([, entry]) => entry.inputs[id] != null);
   ui.buttons([
     open
-      ? { label: '查看来源', onClick: () => showSource(ui, id) }
+      ? { label: '查看生产线', onClick: () => showSource(ui, id) }
       : { label: '查看研发', tone: 'gold', onClick: () => showResearch(ui, id) },
-    ...(uses.length ? [{
-      label: ui.local.showUses ? '收起用途' : '查看用途',
-      onClick: () => {
-        ui.local.showUses = !ui.local.showUses;
-        ui.refresh();
-      },
-    }] : []),
+    ...(hasChain ? [{ label: '查看生产链', onClick: () => showProductionChain(ui, id) }] : []),
   ]);
-  if (ui.local.showUses) {
-    ui.heading('用于以下配方');
-    if (!uses.length) {
-      ui.empty('暂无生产配方使用此品项。');
-      return;
-    }
-    ui.scrollList(uses, (cell, [key, entry]) => cell.tile(key, entry.name, () => openDetail(key)), { columns: 'auto' });
-  }
 }
 
 export function renderCatalog(ui) {
@@ -564,7 +550,6 @@ export function renderCatalog(ui) {
     ui.local.catalogId = ui.local.id;
     ui.local.catalogTrail = [];
     delete ui.local.catalogListParent;
-    ui.local.showUses = ui.local.tab === '用途';
     ui.local.tab = undefined;
     ui.local.id = undefined;
   }
@@ -587,7 +572,6 @@ export function renderCatalog(ui) {
       ui.local.catalogListParent = catalogViewSnapshot(ui.local);
       ui.local.catalogTrail = [];
       ui.local.catalogId = id;
-      ui.local.showUses = false;
       ui.local.scroll = 0;
       ui.refresh();
     }, { description: open ? undefined : '未解锁' });
@@ -622,8 +606,64 @@ const taskArt = {
 };
 const taskTabs = ['未完成', '已完成'];
 const featuredGoals = ['buildLivestock', 'collectFish', 'firstLivestockProcessing', 'firstMixedProduct'];
-const taskItems = { firstHarvest: 'C01', firstFlour: 'I01', breadRecipe: 'P01', firstBread: 'P01',
-  milleCrepe: 'P150', threeSectorGift: 'PT50', miningTop: 'M10', miningProduct: 'PM14' };
+// View-side navigation detail for task buttons: research tab, focused item or tech key, workshop source.
+const recipeFocus = (id) => ({ tab: '品种配方', ...(id && { id }) });
+const taskFocus = {
+  firstHarvest: { id: 'C01' }, firstFlour: { id: 'I01' }, firstBread: { id: 'P01' },
+  milleCrepe: { id: 'P150' }, threeSectorGift: { id: 'PT50' }, miningProduct: { id: 'PM14' },
+  breadRecipe: recipeFocus('P01'), firstSeed: recipeFocus('C02'), livestockTop: recipeFocus('L10'),
+  fishTop: recipeFocus('F10'), miningTop: recipeFocus('M10'), recipeTrio: recipeFocus(), recipeCollection: recipeFocus(),
+  ...Object.fromEntries(Object.keys(qualityDrawTaskTargets).map((id) => [id, { tab: '品质' }])),
+  ...Object.fromEntries(['firstTech', 'techLevel25', 'techLevel100', 'techLevel300', 'techLevel600', 'techLevel900',
+    'techLevel1200'].map((id) => [id, { tab: '经营改良' }])),
+  delegationTech: { tab: '经营改良', id: 'delegation' },
+  firstLivestockProcessing: { source: '畜牧' }, firstFishProcessing: { source: '水产' },
+  firstMiningProcessing: { source: '矿业' },
+  addProcessor: { source: '全部' }, addRefinery: { source: '全部' }, firstMixedProduct: { source: '全部' },
+};
+// Upgrade tasks land on the highest-level slot among these kinds (first wins on a tie).
+const allFacilityKinds = ['C', 'L', 'F', 'M'];
+const allStationKinds = ['I', 'P'];
+const upgradeTaskKinds = {
+  firstUpgrade: ['C'], fieldLevel10: ['C'], livestockUpgrade: ['L'], fishUpgrade: ['F'], miningUpgrade: ['M'],
+  facilityLevel50: allFacilityKinds, facilityLevel100: allFacilityKinds, facilityLevel200: allFacilityKinds,
+  facilityLevel400: allFacilityKinds,
+  stationUpgrade: allStationKinds, stationLevel10: allStationKinds, stationLevel50: allStationKinds,
+  stationLevel100: allStationKinds, stationLevel200: allStationKinds,
+};
+const kindPages = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '加工', P: '精制' };
+
+function highestSlot(world, kinds) {
+  let best = null;
+  for (const kind of kinds) {
+    const slots = world.facilities[kind] ?? world.stations[kind] ?? [];
+    slots.forEach((slot, index) => {
+      const level = BigInt(slot.level ?? '1');
+      if (!best || level > best.level) best = { kind, index, level };
+    });
+  }
+  return best;
+}
+
+function taskDestination(world, goal) {
+  const kinds = upgradeTaskKinds[goal.id];
+  if (kinds) {
+    const best = highestSlot(world, kinds);
+    const kind = best?.kind ?? kinds[0];
+    const station = Object.hasOwn(world.stations, kind);
+    return {
+      target: station ? '工坊' : '庄园', tab: kindPages[kind], id: null,
+      ...(best && { slot: best.index }), ...(station && { source: '全部' }),
+    };
+  }
+  const focus = taskFocus[goal.id] ?? {};
+  const production = goal.target === '庄园' || goal.target === '工坊';
+  return {
+    target: goal.target, tab: focus.tab ?? goal.tab,
+    id: goal.itemId ?? focus.id ?? (production ? null : undefined),
+    ...(focus.source && { source: focus.source }),
+  };
+}
 
 export function renderTasks(ui) {
   const { guide, active, long } = objectives(ui.w);
@@ -670,11 +710,10 @@ export function renderTasks(ui) {
       }
       const progress = (goal.done ? required : compact(goal.current)) + ' / ' + required;
       const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
-      const target = earnForLand ? '仓库' : goal.target;
-      const tab = earnForLand ? undefined : goal.tab;
+      const { target, tab, ...focus } = earnForLand ? { target: '仓库' } : taskDestination(ui.w, goal);
       const destination = target === '庄园' ? (tab === '畜牧' ? '养殖场' : tab ?? target) : target;
       card.titleBar(progress, goal.done ? '已完成' : earnForLand ? '前往出货' : '前往' + destination,
-        () => ui.go(target, { tab, id: goal.itemId ?? taskItems[goal.id] }), {
+        () => ui.go(target, { tab, ...focus }), {
           compact: true, disabled: goal.done, reason: '这个任务已经完成了', tone: goal.done ? 'plain' : 'gold',
         });
     }, { ratio: 0.32 }), { padding: 8, gap: 6 });

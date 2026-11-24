@@ -1692,7 +1692,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     coast = null;
     rememberContext();
     const changedPage = page !== current;
-    const directedEntry = options.id !== undefined || tab !== undefined;
+    const directedEntry = options.id !== undefined || tab !== undefined ||
+      options.slot !== undefined || options.source !== undefined;
     if (!changedPage && !directedEntry && modal) {
       dismissDialog();
       return;
@@ -1727,6 +1728,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       if (page === '研究') locals[page].openResearchItem = true;
     }
     else if (page === '研究' && tab !== undefined) delete locals[page].linkedResearchItem;
+    // One-shot slot focus and workshop source filter (production pages consume and delete them).
+    if (options.slot !== undefined) { locals[page].focusSlot = options.slot; locals[page].scroll = 0; }
+    else delete locals[page].focusSlot;
+    if (options.source !== undefined) locals[page].focusSource = options.source;
+    else delete locals[page].focusSource;
     pendingModal = undefined;
     activateDialog(undefined);
     focusIndex = -1;
