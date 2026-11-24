@@ -45,7 +45,7 @@ export function renderStatistics(ui) {
     const ready = active.filter((order) => order.status === 'locked' && canDeliverOrder(world, order.id)).length;
     ui.card((card) => {
       card.row('订单', count(active.length), { compact: true });
-      card.text('今日订单 ' + count(generated) + ' / ' + count(orderLimit(world)) +
+      card.text('今日高额订单 ' + count(generated) + ' / ' + count(orderLimit(world)) +
         ' · 今日替换 ' + count(replaced) + ' / ' + count(orderReplacementLimit(world)), silent);
       card.text('未接受 ' + count(offered) + ' · 待备货 ' + count(active.length - offered - ready) +
         ' · 可交付 ' + count(ready), silent);

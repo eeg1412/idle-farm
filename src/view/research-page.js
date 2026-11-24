@@ -103,9 +103,9 @@ const techEffectLabels = {
   premiumSales: '新行情最高售价倍率',
   merchantRestock: '行脚商每日手动换货次数',
   merchantBargaining: '行脚商售价相对仓库价',
-  orderExpansion: '每日新单及并存订单上限',
+  orderExpansion: '每日新单及并存高额订单上限',
   orderNegotiation: '每日可替换订单次数',
-  orderPremium: '新订单报酬倍率',
+  orderPremium: '高额与挑战订单报酬倍率',
 };
 
 function itemKind(item) {

@@ -9,17 +9,21 @@ const capacityHours = [8n, 24n];
 const decimal = /^(0|[1-9]\d*)$/;
 const isProduct = (id) => typeof id === 'string' && Object.hasOwn(catalog.items, id) &&
   catalog.items[id].kind.startsWith('P');
+const products = Object.keys(catalog.items).filter(isProduct).sort();
+const orderTypes = new Set(['high', 'normal', 'challenge']);
 
 export const orderLimit = (world) => 3 + (world.tech.orderExpansion ?? 0);
 export const orderReplacementLimit = (world) => 1 + (world.tech.orderNegotiation ?? 0);
+export const normalOrderLimit = 6;
 
 export function newOrders(day = null) {
-  return { day, generated: 0, replaced: 0, sequence: 0n, candidates: [], capacity: {}, nextAttemptMs: null, active: [] };
+  return { day, generated: 0, replaced: 0, sequence: 0n, candidates: [], capacity: {}, nextAttemptMs: null,
+    active: [], challengeHold: false };
 }
 
 export function resetOrderRun(world) {
-  const { day, generated, replaced, sequence } = world.orders;
-  world.orders = { ...newOrders(day), generated, replaced, sequence };
+  const { day, generated, replaced, sequence, challengeHold } = world.orders;
+  world.orders = { ...newOrders(day), generated, replaced, sequence, challengeHold };
 }
 
 // Raise each product's recorded peak full-load output (hundredths per hour) for this run from an
@@ -41,7 +45,7 @@ export function raiseOrderCapacity(world, forecast) {
 export function synchronizeOrders(world, day) {
   const orders = world.orders;
   if (!validCalendarDay(day) || (orders.day !== null && day <= orders.day)) return;
-  world.orders = { ...orders, day, generated: 0, replaced: 0,
+  world.orders = { ...orders, day, generated: 0, replaced: 0, challengeHold: false,
     active: orders.active.filter((order) => order.status === 'locked') };
 }
 
@@ -54,50 +58,121 @@ export function recordOrderAcquisition(world, id) {
 // Products with a positive recorded peak. Older saves may still list candidates without one.
 const eligibleCandidates = (orders) => orders.candidates.filter((item) => (orders.capacity[item] ?? 0n) > 0n);
 
-function unusedCandidates(orders) {
-  const occupied = new Set(orders.active.map((order) => order.item));
+const ofType = (orders, type) => orders.active.filter((order) => order.type === type);
+
+// High and normal orders only exclude products already asked for by orders of the same type.
+function unusedCandidates(orders, type) {
+  const occupied = new Set(ofType(orders, type).map((order) => order.item));
   return eligibleCandidates(orders).filter((item) => !occupied.has(item));
 }
+
+const durationOf = (id) => catalog.items[id].durationMs;
+
+// Base: the longest candidate (positive recorded peak). Target: the shortest other product at least
+// as long, otherwise the longest shorter one. Ties take the smallest ID (both lists are sorted).
+function challengeItems(orders) {
+  const eligible = eligibleCandidates(orders).sort();
+  if (!eligible.length) return null;
+  let base = eligible[0];
+  for (const id of eligible) if (durationOf(id) > durationOf(base)) base = id;
+  const floor = durationOf(base);
+  const known = new Set(eligible);
+  let longer = null;
+  let shorter = null;
+  for (const id of products) {
+    if (known.has(id)) continue;
+    const duration = durationOf(id);
+    if (duration >= floor) {
+      if (longer === null || duration < durationOf(longer)) longer = id;
+    } else if (shorter === null || duration > durationOf(shorter)) shorter = id;
+  }
+  const target = longer ?? shorter;
+  return target === null ? null : { base, target };
+}
+
+const canGenerateChallenge = (orders) => !orders.challengeHold && ofType(orders, 'challenge').length === 0 &&
+  challengeItems(orders) !== null;
+const canGenerateNormal = (orders) => ofType(orders, 'normal').length < normalOrderLimit &&
+  unusedCandidates(orders, 'normal').length > 0;
 
 function chooseItem(world, candidates) {
   const draw = accountRandom(world.accountSeed, 'orders', world.orders.sequence + 1n);
   return candidates[Number(draw(BigInt(candidates.length)))];
 }
 
-// Count = max(1, min(ceil(V / 2U), ceil(peak hourly output × H))), H drawn from 8–24 whole hours.
-function makeOffer(world, item, sequence) {
-  const price = unitPrice(world, item);
-  const denominator = 2n * price;
-  const byValue = (world.productionValue + denominator - 1n) / denominator;
+function orderHours(world, sequence) {
   const [fewestHours, mostHours] = capacityHours;
-  const hours = fewestHours + accountRandom(world.accountSeed, 'order-hours', sequence)(mostHours - fewestHours + 1n);
-  const byCapacity = ((world.orders.capacity[item] ?? 0n) * hours + 99n) / 100n;
-  const smaller = byValue < byCapacity ? byValue : byCapacity;
-  const count = smaller > 0n ? smaller : 1n;
-  const premium = BigInt(world.tech.orderPremium ?? 0);
-  // Match the merchant's per-unit rounding before multiplying by the shipment size.
-  const paidPerUnit = (price * (50n + premium) + 5n) / 10n;
-  return { id: sequence.toString(), item, status: 'offered', count, reward: count * paidPerUnit };
+  return fewestHours + accountRandom(world.accountSeed, 'order-hours', sequence)(mostHours - fewestHours + 1n);
 }
 
-function generateOrder(world, firstItem) {
+const ceilDiv = (numerator, denominator) => (numerator + denominator - 1n) / denominator;
+const orderCount = (byValue, byCapacity) => {
+  const smaller = byValue < byCapacity ? byValue : byCapacity;
+  return smaller > 0n ? smaller : 1n;
+};
+// Match the merchant's per-unit rounding before multiplying by the shipment size.
+const premiumPerUnit = (world, price) => (price * (50n + BigInt(world.tech.orderPremium ?? 0)) + 5n) / 10n;
+
+// Count = max(1, min(ceil(V / 2U), ceil(peak hourly output × H))), H drawn from 8–24 whole hours.
+// High orders pay the order premium per unit; normal orders a fixed 1.2 times.
+function makeOffer(world, item, sequence, type = 'high') {
+  const price = unitPrice(world, item);
+  const byValue = ceilDiv(world.productionValue, 2n * price);
+  const byCapacity = ceilDiv((world.orders.capacity[item] ?? 0n) * orderHours(world, sequence), 100n);
+  const count = orderCount(byValue, byCapacity);
+  const paidPerUnit = type === 'normal' ? (price * 12n + 5n) / 10n : premiumPerUnit(world, price);
+  return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * paidPerUnit };
+}
+
+// The target is priced at quality 1; the base's peak output is converted by value.
+function makeChallenge(world, { base, target }, sequence) {
+  const price = BigInt(catalog.items[target].price);
+  const byValue = ceilDiv(world.productionValue, 2n * price);
+  const byCapacity = ceilDiv((world.orders.capacity[base] ?? 0n) * orderHours(world, sequence) * unitPrice(world, base),
+    price * 100n);
+  const count = orderCount(byValue, byCapacity);
+  return { id: sequence.toString(), type: 'challenge', item: target, status: 'offered', count,
+    reward: count * premiumPerUnit(world, price) };
+}
+
+function addOrder(world, order, changes = {}) {
+  const orders = world.orders;
+  world.orders = { ...orders, ...changes, sequence: BigInt(order.id), active: [...orders.active, order] };
+}
+
+function generateHighOrder(world, firstItem) {
   const orders = world.orders;
   const limit = orderLimit(world);
-  if (orders.generated >= limit || orders.active.length >= limit) return false;
-  const candidates = unusedCandidates(orders);
+  if (orders.generated >= limit || ofType(orders, 'high').length >= limit) return false;
+  const candidates = unusedCandidates(orders, 'high');
   if (!candidates.length || (firstItem !== undefined && !candidates.includes(firstItem))) return false;
   const item = firstItem ?? chooseItem(world, candidates);
-  const sequence = orders.sequence + 1n;
-  world.orders = { ...orders, sequence, generated: orders.generated + 1,
-    active: [...orders.active, makeOffer(world, item, sequence)] };
+  addOrder(world, makeOffer(world, item, orders.sequence + 1n), { generated: orders.generated + 1 });
   return true;
+}
+
+// Once today's high orders are used up, a checkpoint tries a challenge and then a normal order
+// independently; their products do not exclude each other.
+function generateOrder(world) {
+  if (world.orders.generated < orderLimit(world)) return generateHighOrder(world);
+  let generated = false;
+  if (canGenerateChallenge(world.orders)) {
+    addOrder(world, makeChallenge(world, challengeItems(world.orders), world.orders.sequence + 1n));
+    generated = true;
+  }
+  if (canGenerateNormal(world.orders)) {
+    const item = chooseItem(world, unusedCandidates(world.orders, 'normal'));
+    addOrder(world, makeOffer(world, item, world.orders.sequence + 1n, 'normal'));
+    generated = true;
+  }
+  return generated;
 }
 
 // The timeline calls this once all simultaneous completions are in stock and valued.
 export function recordOrderProduction(world, id, atMs = world.clockMs) {
   if (!recordOrderAcquisition(world, id) || world.orders.nextAttemptMs !== null) return false;
   world.orders = { ...world.orders, nextAttemptMs: atMs + intervalMs };
-  return generateOrder(world, id);
+  return generateHighOrder(world, id);
 }
 
 export function attemptScheduledOrder(world, atMs = world.clockMs) {
@@ -130,7 +205,16 @@ function earliestProductBatch(world) {
 export function orderPlaceholders(world, dayEndMs) {
   const orders = world.orders;
   const limit = orderLimit(world);
-  if (orders.generated >= limit) return [{ kind: 'dailyLimit', dueMs: dayEndMs }];
+  if (orders.generated >= limit) {
+    const placeholders = [{ kind: 'dailyLimit', dueMs: dayEndMs }];
+    const dueMs = orders.nextAttemptMs;
+    if (dueMs === null || dueMs >= dayEndMs) return placeholders;
+    let kind = 'noCandidate';
+    if (canGenerateChallenge(orders) || canGenerateNormal(orders)) kind = 'scheduled';
+    else if (ofType(orders, 'normal').length >= normalOrderLimit) kind = 'slotsFull';
+    placeholders.push({ kind, dueMs });
+    return placeholders;
+  }
   const remaining = limit - orders.generated;
   const placeholders = [];
   if (orders.nextAttemptMs === null) {
@@ -139,11 +223,12 @@ export function orderPlaceholders(world, dayEndMs) {
     for (let i = 1; i < remaining; i += 1) placeholders.push({ kind: 'afterFirst', afterMinutes: i * intervalMs / 60000 });
     return placeholders;
   }
-  const unused = unusedCandidates(orders).length;
+  const unused = unusedCandidates(orders, 'high').length;
+  const highActive = ofType(orders, 'high').length;
   for (let i = 0; i < remaining; i += 1) {
     const dueMs = orders.nextAttemptMs + i * intervalMs;
     if (unused <= i) placeholders.push({ kind: 'noCandidate', dueMs });
-    else if (orders.active.length + i >= limit) placeholders.push({ kind: 'slotsFull', dueMs });
+    else if (highActive + i >= limit) placeholders.push({ kind: 'slotsFull', dueMs });
     else if (dueMs >= dayEndMs) placeholders.push({ kind: 'tomorrow', dueMs });
     else placeholders.push({ kind: 'scheduled', dueMs });
   }
@@ -188,6 +273,8 @@ export function abandonOrder(world, id) {
   const order = lookup(world, id);
   if (order?.status !== 'locked') return false;
   endOrder(world, order);
+  // An abandoned challenge stops challenge orders until the next local day.
+  if (order.type === 'challenge') world.orders = { ...world.orders, challengeHold: true };
   return true;
 }
 
@@ -209,9 +296,9 @@ export function deliverOrder(world, id) {
 
 function replacementCandidates(world, order) {
   const orders = world.orders;
-  if (order?.status !== 'offered' || orders.replaced >= orderReplacementLimit(world) ||
+  if (order?.status !== 'offered' || order.type === 'challenge' || orders.replaced >= orderReplacementLimit(world) ||
     eligibleCandidates(orders).length < 3) return [];
-  return unusedCandidates(orders);
+  return unusedCandidates(orders, order.type);
 }
 
 export const canReplaceOrder = (world, id) => replacementCandidates(world, lookup(world, id)).length > 0;
@@ -221,7 +308,7 @@ export function replaceOrder(world, id) {
   const candidates = replacementCandidates(world, previous);
   if (!candidates.length) return false;
   const sequence = world.orders.sequence + 1n;
-  const next = makeOffer(world, chooseItem(world, candidates), sequence);
+  const next = makeOffer(world, chooseItem(world, candidates), sequence, previous.type);
   updateOffer(world, previous, next, { sequence, replaced: world.orders.replaced + 1 });
   return true;
 }
@@ -261,6 +348,9 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
   }
   requireField(raw !== null && typeof raw === 'object' && !Array.isArray(raw), 'orders');
   const { day, generated, replaced, nextAttemptMs, candidates, active } = raw;
+  // Saves from before order types have no abandoned challenge.
+  const challengeHold = Object.hasOwn(raw, 'challengeHold') ? raw.challengeHold : false;
+  requireField(typeof challengeHold === 'boolean', 'challengeHold');
   // Saves from before order capacity start empty; the app records current capacity on load.
   const rawCapacity = Object.hasOwn(raw, 'capacity') ? raw.capacity : {};
   requireField(rawCapacity !== null && typeof rawCapacity === 'object' && !Array.isArray(rawCapacity), 'capacity');
@@ -279,22 +369,27 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
   requireField(eligible.size === candidates.length, 'candidates');
   requireField(nextAttemptMs === null || (Number.isSafeInteger(nextAttemptMs) && nextAttemptMs > world.clockMs &&
     nextAttemptMs - world.clockMs <= intervalMs && eligible.size > 0), 'nextAttemptMs');
-  requireField(Array.isArray(active) && active.length <= orderLimit(world) &&
-    (nextAttemptMs !== null || active.length === 0), 'active');
+  requireField(Array.isArray(active) && (nextAttemptMs !== null || active.length === 0), 'active');
+  const limits = { high: orderLimit(world), normal: normalOrderLimit, challenge: 1 };
   const ids = new Set();
-  const items = new Set();
+  const items = { high: new Set(), normal: new Set(), challenge: new Set() };
   const restored = Array.from(active, (order, index) => {
     const field = 'orders.active.' + index;
     requireField(order !== null && typeof order === 'object' && !Array.isArray(order), field);
     const { id, item, status } = order;
+    const type = Object.hasOwn(order, 'type') ? order.type : 'high';
+    requireField(orderTypes.has(type) && items[type].size < limits[type], field + '.type');
     requireField(typeof id === 'string' && decimal.test(id) && id !== '0' &&
       BigInt(id) <= sequence && !ids.has(id), field + '.id');
-    requireField(eligible.has(item) && !items.has(item), field + '.item');
+    // Challenge targets may be any catalog product, including ones never produced or researched.
+    requireField((type === 'challenge' ? isProduct(item) : eligible.has(item)) && !items[type].has(item),
+      field + '.item');
     requireField(status === 'offered' || status === 'locked', field + '.status');
     ids.add(id);
-    items.add(item);
-    return { id, item, status, count: parseAmount(order.count, field + '.count', 1n),
+    items[type].add(item);
+    return { id, type, item, status, count: parseAmount(order.count, field + '.count', 1n),
       reward: parseAmount(order.reward, field + '.reward', 1n) };
   });
-  return { day, generated, replaced, sequence, candidates: [...candidates].sort(), capacity, nextAttemptMs, active: restored };
+  return { day, generated, replaced, sequence, candidates: [...candidates].sort(), capacity, nextAttemptMs,
+    active: restored, challengeHold };
 }

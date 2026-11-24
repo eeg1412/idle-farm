@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { unitPrice } from '../src/game/advancement.js';
 import { managerGiftRemaining } from '../src/game/managers.js';
 import { objectives, settleTaskRewards } from '../src/game/objectives.js';
 import {
-  acceptOrder, canDeliverOrder, canReplaceOrder, deliverOrder, hasDeliverableOrder,
+  abandonOrder, acceptOrder, canDeliverOrder, canReplaceOrder, deliverOrder, hasDeliverableOrder,
   orderItemTags, raiseOrderCapacity, replaceOrder,
 } from '../src/game/orders.js';
 import {
@@ -24,7 +25,7 @@ test('the first delivery pays the fixed per-piece rounded price and both tasks o
   advanceWorld(world, world.stations.P[0].batch.end);
   const [offer] = world.orders.active;
   // 7,831 × 5.5 rounds to 43,071 for each of the three pieces.
-  assert.deepEqual([offer.item, offer.count, offer.reward], ['P02', 3n, 129_213n]);
+  assert.deepEqual([offer.type, offer.item, offer.count, offer.reward], ['high', 'P02', 3n, 129_213n]);
   assert.ok(acceptOrder(world, offer.id));
   assert.equal(world.inventory.P02, 1n);
   assert.equal(canDeliverOrder(world, offer.id), false);
@@ -123,6 +124,7 @@ test('migration keeps zero-stock products and long tasks without starting the ti
   assert.deepEqual(loaded.orders.candidates, ['P02', 'P03']);
   assert.deepEqual(loaded.orders.capacity, {});
   assert.equal(loaded.orders.nextAttemptMs, null);
+  assert.equal(loaded.orders.challengeHold, false);
   // Legacy candidates only become eligible once a peak is recorded for them.
   raiseOrderCapacity(loaded, [{ id: 'P02', produced: 10_000n }, { id: 'P03', produced: 10_000n }]);
   assert.ok(arrangeStation(loaded, 'P', 0, 'P01'));
@@ -167,4 +169,48 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   assert.equal(restored.orders.capacity.P01, peak);
   assert.ok(sellFarm(restored, farmSaleOffer(restored)));
   assert.deepEqual(restored.orders.capacity, {});
+});
+
+test('after today's high orders a checkpoint adds a challenge and a normal order', () => {
+  const world = newWorld(afternoon);
+  world.unlocked.push('P01');
+  world.inventory = { I01: 1n };
+  world.orders.generated = 3;
+  assert.ok(arrangeStation(world, 'P', 0, 'P01'));
+  advanceWorld(world, world.stations.P[0].batch.end);
+  // The first product starts the timer but today's high orders are already used up.
+  assert.deepEqual(world.orders.active, []);
+  assert.deepEqual(world.orders.candidates, ['P01']);
+  const due = world.orders.nextAttemptMs;
+  advanceWorld(world, due);
+  const [challenge, normal] = world.orders.active;
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['challenge', 'normal']);
+  assert.notEqual(challenge.item, 'P01');
+  assert.equal(normal.item, 'P01');
+  assert.equal(normal.reward, normal.count * ((unitPrice(world, 'P01') * 12n + 5n) / 10n));
+  assert.equal(world.orders.generated, 3);
+  assert.equal(canReplaceOrder(world, challenge.id), false);
+  const restored = decodeWorldRecord(encodeWorldRecord(world));
+  assert.deepEqual(restored.orders, world.orders);
+  assert.ok(acceptOrder(world, challenge.id));
+  assert.ok(abandonOrder(world, challenge.id));
+  assert.equal(world.orders.challengeHold, true);
+  advanceWorld(world, due + halfHour);
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['normal']);
+  assert.ok(sellFarm(world, farmSaleOffer(world)));
+  assert.deepEqual([world.orders.active, world.orders.candidates, world.orders.challengeHold], [[], [], true]);
+});
+
+test('orders saved before order types load as high orders', () => {
+  const world = newWorld(afternoon);
+  world.unlocked.push('P01');
+  world.inventory = { I01: 1n };
+  assert.ok(arrangeStation(world, 'P', 0, 'P01'));
+  advanceWorld(world, world.stations.P[0].batch.end);
+  const legacy = encodeWorldRecord(world);
+  delete legacy.orders.challengeHold;
+  for (const order of legacy.orders.active) delete order.type;
+  const loaded = decodeWorldRecord(legacy);
+  assert.deepEqual(loaded.orders.active.map(({ type, item }) => [type, item]), [['high', 'P01']]);
+  assert.equal(loaded.orders.challengeHold, false);
 });

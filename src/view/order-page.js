@@ -2,7 +2,20 @@ import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { hoursLabel } from './management-pages.js';
-import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit } from '../game/orders.js';
+import { canDeliverOrder, canReplaceOrder, normalOrderLimit, orderLimit, orderPlaceholders, orderReplacementLimit } from '../game/orders.js';
+
+// Orders saved before order types existed are high-value orders.
+const orderType = (order) => order.type ?? 'high';
+const typeLabels = { high: '高额', normal: '普通', challenge: '挑战' };
+const abandonNotes = {
+  high: '订单作废，不发报酬，今日高额订单名额不返还。',
+  normal: '订单作废，不发报酬。',
+  challenge: '订单作废，不发报酬，今天不再有挑战订单。',
+};
+
+function typeTag(order) {
+  return { label: typeLabels[orderType(order)], tone: 'plain' };
+}
 
 function statusTag(world, order) {
   if (order.status !== 'locked') return { label: '未接受', tone: 'blue' };
@@ -17,7 +30,7 @@ function quantities(ui, order) {
 
 function orderProduct(ui, order, small = false) {
   ui.item(order.item, catalog.items[order.item].name, undefined,
-    { iconSize: small ? 34 : 50, titleSize: small ? 14 : 18, badges: [statusTag(ui.w, order)] });
+    { iconSize: small ? 34 : 50, titleSize: small ? 14 : 18, badges: [typeTag(order), statusTag(ui.w, order)] });
 }
 
 // Delivery's float comes from the action result in main.js.
@@ -33,7 +46,7 @@ function isCurrentOrder(world, order) {
 function confirmAbandon(ui, order, inDetail) {
   ui.dialog('放弃订单', (panel) => {
     panel.text('确定放弃「' + catalog.items[order.item].name + '」×' + compact(order.count) + ' 的订单吗？');
-    panel.text('订单作废，不发报酬，今日订单名额不返还。', { muted: true, fontSize: 14 });
+    panel.text(abandonNotes[orderType(order)], { muted: true, fontSize: 14 });
     panel.buttons([
       { label: '再想想', onClick: panel.close },
       { label: '确认放弃', tone: 'danger', onClick: async () => {
@@ -157,7 +170,8 @@ function placeholderCard(cell, placeholder) {
 
 export function renderOrders(ui) {
   const { active, generated, replaced } = ui.w.orders;
-  ui.row('今日订单', generated + ' / ' + orderLimit(ui.w));
+  ui.row('今日高额订单', generated + ' / ' + orderLimit(ui.w));
+  ui.row('普通订单', active.filter((order) => orderType(order) === 'normal').length + ' / ' + normalOrderLimit);
   ui.row('今日替换', replaced + ' / ' + orderReplacementLimit(ui.w));
   const small = Boolean(ui.local.compactOrders);
   const setCompact = (value) => {
@@ -182,5 +196,5 @@ export function renderOrders(ui) {
       }
     }, { style: 'production', showArrow: false, onClick: () => showOrder(ui, order) });
   }, { columns: small ? 'auto' : 1 });
-  if (dailyLimit) ui.text('今天的订单都来过了', { muted: true, align: 'center', fontSize: 13 });
+  if (dailyLimit) ui.text('今天的高额订单都来过了', { muted: true, align: 'center', fontSize: 13 });
 }
