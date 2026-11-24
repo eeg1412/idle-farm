@@ -2536,12 +2536,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           cursor += height + rowGap;
         }
       },
-      // `surface: 'none'` lets the page background show behind a pinned footer instead of the card strip.
-      footer(draw, { surface } = {}) {
+      footer(draw) {
         const layer = parent.addChild(new Container());
         const child = layoutUI(layer, x, cursor, width, local, availableHeight);
         draw(child);
-        trailingButtons.push({ layer, top: cursor, bottom: child.bottom, surface });
+        trailingButtons.push({ layer, top: cursor, bottom: child.bottom });
         cursor = child.bottom;
       },
       tabs(values, selected, onSelect, { keepScroll = false, sticky = false, style, size, compact, indicatorTabs } = {}) {
@@ -3799,9 +3798,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const footer = new Container();
       footer.label = captureFooter ? 'dialog-footer' : 'page-footer';
       footer.position.y = y + height + 6 - footerTop;
-      if (!footerBlocks.every((block) => block.surface === 'none')) {
-        panel(parent, x - bleed, y + height, width + bleed * 2, footerHeight, palette.card, null, 0);
-      }
+      panel(parent, x - bleed, y + height, width + bleed * 2, footerHeight, palette.card, null, 0);
       parent.addChild(footer);
       for (const block of footerBlocks) footer.addChild(block.layer);
     }

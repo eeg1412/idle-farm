@@ -182,6 +182,5 @@ export function renderOrders(ui) {
       }
     }, { style: 'production', showArrow: false, onClick: () => showOrder(ui, order) });
   }, { columns: small ? 'auto' : 1 });
-  // Must stay the page's last draw call.
-  if (dailyLimit) ui.footer((footer) => footer.text('今天的订单都来过了', { muted: true, align: 'center', fontSize: 13 }), { surface: 'none' });
+  if (dailyLimit) ui.text('今天的订单都来过了', { muted: true, align: 'center', fontSize: 13 });
 }
