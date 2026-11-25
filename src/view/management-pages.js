@@ -669,7 +669,6 @@ export function renderTasks(ui) {
   const { guide, active, long } = objectives(ui.w);
   if (ui.local.guideActive === true && !active) ui.local.scroll = 0;
   ui.local.guideActive = active;
-  ui.text('任务完成后自动发奖，每项只发一次。', { muted: true });
   const pendingCapsules = ui.w.pendingTaskCapsules ?? 0n;
   if (pendingCapsules > 0n) {
     ui.titleBar('待领时空胶囊 ' + compact(pendingCapsules), '领取', () => ui.action('claimTaskCapsules'), { compact: true });
