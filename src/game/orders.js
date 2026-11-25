@@ -77,15 +77,32 @@ function unusedCandidates(orders, type) {
 
 const durationOf = (id) => catalog.items[id].durationMs;
 
-// Base: the longest candidate (positive recorded peak), ties to the smallest ID. Pool: every catalog
-// product that is not a candidate this run (sorted by ID).
-function challengePlan(orders) {
-  const eligible = eligibleCandidates(orders).sort();
+// Recipes still to research before the product can be made: the product and its transitive research
+// prerequisites that are not unlocked (an unlocked recipe ends the walk). Its size is the research gap.
+function missingResearch(id, unlocked) {
+  const missing = new Set();
+  (function visit(key) {
+    if (missing.has(key) || unlocked.has(key)) return;
+    missing.add(key);
+    for (const required of catalog.research[key]?.requires ?? []) visit(required);
+  })(id);
+  return [...missing];
+}
+const maxChallengeGap = 2;
+
+// Base: the longest candidate (positive recorded peak), ties to the smallest ID. Pool: catalog products
+// that are not candidates this run (sorted by ID) within two research steps (gap ≤ 2); when none are,
+// those with the smallest gap.
+function challengePlan(world) {
+  const eligible = eligibleCandidates(world.orders).sort();
   if (!eligible.length) return null;
   let base = eligible[0];
   for (const id of eligible) if (durationOf(id) > durationOf(base)) base = id;
   const known = new Set(eligible);
-  return { base, pool: products.filter((id) => !known.has(id)) };
+  const unlocked = new Set(world.unlocked);
+  const unknown = products.filter((id) => !known.has(id)).map((id) => [id, missingResearch(id, unlocked).length]);
+  const nearest = Math.max(maxChallengeGap, Math.min(...unknown.map(([, gap]) => gap)));
+  return { base, pool: unknown.filter(([, gap]) => gap <= nearest).map(([id]) => id) };
 }
 
 // R(S): the shortest product at least as long as the base, otherwise the longest shorter one.
@@ -103,8 +120,8 @@ function pickTarget(ids, floor) {
 }
 
 // T1 = R(U), T2 = R(U − T1), T3 = R(rest of U whose kind differs from the base's); empty picks are left out.
-function challengeTargets(orders) {
-  const plan = challengePlan(orders);
+function challengeTargets(world) {
+  const plan = challengePlan(world);
   if (!plan) return [];
   const floor = durationOf(plan.base);
   const first = pickTarget(plan.pool, floor);
@@ -118,8 +135,9 @@ function challengeTargets(orders) {
 
 const challengeHeld = (orders, atMs) => orders.challengeHoldUntilMs !== null && atMs < orders.challengeHoldUntilMs;
 // Challenges need at least three candidates this run, no challenge order and no running cooldown.
-const canGenerateChallenge = (orders, atMs) => eligibleCandidates(orders).length >= 3 &&
-  !challengeHeld(orders, atMs) && ofType(orders, 'challenge').length === 0 && challengeTargets(orders).length > 0;
+const canGenerateChallenge = (world, atMs) => eligibleCandidates(world.orders).length >= 3 &&
+  !challengeHeld(world.orders, atMs) && ofType(world.orders, 'challenge').length === 0 &&
+  challengeTargets(world).length > 0;
 const canGenerateNormal = (orders) => ofType(orders, 'normal').length < normalOrderLimit &&
   unusedCandidates(orders, 'normal').length > 0;
 
@@ -192,12 +210,21 @@ function standardTime(count, hourlyHundredths) {
 
 // Pioneer bonus: the target's research coins plus its research materials at catalog base price, without
 // research discounts; halved when the target is already researched; zero when it has no research entry.
-function pioneerBonus(world, target) {
-  const research = catalog.research[target];
+function researchCost(id) {
+  const research = catalog.research[id];
   if (!research) return 0n;
-  let bonus = BigInt(research.coins);
-  for (const [id, amount] of Object.entries(research.costs ?? {})) bonus += BigInt(amount) * BigInt(catalog.items[id].price);
-  return world.unlocked.includes(target) ? bonus / 2n : bonus;
+  let cost = BigInt(research.coins);
+  for (const [material, amount] of Object.entries(research.costs ?? {})) {
+    cost += BigInt(amount) * BigInt(catalog.items[material].price);
+  }
+  return cost;
+}
+
+// Catalog research cost of every recipe still missing (target and prerequisites); half the target's own
+// cost when it is already researched.
+function pioneerBonus(world, target, missing) {
+  if (!missing.length) return researchCost(target) / 2n;
+  return missing.reduce((sum, id) => sum + researchCost(id), 0n);
 }
 
 // One level-1 station without technology, in hundredths per hour, rounded like forecastHourlyProduction.
@@ -214,9 +241,11 @@ function makeChallenge(world, target, sequence) {
   const hourly = baseHourlyOutput(target);
   const byCapacity = ceilDiv(hourly * orderHours(world, sequence), 100n);
   const count = orderCount(byValue, byCapacity);
-  const bonus = pioneerBonus(world, target);
+  const missing = missingResearch(target, new Set(world.unlocked));
+  const bonus = pioneerBonus(world, target, missing);
   const capsules = (world.challengeCapsuleItems ?? []).includes(target) ? 0n : challengeCapsules;
-  const rate = 80n + premiumLevel(world);
+  // +1× per research step still missing, fixed at generation.
+  const rate = 80n + premiumLevel(world) + 10n * BigInt(missing.length);
   return { id: sequence.toString(), type: 'challenge', item: target, status: 'offered', count,
     reward: count * ((price * rate + 5n) / 10n) + bonus, rewardRate: Number(rate * 10n), ...standardTime(count, hourly),
     bonus, capsules };
@@ -245,8 +274,8 @@ function generateHighOrder(world, firstItem) {
 function generateOrder(world, atMs = world.clockMs) {
   const quotaUsed = world.orders.generated >= orderLimit(world);
   let generated = !quotaUsed && generateHighOrder(world);
-  if (canGenerateChallenge(world.orders, atMs)) {
-    for (const target of challengeTargets(world.orders)) {
+  if (canGenerateChallenge(world, atMs)) {
+    for (const target of challengeTargets(world)) {
       addOrder(world, makeChallenge(world, target, world.orders.sequence + 1n));
     }
     generated = true;
@@ -291,8 +320,8 @@ function rushDueMs(world, dayEndMs) {
   const limit = orderLimit(world);
   const ready = orders.generated < limit
     ? (ofType(orders, 'high').length < limit && unusedCandidates(orders, 'high').length > 0) ||
-      canGenerateChallenge(orders, world.clockMs)
-    : canGenerateChallenge(orders, world.clockMs) || canGenerateNormal(orders);
+      canGenerateChallenge(world, world.clockMs)
+    : canGenerateChallenge(world, world.clockMs) || canGenerateNormal(orders);
   return ready ? due : null;
 }
 
@@ -346,7 +375,7 @@ export function orderPlaceholders(world, dayEndMs) {
     const dueMs = orders.nextAttemptMs;
     if (dueMs === null || dueMs >= dayEndMs) return placeholders;
     let kind = 'noCandidate';
-    if (canGenerateChallenge(orders, dueMs) || canGenerateNormal(orders)) kind = 'scheduled';
+    if (canGenerateChallenge(world, dueMs) || canGenerateNormal(orders)) kind = 'scheduled';
     else if (ofType(orders, 'normal').length >= normalOrderLimit) kind = 'slotsFull';
     placeholders.push({ kind, dueMs });
     return placeholders;
@@ -453,8 +482,9 @@ export function deliverOrder(world, id) {
 
 // Offered challenges draw from untried products, excluding every current challenge product, within
 // base–2×base duration; an empty range falls back to R over the remaining untried products.
-function challengeReplacements(orders) {
-  const plan = challengePlan(orders);
+function challengeReplacements(world) {
+  const orders = world.orders;
+  const plan = challengePlan(world);
   if (!plan) return [];
   const taken = new Set(ofType(orders, 'challenge').map((order) => order.item));
   const rest = plan.pool.filter((id) => !taken.has(id));
@@ -468,7 +498,7 @@ function challengeReplacements(orders) {
 function replacementCandidates(world, order) {
   const orders = world.orders;
   if (order?.status !== 'offered' || orders.replaced >= orderReplacementLimit(world)) return [];
-  if (order.type === 'challenge') return challengeReplacements(orders);
+  if (order.type === 'challenge') return challengeReplacements(world);
   if (eligibleCandidates(orders).length < 3) return [];
   return unusedCandidates(orders, order.type);
 }
