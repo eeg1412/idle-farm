@@ -161,10 +161,166 @@ export function forecastHourlyProduction(world) {
   });
 }
 
-// Order sizes cap at the products' peak arranged output this run (order spec). Call after any
-// action that may change arrangements, levels or technology, and once on load before offline settlement.
+const utilizationScale = 1_000_000n;
+// Allocation rates are items per hour x 10^12, floored per line; ample next to the 10^-6 utilization quantum.
+const allocationRateScale = 3_600_000n * 10n ** 12n;
+const allocationRate = (amount, duration) => amount * allocationRateScale / duration;
+// Share of a full-speed request, rounded to the utilization quantum so per-line flooring of
+// equal rational rates never reads as a shortage.
+function shareOf(supplied, requested) {
+  if (requested === 0n) return utilizationScale;
+  const share = (supplied * utilizationScale + requested / 2n) / requested;
+  return share < utilizationScale ? share : utilizationScale;
+}
+
+// Real hourly output: facilities run at full speed; each station runs at the smallest share of its
+// inputs. Every input counts as in stock for a station that has a batch running (end after the
+// current clock), and an input also counts as in stock when availableToProduce covers one of the
+// station's batches; otherwise the station receives upstream real output, handed out greedily in
+// orderedStations order. Every station (in stock or not) draws its full-speed request from the
+// upstream pool in that order and returns what its utilization leaves unused to later stations.
+//
+// Consecutive stations in orderedStations with the same recipe, level, priority and running state form
+// one group, so every member has the same in-stock verdict for every input. Within such
+// a run greedy allocation fills members one after another, so member k's share of every input is the
+// same non-decreasing function clamp(t - (k - 1), 0, 1) of that input's total share t; since min and a
+// non-decreasing function commute, the members' utilizations sum to min(min_i t_i, n): exactly the
+// group's utilization times n. Inputs used and handed on are therefore identical, and a member below
+// 100% exists exactly when the group is below 100%. Non-adjacent stations are not merged, because an
+// interleaved consumer of a shared input would then be served in a different order; a running and an
+// idle station are not merged, because only the running one counts every input as in stock.
+//
+// Upstream output depends on utilizations, so passes repeat until utilizations no longer change. Pass
+// k uses the output of pass k - 1 (stations start at zero). When no station's output feeds back into
+// its own supply (through inputs or earlier consumers' leftovers), an item whose dependency chain spans
+// j station products is exact from pass j + 1; such a chain is at most the number of distinct station
+// recipes N, so N + 1 passes reach and confirm the fixed point. Feedback loops through shared inputs
+// may oscillate; the cap bounds the work and the last pass is used.
+export function actualHourlyProduction(world) {
+  const lines = new Map();
+  const arranged = new Set();
+  const starved = new Set();
+  const register = (id) => {
+    if (!lines.has(id)) lines.set(id, { duration: 1n, produced: 0n, consumed: 0n });
+  };
+  // Exact accumulation as in forecastHourlyProduction, with amounts carrying the utilization scale.
+  const addRate = (id, duration, produced, consumed) => {
+    register(id);
+    const total = lines.get(id);
+    const divisor = greatestCommonDivisor(total.duration, duration);
+    const totalScale = duration / divisor;
+    const batchScale = total.duration / divisor;
+    total.duration *= totalScale;
+    total.produced = total.produced * totalScale + produced * batchScale;
+    total.consumed = total.consumed * totalScale + consumed * batchScale;
+  };
+
+  const facilitySupply = new Map();
+  for (const [kind, facilities] of Object.entries(world.facilities)) {
+    for (const { recipe, level } of facilities) {
+      if (!recipe) continue;
+      const durationMs = productionDurationMs(world, recipe);
+      const output = facilityOutput(world, kind, recipe, BigInt(level));
+      if (durationMs === null || output === null) continue;
+      const duration = BigInt(durationMs);
+      arranged.add(recipe);
+      addRate(recipe, duration, output * utilizationScale, 0n);
+      facilitySupply.set(recipe, (facilitySupply.get(recipe) ?? 0n) + allocationRate(output, duration));
+    }
+  }
+  // Row order follows the saved station lists, as in forecastHourlyProduction.
+  for (const { recipe } of Object.values(world.stations).flat()) {
+    if (!recipe || !catalog.items[recipe]) continue;
+    register(recipe);
+    for (const id of Object.keys(catalog.items[recipe].inputs ?? {})) register(id);
+  }
+
+  const groups = [];
+  for (const station of orderedStations(world)) {
+    const { recipe } = station;
+    if (!recipe || !catalog.items[recipe]) continue;
+    const level = BigInt(station.level ?? '1');
+    const priority = Boolean(station.priority);
+    const running = Boolean(station.batch) && station.batch.end > world.clockMs;
+    const last = groups.at(-1);
+    if (last && last.recipe === recipe && last.level === level && last.priority === priority && last.running === running) {
+      last.count += 1n;
+      continue;
+    }
+    groups.push({ recipe, level, priority, running, count: 1n });
+  }
+  for (const group of groups) {
+    group.duration = BigInt(productionDurationMs(world, group.recipe));
+    group.output = group.count * stationOutput(group.recipe, group.level);
+    group.supply = allocationRate(group.output, group.duration);
+    group.inputs = stationRequirements(world, group.recipe, group.level).map(({ id, owned, needed }) => ({
+      id, needed: group.count * needed, stocked: group.running || owned >= needed,
+      request: allocationRate(group.count * needed, group.duration),
+    }));
+    arranged.add(group.recipe);
+  }
+
+  const runPass = (utilizations) => {
+    const pools = new Map(facilitySupply);
+    groups.forEach((group, index) => {
+      pools.set(group.recipe, (pools.get(group.recipe) ?? 0n) + group.supply * utilizations[index] / utilizationScale);
+    });
+    const short = new Set();
+    const next = groups.map((group) => {
+      let utilization = utilizationScale;
+      const grants = group.inputs.map((input) => {
+        const pool = pools.get(input.id) ?? 0n;
+        const granted = pool < input.request ? pool : input.request;
+        const share = shareOf(granted, input.request);
+        if (!input.stocked && share < utilizationScale) short.add(input.id);
+        const supplied = input.stocked ? utilizationScale : share;
+        if (supplied < utilization) utilization = supplied;
+        return granted;
+      });
+      group.inputs.forEach((input, index) => {
+        const used = input.request * utilization / utilizationScale;
+        pools.set(input.id, (pools.get(input.id) ?? 0n) - (used < grants[index] ? used : grants[index]));
+      });
+      return utilization;
+    });
+    return { next, short };
+  };
+
+  let utilizations = groups.map(() => 0n);
+  let short = new Set();
+  const passLimit = new Set(groups.map(({ recipe }) => recipe)).size + 1;
+  for (let pass = 0; pass < passLimit; pass += 1) {
+    const result = runPass(utilizations);
+    const settled = result.next.every((utilization, index) => utilization === utilizations[index]);
+    utilizations = result.next;
+    short = result.short;
+    if (settled) break;
+  }
+
+  groups.forEach((group, index) => {
+    const utilization = utilizations[index];
+    if (utilization < utilizationScale) starved.add(group.recipe);
+    addRate(group.recipe, group.duration, group.output * utilization, 0n);
+    for (const input of group.inputs) addRate(input.id, group.duration, 0n, input.needed * utilization);
+  });
+
+  const roundHourlyHundredths = (amount, duration) => {
+    const scaled = duration * utilizationScale;
+    return (amount * 360_000_000n + scaled / 2n) / scaled;
+  };
+  return Array.from(lines, ([id, total]) => {
+    const produced = roundHourlyHundredths(total.produced, total.duration);
+    const consumed = roundHourlyHundredths(total.consumed, total.duration);
+    return { id, produced, consumed, net: produced - consumed,
+      arranged: arranged.has(id), starved: starved.has(id), short: short.has(id) };
+  });
+}
+
+// Order sizes cap at the products' peak real output this run (order spec). Call after any action that
+// may change arrangements, levels, technology or stock, once on load before offline settlement, and at
+// the end of an advance that completed at least one batch.
 export function recordOrderCapacity(world) {
-  return raiseOrderCapacity(world, forecastHourlyProduction(world));
+  return raiseOrderCapacity(world, actualHourlyProduction(world));
 }
 
 function makeBatch(world, id, amount) {
@@ -400,6 +556,7 @@ export function advanceWorld(world, targetMs, {
   const contributions = productionContributionBatch(world);
   synchronizeOrders(world, localCalendarDay(orderWallStartMs));
   let midnight = nextOrderMidnight(startMs, orderWallStartMs);
+  let completedAny = false;
   try {
     while (true) {
       const eventAt = Math.min(heap[0]?.batch.end ?? Infinity, world.orders.nextAttemptMs ?? Infinity, midnight);
@@ -432,6 +589,7 @@ export function advanceWorld(world, targetMs, {
         entry.batch = null;
         completed.push(entry);
       }
+      if (completed.length) completedAny = true;
       if (firstProduct !== null) recordOrderProduction(world, firstProduct, eventAt);
       else if (world.orders.nextAttemptMs === eventAt) attemptScheduledOrder(world, eventAt);
       if (completed.length && (eventAt !== targetMs || !deferFinalStarts)) restart(completed, depositedIds);
@@ -441,6 +599,8 @@ export function advanceWorld(world, targetMs, {
   }
   world.clockMs = targetMs;
   accrueBasicResearch(world, elapsed);
+  // Completions change stock and so real output; record the peak once per advance after settlement.
+  if (completedAny) recordOrderCapacity(world);
 }
 
 export function updateWorldWallTime(world, now) {

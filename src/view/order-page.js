@@ -1,8 +1,8 @@
-import { catalog } from '../game/world.js';
+import { actualHourlyProduction, catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { researchPathNodes, showResearch } from './research-page.js';
-import { hoursLabel } from './management-pages.js';
+import { hourlyRateLabel, hoursLabel } from './management-pages.js';
 import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderRushCost } from '../game/orders.js';
 
 // Orders saved before order types existed are high-value orders.
@@ -27,9 +27,32 @@ function statusTag(world, order) {
   return canDeliverOrder(world, order.id) ? { label: '可交付', tone: 'green' } : { label: '待备货', tone: 'gold' };
 }
 
-function quantities(ui, order, inDetail = false) {
+// One actualHourlyProduction pass per render, keyed by item id.
+function hourlyRates(world) {
+  return new Map(actualHourlyProduction(world).map((row) => [row.id, row]));
+}
+
+function hourlyChange(ui, order, rates) {
+  const rate = rates.get(order.item);
+  let value;
+  let tone;
+  // A reason instead of a rate means nothing is being produced: shown in red.
+  if (!ui.w.unlocked.includes(order.item)) value = '未研发';
+  else if (!rate?.arranged) value = '未安排生产';
+  else if (rate.produced === 0n) value = '缺料';
+  if (value) tone = 'danger';
+  else {
+    const label = hourlyRateLabel(rate.net, true);
+    value = label + ' 件';
+    tone = label === '0' ? undefined : rate.net < 0n ? 'danger' : 'green';
+  }
+  ui.row('当前产能', value, { compact: true, tone });
+}
+
+function quantities(ui, order, rates, inDetail = false) {
   ui.row('所需件数', compact(order.count) + ' 件', { compact: true });
   ui.row('当前库存', compact(ui.w.inventory[order.item] ?? 0n) + ' 件', { compact: true });
+  hourlyChange(ui, order, rates);
   // Multiplier over the unit price fixed at generation, drawn like a market rate; older orders have none.
   const rate = typeof order.rewardRate === 'number' ? order.rewardRate - 100 : 0;
   ui.row('固定报酬', compact(order.reward) + ' 金币', { compact: true, valueMarketRate: rate || undefined });
@@ -144,7 +167,7 @@ function showOrder(ui, order) {
       return;
     }
     orderProduct(dlg, current, true);
-    quantities(dlg, current, true);
+    quantities(dlg, current, hourlyRates(dlg.w), true);
     // An unresearched challenge target can also show its research prerequisites.
     const locked = orderType(current) === 'challenge' && !dlg.w.unlocked.includes(current.item);
     const tab = locked && dlg.local.chainTab === '科技树' ? '科技树' : '生产链';
@@ -245,6 +268,7 @@ export function renderOrders(ui) {
     .map((placeholder) => ({ placeholder }));
   const firstScheduled = placeholders.find(({ placeholder }) => placeholder.kind === 'scheduled');
   const rushCost = firstScheduled ? orderRushCost(ui.w, nextMidnightClock(ui.w)) : null;
+  const rates = small ? null : hourlyRates(ui.w);
   ui.scrollList([...active, ...placeholders], (cell, order) => {
     if (order.placeholder) {
       return placeholderCard(cell, order.placeholder,
@@ -254,7 +278,7 @@ export function renderOrders(ui) {
       orderProduct(card, order, small);
       if (small) card.text(compact(order.count) + ' 件 · ' + compact(order.reward) + ' 金币');
       else {
-        quantities(card, order);
+        quantities(card, order, rates);
         card.buttons(orderActions(ui, order));
       }
     }, { style: 'production', showArrow: false, onClick: () => showOrder(ui, order) });

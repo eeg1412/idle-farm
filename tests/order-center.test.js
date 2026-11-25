@@ -15,6 +15,11 @@ import { decodeWorldRecord, encodeWorldRecord } from '../src/platform/world-save
 
 const halfHour = 30 * 60_000;
 const afternoon = new Date(2026, 10, 22, 15).getTime();
+// Base hourly output at level 1 without technology, in hundredths per hour.
+const baseHourly = (id) => {
+  const duration = BigInt(catalog.items[id].durationMs);
+  return (BigInt(catalog.items[id].output) * 360_000_000n + duration / 2n) / duration;
+};
 
 test('the first delivery pays the fixed per-piece rounded price and both tasks once', () => {
   const world = newWorld(afternoon);
@@ -169,7 +174,8 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   world.productionValue = world.lifetimeProductionValue = 10n ** 15n;
   assert.ok(arrangeStation(world, 'P', 0, 'P01'));
   const peak = world.orders.capacity.P01;
-  assert.ok(peak > 0n);
+  // The running batch counts as in stock, so its full real output is recorded on arrangement.
+  assert.equal(peak, baseHourly('P01'));
   assert.deepEqual(world.orders.candidates, ['P01']);
   advanceWorld(world, world.stations.P[0].batch.end);
   const [offer] = world.orders.active;
@@ -184,10 +190,6 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
 
 // ceil(count × 100 × 1 hour / C) for C hundredths per hour.
 const standardMs = (count, hourly) => Number((count * 360_000_000n + hourly - 1n) / hourly);
-const baseHourly = (id) => {
-  const duration = BigInt(catalog.items[id].durationMs);
-  return (BigInt(catalog.items[id].output) * 360_000_000n + duration / 2n) / duration;
-};
 
 // Recipes still to research for a product: itself and its transitive prerequisites not yet unlocked.
 function missingResearch(world, id) {

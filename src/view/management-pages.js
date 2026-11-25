@@ -1,4 +1,4 @@
-import { catalog, facilityOffer, farmSaleOffer, forecastHourlyProduction, quantity, startingCoins, tradeOffer } from '../game/world.js';
+import { actualHourlyProduction, catalog, facilityOffer, farmSaleOffer, quantity, startingCoins, tradeOffer } from '../game/world.js';
 import { marketForecast, marketIsActive, marketRate, marketResetsRemaining, marketUnitPrice } from '../game/market.js';
 import { objectives, taskCoinRewards, taskProductionGates } from '../game/objectives.js';
 import { qualityDrawTaskTargets } from '../game/quality-tasks.js';
@@ -322,7 +322,7 @@ function warehouseDetail(ui, id) {
   });
 }
 
-function hourlyRateLabel(rate, signed = false) {
+export function hourlyRateLabel(rate, signed = false) {
   const whole = rate / 100n;
   const sign = whole < 0n ? '−' : signed && whole > 0n ? '+' : '';
   return sign + compact(whole < 0n ? -whole : whole, 0, 1000n);
@@ -337,7 +337,7 @@ function compareHourlyRates(left, right) {
 }
 
 function sampleHourlyProduction(world) {
-  return forecastHourlyProduction(world).sort(compareHourlyRates);
+  return actualHourlyProduction(world).sort(compareHourlyRates);
 }
 
 function showHourlyProduction(ui) {
@@ -348,11 +348,15 @@ function showHourlyProduction(ui) {
       panel.empty('暂无已安排生产的设施或工位。');
       return;
     }
-    panel.scrollList(rows, (row, { id, produced, consumed, net }) => {
+    panel.scrollList(rows, (row, { id, produced, consumed, net, starved, short }) => {
       const netValue = hourlyRateLabel(net, true);
       const netTone = netValue === '0' ? undefined : net < 0n ? 'danger' : 'green';
+      const badges = [];
+      if (starved) badges.push({ label: '缺料', tone: 'danger' });
+      if (short) badges.push({ label: '不足', tone: 'danger' });
       row.card((cell) => {
-        cell.item(id, catalog.items[id].name, undefined, { marketRate: marketRate(panel.w, id) });
+        cell.item(id, catalog.items[id].name, undefined,
+          { marketRate: marketRate(panel.w, id), ...(badges.length ? { badges } : {}) });
         cell.stats([
           { label: '产出', value: hourlyRateLabel(produced) },
           { label: '支出', value: hourlyRateLabel(consumed) },
