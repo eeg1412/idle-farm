@@ -211,7 +211,7 @@ function researchDetails(ui, id) {
   showMaterialSources(ui, offer.costs);
 }
 
-function showResearch(ui, id) {
+export function showResearch(ui, id) {
   ui.dialog(researchName(catalog.items[id]), (dialog) => researchDetails(dialog, id));
 }
 
@@ -344,6 +344,21 @@ function researchNodes(w) {
     return { id, label: researchName(item), icon: researchIcon(id), requires,
       ...researchStatus(w, id, offer, unlocked) };
   });
+}
+
+// The item and every recipe it transitively requires, with research status.
+export function researchPathNodes(w, target) {
+  const unlocked = new Set(w.unlocked);
+  const nodes = new Map();
+  (function visit(id) {
+    if (nodes.has(id)) return;
+    const requires = catalog.research[id]?.requires ?? [];
+    const offer = requires.every((key) => unlocked.has(key)) ? researchOffer(w, id, unlocked) : null;
+    nodes.set(id, { id, label: researchName(catalog.items[id]), icon: researchIcon(id), requires,
+      ...researchStatus(w, id, offer, unlocked) });
+    requires.forEach(visit);
+  })(target);
+  return [...nodes.values()];
 }
 
 function techNodes(w) {

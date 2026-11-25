@@ -1,6 +1,7 @@
 import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
+import { researchPathNodes, showResearch } from './research-page.js';
 import { hoursLabel } from './management-pages.js';
 import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderRushCost } from '../game/orders.js';
 
@@ -144,12 +145,26 @@ function showOrder(ui, order) {
     }
     orderProduct(dlg, current, true);
     quantities(dlg, current, true);
-    dlg.heading('生产链', { size: 17 });
-    const view = dlg.local.productionTree ??= {};
-    dlg.tree({
-      nodes, production: true, view,
-      onSelect: (id) => showItemDetail(dlg, id, { needs, isCurrent: (world) => Boolean(isCurrentOrder(world, order)) }),
-    });
+    // An unresearched challenge target can also show its research prerequisites.
+    const locked = orderType(current) === 'challenge' && !dlg.w.unlocked.includes(current.item);
+    const tab = locked && dlg.local.chainTab === '科技树' ? '科技树' : '生产链';
+    if (locked) {
+      dlg.tabs(['生产链', '科技树'], tab, (value) => {
+        dlg.local.chainTab = value;
+        dlg.refresh();
+      }, { style: 'filter', compact: true });
+    } else dlg.heading('生产链', { size: 17 });
+    if (tab === '科技树') {
+      const view = dlg.local.researchTree ??= { focus: current.item };
+      dlg.tree({ nodes: researchPathNodes(dlg.w, current.item), production: true, view,
+        onSelect: (id) => showResearch(dlg, id) });
+    } else {
+      const view = dlg.local.productionTree ??= {};
+      dlg.tree({
+        nodes, production: true, view,
+        onSelect: (id) => showItemDetail(dlg, id, { needs, isCurrent: (world) => Boolean(isCurrentOrder(world, order)) }),
+      });
+    }
     dlg.footer((footer) => footer.buttons(orderActions(dlg, current, true)));
   });
 }
