@@ -77,7 +77,7 @@ function orderActions(ui, order, inDetail = false) {
     if (inDetail && action !== 'acceptOrder' && ui.isActive()) ui.close();
   };
   if (order.status === 'locked') return [
-    { label: '交付', tone: 'gold', disabled: !canDeliverOrder(ui.w, order.id), reason: '存货还不够交这一单', blockCardTap: !inDetail,
+    { label: '交付', tone: 'green', disabled: !canDeliverOrder(ui.w, order.id), reason: '存货还不够交这一单', blockCardTap: !inDetail,
       onClick: () => submit('deliverOrder') },
     { label: '放弃', onClick: () => confirmAbandon(ui, order, inDetail) },
   ];
