@@ -27,6 +27,7 @@ import { compact } from './view/numbers.js';
 import { createGameView } from './view/canvas-ui.js';
 import { onAssetLoadFailure } from './view/asset-url.js';
 import { createFarmAudio } from './platform/farm-audio.js';
+import { trackForPage } from './content/page-bgm.js';
 
 extensions.remove(AccessibilitySystem);
 const app = new Application();
@@ -660,7 +661,7 @@ const view = createGameView(app, dispatch, () => {
   const wasAtMerchant = currentPage === '行脚商';
   const atMerchant = page === '行脚商';
   currentPage = page;
-  audio.setTrack(page === '加工' || page === '精制' ? 'workshop' : 'farm');
+  audio.setTrack(trackForPage(page));
   if (wasAtMerchant && !atMerchant) {
     void enqueueMerchantRelease(performance.now(), Date.now());
   }

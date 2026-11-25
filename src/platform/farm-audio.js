@@ -1,7 +1,10 @@
-const scores = {
-  farm: [60, 64, 67, 72, 69, 67, 64, 62, 60, 65, 69, 72, 74, 72, 69, 67],
-  workshop: [55, 62, 65, 67, 62, 65, 70, 67, 57, 64, 67, 69, 64, 67, 72, 69],
-};
+import { pageTracks } from '../content/page-bgm.js';
+
+const farmScore = [60, 64, 67, 72, 69, 67, 64, 62, 60, 65, 69, 72, 74, 72, 69, 67];
+const musicLookahead = 0.12;
+const musicTickMs = 25;
+const musicFadeSeconds = 0.04;
+const musicGainMultiplier = 1.6;
 const effects = {
   success: [60, 67], sell: [74, 77, 81],
   research: [60, 64, 67, 72], prestige: [55, 60, 64, 67, 72],
@@ -12,8 +15,9 @@ export function createFarmAudio() {
   let audio;
   let volume = { music: 0, sound: 0 };
   let track = 'farm';
-  let cursor = 0;
   let timer;
+  let musicSchedule;
+  const musicVoices = new Set();
   let visible = !document.hidden;
   let musicBus;
   let effectsBus;
@@ -80,12 +84,21 @@ export function createFarmAudio() {
   function note(value, start, duration, bus, type, level, attack = 0.035) {
     const oscillator = audio.createOscillator();
     const gain = audio.createGain();
+    const rise = Math.min(attack, duration);
     oscillator.type = type;
     oscillator.frequency.value = hz(value);
     gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(level, start + attack);
+    gain.gain.linearRampToValueAtTime(level, start + rise);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
     oscillator.connect(gain).connect(bus);
+    const voice = { oscillator, gain, start, duration, level, attack: rise, stopping: false };
+    if (bus === musicBus) musicVoices.add(voice);
+    // Keep the onended property available for the dialogue pulse's own cleanup.
+    oscillator.addEventListener('ended', () => {
+      oscillator.disconnect();
+      gain.disconnect();
+      musicVoices.delete(voice);
+    }, { once: true });
     oscillator.start(start);
     oscillator.stop(start + duration + 0.01);
     return oscillator;
@@ -93,27 +106,115 @@ export function createFarmAudio() {
 
   function applyVolume() {
     if (!audio) return;
-    musicBus.gain.setTargetAtTime(volume.music / 100 * (visible ? 1 : 0), audio.currentTime, 0.03);
+    musicBus.gain.setTargetAtTime(volume.music / 100 * musicGainMultiplier * (visible ? 1 : 0), audio.currentTime, 0.03);
     effectsBus.gain.setTargetAtTime(volume.sound / 100 * (visible ? 1 : 0), audio.currentTime, 0.03);
   }
 
-  function musicBeat() {
-    if (!visible || audio.state !== 'running' || !volume.music) return;
-    const score = scores[track];
-    const i = cursor++ % score.length;
-    const now = audio.currentTime + 0.02;
-    note(score[i], now, 0.78, musicBus, 'triangle', 0.035);
-    if (i % 4 === 0) note(score[i] - 12, now, 1.5, musicBus, 'sine', 0.025);
+  function stopMusic() {
+    clearTimeout(timer);
+    timer = undefined;
+    musicSchedule = undefined;
+    if (!audio) return;
+    const now = audio.currentTime;
+    for (const voice of musicVoices) {
+      if (voice.stopping) continue;
+      voice.stopping = true;
+      const { oscillator, gain, start, duration, level, attack } = voice;
+      gain.gain.cancelScheduledValues(now);
+      if (start >= now) {
+        gain.gain.setValueAtTime(0, now);
+        oscillator.stop(now);
+        continue;
+      }
+      // Evaluate this note's original envelope before replacing its automation.
+      // This also works where AudioParam.cancelAndHoldAtTime is unavailable.
+      const elapsed = now - start;
+      const current = elapsed < attack ? level * elapsed / attack
+        : elapsed >= duration ? 0.0001
+          : level * (0.0001 / level) ** ((elapsed - attack) / (duration - attack));
+      gain.gain.setValueAtTime(current, now);
+      gain.gain.linearRampToValueAtTime(0, now + musicFadeSeconds);
+      oscillator.stop(Math.min(start + duration + 0.01, now + musicFadeSeconds));
+    }
+  }
+
+  function musicEnabled() {
+    return audio?.state === 'running' && visible && volume.music > 0;
+  }
+
+  function scheduleMusic(schedule) {
+    if (musicSchedule !== schedule) return;
+    timer = undefined;
+    if (!musicEnabled()) { stopMusic(); return; }
+    const now = audio.currentTime;
+    // A delayed foreground callback must not replay a backlog of missed notes.
+    if (now - schedule.lastTime > 0.25) {
+      stopMusic();
+      syncMusic();
+      return;
+    }
+    schedule.lastTime = now;
+    const horizon = now + musicLookahead;
+    if (schedule.track === 'farm') {
+      while (schedule.origin + schedule.cursor * 0.56 < horizon) {
+        const cursor = schedule.cursor++;
+        const start = schedule.origin + cursor * 0.56;
+        if (start < now) continue;
+        const i = cursor % farmScore.length;
+        note(farmScore[i], start, 0.78, musicBus, 'triangle', 0.035);
+        if (i % 4 === 0) note(farmScore[i] - 12, start, 1.5, musicBus, 'sine', 0.025);
+      }
+    } else {
+      const score = pageTracks[schedule.track];
+      const secondsPerBeat = 60 / score.bpm;
+      score.voices.forEach((voice, index) => {
+        if (!voice.notes.length) return;
+        const position = schedule.positions[index];
+        while (true) {
+          const [beat, pitch, duration] = voice.notes[position.cursor];
+          const start = schedule.origin + (position.loop * score.loopBeats + beat) * secondsPerBeat;
+          if (start >= horizon) break;
+          position.cursor += 1;
+          if (position.cursor === voice.notes.length) {
+            position.cursor = 0;
+            position.loop += 1;
+          }
+          if (start < now) continue;
+          note(pitch, start, duration * secondsPerBeat, musicBus, voice.type, voice.level, voice.attack);
+        }
+      });
+    }
+    timer = setTimeout(() => scheduleMusic(schedule), musicTickMs);
+  }
+
+  function syncMusic() {
+    if (!musicEnabled()) { stopMusic(); return; }
+    if (musicSchedule) return;
+    const now = audio.currentTime;
+    musicSchedule = {
+      track,
+      // Preserve the farm tune's original first 560 ms interval and 20 ms lead.
+      origin: now + (track === 'farm' ? 0.58 : 0.02),
+      lastTime: now,
+      cursor: 0,
+      positions: track === 'farm' ? [] : pageTracks[track].voices.map(() => ({ cursor: 0, loop: 0 })),
+    };
+    scheduleMusic(musicSchedule);
   }
 
   return {
-    configure(settings) { volume = { music: settings.music, sound: settings.sound }; applyVolume(); syncRain(); },
-    setVisible(next) { visible = next; applyVolume(); syncRain(); },
+    configure(settings) { volume = { music: settings.music, sound: settings.sound }; applyVolume(); syncRain(); syncMusic(); },
+    setVisible(next) { visible = next; applyVolume(); syncRain(); syncMusic(); },
     setRain(amount) {
       rainAmount = Number.isFinite(amount) ? Math.round(Math.max(0, Math.min(1, amount)) * 100) / 100 : 0;
       syncRain();
     },
-    setTrack(next) { if (track !== next) { track = next; cursor = 0; } },
+    setTrack(next) {
+      if (track === next || (next !== 'farm' && !Object.prototype.hasOwnProperty.call(pageTracks, next))) return;
+      stopMusic();
+      track = next;
+      syncMusic();
+    },
     async unlock() {
       if (!audio) {
         const Context = window.AudioContext ?? window.webkitAudioContext;
@@ -124,12 +225,13 @@ export function createFarmAudio() {
           effectsBus = audio.createGain();
           musicBus.connect(audio.destination);
           effectsBus.connect(audio.destination);
+          audio.addEventListener('statechange', () => { syncMusic(); syncRain(); });
           applyVolume();
         } catch { return; }
       }
       await audio.resume().catch(() => {});
       syncRain();
-      timer ??= setInterval(musicBeat, 560);
+      syncMusic();
     },
     play(name) {
       if (audio?.state !== 'running' || !visible || !volume.sound || !effects[name]) return;
