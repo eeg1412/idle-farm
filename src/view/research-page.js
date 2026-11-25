@@ -155,38 +155,56 @@ function hasResearchLinks(id) {
   return Boolean(catalog.research[id]?.requires.length || researchDependents.has(id));
 }
 
-// The recipe, every recipe it transitively requires and every recipe that transitively requires it.
-function researchTreeNodes(w, target) {
+// The recipe with its direct prerequisites and the recipes that directly require it.
+// Only links to the recipe itself are kept; status uses each recipe's full prerequisites.
+function researchNeighborhood(w, target) {
   const unlocked = new Set(w.unlocked);
-  const keys = new Set();
-  (function visit(id) {
-    if (keys.has(id)) return;
-    keys.add(id);
-    (catalog.research[id]?.requires ?? []).forEach(visit);
-  })(target);
-  const pending = [target];
-  while (pending.length) {
-    for (const next of researchDependents.get(pending.pop()) ?? []) {
-      if (keys.has(next)) continue;
-      keys.add(next);
-      pending.push(next);
-    }
-  }
-  return [...keys].map((id) => {
-    const requires = catalog.research[id]?.requires ?? [];
-    const offer = requires.every((key) => unlocked.has(key)) ? researchOffer(w, id, unlocked) : null;
-    return { id, label: researchName(catalog.items[id]), icon: researchIcon(id),
-      requires: requires.filter((key) => keys.has(key)), ...researchStatus(w, id, offer, unlocked) };
-  });
+  const node = (id, requires) => {
+    const own = catalog.research[id]?.requires ?? [];
+    const offer = own.every((key) => unlocked.has(key)) ? researchOffer(w, id, unlocked) : null;
+    return { id, label: researchName(catalog.items[id]), icon: researchIcon(id), requires,
+      ...researchStatus(w, id, offer, unlocked) };
+  };
+  const before = catalog.research[target]?.requires ?? [];
+  return [...before.map((key) => node(key, [])), node(target, before),
+    ...(researchDependents.get(target) ?? []).map((key) => node(key, [target]))];
 }
 
 function showResearchTree(ui, id) {
+  let panel;
+  // Moves the dialog to another middle recipe without a new dialog or history entry.
+  const center = (next) => {
+    const local = panel.local;
+    local.title = researchName(catalog.items[next]);
+    local.researchCenter = next;
+    local.researchTree = { focus: next };
+    panel.refresh();
+  };
   ui.dialog(researchName(catalog.items[id]), (dialog) => {
-    const view = dialog.local.researchTree ??= { focus: id };
+    panel = dialog;
+    const local = dialog.local;
+    const current = local.researchCenter ??= id;
+    const previous = local.researchCenters ??= [];
+    const view = local.researchTree ??= { focus: current };
     dialog.tree({
-      nodes: researchTreeNodes(dialog.w, id), production: true, current: id, view,
-      onSelect: (next) => { if (next !== id) showResearch(dialog, next); },
+      nodes: researchNeighborhood(dialog.w, current), production: true, neighborhood: true, current, view,
+      onSelect: (next) => {
+        if (next === current) {
+          showResearch(dialog, next);
+          return;
+        }
+        previous.push(current);
+        center(next);
+      },
     });
+  }, {
+    // Closing first steps back through earlier middle recipes.
+    onClose: () => {
+      const previous = panel?.local.researchCenters;
+      if (!previous?.length) return true;
+      center(previous.pop());
+      return false;
+    },
   });
 }
 

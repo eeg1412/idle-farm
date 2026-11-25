@@ -66,6 +66,35 @@ function atlasLayout(nodes, cardWidth, columnGap, rowGap, maxColumns = 18) {
   };
 }
 
+// One recipe in the middle row, its direct prerequisites above and its direct dependents below.
+// A group wider than the grid wraps into whole columns, so every rail runs in a column gutter.
+function neighborhoodLayout(nodes, current, cardWidth, columnGap, rowGap, columns) {
+  const byId = dependencyPlaces(nodes);
+  const center = byId.get(current);
+  const columnStep = cardWidth + columnGap;
+  const rowStep = cardHeight + rowGap;
+  const width = columns * columnStep - columnGap;
+  const places = [];
+  let row = 0;
+  const grid = (members) => {
+    const offset = members.length <= columns ? (columns - members.length) / 2 : 0;
+    members.forEach((place, index) => {
+      place.x = (offset + index % columns) * columnStep;
+      place.y = (row + Math.floor(index / columns)) * rowStep;
+      places.push(place);
+    });
+    row += Math.ceil(members.length / columns);
+  };
+  if (center) {
+    grid(center.before);
+    Object.assign(center, { x: (width - cardWidth) / 2, y: row * rowStep });
+    places.push(center);
+    row += 1;
+    grid(center.after);
+  }
+  return { places, byId, edges: [], width, height: Math.max(1, row * rowStep - rowGap) };
+}
+
 function groupedLayout(nodes, groups, columns, cardWidth, columnGap, rowGap) {
   const byId = dependencyPlaces(nodes);
   const places = [];
@@ -284,7 +313,7 @@ function drawCard(parent, place, cardWidth, { inkGraphics, drawImage, textNode }
 
 export function mountResearchTree({ parent, x, y, width, height, nodes, view, drawImage, textNode, buttonAt,
   transitionNode, inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, comparison, groups,
-  readyOnly, onToggleStatus, production = false, current, textScale = 1 }) {
+  readyOnly, onToggleStatus, production = false, current, neighborhood = false, textScale = 1 }) {
   const compact = height < 210;
   // The production chain has no toolbar or legend; its plot starts at the paper edge.
   const plotTop = production ? 8 : compact ? 50 : 77;
@@ -293,7 +322,11 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const columnGap = comparison ? 34 : (groups || readyOnly ? 24 : 42);
   const rowGap = comparison ? 20 : (readyOnly ? 24 : 44);
   const columns = Math.max(1, Math.floor((plot.width - 20 + columnGap) / (cardWidth + columnGap)));
-  const graph = comparison ? comparisonLayout(nodes, cardWidth, columnGap, rowGap) : groups
+  const normalZoom = clamp((plot.width - 22) / (2 * cardWidth + columnGap), 0.67, 1);
+  // A neighborhood view (production chains only) wraps each row to the cards that fit at normal zoom.
+  const graph = production && neighborhood ? neighborhoodLayout(nodes, current, cardWidth, columnGap, rowGap,
+    Math.max(2, Math.floor(((plot.width - 20) / normalZoom + columnGap) / (cardWidth + columnGap))))
+    : comparison ? comparisonLayout(nodes, cardWidth, columnGap, rowGap) : groups
     ? groupedLayout(nodes, groups, columns, cardWidth, columnGap, rowGap)
     : atlasLayout(nodes, cardWidth, columnGap, rowGap, production ? Infinity : readyOnly ? columns : undefined);
   if (production) {
@@ -314,8 +347,15 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   if (production) {
     // Each recipe is drawn once: its materials join above the product and one arrow enters it.
     const recipeEdges = content.addChild(new Container({ label: 'production-dependencies' }));
-    for (const place of graph.places) {
-      drawConnections(recipeEdges, place, place.before, true, cardWidth, columnGap, rowGap, inkGraphics);
+    const middle = neighborhood ? graph.byId.get(current) : undefined;
+    if (middle) {
+      // Only the middle recipe is linked: prerequisites join into it and it fans out to dependents.
+      drawConnections(recipeEdges, middle, middle.before, true, cardWidth, columnGap, rowGap, inkGraphics);
+      drawConnections(recipeEdges, middle, middle.after, false, cardWidth, columnGap, rowGap, inkGraphics);
+    } else if (!neighborhood) {
+      for (const place of graph.places) {
+        drawConnections(recipeEdges, place, place.before, true, cardWidth, columnGap, rowGap, inkGraphics);
+      }
     }
   }
   const edgeLayer = new Container({ label: 'research-map-edges' });
@@ -332,7 +372,6 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
   const center = { x: plot.x + plot.width / 2, y: plot.y + plot.height / 2 };
   const fit = Math.min(1, Math.max(1, plot.width - 14) / graph.width,
     Math.max(1, plot.height - 14) / graph.height);
-  const normalZoom = clamp((plot.width - 22) / (2 * cardWidth + columnGap), 0.67, 1);
   const minZoom = comparison ? 0.54 : Math.min(fit, normalZoom);
   const drawing = { inkGraphics, drawImage, textNode };
   const tiles = new Map();
