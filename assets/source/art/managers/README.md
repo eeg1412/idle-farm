@@ -8,6 +8,8 @@
 
 运行 `python3 scripts/export-manager-art.py` 重新导出至 `public/art/managers/`。生成新背景时使用约 3∶1 的满幅原画，中心偏左安排场所特征，右半边降低反差给对白留空间。画面使用清晰像素边缘、暖色自然光和田园材质，保留每个场所自己的色调。原画中只绘制环境。
 
+加工女管理员本轮完整重绘为一手握拳、另一手持卷工图。四张内置绘图源、真实提示词与工具来源位于 `processing-tools-2026-11-25/`，完整交付映射见该目录的 `delivery.json`；`active-sources.json` 选择四张握拳版本。`node scripts/export-processing-tools.mjs` 按共同透明列裁切生成四张候选WebP及本地审图证据，不拼接角色。页面规格为503×289、nearest缩半、WebP质量88／Alpha100，保留原语义脸位233。对照参考按 `original-reference.json` 的固定Git提交读入内存，不另存旧图备份。证据图仅本地保存，由审图报告及JSON记录路径与sha256。
+
 | 职位 | 画面要素 |
 | --- | --- |
 | `tasks` | 庄园小径、空白纸签、木制布告栏 |

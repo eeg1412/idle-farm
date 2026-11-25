@@ -1,0 +1,31 @@
+{
+  "version": "PTA-ART smile base v2",
+  "tool": "built-in image_gen.imagegen",
+  "generatedSource": "C:/Users/eeg14/.codex/generated_images/01a21181-a4d7-7d13-bc7e-01c9bd521fb5/exec-31fb18bf-8ec1-4ade-85bc-d4fc7076806e.png",
+  "sourceFile": "female-smile-v2-source.png",
+  "references": [
+    {
+      "path": "assets/source/art/managers/processing-tools-2026-11-25/female-smile-source.png",
+      "role": "complete newly drawn v1 image edit target",
+      "available": false,
+      "removed": true,
+      "removalReason": "用户于2026-11-25明确要求清理废案，该真实v1扳手父稿已删除；保留原输入路径和角色以如实记录生成来源。最终v2生成本体与真实提示词仍保留。"
+    }
+  ],
+  "change": "User specifically replaced the wrench-holding hand with an empty natural fingerless-gloved fist; other hand retains rolled engineering plan.",
+  "prompt": "Use case: precise-object-edit\nAsset type: full-body transparent anime fine-pixel character original, 1024x1536.\nEdit target: the provided image is the newly drawn Rita smile base v1. Output one COMPLETE full-body revised version v2 with genuine transparent alpha.\nONLY REQUIRED CHANGE: remove the entire silver wrench/spanner from the raised hand at IMAGE LEFT (the character's right hand). Replace the formerly wrench-gripping fingers with a natural empty clenched fist at approximately the same raised position. Four fingers curl naturally into the palm and the thumb rests on the OUTSIDE of those curled fingers. Keep her brown FINGERLESS leather work glove: leather covers the back of the hand and wrist/palm but the curled bare fingers and their knuckle tips remain visibly skin-colored. This is a working woman's natural confident fist, not a boxing glove, not an oversized gauntlet, not an open hand, not a thumbs up. No tool at all in this hand, no remaining jaw/shaft/metal cap, no new object, no floating fragments.\nKEEP THE OTHER HAND EXACTLY: the hand at IMAGE RIGHT continues to hold its rolled ivory engineering plan with blue schematic lines, same roll silhouette/angle/position and grip. Keep the rolled paper, do not delete or replace it.\nEverything else remains the same: same winking smile, head angle and amber eye, same strawberry-red high ponytail and forehead brass goggles, fine warm-brown linework, densely textured discrete fine anime pixel illustration, blue rolled blouse, copper wrist guard, tan leather split apron, small belt tools and ornaments, white scarf, navy skirt, stockings and original boots. Keep the original oblique three-quarter shoulder/chest direction, hip direction, offset/crossed legs and both boot directions. Keep the exact full-body composition, scale and source canvas placement; do not front-face or change pose, outfit, hair, facial expression, proportions, style or paper hand.\nStyle and alpha: retain the same very fine high-density single-pixel texture and separated granular material shading as the supplied target. No smooth digital illustration, no vector strokes, no airbrush gradient, no chunky retro pixels or thick black outlines. Background genuinely transparent, no added scene, floor, shadow halo, label or watermark. Output full head-to-toe 1024x1536 image. Use the built-in image edit to render the complete revised image; do not make a collage.",
+  "status": "base v2 candidate awaiting independent review",
+  "created": "2026-11-25",
+  "originalStyleReferences": [
+    {
+      "revision": "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+      "sha256": "3249ff86ffc9d5ecc538f22de7ff4c523b6f6f826656ee727b45ff8449d2a1ef"
+    },
+    {
+      "revision": "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+      "path": "public/art/managers/portraits/processing/female-smile.webp",
+      "sha256": "b5aa8e31be5032e121a17a7a7bb63c921207b46faa710507e62ba791de5b3c5b"
+    }
+  ]
+}

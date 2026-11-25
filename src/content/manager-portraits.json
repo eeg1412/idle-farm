@@ -97,11 +97,11 @@
   },
   "processing": {
     "female": {
-      "width": 505,
+      "width": 503,
       "height": 289,
       "faceX": 233.0,
-      "inkLeft": 86,
-      "inkRight": 425
+      "inkLeft": 95,
+      "inkRight": 405
     },
     "male": {
       "width": 503,

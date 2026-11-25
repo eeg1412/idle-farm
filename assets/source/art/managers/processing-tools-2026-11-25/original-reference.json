@@ -1,0 +1,15 @@
+{
+  "references": [
+    {
+      "revision": "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+      "sha256": "3249ff86ffc9d5ecc538f22de7ff4c523b6f6f826656ee727b45ff8449d2a1ef"
+    },
+    {
+      "revision": "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+      "path": "public/art/managers/portraits/processing/female-smile.webp",
+      "sha256": "b5aa8e31be5032e121a17a7a7bb63c921207b46faa710507e62ba791de5b3c5b"
+    }
+  ],
+  "method": "git show fixed-revision:path read directly into memory; no old-image backup file is written"
+}

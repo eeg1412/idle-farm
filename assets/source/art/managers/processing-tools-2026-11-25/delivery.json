@@ -1,0 +1,285 @@
+{
+    "activeSources":  "assets/source/art/managers/processing-tools-2026-11-25/active-sources.json",
+    "cropAndAnchors":  {
+                           "crop":  {
+                                        "left":  0,
+                                        "top":  0,
+                                        "right":  1006,
+                                        "bottom":  566
+                                    },
+                           "width":  503,
+                           "height":  289,
+                           "faceX":  233,
+                           "sourceAnchorX":  466,
+                           "inkLeft":  95,
+                           "inkRight":  405,
+                           "inkBounds":  [
+                                             {
+                                                 "expression":  "smile",
+                                                 "inkLeft":  95,
+                                                 "inkRight":  405
+                                             },
+                                             {
+                                                 "expression":  "happy",
+                                                 "inkLeft":  95,
+                                                 "inkRight":  404
+                                             },
+                                             {
+                                                 "expression":  "angry",
+                                                 "inkLeft":  95,
+                                                 "inkRight":  405
+                                             },
+                                             {
+                                                 "expression":  "sad",
+                                                 "inkLeft":  95,
+                                                 "inkRight":  403
+                                             }
+                                         ],
+                           "faceAnchorNote":  "Existing semantic alignment anchor retained for PM comparison; visual face center is separately reviewed, not inferred from held props.",
+                           "staticComposition":  {
+                                                     "frameWidth":  390,
+                                                     "contentWidth":  370,
+                                                     "bannerSpan":  390,
+                                                     "bannerHeight":  167,
+                                                     "fullBleed":  10,
+                                                     "dialogueX":  152,
+                                                     "portraitScale":  0.5674740484429066,
+                                                     "portraitY":  3,
+                                                     "faceCanvasX":  76
+                                                 },
+                           "expressions":  [
+                                               "smile",
+                                               "happy",
+                                               "angry",
+                                               "sad"
+                                           ],
+                           "evidence":  [
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-full-comparison.png",
+                                                "sha256":  "43c537be580a71a97efa903655d4e98e9729ba1cae41182ab3f7832798e6ed5a",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-left-hand-4x.png",
+                                                "sha256":  "f4f78bd5180bb7e83304ac06ded2cb186a93657ac11d984dd4224510da14b2f3",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-right-hand-plan-4x.png",
+                                                "sha256":  "f34d6b98f3d96d97e5b2ab8ea3d57117dd8caa04aaea69dc6ad7b2e5bcc99776",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-face-4x.png",
+                                                "sha256":  "93c486bad0122510c658e23855220d8aa768fba5c3695adf7614496f10d9b79a",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-cloth-4x.png",
+                                                "sha256":  "51deb2b44b33b397fcc45ca9d97c0cb9d514e3378b597432c5b2d70bec03925f",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-390-static.png",
+                                                "sha256":  "9b0ef5f4b52ac6cea683bb34307a142f99c33776bc59a2eb292cac93ee0ff1fd",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-smile-v2-published-normal.png",
+                                                "sha256":  "a1f670ee81920c6990dccdcafce358c65d4e238fae852cca41d2194c294e3550",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-full-comparison.png",
+                                                "sha256":  "2773c5ffe4b27797f974dcd8d2e25528a59682de58676b82d2948a7576fe4c83",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-left-hand-4x.png",
+                                                "sha256":  "996006115c610e1a53b064f45c68a3d9ea62f26907136880e0ee5b08f8ba4471",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-right-hand-plan-4x.png",
+                                                "sha256":  "76f6074162169cf8f1f74f4c524fbb5d5547c54a8bcfd994c2360a358627336e",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-face-4x.png",
+                                                "sha256":  "356fa3670633f6c8191b7773e8d48e17a11af51df2e6dfdaeecca1ffcbab430a",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-cloth-4x.png",
+                                                "sha256":  "1b518a446bd2e52557b8a58aa1cd5fd3627521df249c9cf5835468d074ab4a92",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-390-static.png",
+                                                "sha256":  "3a86d88035b068eed3029c53bedf4af74eca613c8d0f3a0d83ff55a83a73a2aa",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-happy-v2-published-normal.png",
+                                                "sha256":  "373f4628f5b8013a131a67d896dee20a6e5c63859f3e833e822be74e91106030",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-full-comparison.png",
+                                                "sha256":  "92ef4414a8c875b249da7fc7f8a9f88f74b6b0aa3ad2e83e7d9245ff32f8dd86",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-left-hand-4x.png",
+                                                "sha256":  "577dc1510a8c276eea0ed94fb5cf407cf13ca1d604a90f4d1bc92c8b27ca8228",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-right-hand-plan-4x.png",
+                                                "sha256":  "c54387aec6f471a4276b4cabe3b3b35ce488dbc64e2eb1bea3694139433b1440",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-face-4x.png",
+                                                "sha256":  "73bbefbdae21b4b1ae41cffa8f13c5bb63b36d8c49ad57293f56d83886e2124e",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-cloth-4x.png",
+                                                "sha256":  "b3ffa668c9cbd5bf6106fbc0d4a8682f08e98f0c727df8bab6e93dfa4649750b",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-390-static.png",
+                                                "sha256":  "6c5699fd05b0ec70bf3d3974004a25c7cc1e2b134817eb36569721cfb396fa52",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-angry-v2-published-normal.png",
+                                                "sha256":  "a301339aa3c0d4e33e9bbbffdb8b3e8fe0e5d4c3b4343a547df4556fe14c1ee0",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-full-comparison.png",
+                                                "sha256":  "27e1b1c57e124685c671e21cb22737687859f3384bcd9284cfe2ada81cb67888",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-left-hand-4x.png",
+                                                "sha256":  "725ac3a536a895e0ee562cffa75c5befe2abecb3eaa9d6a881193a576ad89c33",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-right-hand-plan-4x.png",
+                                                "sha256":  "51976fc0e40ff44ff463be909127e7d3eeb921e44027f64b644a3425bad4b074",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-face-4x.png",
+                                                "sha256":  "19b199185d758ece15bdecdb409271406362602bad44685001791a196c078a0e",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-cloth-4x.png",
+                                                "sha256":  "3016668af14d15799230901606da393c9c7ee5bbe58dfaf6b45879d18e47d93d",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-390-static.png",
+                                                "sha256":  "d919f7974507ca97d0a54aaf99c80cc4e345d0ab2376323cb678bc52e2bbbb24",
+                                                "note":  "证据图仅本地保存"
+                                            },
+                                            {
+                                                "path":  "assets/source/art/managers/processing-tools-2026-11-25/reviews/female-sad-v2-published-normal.png",
+                                                "sha256":  "1c7e0c6defa95a23188afbc30c0ef95ddfc022618e520b76e7953ca9a9c58e5e",
+                                                "note":  "证据图仅本地保存"
+                                            }
+                                        ],
+                           "sources":  [
+                                           {
+                                               "expression":  "smile",
+                                               "path":  "assets/source/art/managers/processing-tools-2026-11-25/female-smile-v2-source.png"
+                                           },
+                                           {
+                                               "expression":  "happy",
+                                               "path":  "assets/source/art/managers/processing-tools-2026-11-25/female-happy-v2-source.png"
+                                           },
+                                           {
+                                               "expression":  "angry",
+                                               "path":  "assets/source/art/managers/processing-tools-2026-11-25/female-angry-v2-source.png"
+                                           },
+                                           {
+                                               "expression":  "sad",
+                                               "path":  "assets/source/art/managers/processing-tools-2026-11-25/female-sad-v2-source.png"
+                                           }
+                                       ],
+                           "originalReferences":  [
+                                                      {
+                                                          "revision":  "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+                                                          "path":  "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+                                                          "sha256":  "3249ff86ffc9d5ecc538f22de7ff4c523b6f6f826656ee727b45ff8449d2a1ef"
+                                                      },
+                                                      {
+                                                          "revision":  "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+                                                          "path":  "public/art/managers/portraits/processing/female-smile.webp",
+                                                          "sha256":  "b5aa8e31be5032e121a17a7a7bb63c921207b46faa710507e62ba791de5b3c5b"
+                                                      }
+                                                  ]
+                       },
+    "entries":  [
+                    {
+                        "expression":  "smile",
+                        "source":  "assets/source/art/managers/processing-tools-2026-11-25/female-smile-v2-source.png",
+                        "generation":  "assets/source/art/managers/processing-tools-2026-11-25/female-smile-v2-generation.json",
+                        "candidatePng":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-smile.png",
+                        "candidateWebp":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-smile.webp",
+                        "canonicalPng":  "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+                        "publicWebp":  "public/art/managers/portraits/processing/female-smile.webp",
+                        "sourceSha256":  "2621ad042290a8c608f82988fb1f33dea3f994af8c75ebc11fa04cd1326e5e46",
+                        "canonicalPngSha256":  "2621ad042290a8c608f82988fb1f33dea3f994af8c75ebc11fa04cd1326e5e46",
+                        "publicWebpSha256":  "baa8f102f96c8a4be9c59fa37dfc57ae763704db276cc3fba57afa600d70367b",
+                        "installationStatus":  "installed after PM and independent exact-candidate static review; source PNG bytes retained; no old-image backup"
+                    },
+                    {
+                        "expression":  "happy",
+                        "source":  "assets/source/art/managers/processing-tools-2026-11-25/female-happy-v2-source.png",
+                        "generation":  "assets/source/art/managers/processing-tools-2026-11-25/female-happy-v2-generation.json",
+                        "candidatePng":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-happy.png",
+                        "candidateWebp":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-happy.webp",
+                        "canonicalPng":  "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_高兴.png",
+                        "publicWebp":  "public/art/managers/portraits/processing/female-happy.webp",
+                        "sourceSha256":  "6d0ac0358a830714601bba904b41e675448cc390c70d1b2dfe43092c5312c219",
+                        "canonicalPngSha256":  "6d0ac0358a830714601bba904b41e675448cc390c70d1b2dfe43092c5312c219",
+                        "publicWebpSha256":  "c1f881c256ef6ad30870f0e2eeee12bb995e9c810f13e940a14820eea04e49a2",
+                        "installationStatus":  "installed after PM and independent exact-candidate static review; source PNG bytes retained; no old-image backup"
+                    },
+                    {
+                        "expression":  "angry",
+                        "source":  "assets/source/art/managers/processing-tools-2026-11-25/female-angry-v2-source.png",
+                        "generation":  "assets/source/art/managers/processing-tools-2026-11-25/female-angry-v2-generation.json",
+                        "candidatePng":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-angry.png",
+                        "candidateWebp":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-angry.webp",
+                        "canonicalPng":  "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_生气.png",
+                        "publicWebp":  "public/art/managers/portraits/processing/female-angry.webp",
+                        "sourceSha256":  "d78c5b02a73f6f301c8cdc73fa8f7ea9e64f0097d4576ebbe67ab1b57a5d849b",
+                        "canonicalPngSha256":  "d78c5b02a73f6f301c8cdc73fa8f7ea9e64f0097d4576ebbe67ab1b57a5d849b",
+                        "publicWebpSha256":  "3ee1779cde4c66ea3d029e665b2581cd1ecbcb6727724486ecd0331e3dc6395c",
+                        "installationStatus":  "installed after PM and independent exact-candidate static review; source PNG bytes retained; no old-image backup"
+                    },
+                    {
+                        "expression":  "sad",
+                        "source":  "assets/source/art/managers/processing-tools-2026-11-25/female-sad-v2-source.png",
+                        "generation":  "assets/source/art/managers/processing-tools-2026-11-25/female-sad-v2-generation.json",
+                        "candidatePng":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-sad.png",
+                        "candidateWebp":  "assets/source/art/managers/processing-tools-2026-11-25/candidates/female-sad.webp",
+                        "canonicalPng":  "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_不高兴.png",
+                        "publicWebp":  "public/art/managers/portraits/processing/female-sad.webp",
+                        "sourceSha256":  "938333c147ecb57d9ad9c78ccd0b0c54eca8d38c7d054cc151f136762b69c0af",
+                        "canonicalPngSha256":  "938333c147ecb57d9ad9c78ccd0b0c54eca8d38c7d054cc151f136762b69c0af",
+                        "publicWebpSha256":  "27185e42308ba8311285e82cf427884696ae07dd6935631e62b16460c1e7352d",
+                        "installationStatus":  "installed after PM and independent exact-candidate static review; source PNG bytes retained; no old-image backup"
+                    }
+                ],
+    "status":  "All four canonical full-body PNGs and four public WebPs installed after PM integration gate; static review passed; game runtime and build not performed by asset owner.",
+    "installedOn":  "2026-11-25"
+}

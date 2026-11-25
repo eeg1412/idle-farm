@@ -1,0 +1,27 @@
+{
+  "version": "PTA-ART sad v2-base variant",
+  "tool": "built-in image_gen.imagegen",
+  "generatedSource": "C:/Users/eeg14/.codex/generated_images/01a21181-a4d7-7d13-bc7e-01c9bd521fb5/exec-f69076c0-4750-44ba-a2cd-7cd7c4cca5b6.png",
+  "sourceFile": "female-sad-v2-source.png",
+  "references": [
+    {
+      "path": "assets/source/art/managers/processing-tools-2026-11-25/female-smile-v2-source.png",
+      "role": "sole reference and full-image edit target; approved new identity, pose, fist, plan, fine-pixel style"
+    }
+  ],
+  "prompt": "Use case: identity-preserve\nAsset type: complete full-body transparent fine anime pixel-illustration character expression variant, exactly 1024x1536 RGBA.\nThe SINGLE provided image is the new approved Rita smile base v2. Produce one COMPLETE full-body expression variant of this image, with true transparent alpha. Render a complete image through the built-in tool, not a cropped face tile or collage.\nChange ONLY facial expression as instructed below. Keep the exact SAME head tilt/angle, skull/jaw placement, ear, fringe, ponytail, goggles and face position. Do not rotate the head to match eye direction. Keep absolutely the same oblique three-quarter shoulders/chest, waist/pelvis direction, split apron angle, crossed-offset leg line and both original boot directions, original figure size/canvas placement and same full head-to-toe framing.\nKeep the EMPTY NATURAL CLENCHED FIST at IMAGE LEFT: same position and fingerless brown leather work glove, four bare fingers curled into palm, thumb outside; NO wrench or other held item, no boxing glove. Keep the IMAGE RIGHT hand holding the same rolled ivory engineering plan with blue linework: same roll dimensions/angle/position and natural grip. No prop redesign, no hand gesture change.\nKeep character identity, strawberry-red high ponytail, brass goggles, navy hair ribbon, amber eyes, blue rolled sleeves, copper wrist guard, white scarf/blue brooch, tan split leather apron and belt tools, navy gold-trimmed panels, stockings and chunky brass-toed brown boots. Do not add or remove clothing or small ornaments.\nMatch the target's ORIGINAL very fine dense Japanese anime pixel illustration: delicate warm-brown broken single-pixel contours, tiny discrete granular color flecks, subtly banded hair highlights, textured woven blue cloth and detailed leather/copper facets. Same warm palette and lighting. Do not smooth or vectorize the edges, no airbrushed gradient, no polished smooth painting, no chunky retro blocks, no thick black contours, no chibi or proportion changes.\nTransparent background, no halo/floor/shadow/scene, no text or watermark. The whole body remains complete from ponytail top through boot soles.\nFACIAL EXPRESSION: UNHAPPY / 不高兴. Mouth center forms a small forward POUT, with subtle disappointed tension, not an open sad cry. Both eyes visible with slightly lowered lids and a small SIDE-EYE glance. Move only the pupils/eyelids: do NOT turn, tilt down or rotate the head or chin. She looks mildly dissatisfied and direct, not tearful. Keep the same fixed head placement and body pose.",
+  "status": "candidate awaiting individual source/published review",
+  "created": "2026-11-25",
+  "originalStyleReferences": [
+    {
+      "revision": "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+      "path": "docs/Pixel-Characters-Complete-Pack/立绘/07_加工管理/加工管理_女_微笑.png",
+      "sha256": "3249ff86ffc9d5ecc538f22de7ff4c523b6f6f826656ee727b45ff8449d2a1ef"
+    },
+    {
+      "revision": "31522f6b7f785ceb3286e8d613eaa7ce92316713",
+      "path": "public/art/managers/portraits/processing/female-smile.webp",
+      "sha256": "b5aa8e31be5032e121a17a7a7bb63c921207b46faa710507e62ba791de5b3c5b"
+    }
+  ]
+}
