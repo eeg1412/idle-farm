@@ -2,7 +2,7 @@ import { Container, Graphics, Sprite } from 'pixi.js';
 import { miningCargoRect, miningFrame, sampleMiningAnimation } from './mining-layout.js';
 
 // Random strike timeline built as the clock advances: a miner hits the same
-// spot 3–10 times about 0.6–0.9 s apart, pauses, then moves to a different
+// spot 3–10 times 0.62–0.9 s apart, pauses, then moves to a different
 // spot. Each hit lands within ±2 px of the spot and throws sparks to a random side.
 function strikeTimeline(originCount) {
   const between = (low, high) => low + Math.random() * (high - low);
@@ -28,7 +28,7 @@ function strikeTimeline(originCount) {
       strike = { time: nextTime, origin, dx: Math.floor(between(-2, 3)), dy: Math.floor(between(-2, 3)),
         flip: Math.random() < 0.5 ? -1 : 1 };
       hitsLeft -= 1;
-      nextTime += between(620, 900) + (hitsLeft ? 0 : between(1300, 2700));
+      nextTime += between(620, 900) + (hitsLeft ? 0 : between(500, 2700));
     }
     return strike;
   };
