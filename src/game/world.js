@@ -358,6 +358,66 @@ export function availableToProduce(world, id) {
   return available > 0n ? available : 0n;
 }
 
+// Running lines of `id`: the batch in progress pays its locked amount at `end`, then one batch at the
+// current level arrives every current period (later inputs are not checked).
+function runningOrderLines(world, id) {
+  const lines = [];
+  const period = productionDurationMs(world, id);
+  const add = (batch, each) => {
+    if (!batch || !(batch.end > world.clockMs)) return;
+    lines.push({
+      end: BigInt(batch.end), first: BigInt(batch.amount),
+      period: period > 0 ? BigInt(period) : 0n, each: period > 0 && each > 0n ? each : 0n,
+    });
+  };
+  for (const [kind, facilities] of Object.entries(world.facilities)) {
+    for (const { recipe, level, batch } of facilities) {
+      if (recipe === id) add(batch, facilityOutput(world, kind, id, BigInt(level)) ?? 0n);
+    }
+  }
+  for (const { recipe, level = '1', batch } of Object.values(world.stations).flat()) {
+    if (recipe === id) add(batch, stationOutput(id, level) ?? 0n);
+  }
+  return lines;
+}
+
+const lineArrivals = (line, t) => t < line.end ? 0n
+  : line.first + (line.each > 0n ? (t - line.end) / line.period * line.each : 0n);
+
+// Earliest time one line alone delivers `need`, or null when it never does.
+function lineAloneTime(line, need) {
+  if (line.first >= need) return line.end;
+  if (line.each === 0n) return null;
+  return line.end + ceilDiv(need - line.first, line.each) * line.period;
+}
+
+// Estimated completion of an order from stock less the merchant hold plus running lines (order ETA spec).
+export function orderCompletion(world, order) {
+  const count = BigInt(order.count);
+  const available = quantity(world, order.item) - activeMerchantHoldQuantity(world, order.item);
+  if (available >= count) return { status: 'ready' };
+  if (!world.unlocked.includes(order.item)) return { status: 'unknown' };
+  const lines = runningOrderLines(world, order.item);
+  const need = count - available;
+  let high = null;
+  for (const line of lines) {
+    const time = lineAloneTime(line, need);
+    if (time !== null && (high === null || time < high)) high = time;
+  }
+  if (high === null) return { status: 'unknown' };
+  // Totals are a non-decreasing step function of integer t that rises only at integer arrival times,
+  // so the least integer t reaching `need` is itself an arrival time.
+  let low = lines.reduce((least, line) => line.end < least ? line.end : least, high) - 1n;
+  const total = (t) => lines.reduce((sum, line) => sum + lineArrivals(line, t), 0n);
+  while (high - low > 1n) {
+    const middle = (low + high) / 2n;
+    if (total(middle) >= need) high = middle;
+    else low = middle;
+  }
+  const atMs = Number(high);
+  return Number.isSafeInteger(atMs) && BigInt(atMs) === high ? { status: 'scheduled', atMs } : { status: 'unknown' };
+}
+
 // A station at level L consumes every recipe input x W(L) per batch (see stationMultiplier).
 export function stationRequirements(world, id, level = 1n) {
   const scale = stationMultiplier(level);

@@ -1,4 +1,4 @@
-import { actualHourlyProduction, catalog } from '../game/world.js';
+import { actualHourlyProduction, catalog, orderCompletion } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { researchPathNodes, showResearch } from './research-page.js';
@@ -49,14 +49,26 @@ function hourlyChange(ui, order, rates) {
   ui.row('当前产能', value, { compact: true, tone });
 }
 
+// Accepted orders only: when running lines reach the count. noWrap is the row layout that ticks valueAtClock.
+function expectedCompletion(ui, order) {
+  const eta = orderCompletion(ui.w, order);
+  if (eta.status === 'ready') ui.row('预计完成时间', '订单完成', { compact: true, noWrap: true, tone: 'green' });
+  else if (eta.status === 'scheduled') {
+    ui.row('预计完成时间', remainingTime(eta.atMs - ui.w.clockMs),
+      { compact: true, noWrap: true, valueAtClock: (clock) => remainingTime(eta.atMs - clock) });
+  } else ui.row('预计完成时间', '无法计算', { compact: true, noWrap: true, tone: 'danger' });
+}
+
 function quantities(ui, order, rates, inDetail = false) {
+  const accepted = order.status === 'locked';
   ui.row('所需件数', compact(order.count) + ' 件', { compact: true });
   ui.row('当前库存', compact(ui.w.inventory[order.item] ?? 0n) + ' 件', { compact: true });
   hourlyChange(ui, order, rates);
+  if (accepted) expectedCompletion(ui, order);
+  else if (typeof order.standardMs === 'number') ui.row('标准完成时间', remainingTime(order.standardMs), { compact: true });
   // Multiplier over the unit price fixed at generation, drawn like a market rate; older orders have none.
   const rate = typeof order.rewardRate === 'number' ? order.rewardRate - 100 : 0;
   ui.row('固定报酬', compact(order.reward) + ' 金币', { compact: true, valueMarketRate: rate || undefined });
-  if (typeof order.standardMs === 'number') ui.row('标准完成时间', remainingTime(order.standardMs), { compact: true });
   if (!inDetail || orderType(order) !== 'challenge') return;
   const bonus = order.bonus ?? 0n;
   const capsules = order.capsules ?? 0n;
