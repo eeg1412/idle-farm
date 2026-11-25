@@ -5,6 +5,8 @@ const farmScore = [60, 64, 67, 72, 69, 67, 64, 62, 60, 65, 69, 72, 74, 72, 69, 6
 const musicLookahead = 0.12;
 const musicTickMs = 25;
 const musicFadeSeconds = 0.04;
+// Page-to-page track change: the old score keeps playing and fades out while the new one fades in.
+const musicCrossfadeSeconds = 1.5;
 const musicGainMultiplier = 1.6;
 const effects = {
   success: [60, 67], sell: [74, 77, 81],
@@ -16,9 +18,8 @@ export function createFarmAudio() {
   let audio;
   let volume = { music: 0, sound: 0 };
   let track = 'farm';
-  let timer;
   let musicSchedule;
-  const musicVoices = new Set();
+  const fadingSchedules = new Set();
   let visible = !document.hidden;
   let musicBus;
   let effectsBus;
@@ -87,7 +88,7 @@ export function createFarmAudio() {
     }
   }
 
-  function note(value, start, duration, bus, type, level, attack = 0.035) {
+  function note(value, start, duration, bus, type, level, attack = 0.035, schedule) {
     const oscillator = audio.createOscillator();
     const gain = audio.createGain();
     const rise = Math.min(attack, duration);
@@ -98,12 +99,14 @@ export function createFarmAudio() {
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
     oscillator.connect(gain).connect(bus);
     const voice = { oscillator, gain, start, duration, level, attack: rise, stopping: false };
-    if (bus === musicBus) musicVoices.add(voice);
+    if (schedule) schedule.voices.add(voice);
     // Keep the onended property available for the dialogue pulse's own cleanup.
     oscillator.addEventListener('ended', () => {
       oscillator.disconnect();
       gain.disconnect();
-      musicVoices.delete(voice);
+      if (!schedule) return;
+      schedule.voices.delete(voice);
+      if (schedule.retired && !schedule.voices.size) schedule.gain.disconnect();
     }, { once: true });
     oscillator.start(start);
     oscillator.stop(start + duration + 0.01);
@@ -116,13 +119,16 @@ export function createFarmAudio() {
     effectsBus.gain.setTargetAtTime(volume.sound / 100 * (visible ? 1 : 0), audio.currentTime, 0.03);
   }
 
-  function stopMusic() {
-    clearTimeout(timer);
-    timer = undefined;
-    musicSchedule = undefined;
-    if (!audio) return;
+  // Quickly silences one schedule: stops its tick, fades its voices in 40 ms and
+  // releases its gain node once the last voice has ended.
+  function haltSchedule(schedule) {
+    clearTimeout(schedule.timer);
+    schedule.timer = undefined;
+    schedule.retired = true;
+    fadingSchedules.delete(schedule);
+    if (musicSchedule === schedule) musicSchedule = undefined;
     const now = audio.currentTime;
-    for (const voice of musicVoices) {
+    for (const voice of schedule.voices) {
       if (voice.stopping) continue;
       voice.stopping = true;
       const { oscillator, gain, start, duration, level, attack } = voice;
@@ -142,6 +148,39 @@ export function createFarmAudio() {
       gain.gain.linearRampToValueAtTime(0, now + musicFadeSeconds);
       oscillator.stop(Math.min(start + duration + 0.01, now + musicFadeSeconds));
     }
+    if (!schedule.voices.size) schedule.gain.disconnect();
+  }
+
+  // Fast stop for music off, background and non-running audio: current and fading schedules.
+  function stopMusic() {
+    if (musicSchedule) haltSchedule(musicSchedule);
+    musicSchedule = undefined;
+    for (const schedule of [...fadingSchedules]) haltSchedule(schedule);
+  }
+
+  // Value of a schedule gain's linear ramp at a context time.
+  function scheduleGainAt(schedule, time) {
+    const { from, to, start, end } = schedule.ramp;
+    if (time >= end) return to;
+    if (time <= start) return from;
+    return from + (to - from) * (time - start) / (end - start);
+  }
+
+  // Ramps linearly from the gain's current value to `to` over the crossfade time.
+  function rampScheduleGain(schedule, to, now) {
+    const from = scheduleGainAt(schedule, now);
+    const end = now + musicCrossfadeSeconds;
+    schedule.ramp = { from, to, start: now, end };
+    schedule.gain.gain.cancelScheduledValues(now);
+    schedule.gain.gain.setValueAtTime(from, now);
+    schedule.gain.gain.linearRampToValueAtTime(to, end);
+  }
+
+  // The schedule keeps adding notes while its gain falls to 0, then is halted.
+  function fadeOutSchedule(schedule) {
+    rampScheduleGain(schedule, 0, audio.currentTime);
+    schedule.fadeEnd = schedule.ramp.end;
+    fadingSchedules.add(schedule);
   }
 
   function musicEnabled() {
@@ -149,26 +188,30 @@ export function createFarmAudio() {
   }
 
   function scheduleMusic(schedule) {
-    if (musicSchedule !== schedule) return;
-    timer = undefined;
+    const fading = fadingSchedules.has(schedule);
+    if (musicSchedule !== schedule && !fading) return;
+    schedule.timer = undefined;
     if (!musicEnabled()) { stopMusic(); return; }
     const now = audio.currentTime;
     // A delayed foreground callback must not replay a backlog of missed notes.
     if (now - schedule.lastTime > 0.25) {
+      if (fading) { haltSchedule(schedule); return; }
       stopMusic();
       syncMusic();
       return;
     }
+    // The fade-out has reached 0: stop adding notes and release the schedule.
+    if (fading && now >= schedule.fadeEnd) { haltSchedule(schedule); return; }
     schedule.lastTime = now;
-    const horizon = now + musicLookahead;
+    const horizon = fading ? Math.min(now + musicLookahead, schedule.fadeEnd) : now + musicLookahead;
     if (schedule.track === 'farm') {
       while (schedule.origin + schedule.cursor * 0.56 < horizon) {
         const cursor = schedule.cursor++;
         const start = schedule.origin + cursor * 0.56;
         if (start < now) continue;
         const i = cursor % farmScore.length;
-        note(farmScore[i], start, 0.78, musicBus, 'triangle', 0.035);
-        if (i % 4 === 0) note(farmScore[i] - 12, start, 1.5, musicBus, 'sine', 0.025);
+        note(farmScore[i], start, 0.78, schedule.gain, 'triangle', 0.035, undefined, schedule);
+        if (i % 4 === 0) note(farmScore[i] - 12, start, 1.5, schedule.gain, 'sine', 0.025, undefined, schedule);
       }
     } else {
       const score = pageTracks[schedule.track];
@@ -186,25 +229,38 @@ export function createFarmAudio() {
             position.loop += 1;
           }
           if (start < now) continue;
-          note(pitch, start, duration * secondsPerBeat, musicBus, voice.type, voice.level, voice.attack);
+          note(pitch, start, duration * secondsPerBeat, schedule.gain, voice.type, voice.level, voice.attack, schedule);
         }
       });
     }
-    timer = setTimeout(() => scheduleMusic(schedule), musicTickMs);
+    schedule.timer = setTimeout(() => scheduleMusic(schedule), musicTickMs);
   }
 
-  function syncMusic() {
+  // fadeIn is true only when a track change replaces an audible schedule.
+  function syncMusic(fadeIn = false) {
     if (!musicEnabled()) { stopMusic(); return; }
     if (musicSchedule) return;
     const now = audio.currentTime;
+    // Each schedule owns a gain node: notes -> schedule gain -> musicBus.
+    const gain = audio.createGain();
+    gain.connect(musicBus);
+    const level = fadeIn ? 0 : 1;
+    gain.gain.setValueAtTime(level, now);
     musicSchedule = {
       track,
+      gain,
+      ramp: { from: level, to: level, start: now, end: now },
+      voices: new Set(),
+      timer: undefined,
+      retired: false,
+      fadeEnd: Infinity,
       // Preserve the farm tune's original first 560 ms interval and 20 ms lead.
       origin: now + (track === 'farm' ? 0.58 : 0.02),
       lastTime: now,
       cursor: 0,
       positions: track === 'farm' ? [] : pageTracks[track].voices.map(() => ({ cursor: 0, loop: 0 })),
     };
+    if (fadeIn) rampScheduleGain(musicSchedule, 1, now);
     scheduleMusic(musicSchedule);
   }
 
@@ -218,9 +274,13 @@ export function createFarmAudio() {
     },
     setTrack(next) {
       if (track === next || (next !== 'farm' && !Object.prototype.hasOwnProperty.call(pageTracks, next))) return;
-      stopMusic();
       track = next;
-      syncMusic();
+      const previous = musicSchedule;
+      // First playback or muted/background state: no crossfade.
+      if (!previous || !musicEnabled()) { stopMusic(); syncMusic(); return; }
+      musicSchedule = undefined;
+      fadeOutSchedule(previous);
+      syncMusic(true);
     },
     async unlock() {
       if (!audio) {
