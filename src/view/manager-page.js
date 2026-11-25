@@ -50,6 +50,12 @@ function affinityNeedsProduction(status) {
   return status.valueToDailyCap > 0n && status.affinityFundingRemaining === 0n;
 }
 
+// Daily affinity bar: full and complete-styled once the day's cap is reached.
+function dailyAffinityProgress(target, gain, cap) {
+  if (gain >= cap) target.goalProgress(1, { complete: true });
+  else target.goalProgress(Number(gain) / Number(cap));
+}
+
 // Affinity levels have no cap; every level shows progress toward the next one.
 function levelProgress(status) {
   return { progress: status.affinity - status.threshold, target: status.nextThreshold - status.threshold };
@@ -397,7 +403,7 @@ export function renderManagerDirectory(ui) {
         copy.text(role.title, silent);
         copy.text('好感 ' + status.level + ' 级', { fontSize: 15 });
         copy.row('今日好感', subunits(status.dailyGain, 100n) + ' / ' + subunits(status.dailyCap, 100n) + ' 点', { compact: true, noWrap: true });
-        copy.goalProgress(Number(status.dailyGain) / Number(status.dailyCap));
+        dailyAffinityProgress(copy, status.dailyGain, status.dailyCap);
       }, {
         ratio: 0.32, artAspect: 1.12, cover: true, surface: 'none',
         managerReply: { role: id, gender: status.gender },
@@ -579,7 +585,7 @@ function giftAll(page) {
       cell.card((card) => {
         card.item(portrait(id, status.gender, 'smile'), character.name, '今日好感 ' + affinityChange(before, after, status.dailyCap),
           { iconSize: 40, titleSize: 16, crop: true, smooth: true });
-        card.goalProgress(Number(after) / Number(status.dailyCap));
+        dailyAffinityProgress(card, after, status.dailyCap);
         if (!gifts.length) card.text('本次不送', silent);
         else card.rewards(gifts.flatMap(({ itemId, count }) => [
           { icon: itemId, value: count },
@@ -629,7 +635,7 @@ function giftAllRole(opener, state, id) {
     panel.row('今日好感', subunits(status.dailyGain, 100n) + ' / ' + subunits(status.dailyCap, 100n) + ' 点', {
       compact: true, noWrap: true,
     });
-    panel.goalProgress(Number(status.dailyGain) / Number(status.dailyCap));
+    dailyAffinityProgress(panel, status.dailyGain, status.dailyCap);
     panel.divider();
     const usage = giftAllUsage(world, state.gifts);
     const mine = state.gifts.filter((gift) => gift.id === id);
