@@ -27,6 +27,7 @@ import { compact } from './view/numbers.js';
 import { createGameView } from './view/canvas-ui.js';
 import { onAssetLoadFailure } from './view/asset-url.js';
 import { createFarmAudio } from './platform/farm-audio.js';
+import { productionAmbienceFor } from './platform/production-ambience-state.js';
 import { trackForPage } from './content/page-bgm.js';
 
 extensions.remove(AccessibilitySystem);
@@ -53,6 +54,9 @@ let deferredMerchantRelease;
 let uncommittedProgress;
 let updatePromptOpen = false;
 let deferredUpdateMerchantNotice = false;
+let productionViewReady = false;
+let productionDisplay = null;
+let productionDisplaySource = null;
 const audio = createFarmAudio();
 const saveQueue = createSaveQueue();
 const { enqueue } = saveQueue;
@@ -110,6 +114,16 @@ function projectWorld(source) {
     stations: copySlots(source.stations),
   };
 }
+function clearProductionAmbience() {
+  productionDisplay = null;
+  productionDisplaySource = null;
+  audio.setProductionAmbience(null);
+}
+function syncProductionAmbience() {
+  const ready = productionViewReady && world && productionDisplaySource === world && visible &&
+    !status?.busy && Number.isFinite(frontAnchor) && frontAnchor >= visibleSince && !view.loading;
+  audio.setProductionAmbience(ready ? productionAmbienceFor(currentPage, productionDisplay) : null);
+}
 function paint() {
   let display = world;
   let anchor = frontAnchor;
@@ -131,7 +145,10 @@ function paint() {
     anchor = frontAnchor + (display.clockMs - world.clockMs);
   }
   const timing = live ? { anchor, epoch: worldEpoch } : undefined;
+  productionDisplay = live ? display : null;
+  productionDisplaySource = live ? world : null;
   if (layout) view.render(layout, display, status, timing);
+  syncProductionAmbience();
   nextDisplayAt = Infinity;
   if (!live) return;
   let nextEnd = Infinity;
@@ -524,6 +541,7 @@ function dispatch(name, ...args) {
       recordOrderCapacity(draft);
       const toast = await commit(draft, anchor);
       if (name === 'sellFarm') {
+        clearProductionAmbience();
         worldEpoch += 1;
         nextDisplayAt = 0;
         view.resetSession();
@@ -552,6 +570,7 @@ function transferFailure(error, fallback) {
 }
 
 function activateReplacement(next) {
+  clearProductionAmbience();
   world = next;
   uncommittedProgress = undefined;
   deferredMerchantRelease = undefined;
@@ -662,6 +681,7 @@ const view = createGameView(app, dispatch, () => {
   const atMerchant = page === '行脚商';
   currentPage = page;
   audio.setTrack(trackForPage(page));
+  syncProductionAmbience();
   if (wasAtMerchant && !atMerchant) {
     void enqueueMerchantRelease(performance.now(), Date.now());
   }
@@ -671,6 +691,7 @@ const view = createGameView(app, dispatch, () => {
     });
   }
 }, window, saveManagement, audio);
+productionViewReady = true;
 
 window.addEventListener('resize', requestViewportResize);
 window.visualViewport?.addEventListener('resize', requestViewportResize);
@@ -724,6 +745,7 @@ document.addEventListener('visibilitychange', () => {
   const anchor = performance.now();
   visible = becameVisible;
   visibleSince = visible ? anchor : Infinity;
+  clearProductionAmbience();
   view.pauseProgress();
   audio.setVisible(visible);
   const now = Date.now();

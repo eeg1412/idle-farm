@@ -82,7 +82,13 @@ function orderActions(ui, order, inDetail = false) {
     { label: '放弃', onClick: () => confirmAbandon(ui, order, inDetail) },
   ];
   const buttons = [{ label: '接受', tone: 'gold', onClick: () => submit('acceptOrder') }];
-  if (canReplaceOrder(ui.w, order.id)) buttons.push({ label: '替换', onClick: () => submit('replaceOrder') });
+  // Replace stays visible; when unavailable it is grey and a tap shows the reason in red.
+  const usedUp = ui.w.orders.replaced >= orderReplacementLimit(ui.w);
+  buttons.push({ label: '替换', disabled: !canReplaceOrder(ui.w, order.id),
+    reason: usedUp ? '今天的替换次数用完了'
+      : orderType(order) === 'challenge' ? '没有别的新商品可挑战' : '多做几种商品才能替换',
+    blockCardTap: !inDetail,
+    onClick: () => submit('replaceOrder') });
   return buttons;
 }
 

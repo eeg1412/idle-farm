@@ -1,4 +1,5 @@
 import { pageTracks } from '../content/page-bgm.js';
+import { createProductionSoundscape } from './production-soundscape.js';
 
 const farmScore = [60, 64, 67, 72, 69, 67, 64, 62, 60, 65, 69, 72, 74, 72, 69, 67];
 const musicLookahead = 0.12;
@@ -26,6 +27,11 @@ export function createFarmAudio() {
   let rainAmount = 0;
   let rainBuffer;
   let rainVoice;
+  const productionAmbience = createProductionSoundscape({
+    getContext: () => audio,
+    getBus: () => effectsBus,
+    isEnabled: () => audio?.state === 'running' && visible && volume.sound > 0,
+  });
 
   function syncRain() {
     const active = audio?.state === 'running' && visible && volume.sound > 0 && rainAmount > 0;
@@ -203,8 +209,9 @@ export function createFarmAudio() {
   }
 
   return {
-    configure(settings) { volume = { music: settings.music, sound: settings.sound }; applyVolume(); syncRain(); syncMusic(); },
-    setVisible(next) { visible = next; applyVolume(); syncRain(); syncMusic(); },
+    configure(settings) { volume = { music: settings.music, sound: settings.sound }; applyVolume(); syncRain(); syncMusic(); productionAmbience.sync(); },
+    setVisible(next) { visible = next; applyVolume(); syncRain(); syncMusic(); productionAmbience.sync(); },
+    setProductionAmbience(state) { productionAmbience.setState(state); },
     setRain(amount) {
       rainAmount = Number.isFinite(amount) ? Math.round(Math.max(0, Math.min(1, amount)) * 100) / 100 : 0;
       syncRain();
@@ -225,13 +232,14 @@ export function createFarmAudio() {
           effectsBus = audio.createGain();
           musicBus.connect(audio.destination);
           effectsBus.connect(audio.destination);
-          audio.addEventListener('statechange', () => { syncMusic(); syncRain(); });
+          audio.addEventListener('statechange', () => { syncMusic(); syncRain(); productionAmbience.sync(); });
           applyVolume();
         } catch { return; }
       }
       await audio.resume().catch(() => {});
       syncRain();
       syncMusic();
+      productionAmbience.sync();
     },
     play(name) {
       if (audio?.state !== 'running' || !visible || !volume.sound || !effects[name]) return;
