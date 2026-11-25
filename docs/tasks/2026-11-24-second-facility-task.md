@@ -24,7 +24,7 @@ PM：主代理。允许验证：无（用户未授权测试、预览、试编译
 | 任务 | 目标 | 可编辑文件 | 上下文 |
 |---|---|---|---|
 | TASK-DEF | 三项 `build*` 的名称、目标值 2、在 `introductionBranches` 中移到对应 `collect*` 之后；同步 `tests/mining-game.test.js` 中依赖「买1座即完成 buildMine」的断言（不运行） | `src/game/objectives.js`、`tests/mining-game.test.js` | 新建干净上下文 |
-| HELP-COPY | `purchaseStep` 在 L／F／M 已有设施时用 `buyMore`；在 `manager-help-copy.js` 为 tasks、livestock、fish、mine 各两种声线新增 `buyMore`，按现有声线人设写「再建一座」的引导 | `src/view/manager-help.js`、`src/view/manager-help-copy.js` | 新建干净上下文 |
+| HELP-COPY | `purchaseStep` 在 L／F／M 已有设施时用 `buyMore`；在 `manager-help-text.js` 为 tasks、livestock、fish、mine 各两种声线新增 `buyMore`，按现有声线人设写「再建一座」的引导 | `src/view/manager-help.js`、`src/view/manager-help-text.js` | 新建干净上下文 |
 
 文档（`docs/game-design.md` 支线表、`docs/expansion/01-operations.md`）由 PM 维护。
 

@@ -35,6 +35,9 @@ import { renderOrders } from './order-page.js';
 import { managerPages, renderManager, renderManagerDirectory } from './manager-page.js';
 import { renderStatistics, renderFarmSaleHistory } from './management-records.js';
 import { createManagerSpeechQueue, fitManagerSpeech } from './manager-speech.js';
+import { createOnboardingSpeech, mountOnboardingOverlay } from './onboarding-overlay.js';
+import { introLines, taskExplanation, taskPageLines } from './onboarding-text.js';
+import { managerTaskGuide } from './manager-help.js';
 import {
   renderWarehouse, renderCatalog, renderTasks, renderSettings, renderFarmSale, renderManagement,
 } from './management-pages.js';
@@ -483,6 +486,21 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let floatNode;
   let drawn;
   let estateMap;
+  // New-estate introduction ({ stage: 'speech' | 'spotlight', session }) and task explanation
+  // ({ taskId, session }); both draw through one onboarding overlay mount.
+  let intro;
+  let introChecked = false;
+  let taskTalk;
+  let onboardingMount;
+  let spotlightRect;
+  // 0 = task banner shown, 1 = faded out for an explanation.
+  let bannerFade = 0;
+  let bannerFadeTarget = 0;
+  // The page whose top banner `bannerFade` applies to; banners elsewhere draw as usual.
+  let bannerPage;
+  // A 「前往」 from a starter task: { taskId, page } until that page is built.
+  let pendingPageGuide;
+  let lastBannerFadeAt;
   let parkedEstateAtmosphere;
   let parkedEstateResearch;
   let parkedEstateWeather;
@@ -1700,6 +1718,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const page = pageForRoute(destination, options.tab);
     const tab = page === destination ? options.tab : undefined;
     if (!Object.hasOwn(pages, page) || navigation?.returning) return;
+    // Only this navigation carries its starter task; history, reloads and other routes never do.
+    pendingPageGuide = options.fromTask !== undefined && !intro ? { taskId: options.fromTask, page } : undefined;
     navigationMenu = undefined;
     if (developmentToolsEnabled) settingsTitleClicks = 0;
     coast = null;
@@ -1718,7 +1738,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     else if (page === '行脚商') pageParent = merchantMapParent(source);
     else if (options.menu) pageParent = defaultParent(page);
     else if (changedPage || directedEntry && !(page === '研究' && !modal && options.id === undefined)) pageParent = source;
-    linkedEntryParent = page === '研究' && options.id !== undefined ? pageParent : undefined;
+    // A starter task's 「前往研究」 detail closes onto the research page itself (the page's own
+    // return still leads to the tasks); other outside entries close back to their source.
+    linkedEntryParent = page === '研究' && options.id !== undefined && options.fromTask === undefined
+      ? pageParent : undefined;
     if (changedPage || tab !== undefined) prepareMerchantNavigation(page, tab);
     if (changedPage) {
       resetManagerSpeech();
@@ -2138,6 +2161,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       isActive: () => local.routeKey ? modal === local && local.navigationEpoch === navigationEpoch : locals[current] === local,
       saveManagement, saveAction,
       dialog: setDialog, close: closeDialog, closeManagerGift, queueManagerSpeech, queueManagerReplies, advanceManagerSpeech,
+      // The task page's explanation trigger, or undefined when the task has no explanation.
+      taskHelp: (taskId) => (!local.routeKey && current === '任务' && taskExplanationText(taskId)
+        ? () => startTaskExplanation(taskId) : undefined),
       tree(options) {
         const owner = parent;
         const top = cursor;
@@ -2208,20 +2234,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         cursor = Math.max(title.y + title.height, info.y + info.height) + 8;
       },
-      titleBar(title, label, fn, options = {}) {
+      titleBar(title, label, fn, allOptions = {}) {
+        // `help` adds a question-mark button just left of the action button.
+        const { help, ...options } = allOptions;
         const compactTitle = options.compact === true;
         const production = options.style === 'production';
         const inset = compactTitle ? 0 : 12;
         const beside = Boolean(label) && width >= 186 * Math.min(scale(), 1.32);
         const buttonWidth = beside ? Math.min(width * 0.48, Math.max(90, label.length * 16 * scale() + 20)) : width;
-        const headingWidth = width - inset - (beside ? buttonWidth + 8 : 0);
+        const helpWidth = help ? 44 : 0;
+        const helpGap = help ? (beside ? 6 : 8) : 0;
+        const headingWidth = width - inset - (beside ? buttonWidth + 8 : 0) - helpWidth - helpGap;
         const top = cursor;
         const t = textNode(parent, title, x + inset, top, headingWidth, {
           size: (compactTitle ? 19 : production ? 35 : 30) * scale(), weight: '800',
         });
-        const height = Math.max(t.height, beside ? 48 : 28);
+        const height = Math.max(t.height, beside || help ? 48 : 28);
         t.y += (height - t.height) / 2;
         if (!compactTitle) parent.addChild(inkGraphics().roundRect(x + 1, t.y + 4, 4, Math.max(15, t.height - 8), 2).fill(palette.green));
+        if (help) buttonAt(parent, x + width - (beside ? buttonWidth + helpGap : 0) - helpWidth, top, helpWidth, height, '？', help);
         if (beside) buttonAt(parent, x + width - buttonWidth, top, buttonWidth, height, label, fn,
           { tone: 'gold', emphasis: production, ...options });
         cursor += height + rowGap;
@@ -2641,8 +2672,18 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const left = x - bleed;
         const right = left + span;
         const top = cursor;
+        // The background stays opaque. While the task page's manager talks from the overlay, the
+        // banner's manager sinks below the banner's lower edge (clipped to the banner) and the
+        // bubble, words and buttons in `banner` fade; both follow `bannerFade`.
         panel(parent, left, top, span, height, 0xd8e5c7, null, 0);
         drawImage(parent, background, left, top, span, height, true);
+        const portraitLayer = parent.addChild(new Container({ label: 'manager-portrait-layer' }));
+        portraitLayer.eventMode = 'none';
+        const banner = parent.addChild(new Container({ label: 'manager-banner' }));
+        // The banner-rect clip exists only once a telling first moves this banner's manager.
+        const sinkClip = { parent, left, top, width: span, height };
+        portraitLayer.sinkClip = sinkClip;
+        if (bannerPage !== undefined && current === bannerPage) applyBannerFade(banner, portraitLayer, height);
         const tight = span < 275;
         const gap = tight ? 3 : width < 350 ? 6 : 8;
         const actionWidth = tight ? Math.max(20, Math.min(48, Math.floor((span * 0.64 - 10 - 2 * gap) / 3))) : 48;
@@ -2659,7 +2700,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const portrait = new Sprite({ texture: Texture.EMPTY, roundPixels: true, label: 'manager-portrait' });
         portrait.eventMode = 'none';
         portrait.visible = false;
-        parent.addChild(portrait);
+        // Loads land at the layer's current sink offset, since the offset belongs to the layer.
+        portraitLayer.addChild(portrait);
         let portraitVisible = false;
         let portraitUrl;
         let pendingPortrait;
@@ -2691,12 +2733,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         };
         const bubbleY = top + (tight ? 4 : 8);
         const bubbleHeight = Math.max(18, buttonsTop - bubbleY - (tight ? 3 : 6));
-        parent.addChild(managerBubblePath(inkGraphics(), dialogueX, bubbleY, dialogueWidth, bubbleHeight)
+        banner.addChild(managerBubblePath(inkGraphics(), dialogueX, bubbleY, dialogueWidth, bubbleHeight)
           .fill(palette.card)
           .stroke({ color: palette.border, width: 1.25 }));
         const bubbleWidth = Math.max(1, dialogueWidth - 20);
         const claimHeight = receive ? Math.min(24, Math.max(12, bubbleHeight - 19)) : 0;
-        const caption = parent.addChild(new Container({ label: 'manager-dialogue' }));
+        const caption = banner.addChild(new Container({ label: 'manager-dialogue' }));
         caption.eventMode = 'none';
         let reveal;
         let bubbleVisible = false;
@@ -2732,19 +2774,25 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         else observe(0);
         const claimTop = bubbleY + bubbleHeight - claimHeight - 3;
         if (!waiting) {
-          const bodyHit = parent.addChild(inkGraphics());
+          const bodyHit = banner.addChild(inkGraphics());
           bodyHit.label = '换管理员对白';
           const bodyHeight = claimHeight ? Math.max(1, claimTop - bubbleY) : bubbleHeight;
-          hitAt(bodyHit, parent, dialogueX, bubbleY, dialogueWidth, bodyHeight,
+          hitAt(bodyHit, banner, dialogueX, bubbleY, dialogueWidth, bodyHeight,
             () => advanceManagerSpeech(role, gender, { messages, nextGreeting }));
         }
         if (claimHeight) {
-          const claim = parent.addChild(new Container());
+          const claim = banner.addChild(new Container());
           buttonAt(claim, dialogueX + 6, claimTop, dialogueWidth - 12, claimHeight - 2, '收回礼',
             () => receive(), { tone: 'plain', icon: receiveIcon, compactLabel: true });
         }
         managerBannerMount = {
           urgent: Boolean(receive),
+          role,
+          layer: banner,
+          portraitLayer,
+          sinkDepth: height,
+          // Inside the scrolled viewport with its texture shown (ignores the sink layer's state).
+          portraitShown: () => !portrait.destroyed && portrait.visible,
           restore() {
             speech.offer(managerSelections.get(speech)?.line ?? message ?? managerDailyLines.get(speech));
             managerSpeech = speech;
@@ -2753,14 +2801,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           },
         };
         if (!waiting) {
-          const portraitHit = parent.addChild(inkGraphics());
+          const portraitHit = banner.addChild(inkGraphics());
           portraitHit.label = '换管理员对白';
-          hitAt(portraitHit, parent, left, top, Math.max(1, dialogueX - left - 4), height,
+          hitAt(portraitHit, banner, left, top, Math.max(1, dialogueX - left - 4), height,
             () => advanceManagerSpeech(role, gender, { messages, nextGreeting }));
         }
         const actionLeft = dialogueX + (dialogueWidth - actionSpan) / 2;
         actions.forEach(({ label, icon, onClick }, index) => {
-          buttonAt(parent, actionLeft + index * (actionWidth + gap), buttonsTop, actionWidth, actionWidth,
+          buttonAt(banner, actionLeft + index * (actionWidth + gap), buttonsTop, actionWidth, actionWidth,
             label, onClick, { iconOnly: icon, touchSize: tight ? actionWidth : 48 });
         });
         cursor += height + rowGap;
@@ -3913,6 +3961,228 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
   }
 
+  function openEstateSite(id) {
+    if (!Object.hasOwn(estateDestinations, id)) return;
+    const page = estateDestinations[id];
+    delete locals[page].id;
+    delete locals[page].positionedSourceId;
+    delete locals[page].linkedResearchItem;
+    go(page);
+  }
+
+  function taskManagerGender() {
+    return world ? managerStatus(world, 'tasks')?.gender : undefined;
+  }
+
+  function taskExplanationText(taskId) {
+    const gender = taskManagerGender();
+    return gender ? taskExplanation(taskId, gender) : null;
+  }
+
+  function onboardingShown() {
+    return Boolean(onboardingMount && !onboardingMount.layer.destroyed);
+  }
+
+  // A new estate's first loaded world starts the introduction on the estate map, clear sky first.
+  function syncIntro() {
+    if (introChecked || !world || status?.busy) return;
+    introChecked = true;
+    if (world.introPending !== true) return;
+    const gender = taskManagerGender() ?? 'female';
+    estateWeatherSession.setSunnyLock(true);
+    intro = { stage: 'speech', session: createOnboardingSpeech({ role: 'tasks', gender, lines: introLines(gender) }) };
+    locals[homePage].scroll = 0;
+    if (current !== homePage || modal || pendingModal || navigationMenu) go(homePage);
+  }
+
+  // Reaching the task page by any route releases the clear sky and starts the page's own telling.
+  function enterIntroTaskPage() {
+    if (!intro || intro.stage === 'taskPage') return;
+    spotlightRect = undefined;
+    estateWeatherSession.setSunnyLock(false);
+    const gender = taskManagerGender() ?? intro.session?.gender ?? 'female';
+    intro = { stage: 'taskPage', session: createOnboardingSpeech({ role: 'tasks', gender, lines: taskPageLines(gender) }) };
+    // Continuing from the map, the banner's manager starts already hidden (no leaving animation).
+    hideBannerAtOnce('任务');
+  }
+
+  // Arriving from another page, the banner's manager is already away: no leaving animation.
+  // This runs in the build that drew the banner, so it applies before that frame shows.
+  function hideBannerAtOnce(page) {
+    bannerPage = page;
+    bannerFade = bannerFadeTarget = 1;
+    lastBannerFadeAt = undefined;
+    applyTaskBannerFade();
+  }
+
+  // A 「前往」 from a starter task reached its page: that page's own manager explains the task here.
+  function startPageGuide() {
+    const pending = pendingPageGuide;
+    pendingPageGuide = undefined;
+    if (!pending || pending.page !== current || intro || taskTalk) return;
+    const role = managerPages[current];
+    const gender = role ? managerStatus(world, role)?.gender : undefined;
+    if (!gender || !managerPortraits[role]?.[gender]) return;
+    const guide = managerTaskGuide(world, pending.taskId, current, { role, gender });
+    if (!guide?.text) return;
+    taskTalk = { page: current, session: createOnboardingSpeech({ role, gender, lines: [guide] }) };
+    hideBannerAtOnce(current);
+  }
+
+  // After the task-page telling the manager has left: the introduction is recorded as complete.
+  function finishIntro() {
+    if (!intro) return;
+    intro = undefined;
+    spotlightRect = undefined;
+    // The top banner's manager comes back (animated only when visible) and its sentence continues.
+    if (!taskTalk && current === '任务') moveTaskBanner('任务', false);
+    else if (!taskTalk) bannerFadeTarget = 0;
+    estateWeatherSession.setSunnyLock(false);
+    // Queued with the other actions, never dropped by a running one. An introduction
+    // already recorded as finished returns { ok: false } and ends silently.
+    queueMicrotask(() => { Promise.resolve(dispatch('completeIntro')).catch(() => {}); });
+    requestRender();
+  }
+
+  function startTaskExplanation(taskId) {
+    if (taskTalk || intro || current !== '任务' || modal || pendingModal) return;
+    const gender = taskManagerGender();
+    const text = gender ? taskExplanation(taskId, gender) : null;
+    if (!text) return;
+    taskTalk = { page: '任务', session: createOnboardingSpeech({ role: 'tasks', gender, lines: [text] }) };
+    // Decided before the rebuild, while the drawn banner still reports what the player sees.
+    // The overlay (dim, all taps) appears now; its manager rises once the banner's has sunk.
+    moveTaskBanner('任务', true);
+    focusIndex = -1;
+    redraw();
+  }
+
+  // Banner bubble/words/buttons fade with `bannerFade`; the banner's manager sinks by the same
+  // progress (ease-in going down, ease-out coming back) until fully below the banner's edge.
+  function applyBannerFade(layer, portraitLayer, depth) {
+    if (layer && !layer.destroyed) layer.alpha = 1 - bannerFade;
+    if (!portraitLayer || portraitLayer.destroyed) return;
+    const clip = portraitLayer.sinkClip;
+    if (!portraitLayer.mask && clip && !clip.parent.destroyed) {
+      // The sinking manager never shows below the banner, over the page content.
+      portraitLayer.mask = clip.parent.addChild(inkGraphics().rect(clip.left, clip.top, clip.width, clip.height).fill(0xffffff));
+    }
+    // fade³ is ease-in while sinking (0→1) and ease-out while rising back (1→0).
+    portraitLayer.y = Math.round(bannerFade ** 3 * depth);
+    portraitLayer.visible = bannerFade < 1;
+  }
+
+  // The current page's banner while a telling owns it (any page's banner, not only the tasks one).
+  function taskBannerMount() {
+    return bannerPage !== undefined && current === bannerPage ? managerBannerMount : undefined;
+  }
+
+  function applyTaskBannerFade() {
+    const mount = taskBannerMount();
+    if (mount) applyBannerFade(mount.layer, mount.portraitLayer, mount.sinkDepth);
+  }
+
+  // Hide or show a page banner's manager. A player who can see that manager watches it sink
+  // or rise (200ms); otherwise the state is set at once, with no waiting.
+  function moveTaskBanner(page, hidden) {
+    if (hidden) bannerPage = page;
+    bannerFadeTarget = hidden ? 1 : 0;
+    if (taskBannerMount()?.portraitShown()) return;
+    bannerFade = bannerFadeTarget;
+    lastBannerFadeAt = undefined;
+    applyTaskBannerFade();
+    markDirty();
+  }
+
+  // The manager has left: the banner's manager comes back and its sentence continues.
+  function endTaskExplanation() {
+    if (!taskTalk) return;
+    const { page } = taskTalk;
+    taskTalk = undefined;
+    moveTaskBanner(page, false);
+    requestRender();
+  }
+
+  function onboardingFinished() {
+    if (intro?.stage === 'speech' && current === homePage) {
+      intro.stage = 'spotlight';
+      intro.session = undefined;
+      requestRender();
+    } else if (intro?.stage === 'taskPage' && current === '任务') finishIntro();
+    else if (taskTalk) endTaskExplanation();
+  }
+
+  // The session the visible overlay is telling, if any.
+  function overlaySession() {
+    if (intro?.stage === 'speech' && current === homePage) return intro.session;
+    if (intro?.stage === 'taskPage' && current === '任务') return intro.session;
+    return taskTalk && current === taskTalk.page ? taskTalk.session : undefined;
+  }
+
+  // Taps anywhere advance the telling; while the task board is lit only it opens (its usual entry).
+  function onboardingTap(at) {
+    if (blockTap || openingScreen?.blocking || !onboardingShown()) return;
+    const session = overlaySession();
+    if (session) {
+      if (session.tap()) markDirty();
+      return;
+    }
+    if (intro?.stage !== 'spotlight' || waiting || !spotlightRect) return;
+    if (at && (at.x < spotlightRect.left || at.x > spotlightRect.right ||
+        at.y < spotlightRect.top || at.y > spotlightRect.bottom)) return;
+    openEstateSite('tasks');
+  }
+
+  function drawOnboarding() {
+    if (intro && current === '任务') enterIntroTaskPage();
+    // The introduction's task-page telling hides the top banner's manager like an explanation.
+    if (intro?.stage === 'taskPage' && current === '任务') {
+      bannerPage = '任务';
+      bannerFadeTarget = 1;
+    }
+    // Leaving a telling's page by any route drops it without fading; banners draw as usual.
+    if (taskTalk && current !== taskTalk.page) taskTalk = undefined;
+    if (bannerPage !== undefined && current !== bannerPage) {
+      bannerPage = undefined;
+      bannerFade = bannerFadeTarget = 0;
+    }
+    startPageGuide();
+    // A telling without lines ends at once instead of leaving an empty overlay.
+    if (overlaySession()?.finished) onboardingFinished();
+    const introShown = Boolean(intro && (intro.stage === 'taskPage' ? current === '任务' : current === homePage && estateMap));
+    const session = overlaySession();
+    if (!introShown && !session) return;
+    let spotlight;
+    if (introShown && intro.stage === 'spotlight') {
+      const bounds = estateMap.siteBounds('tasks');
+      const scroll = locals[homePage].scroll ?? 0;
+      spotlight = bounds && { left: bounds.left, right: bounds.right, top: bounds.top - scroll, bottom: bounds.bottom - scroll };
+    }
+    spotlightRect = spotlight;
+    const gender = session?.gender;
+    const role = session?.role ?? 'tasks';
+    const art = gender ? managerPortraits[role]?.[gender] : undefined;
+    const url = art ? assetUrl(managerPortraitPath(role, gender, 'smile')) : undefined;
+    if (url) touchImage(url, 'scene');
+    onboardingMount = mountOnboardingOverlay(root, {
+      width: frame.width, height: frame.height,
+      // Keep the arrow and bubble clear of the coin display / top bar.
+      insetTop: layout.inset.top + 50, insetLeft: layout.inset.left, insetRight: layout.inset.right,
+      session, spotlight, dim: 0.55, art,
+      requestPortrait: url && ((mount) => {
+        const cached = textures.get(url);
+        if (cached && !cached.destroyed) mount(cached);
+        else loadImage(url).then(mount);
+      }),
+      caption: managerCaption,
+      colors: { dim: palette.dark, card: palette.card, border: palette.border, ring: 0xfff0a9, arrow: palette.gold, arrowStroke: 0x76502a },
+      onTap: onboardingTap, markDirty,
+    });
+    // The overlay owns every tap; keyboard input reaches it through the keydown handler.
+    controls = [];
+    focusIndex = -1;
+  }
+
   function estateArea(parent, researchReady, claimableReturns) {
     const { width, height } = frame;
     // The shadow atlas is shared and pinned, but is optional map decoration:
@@ -3927,14 +4197,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     estateMap = mountEstateMap(body, {
       width,
       insetTop: layout.inset.top,
-      onOpen: (id) => {
-        if (!Object.hasOwn(estateDestinations, id)) return;
-        const page = estateDestinations[id];
-        delete locals[page].id;
-        delete locals[page].positionedSourceId;
-        delete locals[page].linkedResearchItem;
-        go(page);
-      },
+      onOpen: openEstateSite,
       bind: (target, x, y, w, h, run) => hitAt(target, body, x, y, w, h, run),
       getImage: (url) => textures.get(url),
       loadImage: loadAnimationImage,
@@ -4428,6 +4691,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         Math.max(1, boxHeight - headerHeight - 16), modal, modal.draw,
         fullSheet ? Math.max(0, left + pad - boxLeft) : pad, { captureFooter: true });
     }
+    onboardingMount = undefined;
+    if (hasWorld) drawOnboarding();
     feedbackLayer = new Container();
     feedbackLayer.eventMode = 'passive';
     root.addChild(feedbackLayer);
@@ -4435,7 +4700,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function beginDrag(event, thumb = false) {
-    if (openingScreen?.blocking || !scrollTarget?.max || !event.isPrimary || event.button !== 0) return;
+    if (openingScreen?.blocking || onboardingShown() || !scrollTarget?.max || !event.isPrimary || event.button !== 0) return;
     const p = root.toLocal(event.global);
     if (p.x < scrollTarget.x || p.x > scrollTarget.right ||
         p.y < scrollTarget.y || p.y > scrollTarget.y + scrollTarget.height) return;
@@ -4508,6 +4773,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let scrollWheelEvent;
   root.on('wheel', (event) => {
     if (openingScreen?.blocking) return;
+    if (onboardingShown()) { scrollWheelEvent = event.nativeEvent; return; }
     if (!scrollTarget) return;
     if (navigationMenu) scrollWheelEvent = event.nativeEvent;
     const p = root.toLocal(event.global);
@@ -4548,6 +4814,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   app.canvas.addEventListener('keydown', (event) => {
     if (openingScreen?.blocking) {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openingScreen.retryFailed(); }
+      return;
+    }
+    if (onboardingShown()) {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onboardingTap(); }
+      else if (event.key === 'Tab' || event.key === 'Escape') event.preventDefault();
       return;
     }
     if (modal?.onKeyDown?.(event)) { event.preventDefault(); return; }
@@ -4636,8 +4907,34 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     estateWeatherSession.update(now, !document.hidden && openingScreen.complete, weatherMapActive);
     audio.setRain?.(current === homePage && world && !status?.busy && openingScreen.complete && !document.hidden
       ? estateWeatherSession.rain : 0);
+    if (onboardingMount) {
+      // An explanation's manager starts rising only after the visible banner manager has sunk;
+      // until then its telling stays in the not-yet-risen 'enter' state, where taps are ignored.
+      const bannerSinking = taskTalk && current === taskTalk.page && bannerFade < bannerFadeTarget;
+      if (!openingScreen.complete || openingScreen.blocking || document.hidden || status?.busy || bannerSinking) {
+        onboardingMount.pause();
+      } else {
+        const onboardingUpdate = onboardingMount.update(now);
+        if (onboardingUpdate?.audible) audio.typeDialogue?.();
+        if (onboardingUpdate?.finished) onboardingFinished();
+      }
+    }
+    if (bannerFade !== bannerFadeTarget) {
+      const step = lastBannerFadeAt === undefined ? 0 : Math.max(0, now - lastBannerFadeAt) / 200;
+      lastBannerFadeAt = now;
+      bannerFade = bannerFadeTarget > bannerFade ? Math.min(bannerFadeTarget, bannerFade + step)
+        : Math.max(bannerFadeTarget, bannerFade - step);
+      applyTaskBannerFade();
+      markDirty();
+    } else {
+      lastBannerFadeAt = undefined;
+      // Fully back with no telling left: the banner draws as usual from the next build on.
+      if (bannerPage !== undefined && bannerFade === 0 && !taskTalk && intro?.stage !== 'taskPage') bannerPage = undefined;
+    }
+    // An explanation, or the introduction's task-page telling, pauses the task banner's typing;
+    // it continues from there afterwards.
     const speechVisible = !openingScreen.blocking && managerSpeechMount?.visible() && !document.hidden && !status?.busy &&
-      !navigationMenu;
+      !navigationMenu && !taskTalk && !(intro?.stage === 'taskPage' && current === '任务');
     if (!speechVisible && managerSpeechWasVisible) pauseManagerSpeech();
     managerSpeechWasVisible = speechVisible;
     const speechUpdate = managerSpeech?.update(now, speechVisible);
@@ -4742,6 +5039,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     progressEpoch = undefined;
     lastProgressClock = undefined;
     resetManagerSpeech();
+    if (intro) estateWeatherSession.setSunnyLock(false);
+    intro = undefined;
+    introChecked = false;
+    taskTalk = undefined;
+    spotlightRect = undefined;
+    bannerFade = bannerFadeTarget = 0;
+    bannerPage = undefined;
+    pendingPageGuide = undefined;
     managerConversations.clear();
     managerCandidates.clear();
     managerTapTimes.clear();
@@ -4826,6 +5131,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;
+      if (!introChecked && world && !status?.busy) {
+        syncIntro();
+        if (intro) structural = true;
+      }
       if (world && !status?.busy) openingScreen.setWorld(world);
       openingScreen.pageState(Boolean(world && !status?.busy), !world && status && !status.busy ? status : undefined);
       if (structural) resize(nextLayout);

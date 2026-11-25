@@ -10,12 +10,12 @@
 | ID／负责人 | 目标与独占文件 | 上下文选择 | 输出使用方 |
 | --- | --- | --- | --- |
 | NPC-L1／`npc_dialogue_lines` | 重写 `src/view/manager-dialogue.js` 的全部角色台词 | 新建干净上下文，仅给人设与该文件 | 现有 manager-page 调用及 PM |
-| NPC-H1／`npc_help_lines` | 重写 `src/view/manager-help-copy.js` 全部帮助与介绍文案 | 新建干净上下文，仅给人设、帮助文件、调用者和相关按钮词 | manager-help、manager-page 及 PM |
+| NPC-H1／`npc_help_lines` | 重写 `src/view/manager-help-text.js` 全部帮助与介绍文案 | 新建干净上下文，仅给人设、帮助文件、调用者和相关按钮词 | manager-help、manager-page 及 PM |
 | NPC-D1／`npc_personality_writer` | 精简 `docs/npc-personalities.md`；在 `docs/development.md` 和 `AGENTS.md` 写明文档范围与通用性规范 | 复用同一人设文档作者，是连续成果物修订；此前所有权已结束，本次重新独占 | 用户及后续内容作者 |
 
 NPC-D1 已交付并明确结束三文件所有权；PM 已接管、阅读全文核对，当前22人人设及占比保留，正文精简和三条通用性规范已写入。
 
-NPC-H1 已完成并结束文案文件所有权，PM 已阅读全文。NPC-R1 复用 `npc_personality_writer` 做已交付帮助文案的人工语言审阅：这是同一人设到对白的直接下游，最少输入仅人设及 `manager-help-copy.js`；只报告与人设冲突、中文生硬或无依据断言的具体句子和位置，不编辑文件、不重复全仓调查、不运行任何脚本或测试。输出为交给 PM 的简短缺陷清单，无缺陷则明确报告。
+NPC-H1 已完成并结束文案文件所有权，PM 已阅读全文。NPC-R1 复用 `npc_personality_writer` 做已交付帮助文案的人工语言审阅：这是同一人设到对白的直接下游，最少输入仅人设及 `manager-help-text.js`；只报告与人设冲突、中文生硬或无依据断言的具体句子和位置，不编辑文件、不重复全仓调查、不运行任何脚本或测试。输出为交给 PM 的简短缺陷清单，无缺陷则明确报告。
 
 NPC-R1 已交付三处中文问题：田地／加工位持有金币的主语错配、交接引导“听听”与查看动作不符。NPC-H1 已重新接手并仅修正三句，随后再次结束所有权；PM 接管。NPC-R1 未修改文件，未执行验证。
 
@@ -24,14 +24,14 @@ NPC-R1 已交付三处中文问题：田地／加工位持有金币的主语错�
 - NPC-L1：22人814个台词槽全部重写，字段、句数、姓名、简介、help 绑定保留；作者已结束所有权。PM 已按岗位逐段读完全稿，并核对人工审稿后的指定收尾句已落盘。
 - NPC-H1：所有帮助表、22人角色 help 及五子页介绍已重写。只补充 `otherStationVoices` 纯文案表，所有 export、caller、真实分支条件保留；作者已结束所有权。PM 已阅读全文、调用参数与收尾修改。
 - NPC-D1／NPC-R1：文档精简、开发规范范围规则及帮助人工语言审阅均已交付；所有文件所有权已归还 PM。
-- 运行接入沿用 `manager-page.js` → `managerCharacters`／`manager-help.js` → `manager-help-copy.js`；无新增界面或经营行为。此次未执行测试、预览、语法／运行时检查、编译或推送，实际游戏体验未验证。
+- 运行接入沿用 `manager-page.js` → `managerCharacters`／`manager-help.js` → `manager-help-text.js`；无新增界面或经营行为。此次未执行测试、预览、语法／运行时检查、编译或推送，实际游戏体验未验证。
 
 ## 已确认输入与实际接入
 
 - 人设依据：`docs/npc-personalities.md` 全文。22人姓名、身份、性格主轴和动怒条件已确定；NPC-D1 仅精简文档，不更换人设。
 - 22人核心：露斐统筹守序、维诺工作完美主义、瑟菈礼仪护短、斐洛自尊型社交、米绒元气护短、塔珀随和护畜、莉芙耐心种植、芮可固执节俭、诺珥无口、赛穆冷静严格、缇澜好胜直球、泊恩幽默护短、芮塔干练直球、柯斐耐心手作、塞菈洁净、诺铎傲骨传艺、薇珀机敏问责、米昂腼腆守序、芙缇好奇、伊珞执拗学究、赛琳爽快反诈、洛缇沉着幽默。
 - NPC-L1 输入：`src/view/manager-dialogue.js`。保留 name/bio/title/help 绑定，每人 hello/thanks/wantedThanks 各10句、returnPrompts 5句、return/received 各1句，全部重写，共814个台词槽。
-- NPC-H1 输入：`src/view/manager-help-copy.js` 全文，`src/view/manager-help.js` 的调用和 details 字段，`src/view/manager-page.js` 的 managerContextMessages。覆盖 productionCopy、taskCopy、researchCopy、warehouseTaskCopy、estateTaskCopy、productionTaskCopy、tutorialDestination、otherStationCopy、researchHelpCopy、introductions、contextHelpCopy、characterHelpCopy。
+- NPC-H1 输入：`src/view/manager-help-text.js` 全文，`src/view/manager-help.js` 的调用和 details 字段，`src/view/manager-page.js` 的 managerContextMessages。覆盖 productionCopy、taskCopy、researchCopy、warehouseTaskCopy、estateTaskCopy、productionTaskCopy、tutorialDestination、otherStationCopy、researchHelpCopy、introductions、contextHelpCopy、characterHelpCopy。
 - `managerCharacters` 的 help 指向 characterHelpCopy；帮助按实际岗位/性别选择，任务页可代讲其他产线，故 productionCopy.tasks 必须适用于所有生产种类，不把矿产叫作种子、不把所有配方叫一炉。
 - 已知动态字段：purchase、index、place、button、name、item、target、entry、branch、destination、all、page、rate。不得漏插、改义或向玩家输出 undefined。
 - 页面词以当前代码为准：“角色管理”“品种配方”“经营改良”“品质”“鱼塘”；按钮保留实际调用名，包括“研发”“选择配方”“查看来源”“升级”“确认升级”“确认购买”“抽取一次”“全部抽取”等。

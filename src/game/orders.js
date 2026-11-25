@@ -183,7 +183,13 @@ function consumeBoost(orders, item) {
   return { boost };
 }
 
-// High: count = max(1, min(ceil(V / 2U), ceil(peak hourly output × H))), H drawn from 8–24 whole hours.
+// Until the first-order task reward has been issued, a high order holds at most 10 pieces.
+const firstOrderCap = 10n;
+const firstOrderCount = (world, count) =>
+  (world.taskRewards ?? []).includes('firstOrder') || count <= firstOrderCap ? count : firstOrderCap;
+
+// High: count = max(1, min(ceil(V / 2U), ceil(peak hourly output × H))), H drawn from 8–24 whole hours;
+// capped at 10 while the first-order task reward is unissued.
 // Normal: count = max(1, ceil(peak hourly output × H)), H drawn from 1–4 whole hours; each piece pays 2U.
 // rewardRate records the per-piece multiplier in hundredths for display.
 function makeOffer(world, item, sequence, type = 'high') {
@@ -196,7 +202,7 @@ function makeOffer(world, item, sequence, type = 'high') {
   }
   const byValue = ceilDiv(world.productionValue, 2n * price);
   const byCapacity = ceilDiv(peak * orderHours(world, sequence), 100n);
-  const count = orderCount(byValue, byCapacity);
+  const count = firstOrderCount(world, orderCount(byValue, byCapacity));
   const rate = highRate(world, item);
   return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * ((price * rate + 50n) / 100n),
     rewardRate: Number(rate), ...standardTime(count, peak) };

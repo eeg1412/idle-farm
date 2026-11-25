@@ -170,14 +170,29 @@ export function createEstateWeatherSession() {
   let changeAt = 0;
   let nextChange = Infinity;
   let shadowStream;
+  let sunnyLock = false;
   return {
     start(now) {
       if (started) return;
       started = true;
       lastNow = now;
-      rain = targetRain = fromRain = Math.random() < 0.8 ? 0 : 1;
-      nextChange = interval();
+      rain = targetRain = fromRain = sunnyLock || Math.random() < 0.8 ? 0 : 1;
+      nextChange = sunnyLock ? Infinity : interval();
       shadowStream = createShadowStream(motionMs);
+    },
+    // The new-estate introduction keeps the sky clear without sampling. The
+    // next independent sample follows the ordinary interval from release time.
+    setSunnyLock(locked) {
+      const next = Boolean(locked);
+      if (next === sunnyLock) return;
+      sunnyLock = next;
+      if (next) {
+        if (targetRain !== 0 && shadowStream) shadowStream.fadeAt = motionMs;
+        rain = targetRain = fromRain = 0;
+        nextChange = Infinity;
+      } else if (started) {
+        nextChange = elapsed + interval();
+      }
     },
     pause() { lastNow = undefined; },
     update(now, foreground, mapActive) {
@@ -186,7 +201,7 @@ export function createEstateWeatherSession() {
       lastNow = now;
       elapsed += delta;
       if (mapActive) motionMs += delta;
-      while (elapsed >= nextChange) {
+      while (!sunnyLock && elapsed >= nextChange) {
         const nextRain = Math.random() < 0.8 ? 0 : 1;
         const scheduledAt = nextChange;
         nextChange += interval();

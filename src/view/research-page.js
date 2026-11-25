@@ -142,18 +142,50 @@ function showMaterials(ui, costs, coins, title) {
   ui.materialTable(rows, { style: 'research', title });
 }
 
-function showMaterialSources(ui, costs) {
-  if (!costs.length) return;
-  ui.button('查看材料来源', () => {
-    ui.dialog('材料来源', (dialog) => {
-      const rows = costs.map(([id]) => {
-        const item = catalog.items[id];
-        return {
-          label: item.name, value: item.sources.join('、'), icon: id,
-          onClick: () => dialog.go('图鉴', { id }),
-        };
-      });
-      dialog.detailRows(rows, { variant: 'stack' });
+// Recipes that list each recipe as a direct research prerequisite.
+const researchDependents = new Map();
+for (const [id, node] of recipeResearch) {
+  for (const key of node.requires) {
+    if (!researchDependents.has(key)) researchDependents.set(key, []);
+    researchDependents.get(key).push(id);
+  }
+}
+
+function hasResearchLinks(id) {
+  return Boolean(catalog.research[id]?.requires.length || researchDependents.has(id));
+}
+
+// The recipe, every recipe it transitively requires and every recipe that transitively requires it.
+function researchTreeNodes(w, target) {
+  const unlocked = new Set(w.unlocked);
+  const keys = new Set();
+  (function visit(id) {
+    if (keys.has(id)) return;
+    keys.add(id);
+    (catalog.research[id]?.requires ?? []).forEach(visit);
+  })(target);
+  const pending = [target];
+  while (pending.length) {
+    for (const next of researchDependents.get(pending.pop()) ?? []) {
+      if (keys.has(next)) continue;
+      keys.add(next);
+      pending.push(next);
+    }
+  }
+  return [...keys].map((id) => {
+    const requires = catalog.research[id]?.requires ?? [];
+    const offer = requires.every((key) => unlocked.has(key)) ? researchOffer(w, id, unlocked) : null;
+    return { id, label: researchName(catalog.items[id]), icon: researchIcon(id),
+      requires: requires.filter((key) => keys.has(key)), ...researchStatus(w, id, offer, unlocked) };
+  });
+}
+
+function showResearchTree(ui, id) {
+  ui.dialog(researchName(catalog.items[id]), (dialog) => {
+    const view = dialog.local.researchTree ??= { focus: id };
+    dialog.tree({
+      nodes: researchTreeNodes(dialog.w, id), production: true, current: id, view,
+      onSelect: (next) => { if (next !== id) showResearch(dialog, next); },
     });
   });
 }
@@ -193,8 +225,12 @@ function researchDetails(ui, id) {
     ui.detailRows(prerequisites, { variant: 'stack' });
   }
 
+  const showTree = () => {
+    if (hasResearchLinks(id)) ui.button('查看科技树', () => showResearchTree(ui, id));
+  };
   if (!offer) {
     if (ui.w.unlocked.includes(id)) ui.button('查看来源', () => ui.go('图鉴', { id }));
+    showTree();
     return;
   }
 
@@ -208,7 +244,7 @@ function researchDetails(ui, id) {
       },
     },
   ], { style: 'production' });
-  showMaterialSources(ui, offer.costs);
+  showTree();
 }
 
 export function showResearch(ui, id) {

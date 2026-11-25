@@ -577,6 +577,10 @@ function amounts(world, convert, convertSigned) {
     : !Object.hasOwn(world, 'orders') && legacyGuideCompleted(result);
   valid(typeof oldGuide === 'boolean', 'legacyGuideCompleted');
   result.legacyGuideCompleted = oldGuide;
+  // The opening plays only for a freshly created farm; records from before it read as already seen.
+  const introPending = Object.hasOwn(world, 'introPending') ? world.introPending : false;
+  valid(typeof introPending === 'boolean', 'introPending');
+  result.introPending = introPending;
   return result;
 }
 

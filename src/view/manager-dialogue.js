@@ -1,4 +1,4 @@
-import { characterHelpCopy } from './manager-help-copy.js';
+import { characterHelpCopy } from './manager-help-text.js';
 
 // Lines and bios follow the two character designs supplied for each role.
 export const managerCharacters = {

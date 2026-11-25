@@ -284,7 +284,7 @@ function drawCard(parent, place, cardWidth, { inkGraphics, drawImage, textNode }
 
 export function mountResearchTree({ parent, x, y, width, height, nodes, view, drawImage, textNode, buttonAt,
   transitionNode, inkGraphics, requestRender, isWaiting, onSelect, onFind, markGesture, comparison, groups,
-  readyOnly, onToggleStatus, production = false, textScale = 1 }) {
+  readyOnly, onToggleStatus, production = false, current, textScale = 1 }) {
   const compact = height < 210;
   // The production chain has no toolbar or legend; its plot starts at the paper edge.
   const plotTop = production ? 8 : compact ? 50 : 77;
@@ -412,7 +412,9 @@ export function mountResearchTree({ parent, x, y, width, height, nodes, view, dr
     const selected = production ? undefined : graph.byId.get(view.node);
     const before = selected?.before ?? [];
     const after = selected?.after ?? [];
-    const relation = (place) => place.node.id === selected?.node.id ? 'selected'
+    // A production chain may outline one current card; it draws no selection edges or relation rims.
+    const relation = production ? (place) => (current !== undefined && place.node.id === current ? 'selected' : undefined)
+      : (place) => place.node.id === selected?.node.id ? 'selected'
       : before.includes(place) ? 'before' : after.includes(place) ? 'after' : undefined;
     for (const [place, tile] of tiles) {
       if (visible.has(place) && tile.detail === detail && tile.relation === relation(place)) continue;

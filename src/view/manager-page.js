@@ -132,7 +132,7 @@ function managerContextMessages(ui, id, character, researchReady, gender) {
       const name = catalog.items[key]?.name;
       const rate = marketRate(world, key);
       return name && world.inventory[key] > 0n && rate !== 0
-        ? [characterHelpMessage(character.help(name, rate), [name])] : [];
+        ? [{ ...characterHelpMessage(character.help(name, rate), [name]), ...(rate < 0 ? { expression: 'sad' } : {}) }] : [];
     });
   }
   if (id === 'research') {

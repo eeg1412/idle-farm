@@ -25,7 +25,7 @@ PM：主代理。来源：订单中心需求审计（界面与逻辑两份只读
 
 | 卡 | 代理 | 目标 | 独占成果物 | 上下文 | 顺序 |
 | --- | --- | --- | --- | --- | --- |
-| UI-1 | order_ui_fixes | 4、6、8、10、11、12 的代码 | `src/view/order-page.js`、`src/view/item-chain.js`、`src/view/canvas-ui.js`（仅菜单圆点段）、`src/view/manager-page.js`、`src/view/manager-help.js`、`src/view/manager-help-copy.js`、`src/view/manager-dialogue.js`（仅订单两位管理员）、`src/view/management-pages.js`（仅任务图标）、`src/game/objectives.js`（仅 firstOrder 文案） | 新建 | 并行 |
+| UI-1 | order_ui_fixes | 4、6、8、10、11、12 的代码 | `src/view/order-page.js`、`src/view/item-chain.js`、`src/view/canvas-ui.js`（仅菜单圆点段）、`src/view/manager-page.js`、`src/view/manager-help.js`、`src/view/manager-help-text.js`、`src/view/manager-dialogue.js`（仅订单两位管理员）、`src/view/management-pages.js`（仅任务图标）、`src/game/objectives.js`（仅 firstOrder 文案） | 新建 | 并行 |
 | DOC-1 | order_docs | 文档以现游戏为准 | `docs/ui/pages/orders.md`、`docs/ui/pages/estate.md`、`docs/ui/navigation.md`、`docs/ui.md`、`docs/verification.md`、`docs/expansion/07-balance-validation.md`、`docs/tasks/2026-11-22-order-center.md`、`docs/assets.md` 订单段、`docs/npc-personalities.md` 订单段 | 新建 | 并行 |
 | RV-1 | order_runtime_review | 运行画面验收 | `docs/art-reviews/2026-11-22-order-center-runtime.md` 及本地证据图 | 新建 | UI-1 交付后 |
 

@@ -10,6 +10,7 @@ import {
   activeMerchantHoldQuantity, attemptScheduledOrder, newOrders, raiseOrderCapacity, recordOrderAcquisition, recordOrderProduction,
   resetOrderRun, synchronizeOrders,
 } from './orders.js';
+import { activeGuideTask } from './objectives.js';
 import { accrueBasicResearch } from './quality.js';
 import { newPrestigeLedger, prestigeLedgerOffer, productionContributionBatch, settlePrestigeLedger } from './prestige-ledger.js';
 
@@ -344,11 +345,17 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, warehouseRevenue: 0n, lifetimeRevenue: 0n,
       ordersCompleted: 0n, orderRevenue: 0n, lifetimeOrderRevenue: 0n, boughtL: 0n, boughtF: 0n, boughtM: 0n },
-    taskRewards: [], legacyGuideCompleted: false, settings: { music: 0, sound: 0, pickerIconsOnly: false, giftAllMode: 'cap', giftAllEven: false,
+    taskRewards: [], legacyGuideCompleted: false, introPending: true, settings: { music: 0, sound: 0, pickerIconsOnly: false, giftAllMode: 'cap', giftAllEven: false,
       batchUpgradeEven: false },
   };
   settleProduction(world);
   return world;
+}
+
+export function completeIntro(world) {
+  if (world.introPending !== true) return false;
+  world.introPending = false;
+  return true;
 }
 
 export const quantity = (world, id) => world.inventory[id] ?? 0n;
@@ -1021,6 +1028,7 @@ export function farmSaleOffer(world) {
     pondCount: world.facilities.F.length,
     mineCount: world.facilities.M.length,
     ...prestigeLedgerOffer(world),
+    guideLocked: activeGuideTask(world) !== null,
   };
 }
 
@@ -1031,6 +1039,7 @@ export function sellFarm(world, expectedOffer, soldAt = world.wallAnchorMs) {
     'stationCount', 'plotCount', 'livestockCount', 'pondCount', 'mineCount', 'prestigeLedgerVersion',
     'lifetimeProductionValue', 'prestigeCredit'];
   if (!expectedOffer || check.some((key) => actual[key] !== expectedOffer[key])) return false;
+  if (actual.guideLocked) return false;
   settlePrestigeLedger(world);
   world.farmSaleHistory = [...(world.farmSaleHistory ?? []), {
     run: world.completedRuns + 1, soldAt, productionValue: world.productionValue,

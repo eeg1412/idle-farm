@@ -431,7 +431,11 @@ export function mountEstateMap(parent, {
     const animatedTop = motionBounds ? Math.min(top, y + (motionBounds[1] - buildingArtHeight / 2) * unit)
       : chimneySmoke.length ? Math.min(top, y + smokeY - (chimneySmokeStyle.size + chimneySmokeStyle.rise) * effectiveSmokeUnit) : top;
     const animatedBottom = motionBounds ? Math.max(bottom, y + (motionBounds[3] - buildingArtHeight / 2) * unit) : bottom;
-    return { art, plaque, top: animatedTop, bottom: animatedBottom, loadArt, update, pause: () => researchAnimation?.pause() };
+    return {
+      id, art, plaque, top: animatedTop, bottom: animatedBottom, loadArt, update, pause: () => researchAnimation?.pause(),
+      // The entry's own hit area in map coordinates.
+      bounds: { left, top: hitTop, right, bottom },
+    };
   });
 
   let visibleEntries = [];
@@ -441,6 +445,10 @@ export function mountEstateMap(parent, {
     parkResearch() { return researchMotion?.park(); },
     parkWeather() { return weather?.park(); },
     pauseAnimations() { atmosphere.pause(); researchMotion?.pause(); weather?.pause(); },
+    siteBounds(id) {
+      const bounds = entries.find((entry) => entry.id === id)?.bounds;
+      return bounds && { ...bounds };
+    },
     setViewport(scroll, viewportHeight) {
       atmosphere.setViewport(scroll, viewportHeight);
       weather?.setViewport(scroll, viewportHeight);

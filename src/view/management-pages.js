@@ -4,6 +4,7 @@ import { objectives, taskCoinRewards, taskProductionGates } from '../game/object
 import { qualityDrawTaskTargets } from '../game/quality-tasks.js';
 import { compact } from './numbers.js';
 import { showProductionChain } from './item-chain.js';
+import { guideNeedsCoins, guideResearchFocus } from './manager-help.js';
 import { managerIds, managerStatus } from '../game/managers.js';
 
 const entries = Object.entries(catalog.items);
@@ -650,6 +651,9 @@ function highestSlot(world, kinds) {
 }
 
 function taskDestination(world, goal) {
+  // A task whose item is still locked lands on the recipe the task manager names (same rule as the banner).
+  const research = !goal.done && guideResearchFocus(world, goal.id);
+  if (research) return { target: '研究', ...recipeFocus(research.step) };
   const kinds = upgradeTaskKinds[goal.id];
   if (kinds) {
     const best = highestSlot(world, kinds);
@@ -686,6 +690,7 @@ export function renderTasks(ui) {
     ui.refresh();
   }, { keepScroll: true, sticky: true, style: 'segmented' });
   const finished = taskTab === '已完成';
+  const longIds = new Set(long.map((goal) => goal.id));
   const stage = active ? guide : [
     ...guide.filter((goal) => goal.branch || !goal.done),
     ...featuredGoals.map((id) => long.find((goal) => goal.id === id)).filter(Boolean),
@@ -712,12 +717,17 @@ export function renderTasks(ui) {
         card.rewards(rewards, { muted: !goal.rewarded });
       }
       const progress = (goal.done ? required : compact(goal.current)) + ' / ' + required;
-      const earnForLand = goal.id === 'firstPlot' && !goal.done && ui.w.coins < facilityOffer(ui.w, 'C').cost;
+      // Short of coins for land or for the next level of an upgrade task: the card goes to the warehouse first.
+      const earnForLand = !goal.done && (goal.id === 'firstPlot' ? ui.w.coins < facilityOffer(ui.w, 'C').cost
+        : guideNeedsCoins(ui.w, goal.id));
       const { target, tab, ...focus } = earnForLand ? { target: '仓库' } : taskDestination(ui.w, goal);
       const destination = target === '庄园' ? (tab === '畜牧' ? '养殖场' : tab ?? target) : target;
+      // Main and branch tasks under 「未完成」 explain themselves through the task manager.
+      const help = !finished && !goal.done && !longIds.has(goal.id) ? ui.taskHelp?.(goal.id) : undefined;
       card.titleBar(progress, goal.done ? '已完成' : earnForLand ? '前往出货' : '前往' + destination,
-        () => ui.go(target, { tab, ...focus }), {
-          compact: true, disabled: goal.done, reason: '这个任务已经完成了', tone: goal.done ? 'plain' : 'gold',
+        // A starter task's 「前往」 marks the trip so the destination's manager explains the task there.
+        () => ui.go(target, { tab, ...focus, ...(!longIds.has(goal.id) && { fromTask: goal.id }) }), {
+          compact: true, disabled: goal.done, reason: '这个任务已经完成了', tone: goal.done ? 'plain' : 'gold', help,
         });
     }, { ratio: 0.32 }), { padding: 8, gap: 6 });
   });
@@ -1008,8 +1018,12 @@ function farmDetails(ui, offer) {
   }
 }
 
+// The sale stays gray until the guide main line is done; tapping it floats the reason.
+const guideLockReason = '完成新手任务后可出售';
+
 export function renderFarmSale(ui) {
-  farmDetails(ui, farmSaleOffer(ui.w));
+  const saleOffer = farmSaleOffer(ui.w);
+  farmDetails(ui, saleOffer);
   ui.button('出售庄园', () => {
     const state = { pending: false, revised: false };
     ui.dialog('确认出售庄园', (panel) => {
@@ -1020,9 +1034,10 @@ export function renderFarmSale(ui) {
       panel.buttons([
         { label: '继续经营', onClick: () => panel.close(), disabled: state.pending },
         {
-          label: '确认出售', tone: 'gold', disabled: state.pending,
+          label: '确认出售', tone: 'gold', disabled: state.pending || offer.guideLocked === true,
+          ...(offer.guideLocked === true && { reason: guideLockReason }),
           onClick: async () => {
-            if (state.pending) return;
+            if (state.pending || offer.guideLocked === true) return;
             state.pending = true;
             panel.refresh();
             const sold = await panel.action('sellFarm', offer);
@@ -1038,5 +1053,6 @@ export function renderFarmSale(ui) {
         },
       ]);
     }, { variant: 'farm-sale' });
-  }, { tone: 'gold', style: 'primary' });
+  }, { tone: 'gold', style: 'primary',
+    ...(saleOffer.guideLocked === true && { disabled: true, reason: guideLockReason }) });
 }

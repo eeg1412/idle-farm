@@ -5,7 +5,7 @@ PM：主代理。三张卡互不重叠，各自新建干净上下文、单一所
 ## UR-1 「管理员管理」改名「角色管理」
 - 用户原话：【管理员管理】这个名字改为角色管理。
 - 只改页面名「管理员管理」→「角色管理」，包括作为路由键、菜单、页名、父级映射使用的同名字符串，保证所有引用一致；路由 slug `managers`、网址 `#/managers` 不变；单独的「管理员」一词不改。
-- 文件：`src/view/navigation.js`、`canvas-ui.js`、`management-pages.js`、`manager-help-copy.js`、`manager-help.js`、`manager-page.js`、相关测试源、`docs/ui/navigation.md`、`docs/ui/pages/management.md`、`docs/ui.md` 等现行文档（历史记录不改）。
+- 文件：`src/view/navigation.js`、`canvas-ui.js`、`management-pages.js`、`manager-help-text.js`、`manager-help.js`、`manager-page.js`、相关测试源、`docs/ui/navigation.md`、`docs/ui/pages/management.md`、`docs/ui.md` 等现行文档（历史记录不改）。
 
 ## UR-2 研发点余额卡去掉弹窗
 - 用户原话：研发的普通点发点和经营改良的高级研发点，点击后有一个弹窗，去掉这个多余的弹窗。

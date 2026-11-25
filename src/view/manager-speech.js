@@ -127,7 +127,9 @@ function groupForLineBreak(glyphs) {
   let beginning = [];
   for (const glyph of glyphs) {
     if (openingMarks.includes(glyph.text)) beginning.push(glyph);
-    else if (tokens.length && closingMarks.includes(glyph.text)) tokens.at(-1).push(glyph);
+    // After an opening mark, a closing mark starts the new token with it instead of
+    // jumping back onto the previous token ahead of the opening mark.
+    else if (tokens.length && !beginning.length && closingMarks.includes(glyph.text)) tokens.at(-1).push(glyph);
     else {
       tokens.push([...beginning, glyph]);
       beginning = [];

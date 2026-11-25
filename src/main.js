@@ -3,7 +3,7 @@ import {
   advanceWorld, newWorld, settleProduction, catalog,
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   assignProductionBatch, clearProductionBatch, upgradeProductionBatch,
-  setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar, recordOrderCapacity,
+  setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar, recordOrderCapacity, completeIntro,
 } from './game/world.js';
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
@@ -90,7 +90,7 @@ const actions = {
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
   ...orderActions,
   giftManager, giftAllManagers, claimManagerGift, claimAllManagerGifts, switchManagerAppearance,
-  useCapsules, claimTaskCapsules, rushOrder,
+  useCapsules, claimTaskCapsules, rushOrder, completeIntro,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 
@@ -531,6 +531,7 @@ function dispatch(name, ...args) {
         if (name === 'buyMerchant' || name === 'sellMerchant') return { ok: false, toast };
         if (name === 'giftManager') return { ok: false, toast, staleManagerGift: true };
         if (name === 'claimManagerGift') return { ok: false, toast };
+        if (name === 'completeIntro') return { ok: false, toast };
         if (name === 'claimAllManagerGifts') return { ok: false, message: joinToast('回礼已变化，请重新领取', toast) };
         const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';
