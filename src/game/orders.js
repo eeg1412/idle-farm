@@ -6,6 +6,8 @@ import { localCalendarDay, validCalendarDay } from './market.js';
 const intervalMs = 30 * 60 * 1000;
 // An order asks for at most this many hours (inclusive, drawn per order) of the product's peak output.
 const capacityHours = [8n, 24n];
+// A normal order asks for 1–4 whole hours of the product's peak output.
+const normalHours = [1n, 4n];
 const decimal = /^(0|[1-9]\d*)$/;
 const isProduct = (id) => typeof id === 'string' && Object.hasOwn(catalog.items, id) &&
   catalog.items[id].kind.startsWith('P');
@@ -15,15 +17,22 @@ const orderTypes = new Set(['high', 'normal', 'challenge']);
 export const orderLimit = (world) => 3 + (world.tech.orderExpansion ?? 0);
 export const orderReplacementLimit = (world) => 1 + (world.tech.orderNegotiation ?? 0);
 export const normalOrderLimit = 6;
+export const challengeOrderLimit = 3;
+// Abandoning an accepted challenge stops new challenge orders for two hours of operating time.
+export const challengeCooldownMs = 7_200_000;
+// A delivered challenge lets the next three high orders for its product pay 2 times more.
+const challengeBoostOrders = 3;
+const challengeCapsules = 1000n;
 
 export function newOrders(day = null) {
   return { day, generated: 0, replaced: 0, sequence: 0n, candidates: [], capacity: {}, nextAttemptMs: null,
-    active: [], challengeHold: false };
+    active: [], delivered: {}, boost: {}, challengeHoldUntilMs: null };
 }
 
+// Selling the farm clears this run's deliveries and boosts; today's quotas and the challenge cooldown stay.
 export function resetOrderRun(world) {
-  const { day, generated, replaced, sequence, challengeHold } = world.orders;
-  world.orders = { ...newOrders(day), generated, replaced, sequence, challengeHold };
+  const { day, generated, replaced, sequence, challengeHoldUntilMs } = world.orders;
+  world.orders = { ...newOrders(day), generated, replaced, sequence, challengeHoldUntilMs };
 }
 
 // Raise each product's recorded peak full-load output (hundredths per hour) for this run from an
@@ -45,7 +54,7 @@ export function raiseOrderCapacity(world, forecast) {
 export function synchronizeOrders(world, day) {
   const orders = world.orders;
   if (!validCalendarDay(day) || (orders.day !== null && day <= orders.day)) return;
-  world.orders = { ...orders, day, generated: 0, replaced: 0, challengeHold: false,
+  world.orders = { ...orders, day, generated: 0, replaced: 0,
     active: orders.active.filter((order) => order.status === 'locked') };
 }
 
@@ -68,30 +77,49 @@ function unusedCandidates(orders, type) {
 
 const durationOf = (id) => catalog.items[id].durationMs;
 
-// Base: the longest candidate (positive recorded peak). Target: the shortest other product at least
-// as long, otherwise the longest shorter one. Ties take the smallest ID (both lists are sorted).
-function challengeItems(orders) {
+// Base: the longest candidate (positive recorded peak), ties to the smallest ID. Pool: every catalog
+// product that is not a candidate this run (sorted by ID).
+function challengePlan(orders) {
   const eligible = eligibleCandidates(orders).sort();
   if (!eligible.length) return null;
   let base = eligible[0];
   for (const id of eligible) if (durationOf(id) > durationOf(base)) base = id;
-  const floor = durationOf(base);
   const known = new Set(eligible);
+  return { base, pool: products.filter((id) => !known.has(id)) };
+}
+
+// R(S): the shortest product at least as long as the base, otherwise the longest shorter one.
+// Ties take the smallest ID (ids are sorted).
+function pickTarget(ids, floor) {
   let longer = null;
   let shorter = null;
-  for (const id of products) {
-    if (known.has(id)) continue;
+  for (const id of ids) {
     const duration = durationOf(id);
     if (duration >= floor) {
       if (longer === null || duration < durationOf(longer)) longer = id;
     } else if (shorter === null || duration > durationOf(shorter)) shorter = id;
   }
-  const target = longer ?? shorter;
-  return target === null ? null : { base, target };
+  return longer ?? shorter;
 }
 
-const canGenerateChallenge = (orders) => !orders.challengeHold && ofType(orders, 'challenge').length === 0 &&
-  challengeItems(orders) !== null;
+// T1 = R(U), T2 = R(U − T1), T3 = R(rest of U whose kind differs from the base's); empty picks are left out.
+function challengeTargets(orders) {
+  const plan = challengePlan(orders);
+  if (!plan) return [];
+  const floor = durationOf(plan.base);
+  const first = pickTarget(plan.pool, floor);
+  if (first === null) return [];
+  const second = pickTarget(plan.pool.filter((id) => id !== first), floor);
+  const baseKind = catalog.items[plan.base].kind;
+  const third = pickTarget(plan.pool.filter((id) => id !== first && id !== second &&
+    catalog.items[id].kind !== baseKind), floor);
+  return [first, second, third].filter((id) => id !== null);
+}
+
+const challengeHeld = (orders, atMs) => orders.challengeHoldUntilMs !== null && atMs < orders.challengeHoldUntilMs;
+// Challenges need at least three candidates this run, no challenge order and no running cooldown.
+const canGenerateChallenge = (orders, atMs) => eligibleCandidates(orders).length >= 3 &&
+  !challengeHeld(orders, atMs) && ofType(orders, 'challenge').length === 0 && challengeTargets(orders).length > 0;
 const canGenerateNormal = (orders) => ofType(orders, 'normal').length < normalOrderLimit &&
   unusedCandidates(orders, 'normal').length > 0;
 
@@ -105,34 +133,93 @@ function orderHours(world, sequence) {
   return fewestHours + accountRandom(world.accountSeed, 'order-hours', sequence)(mostHours - fewestHours + 1n);
 }
 
-const ceilDiv = (numerator, denominator) => (numerator + denominator - 1n) / denominator;
-const orderCount = (byValue, byCapacity) => {
-  const smaller = byValue < byCapacity ? byValue : byCapacity;
-  return smaller > 0n ? smaller : 1n;
-};
-// Match the merchant's per-unit rounding before multiplying by the shipment size.
-const premiumPerUnit = (world, price) => (price * (50n + BigInt(world.tech.orderPremium ?? 0)) + 5n) / 10n;
-
-// Count = max(1, min(ceil(V / 2U), ceil(peak hourly output × H))), H drawn from 8–24 whole hours.
-// High orders pay the order premium per unit; normal orders a fixed 1.2 times.
-function makeOffer(world, item, sequence, type = 'high') {
-  const price = unitPrice(world, item);
-  const byValue = ceilDiv(world.productionValue, 2n * price);
-  const byCapacity = ceilDiv((world.orders.capacity[item] ?? 0n) * orderHours(world, sequence), 100n);
-  const count = orderCount(byValue, byCapacity);
-  const paidPerUnit = type === 'normal' ? (price * 12n + 5n) / 10n : premiumPerUnit(world, price);
-  return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * paidPerUnit };
+function normalOrderHours(world, sequence) {
+  const [fewestHours, mostHours] = normalHours;
+  return fewestHours + accountRandom(world.accountSeed, 'normal-hours', sequence)(mostHours - fewestHours + 1n);
 }
 
-// The target is priced at quality 1; the base's peak output is converted by value.
-function makeChallenge(world, { base, target }, sequence) {
+const ceilDiv = (numerator, denominator) => (numerator + denominator - 1n) / denominator;
+const atLeastOne = (count) => count > 0n ? count : 1n;
+const orderCount = (byValue, byCapacity) => atLeastOne(byValue < byCapacity ? byValue : byCapacity);
+const premiumLevel = (world) => BigInt(world.tech.orderPremium ?? 0);
+
+// High orders: per piece floor((U × (50 + L + B) × d + 50) / 100) with d = max(5, 10 − k) tenths for the
+// product's k high deliveries this run and B = 20 while a challenge boost remains. With k = 0 and no
+// boost this equals floor((U × (50 + L) + 5) / 10), the merchant's per-unit rounding.
+// The rate is (50 + L + B) × d in hundredths of the unit price.
+function highRate(world, item) {
+  const orders = world.orders;
+  const delivered = BigInt(orders.delivered[item] ?? 0);
+  const decay = delivered >= 5n ? 5n : 10n - delivered;
+  const boost = (orders.boost[item] ?? 0) > 0 ? 20n : 0n;
+  return (50n + premiumLevel(world) + boost) * decay;
+}
+
+// Generating or replacing a high order for a boosted product uses up one boost.
+function consumeBoost(orders, item) {
+  const left = orders.boost[item] ?? 0;
+  if (left <= 0) return {};
+  const boost = { ...orders.boost };
+  if (left > 1) boost[item] = left - 1;
+  else delete boost[item];
+  return { boost };
+}
+
+// High: count = max(1, min(ceil(V / 2U), ceil(peak hourly output × H))), H drawn from 8–24 whole hours.
+// Normal: count = max(1, ceil(peak hourly output × H)), H drawn from 1–4 whole hours; each piece pays 2U.
+// rewardRate records the per-piece multiplier in hundredths for display.
+function makeOffer(world, item, sequence, type = 'high') {
+  const price = unitPrice(world, item);
+  const peak = world.orders.capacity[item] ?? 0n;
+  if (type === 'normal') {
+    const count = atLeastOne(ceilDiv(peak * normalOrderHours(world, sequence), 100n));
+    return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * 2n * price,
+      rewardRate: 200, ...standardTime(count, peak) };
+  }
+  const byValue = ceilDiv(world.productionValue, 2n * price);
+  const byCapacity = ceilDiv(peak * orderHours(world, sequence), 100n);
+  const count = orderCount(byValue, byCapacity);
+  const rate = highRate(world, item);
+  return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * ((price * rate + 50n) / 100n),
+    rewardRate: Number(rate), ...standardTime(count, peak) };
+}
+
+// Standard completion time: ceil(count × 100 × 3,600,000 / C) ms for C hundredths per hour; omitted when C is 0.
+function standardTime(count, hourlyHundredths) {
+  if (hourlyHundredths <= 0n) return {};
+  return { standardMs: Number(ceilDiv(count * 100n * 3_600_000n, hourlyHundredths)) };
+}
+
+// Pioneer bonus: the target's research coins plus its research materials at catalog base price, without
+// research discounts; halved when the target is already researched; zero when it has no research entry.
+function pioneerBonus(world, target) {
+  const research = catalog.research[target];
+  if (!research) return 0n;
+  let bonus = BigInt(research.coins);
+  for (const [id, amount] of Object.entries(research.costs ?? {})) bonus += BigInt(amount) * BigInt(catalog.items[id].price);
+  return world.unlocked.includes(target) ? bonus / 2n : bonus;
+}
+
+// One level-1 station without technology, in hundredths per hour, rounded like forecastHourlyProduction.
+function baseHourlyOutput(id) {
+  const duration = BigInt(catalog.items[id].durationMs);
+  return (BigInt(catalog.items[id].output) * 360_000_000n + duration / 2n) / duration;
+}
+
+// The target is priced at quality 1. Count = max(1, min(ceil(V / 2U), ceil(C0 × H / 100))) with H drawn
+// from 8–24 whole hours; reward = count × floor((U × (80 + L) + 5) / 10) + pioneer bonus.
+function makeChallenge(world, target, sequence) {
   const price = BigInt(catalog.items[target].price);
   const byValue = ceilDiv(world.productionValue, 2n * price);
-  const byCapacity = ceilDiv((world.orders.capacity[base] ?? 0n) * orderHours(world, sequence) * unitPrice(world, base),
-    price * 100n);
+  const hourly = baseHourlyOutput(target);
+  const byCapacity = ceilDiv(hourly * orderHours(world, sequence), 100n);
   const count = orderCount(byValue, byCapacity);
+  const bonus = pioneerBonus(world, target);
+  const capsules = (world.challengeCapsuleItems ?? []).includes(target) ? 0n : challengeCapsules;
+  const rate = 80n + premiumLevel(world);
   return { id: sequence.toString(), type: 'challenge', item: target, status: 'offered', count,
-    reward: count * premiumPerUnit(world, price) };
+    reward: count * ((price * rate + 5n) / 10n) + bonus, rewardRate: Number(rate * 10n), ...standardTime(count, hourly),
+    bonus, capsules };
 }
 
 function addOrder(world, order, changes = {}) {
@@ -147,20 +234,24 @@ function generateHighOrder(world, firstItem) {
   const candidates = unusedCandidates(orders, 'high');
   if (!candidates.length || (firstItem !== undefined && !candidates.includes(firstItem))) return false;
   const item = firstItem ?? chooseItem(world, candidates);
-  addOrder(world, makeOffer(world, item, orders.sequence + 1n), { generated: orders.generated + 1 });
+  addOrder(world, makeOffer(world, item, orders.sequence + 1n),
+    { generated: orders.generated + 1, ...consumeBoost(orders, item) });
   return true;
 }
 
-// Once today's high orders are used up, a checkpoint tries a challenge and then a normal order
-// independently; their products do not exclude each other.
-function generateOrder(world) {
-  if (world.orders.generated < orderLimit(world)) return generateHighOrder(world);
-  let generated = false;
-  if (canGenerateChallenge(world.orders)) {
-    addOrder(world, makeChallenge(world, challengeItems(world.orders), world.orders.sequence + 1n));
+// Each timed checkpoint: (1) a high order while today's quota lasts; (2) up to three challenges (T1, T2,
+// T3, each with its own number) when allowed; (3) a normal order only if the quota was already used up
+// when the checkpoint began. Products of different types do not exclude each other.
+function generateOrder(world, atMs = world.clockMs) {
+  const quotaUsed = world.orders.generated >= orderLimit(world);
+  let generated = !quotaUsed && generateHighOrder(world);
+  if (canGenerateChallenge(world.orders, atMs)) {
+    for (const target of challengeTargets(world.orders)) {
+      addOrder(world, makeChallenge(world, target, world.orders.sequence + 1n));
+    }
     generated = true;
   }
-  if (canGenerateNormal(world.orders)) {
+  if (quotaUsed && canGenerateNormal(world.orders)) {
     const item = chooseItem(world, unusedCandidates(world.orders, 'normal'));
     addOrder(world, makeOffer(world, item, world.orders.sequence + 1n, 'normal'));
     generated = true;
@@ -179,7 +270,52 @@ export function attemptScheduledOrder(world, atMs = world.clockMs) {
   const due = world.orders.nextAttemptMs;
   if (due === null || atMs !== due) return false;
   world.orders = { ...world.orders, nextAttemptMs: due + intervalMs };
-  return generateOrder(world);
+  return generateOrder(world, atMs);
+}
+
+const capsulesPerRushMinute = 100n;
+const rushMinuteMs = 60_000;
+// dayEndMs may be passed as a number or as { dayEndMs }; anything else skips the day-end check.
+const rushDayEnd = (value) => typeof value === 'number' ? value
+  : typeof value?.dayEndMs === 'number' ? value.dayEndMs : undefined;
+
+// The pending checkpoint may be rushed when the timer runs, it falls before the local day ends (when the
+// caller supplies dayEndMs, the operating-clock time of the next local midnight) and generating at the
+// current clock would add an order: while today's high quota lasts, a high order (slots and an unused
+// candidate) or a challenge; once it is used up, a challenge or a normal order. Challenge cooldown is
+// checked at clockMs.
+function rushDueMs(world, dayEndMs) {
+  const orders = world.orders;
+  const due = orders.nextAttemptMs;
+  if (due === null || due <= world.clockMs || (dayEndMs !== undefined && due >= dayEndMs)) return null;
+  const limit = orderLimit(world);
+  const ready = orders.generated < limit
+    ? (ofType(orders, 'high').length < limit && unusedCandidates(orders, 'high').length > 0) ||
+      canGenerateChallenge(orders, world.clockMs)
+    : canGenerateChallenge(orders, world.clockMs) || canGenerateNormal(orders);
+  return ready ? due : null;
+}
+
+// Capsules to bring the next checkpoint forward: 100 per started minute left. Returned even when the
+// holding is short (rushOrder refuses then); null when the checkpoint cannot be rushed.
+export function orderRushCost(world, dayEndMs) {
+  const due = rushDueMs(world, rushDayEnd(dayEndMs));
+  if (due === null) return null;
+  return BigInt(Math.ceil((due - world.clockMs) / rushMinuteMs)) * capsulesPerRushMinute;
+}
+
+// Spend capsules to run the next checkpoint now; later checkpoints follow 30 minutes after the clock.
+// The world clock, production and day changes do not move. A refusal changes nothing.
+export function rushOrder(world, dayEndMs) {
+  const cost = orderRushCost(world, dayEndMs);
+  if (cost === null || (world.capsules ?? 0n) < cost) return false;
+  const before = { orders: world.orders, capsules: world.capsules };
+  world.capsules = (world.capsules ?? 0n) - cost;
+  world.orders = { ...world.orders, nextAttemptMs: world.clockMs + intervalMs };
+  if (generateOrder(world, world.clockMs)) return true;
+  world.orders = before.orders;
+  world.capsules = before.capsules;
+  return false;
 }
 
 // The running product batch that ends first, with its slot location ({ type, kind, index }).
@@ -210,7 +346,7 @@ export function orderPlaceholders(world, dayEndMs) {
     const dueMs = orders.nextAttemptMs;
     if (dueMs === null || dueMs >= dayEndMs) return placeholders;
     let kind = 'noCandidate';
-    if (canGenerateChallenge(orders) || canGenerateNormal(orders)) kind = 'scheduled';
+    if (canGenerateChallenge(orders, dueMs) || canGenerateNormal(orders)) kind = 'scheduled';
     else if (ofType(orders, 'normal').length >= normalOrderLimit) kind = 'slotsFull';
     placeholders.push({ kind, dueMs });
     return placeholders;
@@ -261,6 +397,12 @@ export function acceptOrder(world, id) {
   const order = lookup(world, id);
   if (order?.status !== 'offered') return false;
   updateOffer(world, order, { ...order, status: 'locked' });
+  // Accepting one challenge withdraws the other offered challenges.
+  if (order.type === 'challenge') {
+    const orders = world.orders;
+    world.orders = { ...orders, active: orders.active.filter((entry) =>
+      entry.type !== 'challenge' || entry.status !== 'offered') };
+  }
   return true;
 }
 
@@ -273,8 +415,10 @@ export function abandonOrder(world, id) {
   const order = lookup(world, id);
   if (order?.status !== 'locked') return false;
   endOrder(world, order);
-  // An abandoned challenge stops challenge orders until the next local day.
-  if (order.type === 'challenge') world.orders = { ...world.orders, challengeHold: true };
+  // An abandoned challenge stops challenge orders for two hours; day changes and farm sales keep it.
+  if (order.type === 'challenge') {
+    world.orders = { ...world.orders, challengeHoldUntilMs: world.clockMs + challengeCooldownMs };
+  }
   return true;
 }
 
@@ -291,13 +435,41 @@ export function deliverOrder(world, id) {
   world.stats.orderRevenue = (world.stats.orderRevenue ?? 0n) + reward;
   world.stats.lifetimeOrderRevenue = (world.stats.lifetimeOrderRevenue ?? 0n) + reward;
   endOrder(world, order);
+  const orders = world.orders;
+  if (order.type === 'high') {
+    world.orders = { ...orders, delivered: { ...orders.delivered, [item]: (orders.delivered[item] ?? 0) + 1 } };
+  } else if (order.type === 'challenge') {
+    world.orders = { ...orders, boost: { ...orders.boost, [item]: challengeBoostOrders } };
+    // The first completed challenge for each product grants its time capsules once per account.
+    const capsules = order.capsules ?? 0n;
+    const claimed = world.challengeCapsuleItems ?? [];
+    if (capsules > 0n && !claimed.includes(item)) {
+      world.capsules = (world.capsules ?? 0n) + capsules;
+      world.challengeCapsuleItems = [...claimed, item];
+    }
+  }
   return true;
+}
+
+// Offered challenges draw from untried products, excluding every current challenge product, within
+// base–2×base duration; an empty range falls back to R over the remaining untried products.
+function challengeReplacements(orders) {
+  const plan = challengePlan(orders);
+  if (!plan) return [];
+  const taken = new Set(ofType(orders, 'challenge').map((order) => order.item));
+  const rest = plan.pool.filter((id) => !taken.has(id));
+  const floor = durationOf(plan.base);
+  const ranged = rest.filter((id) => durationOf(id) >= floor && durationOf(id) <= 2 * floor);
+  if (ranged.length) return ranged;
+  const fallback = pickTarget(rest, floor);
+  return fallback === null ? [] : [fallback];
 }
 
 function replacementCandidates(world, order) {
   const orders = world.orders;
-  if (order?.status !== 'offered' || order.type === 'challenge' || orders.replaced >= orderReplacementLimit(world) ||
-    eligibleCandidates(orders).length < 3) return [];
+  if (order?.status !== 'offered' || orders.replaced >= orderReplacementLimit(world)) return [];
+  if (order.type === 'challenge') return challengeReplacements(orders);
+  if (eligibleCandidates(orders).length < 3) return [];
   return unusedCandidates(orders, order.type);
 }
 
@@ -308,8 +480,14 @@ export function replaceOrder(world, id) {
   const candidates = replacementCandidates(world, previous);
   if (!candidates.length) return false;
   const sequence = world.orders.sequence + 1n;
-  const next = makeOffer(world, chooseItem(world, candidates), sequence, previous.type);
-  updateOffer(world, previous, next, { sequence, replaced: world.orders.replaced + 1 });
+  const item = chooseItem(world, candidates);
+  const changes = { sequence, replaced: world.orders.replaced + 1 };
+  if (previous.type === 'challenge') {
+    updateOffer(world, previous, makeChallenge(world, item, sequence), changes);
+  } else {
+    const next = makeOffer(world, item, sequence, previous.type);
+    updateOffer(world, previous, next, previous.type === 'high' ? { ...changes, ...consumeBoost(world.orders, item) } : changes);
+  }
   return true;
 }
 
@@ -348,9 +526,12 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
   }
   requireField(raw !== null && typeof raw === 'object' && !Array.isArray(raw), 'orders');
   const { day, generated, replaced, nextAttemptMs, candidates, active } = raw;
-  // Saves from before order types have no abandoned challenge.
-  const challengeHold = Object.hasOwn(raw, 'challengeHold') ? raw.challengeHold : false;
-  requireField(typeof challengeHold === 'boolean', 'challengeHold');
+  // The old day-long challengeHold flag (any value) migrates to no cooldown.
+  const challengeHoldUntilMs = Object.hasOwn(raw, 'challengeHoldUntilMs') ? raw.challengeHoldUntilMs : null;
+  requireField(challengeHoldUntilMs === null || Number.isSafeInteger(challengeHoldUntilMs), 'challengeHoldUntilMs');
+  // Saves from before order balancing start with no deliveries or boosts.
+  const delivered = productCounts(Object.hasOwn(raw, 'delivered') ? raw.delivered : {}, 'delivered');
+  const boost = productCounts(Object.hasOwn(raw, 'boost') ? raw.boost : {}, 'boost');
   // Saves from before order capacity start empty; the app records current capacity on load.
   const rawCapacity = Object.hasOwn(raw, 'capacity') ? raw.capacity : {};
   requireField(rawCapacity !== null && typeof rawCapacity === 'object' && !Array.isArray(rawCapacity), 'capacity');
@@ -370,7 +551,7 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
   requireField(nextAttemptMs === null || (Number.isSafeInteger(nextAttemptMs) && nextAttemptMs > world.clockMs &&
     nextAttemptMs - world.clockMs <= intervalMs && eligible.size > 0), 'nextAttemptMs');
   requireField(Array.isArray(active) && (nextAttemptMs !== null || active.length === 0), 'active');
-  const limits = { high: orderLimit(world), normal: normalOrderLimit, challenge: 1 };
+  const limits = { high: orderLimit(world), normal: normalOrderLimit, challenge: challengeOrderLimit };
   const ids = new Set();
   const items = { high: new Set(), normal: new Set(), challenge: new Set() };
   const restored = Array.from(active, (order, index) => {
@@ -387,9 +568,36 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
     requireField(status === 'offered' || status === 'locked', field + '.status');
     ids.add(id);
     items[type].add(item);
-    return { id, type, item, status, count: parseAmount(order.count, field + '.count', 1n),
+    const restoredOrder = { id, type, item, status, count: parseAmount(order.count, field + '.count', 1n),
       reward: parseAmount(order.reward, field + '.reward', 1n) };
+    // Orders saved before reward rates have none; it is not reconstructed.
+    if (Object.hasOwn(order, 'rewardRate')) {
+      requireField(Number.isSafeInteger(order.rewardRate) && order.rewardRate >= 100, field + '.rewardRate');
+      restoredOrder.rewardRate = order.rewardRate;
+    }
+    // Orders saved before standard times, or generated without a recorded rate, have none.
+    if (Object.hasOwn(order, 'standardMs')) {
+      requireField(Number.isSafeInteger(order.standardMs) && order.standardMs > 0, field + '.standardMs');
+      restoredOrder.standardMs = order.standardMs;
+    }
+    if (type !== 'challenge') return restoredOrder;
+    // Challenges saved before order balancing have no pioneer bonus or capsules.
+    return { ...restoredOrder,
+      bonus: parseAmount(Object.hasOwn(order, 'bonus') ? order.bonus : '0', field + '.bonus', 0n),
+      capsules: parseAmount(Object.hasOwn(order, 'capsules') ? order.capsules : '0', field + '.capsules', 0n) };
   });
+  // An accepted challenge never coexists with another challenge order.
+  const challenges = restored.filter((order) => order.type === 'challenge');
+  requireField(!challenges.some((order) => order.status === 'locked') || challenges.length === 1, 'active.challenge');
   return { day, generated, replaced, sequence, candidates: [...candidates].sort(), capacity, nextAttemptMs,
-    active: restored, challengeHold };
+    active: restored, delivered, boost, challengeHoldUntilMs };
+}
+
+// Product ID → positive integer.
+function productCounts(value, field) {
+  requireField(value !== null && typeof value === 'object' && !Array.isArray(value), field);
+  return Object.fromEntries(Object.entries(value).map(([item, count]) => {
+    requireField(isProduct(item) && Number.isSafeInteger(count) && count > 0, field + '.' + item);
+    return [item, count];
+  }));
 }

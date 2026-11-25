@@ -2,7 +2,7 @@ import { catalog } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { hoursLabel } from './management-pages.js';
-import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit } from '../game/orders.js';
+import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderRushCost } from '../game/orders.js';
 
 // Orders saved before order types existed are high-value orders.
 const orderType = (order) => order.type ?? 'high';
@@ -14,7 +14,7 @@ const typeTags = {
 const abandonNotes = {
   high: '订单作废，不发报酬，今日高额订单名额不返还。',
   normal: '订单作废，不发报酬。',
-  challenge: '订单作废，不发报酬，今天不再有挑战订单。',
+  challenge: '订单作废，不发报酬，2 小时内不再有挑战订单。',
 };
 
 function typeTag(order) {
@@ -26,10 +26,18 @@ function statusTag(world, order) {
   return canDeliverOrder(world, order.id) ? { label: '可交付', tone: 'green' } : { label: '待备货', tone: 'gold' };
 }
 
-function quantities(ui, order) {
+function quantities(ui, order, inDetail = false) {
   ui.row('所需件数', compact(order.count) + ' 件', { compact: true });
   ui.row('当前库存', compact(ui.w.inventory[order.item] ?? 0n) + ' 件', { compact: true });
-  ui.row('固定报酬', compact(order.reward) + ' 金币', { compact: true });
+  // Multiplier over the unit price fixed at generation, drawn like a market rate; older orders have none.
+  const rate = typeof order.rewardRate === 'number' ? order.rewardRate - 100 : 0;
+  ui.row('固定报酬', compact(order.reward) + ' 金币', { compact: true, valueMarketRate: rate || undefined });
+  if (typeof order.standardMs === 'number') ui.row('标准完成时间', remainingTime(order.standardMs), { compact: true });
+  if (!inDetail || orderType(order) !== 'challenge') return;
+  const bonus = order.bonus ?? 0n;
+  const capsules = order.capsules ?? 0n;
+  if (bonus > 0n) ui.row('开拓奖金', compact(bonus) + ' 金币', { compact: true });
+  if (capsules > 0n) ui.row('时空胶囊', compact(capsules) + ' 个', { compact: true });
 }
 
 function orderProduct(ui, order, small = false) {
@@ -102,14 +110,17 @@ function orderRequirements(product, count) {
   return needed;
 }
 
-function productionNodes(product, needed) {
+// Researched recipes are green; unresearched ones are grey and say so.
+function productionNodes(product, needed, unlocked) {
   const nodes = new Map();
   function visit(id) {
     if (nodes.has(id)) return;
     const item = catalog.items[id];
     const requires = Object.keys(item.inputs ?? {});
+    const researched = unlocked.has(id);
+    const need = '需 ' + compact(needed.get(id) ?? 0n);
     nodes.set(id, { id, icon: id, label: item.name, requires,
-      status: '需 ' + compact(needed.get(id) ?? 0n), tone: id === product ? 'done' : 'neutral' });
+      status: researched ? need : '未研发 · ' + need, tone: researched ? 'done' : 'locked' });
     requires.forEach(visit);
   }
   visit(product);
@@ -118,7 +129,7 @@ function productionNodes(product, needed) {
 
 function showOrder(ui, order) {
   const needs = orderRequirements(order.item, BigInt(order.count));
-  const nodes = productionNodes(order.item, needs);
+  const nodes = productionNodes(order.item, needs, new Set(ui.w.unlocked));
   ui.dialog('订单详情', (dlg) => {
     const current = isCurrentOrder(dlg.w, order);
     if (!current) {
@@ -126,7 +137,7 @@ function showOrder(ui, order) {
       return;
     }
     orderProduct(dlg, current, true);
-    quantities(dlg, current);
+    quantities(dlg, current, true);
     dlg.heading('生产链', { size: 17 });
     const view = dlg.local.productionTree ??= {};
     dlg.tree({
@@ -154,7 +165,8 @@ function nextMidnightClock(world) {
 const countdownTo = (dueMs) => (clock) => '还要 ' + remainingTime(dueMs - clock);
 
 // One placeholder card per remaining order slot today; the reason, countdown and progress stay inside it.
-function placeholderCard(cell, placeholder) {
+// rush: { cost, onClick, disabled } puts the capsule rush button inside the scheduled card.
+function placeholderCard(cell, placeholder, rush = null) {
   const icon = 'menu-orders';
   const { kind, dueMs, batch } = placeholder;
   if (kind === 'firstProduct' && batch) {
@@ -169,11 +181,31 @@ function placeholderCard(cell, placeholder) {
   else if (kind === 'noCandidate') cell.empty('可下单的商品不够了', { icon, hint: '多做几种商品，就能接到更多订单' });
   else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交付或放弃一张后，新订单才会来' });
   else if (kind === 'tomorrow') cell.empty('今天赶不上了', { icon, hint: '明天还会有新订单' });
-  else cell.empty('下一张订单在路上', { icon, valueAtClock: countdownTo(dueMs) });
+  else cell.empty('下一张订单在路上', { icon, valueAtClock: countdownTo(dueMs),
+    action: rush && { label: '加速 (', midIcon: 'time-capsule', midIconSize: 26, midText: compact(rush.cost) + ')', tone: 'plain',
+      disabled: rush.disabled,
+      reason: '时空胶囊不够', onClick: rush.onClick } });
 }
+
+function confirmRush(ui, cost) {
+  ui.dialog('加速订单', (panel) => {
+    panel.text('消耗 ' + compact(cost) + ' 个时空胶囊，立即生成订单？');
+    panel.buttons([
+      { label: '再想想', onClick: panel.close },
+      { label: '确认', tone: 'gold', onClick: async () => {
+        if (!panel.isActive() || !await panel.action('rushOrder', { dayEndMs: nextMidnightClock(panel.w) }) || !panel.isActive()) return;
+        await panel.close();
+      } },
+    ]);
+  }, { center: true, maxHeight: 240 });
+}
+
+// Capsule rush for the earliest scheduled checkpoint; cost is null when it cannot be rushed.
+const rushOption = (ui, cost) => ({ cost, disabled: (ui.w.capsules ?? 0n) < cost, onClick: () => confirmRush(ui, cost) });
 
 export function renderOrders(ui) {
   const { active, generated, replaced } = ui.w.orders;
+  ui.row('时空胶囊', compact(ui.w.capsules ?? 0n), { icon: 'time-capsule' });
   ui.row('今日高额订单', generated + ' / ' + orderLimit(ui.w));
   ui.row('今日替换', replaced + ' / ' + orderReplacementLimit(ui.w));
   const small = Boolean(ui.local.compactOrders);
@@ -186,9 +218,17 @@ export function renderOrders(ui) {
     { label: '放大', disabled: !small, reason: '已经是放大视图了', onClick: () => setCompact(false) },
   ], { style: 'production' });
   const forecast = orderPlaceholders(ui.w, nextMidnightClock(ui.w));
-  const placeholders = forecast.filter(({ kind }) => kind !== 'dailyLimit').map((placeholder) => ({ placeholder }));
+  // Show the "not enough products" card only once, however many slots it covers.
+  const placeholders = forecast.filter(({ kind }, index) => kind !== 'dailyLimit' &&
+    (kind !== 'noCandidate' || forecast.findIndex((entry) => entry.kind === 'noCandidate') === index))
+    .map((placeholder) => ({ placeholder }));
+  const firstScheduled = placeholders.find(({ placeholder }) => placeholder.kind === 'scheduled');
+  const rushCost = firstScheduled ? orderRushCost(ui.w, nextMidnightClock(ui.w)) : null;
   ui.scrollList([...active, ...placeholders], (cell, order) => {
-    if (order.placeholder) return placeholderCard(cell, order.placeholder);
+    if (order.placeholder) {
+      return placeholderCard(cell, order.placeholder,
+        order === firstScheduled && rushCost != null ? rushOption(ui, rushCost) : null);
+    }
     cell.card((card) => {
       orderProduct(card, order, small);
       if (small) card.text(compact(order.count) + ' 件 · ' + compact(order.reward) + ' 金币');

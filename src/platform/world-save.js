@@ -500,7 +500,16 @@ function orderRecord(world, merchant, market, convert) {
     capacity: Object.fromEntries(Object.entries(orders.capacity).map(([item, peak]) => [item, peak.toString()])),
     active: orders.active.map((order) => ({
     ...order, count: order.count.toString(), reward: order.reward.toString(),
+    ...(order.type === 'challenge' && { bonus: order.bonus.toString(), capsules: order.capsules.toString() }),
   })) };
+}
+
+// Products whose first-challenge capsules were granted; an account-level list kept across farm sales.
+function challengeCapsuleItemRecord(world) {
+  const items = Object.hasOwn(world, 'challengeCapsuleItems') ? world.challengeCapsuleItems : [];
+  valid(Array.isArray(items) && new Set(items).size === items.length && items.every((id) => typeof id === 'string' &&
+    Object.hasOwn(catalog.items, id) && catalog.items[id].kind.startsWith('P')), 'challengeCapsuleItems');
+  return [...items];
 }
 
 function amounts(world, convert, convertSigned) {
@@ -550,6 +559,7 @@ function amounts(world, convert, convertSigned) {
     accountSeed,
     capsules,
     pendingTaskCapsules,
+    challengeCapsuleItems: challengeCapsuleItemRecord(world),
     market,
     merchant,
     managers,

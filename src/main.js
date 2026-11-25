@@ -8,7 +8,7 @@ import {
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
-import { acceptOrder, deliverOrder, abandonOrder, replaceOrder } from './game/orders.js';
+import { acceptOrder, deliverOrder, abandonOrder, replaceOrder, rushOrder } from './game/orders.js';
 import {
   claimAllManagerGifts, claimManagerGift, giftAllManagers, giftManager, switchManagerAppearance,
 } from './game/managers.js';
@@ -85,7 +85,7 @@ const actions = {
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
   ...orderActions,
   giftManager, giftAllManagers, claimManagerGift, claimAllManagerGifts, switchManagerAppearance,
-  useCapsules, claimTaskCapsules,
+  useCapsules, claimTaskCapsules, rushOrder,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 

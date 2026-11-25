@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import catalog from '../src/content/game-data.json' with { type: 'json' };
 import { unitPrice } from '../src/game/advancement.js';
 import { managerGiftRemaining } from '../src/game/managers.js';
 import { objectives, settleTaskRewards } from '../src/game/objectives.js';
 import {
-  abandonOrder, acceptOrder, canDeliverOrder, canReplaceOrder, deliverOrder, hasDeliverableOrder,
-  orderItemTags, raiseOrderCapacity, replaceOrder,
+  abandonOrder, acceptOrder, canDeliverOrder, canReplaceOrder, challengeCooldownMs, deliverOrder, hasDeliverableOrder,
+  orderItemTags, orderRushCost, raiseOrderCapacity, replaceOrder, rushOrder,
 } from '../src/game/orders.js';
 import {
   advanceWorld, arrangeStation, buyStation, farmSaleOffer, newWorld, sellFarm, updateWorldWallTime,
@@ -25,7 +26,8 @@ test('the first delivery pays the fixed per-piece rounded price and both tasks o
   advanceWorld(world, world.stations.P[0].batch.end);
   const [offer] = world.orders.active;
   // 7,831 × 5.5 rounds to 43,071 for each of the three pieces.
-  assert.deepEqual([offer.type, offer.item, offer.count, offer.reward], ['high', 'P02', 3n, 129_213n]);
+  assert.deepEqual([offer.type, offer.item, offer.count, offer.reward, offer.rewardRate],
+    ['high', 'P02', 3n, 129_213n, 550]);
   assert.ok(acceptOrder(world, offer.id));
   assert.equal(world.inventory.P02, 1n);
   assert.equal(canDeliverOrder(world, offer.id), false);
@@ -99,12 +101,14 @@ test('an offline half-hour offer cannot see a later pending completion in the sa
   assert.ok(done > due);
   const offline = structuredClone(world);
   updateWorldWallTime(world, afternoon + due);
-  assert.deepEqual(world.orders.active.map(({ item, count }) => [item, count]), [['P02', 1n], ['P01', 2n]]);
+  // Challenges may join the timed checkpoint once three candidates exist; only high orders are checked here.
+  const highOrders = (target) => target.orders.active.filter(({ type }) => type === 'high');
+  assert.deepEqual(highOrders(world).map(({ item, count }) => [item, count]), [['P02', 1n], ['P01', 2n]]);
   updateWorldWallTime(world, afternoon + done);
   updateWorldWallTime(offline, afternoon + done);
   assert.equal(offline.productionValue, 19_997n);
   assert.deepEqual(offline.orders, world.orders);
-  assert.equal(offline.orders.active[1].count, 2n);
+  assert.equal(highOrders(offline)[1].count, 2n);
 });
 
 test('migration keeps zero-stock products and long tasks without starting the timer or refunding quota on handover', () => {
@@ -124,11 +128,13 @@ test('migration keeps zero-stock products and long tasks without starting the ti
   assert.deepEqual(loaded.orders.candidates, ['P02', 'P03']);
   assert.deepEqual(loaded.orders.capacity, {});
   assert.equal(loaded.orders.nextAttemptMs, null);
-  assert.equal(loaded.orders.challengeHold, false);
+  assert.deepEqual([loaded.orders.challengeHoldUntilMs, loaded.orders.delivered, loaded.orders.boost], [null, {}, {}]);
   // Legacy candidates only become eligible once a peak is recorded for them.
   raiseOrderCapacity(loaded, [{ id: 'P02', produced: 10_000n }, { id: 'P03', produced: 10_000n }]);
   assert.ok(arrangeStation(loaded, 'P', 0, 'P01'));
   advanceWorld(loaded, 31_000);
+  // The first order is only a high order even with three candidates.
+  assert.deepEqual(loaded.orders.active.map(({ type }) => type), ['high']);
   const [first] = loaded.orders.active;
   assert.equal(first.item, 'P01');
   assert.ok(replaceOrder(loaded, first.id));
@@ -137,7 +143,9 @@ test('migration keeps zero-stock products and long tasks without starting the ti
   assert.ok(acceptOrder(loaded, replacement.id));
   assert.equal(canReplaceOrder(loaded, replacement.id), false);
   advanceWorld(loaded, 31_000 + 2 * halfHour);
-  assert.equal(loaded.orders.active.length, 3);
+  // The first timed checkpoint adds a high order and the challenges; the second only a high order.
+  assert.deepEqual(loaded.orders.active.map(({ type }) => type),
+    ['high', 'high', 'challenge', 'challenge', 'challenge', 'high']);
   assert.ok(sellFarm(loaded, farmSaleOffer(loaded)));
   assert.deepEqual(loaded.orders.active, []);
   assert.deepEqual(loaded.orders.candidates, []);
@@ -171,7 +179,25 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   assert.deepEqual(restored.orders.capacity, {});
 });
 
-test('after today's high orders a checkpoint adds a challenge and a normal order', () => {
+// ceil(count × 100 × 1 hour / C) for C hundredths per hour.
+const standardMs = (count, hourly) => Number((count * 360_000_000_000n + hourly - 1n) / hourly);
+const baseHourly = (id) => {
+  const duration = BigInt(catalog.items[id].durationMs);
+  return (BigInt(catalog.items[id].output) * 360_000_000n + duration / 2n) / duration;
+};
+
+// Research coins plus research materials at catalog base price; halved once researched.
+function pioneerBonus(world, id) {
+  const research = catalog.research[id];
+  if (!research) return 0n;
+  let bonus = BigInt(research.coins);
+  for (const [material, amount] of Object.entries(research.costs ?? {})) {
+    bonus += BigInt(amount) * BigInt(catalog.items[material].price);
+  }
+  return world.unlocked.includes(id) ? bonus / 2n : bonus;
+}
+
+test('after today's high orders a checkpoint adds up to three challenges and a small normal order', () => {
   const world = newWorld(afternoon);
   world.unlocked.push('P01');
   world.inventory = { I01: 1n };
@@ -183,22 +209,141 @@ test('after today's high orders a checkpoint adds a challenge and a normal order
   assert.deepEqual(world.orders.candidates, ['P01']);
   const due = world.orders.nextAttemptMs;
   advanceWorld(world, due);
-  const [challenge, normal] = world.orders.active;
-  assert.deepEqual(world.orders.active.map(({ type }) => type), ['challenge', 'normal']);
-  assert.notEqual(challenge.item, 'P01');
+  // Fewer than three candidates: no challenge, only a normal order.
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['normal']);
+  raiseOrderCapacity(world, [{ id: 'P02', produced: 10_000n }, { id: 'P03', produced: 10_000n }]);
+  const candidates = ['P01', 'P02', 'P03'];
+  advanceWorld(world, due + halfHour);
+  assert.deepEqual(world.orders.active.map(({ type }) => type),
+    ['normal', 'challenge', 'challenge', 'challenge', 'normal']);
+  const challenges = world.orders.active.filter(({ type }) => type === 'challenge');
+  const [normal] = world.orders.active;
+  const targets = challenges.map(({ item }) => item);
+  assert.equal(new Set(targets).size, 3);
+  assert.ok(targets.every((item) => !candidates.includes(item)));
+  // T3 differs in kind from the base product.
+  assert.notEqual(catalog.items[targets[2]].kind, catalog.items.P01.kind);
+  for (const challenge of challenges) {
+    const price = BigInt(catalog.items[challenge.item].price);
+    assert.equal(challenge.bonus, pioneerBonus(world, challenge.item));
+    assert.equal(challenge.reward, challenge.count * ((price * 80n + 5n) / 10n) + challenge.bonus);
+    assert.equal(challenge.capsules, 1000n);
+    assert.equal(challenge.rewardRate, 800);
+    assert.equal(challenge.standardMs, standardMs(challenge.count, baseHourly(challenge.item)));
+  }
+  // A normal order asks for 1-4 hours of the recorded peak and pays twice the unit price.
+  const peak = world.orders.capacity.P01;
   assert.equal(normal.item, 'P01');
-  assert.equal(normal.reward, normal.count * ((unitPrice(world, 'P01') * 12n + 5n) / 10n));
+  assert.ok(normal.count >= (peak + 99n) / 100n && normal.count <= (peak * 4n + 99n) / 100n);
+  assert.equal(normal.reward, normal.count * 2n * unitPrice(world, 'P01'));
+  assert.equal(normal.rewardRate, 200);
+  assert.equal(normal.standardMs, standardMs(normal.count, peak));
   assert.equal(world.orders.generated, 3);
-  assert.equal(canReplaceOrder(world, challenge.id), false);
   const restored = decodeWorldRecord(encodeWorldRecord(world));
   assert.deepEqual(restored.orders, world.orders);
-  assert.ok(acceptOrder(world, challenge.id));
-  assert.ok(abandonOrder(world, challenge.id));
-  assert.equal(world.orders.challengeHold, true);
-  advanceWorld(world, due + halfHour);
-  assert.deepEqual(world.orders.active.map(({ type }) => type), ['normal']);
+  // An offered challenge can be replaced by another untried product.
+  assert.ok(canReplaceOrder(world, challenges[0].id));
+  const replaced = decodeWorldRecord(encodeWorldRecord(world));
+  assert.ok(replaceOrder(replaced, challenges[0].id));
+  const replacement = replaced.orders.active.find(({ id }) => id === replaced.orders.sequence.toString());
+  assert.equal(replacement.type, 'challenge');
+  assert.ok(!targets.includes(replacement.item) && !candidates.includes(replacement.item));
+  assert.equal(replaced.orders.replaced, 1);
+  // Delivering a challenge pays its fixed reward, grants capsules once per product and boosts high orders.
+  const delivered = decodeWorldRecord(encodeWorldRecord(world));
+  const [first] = challenges;
+  assert.ok(acceptOrder(delivered, first.id));
+  assert.deepEqual(delivered.orders.active.map(({ type }) => type), ['normal', 'challenge', 'normal']);
+  delivered.inventory[first.item] = first.count;
+  const before = { coins: delivered.coins, capsules: delivered.capsules };
+  assert.ok(deliverOrder(delivered, first.id));
+  assert.deepEqual([delivered.coins - before.coins, delivered.capsules - before.capsules], [first.reward, 1000n]);
+  assert.deepEqual(delivered.challengeCapsuleItems, [first.item]);
+  assert.deepEqual([delivered.orders.boost, delivered.orders.delivered], [{ [first.item]: 3 }, {}]);
+  const reloaded = decodeWorldRecord(encodeWorldRecord(delivered));
+  assert.deepEqual(reloaded.challengeCapsuleItems, [first.item]);
+  assert.ok(sellFarm(reloaded, farmSaleOffer(reloaded)));
+  assert.deepEqual([reloaded.challengeCapsuleItems, reloaded.orders.boost], [[first.item], {}]);
+  // Abandoning an accepted challenge holds new challenges for two hours of operating time.
+  assert.ok(acceptOrder(world, first.id));
+  const abandonedAt = world.clockMs;
+  assert.ok(abandonOrder(world, first.id));
+  assert.equal(world.orders.challengeHoldUntilMs, abandonedAt + challengeCooldownMs);
+  const challengeCount = () => world.orders.active.filter(({ type }) => type === 'challenge').length;
+  advanceWorld(world, abandonedAt + 3 * halfHour);
+  assert.equal(challengeCount(), 0);
+  advanceWorld(world, abandonedAt + 4 * halfHour);
+  assert.equal(challengeCount(), 3);
   assert.ok(sellFarm(world, farmSaleOffer(world)));
-  assert.deepEqual([world.orders.active, world.orders.candidates, world.orders.challengeHold], [[], [], true]);
+  assert.deepEqual([world.orders.active, world.orders.candidates, world.orders.challengeHoldUntilMs],
+    [[], [], abandonedAt + challengeCooldownMs]);
+});
+
+test('high orders decay with repeated deliveries and spend a challenge boost', () => {
+  const world = newWorld(afternoon);
+  world.unlocked.push('P01');
+  world.inventory = { I01: 1n };
+  world.orders.delivered = { P01: 3 };
+  world.orders.boost = { P01: 1 };
+  assert.ok(arrangeStation(world, 'P', 0, 'P01'));
+  advanceWorld(world, world.stations.P[0].batch.end);
+  const [offer] = world.orders.active;
+  assert.equal(offer.type, 'high');
+  // k = 3 gives 0.7 times; the boost adds 2 times before the decay: floor((U × 70 × 7 + 50) / 100).
+  assert.equal(offer.reward, offer.count * ((unitPrice(world, 'P01') * 70n * 7n + 50n) / 100n));
+  assert.equal(offer.rewardRate, 490);
+  assert.equal(offer.standardMs, standardMs(offer.count, world.orders.capacity.P01));
+  assert.deepEqual(world.orders.boost, {});
+  // Without a boost, k = 3 is 0.5 × 0.7 = 3.5 times.
+  const plain = newWorld(afternoon);
+  plain.unlocked.push('P01');
+  plain.inventory = { I01: 1n };
+  plain.orders.delivered = { P01: 3 };
+  assert.ok(arrangeStation(plain, 'P', 0, 'P01'));
+  advanceWorld(plain, plain.stations.P[0].batch.end);
+  const [plainOffer] = plain.orders.active;
+  assert.equal(plainOffer.rewardRate, 350);
+  assert.equal(plainOffer.reward, plainOffer.count * ((unitPrice(plain, 'P01') * 350n + 50n) / 100n));
+  assert.ok(acceptOrder(world, offer.id));
+  world.inventory.P01 = offer.count;
+  assert.ok(deliverOrder(world, offer.id));
+  assert.deepEqual(world.orders.delivered, { P01: 4 });
+  const restored = decodeWorldRecord(encodeWorldRecord(world));
+  assert.deepEqual(restored.orders.delivered, { P01: 4 });
+  assert.ok(sellFarm(restored, farmSaleOffer(restored)));
+  assert.deepEqual([restored.orders.delivered, restored.orders.boost], [{}, {}]);
+});
+
+test('time capsules bring the next order checkpoint forward', () => {
+  const world = newWorld(afternoon);
+  world.unlocked.push('P01');
+  world.inventory = { I01: 1n };
+  // Before the first product there is no timer to rush.
+  assert.equal(orderRushCost(world), null);
+  raiseOrderCapacity(world, [{ id: 'P02', produced: 10_000n }]);
+  assert.ok(arrangeStation(world, 'P', 0, 'P01'));
+  advanceWorld(world, world.stations.P[0].batch.end);
+  assert.equal(world.orders.active.length, 1);
+  const due = world.orders.nextAttemptMs;
+  assert.equal(due - world.clockMs, halfHour);
+  // 30 minutes left cost 100 capsules each; a checkpoint at or after the day's end cannot be rushed.
+  assert.equal(orderRushCost(world), 3_000n);
+  assert.equal(orderRushCost(world, due), null);
+  assert.equal(orderRushCost(world, { dayEndMs: due + 1 }), 3_000n);
+  const unchanged = structuredClone(world);
+  assert.equal(rushOrder(world), false);
+  assert.deepEqual(world, unchanged);
+  world.capsules = 5_000n;
+  const rushedAt = world.clockMs;
+  assert.ok(rushOrder(world));
+  assert.deepEqual([world.capsules, world.clockMs, world.orders.generated, world.orders.nextAttemptMs],
+    [2_000n, rushedAt, 2, rushedAt + halfHour]);
+  assert.deepEqual(world.orders.active.map(({ type, item }) => [type, item]), [['high', 'P01'], ['high', 'P02']]);
+  // With every candidate already asked for, the next checkpoint cannot generate and cannot be rushed.
+  assert.equal(orderRushCost(world), null);
+  assert.equal(rushOrder(world), false);
+  const restored = decodeWorldRecord(encodeWorldRecord(world));
+  assert.deepEqual(restored.orders, world.orders);
 });
 
 test('orders saved before order types load as high orders', () => {
@@ -208,9 +353,16 @@ test('orders saved before order types load as high orders', () => {
   assert.ok(arrangeStation(world, 'P', 0, 'P01'));
   advanceWorld(world, world.stations.P[0].batch.end);
   const legacy = encodeWorldRecord(world);
-  delete legacy.orders.challengeHold;
+  delete legacy.orders.challengeHoldUntilMs;
+  delete legacy.orders.delivered;
+  delete legacy.orders.boost;
+  delete legacy.challengeCapsuleItems;
+  // The old day-long flag migrates to no cooldown.
+  legacy.orders.challengeHold = true;
   for (const order of legacy.orders.active) delete order.type;
   const loaded = decodeWorldRecord(legacy);
   assert.deepEqual(loaded.orders.active.map(({ type, item }) => [type, item]), [['high', 'P01']]);
-  assert.equal(loaded.orders.challengeHold, false);
+  assert.deepEqual([loaded.orders.challengeHoldUntilMs, loaded.orders.delivered, loaded.orders.boost,
+    loaded.challengeCapsuleItems], [null, {}, {}, []]);
+  assert.ok(!Object.hasOwn(loaded.orders, 'challengeHold'));
 });

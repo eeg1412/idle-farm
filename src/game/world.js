@@ -183,7 +183,7 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
     researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
     accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(day),
     managers: newManagers(day), orders: newOrders(day), productionValue: 0n, completedRuns: 0, farmSaleHistory: [],
-    capsules: 0n, pendingTaskCapsules: 0n,
+    capsules: 0n, pendingTaskCapsules: 0n, challengeCapsuleItems: [],
     ...newPrestigeLedger(),
     facilities: startingFacilities(null), stations: { I: [emptyStation(0)], P: [emptyStation(1)] },
     stats: { produced: {}, sold: 0n, plots: 0n, revenue: 0n, warehouseRevenue: 0n, lifetimeRevenue: 0n,

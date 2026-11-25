@@ -1280,9 +1280,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const icon = options.icon && hasIcon(options.icon) && width >= 63 ? iconSize + 3 : 0;
       const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? iconSize + 4 : 0;
       const baseSize = options.emphasis ? 23 : 18;
-      const captionWidth = Math.max(1, width - 8 - icon - trailing);
+      // midIcon + midText continue the label after it: label, icon, then midText on one line.
+      const midSize = Math.min(options.midIconSize ?? iconSize, contentHeight);
+      const mid = options.midIcon && hasIcon(options.midIcon) ? midSize + 4 : 0;
+      const captionWidth = Math.max(1, width - 8 - icon - trailing - mid);
       // Half-width characters (digits, Latin letters, spaces) take about 0.6 of a full-width glyph.
-      const labelUnits = Array.from(String(label)).reduce((units, char) => units + (char.charCodeAt(0) < 0x2e80 ? 0.6 : 1), 0);
+      const labelUnits = Array.from(String(label) + (mid ? String(options.midText ?? '') : ''))
+        .reduce((units, char) => units + (char.charCodeAt(0) < 0x2e80 ? 0.6 : 1), 0);
       const size = options.compactLabel ? 15 * scale() : Math.min(baseSize * scale(),
         (captionWidth - 2) / Math.max(2, labelUnits));
       const caption = textNode(parent, label, 0, 0, captionWidth,
@@ -1290,11 +1294,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           weight: '750', wrap: !options.compactLabel });
       if (options.compactLabel) caption.scale.set(Math.min(1,
         captionWidth / Math.max(1, caption.width), contentHeight / Math.max(1, caption.height)));
-      const contentLeft = x + (width - icon - caption.width - trailing) / 2;
+      const midCaption = mid ? textNode(parent, String(options.midText ?? ''), 0, 0, captionWidth,
+        { size: Math.max(8, size), color: disabled ? palette.muted : green ? palette.cream : palette.ink,
+          weight: '750', wrap: false }) : null;
+      const midWidth = mid ? mid + midCaption.width : 0;
+      const contentLeft = x + (width - icon - caption.width - midWidth - trailing) / 2;
       caption.position.set(contentLeft + icon, faceY + (faceHeight - caption.height) / 2);
       const iconY = faceY + (faceHeight - iconSize) / 2;
       if (icon) drawImage(parent, options.icon, contentLeft, iconY, iconSize, iconSize);
-      if (trailing) drawImage(parent, options.trailingIcon, caption.x + caption.width + 4, iconY, iconSize, iconSize);
+      if (mid) {
+        const midLeft = caption.x + caption.width + 2;
+        drawImage(parent, options.midIcon, midLeft, faceY + (faceHeight - midSize) / 2, midSize, midSize);
+        midCaption.position.set(midLeft + mid - 2, faceY + (faceHeight - midCaption.height) / 2);
+      }
+      if (trailing) drawImage(parent, options.trailingIcon, caption.x + caption.width + midWidth + 4, iconY, iconSize, iconSize);
     }
     if (hasIndicator) {
       const segmentInset = options.segment ? 2 : 0;
@@ -2237,7 +2250,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       },
       // Shared empty-list placeholder: a soft panel with a muted icon, message and optional hint.
       // `valueAtClock` adds a live clock line under the text; `progressAtClock` a live bar at the bottom.
-      empty(message, { icon, hint, height = 112, valueAtClock, progressAtClock } = {}) {
+      // `action` ({ label, onClick, tone, disabled, reason }) adds one button inside the box under the content.
+      empty(message, { icon, hint, height = 112, valueAtClock, progressAtClock, action } = {}) {
         const top = cursor;
         const padding = 14;
         const span = Math.max(1, width - padding * 2);
@@ -2266,7 +2280,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         const barHeight = 8;
         const barSpace = progressAtClock ? barHeight + 10 : 0;
-        const content = iconSize + iconGap + title.height + noteGap + (note?.height ?? 0) + clockGap + clockHeight;
+        const actionHeight = action ? Math.max(36, Math.ceil(22 * scale())) : 0;
+        const actionGap = action ? 10 : 0;
+        const content = iconSize + iconGap + title.height + noteGap + (note?.height ?? 0) + clockGap + clockHeight +
+          actionGap + actionHeight;
         const boxHeight = Math.max(height, Math.ceil(content + padding * 2 + barSpace));
         const nodes = [title];
         let at = top + (boxHeight - barSpace - content) / 2;
@@ -2284,6 +2301,13 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           nodes.push(note);
         }
         let barTop = top + boxHeight - padding - barHeight;
+        if (action) {
+          const buttonWidth = Math.min(span, 136);
+          // `at` already sits below the icon; stack the button under the title, hint and countdown.
+          const actionTop = at + title.height + noteGap + (note?.height ?? 0) + clockGap + clockHeight + actionGap;
+          buttonAt(parent, x + (width - buttonWidth) / 2, actionTop, buttonWidth, actionHeight,
+            action.label, action.onClick, { ...action });
+        }
         if (clockLine) {
           const centerClock = () => {
             clockLine.x = x + (width - Math.min(span, clockText.x + clockText.width)) / 2;
@@ -2333,7 +2357,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         const surface = (rowHeight) => {
           // An equal-height grid row stretches the panel; content stays centred and the bar stays at the bottom.
-          const shift = (rowHeight - boxHeight) / 2;
+          // A box with a button keeps its content in place so the button's hit area stays aligned.
+          const shift = action ? 0 : (rowHeight - boxHeight) / 2;
           if (shift > 0) {
             for (const node of nodes) node.y += shift;
             if (redrawBar) {
@@ -2445,9 +2470,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           cursor += height + (compactRow ? 3 : rowGap);
           return;
         }
-        const aWidth = options.stack || scale() > 1.45 || value == null ? width :
+        let aWidth = options.stack || scale() > 1.45 || value == null ? width :
           Math.floor(width * (options.compact ? 0.68 : metric ? 0.65 : 0.53));
         const nameX = x + (options.valueIcon ? 0 : icon) + (options.pill ? 6 : 0);
+        // A value with a market mark keeps it on one line: the label takes only the width it needs.
+        if (options.valueMarketRate && aWidth < width) {
+          const measure = textNode(parent, label, 0, 0, width, { size, weight: '750', wrap: false });
+          aWidth = Math.min(aWidth, Math.ceil(nameX - x + measure.width + 12));
+          measure.destroy();
+        }
         const a = marketLabel(parent, label, nameX, cursor + 2,
           x + aWidth - nameX - (value == null && options.onClick ? 20 : 0), options.marketRate,
           { size, weight: '750' });
