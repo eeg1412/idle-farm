@@ -17,6 +17,7 @@ const orderTypes = new Set(['high', 'normal', 'challenge']);
 export const orderLimit = (world) => 3 + (world.tech.orderExpansion ?? 0);
 export const orderReplacementLimit = (world) => 1 + (world.tech.orderNegotiation ?? 0);
 export const normalOrderLimit = 6;
+// Restore limit: saves from before single challenges may hold up to three offered challenges until they expire.
 export const challengeOrderLimit = 3;
 // Abandoning an accepted challenge stops new challenge orders for two hours of operating time.
 export const challengeCooldownMs = 7_200_000;
@@ -119,25 +120,18 @@ function pickTarget(ids, floor) {
   return longer ?? shorter;
 }
 
-// T1 = R(U), T2 = R(U − T1), T3 = R(rest of U whose kind differs from the base's); empty picks are left out.
-function challengeTargets(world) {
+// T1 = R(U); null when the pool is empty.
+function challengeTarget(world) {
   const plan = challengePlan(world);
-  if (!plan) return [];
-  const floor = durationOf(plan.base);
-  const first = pickTarget(plan.pool, floor);
-  if (first === null) return [];
-  const second = pickTarget(plan.pool.filter((id) => id !== first), floor);
-  const baseKind = catalog.items[plan.base].kind;
-  const third = pickTarget(plan.pool.filter((id) => id !== first && id !== second &&
-    catalog.items[id].kind !== baseKind), floor);
-  return [first, second, third].filter((id) => id !== null);
+  if (!plan) return null;
+  return pickTarget(plan.pool, durationOf(plan.base));
 }
 
 const challengeHeld = (orders, atMs) => orders.challengeHoldUntilMs !== null && atMs < orders.challengeHoldUntilMs;
 // Challenges need at least three candidates this run, no challenge order and no running cooldown.
 const canGenerateChallenge = (world, atMs) => eligibleCandidates(world.orders).length >= 3 &&
   !challengeHeld(world.orders, atMs) && ofType(world.orders, 'challenge').length === 0 &&
-  challengeTargets(world).length > 0;
+  challengeTarget(world) !== null;
 const canGenerateNormal = (orders) => ofType(orders, 'normal').length < normalOrderLimit &&
   unusedCandidates(orders, 'normal').length > 0;
 
@@ -198,24 +192,18 @@ function makeOffer(world, item, sequence, type = 'high') {
   if (type === 'normal') {
     const count = atLeastOne(ceilDiv(peak * normalOrderHours(world, sequence), 100n));
     return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * 2n * price,
-      rewardRate: 200, ...standardTime(count, peak) };
+      rewardRate: 200 };
   }
   const byValue = ceilDiv(world.productionValue, 2n * price);
   const byCapacity = ceilDiv(peak * orderHours(world, sequence), 100n);
   const count = firstOrderCount(world, orderCount(byValue, byCapacity));
   const rate = highRate(world, item);
   return { id: sequence.toString(), type, item, status: 'offered', count, reward: count * ((price * rate + 50n) / 100n),
-    rewardRate: Number(rate), ...standardTime(count, peak) };
+    rewardRate: Number(rate) };
 }
 
-// Standard completion time: ceil(count × 100 × 3,600,000 / C) ms for C hundredths per hour; omitted when C is 0.
-function standardTime(count, hourlyHundredths) {
-  if (hourlyHundredths <= 0n) return {};
-  return { standardMs: Number(ceilDiv(count * 100n * 3_600_000n, hourlyHundredths)) };
-}
-
-// Pioneer bonus: the target's research coins plus its research materials at catalog base price, without
-// research discounts; halved when the target is already researched; zero when it has no research entry.
+// Research cost: the recipe's research coins plus its research materials at catalog base price, without
+// research discounts; zero when it has no research entry.
 function researchCost(id) {
   const research = catalog.research[id];
   if (!research) return 0n;
@@ -226,11 +214,12 @@ function researchCost(id) {
   return cost;
 }
 
-// Catalog research cost of every recipe still missing (target and prerequisites); half the target's own
-// cost when it is already researched.
+// Pioneer bonus: 10 × the research cost of every recipe still missing (target and prerequisites);
+// 10 × floor(half the target's own cost) when it is already researched.
+const pioneerBonusScale = 10n;
 function pioneerBonus(world, target, missing) {
-  if (!missing.length) return researchCost(target) / 2n;
-  return missing.reduce((sum, id) => sum + researchCost(id), 0n);
+  if (!missing.length) return researchCost(target) / 2n * pioneerBonusScale;
+  return missing.reduce((sum, id) => sum + researchCost(id), 0n) * pioneerBonusScale;
 }
 
 // One level-1 station without technology, in hundredths per hour, rounded like forecastHourlyProduction.
@@ -253,7 +242,7 @@ function makeChallenge(world, target, sequence) {
   // +1× per research step still missing, fixed at generation.
   const rate = 80n + premiumLevel(world) + 10n * BigInt(missing.length);
   return { id: sequence.toString(), type: 'challenge', item: target, status: 'offered', count,
-    reward: count * ((price * rate + 5n) / 10n) + bonus, rewardRate: Number(rate * 10n), ...standardTime(count, hourly),
+    reward: count * ((price * rate + 5n) / 10n) + bonus, rewardRate: Number(rate * 10n),
     bonus, capsules };
 }
 
@@ -274,16 +263,13 @@ function generateHighOrder(world, firstItem) {
   return true;
 }
 
-// Each timed checkpoint: (1) a high order while today's quota lasts; (2) up to three challenges (T1, T2,
-// T3, each with its own number) when allowed; (3) a normal order only if the quota was already used up
-// when the checkpoint began. Products of different types do not exclude each other.
+// Each timed checkpoint: (1) a high order while today's quota lasts; (2) one challenge (T1) when allowed;
+// (3) a normal order only if the quota was already used up when the checkpoint began. Products of different types do not exclude each other.
 function generateOrder(world, atMs = world.clockMs) {
   const quotaUsed = world.orders.generated >= orderLimit(world);
   let generated = !quotaUsed && generateHighOrder(world);
   if (canGenerateChallenge(world, atMs)) {
-    for (const target of challengeTargets(world)) {
-      addOrder(world, makeChallenge(world, target, world.orders.sequence + 1n));
-    }
+    addOrder(world, makeChallenge(world, challengeTarget(world), world.orders.sequence + 1n));
     generated = true;
   }
   if (quotaUsed && canGenerateNormal(world.orders)) {
@@ -611,7 +597,7 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
       requireField(Number.isSafeInteger(order.rewardRate) && order.rewardRate >= 100, field + '.rewardRate');
       restoredOrder.rewardRate = order.rewardRate;
     }
-    // Orders saved before standard times, or generated without a recorded rate, have none.
+    // Only orders saved while standard times were stored have one; it is kept but no longer shown.
     if (Object.hasOwn(order, 'standardMs')) {
       requireField(Number.isSafeInteger(order.standardMs) && order.standardMs > 0, field + '.standardMs');
       restoredOrder.standardMs = order.standardMs;

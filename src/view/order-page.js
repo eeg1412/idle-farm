@@ -1,4 +1,4 @@
-import { actualHourlyProduction, catalog, orderCompletion } from '../game/world.js';
+import { actualHourlyProduction, catalog, orderCompletion, orderStandardTime } from '../game/world.js';
 import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { researchPathNodes, showResearch } from './research-page.js';
@@ -59,18 +59,26 @@ function expectedCompletion(ui, order) {
   } else ui.row('预计完成时间', '无法计算', { compact: true, noWrap: true, tone: 'danger' });
 }
 
-function quantities(ui, order, rates, inDetail = false) {
+// Unaccepted orders: time for the current production to make the count.
+function standardTime(ui, order) {
+  const ms = orderStandardTime(ui.w, order);
+  const help = ui.orderHelp?.('standardTime');
+  if (ms !== null) ui.row('标准完成时间', remainingTime(ms), { compact: true, help });
+  else ui.row('标准完成时间', '未安排生产', { compact: true, tone: 'danger', help });
+}
+
+function quantities(ui, order, rates) {
   const accepted = order.status === 'locked';
   ui.row('所需件数', compact(order.count) + ' 件', { compact: true });
   ui.row('当前库存', compact(ui.w.inventory[order.item] ?? 0n) + ' 件', { compact: true });
   hourlyChange(ui, order, rates);
   if (accepted) expectedCompletion(ui, order);
-  else if (typeof order.standardMs === 'number') ui.row('标准完成时间', remainingTime(order.standardMs), { compact: true });
+  else standardTime(ui, order);
+  const bonus = order.bonus ?? 0n;
   // Multiplier over the unit price fixed at generation, drawn like a market rate; older orders have none.
   const rate = typeof order.rewardRate === 'number' ? order.rewardRate - 100 : 0;
-  ui.row('固定报酬', compact(order.reward) + ' 金币', { compact: true, valueMarketRate: rate || undefined });
-  if (!inDetail || orderType(order) !== 'challenge') return;
-  const bonus = order.bonus ?? 0n;
+  ui.row('固定报酬', compact(order.reward - bonus) + ' 金币', { compact: true, valueMarketRate: rate || undefined });
+  if (orderType(order) !== 'challenge') return;
   const capsules = order.capsules ?? 0n;
   if (bonus > 0n) ui.row('开拓奖金', compact(bonus) + ' 金币', { compact: true });
   if (capsules > 0n) ui.row('时空胶囊', compact(capsules) + ' 个', { compact: true });
@@ -179,7 +187,7 @@ function showOrder(ui, order) {
       return;
     }
     orderProduct(dlg, current, true);
-    quantities(dlg, current, hourlyRates(dlg.w), true);
+    quantities(dlg, current, hourlyRates(dlg.w));
     // An unresearched challenge target can also show its research prerequisites.
     const locked = orderType(current) === 'challenge' && !dlg.w.unlocked.includes(current.item);
     const tab = locked && dlg.local.chainTab === '科技树' ? '科技树' : '生产链';

@@ -9,7 +9,7 @@ import {
   orderItemTags, orderRushCost, raiseOrderCapacity, replaceOrder, rushOrder,
 } from '../src/game/orders.js';
 import {
-  advanceWorld, arrangeStation, buyStation, farmSaleOffer, newWorld, sellFarm, updateWorldWallTime,
+  advanceWorld, arrangeStation, buyStation, farmSaleOffer, newWorld, orderStandardTime, sellFarm, updateWorldWallTime,
 } from '../src/game/world.js';
 import { decodeWorldRecord, encodeWorldRecord } from '../src/platform/world-save.js';
 
@@ -20,6 +20,8 @@ const baseHourly = (id) => {
   const duration = BigInt(catalog.items[id].durationMs);
   return (BigInt(catalog.items[id].output) * 360_000_000n + duration / 2n) / duration;
 };
+// ceil(count × 100 × 1 hour / C) for C hundredths per hour.
+const standardMs = (count, hourly) => Number((count * 360_000_000n + hourly - 1n) / hourly);
 
 test('the first delivery pays the fixed per-piece rounded price and both tasks once', () => {
   const world = newWorld(afternoon);
@@ -148,12 +150,10 @@ test('migration keeps zero-stock products and long tasks without starting the ti
   assert.ok(acceptOrder(loaded, replacement.id));
   assert.equal(canReplaceOrder(loaded, replacement.id), false);
   advanceWorld(loaded, 31_000 + 2 * halfHour);
-  // The first timed checkpoint adds a high order and the challenges (1–3, near in research); the
-  // second only a high order.
+  // The first timed checkpoint adds a high order and one challenge (near in research); the second only a
+  // high order.
   const types = loaded.orders.active.map(({ type }) => type);
-  const challengeTotal = types.filter((type) => type === 'challenge').length;
-  assert.ok(challengeTotal >= 1 && challengeTotal <= 3);
-  assert.deepEqual(types, ['high', 'high', ...Array(challengeTotal).fill('challenge'), 'high']);
+  assert.deepEqual(types, ['high', 'high', 'challenge', 'high']);
   assert.ok(sellFarm(loaded, farmSaleOffer(loaded)));
   assert.deepEqual(loaded.orders.active, []);
   assert.deepEqual(loaded.orders.candidates, []);
@@ -177,6 +177,9 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   // The running batch counts as in stock, so its full real output is recorded on arrangement.
   assert.equal(peak, baseHourly('P01'));
   assert.deepEqual(world.orders.candidates, ['P01']);
+  // The standard time uses every station making the product at full speed; none making it gives null.
+  assert.equal(orderStandardTime(world, { item: 'P01', count: 3n }), standardMs(3n, baseHourly('P01')));
+  assert.equal(orderStandardTime(world, { item: 'P02', count: 3n }), null);
   advanceWorld(world, world.stations.P[0].batch.end);
   const [offer] = world.orders.active;
   assert.equal(offer.item, 'P01');
@@ -187,9 +190,6 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   assert.ok(sellFarm(restored, farmSaleOffer(restored)));
   assert.deepEqual(restored.orders.capacity, {});
 });
-
-// ceil(count × 100 × 1 hour / C) for C hundredths per hour.
-const standardMs = (count, hourly) => Number((count * 360_000_000n + hourly - 1n) / hourly);
 
 // Recipes still to research for a product: itself and its transitive prerequisites not yet unlocked.
 function missingResearch(world, id) {
@@ -214,10 +214,10 @@ function researchCost(id) {
   return cost;
 }
 
-// Every missing recipe's research cost; half the target's own cost once it is researched.
+// 10 × every missing recipe's research cost; 10 × floor(half the target's own cost) once it is researched.
 function pioneerBonus(world, id) {
   const missing = missingResearch(world, id);
-  return missing.length ? missing.reduce((sum, key) => sum + researchCost(key), 0n) : researchCost(id) / 2n;
+  return 10n * (missing.length ? missing.reduce((sum, key) => sum + researchCost(key), 0n) : researchCost(id) / 2n);
 }
 
 // Challenge targets stay within two research steps whenever such untried products exist.
@@ -231,7 +231,7 @@ function assertChallengeTargets(world, targets, candidates) {
   }
 }
 
-test("after today's high orders a checkpoint adds up to three challenges and a small normal order", () => {
+test("after today's high orders a checkpoint adds one challenge and a small normal order", () => {
   const world = newWorld(afternoon);
   // P02 and P03 join the candidates below, so their recipes are researched as in real play.
   world.unlocked.push('P01', 'I02', 'I03', 'P02', 'P03');
@@ -250,15 +250,10 @@ test("after today's high orders a checkpoint adds up to three challenges and a s
   const candidates = ['P01', 'P02', 'P03'];
   advanceWorld(world, due + halfHour);
   const challenges = world.orders.active.filter(({ type }) => type === 'challenge');
-  assert.ok(challenges.length >= 1 && challenges.length <= 3);
-  assert.deepEqual(world.orders.active.map(({ type }) => type),
-    ['normal', ...challenges.map(() => 'challenge'), 'normal']);
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['normal', 'challenge', 'normal']);
   const [normal] = world.orders.active;
   const targets = challenges.map(({ item }) => item);
-  assert.equal(new Set(targets).size, targets.length);
   assertChallengeTargets(world, targets, candidates);
-  // T3, when present, differs in kind from the base product.
-  if (targets.length === 3) assert.notEqual(catalog.items[targets[2]].kind, catalog.items.P01.kind);
   for (const challenge of challenges) {
     // Eight times plus one per missing research step, plus the pioneer bonus for every missing recipe.
     const gap = BigInt(missingResearch(world, challenge.item).length);
@@ -267,7 +262,7 @@ test("after today's high orders a checkpoint adds up to three challenges and a s
     assert.equal(challenge.reward, challenge.count * ((price * (80n + 10n * gap) + 5n) / 10n) + challenge.bonus);
     assert.equal(challenge.capsules, 1000n);
     assert.equal(challenge.rewardRate, Number((80n + 10n * gap) * 10n));
-    assert.equal(challenge.standardMs, standardMs(challenge.count, baseHourly(challenge.item)));
+    assert.ok(!Object.hasOwn(challenge, 'standardMs'));
   }
   // A normal order asks for 1-4 hours of the recorded peak and pays twice the unit price.
   const peak = world.orders.capacity.P01;
@@ -275,7 +270,7 @@ test("after today's high orders a checkpoint adds up to three challenges and a s
   assert.ok(normal.count >= (peak + 99n) / 100n && normal.count <= (peak * 4n + 99n) / 100n);
   assert.equal(normal.reward, normal.count * 2n * unitPrice(world, 'P01'));
   assert.equal(normal.rewardRate, 200);
-  assert.equal(normal.standardMs, standardMs(normal.count, peak));
+  assert.ok(!Object.hasOwn(normal, 'standardMs'));
   assert.equal(world.orders.generated, 3);
   const restored = decodeWorldRecord(encodeWorldRecord(world));
   assert.deepEqual(restored.orders, world.orders);
@@ -312,7 +307,7 @@ test("after today's high orders a checkpoint adds up to three challenges and a s
   advanceWorld(world, abandonedAt + 3 * halfHour);
   assert.equal(challengeCount(), 0);
   advanceWorld(world, abandonedAt + 4 * halfHour);
-  assert.equal(challengeCount(), challenges.length);
+  assert.equal(challengeCount(), 1);
   assert.ok(sellFarm(world, farmSaleOffer(world)));
   assert.deepEqual([world.orders.active, world.orders.candidates, world.orders.challengeHoldUntilMs],
     [[], [], abandonedAt + challengeCooldownMs]);
@@ -331,7 +326,7 @@ test('high orders decay with repeated deliveries and spend a challenge boost', (
   // k = 3 gives 0.7 times; the boost adds 2 times before the decay: floor((U × 70 × 7 + 50) / 100).
   assert.equal(offer.reward, offer.count * ((unitPrice(world, 'P01') * 70n * 7n + 50n) / 100n));
   assert.equal(offer.rewardRate, 490);
-  assert.equal(offer.standardMs, standardMs(offer.count, world.orders.capacity.P01));
+  assert.ok(!Object.hasOwn(offer, 'standardMs'));
   assert.deepEqual(world.orders.boost, {});
   // Without a boost, k = 3 is 0.5 × 0.7 = 3.5 times.
   const plain = newWorld(afternoon);

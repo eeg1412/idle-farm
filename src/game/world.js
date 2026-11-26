@@ -162,6 +162,15 @@ export function forecastHourlyProduction(world) {
   });
 }
 
+// Standard completion time: every facility and station making the order's product at full speed,
+// inputs not counted. ceil(count × 100 × 3,600,000 / P) ms for P hundredths per hour; null when P is 0.
+export function orderStandardTime(world, order) {
+  const produced = forecastHourlyProduction(world).find(({ id }) => id === order.item)?.produced ?? 0n;
+  if (produced <= 0n) return null;
+  const count = BigInt(order.count);
+  return Number((count * 100n * 3_600_000n + produced - 1n) / produced);
+}
+
 const utilizationScale = 1_000_000n;
 // Allocation rates are items per hour x 10^12, floored per line; ample next to the 10^-6 utilization quantum.
 const allocationRateScale = 3_600_000n * 10n ** 12n;

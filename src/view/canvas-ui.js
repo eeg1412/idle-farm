@@ -36,7 +36,7 @@ import { managerPages, renderManager, renderManagerDirectory } from './manager-p
 import { renderStatistics, renderFarmSaleHistory } from './management-records.js';
 import { createManagerSpeechQueue, fitManagerSpeech } from './manager-speech.js';
 import { createOnboardingSpeech, mountOnboardingOverlay } from './onboarding-overlay.js';
-import { introLines, taskExplanation, taskPageLines } from './onboarding-text.js';
+import { introLines, orderExplanation, taskExplanation, taskPageLines } from './onboarding-text.js';
 import { managerTaskGuide } from './manager-help.js';
 import {
   renderWarehouse, renderCatalog, renderTasks, renderSettings, renderFarmSale, renderManagement,
@@ -1226,6 +1226,26 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     });
   }
 
+  // A small round 「？」 drawn around its own origin (the circle's center); the caller positions it.
+  // Its tap runs `fn` only: it owns its surface, so the enclosing card's tap does not fire.
+  function helpButton(parent, size, fn) {
+    const holder = new Container();
+    holder.label = 'row-help';
+    parent.addChild(holder);
+    const focused = !waiting && controls.length === focusIndex;
+    const radius = size / 2;
+    const g = holder.addChild(inkGraphics());
+    g.circle(0, 0, radius).fill(palette.pale).stroke({ color: focused ? palette.green : palette.border, width: focused ? 2 : 1.2 });
+    const mark = textNode(holder, '？', 0, 0, size, { size: Math.max(8, size * 0.72), weight: '800', wrap: false });
+    mark.position.set(-mark.width / 2, -mark.height / 2);
+    const hit = Math.max(30, size + 12);
+    if (!waiting) hitAt(g, holder, -hit / 2, -hit / 2, hit, hit, (event) => {
+      event?.stopPropagation();
+      fn();
+    });
+    return holder;
+  }
+
   function directionIcon(parent, direction, x, y, width, height, { arrow = false, color = palette.ink } = {}) {
     return drawPixelIcon(parent, { kind: arrow ? 'arrow' : 'chevron', direction, color }, x, y, width, height);
   }
@@ -2164,6 +2184,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // The task page's explanation trigger, or undefined when the task has no explanation.
       taskHelp: (taskId) => (!local.routeKey && current === '任务' && taskExplanationText(taskId)
         ? () => startTaskExplanation(taskId) : undefined),
+      // The order page's explanation trigger (also inside dialogs opened there), or undefined.
+      orderHelp: (topic) => (current === '订单中心' && (!local.routeKey || local.ownerPage === '订单中心') &&
+        orderExplanationText(topic) ? () => startOrderExplanation(topic) : undefined),
       tree(options) {
         const owner = parent;
         const top = cursor;
@@ -2469,11 +2492,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const transition = value && typeof value === 'object' && value.from != null && value.to != null ? value :
           options.from != null && options.to != null ? { from: options.from, to: options.to } : undefined;
         const valueStr = transition ? number(transition.from) + ' ' + number(transition.to) : number(value);
+        // `help` puts a small round 「？」 right after the label text.
+        const helpSize = options.help ? Math.round(18 * Math.min(scale(), 1.3)) : 0;
+        const helpRoom = helpSize ? helpSize + 6 : 0;
         if ((options.noWrap || label === '距收获') && value != null && !options.marketRate && !options.valueMarketRate) {
           const nameX = x + icon + (options.pill ? 6 : 0);
           const room = Math.max(1, x + width - nameX - 2);
           const name = textNode(parent, label, nameX, start, room,
             { size, weight: '750', wrap: false });
+          const help = helpSize ? helpButton(parent, helpSize, options.help) : undefined;
           const amount = textNode(parent, valueStr, nameX, start, room,
             { size, weight: '800', wrap: false, color: valueColor });
           const nameWidth = name.width;
@@ -2487,10 +2514,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const height = Math.max(32, minimumHeight, Math.ceil(size * 1.36) + 4, icon);
           const align = () => {
             amount.scale.set(1);
-            const fit = Math.min(1, room / (nameWidth + Math.max(amount.width, baselineWidth) + 6));
+            const fit = Math.min(1, room / (nameWidth + helpRoom + Math.max(amount.width, baselineWidth) + 6));
             name.scale.set(fit);
             amount.scale.set(fit);
             name.y = start + (height - name.height) / 2;
+            help?.position.set(name.x + name.width + 4 + helpSize / 2, start + height / 2);
             amount.position.set(x + width - amount.width, start + (height - amount.height) / 2);
           };
           align();
@@ -2507,11 +2535,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         // A value with a market mark keeps it on one line: the label takes only the width it needs.
         if (options.valueMarketRate && aWidth < width) {
           const measure = textNode(parent, label, 0, 0, width, { size, weight: '750', wrap: false });
-          aWidth = Math.min(aWidth, Math.ceil(nameX - x + measure.width + 12));
+          aWidth = Math.min(aWidth, Math.ceil(nameX - x + measure.width + 12 + helpRoom));
           measure.destroy();
         }
         const a = marketLabel(parent, label, nameX, cursor + 2,
-          x + aWidth - nameX - (value == null && options.onClick ? 20 : 0), options.marketRate,
+          x + aWidth - nameX - (value == null && options.onClick ? 20 : 0) - helpRoom, options.marketRate,
           { size, weight: '750' });
         const amountSize = (metric || comparison ? 20 : compactRow ? 17 : 15) * scale();
         const sameLine = !options.stack && value != null && scale() <= 1.45 && valueStr.length * amountSize * 0.55 <= width - aWidth;
@@ -2542,6 +2570,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           parent.addChild(hit);
           hitAt(hit, parent, x, start, width, height, options.onClick);
         }
+        // Drawn after any row hit so the 「？」 owns its spot; centered on the label's first line.
+        if (helpSize) helpButton(parent, helpSize, options.help).position.set(a.x + a.width + 4 + helpSize / 2,
+          a.y + Math.min(a.height, Math.ceil(size * 1.36)) / 2);
         cursor += height + (compactRow ? 3 : rowGap);
       },
       detailRows(entries, { variant = 'label' } = {}) {
@@ -4053,6 +4084,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     // Decided before the rebuild, while the drawn banner still reports what the player sees.
     // The overlay (dim, all taps) appears now; its manager rises once the banner's has sunk.
     moveTaskBanner('任务', true);
+    focusIndex = -1;
+    redraw();
+  }
+
+  function orderManagerGender() {
+    const gender = world ? managerStatus(world, 'orders')?.gender : undefined;
+    return gender && managerPortraits.orders?.[gender] ? gender : undefined;
+  }
+
+  function orderExplanationText(topic) {
+    const gender = orderManagerGender();
+    return gender ? orderExplanation(topic, gender) : null;
+  }
+
+  // The order page's 「？」: its manager rises and explains, on the page or over the order dialog
+  // opened from it. The dialog stays open as it is (its content and scroll are kept in `modal`);
+  // the overlay is drawn after it, so it covers the dialog until the telling ends.
+  function startOrderExplanation(topic) {
+    if (taskTalk || intro || current !== '订单中心' || pendingModal || navigationMenu) return;
+    const gender = orderManagerGender();
+    const text = gender ? orderExplanation(topic, gender) : null;
+    if (!text) return;
+    taskTalk = { page: '订单中心', session: createOnboardingSpeech({ role: 'orders', gender, lines: [text] }) };
+    moveTaskBanner('订单中心', true);
     focusIndex = -1;
     redraw();
   }
