@@ -9,7 +9,8 @@ import {
   orderItemTags, orderRushCost, raiseOrderCapacity, replaceOrder, rushOrder,
 } from '../src/game/orders.js';
 import {
-  advanceWorld, arrangeStation, buyStation, farmSaleOffer, newWorld, orderStandardTime, sellFarm, updateWorldWallTime,
+  advanceWorld, arrangeStation, buyStation, farmSaleOffer, newWorld, orderStandardTime, productionDurationMs, sellFarm,
+  stationMultiplier, updateWorldWallTime,
 } from '../src/game/world.js';
 import { decodeWorldRecord, encodeWorldRecord } from '../src/platform/world-save.js';
 
@@ -22,6 +23,14 @@ const baseHourly = (id) => {
 };
 // ceil(count × 100 × 1 hour / C) for C hundredths per hour.
 const standardMs = (count, hourly) => Number((count * 360_000_000n + hourly - 1n) / hourly);
+// Every refining station making the product at full speed, each rounded to hundredths per hour.
+const refiningHourly = (world, id) => {
+  const duration = BigInt(productionDurationMs(world, id));
+  return world.stations.P.reduce((sum, { level = '1' }) => {
+    const amount = BigInt(catalog.items[id].output) * stationMultiplier(level);
+    return sum + (amount * 360_000_000n + duration / 2n) / duration;
+  }, 0n);
+};
 
 test('the first delivery pays the fixed per-piece rounded price and both tasks once', () => {
   const world = newWorld(afternoon);
@@ -177,9 +186,10 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   // The running batch counts as in stock, so its full real output is recorded on arrangement.
   assert.equal(peak, baseHourly('P01'));
   assert.deepEqual(world.orders.candidates, ['P01']);
-  // The standard time uses every station making the product at full speed; none making it gives null.
-  assert.equal(orderStandardTime(world, { item: 'P01', count: 3n }), standardMs(3n, baseHourly('P01')));
-  assert.equal(orderStandardTime(world, { item: 'P02', count: 3n }), null);
+  // The standard time switches every refining station to the product, arranged or not and researched or not.
+  assert.equal(orderStandardTime(world, { item: 'P01', count: 3n }), standardMs(3n, refiningHourly(world, 'P01')));
+  assert.equal(orderStandardTime(world, { item: 'P02', count: 3n }), standardMs(3n, refiningHourly(world, 'P02')));
+  assert.equal(refiningHourly(world, 'P01'), baseHourly('P01'));
   advanceWorld(world, world.stations.P[0].batch.end);
   const [offer] = world.orders.active;
   assert.equal(offer.item, 'P01');

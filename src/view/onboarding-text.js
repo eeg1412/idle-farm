@@ -152,8 +152,8 @@ export function taskExplanation(taskId, gender) {
 // Order-page explanations, told by the orders manager (茜梨 female / 奥林 male).
 const orderTopics = {
   standardTime: say(
-    '这是把做这件货的工位全开起来、原料管够的时候，交齐要花的时间。真照这个数算，原料可得先替它备好哦。',
-    '标准完成时间，是做这件货的工位全部开工时，交齐所需的时间。原料不算在内，备料要留余量。'),
+    '要是你所有精制工位都改做这件货、原料管够，交齐就得这么久。真照这个数算，原料可得先替它备好哦。',
+    '标准完成时间，是全部精制工位都做这件货时交齐所需的时间。原料不算在内，备料要留余量。'),
 };
 
 export function orderExplanation(topic, gender) {

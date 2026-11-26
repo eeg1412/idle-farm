@@ -162,10 +162,18 @@ export function forecastHourlyProduction(world) {
   });
 }
 
-// Standard completion time: every facility and station making the order's product at full speed,
-// inputs not counted. ceil(count × 100 × 3,600,000 / P) ms for P hundredths per hour; null when P is 0.
+// Standard completion time: every refining station (world.stations.P) switched to the order's product at
+// full speed, whatever it currently makes and whether the product was researched; inputs not counted.
+// P sums each station's hourly output in hundredths, rounded like forecastHourlyProduction;
+// ceil(count × 100 × 3,600,000 / P) ms, null when P is 0.
 export function orderStandardTime(world, order) {
-  const produced = forecastHourlyProduction(world).find(({ id }) => id === order.item)?.produced ?? 0n;
+  const duration = BigInt(productionDurationMs(world, order.item) ?? 0);
+  if (duration <= 0n) return null;
+  let produced = 0n;
+  for (const { level = '1' } of world.stations.P ?? []) {
+    const amount = stationOutput(order.item, level) ?? 0n;
+    produced += (amount * 360_000_000n + duration / 2n) / duration;
+  }
   if (produced <= 0n) return null;
   const count = BigInt(order.count);
   return Number((count * 100n * 3_600_000n + produced - 1n) / produced);
