@@ -1,25 +1,6 @@
 import { accountRandom } from './account-random.js';
-import { basicResearchHourlyRate, researchHourMs } from './advancement.js';
 
 export const qualityDrawCost = 100n;
-
-export function accrueBasicResearch(world, elapsed) {
-  if (elapsed <= 0) return;
-  const rate = BigInt(basicResearchHourlyRate(world));
-  const toHour = researchHourMs - world.basicResearchElapsedMs;
-  if (elapsed < toHour) {
-    world.basicResearchElapsedMs += elapsed;
-    world.basicResearchWeightedMs += BigInt(elapsed) * rate;
-    return;
-  }
-
-  const hour = BigInt(researchHourMs);
-  const completedWeight = world.basicResearchWeightedMs + BigInt(toHour) * rate;
-  const remaining = elapsed - toHour;
-  world.basicResearchPoints += completedWeight / hour + BigInt(Math.floor(remaining / researchHourMs)) * rate;
-  world.basicResearchElapsedMs = remaining % researchHourMs;
-  world.basicResearchWeightedMs = completedWeight % hour + BigInt(world.basicResearchElapsedMs) * rate;
-}
 
 export function qualityDrawOffer(world, mode = 'single') {
   if (mode !== 'single' && mode !== 'all') return null;

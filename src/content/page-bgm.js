@@ -337,7 +337,7 @@ export const pageTracks = {
 
 export const pageTrackIds = {
   庄园: 'farm', 田地: 'field', 畜牧: 'livestock', 鱼塘: 'fish', 矿洞: 'mine',
-  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 订单中心: 'orders',
+  料坊: 'processing', 工房: 'refining', 仓库: 'warehouse', 订单中心: 'orders',
   行脚商: 'merchant', 研究: 'research', 经营: 'management', 角色管理: 'characters',
   统计: 'statistics', 出售庄园历史: 'saleHistory', 图鉴: 'catalog', 任务: 'tasks',
   出售庄园: 'farmSale', 设置: 'settings',

@@ -92,7 +92,7 @@ function showSource(ui, id) {
   const item = catalog.items[id];
   if (!item) return;
   if (facilityTabs[item.kind]) ui.go('庄园', { tab: facilityTabs[item.kind], id });
-  else ui.go('工坊', { tab: typeOf(item) === '商品' ? '精制' : '加工', id });
+  else ui.go('工坊', { tab: typeOf(item) === '商品' ? '工房' : '料坊', id });
 }
 
 function showResearch(ui, id) {
@@ -440,7 +440,7 @@ export function renderWarehouse(ui) {
       ui.text('库存 0', { muted: true, align: 'center' });
       ui.buttons([
         { label: '前往田地', onClick: () => ui.go('庄园', { tab: '田地' }) },
-        { label: '前往工坊', onClick: () => ui.go('工坊') },
+        { label: '前往料坊', onClick: () => ui.go('工坊') },
       ]);
     } else {
       ui.text('库存 0', { muted: true });
@@ -636,7 +636,7 @@ const upgradeTaskKinds = {
   stationUpgrade: allStationKinds, stationLevel10: allStationKinds, stationLevel50: allStationKinds,
   stationLevel100: allStationKinds, stationLevel200: allStationKinds,
 };
-const kindPages = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '加工', P: '精制' };
+const kindPages = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '料坊', P: '工房' };
 
 function highestSlot(world, kinds) {
   let best = null;
@@ -1004,8 +1004,8 @@ function farmDetails(ui, offer) {
       { label: '田地、养殖场、鱼塘、矿洞' },
       { label: '库存、金币' },
     ]],
-    ['工坊重置', [
-      { label: '重置为加工位、精制位各 1 个' },
+    ['料坊与工房重置', [
+      { label: '重置为料坊位、工房位各 1 个' },
       { label: '原配方、优先生产和未完成批次清空' },
     ]],
     ['新一轮', newRun],

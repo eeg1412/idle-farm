@@ -1,6 +1,5 @@
 import { Container, FillGradient, Graphics, ImageSource, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
-import { researchHourMs } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
 import { managerIds, managerStatus } from '../game/managers.js';
 import { merchantStatus } from '../game/merchant.js';
@@ -53,7 +52,7 @@ const pages = {
   [homePage]: null,
   田地: (ui) => renderProduction(ui, 'C'), 畜牧: (ui) => renderProduction(ui, 'L'),
   鱼塘: (ui) => renderProduction(ui, 'F'), 矿洞: (ui) => renderProduction(ui, 'M'),
-  加工: (ui) => renderWorkshop(ui, 'I'), 精制: (ui) => renderWorkshop(ui, 'P'),
+  料坊: (ui) => renderWorkshop(ui, 'I'), 工房: (ui) => renderWorkshop(ui, 'P'),
   仓库: renderWarehouse, 订单中心: renderOrders, 行脚商: renderMerchant, 研究: renderResearch, 经营: renderManagement,
   角色管理: renderManagerDirectory, 统计: renderStatistics, 出售庄园历史: renderFarmSaleHistory,
   图鉴: renderCatalog, 任务: renderTasks, 出售庄园: renderFarmSale, 设置: renderSettings,
@@ -61,13 +60,13 @@ const pages = {
 const menuPages = Object.keys(pages);
 const menuIcons = {
   [homePage]: 'menu-map', 田地: 'menu-field', 畜牧: 'menu-livestock', 鱼塘: 'menu-fish', 矿洞: 'menu-mine',
-  加工: 'menu-processing', 精制: 'menu-refining', 仓库: 'menu-warehouse', 订单中心: 'menu-orders', 行脚商: 'menu-merchant',
+  料坊: 'menu-processing', 工房: 'menu-refining', 仓库: 'menu-warehouse', 订单中心: 'menu-orders', 行脚商: 'menu-merchant',
   研究: 'menu-research', 经营: 'menu-operations', 图鉴: 'menu-catalog', 任务: 'menu-tasks',
   角色管理: 'manager-directory', 统计: 'statistics', 出售庄园历史: 'sale-history',
   出售庄园: 'menu-farm-sale', 设置: 'menu-settings',
 };
 const estateDestinations = {
-  field: '田地', livestock: '畜牧', fish: '鱼塘', mine: '矿洞', processing: '加工', refining: '精制',
+  field: '田地', livestock: '畜牧', fish: '鱼塘', mine: '矿洞', processing: '料坊', refining: '工房',
   warehouse: '仓库', orders: '订单中心', research: '研究', operations: '经营', tasks: '任务', merchant: '行脚商',
 };
 const noResearchReadyTabs = new Set();
@@ -236,7 +235,7 @@ function restoreViewState(target, saved) {
 }
 // Fields no page draws statically: the projected clock moves them every frame, and the save
 // revision changes on every commit (including the 5-second autosave) without any visible effect.
-const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs', 'revision', 'basicResearchElapsedMs', 'basicResearchWeightedMs']);
+const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs', 'revision']);
 // Texture LRU limits for page icons and facility scenes. Animation textures are never evicted.
 const iconCacheLimit = 200;
 const sceneCacheLimit = 40;
@@ -1211,8 +1210,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   // Flows text segments ({ text }) and icon + amount items ({ icon, value }) left to right, wrapping
-  // to new lines at `width`; icons are about 1.2× the font size. Returns the height used.
-  function rewardFlow(parent, entries, x, y, width, { size, color, align = 'left', trackViewport = true }) {
+  // to new lines at `width`; icons are about 1.2× the font size. An item's optional marketRate draws
+  // the market mark after its amount. Returns the height used. singleLine: when the items need more
+  // than one line, removes what it made and returns null; minHeight raises the line height.
+  function rewardFlow(parent, entries, x, y, width,
+    { size, color, align = 'left', trackViewport = true, singleLine = false, minHeight = 0 }) {
     const iconSize = Math.round(size * 1.2);
     const iconGap = Math.max(2, Math.round(size * 0.2));
     const itemGap = Math.round(size * 0.8);
@@ -1222,29 +1224,51 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const label = textNode(parent, icon || entry.icon ? compact(entry.value) : entry.text, 0, 0, width,
         { size, color: entry.tone === 'danger' ? palette.red : color, weight: icon ? '700' : '600', wrap: false });
       const offset = icon ? iconSize + iconGap : 0;
-      if (offset + label.width > width) {
+      const mark = entry.marketRate ? marketMark(parent, width, entry.marketRate, size, trackViewport) : undefined;
+      // The mark sits in brackets of the mark's size and the row's text color: "(▲ ×1.2)".
+      const bracket = (text) => textNode(parent, text, 0, 0, width, { size: marketMarkSize(size) * mark.layer.scale.x,
+        color, weight: '800', wrap: false });
+      if (mark) Object.assign(mark, { open: bracket('('), close: bracket(')') });
+      const markWidth = mark ? marketLabelGap + mark.open.width + mark.width + mark.close.width : 0;
+      if (offset + label.width + markWidth > width) {
         label.style.wordWrap = true;
         label.style.breakWords = true;
-        label.style.wordWrapWidth = Math.max(8, width - offset);
+        label.style.wordWrapWidth = Math.max(8, width - offset - markWidth);
       }
-      return { icon, label, offset, width: offset + label.width, height: Math.max(icon ? iconSize : 0, label.height) };
+      // tight: only the small icon gap before the next item.
+      return { icon, label, offset, mark, gap: entry.tight ? iconGap : itemGap, width: offset + label.width + markWidth,
+        height: Math.max(icon ? iconSize : 0, label.height, mark?.height ?? 0, mark?.open.height ?? 0) };
     });
     const lines = [];
     for (const cell of cells) {
       const line = lines.at(-1);
-      if (line && line.width + itemGap + cell.width <= width) {
-        line.width += itemGap + cell.width;
+      const gap = line?.cells.at(-1).gap;
+      if (line && line.width + gap + cell.width <= width) {
+        line.width += gap + cell.width;
         line.cells.push(cell);
       } else lines.push({ width: cell.width, cells: [cell] });
     }
+    if (singleLine && (lines.length > 1 || cells.some((cell) => cell.label.style.wordWrap))) {
+      for (const cell of cells) {
+        cell.label.destroy();
+        if (cell.mark) for (const node of [cell.mark.layer, cell.mark.open, cell.mark.close]) node.destroy({ children: true });
+      }
+      return null;
+    }
     let top = y;
     for (const line of lines) {
-      const height = Math.max(minLine, ...line.cells.map((cell) => cell.height));
+      const height = Math.max(minLine, minHeight, ...line.cells.map((cell) => cell.height));
       let left = x + (align === 'center' ? Math.max(0, (width - line.width) / 2) : align === 'right' ? Math.max(0, width - line.width) : 0);
       for (const cell of line.cells) {
         if (cell.icon) drawImage(parent, cell.icon, left, top + (height - iconSize) / 2, iconSize, iconSize, false, trackViewport);
         cell.label.position.set(left + cell.offset, top + (height - cell.label.height) / 2);
-        left += cell.width + itemGap;
+        if (cell.mark) {
+          const { open, layer, close } = cell.mark;
+          open.position.set(cell.label.x + cell.label.width + marketLabelGap, top + (height - open.height) / 2);
+          layer.position.set(open.x + open.width, top + (height - cell.mark.height) / 2);
+          close.position.set(layer.x + cell.mark.width, top + (height - close.height) / 2);
+        }
+        left += cell.width + cell.gap;
       }
       top += height + (line === lines.at(-1) ? 0 : 3);
     }
@@ -1405,7 +1429,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     const baseSize = options.emphasis ? 23 : 18;
     const midSize = Math.min(options.midIconSize ?? iconSize, contentHeight);
     const mid = options.midIcon && hasIcon(options.midIcon) ? midSize + 4 : 0;
-    const captionWidth = Math.max(1, width - 8 - icon - trailing - mid);
+    const check = typeof options.checked === 'boolean' ? iconSize + 5 : 0;
+    const captionWidth = Math.max(1, width - 8 - check - icon - trailing - mid);
     // Half-width characters (digits, Latin letters, spaces) take about 0.6 of a full-width glyph.
     const labelUnits = Array.from(String(label) + (mid ? String(options.midText ?? '') : ''))
       .reduce((units, char) => units + (char.charCodeAt(0) < 0x2e80 ? 0.6 : 1), 0);
@@ -1449,7 +1474,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // midIcon + midText continue the label after it: label, icon, then midText on one line.
       const midSize = Math.min(options.midIconSize ?? iconSize, contentHeight);
       const mid = options.midIcon && hasIcon(options.midIcon) ? midSize + 4 : 0;
-      const captionWidth = Math.max(1, width - 8 - icon - trailing - mid);
+      // checked (boolean) leads the content with a checkbox; a tick inside marks the on state.
+      const check = typeof options.checked === 'boolean' ? iconSize + 5 : 0;
+      const captionWidth = Math.max(1, width - 8 - check - icon - trailing - mid);
       // labelSize: a row-wide size chosen by buttons({ uniformLabel }).
       const size = options.labelSize ?? buttonLabelSize(width, height, label, options);
       const caption = textNode(parent, label, 0, 0, captionWidth,
@@ -1461,10 +1488,22 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         { size: Math.max(8, size), color: disabled ? palette.muted : green ? palette.cream : palette.ink,
           weight: '750', wrap: false }) : null;
       const midWidth = mid ? mid + midCaption.width : 0;
-      const contentLeft = x + (width - icon - caption.width - midWidth - trailing) / 2;
-      caption.position.set(contentLeft + icon, faceY + (faceHeight - caption.height) / 2);
+      const contentLeft = x + (width - check - icon - caption.width - midWidth - trailing) / 2;
+      caption.position.set(contentLeft + check + icon, faceY + (faceHeight - caption.height) / 2);
       const iconY = faceY + (faceHeight - iconSize) / 2;
-      if (icon) drawImage(parent, options.icon, contentLeft, iconY, iconSize, iconSize);
+      if (check) {
+        const box = iconSize;
+        const boxColor = disabled ? palette.muted : palette.ink;
+        const mark = inkGraphics().roundRect(contentLeft, iconY, box, box, 3)
+          .stroke({ color: boxColor, width: 1.5 });
+        if (options.checked) mark.moveTo(contentLeft + box * 0.22, iconY + box * 0.52)
+          .lineTo(contentLeft + box * 0.42, iconY + box * 0.72)
+          .lineTo(contentLeft + box * 0.78, iconY + box * 0.3)
+          .stroke({ color: disabled ? palette.muted : palette.green, width: Math.min(3.5, box * 0.2), cap: 'round', join: 'round' });
+        mark.eventMode = 'none';
+        parent.addChild(mark);
+      }
+      if (icon) drawImage(parent, options.icon, contentLeft + check, iconY, iconSize, iconSize);
       if (mid) {
         const midLeft = caption.x + caption.width + 2;
         drawImage(parent, options.midIcon, midLeft, faceY + (faceHeight - midSize) / 2, midSize, midSize);
@@ -2555,11 +2594,30 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         cursor += boxHeight + rowGap;
       },
       // One flowing row of icon + amount items, optionally followed by short { text } tags.
-      rewards(entries, { fontSize = 15, muted = false, align } = {}) {
+      // label: a compact-row label on the left with the items right-aligned beside it when they fit
+      // on that line, otherwise the label row above the items.
+      rewards(entries, { fontSize = 15, muted = false, align, label } = {}) {
         if (!entries.length) return;
         const size = fontSize * scale();
-        cursor += rewardFlow(parent, entries, x, cursor, width,
-          { size, color: muted ? palette.muted : palette.ink, align }) + rowGap;
+        const color = muted ? palette.muted : palette.ink;
+        if (label != null) {
+          const labelSize = 16 * scale();
+          const name = textNode(parent, label, x, cursor, width, { size: labelSize, weight: '750', wrap: false });
+          const rowHeight = Math.max(32, name.height + 4);
+          const gap = 12;
+          const room = width - name.width - gap;
+          const height = room > 0 ? rewardFlow(parent, entries, x + name.width + gap, cursor, room,
+            { size, color, align: 'right', singleLine: true, minHeight: rowHeight }) : null;
+          if (height != null) {
+            name.y = cursor + (height - name.height) / 2;
+            cursor += height + rowGap;
+            return;
+          }
+          // Same placement as a compact label-only row.
+          name.y = cursor + 2;
+          cursor += rowHeight + 3;
+        }
+        cursor += rewardFlow(parent, entries, x, cursor, width, { size, color, align }) + rowGap;
       },
       sampleProgress(label) {
         if (modal !== local || !local.sample) return;
@@ -3029,7 +3087,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         amount.position.set(x + width - amount.width, top + (height - amount.height) / 2);
         cursor += height + rowGap;
       },
-      item(id, title, description, { marketRate, iconSize, badges, titleSize = 18, crop = false, smooth = false } = {}) {
+      item(id, title, description, { marketRate, iconSize, badges, badgeSize = 13, titleSize = 18, crop = false, smooth = false } = {}) {
         if (iconSize != null || badges) {
           // Icon on the left; title, description and badges stacked on the right and centered on the icon.
           const top = cursor;
@@ -3049,7 +3107,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           }
           if (badges?.length) {
             const gap = 6;
-            const fontSize = 13 * scale();
+            const fontSize = badgeSize * scale();
             let left = textX;
             let rowTop = top + textHeight + 4;
             let rowHeight = 0;
@@ -3331,16 +3389,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // Places the yield float of a production slot just above the next row's right end.
       yieldAnchor(source) {
         yieldAnchor(parent, local, source, x + width, cursor);
-      },
-      researchProgress() {
-        ui.row('距下次发放', undefined, {
-          compact: true, noWrap: true, icon: 'clock',
-          valueAtClock: (clock) => {
-            const elapsed = world.basicResearchElapsedMs + Math.floor(Math.max(0, clock - world.clockMs));
-            const seconds = Math.ceil((researchHourMs - elapsed % researchHourMs) / 1000);
-            return Math.floor(seconds / 60) + ' 分 ' + seconds % 60 + ' 秒';
-          },
-        });
       },
       goalProgress(fraction, { complete = false } = {}) {
         const height = 8;
@@ -3721,9 +3769,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const detailWidth = cellWidth - 8;
         const tagOptions = { size: 10, align: 'center', color: palette.green, weight: '800', wrap: false };
         const tagLine = Math.ceil(tagOptions.size * 1.36) + 2;
-        // Icon-only cells stack the market mark and order tags as equal lines; each grid row takes its tallest stack.
+        // Icon-only cells stack order tags as equal lines; each grid row takes its tallest stack.
         const infoLine = 18;
-        const infoLines = (item) => (item.marketRate ? 1 : 0) + (item.orderTags?.length ?? 0);
+        const infoLines = (item) => item.orderTags?.length ?? 0;
+        // Market rate sits in the card's top-left corner as white-stroked text, drawn last so it stays readable over the icon.
+        const rateBadge = (layer, rate, cardLeft, cardTop, cardSpan) => {
+          const badge = textNode(layer, marketRateText(rate), cardLeft + 5, cardTop + 4, cardSpan - 10,
+            { size: 12, color: rate > 0 ? palette.green : palette.red, weight: '900', wrap: false });
+          badge.style.stroke = { color: 0xffffff, width: 3, join: 'round' };
+          return badge;
+        };
         let heights = [];
         if (iconsOnly) {
           for (const [index, item] of items.entries()) {
@@ -3733,23 +3788,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         }
         if (!iconsOnly) {
           const style = new TextStyle(textStyle(titleWidth, titleOptions));
-          const unwrapped = new TextStyle(textStyle(titleWidth, { ...titleOptions, align: 'left', wrap: false }));
-          const markSize = marketMarkSize(font);
-          const markStyle = new TextStyle(textStyle(titleWidth, { size: markSize, weight: '800', wrap: false }));
           const detailStyle = new TextStyle(textStyle(detailWidth, detailOptions));
           heights = [];
-          for (const [index, { label, marketRate, duration, assignmentSummary, orderTags }] of items.entries()) {
-            const name = number(label);
-            const title = CanvasTextMetrics.measureText(name, style);
-            let titleHeight = title.height;
-            if (marketRate) {
-              const amount = CanvasTextMetrics.measureText(marketRateText(marketRate), markStyle);
-              const mark = marketMarkLayout(titleWidth, markSize, amount);
-              const plain = CanvasTextMetrics.measureText(name, unwrapped);
-              titleHeight = marketLabelFits(titleWidth, name, plain.width, mark.width)
-                ? Math.max(plain.height, mark.height)
-                : title.height * Math.min(1, titleWidth / title.width) + 1 + mark.height;
-            }
+          for (const [index, { label, duration, assignmentSummary, orderTags }] of items.entries()) {
+            const titleHeight = CanvasTextMetrics.measureText(number(label), style).height;
             const cycle = CanvasTextMetrics.measureText(number(duration), detailStyle);
             const assignmentHeight = assignmentSummary
               ? detailGap + CanvasTextMetrics.measureText(assignmentSummary, detailStyle).height : 0;
@@ -3767,23 +3809,20 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (iconsOnly) {
             drawImage(layer, item.icon ?? item.id, left + (span - iconSize) / 2, top + 8, iconSize, iconSize, false, false);
             let line = top + 44;
-            if (item.marketRate) {
-              const mark = marketMark(layer, span - 8, item.marketRate, 12, false);
-              mark.layer.position.set(left + (span - mark.width) / 2, line + (infoLine - mark.height) / 2);
-              line += infoLine;
-            }
             for (const tag of tags) {
               const label = textNode(layer, tag, left, line, span, tagOptions);
               label.y = line + (infoLine - label.height) / 2;
               line += infoLine;
             }
+            if (item.marketRate) rateBadge(layer, item.marketRate, left, top, span);
             return;
           }
           const content = new Container({ label: 'picker-content:' + item.id });
           content.eventMode = 'none';
           layer.addChild(content);
           drawImage(content, item.icon ?? item.id, (span - iconSize) / 2, 0, iconSize, iconSize, false, false);
-          const title = marketLabel(content, item.label, 5, iconSize + titleGap, titleWidth, item.marketRate, titleOptions);
+          const title = textNode(content, item.label, 5, iconSize + titleGap, titleWidth, item.marketRate
+            ? { ...titleOptions, color: item.marketRate > 0 ? palette.green : palette.red } : titleOptions);
           const duration = textNode(content, item.duration, 4, title.y + title.height + detailGap, detailWidth, detailOptions);
           const last = item.assignmentSummary
             ? textNode(content, item.assignmentSummary, 4, duration.y + duration.height + detailGap, detailWidth, detailOptions)
@@ -3791,6 +3830,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           const tagTop = last.y + last.height;
           tags.forEach((tag, index) => textNode(content, tag, 0, tagTop + 2 + index * tagLine, span, tagOptions));
           content.position.set(left, top + (height - tagTop - tags.length * tagLine) / 2);
+          if (item.marketRate) rateBadge(layer, item.marketRate, left, top, span);
         });
       },
       selectionGrid(items, onSelect) {
@@ -4104,6 +4144,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     const bodyImages = [];
     for (const image of images) {
+      // Layers removed during layout (a reward row's discarded single-line attempt) are never mounted.
+      if (image.layer.destroyed) continue;
       // Fixed dialog-footer and sticky controls were moved out of the scroll body.
       let ancestor = image.layer.parent;
       while (ancestor && ancestor !== body) ancestor = ancestor.parent;
@@ -4420,7 +4462,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     focusIndex = -1;
   }
 
-  function estateArea(parent, researchReady, claimableReturns) {
+  function estateArea(parent, researchReady, hasClaimableReturn) {
     const { width, height } = frame;
     // The shadow atlas is shared and pinned, but is optional map decoration:
     // direct-linked subpages neither request it nor wait for it at opening.
@@ -4448,8 +4490,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       merchantUnlocked: merchantStatus(world).unlocked,
       ordersReady: hasDeliverableOrder(world),
       researchReady,
-      returnGiftSites: new Set(Object.entries(estateDestinations)
-        .filter(([, page]) => claimableReturns.has(page)).map(([site]) => site)),
+      returnGiftSites: new Set(hasClaimableReturn ? ['operations'] : []),
       guideTaskName: activeGuideTask(world)?.name,
       focusedIndex: focusIndex - firstControl,
     });
@@ -4526,7 +4567,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     return { layer, control, right, y: top + size + 8 };
   }
 
-  function drawNavigationMenu(parent, { layer: trigger, control, right, y }, claimableReturns) {
+  function drawNavigationMenu(parent, { layer: trigger, control, right, y }, hasClaimableReturn) {
     // Give the overlay the only hit targets and keyboard controls while it is open.
     const layer = new Container();
     layer.label = 'navigation-menu';
@@ -4579,7 +4620,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       textNode(tile, page === homePage ? '大地图' : page, 4, 40, tileWidth - 8, {
         size: labelSize, align: 'center', weight: '750', wrap: false,
       });
-      if (claimableReturns.has(page) || page === '角色管理' && claimableReturns.size > 0 ||
+      if (hasClaimableReturn && (page === '经营' || page === '角色管理') ||
           page === '订单中心' && hasDeliverableOrder(world)) drawIndicator(tile, tileWidth - 2, 2);
       hitAt(surface, tile, 0, 0, tileWidth, rowHeight, () => go(page, { menu: true }));
     }
@@ -4890,10 +4931,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       navigationMenu = undefined;
       focusIndex = -1;
     }
-    const claimableReturns = hasWorld && (isHome || navigationMenu)
-      ? new Set(Object.entries(managerPages).flatMap(([page, role]) =>
-        managerStatus(world, role)?.claim ? [page] : []))
-      : undefined;
+    const hasClaimableReturn = Boolean(hasWorld && (isHome || navigationMenu) &&
+      Object.values(managerPages).some((role) => managerStatus(world, role)?.claim));
     let menu = isHome ? undefined : topBar(root, world, left, inset.top, w, hasWorld);
     const readyTabs = hasWorld && !waiting && (isHome || current === '研究')
       ? cachedResearchReadyTabs(world) : noResearchReadyTabs;
@@ -4902,7 +4941,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     if (hasWorld && isHome) {
       const hud = new Container();
       menu = homeHud(hud, world, inset);
-      estateArea(root, readyTabs.size > 0, claimableReturns);
+      estateArea(root, readyTabs.size > 0, hasClaimableReturn);
       root.addChild(hud);
     } else if (hasWorld) {
       const drawPage = current === '研究' ? (ui) => renderResearch(ui, readyTabs) : pages[current];
@@ -4950,7 +4989,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       }
     }
 
-    if (navigationMenu && menu) drawNavigationMenu(root, menu, claimableReturns);
+    if (navigationMenu && menu) drawNavigationMenu(root, menu, hasClaimableReturn);
     if (modal && hasWorld) {
       controls = [];
       const sheetBottom = frame.height - inset.bottom - 7;

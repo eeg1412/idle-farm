@@ -1,6 +1,6 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
 import { accountRandom } from './account-random.js';
-import { unitPrice } from './advancement.js';
+import { basicResearchRatePercent, unitPrice } from './advancement.js';
 import { localCalendarDay, validCalendarDay } from './market.js';
 
 const intervalMs = 30 * 60 * 1000;
@@ -21,6 +21,13 @@ export const normalOrderLimit = 6;
 export const challengeOrderLimit = 3;
 // Abandoning an accepted challenge stops new challenge orders for two hours of operating time.
 export const challengeCooldownMs = 7_200_000;
+// Each delivered order grants basic research points by type, scaled by the basic research rate tech.
+export const orderResearchBase = { normal: 50n, high: 100n, challenge: 200n };
+export const orderResearchPoints = (world, type) =>
+  orderResearchBase[type] * BigInt(basicResearchRatePercent(world)) / 100n;
+// Delivery points plus a challenge's pioneer reward, scaled together by the basic research rate tech.
+export const orderResearchReward = (world, order) =>
+  (orderResearchBase[order.type] + (order.pioneer ?? 0n)) * BigInt(basicResearchRatePercent(world)) / 100n;
 // A delivered challenge lets the next three high orders for its product pay 2 times more.
 const challengeBoostOrders = 3;
 const challengeCapsules = 1000n;
@@ -202,26 +209,6 @@ function makeOffer(world, item, sequence, type = 'high') {
     rewardRate: Number(rate) };
 }
 
-// Research cost: the recipe's research coins plus its research materials at catalog base price, without
-// research discounts; zero when it has no research entry.
-function researchCost(id) {
-  const research = catalog.research[id];
-  if (!research) return 0n;
-  let cost = BigInt(research.coins);
-  for (const [material, amount] of Object.entries(research.costs ?? {})) {
-    cost += BigInt(amount) * BigInt(catalog.items[material].price);
-  }
-  return cost;
-}
-
-// Pioneer bonus: 10 × the research cost of every recipe still missing (target and prerequisites);
-// 10 × floor(half the target's own cost) when it is already researched.
-const pioneerBonusScale = 10n;
-function pioneerBonus(world, target, missing) {
-  if (!missing.length) return researchCost(target) / 2n * pioneerBonusScale;
-  return missing.reduce((sum, id) => sum + researchCost(id), 0n) * pioneerBonusScale;
-}
-
 // One level-1 station without technology, in hundredths per hour, rounded like forecastHourlyProduction.
 function baseHourlyOutput(id) {
   const duration = BigInt(catalog.items[id].durationMs);
@@ -229,7 +216,8 @@ function baseHourlyOutput(id) {
 }
 
 // The target is priced at quality 1. Count = max(1, min(ceil(V / 2U), ceil(C0 × H / 100))) with H drawn
-// from 8–24 whole hours; reward = count × floor((U × (80 + L) + 5) / 10) + pioneer bonus.
+// from 8–24 whole hours; reward = count × floor((U × rate + 5) / 10). The pioneer reward in basic research
+// points is fixed at generation: 200 while the target still has missing research, otherwise 100.
 function makeChallenge(world, target, sequence) {
   const price = BigInt(catalog.items[target].price);
   const byValue = ceilDiv(world.productionValue, 2n * price);
@@ -237,13 +225,13 @@ function makeChallenge(world, target, sequence) {
   const byCapacity = ceilDiv(hourly * orderHours(world, sequence), 100n);
   const count = orderCount(byValue, byCapacity);
   const missing = missingResearch(target, new Set(world.unlocked));
-  const bonus = pioneerBonus(world, target, missing);
+  const pioneer = missing.length > 0 ? 200n : 100n;
   const capsules = (world.challengeCapsuleItems ?? []).includes(target) ? 0n : challengeCapsules;
   // +1× per research step still missing, fixed at generation.
   const rate = 80n + premiumLevel(world) + 10n * BigInt(missing.length);
   return { id: sequence.toString(), type: 'challenge', item: target, status: 'offered', count,
-    reward: count * ((price * rate + 5n) / 10n) + bonus, rewardRate: Number(rate * 10n),
-    bonus, capsules };
+    reward: count * ((price * rate + 5n) / 10n), rewardRate: Number(rate * 10n),
+    bonus: 0n, pioneer, capsules };
 }
 
 function addOrder(world, order, changes = {}) {
@@ -455,6 +443,7 @@ export function deliverOrder(world, id) {
   world.stats.ordersCompleted += 1n;
   world.stats.orderRevenue = (world.stats.orderRevenue ?? 0n) + reward;
   world.stats.lifetimeOrderRevenue = (world.stats.lifetimeOrderRevenue ?? 0n) + reward;
+  world.basicResearchPoints += orderResearchReward(world, order);
   endOrder(world, order);
   const orders = world.orders;
   if (order.type === 'high') {
@@ -617,9 +606,11 @@ export function restoreOrders(raw, world, parseAmount = orderAmount) {
       restoredOrder.standardMs = order.standardMs;
     }
     if (type !== 'challenge') return restoredOrder;
-    // Challenges saved before order balancing have no pioneer bonus or capsules.
+    // Challenges saved before order balancing have no coin bonus or capsules; challenges saved before the
+    // pioneer reward have none. A legacy coin bonus stays included in the saved reward.
     return { ...restoredOrder,
       bonus: parseAmount(Object.hasOwn(order, 'bonus') ? order.bonus : '0', field + '.bonus', 0n),
+      pioneer: parseAmount(Object.hasOwn(order, 'pioneer') ? order.pioneer : '0', field + '.pioneer', 0n),
       capsules: parseAmount(Object.hasOwn(order, 'capsules') ? order.capsules : '0', field + '.capsules', 0n) };
   });
   // An accepted challenge never coexists with another challenge order.

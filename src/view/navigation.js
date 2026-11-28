@@ -1,6 +1,6 @@
 const routes = {
   庄园: ['farm', { 田地: 'fields', 畜牧: 'livestock', 鱼塘: 'fish', 矿洞: 'mining' }],
-  工坊: ['workshop', { 加工: 'processing', 精制: 'refining' }],
+  工坊: ['workshop', { 料坊: 'processing', 工房: 'refining' }],
   仓库: ['warehouse', {}],
   订单中心: ['orders', {}],
   行脚商: ['merchant', { 买入: 'buy', 卖出: 'sell' }],
@@ -19,7 +19,7 @@ const productionPages = Object.fromEntries(['庄园', '工坊'].flatMap((page) =
   Object.keys(routes[page][1]).map((tab) => [tab, page])));
 
 export function pageForRoute(page, tab) {
-  if (page === '工坊') return Object.hasOwn(routes.工坊[1], tab) ? tab : '加工';
+  if (page === '工坊') return Object.hasOwn(routes.工坊[1], tab) ? tab : '料坊';
   if (page === '庄园' && Object.hasOwn(routes.庄园[1], tab)) return tab;
   return page;
 }

@@ -4,7 +4,7 @@ import { showItemDetail } from './item-chain.js';
 import { researchPathNodes, showResearch } from './research-page.js';
 import { hourlyRateLabel, hoursLabel } from './management-pages.js';
 import { planOrderLines } from '../game/order-plan.js';
-import { canDeliverOffered, canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderRushCost } from '../game/orders.js';
+import { canDeliverOffered, canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderResearchReward, orderRushCost } from '../game/orders.js';
 
 // Orders saved before order types existed are high-value orders.
 const orderType = (order) => order.type ?? 'high';
@@ -84,19 +84,24 @@ function quantities(ui, order, rates) {
   hourlyChange(ui, order, rates);
   if (accepted) expectedCompletion(ui, order);
   else standardTime(ui, order);
-  const bonus = order.bonus ?? 0n;
-  // Multiplier over the unit price fixed at generation, drawn like a market rate; older orders have none.
-  const rate = typeof order.rewardRate === 'number' ? order.rewardRate - 100 : 0;
-  ui.row('固定报酬', compact(order.reward - bonus) + ' 金币', { compact: true, valueMarketRate: rate || undefined });
-  if (orderType(order) !== 'challenge') return;
-  const capsules = order.capsules ?? 0n;
-  if (bonus > 0n) ui.row('开拓奖金', compact(bonus) + ' 金币', { compact: true });
-  if (capsules > 0n) ui.row('时空胶囊', compact(capsules) + ' 个', { compact: true });
+  ui.rewards(rewardEntries(ui.w, order), { label: '报酬' });
 }
 
-function orderProduct(ui, order, small = false) {
+// Coins (all of the reward), boosted basic research points, then capsules when there are any.
+function rewardEntries(world, order) {
+  // Multiplier over the unit price fixed at generation, drawn like a market rate; older orders have none.
+  const rate = typeof order.rewardRate === 'number' ? order.rewardRate - 100 : 0;
+  const entries = [{ icon: 'coin', value: order.reward, marketRate: rate || undefined },
+    { icon: 'research-point-basic', value: orderResearchReward(world, order) }];
+  const capsules = order.capsules ?? 0n;
+  if (capsules > 0n) entries.push({ icon: 'time-capsule', value: capsules });
+  return entries;
+}
+
+// badgeSize shrinks the type and status tags (compact list cards only); the default keeps the item's size.
+function orderProduct(ui, order, small = false, badgeSize = undefined) {
   ui.item(order.item, catalog.items[order.item].name, undefined,
-    { iconSize: small ? 34 : 50, titleSize: small ? 14 : 18, badges: [typeTag(order), statusTag(ui.w, order)] });
+    { iconSize: small ? 34 : 50, titleSize: small ? 14 : 18, badges: [typeTag(order), statusTag(ui.w, order)], badgeSize });
 }
 
 // Delivery's float comes from the action result in main.js.
@@ -124,7 +129,7 @@ function confirmAbandon(ui, order, inDetail) {
   }, { center: true, maxHeight: 240 });
 }
 
-const placeNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞', I: '加工位', P: '精制位' };
+const placeNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞', I: '料坊位', P: '工房位' };
 
 // One plan per displayed world and order: worlds are replaced on each display refresh, not mutated per frame.
 // Buttons only need availability (no completion, no world copy); the preview takes its own snapshot.
@@ -391,7 +396,7 @@ function placeholderCard(cell, placeholder, rush = null) {
       valueAtClock: (clock) => catalog.items[batch.id].name + ' 还要 ' + remainingTime(batch.end - clock),
       progressAtClock: (clock) => Math.min(1, Math.max(0, (clock - batch.start) / span)),
     });
-  } else if (kind === 'firstProduct') cell.empty('第一件商品做好就有订单', { icon, hint: '去精制位做点商品吧' });
+  } else if (kind === 'firstProduct') cell.empty('第一件商品做好就有订单', { icon, hint: '去工房位做点商品吧' });
   else if (kind === 'afterFirst') cell.empty('还没开始接单', { icon, hint: '第一件商品做好后，再等约 ' + placeholder.afterMinutes + ' 分钟' });
   else if (kind === 'noCandidate') cell.empty('可下单的商品不够了', { icon, hint: '多做几种商品，就能接到更多订单' });
   else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交付或放弃一张后，新订单才会来' });
@@ -446,9 +451,11 @@ export function renderOrders(ui) {
         order === firstScheduled && rushCost != null ? rushOption(ui, rushCost) : null);
     }
     cell.card((card) => {
-      orderProduct(card, order, small);
-      if (small) card.text(compact(order.count) + ' 件 · ' + compact(order.reward) + ' 金币');
-      else {
+      orderProduct(card, order, small, small ? 11 : undefined);
+      if (small) {
+        card.text('需 ' + compact(order.count) + ' 件', { fontSize: 13 });
+        card.rewards([{ text: '报酬:', tight: true }, ...rewardEntries(ui.w, order)], { fontSize: 13 });
+      } else {
         quantities(card, order, rates);
         card.buttons(orderActions(ui, order), { uniformLabel: order.status === 'locked' });
       }

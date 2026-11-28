@@ -251,9 +251,9 @@ function waitingForMerchant(ui, { producedCount, salesLevel12 }) {
       card.text(progress + (complete ? ' ✓' : ''), { ...note, color: complete ? 0x297b34 : undefined });
       card.goalProgress(fraction, { complete });
     };
-    condition(`庄园、工坊加工共出产 ${merchantProductionGate} 种物品`,
+    condition(`庄园、料坊、工房共出产 ${merchantProductionGate} 种物品`,
       `已生产 ${producedCount} / ${merchantProductionGate} 种`, producedCount / merchantProductionGate, productionReady);
-    condition(`在仓库卖出庄园产物和工坊加工品\n累计得款超过 ${salesTarget} 金币`,
+    condition(`在仓库卖出庄园、料坊与工房的产物\n累计得款超过 ${salesTarget} 金币`,
       `已得款 ${salesAmount} 金币`, salesProgress, salesReady);
   }, { padding: 12 });
 }

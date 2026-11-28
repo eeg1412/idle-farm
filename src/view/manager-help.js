@@ -7,10 +7,10 @@ import { compact } from './numbers.js';
 import { helpVoice, productionHelpCopy, taskHelpCopy, tutorialDestination, otherStationCopy, researchHelpCopy, contextHelpCopy } from './manager-help-text.js';
 
 const facilityKinds = { 田地: 'C', 畜牧: 'L', 鱼塘: 'F', 矿洞: 'M' };
-const stationKinds = { 加工: 'I', 精制: 'P' };
-const placeNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞', I: '加工位', P: '精制位' };
-const purchaseNames = { C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞', I: '增设加工位', P: '增设精制位' };
-const addNames = { C: '一块田', I: '一个加工位', P: '一个精制位' };
+const stationKinds = { 料坊: 'I', 工房: 'P' };
+const placeNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞', I: '料坊位', P: '工房位' };
+const purchaseNames = { C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞', I: '增设料坊位', P: '增设工房位' };
+const addNames = { C: '一块田', I: '一个料坊位', P: '一个工房位' };
 const assignmentNames = { C: '播种', L: '安排养殖', F: '安排养殖', M: '开采', I: '选择配方', P: '选择配方' };
 const replacementNames = { C: '换种', L: '更换品种', F: '更换品种', M: '更换矿种', I: '更换配方', P: '更换配方' };
 const taskCache = new WeakMap();
@@ -100,7 +100,7 @@ function taskPage(world, task) {
 }
 
 function matchesPage(world, task, page) {
-  if (task.id === 'stationUpgrade') return page === '加工' || page === '精制';
+  if (task.id === 'stationUpgrade') return page === '料坊' || page === '工房';
   if (page === '研究' && guideResearchFocus(world, task.id)) return true;
   return (task.tab ?? task.target) === page;
 }
@@ -265,7 +265,7 @@ function taskInstruction(world, task, page, speaker) {
     }
     case 'addProcessor': return purchaseStep(world, 'I', speaker);
     case 'addRefinery': return purchaseStep(world, 'P', speaker);
-    case 'stationUpgrade': return upgradeStep(world, page === '精制' ? 'P' : 'I', 2n, speaker);
+    case 'stationUpgrade': return upgradeStep(world, page === '工房' ? 'P' : 'I', 2n, speaker);
     case 'fieldLevel10': return upgradeStep(world, 'C', 10n, speaker);
     case 'livestockIntro': case 'buildLivestock': return purchaseStep(world, 'L', speaker);
     case 'fishIntro': case 'buildFish': return purchaseStep(world, 'F', speaker);
@@ -294,7 +294,7 @@ function taskInstruction(world, task, page, speaker) {
 }
 
 const pageRoles = { 任务: 'tasks', 田地: 'field', 畜牧: 'livestock', 鱼塘: 'fish', 矿洞: 'mine',
-  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 图鉴: 'estate', 出售庄园: 'estate', 订单中心: 'orders' };
+  料坊: 'processing', 工房: 'refining', 仓库: 'warehouse', 研究: 'research', 图鉴: 'estate', 出售庄园: 'estate', 订单中心: 'orders' };
 const speakerKey = (speaker) => speaker.role + ':' + speaker.gender;
 
 // The task page speaks for the active main task, or the first shown unfinished branch task once the main line is
@@ -323,7 +323,7 @@ export function managerTutorial(world, page, speaker) {
 }
 
 const guideCache = new WeakMap();
-const kindPages = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '加工', P: '精制' };
+const kindPages = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '料坊', P: '工房' };
 
 // Coins a task card sends to the warehouse for: where they are spent next, and whether they are still short.
 function earnTarget(world, taskId) {
@@ -334,7 +334,7 @@ function earnTarget(world, taskId) {
 
 // Guidance for a task-card arrival: what task `taskId` needs on `page` right now, in the page manager's voice and
 // without a destination prefix. Main and branch guide tasks only; null when the task is done or the page has nothing
-// to do for it. Landing pages: the task's own page (either workshop page for stationUpgrade), the warehouse when the
+// to do for it. Landing pages: the task's own page (the 料坊 or 工房 page for stationUpgrade), the warehouse when the
 // card sent the player to earn coins, the research page while the task's item is locked.
 export function managerTaskGuide(world, taskId, page, speaker) {
   speaker = helpVoice(speaker, pageRoles[page]);
@@ -346,7 +346,7 @@ export function managerTaskGuide(world, taskId, page, speaker) {
   let text = null;
   if (task && !task.done) {
     const own = task.tab ?? task.target;
-    if (taskId === 'stationUpgrade' ? page === '加工' || page === '精制' : page === own) {
+    if (taskId === 'stationUpgrade' ? page === '料坊' || page === '工房' : page === own) {
       text = spoken(taskInstruction(world, task, page, speaker))?.text ?? null;
     } else if (page === '仓库') {
       const earn = earnTarget(world, taskId);

@@ -3,7 +3,7 @@ import { guide, inGuide, longTerm } from '../game/tasks.js';
 import { appraisalOffer, catalog, farmSaleOffer, plotPrice, quantity, researchOffer } from '../game/state.js';
 import { compact } from './numbers.js';
 
-const pages = ['田地', '工坊', '仓库', '研究'];
+const pages = ['田地', '料坊工房', '仓库', '研究'];
 const palette = { paper: 0xf2e5ba, ink: 0x2a3828, green: 0x35583b, gold: 0xe7ba60, cream: 0xfff6da };
 
 export function createFarm(app, dispatch) {
@@ -169,7 +169,7 @@ export function createFarm(app, dispatch) {
         const [title] = guide.find(([, , done]) => !done(model));
         button(title, left, row + 286, widthIn, () => navigate('任务'));
       }
-    } else if (current === '工坊') {
+    } else if (current === '料坊工房') {
       for (const [index, kind] of ['I', 'P'].entries()) {
         const y = row + 38 + index * 137;
         const station = model.stations[kind];
@@ -177,7 +177,7 @@ export function createFarm(app, dispatch) {
         const itemId = active ? station.output : station.recipe;
         const item = catalog.items[itemId];
         const next = catalog.items[station.recipe];
-        const title = item?.name ?? (kind === 'I' ? '加工位' : '精制位');
+        const title = item?.name ?? (kind === 'I' ? '料坊位' : '工房位');
         const status = active ? '生产中' : next ? '等待材料' : '等待安排';
         label(title + '  ·  ' + status, left, y);
         if (active) {

@@ -12,7 +12,7 @@ import { compact } from './numbers.js';
 
 export const managerPages = {
   任务: 'tasks', 经营: 'estate', 畜牧: 'livestock', 田地: 'field', 矿洞: 'mine', 鱼塘: 'fish',
-  加工: 'processing', 精制: 'refining', 仓库: 'warehouse', 研究: 'research', 行脚商: 'merchant', 订单中心: 'orders',
+  料坊: 'processing', 工房: 'refining', 仓库: 'warehouse', 研究: 'research', 行脚商: 'merchant', 订单中心: 'orders',
   角色管理: 'estate', 统计: 'estate', 出售庄园历史: 'estate', 图鉴: 'estate', 出售庄园: 'estate',
 };
 
@@ -26,7 +26,7 @@ const facilityHelpEmphasis = {
   mine: ['购买矿洞', '选矿', '矿种', '买一座矿洞', '准备矿洞'],
 };
 const workshops = { processing: 'I', refining: 'P' };
-const contextPlaceNames = { field: '田地', livestock: '养殖场', fish: '鱼塘', mine: '矿洞', processing: '加工位', refining: '精制位' };
+const contextPlaceNames = { field: '田地', livestock: '养殖场', fish: '鱼塘', mine: '矿洞', processing: '料坊位', refining: '工房位' };
 const assignmentNames = { field: '播种', livestock: '安排养殖', fish: '安排养殖', mine: '开采', processing: '选择配方', refining: '选择配方' };
 const silent = { muted: true, fontSize: 14 };
 const produceForAffinity = '多生产一些物品，就能继续提高好感。';

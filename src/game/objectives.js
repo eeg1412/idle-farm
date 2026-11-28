@@ -10,8 +10,8 @@ const field = destination('庄园', '田地');
 const livestock = destination('庄园', '畜牧');
 const fish = destination('庄园', '鱼塘');
 const mining = destination('庄园', '矿洞');
-const processing = destination('工坊', '加工');
-const refining = destination('工坊', '精制');
+const processing = destination('工坊', '料坊');
+const refining = destination('工坊', '工房');
 const warehouse = destination('仓库');
 const research = destination('研究');
 const codex = destination('图鉴');
@@ -184,7 +184,7 @@ const qualityTask = (id) => [id, `品质抽取 ${qualityDrawTaskTargets[id]} 次
 
 const plotCondition = '累计购买至少 {目标} 块额外田地';
 const fieldLevelCondition = '将任意一块田地升到 {目标} 级';
-const stationLevelCondition = '将任意加工位或精制位升到 {目标} 级';
+const stationLevelCondition = '将任意料坊位或工房位升到 {目标} 级';
 const recipeCondition = '研发至少 {目标} 种商品配方';
 const codexCondition = '解锁至少 {目标} 种图鉴物品';
 const facilityLevelCondition = '将任意田地、养殖场、鱼塘或矿洞升到 {目标} 级';
@@ -196,7 +196,7 @@ const mainGuide = [
   ['firstHarvest', '第一次收成', '让至少 {目标} 份小麦入库', field, (world) => produced(world, 'C01')],
   ['firstFlour', '磨出面粉', '加工并入库至少 {目标} 份面粉', processing, (world) => produced(world, 'I01')],
   ['breadRecipe', '研发乡村面包', '解锁乡村面包的商品配方', research, (world) => learned(world, 'P01')],
-  ['firstBread', '烤出乡村面包', '精制并入库至少 {目标} 份乡村面包', refining, (world) => produced(world, 'P01')],
+  ['firstBread', '烤出乡村面包', '制作并入库至少 {目标} 份乡村面包', refining, (world) => produced(world, 'P01')],
   ['firstOrder', '完成1件订单', '成功交付至少 {目标} 件订单', destination('订单中心'), (world) => world.stats.ordersCompleted ?? 0n],
   ['firstSale', '第一次出货', '通过仓库或订单出货至少 {目标} 件', warehouse, (world) => world.stats.sold],
   ['firstPlot', '扩建田地', plotCondition, field, (world) => world.stats.plots],
@@ -206,8 +206,8 @@ const mainGuide = [
     (world) => countWhere(world.facilities.C, (slot) => slot.recipe && slot.recipe !== 'C01')],
   ['reserveStock', '设置保留量', '为任一物品设置大于 0 的加工保留量', warehouse,
     (world) => BigInt(Object.keys(world.reserves).length)],
-  ['addProcessor', '添置加工位', '让工坊拥有至少 {目标} 个加工位', processing, (world) => BigInt(world.stations.I.length), 2n],
-  ['addRefinery', '添置精制位', '让工坊拥有至少 {目标} 个精制位', refining, (world) => BigInt(world.stations.P.length), 2n],
+  ['addProcessor', '添置料坊位', '拥有至少 {目标} 个料坊位', processing, (world) => BigInt(world.stations.I.length), 2n],
+  ['addRefinery', '添置工房位', '拥有至少 {目标} 个工房位', refining, (world) => BigInt(world.stations.P.length), 2n],
   ['stationUpgrade', '升级工位', stationLevelCondition, processing, (world) => maxLevel(allStations(world)), 2n],
   ['recipeTrio', '扩充配方', recipeCondition, research, (world) => countWhere(world.unlocked, (id) => id.startsWith('P')), 3n],
   ['fieldLevel10', '田地十级', fieldLevelCondition, field, (world) => maxLevel(world.facilities.C), 10n],
@@ -242,7 +242,7 @@ const introductionBranches = [
     (world) => maxLevel(world.facilities.M), 5n, '矿业'],
   ['firstMiningProcessing', '加工矿业原料', '加工并入库至少 {目标} 份矿业中间产物', processing,
     (world) => sumProduced(world, (item) => item?.kind === 'IM'), 1n, '矿业'],
-  ['firstMixedProduct', '制作复合商品', '精制并入库至少 {目标} 份复合商品', refining,
+  ['firstMixedProduct', '制作复合商品', '制作并入库至少 {目标} 份复合商品', refining,
     (world) => sumProduced(world, (item) => item?.kind.startsWith('P') && item.sources.length >= 2), 1n, '复合'],
   ['newFarm', '经营交接', runCondition, farmSale, runs, 1n, '经营'],
   ['firstTech', '永久科技', techCondition, research, techTotal, 1n, '经营'],
@@ -254,13 +254,13 @@ const longTerm = [
   ['moreFields', '农地扩建', '当前拥有至少 {目标} 块额外田地', field,
     (world) => BigInt(Math.max(0, world.facilities.C.length - 2)), 10n],
   ['farmIncome', '经营收入', '累计出货收入达到 {目标} 金币', warehouse, (world) => world.stats.lifetimeRevenue, 1_000_000_000_000n * coinScale],
-  ['recipeCollection', '工坊配方集', recipeCondition, research,
+  ['recipeCollection', '工房配方集', recipeCondition, research,
     (world) => countWhere(world.unlocked, (id) => id.startsWith('P')), 25n],
   qualityTask('qualityCollection'),
-  ['milleCrepe', '南岛珍果千层', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'P150')],
+  ['milleCrepe', '南岛珍果千层', '制作并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'P150')],
   ['itemCollection', '完整图鉴', '解锁图鉴中的全部 {目标} 种物品', codex, unlockedCount, BigInt(Object.keys(catalog.items).length)],
   qualityTask('qualityMaster'),
-  ['threeSectorGift', '紫苏双鱼牛汁千层御膳礼盒', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PT50')],
+  ['threeSectorGift', '紫苏双鱼牛汁千层御膳礼盒', '制作并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PT50')],
   ['collection100', '图鉴百种', codexCondition, codex, unlockedCount, 100n],
   ['collection200', '图鉴两百种', codexCondition, codex, unlockedCount, 200n],
   ['collection300', '图鉴三百种', codexCondition, codex, unlockedCount, 300n],
@@ -290,7 +290,7 @@ const longTerm = [
   ['livestockTop', '牛肉庄园', '解锁肉用黄牛品种', research, (world) => learned(world, 'L10')],
   ['fishTop', '鲟鱼鱼塘', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
   ['miningTop', '宝石矿洞', '解锁宝石原矿', research, (world) => learned(world, 'M10')],
-  ['miningProduct', '锡衬铜盘鲈鱼片', '精制并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PM14')],
+  ['miningProduct', '锡衬铜盘鲈鱼片', '制作并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PM14')],
 ];
 
 function floorTwoSignificantDigits(value) {

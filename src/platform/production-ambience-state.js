@@ -1,6 +1,6 @@
 ﻿const productionPages = {
-  加工: { group: 'stations', slot: 'I', kind: 'processing' },
-  精制: { group: 'stations', slot: 'P', kind: 'refining' },
+  料坊: { group: 'stations', slot: 'I', kind: 'processing' },
+  工房: { group: 'stations', slot: 'P', kind: 'refining' },
   田地: { group: 'facilities', slot: 'C', kind: 'field' },
   畜牧: { group: 'facilities', slot: 'L', kind: 'livestock' },
   矿洞: { group: 'facilities', slot: 'M', kind: 'mine' },

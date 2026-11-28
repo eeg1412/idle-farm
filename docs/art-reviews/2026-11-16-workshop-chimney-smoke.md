@@ -1,5 +1,7 @@
 # 工坊烟囱与烟雾分层素材审阅
 
+> 术语更名（2026-11-28）：文中建筑「加工」现称「料坊」，「精制」现称「工房」；加工位、精制位现称料坊位、工房位；「工坊」现分别指料坊或工房。
+
 - 日期：2026-11-16。
 - 依据：`docs/tasks/2026-11-16-workshop-chimney-smoke.md` C、`farm-art-review`及其checklist/rejection。
 - 所有权：本报告归 `/root/workshop_topdown_review`；原画/转换/效果JSON归 `/root/workshop_topdown_art`，布局/渲染归motion，本审阅其他文件只读，不私自修画。

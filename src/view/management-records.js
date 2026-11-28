@@ -20,7 +20,7 @@ export function inventoryEstimate(world) {
 
 export function productionSummary(world) {
   return [['田地', world.facilities.C], ['畜牧', world.facilities.L], ['鱼塘', world.facilities.F],
-    ['矿洞', world.facilities.M], ['加工', world.stations.I], ['精制', world.stations.P]]
+    ['矿洞', world.facilities.M], ['料坊', world.stations.I], ['工房', world.stations.P]]
     .map(([name, slots], index) => ({ name, total: slots.length,
       active: slots.filter((slot) => Boolean(slot.batch)).length,
       empty: slots.filter((slot) => !slot.recipe).length,

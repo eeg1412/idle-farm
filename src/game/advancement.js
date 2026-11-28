@@ -23,9 +23,9 @@ export const techDefinitions = [
   { key: 'cropResearch', budget: 125_000n, name: '农业研发手册', source: '农业' },
   { key: 'cropProcessing', budget: 100_000n, name: '农业加工提速', source: '农业' },
   { key: 'cropCycle', budget: 230_000n, baseCost: 50n, name: '作物周期改良', source: '农业', item: 'C05', prerequisite: 'cropYield', prerequisiteLevel: 20 },
-  { key: 'cropRefining', budget: 230_000n, name: '农业精制专精', source: '农业', item: 'P01', prerequisite: 'cropProcessing', prerequisiteLevel: 20 },
+  { key: 'cropRefining', budget: 230_000n, name: '农业制作专精', source: '农业', item: 'P01', prerequisite: 'cropProcessing', prerequisiteLevel: 20 },
   { key: 'appraisal', budget: 250_000n, baseCost: 50n, name: '经营评估', source: '通用' },
-  { key: 'workshopSpeed', budget: 320_000n, baseCost: 75n, name: '工坊提速', source: '通用' },
+  { key: 'workshopSpeed', budget: 320_000n, baseCost: 75n, name: '料坊工房提速', source: '通用' },
   { key: 'delegation', budget: 140_000n, baseCost: 50n, name: '代管时长', source: '通用' },
   { key: 'livestockBuy', budget: 125_000n, name: '养殖场议价', source: '畜牧', item: 'L01' },
   { key: 'livestockUpgrade', budget: 125_000n, name: '养殖场改造', source: '畜牧', item: 'L01' },
@@ -33,21 +33,21 @@ export const techDefinitions = [
   { key: 'livestockResearch', budget: 125_000n, name: '畜牧研发手册', source: '畜牧', item: 'L01' },
   { key: 'livestockProcessing', budget: 100_000n, name: '畜牧加工提速', source: '畜牧', item: 'L01' },
   { key: 'livestockCycle', budget: 230_000n, baseCost: 50n, name: '畜牧周期改良', source: '畜牧', item: 'L05', prerequisite: 'livestockYield', prerequisiteLevel: 20 },
-  { key: 'livestockRefining', budget: 230_000n, name: '畜牧精制专精', source: '畜牧', item: 'PL01', prerequisite: 'livestockProcessing', prerequisiteLevel: 20 },
+  { key: 'livestockRefining', budget: 230_000n, name: '畜牧制作专精', source: '畜牧', item: 'PL01', prerequisite: 'livestockProcessing', prerequisiteLevel: 20 },
   { key: 'fishBuy', budget: 125_000n, name: '鱼塘议价', source: '水产', item: 'F01' },
   { key: 'fishUpgrade', budget: 125_000n, name: '鱼塘改造', source: '水产', item: 'F01' },
   { key: 'fishYield', budget: 420_000n, baseCost: 150n, name: '鱼群培育', source: '水产', item: 'F01' },
   { key: 'fishResearch', budget: 125_000n, name: '水产研发手册', source: '水产', item: 'F01' },
   { key: 'fishProcessing', budget: 100_000n, name: '水产加工提速', source: '水产', item: 'F01' },
   { key: 'fishCycle', budget: 230_000n, baseCost: 50n, name: '水产周期改良', source: '水产', item: 'F05', prerequisite: 'fishYield', prerequisiteLevel: 20 },
-  { key: 'fishRefining', budget: 230_000n, name: '水产精制专精', source: '水产', item: 'PF01', prerequisite: 'fishProcessing', prerequisiteLevel: 20 },
+  { key: 'fishRefining', budget: 230_000n, name: '水产制作专精', source: '水产', item: 'PF01', prerequisite: 'fishProcessing', prerequisiteLevel: 20 },
   { key: 'miningBuy', budget: 125_000n, name: '矿洞议价', source: '矿业', item: 'M01' },
   { key: 'miningUpgrade', budget: 125_000n, name: '矿洞改造', source: '矿业', item: 'M01' },
   { key: 'miningYield', budget: 420_000n, baseCost: 150n, name: '矿产增收', source: '矿业', item: 'M01' },
   { key: 'miningResearch', budget: 125_000n, name: '矿业研发手册', source: '矿业', item: 'M01' },
   { key: 'miningProcessing', budget: 100_000n, name: '矿业加工提速', source: '矿业', item: 'M01' },
   { key: 'miningCycle', budget: 230_000n, baseCost: 50n, name: '开采周期改良', source: '矿业', item: 'M05', prerequisite: 'miningYield', prerequisiteLevel: 20 },
-  { key: 'miningRefining', budget: 230_000n, name: '矿业精制专精', source: '矿业', item: 'PM01', prerequisite: 'miningProcessing', prerequisiteLevel: 20 },
+  { key: 'miningRefining', budget: 230_000n, name: '矿业制作专精', source: '矿业', item: 'PM01', prerequisite: 'miningProcessing', prerequisiteLevel: 20 },
   { key: 'basicResearchRate', name: '普通研发点倍率', source: '通用', budget: 200_000n },
   { key: 'marketForecast', name: '市场预测', source: '市场', costs: [60n] },
   { key: 'marketManipulation', name: '市场操纵', source: '市场', costs: [50n, 450n, 2_500n] },
@@ -122,7 +122,7 @@ const effectDefinitions = {
   livestockRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   fishRefining: ['生产提速', 0, processingPerLevel, '%', 100],
   miningRefining: ['生产提速', 0, processingPerLevel, '%', 100],
-  basicResearchRate: ['每小时普通研发点', 100, 4, '点'],
+  basicResearchRate: ['普通研发点倍率', 100, 4, '%'],
   marketManipulation: ['每日重置次数', 0, 1, '次'],
   marketForecast: ['明日首次行情', 0, 1, ''],
   marketPromotion: ['上涨方向概率', marketBaseUpwardChance, marketUpwardChancePerLevel, '%'],
@@ -157,7 +157,7 @@ function delegationTime(level) {
 
 export const delegationMilliseconds = (world) => delegationTime(techLevel(world, 'delegation'));
 export const delegationHours = (world) => delegationMilliseconds(world) / researchHourMs;
-export const basicResearchHourlyRate = (world) => 100 + 4 * techLevel(world, 'basicResearchRate');
+export const basicResearchRatePercent = (world) => 100 + 4 * techLevel(world, 'basicResearchRate');
 export const facilityYieldBasis = (world, kind) => 10000 + yieldPerLevel * techLevel(world, yieldKeys[kind]);
 
 export function rate(world, id) {

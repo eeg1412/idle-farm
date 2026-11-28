@@ -35,7 +35,7 @@ python3 scripts/export-item-icons.py --check
 
 ### 设施场景
 
-68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于非动画设施详情及历史素材交付；牲畜与鱼种选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。庄园与工坊的已安排动画区域禁止回退图标、静态场景和程序占位，加载中／失败／资料缺失／卸载均保留区域；素材存在不构成运行回退授权。空设施初始选择图保留。收成明细中的物品图标表示实际产物。
+68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于非动画设施详情及历史素材交付；牲畜与鱼种选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。庄园、料坊与工房的已安排动画区域禁止回退图标、静态场景和程序占位，加载中／失败／资料缺失／卸载均保留区域；素材存在不构成运行回退授权。空设施初始选择图保留。收成明细中的物品图标表示实际产物。
 
 场景原图保存在 `assets/source/art/`，小幅场景表及其提示词保存在 `assets/source/art/facility-sheets/`。按从左到右、从上到下的 ID 顺序绘制和检查，裁去分隔线后导出单张 320×320 WebP，质量 70。运行 `python3 scripts/export-facility-scenes.py` 可重新裁切。首页横幅、空设施和三个首个品种保留整幅绘制的 PNG 原图。游戏只加载当前页面相关的场景。最终构建执行 `npm run art:check`，以原料目录检查设施场景是否齐全；单独执行检查按用户验证授权。
 
@@ -109,29 +109,29 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 共享背景、同种图集与选择图按需加载；滚出、切页、后台与弹窗底板完全遮住时卸载动画，普通弹窗打开时背后可见的动画继续播放；加载中或失败不显示同ID场景或其他回退图标。成熟鱼淡出后再淡入鱼苗，固定鱼塘不参与淡变；展示无保底，跟随真实批次时长：≥4秒三期完整，3–4秒只播鱼苗与成熟，<3秒只常显成熟鱼且不淡变。300ms 参数为实现选择。WebP 不进入启动预缓存，已访问图沿现有离线图片缓存复用。
 
-### 工坊正视动画
+### 料坊与工房正视动画
 
-当前工坊使用 [正视动画素材](art-reviews/2026-11-17-workshop-front.md)，尺寸和拼接位置在 `src/content/workshop-visuals.json` 登记。物料使用仓库同款图标，导出时记录可见底边以对齐履带。
+当前料坊与工房使用 [正视动画素材](art-reviews/2026-11-17-workshop-front.md)，尺寸和拼接位置在 `src/content/workshop-visuals.json` 登记。物料使用仓库同款图标，导出时记录可见底边以对齐履带。
 
-### 历史素材：工坊木质机器与木板履带
+### 历史素材：料坊与工房木质机器与木板履带
 
 2026-11-16按用户要求用内置image_gen独立重画三份木质原稿，替换旧金属机身／橡胶带面，不能用滤色或程序图形代替新绘图。真实输入及提示词在 `assets/workshop/prompts-wood-v6.md`，原稿在同目录 `raw/`，裁切来源和等比尺度在 `registration-wood-v6.json`。
 
 | 对象 | 发布资源 | 持久PNG |
 | --- | --- | --- |
-| 木质加工机 | 已从发布目录移除，源图仍在 assets/（原165×632透明） | `assets/workshop/png/processing-machine-wood-v6.png` |
-| 木质精制机 | 已从发布目录移除，源图仍在 assets/（原158×634透明） | `assets/workshop/png/refining-machine-wood-v6.png` |
+| 木质料坊机 | 已从发布目录移除，源图仍在 assets/（原165×632透明） | `assets/workshop/png/processing-machine-wood-v6.png` |
+| 木质工房机 | 已从发布目录移除，源图仍在 assets/（原158×634透明） | `assets/workshop/png/refining-machine-wood-v6.png` |
 | 无边木板履带 | 已从发布目录移除，源图仍在 assets/（原104×52不透明） | `assets/workshop/png/belt-surface-wood-v6.png` |
 
 旧导出脚本 `export-wood-v6.mjs` 已删除；原画、PNG、`registration-wood-v6.json` 与 `workshop-visuals-wood-v6-candidate.json` 保留。
 
-### 历史素材：工坊独立烟囱与烟雾
+### 历史素材：料坊与工房独立烟囱与烟雾
 
 烟囱和烟雾在木质机身之上分层，不修改wood-v6机身原画。`assets/workshop/raw/chimney-smoke-v1.png`由内置image_gen真实生成透明2×2网格，烟囱顶口与三烟团分别裁出。实际提示词、输入与裁切／开口中心登记在同目录 `prompts-chimney-smoke-v1.md`、`registration-chimney-smoke-v1.json`；旧转换脚本 `export-chimney-smoke-v1.mjs` 已删除，原画与登记保留。
 
 原发布的 `chimney-v1.webp`、`smoke-1-v1.webp`、`smoke-2-v1.webp`、`smoke-3-v1.webp`（均为96×96透明纹理）已从发布目录移除，源图仍在 assets/，持久PNG位于 `assets/workshop/png/`。烟囱源顶口中心315,312经400²真实裁切归一到48,48，锚点为0.5,0.5；现行安装与发射点、烟团生命周期等效果参数在 `src/content/workshop-visuals.json` 的 `effects` 中登记（旧 `workshop-effects.json` 已删除）。烟团保留真实Alpha轮廓，再由显示层控制全局透明度，不能把不透明程序圆或整块灰底当烟雾素材。源／成品直接图片审阅与真实漂浮、半透明叠加、130px组合分别验收，未运行部分不得记为通过。
 
-第 2 版效果配置复用烟囱与烟团纹理。工坊齿轮 `gear-v1.webp`（96×96 透明，旋转锚点 0.5,0.5）已从发布目录移除，源图仍在 assets/；空仓图标采用 `public/ui-icons/warehouse-empty-v1.webp`（160×160 透明）。[源图、绘制提示和导出记录](art-reviews/2026-11-16-workshop-warehouse-assets.md)。
+第 2 版效果配置复用烟囱与烟团纹理。料坊与工房齿轮 `gear-v1.webp`（96×96 透明，旋转锚点 0.5,0.5）已从发布目录移除，源图仍在 assets/；空仓图标采用 `public/ui-icons/warehouse-empty-v1.webp`（160×160 透明）。[源图、绘制提示和导出记录](art-reviews/2026-11-16-workshop-warehouse-assets.md)。
 
 ## 资源加载
 
@@ -145,7 +145,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 静态关键帧使用与Pixi相同的布局/时序输入合成；审图报告见本轮`docs/art-reviews/`，逐一分开记录原画、发布资源、合成分镜、实际运行与用户认可。`assets/mining/keyframes/` 与 `assets/mining/reviews/` 的图片是仅本地保存的证据图，不提交；`keyframes.json` 等清单照常提交，新环境用 `scripts/compose-mining-keyframes.mjs` 重新生成。素材存在或自动资源门通过不代表视觉或运行通过。
 
-- PixiJS 游戏的庄园、工坊、仓库和图鉴列表连续滚动。列表只绘制进入视口的内容，并在其进入视口时按需请求对应图标和场景图。图片请求按资源 URL 合并并发请求，失败时保留名称及布局。物品图与界面图分别来自 `public/wiki/icons/` 和 `public/ui-icons/`。动画挂载和卸载遵循各场景的既有规则。
+- PixiJS 游戏的庄园、料坊、工房、仓库和图鉴列表连续滚动。列表只绘制进入视口的内容，并在其进入视口时按需请求对应图标和场景图。图片请求按资源 URL 合并并发请求，失败时保留名称及布局。物品图与界面图分别来自 `public/wiki/icons/` 和 `public/ui-icons/`。动画挂载和卸载遵循各场景的既有规则。
 - Service Worker 只预缓存启动壳和必需依赖；带哈希的 `public/` 发布文件除 `art/estate/` 地图图外不进入安装清单，首次加载成功后按发布路径缓存并优先读缓存。除游戏首页外的导航走浏览器常规请求。原图不进入 `dist/`。
 
 游戏大幅场景分别保留在 `assets/source/art/*.png`，各页发布图在 `public/art/*.webp`。游戏按当前页面的可见内容请求相应横幅、场景及图标，并沿用已访问发布图片的缓存。
@@ -157,7 +157,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 - 清单为 `src/content/asset-manifest.json`，由 `scripts/build-asset-manifest.mjs` 在 `vite build` 前生成，属于构建生成物，已列入 `.gitignore`，不提交。生成规则位于 `scripts/asset-manifest.mjs`。
 - 固定名文件保持原名、不入清单：`index.html`、`sw.js`、`manifest.webmanifest`、`favicon.ico`、`icons/` 目录全部文件、`index.html` 的 `href`／`src` 与 `manifest.webmanifest` 的 `icons`／`screenshots`／`shortcuts` 直接引用的本地文件，以及 Cloudflare Pages 配置文件 `_headers`、`_redirects`、`_routes.json`。
 - 运行时不请求的文件不入清单，并由构建从 `dist/` 删除：`art/plot/crops/` 中已登记作物的旧整田图集（C01 未改为单株模式时除外）、`art/loading/background.webp` 与 `art/loading/managers.webp`。调整这些加载规则时同步修改 `scripts/asset-manifest.mjs`。
-- 新增运行时资源时，其路径必须能由 `src/view/canvas-ui.js` 的 `runtimeAssetPaths()` 推导。构建逐一核对该集合与清单，缺项即构建失败。该函数从物品、作物、牲畜、鱼类、矿业、工坊、管理员、开屏场景、地图建筑与地图气氛的目录及视觉登记推导路径；以下两组是写在 `canvas-ui.js` 中的固定名单，不由数据推导，新增对应资源时必须同步改名单：
+- 新增运行时资源时，其路径必须能由 `src/view/canvas-ui.js` 的 `runtimeAssetPaths()` 推导。构建逐一核对该集合与清单，缺项即构建失败。该函数从物品、作物、牲畜、鱼类、矿业、料坊与工房、管理员、开屏场景、地图建筑与地图气氛的目录及视觉登记推导路径；以下两组是写在 `canvas-ui.js` 中的固定名单，不由数据推导，新增对应资源时必须同步改名单：
   - 管理员表情：`managerExpressions`（`smile`、`happy`、`sad`、`angry`）× `managerGenders`（`female`、`male`），对应 `art/managers/portraits/<role>/<gender>-<expression>.webp`。
   - 管理员行动图标：`managerActionIcons`（`gift`、`info`、`receive`、`switch`），对应 `art/managers/icons/<name>.webp`。
 - 资源加载失败、Service Worker 缓存与更新提示规则见[性能规约 §6](performance.md#6-构建与发布scriptsbuild-offlinemjs)。

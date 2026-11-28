@@ -1,5 +1,5 @@
 import catalog from '../content/game-data.json' with { type: 'json' };
-import { researchHourMs, techMaxLevels } from '../game/advancement.js';
+import { techMaxLevels } from '../game/advancement.js';
 import { managerDailyCap, managerIds, managerWishUnlockCount, newManagers,
   validManagerAffinityRemainder } from '../game/managers.js';
 import { validCalendarDay, validMarketRate } from '../game/market.js';
@@ -500,7 +500,8 @@ function orderRecord(world, merchant, market, convert) {
     capacity: Object.fromEntries(Object.entries(orders.capacity).map(([item, peak]) => [item, peak.toString()])),
     active: orders.active.map((order) => ({
     ...order, count: order.count.toString(), reward: order.reward.toString(),
-    ...(order.type === 'challenge' && { bonus: order.bonus.toString(), capsules: order.capsules.toString() }),
+    ...(order.type === 'challenge' && { bonus: order.bonus.toString(),
+      pioneer: (order.pioneer ?? 0n).toString(), capsules: order.capsules.toString() }),
   })) };
 }
 
@@ -533,8 +534,6 @@ function amounts(world, convert, convertSigned) {
   const pendingTaskCapsules = convert(Object.hasOwn(world, 'pendingTaskCapsules') ? world.pendingTaskCapsules : '0',
     'pendingTaskCapsules');
   valid(BigInt(pendingTaskCapsules) <= taskCapsuleRewardTotal, 'pendingTaskCapsules');
-  const basicResearchElapsedMs = Object.hasOwn(world, 'basicResearchElapsedMs')
-    ? integer(world.basicResearchElapsedMs, 'basicResearchElapsedMs') : 0;
   const result = {
     schemaVersion: world.schemaVersion,
     revision: world.revision,
@@ -553,8 +552,6 @@ function amounts(world, convert, convertSigned) {
     productionValue: convert(world.productionValue, 'productionValue'),
     researchPoints: convert(world.researchPoints, 'researchPoints'),
     basicResearchPoints: convert(Object.hasOwn(world, 'basicResearchPoints') ? world.basicResearchPoints : '0', 'basicResearchPoints'),
-    basicResearchElapsedMs,
-    basicResearchWeightedMs: convert(Object.hasOwn(world, 'basicResearchWeightedMs') ? world.basicResearchWeightedMs : '0', 'basicResearchWeightedMs'),
     qualityDraws: convert(Object.hasOwn(world, 'qualityDraws') ? world.qualityDraws : '0', 'qualityDraws'),
     accountSeed,
     capsules,
@@ -676,11 +673,6 @@ function validateWorld(world) {
   integer(world.clockMs, 'clockMs');
   integer(world.revision, 'revision');
   integer(world.completedRuns, 'completedRuns');
-  const elapsed = world.basicResearchElapsedMs ?? 0;
-  const weighted = BigInt(world.basicResearchWeightedMs ?? 0);
-  valid(integer(elapsed, 'basicResearchElapsedMs') < researchHourMs, 'basicResearchElapsedMs');
-  valid(weighted >= 100n * BigInt(elapsed) &&
-    weighted < 300n * BigInt(elapsed) + BigInt(researchHourMs), 'basicResearchWeightedMs');
   valid(Array.isArray(world.unlocked), 'unlocked');
   const unlocked = new Set(world.unlocked);
   valid(unlocked.size === world.unlocked.length && world.unlocked.every((id) => typeof id === 'string' &&

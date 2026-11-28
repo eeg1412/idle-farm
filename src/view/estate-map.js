@@ -81,12 +81,12 @@ const sites = [
       sprite.position.set(x + 51 * unit * Math.sin(angle), y + 16.5 * unit * Math.sin(angle));
     } },
 
-  { id: 'processing', label: '加工', center: [0.6515, 1.6266], footprint: [32, 24, 504, 309],
+  { id: 'processing', label: '料坊', center: [0.6515, 1.6266], footprint: [32, 24, 504, 309],
     widthRatio: 0.37, prop: [348, 223, 152], smoke: { origin: [330, 32], phaseOffset: 0 },
     animate(sprite, time) {
       sprite.rotation = turn * cycle(time, 8);
     } },
-  { id: 'refining', label: '精制', center: [0.2226, 1.7611], footprint: [28, 30, 506, 309],
+  { id: 'refining', label: '工房', center: [0.2226, 1.7611], footprint: [28, 30, 506, 309],
     widthRatio: 0.34, smoke: { origin: [403, 37], phaseOffset: 1.1 } },
 
   { id: 'research', label: '研发', center: [0.2596, 2.1034], footprint: estateResearchFootprint,

@@ -1,5 +1,6 @@
 import { catalog, quantity } from '../game/world.js';
-import { basicResearchHourlyRate, researchOffer, techDefinitions, techOffer, unitPrice } from '../game/advancement.js';
+import { researchOffer, techDefinitions, techOffer, unitPrice } from '../game/advancement.js';
+import { orderResearchPoints } from '../game/orders.js';
 import { qualityDrawCost, qualityDrawOffer } from '../game/quality.js';
 import { hoursLabel } from './management-pages.js';
 import { compact } from './numbers.js';
@@ -66,37 +67,37 @@ const techArt = {
 const techEffectLabels = {
   recipeDiscount: '商品配方研发材料减免',
   appraisal: '后续产出折算高级研发点的倍率',
-  workshopSpeed: '工坊加工与精制速度加成',
+  workshopSpeed: '料坊加工与工房制作速度加成',
   delegation: '离线结算上限',
-  basicResearchRate: '每小时普通研发点',
+  basicResearchRate: '交付订单获得普通研发点的倍率',
   cropBuy: '购地费用降幅',
   cropUpgrade: '地块升级费用降幅',
   cropYield: '田地每批产量加成',
   cropResearch: '作物与农业加工配方研发材料减免',
   cropProcessing: '农业中间产物加工速度加成',
   cropCycle: '田地生产速度加成',
-  cropRefining: '农业来源商品精制速度加成',
+  cropRefining: '农业来源商品制作速度加成',
   livestockBuy: '养殖场购置费用降幅',
   livestockUpgrade: '养殖场升级费用降幅',
   livestockYield: '养殖场每批产量加成',
   livestockResearch: '畜牧品种与加工配方研发材料减免',
   livestockProcessing: '畜牧中间产物加工速度加成',
   livestockCycle: '养殖场生产速度加成',
-  livestockRefining: '畜牧来源商品精制速度加成',
+  livestockRefining: '畜牧来源商品制作速度加成',
   fishBuy: '鱼塘购置费用降幅',
   fishUpgrade: '鱼塘升级费用降幅',
   fishYield: '鱼塘每批产量加成',
   fishResearch: '鱼种与水产加工配方研发材料减免',
   fishProcessing: '水产中间产物加工速度加成',
   fishCycle: '鱼塘养殖速度加成',
-  fishRefining: '水产来源商品精制速度加成',
+  fishRefining: '水产来源商品制作速度加成',
   miningBuy: '矿洞购置费用降幅',
   miningUpgrade: '矿洞升级费用降幅',
   miningYield: '矿洞每批产量加成',
   miningResearch: '矿种与矿业加工配方研发材料减免',
   miningProcessing: '矿业中间产物加工速度加成',
   miningCycle: '矿洞开采速度加成',
-  miningRefining: '矿业来源商品精制速度加成',
+  miningRefining: '矿业来源商品制作速度加成',
   marketForecast: '明日首次行情',
   marketManipulation: '每日行情重置次数',
   marketPromotion: '价格波动时的涨价概率',
@@ -280,9 +281,9 @@ function showQualityDrawResults(ui, result) {
 
 function renderQuality(ui) {
   ui.balance('普通研发点', ui.w.basicResearchPoints, { variant: 'efficiency', icon: 'research-point-basic' });
-  ui.researchProgress();
-  ui.text(`每小时发放 ${basicResearchHourlyRate(ui.w)} 普通研发点。每抽消耗 ${qualityDrawCost} 点，随机提升一个已研发品项的品质。`,
-    { muted: true });
+  const points = (type) => compact(orderResearchPoints(ui.w, type));
+  ui.text(`交付订单获得普通研发点：普通 ${points('normal')}／高额 ${points('high')}／挑战 ${points('challenge')}。`
+    + `每抽消耗 ${compact(qualityDrawCost)} 点，随机提升一个已研发品项的品质。`, { muted: true });
   const single = qualityDrawOffer(ui.w, 'single');
   const all = qualityDrawOffer(ui.w, 'all');
   const drawReason = ui.w.basicResearchPoints < qualityDrawCost ? '研发点还不够' : '还没研发出任何品种';
@@ -307,6 +308,7 @@ function techEffect(offer, key) {
   const format = (value) => {
     if (unit === '分钟') return hoursLabel(value * 60);
     if (key === 'marketForecast') return value ? '可查看' : '未解锁';
+    if (key === 'basicResearchRate') return `${value}%`;
     if (key === 'premiumSales' || key === 'merchantBargaining') return `${value.toFixed(2)} ${unit}`;
     return unit === '%' ? `${value}%` : `${value} ${unit}`;
   };

@@ -5,7 +5,7 @@ import {
   assignProductionBatch, clearProductionBatch, upgradeProductionBatch,
   setStationPriority, reserve, sell, sellBatch, sellFarm, synchronizeWorldCalendar, recordOrderCapacity, completeIntro,
 } from './game/world.js';
-import { research, researchHourMs, upgradeTech } from './game/advancement.js';
+import { research, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
 import { acceptOrder, deliverOrder, deliverOfferedOrder, abandonOrder, replaceOrder, rushOrder } from './game/orders.js';
@@ -162,8 +162,7 @@ function paint() {
   }
   // Reproject at the actual production boundary, even between regular snapshots.
   nextDisplayAt = anchor + Math.min(displayRefreshMs, nextEnd - display.clockMs,
-    (display.orders.nextAttemptMs ?? Infinity) - display.clockMs,
-    researchHourMs - display.basicResearchElapsedMs);
+    (display.orders.nextAttemptMs ?? Infinity) - display.clockMs);
 }
 function resize() {
   viewportResizePending = false;
@@ -451,7 +450,7 @@ async function initialize(recovery) {
   }
 }
 
-function feedback(name, args, revenueBefore, after, actionResult) {
+function feedback(name, args, revenueBefore, after, actionResult, researchBefore) {
   if (__DEV_TEST_MODE__ && name === 'grantDevelopmentTools') {
     return { toast: '开发测试模式：已解锁全部科技，并追加 1T 金币', sound: 'success' };
   }
@@ -481,10 +480,11 @@ function feedback(name, args, revenueBefore, after, actionResult) {
     return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
   }
   if (name === 'deliverOrder' || name === 'deliverOfferedOrder') {
-    return { float: '已交付 +' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
+    return { float: '已交付 +' + compact(after.stats.revenue - revenueBefore) + ' 金币 +' +
+      compact(after.basicResearchPoints - researchBefore) + ' 研发点', sound: 'sell' };
   }
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' })[args[0]], sound: 'success' };
-  if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '加工位' : '精制位'), sound: 'success' };
+  if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '料坊位' : '工房位'), sound: 'success' };
   if (name === 'upgradeFacility' || name === 'upgradeStation' || name === 'upgradeProductionBatch') {
     return { float: '已升级', sound: 'success' };
   }
@@ -522,8 +522,9 @@ function dispatch(name, ...args) {
       if (!Object.hasOwn(actions, name)) return { ok: false };
       const draft = structuredClone(world);
       const anchor = foreground(draft, true, anchorAt, wallAt);
-      // Feedback reads only the revenue before the action; a BigInt needs no copy.
+      // Feedback reads only the revenue and basic research points before the action; a BigInt needs no copy.
       const revenueBefore = draft.stats.revenue;
+      const researchBefore = draft.basicResearchPoints;
       const actionResult = applyAction(name, draft, args, wallAt);
       if (actionResult === false) {
         settleProduction(draft);
@@ -551,7 +552,7 @@ function dispatch(name, ...args) {
         view.resetSession();
       }
       paint();
-      const result = feedback(name, args, revenueBefore, draft, actionResult);
+      const result = feedback(name, args, revenueBefore, draft, actionResult, researchBefore);
       result.toast = joinToast(result.toast, toast);
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };

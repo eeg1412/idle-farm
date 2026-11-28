@@ -14,7 +14,7 @@ const facilityNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞' };
 const facilityArtAspects = { C: 1.06, L: 1.11, F: 1.20, M: 1 };
 const emptyFacilityArt = { C: 'scene-empty-field', L: 'scene-empty-barn', F: 'scene-empty-pond', M: 'facility-empty-mine' };
 const purchaseLabels = { C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' };
-const stationNames = { I: '加工位', P: '精制位' };
+const stationNames = { I: '料坊位', P: '工房位' };
 const emptyStationArt = { I: 'facility-mill', P: 'facility-kitchen' };
 const emptyListIcons = { C: 'facility-field', L: 'facility-hen', F: 'facility-fish', M: 'mining-tab' };
 const upgradeOptions = [
@@ -25,7 +25,7 @@ const batchUpgradeSteps = [1n, 5n, 10n];
 
 const confirm = { tone: 'gold' };
 
-const capsuleCategories = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '加工', P: '精制' };
+const capsuleCategories = { C: '田地', L: '畜牧', F: '鱼塘', M: '矿洞', I: '料坊', P: '工房' };
 const capsuleShortcuts = [
   { label: '1 分钟', amount: capsulesPerMinute }, { label: '10 分钟', amount: capsulesPerMinute * 10n },
   { label: '1 小时', amount: capsulesPerMinute * 60n }, { label: '最大', amount: 'max' },
@@ -151,6 +151,9 @@ function replacementChoices(dialog, kind, choices, isSelected, onSelect) {
     selected: isSelected(id),
     ...(assignments && { assignmentSummary: '已安排 ' + compact(assignments.get(id) ?? 0) + ' 条' }),
   }));
+  // Order products first, then order materials; Array#sort is stable, so each group keeps its order.
+  const orderRank = (item) => (products.has(item.id) ? 0 : materials.has(item.id) ? 1 : 2);
+  items.sort((a, b) => orderRank(a) - orderRank(b));
   dialog.choiceGrid(items, onSelect, { iconsOnly });
 }
 
@@ -201,13 +204,6 @@ function batchOutput(world, kind, index, slot, id, upgradeQuote) {
   };
 }
 
-function batchImpact(dialog, kind, cancelled) {
-  if (!cancelled) return;
-  dialog.text(isWorkshop(kind)
-    ? '将中止 ' + cancelled + ' 个未完成批次，已扣材料退回仓库。'
-    : '将中止 ' + cancelled + ' 个未完成批次，这些批次没有收成。', { muted: true });
-}
-
 function batchReplace(ui, kind, targets, source, action) {
   const workshop = isWorkshop(kind);
   const title = workshop ? '批量选择配方' : kind === 'C' ? '批量选择作物' : kind === 'L' ? '批量选择牲畜' : kind === 'M' ? '批量选择矿种' : '批量选择鱼种';
@@ -218,7 +214,6 @@ function batchReplace(ui, kind, targets, source, action) {
     if (chosen) {
       const { icon, label, marketRate: rate } = productionChoice(dlg.w, kind, chosen);
       dlg.item(icon, label, '应用至 ' + targets.length + ' 处', { marketRate: rate });
-      batchImpact(dlg, kind, targets.filter((index) => slots[index]?.batch && slots[index].batch.id !== chosen).length);
       dialogButtons(dlg, '确认' + action, () => submit(dlg, 'assignProductionBatch', [kind, targets, chosen], null, '已应用至 ' + targets.length + ' 处'));
       return;
     }
@@ -250,7 +245,6 @@ function batchClear(ui, kind, targets) {
     const slots = workshop ? dlg.w.stations[kind] : dlg.w.facilities[kind];
     const occupied = targets.map((index) => slots[index]).filter((slot) => slot?.recipe || slot?.batch || slot?.planting);
     dlg.row('待清空数量', String(occupied.length));
-    batchImpact(dlg, kind, occupied.filter((slot) => slot.batch).length);
     dialogButtons(dlg, '确认清空', () => submit(dlg, 'clearProductionBatch', [kind, targets], null, '已批量清空'), !occupied.length, undefined,
       '选中的' + placeName(kind) + '都空着');
   });
@@ -420,7 +414,6 @@ function chooseFacility(ui, kind, index) {
     if (!facility) return;
     const choices = dlg.w.unlocked.filter((id) => catalog.items[id]?.kind === kind);
     const label = facility.batch ? replaceLabel : assignLabel;
-    if (facility.batch) dlg.text('更换品种后立即开始新一批，当前未完成的批次没有收成。', { muted: true });
     if (!choices.length) {
       dlg.text('研发对应品种后即可安排。');
       dlg.button('前往研究', () => dlg.go('研究', { tab: '品种配方' }), confirm);
@@ -783,9 +776,6 @@ function chooseRecipe(ui, kind, index, source) {
       dlg.local.indexKeyboard = 0;
       dlg.refresh();
     }, { sticky: true, style: 'filter', compact: true });
-    if (station.batch) {
-      dlg.text('改用其他配方会中止本批，已扣材料退回仓库。', { muted: true });
-    }
     if (!choices.length) {
       dlg.empty('暂无已研发的配方。');
       dlg.button('前往研究', () => dlg.go('研究', { tab: '品种配方' }), confirm);
@@ -1040,7 +1030,7 @@ function workshopSlots(world, kind, source) {
   });
 }
 
-export function renderWorkshop(ui, kind = ui.local.tab === '精制' ? 'P' : 'I') {
+export function renderWorkshop(ui, kind = ui.local.tab === '工房' ? 'P' : 'I') {
   const local = ui.local;
   const sourceKey = 'workshopSource' + kind;
   const focus = catalog.items[local.id]?.kind?.[0] === kind ? local.id : null;

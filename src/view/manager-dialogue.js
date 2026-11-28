@@ -597,7 +597,7 @@ export const managerCharacters = {
     },
   },
   processing: {
-    title: '加工管理员',
+    title: '料坊管理员',
     female: {
       name: '芮塔',
       bio: '红马尾扎得利落，一手攥拳，一手拿着卷起的工图。嘴跟手一样快，开工先问尺寸量了没。',
@@ -696,7 +696,7 @@ export const managerCharacters = {
     },
   },
   refining: {
-    title: '精制管理员',
+    title: '工房管理员',
     female: {
       name: '塞菈',
       bio: '护目镜推在额上，抹布从不离手。炉台擦到能照见人影，她才肯开火。',

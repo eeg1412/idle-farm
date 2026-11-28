@@ -11,7 +11,6 @@ import {
   resetOrderRun, synchronizeOrders,
 } from './orders.js';
 import { activeGuideTask } from './objectives.js';
-import { accrueBasicResearch } from './quality.js';
 import { newPrestigeLedger, prestigeLedgerOffer, productionContributionBatch, settlePrestigeLedger } from './prestige-ledger.js';
 
 export { catalog, marketUnitPrice, unitPrice };
@@ -354,7 +353,7 @@ export function newWorld(now = 0, accountSeed = now.toString(16).padStart(32, '0
   const world = {
     schemaVersion: worldSchemaVersion, revision: 0, clockMs: 0, wallAnchorMs: now, coins: startingCoins,
     inventory: {}, reserves: {}, unlocked: [...catalog.initial], quality: {}, tech: {},
-    researchPoints: 0n, basicResearchPoints: 0n, basicResearchElapsedMs: 0, basicResearchWeightedMs: 0n,
+    researchPoints: 0n, basicResearchPoints: 0n,
     accountSeed, qualityDraws: 0n, market: null, merchant: newMerchant(day),
     managers: newManagers(day), orders: newOrders(day), productionValue: 0n, completedRuns: 0, farmSaleHistory: [],
     capsules: 0n, pendingTaskCapsules: 0n, challengeCapsuleItems: [],
@@ -625,7 +624,6 @@ export function advanceWorld(world, targetMs, {
 } = {}) {
   if (!Number.isSafeInteger(targetMs) || targetMs < world.clockMs) return;
   const startMs = world.clockMs;
-  const elapsed = targetMs - startMs;
   const stations = orderedStations(world);
   const heap = [];
   const enqueue = (entry) => pushEvent(heap, entry);
@@ -682,7 +680,6 @@ export function advanceWorld(world, targetMs, {
     contributions.flush();
   }
   world.clockMs = targetMs;
-  accrueBasicResearch(world, elapsed);
   // Completions change stock and so real output; record the peak once per advance after settlement.
   if (completedAny) recordOrderCapacity(world);
 }

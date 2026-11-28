@@ -1,5 +1,7 @@
 # 工坊木质机器与木板履带审阅
 
+> 术语更名（2026-11-28）：文中建筑「加工」现称「料坊」，「精制」现称「工房」；加工位、精制位现称料坊位、工房位；「工坊」现分别指料坊或工房。
+
 - 日期：2026-11-16。
 - 依据：`docs/tasks/2026-11-16-workshop-wood-art.md`、`farm-art-review`及其checklist/rejection。
 - 所有权：本报告仅由 `/root/workshop_topdown_review` 维护；原画与导出归 `/root/workshop_topdown_art`，本审阅不改资源、元数据或代码。

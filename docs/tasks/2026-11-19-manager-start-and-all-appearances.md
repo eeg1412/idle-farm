@@ -1,5 +1,7 @@
 # 新档男女搭配与22形象开屏
 
+> 术语更名（2026-11-28）：文中建筑「加工」现称「料坊」，「精制」现称「工房」；加工位、精制位现称料坊位、工房位；「工坊」现分别指料坊或工房。
+
 基线GitHub main b32224f与Sites v66代码树相同，Sites源码HEAD708e978。PM已读源码：newRelationship固定female，newWorld→newManagers，因此当前新档11岗全女性；world-save.managerRecord对缺managers的旧档也复用newManagers，需要与新档默认隔离。用户要求：以后新档采用现在11人开屏同一男女搭配；新的开屏同时展示11岗位的男女形象共22人。
 
 ## 冻结新档默认（以当前11人图为依据）
