@@ -123,9 +123,12 @@ function dialogButtons(ui, label, action, disabled = false, style, reason) {
   ], { style });
 }
 
-// Purchases are blocked either by the slot limit or by coins.
-function purchaseReason(quote) {
-  return quote?.atLimit ? '已经建满了' : '金币还不够';
+// Purchases are blocked either by the slot limit or by coins; the coin case names the shortfall.
+function purchaseReason(quote, coins) {
+  if (quote?.atLimit) return '已经建满了';
+  const cost = quote?.cost;
+  if (typeof cost !== 'bigint' || typeof coins !== 'bigint' || cost <= coins) return '金币还不够';
+  return '金币还差 ' + compact(cost - coins);
 }
 
 function replacementChoices(dialog, kind, choices, isSelected, onSelect) {
@@ -433,7 +436,7 @@ function purchaseFacility(ui, kind) {
     dlg.row('购买后数量', compact(BigInt(dlg.w.facilities[kind].length) + 1n));
     dialogButtons(dlg, '确认购买', () => submit(dlg, 'buyFacility', [kind], () => {
       ui.local.focusPurchasedKind = kind;
-    }), !quote.affordable, undefined, purchaseReason(quote));
+    }), !quote.affordable, undefined, purchaseReason(quote, dlg.w.coins));
   });
 }
 
@@ -753,7 +756,7 @@ export function renderProduction(ui, kind = facilityTabs[ui.local.tab] ?? 'C') {
   // Fixed page footer: must stay the last draw call of the page.
   ui.footer(capsuleFooter(ui, kind, {
     label: purchaseLabels[kind], onClick: () => purchaseFacility(ui, kind), disabled: !quote?.affordable,
-    reason: purchaseReason(quote),
+    reason: purchaseReason(quote, ui.w.coins),
   }));
 }
 
@@ -796,7 +799,7 @@ function purchaseStation(ui, kind) {
     dialogButtons(dlg, '确认购买', () => submit(dlg, 'buyStation', [kind], () => {
       ui.local['workshopSource' + kind] = sources[0];
       ui.local.focusPurchasedKind = kind;
-    }), !quote.affordable, undefined, purchaseReason(quote));
+    }), !quote.affordable, undefined, purchaseReason(quote, dlg.w.coins));
   });
 }
 
@@ -1061,6 +1064,6 @@ export function renderWorkshop(ui, kind = ui.local.tab === '工房' ? 'P' : 'I')
   // Fixed page footer: must stay the last draw call of the page.
   ui.footer(capsuleFooter(ui, kind, {
     label: '增设' + stationNames[kind], onClick: () => purchaseStation(ui, kind), disabled: !quote?.affordable,
-    reason: purchaseReason(quote),
+    reason: purchaseReason(quote, ui.w.coins),
   }));
 }
