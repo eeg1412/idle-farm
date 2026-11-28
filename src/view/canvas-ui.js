@@ -3879,7 +3879,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const titleHeight = Math.ceil(titleSize * 1.36) * 2 + 1;
         const detailSize = 12 * scale();
         const detailLines = items.some(({ detail }) => detail?.split('\n').length >= 3) ? 3 : 2;
-        const height = 43 + titleHeight + Math.ceil(detailSize * 1.36) * detailLines + 7;
+        // Optional order tags use the choiceGrid tag style; grids without tags keep their height.
+        const tagOptions = { size: 10, color: palette.green, weight: '800', wrap: false };
+        const tagLine = Math.ceil(tagOptions.size * 1.36) + 2;
+        const tagSpace = Math.max(0, ...items.map(({ orderTags }) => orderTags?.length ?? 0)) * tagLine;
+        const height = 43 + titleHeight + Math.ceil(detailSize * 1.36) * detailLines + 7 + tagSpace;
         scrollChoices(items, onSelect, columns, height, (layer, item, left, top, span) => {
           const card = panel(layer, left, top, span, height,
             item.selected ? palette.selection : palette.card, item.selected ? palette.green : palette.line, 9);
@@ -3896,9 +3900,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           if (item.detail != null) {
             const detail = textNode(layer, item.detail, left + 8, title.y + title.height + 3, span - 16,
               { size: detailSize, color: palette.muted });
-            const fit = Math.min(1, (span - 16) / detail.width, (top + height - 6 - detail.y) / detail.height);
+            const fit = Math.min(1, (span - 16) / detail.width, (top + height - 6 - tagSpace - detail.y) / detail.height);
             detail.scale.set(fit);
           }
+          (item.orderTags ?? []).forEach((tag, index) =>
+            textNode(layer, tag, left + 8, top + height - 6 - tagSpace + 2 + index * tagLine, span - 16, tagOptions));
         }, { toggle: true });
       },
       slider(value, onChange, { min = 0, max = 100, step = 1, label = '', bubble = false, onCommit, onCancel } = {}) {

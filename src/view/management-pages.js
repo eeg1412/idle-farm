@@ -6,6 +6,7 @@ import { compact } from './numbers.js';
 import { showProductionChain } from './item-chain.js';
 import { guideNeedsCoins, guideResearchFocus } from './manager-help.js';
 import { managerIds, managerStatus } from '../game/managers.js';
+import { orderItemTags } from '../game/orders.js';
 
 const entries = Object.entries(catalog.items);
 const typeTabs = ['全部', '原料', '中间产物', '商品'];
@@ -147,17 +148,35 @@ function salePanel(ui, id) {
   }, { variant: 'warehouse-sale' });
 }
 
+// Same wording and basis as the recipe picker: locked orders' items and their recursive inputs.
+function orderTagLabels(tags, id) {
+  return [tags.products.has(id) && '订单商品', tags.materials.has(id) && '订单原料'].filter(Boolean);
+}
+
+const orderFilterTabs = ['全部', '订单', '非订单'];
+
 function batchSalePanel(ui, filters) {
   const selected = new Set();
+  let orderFilter = '全部';
   ui.dialog('批量管理', (panel) => {
+    const tags = orderItemTags(panel.w);
     const quotes = warehouseEntries(panel.w, filters)
       .filter(([id]) => quantity(panel.w, id) > 0n)
+      .filter(([id]) => orderFilter === '全部' ||
+        (orderFilter === '订单') === (tags.products.has(id) || tags.materials.has(id)))
       .map(([id]) => tradeOffer(panel.w, id, 100));
     const available = new Set(quotes.map(({ id }) => id));
     for (const id of selected) {
       if (!available.has(id)) selected.delete(id);
     }
     panel.row('已选品项', selected.size + ' / ' + quotes.length, { compact: true, noWrap: true });
+    panel.buttons(orderFilterTabs.map((label) => ({
+      label, tone: orderFilter === label ? 'green' : 'plain',
+      onClick: () => {
+        orderFilter = label;
+        panel.refresh();
+      },
+    })), { style: 'filter' });
     panel.buttons([
       { label: '全选', disabled: selected.size === quotes.length, reason: quotes.length ? '已经全选了' : '仓库里还没有存货', onClick: () => {
         for (const id of available) selected.add(id);
@@ -172,7 +191,7 @@ function batchSalePanel(ui, filters) {
       panel.selectionGrid(quotes.map(({ id, inventory, price, gain }) => ({
         id, icon: id, label: catalog.items[id].name,
         detail: '库存 ' + compact(inventory) + ' 件\n单价 ' + compact(price) + '\n总价 ' + compact(gain),
-        marketRate: marketRate(panel.w, id), selected: selected.has(id),
+        marketRate: marketRate(panel.w, id), selected: selected.has(id), orderTags: orderTagLabels(tags, id),
       })), ({ id }) => {
         if (selected.has(id)) selected.delete(id);
         else selected.add(id);
@@ -447,7 +466,9 @@ export function renderWarehouse(ui) {
     }
     return;
   }
+  const tags = orderItemTags(ui.w);
   ui.scrollList(filtered, (cell, [id, item]) => {
+    const orderBadges = orderTagLabels(tags, id).map((label) => ({ label, tone: 'green' }));
     const amount = quantity(ui.w, id);
     const quality = compact(ui.w.quality[id] ?? 1n) + ' 级';
     const price = compact(marketUnitPrice(ui.w, id)) + ' 金币';
@@ -460,6 +481,7 @@ export function renderWarehouse(ui) {
     if (compactView) {
       cell.card((row) => {
         row.row(item.name, null, { icon: id, marketRate: rate, compact: true });
+        if (orderBadges.length) row.badges(orderBadges);
         row.row('库存', amount, { compact: true, noWrap: true });
         row.row('品质', quality, { compact: true, noWrap: true });
         row.row('单价', price, { compact: true, noWrap: true });
@@ -469,6 +491,7 @@ export function renderWarehouse(ui) {
     cell.card((row) => {
       row.feature(id, (card) => {
         card.heading(item.name, { marketRate: rate });
+        if (orderBadges.length) card.badges(orderBadges);
         card.row('库存', amount, { style: 'metric', compact: true, divider: true, noWrap: true });
         card.row('品质', quality, { compact: true });
         card.row('单价', price, { compact: true });
