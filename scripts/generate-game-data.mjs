@@ -29,7 +29,7 @@ function fail(message) {
   throw new Error(message);
 }
 
-function readRows(markdown, title, header, includeId = () => true) {
+function readRows(markdown, title, header, { includeId = () => true, tableOnly = false } = {}) {
   const lines = markdown.split(/\r?\n/);
   if (!lines.includes(header)) fail(`${title}缺少表头：${header}`);
   const columnCount = header.split('|').length - 2;
@@ -37,8 +37,13 @@ function readRows(markdown, title, header, includeId = () => true) {
   return lines.flatMap((line, index) => {
     if (!line.startsWith('|')) return [];
     if (!lines[index - 1]?.startsWith('|')) tableHeader = line;
+    if (tableOnly && tableHeader !== header) return [];
     const fields = line.split('|').slice(1, -1).map((field) => field.trim());
-    if (!/^[A-Z]+\d/.test(fields[0] ?? '')) return [];
+    if (tableOnly) {
+      if (line === header || /^\|(?:\s*---\s*\|)+$/.test(line)) return [];
+    } else if (!/^[A-Z]+\d/.test(fields[0] ?? '')) {
+      return [];
+    }
     if (!includeId(fields[0])) return [];
     if (tableHeader !== header || !line.endsWith('|') || fields.length !== columnCount || !idPattern.test(fields[0])) fail(`${title}中的行无效：${line}`);
     return [fields];
@@ -79,9 +84,17 @@ function ids(text, label) {
 }
 
 const stock = new Map();
-for (const [id, subject, name] of readRows(stockTable, '养殖表', '| ID | 对象 | 产物 |', (id) => /^[LF]\d/.test(id))) {
+for (const [id, subject, name] of readRows(stockTable, '养殖表', '| ID | 对象 | 产物 |', {
+  includeId: (id) => /^[LF]\d/.test(id),
+})) {
   if (stock.has(id) || !subject || !name) fail(`${id}的养殖对象无效`);
   stock.set(id, { subject, name });
+}
+
+const crops = new Map();
+for (const [id, subject, name] of readRows(cropUses, '种植对象表', '| ID | 种植对象 | 收获物 |', { tableOnly: true })) {
+  if (!/^C\d/.test(id) || crops.has(id) || !subject || !name) fail(`${id}的种植对象无效`);
+  crops.set(id, { subject, name });
 }
 
 const items = {};
@@ -98,10 +111,16 @@ for (const [id, name, seconds, recipe] of readRows(catalogue, '物品表', '| ID
   if (/^[CLFM]$/.test(kind) ? hasInputs : !hasInputs) fail(`${id}的生产配方不符合品类`);
   const animal = stock.get(id);
   if ((kind === 'L' || kind === 'F') && (!animal || animal.name !== name)) fail(`${id}的物品表与养殖表不一致`);
-  items[id] = { name, ...(animal ? { subject: animal.subject } : {}), minimumSeconds, inputs, kind };
+  const crop = crops.get(id);
+  if (crop && crop.name !== name) fail(`${id}的物品表与种植对象表不一致`);
+  const subject = animal?.subject ?? crop?.subject;
+  items[id] = { name, ...(subject ? { subject } : {}), minimumSeconds, inputs, kind };
 }
 for (const id of stock.keys()) {
   if (!items[id]) fail(`养殖表有未知品项：${id}`);
+}
+for (const id of crops.keys()) {
+  if (!items[id]) fail(`种植对象表有未知品项：${id}`);
 }
 
 for (const [kind, count] of Object.entries(kindCounts)) {

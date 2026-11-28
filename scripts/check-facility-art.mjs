@@ -543,13 +543,47 @@ for (const [key, file] of Object.entries(livestockLayout.sources.sheets)) {
     livestockLayout.sceneSize * livestockLayout.grid.columns, livestockLayout.sceneSize * livestockLayout.grid.rows, true);
 }
 
+const specialFeedKinds = { L13: 'nectar', L29: 'mulberry' };
+sameIDs(livestock.filter((id) => Object.hasOwn(specialFeedKinds, id)),
+  Object.keys(compoundFeed.species ?? {}), '畜牧专用饲料登记');
+
 let livestockFrameCount = 0;
 for (const id of livestock) {
   const definition = livestockLayout.species[id];
   const record = livestockManifest.species[id];
   const feedDefinition = feedingRegistration.species[id];
-  if (JSON.stringify(livestockVisuals[id].feedTexture) !== JSON.stringify(compoundTexture)) {
-    throw new Error(`畜牧运行必须消费同一共用复合饲料图片契约：${id}`);
+  const specialFeed = compoundFeed.species?.[id];
+  const expectedFeedTexture = specialFeed?.texture ?? compoundTexture;
+  const allowedFeedKinds = specialFeed ? [specialFeedKinds[id]] : ['grain', 'hay', 'greens'];
+  if (specialFeed) {
+    const { texture, source, png, sourceSize, sourceRectangle, promptFile } = specialFeed;
+    const region = { x: sourceRectangle?.left, y: sourceRectangle?.top,
+      width: sourceRectangle?.width, height: sourceRectangle?.height };
+    if (specialFeed.kind !== specialFeedKinds[id] || specialFeed.generatedWith !== 'built-in image_gen' ||
+        typeof source !== 'string' || typeof png !== 'string' || typeof promptFile !== 'string' ||
+        !Array.isArray(sourceSize) || sourceSize.length !== 2 || !sourceSize.every(Number.isInteger) ||
+        !validRegion(region, ...sourceSize) ||
+        texture?.path !== './art/livestock/feed-' + id + '.webp' ||
+        JSON.stringify(texture.size) !== '[128,64]' || !validRegion(texture.bounds, 128, 64) ||
+        ![texture.anchor, texture.mouthAnchor].every((point) =>
+          Array.isArray(point) && point.length === 2 && containsPoint(texture.bounds, ...point)) ||
+        !Number.isFinite(texture.sceneWidth) || texture.sceneWidth <= 0) {
+      throw new Error(`畜牧专用饲料来源、范围或锚点无效：${id}`);
+    }
+    const original = await imageFile('assets/livestock/' + source, ...sourceSize, true);
+    await imageFile('assets/livestock/' + png, ...texture.size, true);
+    const published = await imageFile('public/' + texture.path.slice(2), ...texture.size, true);
+    await readFile(locate(promptFile));
+    const feedAsset = record.feedAsset;
+    if (specialFeed.sourceSha256 !== digest(original) || feedAsset?.source !== source ||
+        feedAsset.png !== png || feedAsset.sourceSha256 !== specialFeed.sourceSha256 ||
+        feedAsset.sha256 !== digest(published) ||
+        JSON.stringify(feedAsset.sourceRectangle) !== JSON.stringify(sourceRectangle)) {
+      throw new Error(`畜牧专用饲料的原稿与发布图登记不一致：${id}`);
+    }
+  }
+  if (JSON.stringify(livestockVisuals[id].feedTexture) !== JSON.stringify(expectedFeedTexture)) {
+    throw new Error(`畜牧运行饲料与生产登记不一致：${id}`);
   }
   const expectedStages = definition.slaughter ? 3 : 1;
   const expectedNames = definition.slaughter ? ['young', 'growing', 'mature'] : ['adult'];
@@ -559,7 +593,7 @@ for (const id of livestock) {
       definition.stages.length !== expectedStages || record.frames.length !== expectedStages * 4 ||
       JSON.stringify(definition.stages.map(({ name }) => name)) !== JSON.stringify(expectedNames) ||
       JSON.stringify(record.stages) !== JSON.stringify(expectedNames) || record.animation !== 'feeding' ||
-      feedDefinition.key !== definition.source || !['grain', 'hay', 'greens'].includes(feedDefinition.kind) ||
+      feedDefinition.key !== definition.source || !allowedFeedKinds.includes(feedDefinition.kind) ||
       !Array.isArray(feedDefinition.stages) || feedDefinition.stages.length !== expectedStages) {
     throw new Error(`畜牧阶段或裁切登记不完整：${id}`);
   }
@@ -574,7 +608,7 @@ for (const id of livestock) {
   if (!Array.isArray(feeding) || feeding.length !== expectedStages ||
       !Array.isArray(record.feeding) || record.feeding.length !== expectedStages ||
       !Array.isArray(record.feedingSources) || record.feedingSources.length !== expectedStages ||
-      feeding.some((entry, stage) => !validGrounding(entry) || !['grain', 'hay', 'greens'].includes(entry.kind) ||
+      feeding.some((entry, stage) => !validGrounding(entry) || !allowedFeedKinds.includes(entry.kind) ||
         !validGrounding(definition.stages[stage].feeding) ||
         !sameGrounding(entry, definition.stages[stage].feeding) || entry.kind !== definition.stages[stage].feeding.kind ||
         !validGrounding(record.feeding[stage]) || !sameGrounding(entry, record.feeding[stage]) ||
@@ -727,8 +761,8 @@ for (const id of livestock) {
   if (feedingFallback.source !== `assets/source/art/scene-${id}.png` ||
       feedingFallback.sourceSha256 !== digest(feedingFallbackOriginal) ||
       feedingFallback.sha256 !== digest(feedingFallbackPublished) ||
-      JSON.stringify(feedingFallback.feedTexture) !== JSON.stringify(compoundTexture)) {
-    throw new Error(`畜牧回退必须复用当前独立复合饲料与持久场景来源：${id}`);
+      JSON.stringify(feedingFallback.feedTexture) !== JSON.stringify(expectedFeedTexture)) {
+    throw new Error(`畜牧详情场景必须复用已登记的饲料及原图：${id}`);
   }
   const headUp = livestockChoices.species[id];
   const headUpBytes = await readFile(locate('assets/livestock/' + headUp.source));
@@ -744,23 +778,28 @@ for (const id of livestock) {
       Object.values(feedingRegistration.sources).includes(headUp.source)) {
     throw new Error(`畜牧抬头选择来源缺失、过期或错误消费低头进食来源：${id}`);
   }
+  const choicePrompt = headUp.promptFile ?? livestockChoices.promptFile;
+  // The approved L08 R9 artwork keeps its original input archive beside its source.
+  const archiveDirectory = id === 'L08' && headUp.source === 'raw/l08-small-tailed-han-v1/choice-r9.png'
+    ? 'assets/livestock/raw/l08-small-tailed-han-v1/choice-inputs-r9'
+    : `assets/livestock/choice-input-archive/v7/${id}`;
   if (!Array.isArray(headUp.referenceFrames) || headUp.referenceFrames.length !== 2 ||
       JSON.stringify(record.animalIcon.referenceFrames) !== JSON.stringify(headUp.referenceFrames) ||
       record.animalIcon.generatedWith !== 'built-in image_gen' ||
-      record.animalIcon.promptFile !== livestockChoices.promptFile ||
+      record.animalIcon.promptFile !== choicePrompt ||
       headUp.referenceFrames.some((reference, index) => {
         const frame = `${expectedNames.at(-1)}-${[0, 3][index]}.png`;
         const originalPath = `assets/livestock/animals/${id}/${frame}`;
         if (reference.path === originalPath) {
           return reference.archiveOf !== undefined || reference.originalInputPath !== undefined;
         }
-        return reference.path !== `assets/livestock/choice-input-archive/v7/${id}/${frame}` ||
+        return reference.path !== `${archiveDirectory}/${frame}` ||
           reference.archiveOf !== originalPath || reference.originalInputPath !== originalPath ||
           reference.inputHash !== reference.sha256;
       })) {
     throw new Error(`畜牧普通选择图必须由同ID当前成熟动画0/3帧输入新生成，并保留实际提示词：${id}`);
   }
-  await readFile(locate(livestockChoices.promptFile));
+  await readFile(locate(choicePrompt));
   for (const reference of headUp.referenceFrames) {
     if (reference.sha256 !== digest(await readFile(locate(reference.path)))) {
       throw new Error(`畜牧普通选择图的当前动画输入登记过期：${id}`);
@@ -993,4 +1032,4 @@ for (const id of mining) {
       digest(source) !== record.pngSha256 || digest(published) !== record.sha256 ||
       record.icon !== 'public/wiki/icons/' + id + '.webp') throw new Error('矿业选择场景未复用同ID物品：' + id);
 }
-console.log('已覆盖矿业全目录物品、9界面图标、10选择场景和矿洞/矿车/洞口分层来源；视觉与真实矿车循环另行审阅。');
+console.log(`已覆盖矿业全目录物品、9界面图标、${mining.length} 张选择场景和矿洞/矿车/洞口分层来源。`);

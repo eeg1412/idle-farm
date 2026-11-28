@@ -1,0 +1,139 @@
+{
+  "source": "assets\\plot\\crop-atlases\\C69-C73\\sheet-v2.png",
+  "version": "sheet-v2",
+  "width": 1254,
+  "height": 1254,
+  "alphaNoiseCeiling": 29,
+  "cuts": {
+    "C69": {
+      "sown": {
+        "left": 0,
+        "top": 0,
+        "width": 250,
+        "height": 272
+      },
+      "seedling": {
+        "left": 250,
+        "top": 0,
+        "width": 224,
+        "height": 272
+      },
+      "growing": {
+        "left": 474,
+        "top": 0,
+        "width": 258,
+        "height": 272
+      },
+      "mature": {
+        "left": 732,
+        "top": 0,
+        "width": 298,
+        "height": 272
+      }
+    },
+    "C70": {
+      "sown": {
+        "left": 0,
+        "top": 272,
+        "width": 250,
+        "height": 232
+      },
+      "seedling": {
+        "left": 250,
+        "top": 272,
+        "width": 224,
+        "height": 232
+      },
+      "growing": {
+        "left": 474,
+        "top": 272,
+        "width": 258,
+        "height": 232
+      },
+      "mature": {
+        "left": 732,
+        "top": 272,
+        "width": 298,
+        "height": 232
+      }
+    },
+    "C71": {
+      "sown": {
+        "left": 0,
+        "top": 504,
+        "width": 250,
+        "height": 218
+      },
+      "seedling": {
+        "left": 250,
+        "top": 504,
+        "width": 224,
+        "height": 218
+      },
+      "growing": {
+        "left": 474,
+        "top": 504,
+        "width": 258,
+        "height": 218
+      },
+      "mature": {
+        "left": 732,
+        "top": 504,
+        "width": 298,
+        "height": 218
+      }
+    },
+    "C72": {
+      "sown": {
+        "left": 0,
+        "top": 722,
+        "width": 250,
+        "height": 257
+      },
+      "seedling": {
+        "left": 250,
+        "top": 722,
+        "width": 224,
+        "height": 257
+      },
+      "growing": {
+        "left": 474,
+        "top": 722,
+        "width": 258,
+        "height": 257
+      },
+      "mature": {
+        "left": 732,
+        "top": 722,
+        "width": 298,
+        "height": 257
+      }
+    },
+    "C73": {
+      "sown": {
+        "left": 0,
+        "top": 979,
+        "width": 250,
+        "height": 275
+      },
+      "seedling": {
+        "left": 250,
+        "top": 979,
+        "width": 224,
+        "height": 275
+      },
+      "growing": {
+        "left": 474,
+        "top": 979,
+        "width": 258,
+        "height": 275
+      },
+      "mature": {
+        "left": 732,
+        "top": 979,
+        "width": 298,
+        "height": 275
+      }
+    }
+  }
+}

@@ -10,6 +10,11 @@ const selectedOptions = process.argv.filter((argument) => argument.startsWith('-
 const selectedId = selectedOptions[0]?.slice('--species='.length);
 const selective = selectedOptions.length > 0;
 const selectedChoices = selective && process.argv.includes('--choices-only');
+const framesOnly = process.argv.includes('--frames-only');
+if (framesOnly && (!selective || process.argv.some((argument) =>
+  ['--choices-only', '--feed-only', '--choices-feed-only', '--refresh-scenes'].includes(argument)))) {
+  throw new Error('Use --frames-only with one --species=<ID>.');
+}
 if (selectedOptions.length > 1 || (selective && (!selectedId ||
   ['--feed-only', '--choices-feed-only'].some((argument) => process.argv.includes(argument)) ||
   (selectedChoices && process.argv.includes('--refresh-scenes'))))) {
@@ -23,7 +28,7 @@ if (process.argv.includes('--feed-only')) {
 let choiceExport;
 if (!selective || selectedChoices) choiceExport = await exportLivestockChoices(selectedId);
 if (process.argv.includes('--choices-only')) {
-  console.log('Exported new current-V5-referenced neutral portraits only; feeding frames, feed and fallbacks are untouched.');
+  console.log('Exported neutral portraits from the registered feeding reference frames.');
   process.exit(0);
 }
 
@@ -36,12 +41,19 @@ const evidenceRoot = resolve(sourceRoot, 'choice-feed-evidence', feedRegistratio
 const choicesFeedOnly = process.argv.includes('--choices-feed-only');
 const previousManifest = choicesFeedOnly || selective ? JSON.parse(await readFile(resolve(sourceRoot, 'atlas.json'), 'utf8')) : null;
 if (selective) {
-  if (!layout.species[selectedId] || !feedingRegistration.species[selectedId] || !previousManifest.species[selectedId]) {
+  if (!layout.species[selectedId] || !feedingRegistration.species[selectedId]) {
     throw new Error(`Unknown registered livestock species: ${selectedId}`);
   }
-  const choices = JSON.parse(await readFile(resolve(livestockChoiceRegistrationPath), 'utf8'));
-  choiceExport = { records: Object.fromEntries(Object.entries(previousManifest.species)
-    .map(([id, record]) => [id, { ...record.animalIcon, referenceFrames: choices.species[id].referenceFrames }])) };
+  if (!framesOnly) {
+    if (previousManifest.species[selectedId]) {
+      const choices = JSON.parse(await readFile(resolve(livestockChoiceRegistrationPath), 'utf8'));
+      choiceExport = { records: { [selectedId]: {
+        ...previousManifest.species[selectedId].animalIcon, referenceFrames: choices.species[selectedId].referenceFrames,
+      } } };
+    } else {
+      choiceExport = await exportLivestockChoices(selectedId);
+    }
+  }
 }
 function stageScale(stage, width, height) {
   if (stage.sourceScale !== undefined) {
@@ -86,16 +98,20 @@ for (const [id, registration] of Object.entries(feedingRegistration.species)) {
     const radiusX = Math.max(10, Math.min(25, Math.round(stage.maxWidth * 0.12)));
     stage.feeding = { x: Math.round(mouthX), y: Math.round(mouthY + 3), radiusX,
       radiusY: Math.max(4, Math.round(radiusX * 0.23)), kind: registration.kind };
+    const specialFeed = feedRegistration.species?.[id];
     stage.feedingSource = { source: registration.key, referenceFrame: 0, sourceMouth: points.mouth,
-      method: 'Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.' };
-    stage.supportXRange = [0, Math.floor(mouthX - radiusX * 1.05)];
-    const mouthBounds = {
-      x: stage.supportXRange[1] + 1,
-      y: Math.floor(Math.min(266, mouthY - 8)),
-      width: Math.ceil(mouthX + Math.max(10, radiusX * 0.8)) - stage.supportXRange[1] - 1,
-      height: 0,
+      method: specialFeed
+        ? 'Manual reference-frame mouth contact in original source coordinates, transformed by the fixed support point and shared stageScale. The separate food texture aligns its mouthAnchor to this contact.'
+        : 'Manual reference-frame mouth/beak ground-contact point in original source coordinates, transformed by the shared anatomical foot registration and stageScale. The independent compound-feed image ground anchor is 3 scene pixels below the contact point; food is absent from animal pixels.' };
+    stage.supportXRange = points.supportXRange ?? [0, Math.floor(mouthX - radiusX * 1.05)];
+    const mouthTop = Math.floor(Math.min(266, mouthY - 8));
+    const mouthLeft = stage.supportXRange[1] + 1;
+    const mouthBounds = points.mouthBounds ?? {
+      x: mouthLeft,
+      y: mouthTop,
+      width: Math.ceil(mouthX + Math.max(10, radiusX * 0.8)) - mouthLeft,
+      height: Math.max(274, Math.ceil(mouthY + 5)) - mouthTop,
     };
-    mouthBounds.height = Math.max(274, Math.ceil(mouthY + 5)) - mouthBounds.y;
     stage.feedingSource.mouthBounds = mouthBounds;
     stage.feedingSource.sourceMouthBounds = {
       x: Number((anchorX + (mouthBounds.x - layout.animalRoot.x) / scale).toFixed(3)),
@@ -201,6 +217,22 @@ const feedPublishedPath = resolve('public', feedTexture.path.replace(/^\.\//, ''
 if (!selective) await saveVersions(feed, resolve(sourceRoot, feedRegistration.png), feedPublishedPath);
 // Static evidence consumes the actual published texture, just as the live loader does.
 const publishedFeed = await readFile(feedPublishedPath);
+const speciesFeed = new Map();
+for (const [id, definition] of Object.entries(feedRegistration.species ?? {})) {
+  if (framesOnly || (selective && id !== selectedId)) continue;
+  const { texture, source, sourceRectangle, png } = definition;
+  const original = await readFile(resolve(sourceRoot, source));
+  const image = await sharp(original).extract(sourceRectangle)
+    .resize(texture.bounds.width, texture.bounds.height, { kernel: 'nearest', fit: 'fill' }).png().toBuffer();
+  const normalized = await transparent(...texture.size).composite([{ input: image,
+    left: texture.bounds.x, top: texture.bounds.y }]).png().toBuffer();
+  const publicPath = resolve('public', texture.path.replace(/^\.\//, ''));
+  await saveVersions(normalized, resolve(sourceRoot, png), publicPath);
+  const published = await readFile(publicPath);
+  speciesFeed.set(id, { texture, published, asset: { source, png, sourceRectangle,
+    sourceSha256: createHash('sha256').update(original).digest('hex'),
+    sha256: createHash('sha256').update(published).digest('hex') } });
+}
 const manifest = selective ? structuredClone(previousManifest) : {
   version: layout.version, generatedWith: 'built-in image_gen using approved pixel-v4 style; sharp alpha isolation, fixed anatomical registration and nearest-neighbor packing',
   animation: 'feeding', feedingRegistration: 'assets/livestock/feeding-registration-v5.json',
@@ -308,7 +340,9 @@ async function deriveGrounding(scene, id, stage) {
   return { grounding, footprint: { referenceFrame: 0,
     framePath: `assets/livestock/animals/${id}/${stage.name}-0.png`, alphaThreshold: 128, region,
     supportMaterial: stage.supportMaterial, supportXRange: stage.supportXRange,
-    supportSelection: goldenFeet ? 'Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.' : 'Opaque supporting hooves/paws in the registered lower-foot region.',
+    supportSelection: goldenFeet ? 'Golden toes/webbing RGB r>=100,g>=45,r>g,b<=0.7g, plus one-pixel outline; excludes low feather hem.'
+      : feedRegistration.species?.[id] ? 'Opaque supporting feet in the registered lower-foot region.'
+      : 'Opaque supporting hooves/paws in the registered lower-foot region.',
     bounds: { x: left, y: top, width: right - left, height: frontY - top }, contacts: feet,
     method: 'Reference frame 0 only: connected support feet in the registered lower-foot region; ellipse center spans the stance extrema and rear/front toe-bottom ground contacts. Same geometry for all idle frames; animal registration and transforms are unchanged.' } };
 }
@@ -326,15 +360,18 @@ async function overviewProduct(id, species) {
 
 async function feedingScene(id, species, animal, stageIndex = species.stages.length - 1, background = barn) {
   const positions = livestockLayout(id);
+  const separateFeed = speciesFeed.get(id);
+  const texture = separateFeed?.texture ?? feedTexture;
+  const feedImage = separateFeed?.published ?? publishedFeed;
   const layers = [];
   for (const placement of positions.placements) {
     const factor = positions.animalScale * placement.depth;
     const left = placement.x - layout.animalRoot.x * factor, top = placement.y - layout.animalRoot.y * factor;
-    const geometry = livestockFeedLayout(species.stages[stageIndex].feeding, feedTexture, positions.animalScale);
+    const geometry = livestockFeedLayout(species.stages[stageIndex].feeding, texture, positions.animalScale);
     const { shadow } = geometry;
     const shadowImage = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><g transform="translate(${left} ${top}) scale(${factor})"><ellipse cx="${shadow.x}" cy="${shadow.y}" rx="${shadow.radiusX}" ry="${shadow.radiusY}" fill="#2b2118" opacity="${shadow.alpha}"/></g></svg>`);
     layers.push({ input: shadowImage, left: 0, top: 0 });
-    layers.push({ input: await sharp(publishedFeed)
+    layers.push({ input: await sharp(feedImage)
       .resize(Math.max(1, Math.round(geometry.width * factor)), Math.max(1, Math.round(geometry.height * factor)), { kernel: 'nearest' })
       .png().toBuffer(), left: Math.round(left + geometry.x * factor), top: Math.round(top + geometry.y * factor) });
     layers.push({ input: await sharp(animal).resize(Math.round(size * factor), Math.round(size * factor), { kernel: 'nearest' }).png().toBuffer(),
@@ -345,8 +382,8 @@ async function feedingScene(id, species, animal, stageIndex = species.stages.len
 
 for (const [id, species] of Object.entries(layout.species)) {
   if (selective && id !== selectedId) continue;
-  const productAsset = await canonicalProduct(id);
-  species.productVisual = { ...productAsset };
+  const productAsset = framesOnly ? null : await canonicalProduct(id);
+  if (productAsset) species.productVisual = { ...productAsset };
   const atlasLayers = [];
   const records = choicesFeedOnly ? previousManifest.species[id].frames : [];
   for (const [stageIndex, stage] of (choicesFeedOnly ? [] : species.stages).entries()) {
@@ -395,6 +432,10 @@ for (const [id, species] of Object.entries(layout.species)) {
     await transparent(size * layout.idleFrames, size).composite(alignmentLayers).png()
       .toFile(resolve(alignmentRoot, `${id}-${stage.name}.png`));
   }
+  if (framesOnly) {
+    console.log(`Exported registered frame PNGs for ${selectedId} as image generation references.`);
+    process.exit(0);
+  }
   if (!choicesFeedOnly) {
     const atlas = await transparent(size * layout.idleFrames, size * species.stages.length)
       .composite(atlasLayers).png().toBuffer();
@@ -410,7 +451,7 @@ for (const [id, species] of Object.entries(layout.species)) {
   const retainedItemIcon = await exists(itemIcon);
   const facilityScene = resolve('public/art', `scene-${id}.webp`);
   const retainedFacilityScene = await exists(facilityScene);
-  const previousScene = selective ? previousManifest.species[id].facilityScene : undefined;
+  const previousScene = selective ? previousManifest.species[id]?.facilityScene : undefined;
   if (!retainedFacilityScene || refreshScenes) {
     const stageIndex = species.stages.length - 1;
     // Preserve the published V8 fallback's compositing inputs during a one-species repair.
@@ -424,6 +465,7 @@ for (const [id, species] of Object.entries(layout.species)) {
   }
   const facilityOriginal = await readFile(resolve('assets/source/art', `scene-${id}.png`));
   const facilityPublished = await readFile(facilityScene);
+  const separateFeed = speciesFeed.get(id);
   manifest.species[id] = { subject: species.subject, product: species.product, slaughter: species.slaughter,
     animation: 'feeding', feeding: species.stages.map((stage) => stage.feeding),
     feedingSources: species.stages.map((stage) => stage.feedingSource),
@@ -438,11 +480,15 @@ for (const [id, species] of Object.entries(layout.species)) {
     grounding: species.stages.map((stage) => stage.grounding),
     footprints: species.stages.map((stage) => stage.footprint),
     itemIcon: { path: `public/wiki/icons/${id}.webp`, retained: retainedItemIcon },
+    ...(separateFeed ? { feedAsset: separateFeed.asset } : {}),
     facilityScene: retainedFacilityScene && !refreshScenes && previousScene ? previousScene : {
       path: `public/art/scene-${id}.webp`, source: `assets/source/art/scene-${id}.png`, animation: 'feeding',
       sourceSha256: createHash('sha256').update(facilityOriginal).digest('hex'),
-      sha256: createHash('sha256').update(facilityPublished).digest('hex'), feedTexture,
-      feedLayers: previousScene?.feedLayers ?? 'shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures',
+      sha256: createHash('sha256').update(facilityPublished).digest('hex'),
+      feedTexture: separateFeed?.texture ?? feedTexture,
+      feedLayers: separateFeed
+        ? 'species-specific food image and independent shadow composed at the registered mouth using livestockFeedLayout'
+        : previousScene?.feedLayers ?? 'shared compound-feed image and independent light shadow composed under each animal using livestockFeedLayout; never inside animal textures',
       retained: retainedFacilityScene && !refreshScenes,
       refreshed: retainedFacilityScene && refreshScenes } };
   console.log(JSON.stringify({ id, canonicalProduct: productAsset.canonicalPath, productBounds: productAsset.bounds,
@@ -471,15 +517,36 @@ layout.productContract = { source: 'canonical inventory icons only', canonicalPa
 manifest.productContract = layout.productContract;
 await writeFile(resolve(sourceRoot, 'layout.json'), JSON.stringify(layout, null, 2) + '\n');
 await writeFile(resolve(sourceRoot, 'atlas.json'), JSON.stringify(manifest, null, 2) + '\n');
-const visuals = Object.fromEntries(Object.entries(layout.species).map(([id, species]) => [id,
-  { stages: species.stages.length, slaughter: species.slaughter,
-    feedTexture,
+const visuals = Object.fromEntries(Object.keys(manifest.species).map((id) => {
+  const species = layout.species[id];
+  return [id, {
+    stages: species.stages.length,
+    slaughter: species.slaughter,
+    feedTexture: feedRegistration.species?.[id]?.texture ?? feedTexture,
     feeding: species.stages.map((stage) => stage.feeding),
     grounding: species.stages.map((stage) => stage.grounding),
-    product: { icon: id, bounds: species.productVisual.bounds } }]));
+    product: { icon: id, bounds: species.productVisual.bounds },
+  }];
+}));
 await writeFile(resolve('src/content/livestock-visuals.json'), JSON.stringify(visuals, null, 2) + '\n');
 if (selective) {
-  console.log(`Exported registered source-cell repair for ${selectedId}; choices, feed, other species and shared barn retained.`);
+  const species = layout.species[selectedId];
+  const atlas = await readFile(resolve(publicRoot, 'animals', `${selectedId}.webp`));
+  const background = await readFile(resolve(publicRoot, 'barn.webp'));
+  const panels = [];
+  const cardSize = 130;
+  for (const [index] of species.stages.entries()) {
+    for (let frame = 0; frame < layout.idleFrames; frame++) {
+      const animal = await sharp(atlas)
+        .extract({ left: frame * size, top: index * size, width: size, height: size }).png().toBuffer();
+      const scene = await feedingScene(selectedId, species, animal, index, background);
+      panels.push({ input: await sharp(scene).resize(cardSize, cardSize, { kernel: 'nearest' }).png().toBuffer(),
+        left: frame * cardSize, top: index * cardSize });
+    }
+  }
+  await transparent(cardSize * layout.idleFrames, cardSize * species.stages.length).composite(panels).png()
+    .toFile(resolve(sourceRoot, 'reviews', selectedId, 'feeding-130.png'));
+  console.log(`Exported registered livestock art for ${selectedId}.`);
   process.exit(0);
 }
 // A source-art contact sheet for reviewing the requested two-species prototype; it is not a game screenshot.

@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "sceneSize": 320,
+  "background": {
+    "path": "art/mining/background.webp",
+    "width": 320,
+    "height": 320
+  },
+  "foreground": {
+    "path": "art/mining/foreground.webp",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 320
+    }
+  },
+  "cart": {
+    "path": "art/mining/cart.webp",
+    "width": 96,
+    "height": 64,
+    "anchorX": 48,
+    "anchorY": 60,
+    "visibleLeftX": 5,
+    "cargo": {
+      "x": 48,
+      "y": 15,
+      "width": 58,
+      "height": 48,
+      "anchorX": 0.5,
+      "anchorY": 1
+    }
+  },
+  "opening": {
+    "left": 28,
+    "right": 108
+  },
+  "sparks": {
+    "mask": [40, 151, 54, 143, 78, 143, 94, 155, 98, 228, 32, 228, 32, 163],
+    "origins": [
+      { "x": 52, "y": 177 },
+      { "x": 79, "y": 187 },
+      { "x": 62, "y": 202 }
+    ]
+  },
+  "track": {
+    "inside": {
+      "x": 70,
+      "y": 237
+    },
+    "station": {
+      "x": 249,
+      "y": 237
+    }
+  },
+  "items": {
+    "M01": {
+      "icon": "wiki/icons/M01.webp",
+      "scene": "art/scene-M01.webp"
+    },
+    "M02": {
+      "icon": "wiki/icons/M02.webp",
+      "scene": "art/scene-M02.webp"
+    },
+    "M03": {
+      "icon": "wiki/icons/M03.webp",
+      "scene": "art/scene-M03.webp"
+    },
+    "M04": {
+      "icon": "wiki/icons/M04.webp",
+      "scene": "art/scene-M04.webp"
+    },
+    "M05": {
+      "icon": "wiki/icons/M05.webp",
+      "scene": "art/scene-M05.webp"
+    },
+    "M06": {
+      "icon": "wiki/icons/M06.webp",
+      "scene": "art/scene-M06.webp"
+    },
+    "M07": {
+      "icon": "wiki/icons/M07.webp",
+      "scene": "art/scene-M07.webp"
+    },
+    "M08": {
+      "icon": "wiki/icons/M08.webp",
+      "scene": "art/scene-M08.webp"
+    },
+    "M09": {
+      "icon": "wiki/icons/M09.webp",
+      "scene": "art/scene-M09.webp"
+    },
+    "M10": {
+      "icon": "wiki/icons/M10.webp",
+      "scene": "art/scene-M10.webp"
+    }
+  }
+}

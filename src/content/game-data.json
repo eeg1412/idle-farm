@@ -754,6 +754,66 @@
         "农业"
       ]
     },
+    "C69": {
+      "name": "杉木原木",
+      "subject": "杉树",
+      "durationMs": 1217000,
+      "output": "2",
+      "price": "1237283",
+      "inputs": {},
+      "kind": "C",
+      "sources": [
+        "农业"
+      ]
+    },
+    "C70": {
+      "name": "松木原木",
+      "subject": "马尾松",
+      "durationMs": 1667000,
+      "output": "2",
+      "price": "2319908",
+      "inputs": {},
+      "kind": "C",
+      "sources": [
+        "农业"
+      ]
+    },
+    "C71": {
+      "name": "樟木原木",
+      "subject": "香樟",
+      "durationMs": 1714000,
+      "output": "2",
+      "price": "2452448",
+      "inputs": {},
+      "kind": "C",
+      "sources": [
+        "农业"
+      ]
+    },
+    "C72": {
+      "name": "楠木原木",
+      "subject": "桢楠",
+      "durationMs": 1991000,
+      "output": "2",
+      "price": "3308378",
+      "inputs": {},
+      "kind": "C",
+      "sources": [
+        "农业"
+      ]
+    },
+    "C73": {
+      "name": "檀木原木",
+      "subject": "檀香树",
+      "durationMs": 2290000,
+      "output": "2",
+      "price": "4375808",
+      "inputs": {},
+      "kind": "C",
+      "sources": [
+        "农业"
+      ]
+    },
     "L01": {
       "name": "鸡蛋",
       "subject": "蛋鸡",
@@ -874,6 +934,246 @@
         "畜牧"
       ]
     },
+    "L11": {
+      "name": "鹌鹑蛋",
+      "subject": "鹌鹑",
+      "durationMs": 2420000,
+      "output": "2",
+      "price": "4886383",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L12": {
+      "name": "绵羊毛",
+      "subject": "美利奴绵羊",
+      "durationMs": 2491000,
+      "output": "2",
+      "price": "5177128",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L13": {
+      "name": "蜂蜜",
+      "subject": "中华蜜蜂",
+      "durationMs": 2589000,
+      "output": "2",
+      "price": "5592240",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L14": {
+      "name": "火鸡肉",
+      "subject": "火鸡",
+      "durationMs": 2629000,
+      "output": "2",
+      "price": "5766273",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L15": {
+      "name": "鸽肉",
+      "subject": "肉鸽",
+      "durationMs": 2770000,
+      "output": "2",
+      "price": "6401008",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L16": {
+      "name": "驴乳",
+      "subject": "德州驴",
+      "durationMs": 2866000,
+      "output": "2",
+      "price": "6852128",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L17": {
+      "name": "牦牛乳",
+      "subject": "牦牛",
+      "durationMs": 2965000,
+      "output": "2",
+      "price": "7333433",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L18": {
+      "name": "鹿肉",
+      "subject": "梅花鹿",
+      "durationMs": 3066000,
+      "output": "2",
+      "price": "7841295",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L19": {
+      "name": "马乳",
+      "subject": "蒙古马",
+      "durationMs": 3183000,
+      "output": "2",
+      "price": "8450865",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L20": {
+      "name": "鸵鸟蛋",
+      "subject": "鸵鸟",
+      "durationMs": 3281000,
+      "output": "2",
+      "price": "8979003",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L21": {
+      "name": "珍珠鸡肉",
+      "subject": "珍珠鸡",
+      "durationMs": 3393000,
+      "output": "2",
+      "price": "9602190",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L22": {
+      "name": "驼乳",
+      "subject": "双峰驼",
+      "durationMs": 3513000,
+      "output": "2",
+      "price": "10293090",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L23": {
+      "name": "羊驼毛",
+      "subject": "羊驼",
+      "durationMs": 3638000,
+      "output": "2",
+      "price": "11038298",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L24": {
+      "name": "鹅肉",
+      "subject": "狮头鹅",
+      "durationMs": 3722000,
+      "output": "2",
+      "price": "11553708",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L25": {
+      "name": "黑山羊肉",
+      "subject": "黑山羊",
+      "durationMs": 3885000,
+      "output": "2",
+      "price": "12587400",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L26": {
+      "name": "乌鸡肉",
+      "subject": "泰和乌鸡",
+      "durationMs": 4018000,
+      "output": "2",
+      "price": "13463648",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L27": {
+      "name": "兔毛",
+      "subject": "安哥拉兔",
+      "durationMs": 4156000,
+      "output": "2",
+      "price": "14404003",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L28": {
+      "name": "香猪肉",
+      "subject": "巴马香猪",
+      "durationMs": 4291000,
+      "output": "2",
+      "price": "15354628",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L29": {
+      "name": "桑蚕茧",
+      "subject": "家蚕",
+      "durationMs": 4447000,
+      "output": "2",
+      "price": "16490958",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "L30": {
+      "name": "和牛肉",
+      "subject": "黑毛和牛",
+      "durationMs": 4600000,
+      "output": "2",
+      "price": "17644833",
+      "inputs": {},
+      "kind": "L",
+      "sources": [
+        "畜牧"
+      ]
+    },
     "F01": {
       "name": "鲫鱼",
       "subject": "鲫鱼",
@@ -988,6 +1288,246 @@
       "durationMs": 450000,
       "output": "2",
       "price": "169875",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F11": {
+      "name": "草鱼",
+      "subject": "草鱼",
+      "durationMs": 2539000,
+      "output": "2",
+      "price": "5378448",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F12": {
+      "name": "鳙鱼",
+      "subject": "鳙鱼",
+      "durationMs": 2555000,
+      "output": "2",
+      "price": "5446408",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F13": {
+      "name": "青鱼",
+      "subject": "青鱼",
+      "durationMs": 2618000,
+      "output": "2",
+      "price": "5718148",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F14": {
+      "name": "鳊鱼",
+      "subject": "鳊鱼",
+      "durationMs": 2737000,
+      "output": "2",
+      "price": "6249483",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F15": {
+      "name": "黄颡鱼",
+      "subject": "黄颡鱼",
+      "durationMs": 2828000,
+      "output": "2",
+      "price": "6671723",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F16": {
+      "name": "鲶鱼",
+      "subject": "鲶鱼",
+      "durationMs": 2926000,
+      "output": "2",
+      "price": "7141878",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F17": {
+      "name": "乌鳢",
+      "subject": "乌鳢",
+      "durationMs": 3026000,
+      "output": "2",
+      "price": "7638128",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F18": {
+      "name": "泥鳅",
+      "subject": "泥鳅",
+      "durationMs": 3133000,
+      "output": "2",
+      "price": "8187573",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F19": {
+      "name": "黄鳝",
+      "subject": "黄鳝",
+      "durationMs": 3297000,
+      "output": "2",
+      "price": "9066750",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F20": {
+      "name": "河鲀",
+      "subject": "河鲀",
+      "durationMs": 3349000,
+      "output": "2",
+      "price": "9354873",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F21": {
+      "name": "鲳鱼",
+      "subject": "鲳鱼",
+      "durationMs": 3465000,
+      "output": "2",
+      "price": "10013850",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F22": {
+      "name": "带鱼",
+      "subject": "带鱼",
+      "durationMs": 3574000,
+      "output": "2",
+      "price": "10653498",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F23": {
+      "name": "大黄鱼",
+      "subject": "大黄鱼",
+      "durationMs": 3708000,
+      "output": "2",
+      "price": "11466990",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F24": {
+      "name": "鲭鱼",
+      "subject": "鲭鱼",
+      "durationMs": 3836000,
+      "output": "2",
+      "price": "12272003",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F25": {
+      "name": "秋刀鱼",
+      "subject": "秋刀鱼",
+      "durationMs": 3968000,
+      "output": "2",
+      "price": "13130773",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F26": {
+      "name": "马鲛鱼",
+      "subject": "马鲛鱼",
+      "durationMs": 4118000,
+      "output": "2",
+      "price": "14141898",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F27": {
+      "name": "鳕鱼",
+      "subject": "鳕鱼",
+      "durationMs": 4246000,
+      "output": "2",
+      "price": "15034378",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F28": {
+      "name": "石斑鱼",
+      "subject": "石斑鱼",
+      "durationMs": 4392000,
+      "output": "2",
+      "price": "16085700",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F29": {
+      "name": "鮟鱇",
+      "subject": "鮟鱇",
+      "durationMs": 4553000,
+      "output": "2",
+      "price": "17286223",
+      "inputs": {},
+      "kind": "F",
+      "sources": [
+        "水产"
+      ]
+    },
+    "F30": {
+      "name": "蓝鳍金枪鱼",
+      "subject": "蓝鳍金枪鱼",
+      "durationMs": 4711000,
+      "output": "2",
+      "price": "18506378",
       "inputs": {},
       "kind": "F",
       "sources": [
@@ -2728,6 +3268,138 @@
         "农业"
       ]
     },
+    "I128": {
+      "name": "杉木板材",
+      "durationMs": 1697000,
+      "output": "3",
+      "price": "2750082",
+      "inputs": {
+        "C69": "2"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I129": {
+      "name": "杉木蒸笼坯",
+      "durationMs": 2360000,
+      "output": "2",
+      "price": "8950955",
+      "inputs": {
+        "C69": "2",
+        "I128": "1"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I130": {
+      "name": "松木板材",
+      "durationMs": 1834000,
+      "output": "2",
+      "price": "5355280",
+      "inputs": {
+        "C70": "2"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I131": {
+      "name": "松木炭",
+      "durationMs": 2937000,
+      "output": "3",
+      "price": "8877082",
+      "inputs": {
+        "C70": "3"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I132": {
+      "name": "樟木板材",
+      "durationMs": 1901000,
+      "output": "3",
+      "price": "3821010",
+      "inputs": {
+        "C71": "2"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I133": {
+      "name": "樟脑块",
+      "durationMs": 2987000,
+      "output": "2",
+      "price": "13842255",
+      "inputs": {
+        "C71": "3"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I134": {
+      "name": "楠木板材",
+      "durationMs": 2219000,
+      "output": "3",
+      "price": "5193692",
+      "inputs": {
+        "C72": "2"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I135": {
+      "name": "楠木雕坯",
+      "durationMs": 3431000,
+      "output": "2",
+      "price": "19523343",
+      "inputs": {
+        "C72": "2",
+        "I134": "1"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I136": {
+      "name": "檀木板材",
+      "durationMs": 2566000,
+      "output": "3",
+      "price": "6926774",
+      "inputs": {
+        "C73": "2"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
+    "I137": {
+      "name": "檀香粉",
+      "durationMs": 3791000,
+      "output": "3",
+      "price": "15225077",
+      "inputs": {
+        "C73": "3"
+      },
+      "kind": "I",
+      "sources": [
+        "农业"
+      ]
+    },
     "IL01": {
       "name": "全蛋液",
       "durationMs": 66000,
@@ -2862,6 +3534,266 @@
         "畜牧"
       ]
     },
+    "IL11": {
+      "name": "鹌鹑卤蛋",
+      "durationMs": 2712000,
+      "output": "3",
+      "price": "7736733",
+      "inputs": {
+        "L11": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL12": {
+      "name": "精梳羊毛条",
+      "durationMs": 2914000,
+      "output": "3",
+      "price": "8754951",
+      "inputs": {
+        "L12": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL13": {
+      "name": "精滤蜂蜜",
+      "durationMs": 2848000,
+      "output": "3",
+      "price": "8607288",
+      "inputs": {
+        "L13": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL14": {
+      "name": "火鸡腿肉块",
+      "durationMs": 3077000,
+      "output": "3",
+      "price": "9759218",
+      "inputs": {
+        "L14": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL15": {
+      "name": "卤鸽肉",
+      "durationMs": 3047000,
+      "output": "2",
+      "price": "14777950",
+      "inputs": {
+        "L15": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL16": {
+      "name": "驴乳粉",
+      "durationMs": 3153000,
+      "output": "3",
+      "price": "10548536",
+      "inputs": {
+        "L16": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL17": {
+      "name": "牦牛酥油",
+      "durationMs": 3262000,
+      "output": "2",
+      "price": "16935216",
+      "inputs": {
+        "L17": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL18": {
+      "name": "鹿肉片",
+      "durationMs": 3373000,
+      "output": "2",
+      "price": "18107388",
+      "inputs": {
+        "L18": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL19": {
+      "name": "马奶发酵液",
+      "durationMs": 3524000,
+      "output": "2",
+      "price": "19705033",
+      "inputs": {
+        "L19": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL20": {
+      "name": "鸵鸟蛋液",
+      "durationMs": 3660000,
+      "output": "2",
+      "price": "21179200",
+      "inputs": {
+        "L20": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL21": {
+      "name": "珍珠鸡肉丁",
+      "durationMs": 3733000,
+      "output": "2",
+      "price": "22177130",
+      "inputs": {
+        "L21": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL22": {
+      "name": "驼乳粉",
+      "durationMs": 3865000,
+      "output": "2",
+      "price": "23772970",
+      "inputs": {
+        "L22": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL23": {
+      "name": "羊驼毛纱",
+      "durationMs": 4002000,
+      "output": "3",
+      "price": "16992936",
+      "inputs": {
+        "L23": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL24": {
+      "name": "烧鹅坯",
+      "durationMs": 4140000,
+      "output": "2",
+      "price": "27134250",
+      "inputs": {
+        "L24": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL25": {
+      "name": "黑山羊肉块",
+      "durationMs": 4274000,
+      "output": "2",
+      "price": "29070323",
+      "inputs": {
+        "L25": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL26": {
+      "name": "乌鸡清汤",
+      "durationMs": 4420000,
+      "output": "3",
+      "price": "20727344",
+      "inputs": {
+        "L26": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL27": {
+      "name": "兔毛纱",
+      "durationMs": 4572000,
+      "output": "2",
+      "price": "33265110",
+      "inputs": {
+        "L27": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL28": {
+      "name": "香猪腊肉",
+      "durationMs": 4722000,
+      "output": "3",
+      "price": "23651973",
+      "inputs": {
+        "L28": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL29": {
+      "name": "生丝",
+      "durationMs": 4893000,
+      "output": "3",
+      "price": "25397388",
+      "inputs": {
+        "L29": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
+    "IL30": {
+      "name": "和牛肉片",
+      "durationMs": 5060000,
+      "output": "4",
+      "price": "20372825",
+      "inputs": {
+        "L30": "2"
+      },
+      "kind": "IL",
+      "sources": [
+        "畜牧"
+      ]
+    },
     "IF01": {
       "name": "鲫鱼鱼糜",
       "durationMs": 93000,
@@ -2989,6 +3921,266 @@
       "inputs": {
         "F10": "2",
         "IF05": "1"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF11": {
+      "name": "草鱼片",
+      "durationMs": 2976000,
+      "output": "3",
+      "price": "9123093",
+      "inputs": {
+        "F11": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF12": {
+      "name": "鳙鱼头汤底",
+      "durationMs": 2811000,
+      "output": "3",
+      "price": "8384588",
+      "inputs": {
+        "F12": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF13": {
+      "name": "熏青鱼块",
+      "durationMs": 2998000,
+      "output": "2",
+      "price": "14038135",
+      "inputs": {
+        "F13": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF14": {
+      "name": "鳊鱼肉块",
+      "durationMs": 3011000,
+      "output": "2",
+      "price": "14430217",
+      "inputs": {
+        "F14": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF15": {
+      "name": "黄颡鱼肉段",
+      "durationMs": 3404000,
+      "output": "1",
+      "price": "35373233",
+      "inputs": {
+        "F15": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF16": {
+      "name": "鲶鱼肉片",
+      "durationMs": 3415000,
+      "output": "2",
+      "price": "18053966",
+      "inputs": {
+        "F16": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF17": {
+      "name": "乌鳢鱼片",
+      "durationMs": 3329000,
+      "output": "2",
+      "price": "17638151",
+      "inputs": {
+        "F17": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF18": {
+      "name": "泥鳅干",
+      "durationMs": 3447000,
+      "output": "2",
+      "price": "18909667",
+      "inputs": {
+        "F18": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF19": {
+      "name": "黄鳝段",
+      "durationMs": 3671000,
+      "output": "2",
+      "price": "21325450",
+      "inputs": {
+        "F19": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF20": {
+      "name": "河鲀鱼片",
+      "durationMs": 3684000,
+      "output": "2",
+      "price": "21600520",
+      "inputs": {
+        "F20": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF21": {
+      "name": "鲳鱼块",
+      "durationMs": 3812000,
+      "output": "3",
+      "price": "15417422",
+      "inputs": {
+        "F21": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF22": {
+      "name": "带鱼段",
+      "durationMs": 3932000,
+      "output": "2",
+      "price": "24604490",
+      "inputs": {
+        "F22": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF23": {
+      "name": "黄鱼鲞",
+      "durationMs": 4129000,
+      "output": "2",
+      "price": "26976133",
+      "inputs": {
+        "F23": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF24": {
+      "name": "鲭鱼柳",
+      "durationMs": 4220000,
+      "output": "3",
+      "price": "18893877",
+      "inputs": {
+        "F24": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF25": {
+      "name": "秋刀鱼干",
+      "durationMs": 4367000,
+      "output": "3",
+      "price": "20228914",
+      "inputs": {
+        "F25": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF26": {
+      "name": "马鲛鱼丸坯",
+      "durationMs": 4531000,
+      "output": "2",
+      "price": "32668510",
+      "inputs": {
+        "F26": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF27": {
+      "name": "鳕鱼柳",
+      "durationMs": 4671000,
+      "output": "4",
+      "price": "17360550",
+      "inputs": {
+        "F27": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF28": {
+      "name": "石斑鱼片",
+      "durationMs": 4832000,
+      "output": "4",
+      "price": "18577026",
+      "inputs": {
+        "F28": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF29": {
+      "name": "鮟鱇肝",
+      "durationMs": 5009000,
+      "output": "4",
+      "price": "19962952",
+      "inputs": {
+        "F29": "2"
+      },
+      "kind": "IF",
+      "sources": [
+        "水产"
+      ]
+    },
+    "IF30": {
+      "name": "金枪鱼腩",
+      "durationMs": 5183000,
+      "output": "4",
+      "price": "21373396",
+      "inputs": {
+        "F30": "2"
       },
       "kind": "IF",
       "sources": [
@@ -5895,6 +7087,154 @@
       ],
       "level": 28
     },
+    "P181": {
+      "name": "盒装杉木砧板",
+      "durationMs": 1867000,
+      "output": "1",
+      "price": "11863747",
+      "inputs": {
+        "I128": "2"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 1
+    },
+    "P182": {
+      "name": "袋装松木炭",
+      "durationMs": 3239000,
+      "output": "1",
+      "price": "37070355",
+      "inputs": {
+        "I131": "2"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 4
+    },
+    "P183": {
+      "name": "盒装樟脑防虫丸",
+      "durationMs": 3476000,
+      "output": "1",
+      "price": "52354353",
+      "inputs": {
+        "I133": "2"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 7
+    },
+    "P184": {
+      "name": "盒装杉木蒸笼",
+      "durationMs": 2903000,
+      "output": "1",
+      "price": "40766183",
+      "inputs": {
+        "I129": "2",
+        "I128": "1"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 10
+    },
+    "P185": {
+      "name": "盒装松木衣架",
+      "durationMs": 3308000,
+      "output": "1",
+      "price": "47207916",
+      "inputs": {
+        "I130": "3"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 13
+    },
+    "P186": {
+      "name": "盒装樟木首饰匣",
+      "durationMs": 4905000,
+      "output": "1",
+      "price": "82542975",
+      "inputs": {
+        "I132": "2",
+        "I133": "1"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 16
+    },
+    "P187": {
+      "name": "盒装檀香线香",
+      "durationMs": 6859000,
+      "output": "1",
+      "price": "152018303",
+      "inputs": {
+        "I137": "2",
+        "I136": "1"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 19
+    },
+    "P188": {
+      "name": "盒装楠木雕花笔筒",
+      "durationMs": 3914000,
+      "output": "1",
+      "price": "79230232",
+      "inputs": {
+        "I135": "2",
+        "I134": "1"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 22
+    },
+    "P189": {
+      "name": "纸箱装楠樟双层收纳箱",
+      "durationMs": 6733000,
+      "output": "1",
+      "price": "165313852",
+      "inputs": {
+        "I134": "2",
+        "I132": "2",
+        "I133": "1"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 25
+    },
+    "P190": {
+      "name": "礼盒装檀木雕花摆件",
+      "durationMs": 4307000,
+      "output": "1",
+      "price": "149371545",
+      "inputs": {
+        "I136": "3",
+        "I135": "2",
+        "I137": "2"
+      },
+      "kind": "P",
+      "sources": [
+        "农业"
+      ],
+      "level": 28
+    },
     "PL01": {
       "name": "鸡蛋乳羹封口杯",
       "durationMs": 220000,
@@ -6218,6 +7558,308 @@
       ],
       "level": 28
     },
+    "PL21": {
+      "name": "罐装蜂蜜鹌鹑卤蛋",
+      "durationMs": 6396000,
+      "output": "1",
+      "price": "124004226",
+      "inputs": {
+        "IL11": "2",
+        "IL13": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 1
+    },
+    "PL22": {
+      "name": "袋装羊毛羊驼毛混纺线团",
+      "durationMs": 8204000,
+      "output": "1",
+      "price": "196308046",
+      "inputs": {
+        "IL12": "2",
+        "IL23": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 1
+    },
+    "PL23": {
+      "name": "瓶装驴乳蜂蜜饮",
+      "durationMs": 6781000,
+      "output": "1",
+      "price": "142502715",
+      "inputs": {
+        "IL16": "2",
+        "IL13": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 4
+    },
+    "PL24": {
+      "name": "袋装卤鸽鹌鹑蛋双拼",
+      "durationMs": 4520000,
+      "output": "1",
+      "price": "90781688",
+      "inputs": {
+        "IL15": "2",
+        "IL11": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 4
+    },
+    "PL25": {
+      "name": "罐装蜜汁火鸡腿",
+      "durationMs": 6645000,
+      "output": "1",
+      "price": "135827491",
+      "inputs": {
+        "IL14": "2",
+        "IL13": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 7
+    },
+    "PL26": {
+      "name": "盒装牦牛酥油砖",
+      "durationMs": 3649000,
+      "output": "1",
+      "price": "60080785",
+      "inputs": {
+        "IL17": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 7
+    },
+    "PL27": {
+      "name": "瓶装蜂蜜马奶酒",
+      "durationMs": 4949000,
+      "output": "1",
+      "price": "111116047",
+      "inputs": {
+        "IL19": "2",
+        "IL13": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 10
+    },
+    "PL28": {
+      "name": "袋装鹿羊双肉干",
+      "durationMs": 5543000,
+      "output": "1",
+      "price": "148409205",
+      "inputs": {
+        "IL18": "2",
+        "IL25": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 10
+    },
+    "PL29": {
+      "name": "盒装驴乳鸵鸟蛋蒸糕",
+      "durationMs": 5331000,
+      "output": "1",
+      "price": "126889646",
+      "inputs": {
+        "IL20": "2",
+        "IL16": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 13
+    },
+    "PL30": {
+      "name": "罐装蜂蜜驼乳粉",
+      "durationMs": 4960000,
+      "output": "1",
+      "price": "117000888",
+      "inputs": {
+        "IL22": "2",
+        "IL13": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 13
+    },
+    "PL31": {
+      "name": "盒装鸵鸟蛋珍珠鸡肉卷",
+      "durationMs": 4107000,
+      "output": "1",
+      "price": "124421565",
+      "inputs": {
+        "IL21": "2",
+        "IL20": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 16
+    },
+    "PL32": {
+      "name": "袋装羊驼兔毛围巾",
+      "durationMs": 6005000,
+      "output": "1",
+      "price": "180270100",
+      "inputs": {
+        "IL23": "3",
+        "IL27": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 16
+    },
+    "PL33": {
+      "name": "真空袋装蜜汁烧鹅",
+      "durationMs": 6834000,
+      "output": "1",
+      "price": "232838176",
+      "inputs": {
+        "IL24": "3",
+        "IL13": "1"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 19
+    },
+    "PL34": {
+      "name": "罐装乌鸡羊肉炖汤",
+      "durationMs": 7053000,
+      "output": "1",
+      "price": "292932640",
+      "inputs": {
+        "IL25": "3",
+        "IL26": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 19
+    },
+    "PL35": {
+      "name": "袋装羊毛兔毛手套",
+      "durationMs": 7544000,
+      "output": "1",
+      "price": "304806937",
+      "inputs": {
+        "IL27": "3",
+        "IL12": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 22
+    },
+    "PL36": {
+      "name": "真空袋装火鸡香猪腊味",
+      "durationMs": 5195000,
+      "output": "1",
+      "price": "155979875",
+      "inputs": {
+        "IL28": "3",
+        "IL14": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 22
+    },
+    "PL37": {
+      "name": "盒装真丝羊毛围巾",
+      "durationMs": 5384000,
+      "output": "1",
+      "price": "164484191",
+      "inputs": {
+        "IL29": "3",
+        "IL12": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 25
+    },
+    "PL38": {
+      "name": "盒装牦牛酥油和牛肉片",
+      "durationMs": 5566000,
+      "output": "1",
+      "price": "176637010",
+      "inputs": {
+        "IL30": "3",
+        "IL17": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 25
+    },
+    "PL39": {
+      "name": "礼盒装真丝羊驼毛披肩",
+      "durationMs": 7177000,
+      "output": "1",
+      "price": "430635948",
+      "inputs": {
+        "IL29": "4",
+        "IL23": "3",
+        "IL27": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 28
+    },
+    "PL40": {
+      "name": "礼盒装和牛鹿肉烧烤套装",
+      "durationMs": 5593000,
+      "output": "1",
+      "price": "350048780",
+      "inputs": {
+        "IL30": "4",
+        "IL18": "3",
+        "IL28": "3",
+        "IL13": "2"
+      },
+      "kind": "PL",
+      "sources": [
+        "畜牧"
+      ],
+      "level": 28
+    },
     "PF01": {
       "name": "鲫鲤双鱼蒸饼盒",
       "durationMs": 263000,
@@ -6534,6 +8176,312 @@
         "IF08": "6",
         "IF09": "5",
         "IF10": "6"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 28
+    },
+    "PF21": {
+      "name": "袋装草鳊双鱼片",
+      "durationMs": 5844000,
+      "output": "1",
+      "price": "120753273",
+      "inputs": {
+        "IF11": "2",
+        "IF14": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 1
+    },
+    "PF22": {
+      "name": "罐装鳙鱼头草鱼汤",
+      "durationMs": 6558000,
+      "output": "1",
+      "price": "130904966",
+      "inputs": {
+        "IF12": "2",
+        "IF11": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 1
+    },
+    "PF23": {
+      "name": "真空袋装熏青鱼黄颡鱼",
+      "durationMs": 3745000,
+      "output": "1",
+      "price": "97345033",
+      "inputs": {
+        "IF13": "2",
+        "IF15": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 4
+    },
+    "PF24": {
+      "name": "罐装乌鳢鲶鱼片",
+      "durationMs": 4458000,
+      "output": "1",
+      "price": "103867685",
+      "inputs": {
+        "IF16": "2",
+        "IF17": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 4
+    },
+    "PF25": {
+      "name": "袋装泥鳅黄鳝干",
+      "durationMs": 4861000,
+      "output": "1",
+      "price": "120941680",
+      "inputs": {
+        "IF18": "2",
+        "IF19": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 7
+    },
+    "PF26": {
+      "name": "盒装河鲀乌鳢刺身",
+      "durationMs": 4583000,
+      "output": "1",
+      "price": "113020599",
+      "inputs": {
+        "IF20": "2",
+        "IF17": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 7
+    },
+    "PF27": {
+      "name": "罐装鲳鱼带鱼",
+      "durationMs": 7661000,
+      "output": "1",
+      "price": "207719502",
+      "inputs": {
+        "IF21": "2",
+        "IF22": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 10
+    },
+    "PF28": {
+      "name": "袋装黄鱼鲞",
+      "durationMs": 4542000,
+      "output": "1",
+      "price": "93731740",
+      "inputs": {
+        "IF23": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 10
+    },
+    "PF29": {
+      "name": "罐装鲭鱼秋刀鱼",
+      "durationMs": 9885000,
+      "output": "1",
+      "price": "297159575",
+      "inputs": {
+        "IF24": "2",
+        "IF25": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 13
+    },
+    "PF30": {
+      "name": "袋装马鲛带鱼丸",
+      "durationMs": 5373000,
+      "output": "1",
+      "price": "159201990",
+      "inputs": {
+        "IF26": "2",
+        "IF22": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 13
+    },
+    "PF31": {
+      "name": "盒装鳕鱼草鱼柳",
+      "durationMs": 7353000,
+      "output": "1",
+      "price": "194634931",
+      "inputs": {
+        "IF27": "3",
+        "IF11": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 16
+    },
+    "PF32": {
+      "name": "盒装石斑河鲀鱼片",
+      "durationMs": 7452000,
+      "output": "1",
+      "price": "222187590",
+      "inputs": {
+        "IF28": "3",
+        "IF20": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 16
+    },
+    "PF33": {
+      "name": "罐装鮟鱇肝鳕鱼酱",
+      "durationMs": 8701000,
+      "output": "1",
+      "price": "294876890",
+      "inputs": {
+        "IF29": "3",
+        "IF27": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 19
+    },
+    "PF34": {
+      "name": "罐装金枪鲭鱼双拼",
+      "durationMs": 9643000,
+      "output": "1",
+      "price": "317444881",
+      "inputs": {
+        "IF30": "3",
+        "IF24": "1"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 19
+    },
+    "PF35": {
+      "name": "盒装马鲛鲶鳊鱼丸火锅料",
+      "durationMs": 4985000,
+      "output": "1",
+      "price": "213740183",
+      "inputs": {
+        "IF26": "2",
+        "IF16": "2",
+        "IF14": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 22
+    },
+    "PF36": {
+      "name": "真空袋装秋刀黄鱼泥鳅干货",
+      "durationMs": 4804000,
+      "output": "1",
+      "price": "220655726",
+      "inputs": {
+        "IF25": "3",
+        "IF23": "2",
+        "IF18": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 22
+    },
+    "PF37": {
+      "name": "礼盒装石斑鳕鲳鱼",
+      "durationMs": 7204000,
+      "output": "1",
+      "price": "335827467",
+      "inputs": {
+        "IF28": "4",
+        "IF27": "3",
+        "IF21": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 25
+    },
+    "PF38": {
+      "name": "礼盒装金枪石斑河鲀刺身",
+      "durationMs": 5702000,
+      "output": "1",
+      "price": "280823500",
+      "inputs": {
+        "IF30": "4",
+        "IF28": "3",
+        "IF20": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 25
+    },
+    "PF39": {
+      "name": "礼罐装鮟鱇鳙鱼青鱼浓汤",
+      "durationMs": 5510000,
+      "output": "1",
+      "price": "239290116",
+      "inputs": {
+        "IF29": "4",
+        "IF12": "3",
+        "IF13": "2"
+      },
+      "kind": "PF",
+      "sources": [
+        "水产"
+      ],
+      "level": 28
+    },
+    "PF40": {
+      "name": "礼盒装深海四鲜珍味",
+      "durationMs": 8333000,
+      "output": "1",
+      "price": "565786395",
+      "inputs": {
+        "IF30": "4",
+        "IF29": "3",
+        "IF27": "3",
+        "IF26": "2"
       },
       "kind": "PF",
       "sources": [
@@ -6905,6 +8853,249 @@
         "水产"
       ],
       "level": 29
+    },
+    "PD21": {
+      "name": "真空袋装松炭烤火鸡腿",
+      "durationMs": 6656000,
+      "output": "1",
+      "price": "136176213",
+      "inputs": {
+        "IL14": "2",
+        "I131": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "畜牧"
+      ],
+      "level": 5
+    },
+    "PD22": {
+      "name": "盒装杉木蒸笼驴乳蛋糕",
+      "durationMs": 6039000,
+      "output": "1",
+      "price": "193950872",
+      "inputs": {
+        "IL20": "2",
+        "IL16": "2",
+        "I129": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "畜牧"
+      ],
+      "level": 11
+    },
+    "PD23": {
+      "name": "樟木匣装真丝围巾",
+      "durationMs": 6823000,
+      "output": "1",
+      "price": "162133432",
+      "inputs": {
+        "IL29": "2",
+        "I132": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "畜牧"
+      ],
+      "level": 17
+    },
+    "PD24": {
+      "name": "盒装楠木梳羊驼毛围巾",
+      "durationMs": 6545000,
+      "output": "1",
+      "price": "142295572",
+      "inputs": {
+        "IL23": "2",
+        "I134": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "畜牧"
+      ],
+      "level": 23
+    },
+    "PD25": {
+      "name": "檀木礼盒装松炭和牛烧肉",
+      "durationMs": 9661000,
+      "output": "1",
+      "price": "353573814",
+      "inputs": {
+        "IL30": "3",
+        "I136": "2",
+        "I131": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "畜牧"
+      ],
+      "level": 29
+    },
+    "PD26": {
+      "name": "真空袋装杉木板烤鲭鱼",
+      "durationMs": 5729000,
+      "output": "1",
+      "price": "115286576",
+      "inputs": {
+        "IF24": "2",
+        "I128": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "水产"
+      ],
+      "level": 5
+    },
+    "PD27": {
+      "name": "袋装松炭烤秋刀鱼",
+      "durationMs": 7785000,
+      "output": "1",
+      "price": "196664237",
+      "inputs": {
+        "IF25": "2",
+        "I131": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "水产"
+      ],
+      "level": 8
+    },
+    "PD28": {
+      "name": "盒装杉木蒸笼鳕鱼",
+      "durationMs": 8083000,
+      "output": "1",
+      "price": "199632137",
+      "inputs": {
+        "IF27": "2",
+        "I129": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "水产"
+      ],
+      "level": 14
+    },
+    "PD29": {
+      "name": "楠木盒装鮟鱇肝",
+      "durationMs": 8969000,
+      "output": "1",
+      "price": "226561922",
+      "inputs": {
+        "IF29": "2",
+        "I134": "1"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "水产"
+      ],
+      "level": 20
+    },
+    "PD30": {
+      "name": "檀木礼盒装金枪石斑",
+      "durationMs": 11114000,
+      "output": "1",
+      "price": "488772109",
+      "inputs": {
+        "IF30": "3",
+        "IF28": "2",
+        "I136": "2"
+      },
+      "kind": "PD",
+      "sources": [
+        "农业",
+        "水产"
+      ],
+      "level": 29
+    },
+    "PD31": {
+      "name": "罐装乌鸡草鱼汤",
+      "durationMs": 6050000,
+      "output": "1",
+      "price": "154829583",
+      "inputs": {
+        "IL26": "2",
+        "IF11": "2"
+      },
+      "kind": "PD",
+      "sources": [
+        "畜牧",
+        "水产"
+      ],
+      "level": 2
+    },
+    "PD32": {
+      "name": "盒装鹌鹑蛋鳕鱼饼",
+      "durationMs": 7578000,
+      "output": "1",
+      "price": "195270325",
+      "inputs": {
+        "IF27": "2",
+        "IL11": "2"
+      },
+      "kind": "PD",
+      "sources": [
+        "畜牧",
+        "水产"
+      ],
+      "level": 11
+    },
+    "PD33": {
+      "name": "罐装驴乳鳙鱼头浓汤",
+      "durationMs": 4938000,
+      "output": "1",
+      "price": "103130130",
+      "inputs": {
+        "IF12": "2",
+        "IL16": "2"
+      },
+      "kind": "PD",
+      "sources": [
+        "畜牧",
+        "水产"
+      ],
+      "level": 14
+    },
+    "PD34": {
+      "name": "罐装香猪腊肉黄鳝煲",
+      "durationMs": 5206000,
+      "output": "1",
+      "price": "157790967",
+      "inputs": {
+        "IL28": "2",
+        "IF19": "2"
+      },
+      "kind": "PD",
+      "sources": [
+        "畜牧",
+        "水产"
+      ],
+      "level": 20
+    },
+    "PD35": {
+      "name": "礼盒装和牛金枪鱼双拼",
+      "durationMs": 6848000,
+      "output": "1",
+      "price": "245574986",
+      "inputs": {
+        "IL30": "3",
+        "IF30": "3"
+      },
+      "kind": "PD",
+      "sources": [
+        "畜牧",
+        "水产"
+      ],
+      "level": 26
     },
     "PT01": {
       "name": "袋装鲫鱼乳蛋酥",
@@ -8006,6 +10197,96 @@
       ],
       "level": 30
     },
+    "PT51": {
+      "name": "盒装杉木蒸笼鹌鹑蛋鳕鱼糕",
+      "durationMs": 10310000,
+      "output": "1",
+      "price": "351691283",
+      "inputs": {
+        "IF27": "2",
+        "IL11": "2",
+        "I129": "1"
+      },
+      "kind": "PT",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产"
+      ],
+      "level": 6
+    },
+    "PT52": {
+      "name": "盒装松炭和牛秋刀鱼烧烤",
+      "durationMs": 13584000,
+      "output": "1",
+      "price": "583798813",
+      "inputs": {
+        "IL30": "2",
+        "IF25": "2",
+        "I131": "1"
+      },
+      "kind": "PT",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产"
+      ],
+      "level": 15
+    },
+    "PT53": {
+      "name": "楠木盒装蜜汁火鸡鲳鱼",
+      "durationMs": 8871000,
+      "output": "1",
+      "price": "279919476",
+      "inputs": {
+        "IL14": "2",
+        "IF21": "2",
+        "I134": "1"
+      },
+      "kind": "PT",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产"
+      ],
+      "level": 18
+    },
+    "PT54": {
+      "name": "盒装杉木板烤香猪石斑",
+      "durationMs": 11682000,
+      "output": "1",
+      "price": "453203190",
+      "inputs": {
+        "IL28": "2",
+        "IF28": "2",
+        "I128": "1"
+      },
+      "kind": "PT",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产"
+      ],
+      "level": 24
+    },
+    "PT55": {
+      "name": "檀木礼盒装和牛金枪鱼御膳",
+      "durationMs": 8956000,
+      "output": "1",
+      "price": "400957632",
+      "inputs": {
+        "IL30": "3",
+        "IF30": "3",
+        "I136": "2"
+      },
+      "kind": "PT",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产"
+      ],
+      "level": 30
+    },
     "M01": {
       "name": "岩盐",
       "durationMs": 755000,
@@ -8110,6 +10391,226 @@
       "durationMs": 3210000,
       "output": "2",
       "price": "8594775",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M11": {
+      "name": "石灰石",
+      "durationMs": 4921000,
+      "output": "2",
+      "price": "20192503",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M12": {
+      "name": "高岭土",
+      "durationMs": 5074000,
+      "output": "2",
+      "price": "21467248",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M13": {
+      "name": "硫磺",
+      "durationMs": 5254000,
+      "output": "2",
+      "price": "23016898",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M14": {
+      "name": "石墨",
+      "durationMs": 5434000,
+      "output": "2",
+      "price": "24620548",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M15": {
+      "name": "云母",
+      "durationMs": 5633000,
+      "output": "2",
+      "price": "26456323",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M16": {
+      "name": "萤石",
+      "durationMs": 5833000,
+      "output": "2",
+      "price": "28367823",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M17": {
+      "name": "铝土矿",
+      "durationMs": 6028000,
+      "output": "2",
+      "price": "30295723",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M18": {
+      "name": "锌矿石",
+      "durationMs": 6254000,
+      "output": "2",
+      "price": "32609398",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M19": {
+      "name": "铅矿石",
+      "durationMs": 6475000,
+      "output": "2",
+      "price": "34954208",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M20": {
+      "name": "镍矿石",
+      "durationMs": 6705000,
+      "output": "2",
+      "price": "37480950",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M21": {
+      "name": "钴矿石",
+      "durationMs": 6943000,
+      "output": "2",
+      "price": "40188398",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M22": {
+      "name": "钨矿石",
+      "durationMs": 7189000,
+      "output": "2",
+      "price": "43086073",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M23": {
+      "name": "玛瑙原石",
+      "durationMs": 7425000,
+      "output": "2",
+      "price": "45960750",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M24": {
+      "name": "翡翠原石",
+      "durationMs": 7708000,
+      "output": "2",
+      "price": "49530323",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M25": {
+      "name": "绿松石原矿",
+      "durationMs": 7981000,
+      "output": "2",
+      "price": "53100253",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M26": {
+      "name": "青金石原矿",
+      "durationMs": 8264000,
+      "output": "2",
+      "price": "56932073",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M27": {
+      "name": "铂矿石",
+      "durationMs": 8557000,
+      "output": "2",
+      "price": "61039933",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M28": {
+      "name": "红宝石原矿",
+      "durationMs": 8860000,
+      "output": "2",
+      "price": "65438483",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M29": {
+      "name": "蓝宝石原矿",
+      "durationMs": 9175000,
+      "output": "2",
+      "price": "70173458",
+      "inputs": {},
+      "kind": "M",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "M30": {
+      "name": "钻石原矿",
+      "durationMs": 9509000,
+      "output": "2",
+      "price": "75374673",
       "inputs": {},
       "kind": "M",
       "sources": [
@@ -8333,6 +10834,266 @@
       "kind": "IM",
       "sources": [
         "水产",
+        "矿业"
+      ]
+    },
+    "IM17": {
+      "name": "生石灰",
+      "durationMs": 5414000,
+      "output": "2",
+      "price": "46641610",
+      "inputs": {
+        "M11": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM18": {
+      "name": "瓷土坯",
+      "durationMs": 5604000,
+      "output": "3",
+      "price": "33253513",
+      "inputs": {
+        "M12": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM19": {
+      "name": "硫磺粉",
+      "durationMs": 5780000,
+      "output": "2",
+      "price": "53161550",
+      "inputs": {
+        "M13": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM20": {
+      "name": "石墨粉",
+      "durationMs": 5978000,
+      "output": "2",
+      "price": "56865725",
+      "inputs": {
+        "M14": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM21": {
+      "name": "云母片",
+      "durationMs": 6218000,
+      "output": "2",
+      "price": "61423476",
+      "inputs": {
+        "M15": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM22": {
+      "name": "萤石晶块",
+      "durationMs": 6417000,
+      "output": "2",
+      "price": "65522917",
+      "inputs": {
+        "M16": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM23": {
+      "name": "铝锭",
+      "durationMs": 6631000,
+      "output": "3",
+      "price": "46645401",
+      "inputs": {
+        "M17": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM24": {
+      "name": "锌锭",
+      "durationMs": 6880000,
+      "output": "2",
+      "price": "75318800",
+      "inputs": {
+        "M18": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM25": {
+      "name": "铅锭",
+      "durationMs": 7123000,
+      "output": "2",
+      "price": "80733269",
+      "inputs": {
+        "M19": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM26": {
+      "name": "镍锭",
+      "durationMs": 7376000,
+      "output": "3",
+      "price": "57713102",
+      "inputs": {
+        "M20": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM27": {
+      "name": "钴蓝颜料",
+      "durationMs": 7638000,
+      "output": "2",
+      "price": "92827160",
+      "inputs": {
+        "M21": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM28": {
+      "name": "钨丝",
+      "durationMs": 7908000,
+      "output": "2",
+      "price": "99509000",
+      "inputs": {
+        "M22": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM29": {
+      "name": "玛瑙坯",
+      "durationMs": 8176000,
+      "output": "2",
+      "price": "106315253",
+      "inputs": {
+        "M23": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM30": {
+      "name": "翡翠坯",
+      "durationMs": 8479000,
+      "output": "2",
+      "price": "114395841",
+      "inputs": {
+        "M24": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM31": {
+      "name": "绿松石坯",
+      "durationMs": 8780000,
+      "output": "2",
+      "price": "122656600",
+      "inputs": {
+        "M25": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM32": {
+      "name": "青金石颜料",
+      "durationMs": 9091000,
+      "output": "2",
+      "price": "131501315",
+      "inputs": {
+        "M26": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM33": {
+      "name": "铂锭",
+      "durationMs": 9413000,
+      "output": "3",
+      "price": "93988805",
+      "inputs": {
+        "M27": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM34": {
+      "name": "红宝石坯",
+      "durationMs": 9746000,
+      "output": "2",
+      "price": "151136095",
+      "inputs": {
+        "M28": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM35": {
+      "name": "蓝宝石坯",
+      "durationMs": 10093000,
+      "output": "2",
+      "price": "162085169",
+      "inputs": {
+        "M29": "2"
+      },
+      "kind": "IM",
+      "sources": [
+        "矿业"
+      ]
+    },
+    "IM36": {
+      "name": "钻石坯",
+      "durationMs": 10460000,
+      "output": "2",
+      "price": "174089266",
+      "inputs": {
+        "M30": "2"
+      },
+      "kind": "IM",
+      "sources": [
         "矿业"
       ]
     },
@@ -8730,6 +11491,1014 @@
         "矿业"
       ],
       "level": 22
+    },
+    "PM24": {
+      "name": "袋装生石灰干燥剂",
+      "durationMs": 5956000,
+      "output": "1",
+      "price": "161745106",
+      "inputs": {
+        "IM17": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 1
+    },
+    "PM25": {
+      "name": "盒装白瓷茶杯",
+      "durationMs": 10833000,
+      "output": "1",
+      "price": "417470719",
+      "inputs": {
+        "IM18": "2",
+        "IM17": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 4
+    },
+    "PM26": {
+      "name": "盒装硫磺皂",
+      "durationMs": 7309000,
+      "output": "1",
+      "price": "286433619",
+      "inputs": {
+        "IM19": "2",
+        "IM17": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 4
+    },
+    "PM27": {
+      "name": "盒装石墨素描棒",
+      "durationMs": 9332000,
+      "output": "1",
+      "price": "378044504",
+      "inputs": {
+        "IM20": "2",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 7
+    },
+    "PM28": {
+      "name": "盒装铝框云母灯罩",
+      "durationMs": 10894000,
+      "output": "1",
+      "price": "489642934",
+      "inputs": {
+        "IM21": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 7
+    },
+    "PM29": {
+      "name": "盒装萤石铝座夜灯",
+      "durationMs": 10934000,
+      "output": "1",
+      "price": "499440822",
+      "inputs": {
+        "IM22": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 10
+    },
+    "PM30": {
+      "name": "盒装铝制饭盒",
+      "durationMs": 7295000,
+      "output": "1",
+      "price": "242643858",
+      "inputs": {
+        "IM23": "3"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 10
+    },
+    "PM31": {
+      "name": "盒装锌碳电池",
+      "durationMs": 8165000,
+      "output": "1",
+      "price": "367533866",
+      "inputs": {
+        "IM24": "2",
+        "IM20": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 13
+    },
+    "PM32": {
+      "name": "盒装铅制钓坠",
+      "durationMs": 9244000,
+      "output": "1",
+      "price": "453140880",
+      "inputs": {
+        "IM25": "2",
+        "IM24": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 13
+    },
+    "PM33": {
+      "name": "盒装镍铝餐具组",
+      "durationMs": 15811000,
+      "output": "1",
+      "price": "775292385",
+      "inputs": {
+        "IM26": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 16
+    },
+    "PM34": {
+      "name": "盒装钴蓝白瓷盘",
+      "durationMs": 8402000,
+      "output": "1",
+      "price": "421565682",
+      "inputs": {
+        "IM27": "2",
+        "IM18": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 16
+    },
+    "PM35": {
+      "name": "盒装钨丝灯泡",
+      "durationMs": 12309000,
+      "output": "1",
+      "price": "658586206",
+      "inputs": {
+        "IM28": "2",
+        "IM26": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 19
+    },
+    "PM36": {
+      "name": "盒装玛瑙手串",
+      "durationMs": 8994000,
+      "output": "1",
+      "price": "368724020",
+      "inputs": {
+        "IM29": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 19
+    },
+    "PM37": {
+      "name": "盒装铂扣翡翠吊坠",
+      "durationMs": 15400000,
+      "output": "1",
+      "price": "964553333",
+      "inputs": {
+        "IM30": "2",
+        "IM33": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 22
+    },
+    "PM38": {
+      "name": "盒装绿松石耳坠",
+      "durationMs": 12476000,
+      "output": "1",
+      "price": "705594042",
+      "inputs": {
+        "IM31": "2",
+        "IM26": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 22
+    },
+    "PM39": {
+      "name": "盒装青金钴蓝矿物颜料",
+      "durationMs": 10488000,
+      "output": "1",
+      "price": "614186020",
+      "inputs": {
+        "IM32": "2",
+        "IM27": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 25
+    },
+    "PM40": {
+      "name": "盒装铂金素戒",
+      "durationMs": 10355000,
+      "output": "1",
+      "price": "488894066",
+      "inputs": {
+        "IM33": "3"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 25
+    },
+    "PM41": {
+      "name": "盒装红宝石铂金戒指",
+      "durationMs": 10721000,
+      "output": "1",
+      "price": "738140850",
+      "inputs": {
+        "IM34": "2",
+        "IM33": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 28
+    },
+    "PM42": {
+      "name": "盒装蓝宝石铂金项链",
+      "durationMs": 11103000,
+      "output": "1",
+      "price": "783760770",
+      "inputs": {
+        "IM35": "2",
+        "IM33": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 28
+    },
+    "PM43": {
+      "name": "礼盒装钻石铂金对戒",
+      "durationMs": 17259000,
+      "output": "1",
+      "price": "1702758557",
+      "inputs": {
+        "IM36": "3",
+        "IM33": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "矿业"
+      ],
+      "level": 28
+    },
+    "PM44": {
+      "name": "铝罐装樟脑丸",
+      "durationMs": 10265000,
+      "output": "1",
+      "price": "342947947",
+      "inputs": {
+        "I133": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "矿业"
+      ],
+      "level": 5
+    },
+    "PM45": {
+      "name": "盒装杉木杆石墨铅笔",
+      "durationMs": 6576000,
+      "output": "1",
+      "price": "218472986",
+      "inputs": {
+        "I128": "2",
+        "IM20": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "矿业"
+      ],
+      "level": 8
+    },
+    "PM46": {
+      "name": "盒装檀香白瓷香炉套装",
+      "durationMs": 7763000,
+      "output": "1",
+      "price": "254911043",
+      "inputs": {
+        "I137": "2",
+        "IM18": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "矿业"
+      ],
+      "level": 14
+    },
+    "PM47": {
+      "name": "盒装松木框萤石摆件",
+      "durationMs": 7064000,
+      "output": "1",
+      "price": "268643920",
+      "inputs": {
+        "I130": "2",
+        "IM22": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "矿业"
+      ],
+      "level": 17
+    },
+    "PM48": {
+      "name": "盒装楠木镶玛瑙首饰盒",
+      "durationMs": 9005000,
+      "output": "1",
+      "price": "471776952",
+      "inputs": {
+        "I135": "2",
+        "IM29": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "矿业"
+      ],
+      "level": 23
+    },
+    "PM49": {
+      "name": "盒装石灰腌鹌鹑皮蛋",
+      "durationMs": 8429000,
+      "output": "1",
+      "price": "239114340",
+      "inputs": {
+        "IL11": "2",
+        "IM17": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "矿业"
+      ],
+      "level": 2
+    },
+    "PM50": {
+      "name": "白瓷罐装精滤蜂蜜",
+      "durationMs": 10547000,
+      "output": "1",
+      "price": "311734163",
+      "inputs": {
+        "IL13": "2",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "矿业"
+      ],
+      "level": 8
+    },
+    "PM51": {
+      "name": "铝罐装马奶酒",
+      "durationMs": 10380000,
+      "output": "1",
+      "price": "368657233",
+      "inputs": {
+        "IL19": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "矿业"
+      ],
+      "level": 11
+    },
+    "PM52": {
+      "name": "盒装镍扣羊毛开衫",
+      "durationMs": 13142000,
+      "output": "1",
+      "price": "469651273",
+      "inputs": {
+        "IL12": "2",
+        "IM26": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "矿业"
+      ],
+      "level": 17
+    },
+    "PM53": {
+      "name": "盒装翡翠扣真丝手包",
+      "durationMs": 13764000,
+      "output": "1",
+      "price": "644319603",
+      "inputs": {
+        "IL29": "2",
+        "IM30": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "矿业"
+      ],
+      "level": 26
+    },
+    "PM54": {
+      "name": "铝罐装秋刀鱼",
+      "durationMs": 13321000,
+      "output": "1",
+      "price": "512865900",
+      "inputs": {
+        "IF25": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "水产",
+        "矿业"
+      ],
+      "level": 5
+    },
+    "PM55": {
+      "name": "铝盒装带鱼段",
+      "durationMs": 10471000,
+      "output": "1",
+      "price": "387421182",
+      "inputs": {
+        "IF22": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "水产",
+        "矿业"
+      ],
+      "level": 8
+    },
+    "PM56": {
+      "name": "密封白瓷罐装鮟鱇鱼汤",
+      "durationMs": 13928000,
+      "output": "1",
+      "price": "516991884",
+      "inputs": {
+        "IF29": "2",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "水产",
+        "矿业"
+      ],
+      "level": 17
+    },
+    "PM57": {
+      "name": "礼盒装钴蓝瓷盘石斑鱼",
+      "durationMs": 14287000,
+      "output": "1",
+      "price": "623687079",
+      "inputs": {
+        "IF28": "2",
+        "IM27": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "水产",
+        "矿业"
+      ],
+      "level": 20
+    },
+    "PM58": {
+      "name": "铝罐装油浸金枪鱼",
+      "durationMs": 15646000,
+      "output": "1",
+      "price": "647109867",
+      "inputs": {
+        "IF30": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "水产",
+        "矿业"
+      ],
+      "level": 23
+    },
+    "PM59": {
+      "name": "铝盒装松炭烤火鸡腿",
+      "durationMs": 16354000,
+      "output": "1",
+      "price": "713938412",
+      "inputs": {
+        "IL14": "2",
+        "I131": "1",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "矿业"
+      ],
+      "level": 9
+    },
+    "PM60": {
+      "name": "樟木匣装铂扣真丝围巾",
+      "durationMs": 20603000,
+      "output": "1",
+      "price": "1168453360",
+      "inputs": {
+        "IL29": "2",
+        "I132": "1",
+        "IM33": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "矿业"
+      ],
+      "level": 18
+    },
+    "PM61": {
+      "name": "礼盒装白瓷蜂蜜檀香",
+      "durationMs": 16090000,
+      "output": "1",
+      "price": "688803961",
+      "inputs": {
+        "IL13": "2",
+        "IM18": "1",
+        "I137": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "矿业"
+      ],
+      "level": 12
+    },
+    "PM62": {
+      "name": "楠木盒装翡翠扣羊驼毛披肩",
+      "durationMs": 16258000,
+      "output": "1",
+      "price": "835963779",
+      "inputs": {
+        "IL23": "2",
+        "I134": "1",
+        "IM30": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "矿业"
+      ],
+      "level": 24
+    },
+    "PM63": {
+      "name": "盒装镍架松炭和牛烧烤套装",
+      "durationMs": 18955000,
+      "output": "1",
+      "price": "1014303111",
+      "inputs": {
+        "IL30": "2",
+        "I131": "2",
+        "IM26": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "矿业"
+      ],
+      "level": 27
+    },
+    "PM64": {
+      "name": "铝罐装松炭熏鲭鱼",
+      "durationMs": 17372000,
+      "output": "1",
+      "price": "833214201",
+      "inputs": {
+        "IF24": "2",
+        "I131": "1",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "水产",
+        "矿业"
+      ],
+      "level": 6
+    },
+    "PM65": {
+      "name": "盒装杉木蒸笼白瓷鳕鱼盅",
+      "durationMs": 16273000,
+      "output": "1",
+      "price": "720568440",
+      "inputs": {
+        "IF27": "2",
+        "I129": "1",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "水产",
+        "矿业"
+      ],
+      "level": 12
+    },
+    "PM66": {
+      "name": "楠木礼盒装钴蓝瓷盘鲳鱼",
+      "durationMs": 15137000,
+      "output": "1",
+      "price": "723678946",
+      "inputs": {
+        "IF21": "2",
+        "I134": "1",
+        "IM27": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "水产",
+        "矿业"
+      ],
+      "level": 18
+    },
+    "PM67": {
+      "name": "樟木礼盒装铝罐黄鱼鲞",
+      "durationMs": 13268000,
+      "output": "1",
+      "price": "586725702",
+      "inputs": {
+        "IF23": "2",
+        "I132": "1",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "水产",
+        "矿业"
+      ],
+      "level": 15
+    },
+    "PM68": {
+      "name": "檀木礼盒装白瓷金枪鱼刺身",
+      "durationMs": 16235000,
+      "output": "1",
+      "price": "757137263",
+      "inputs": {
+        "IF30": "2",
+        "I136": "2",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "水产",
+        "矿业"
+      ],
+      "level": 27
+    },
+    "PM69": {
+      "name": "密封白瓷罐装乌鸡鮟鱇汤",
+      "durationMs": 17588000,
+      "output": "1",
+      "price": "925031088",
+      "inputs": {
+        "IL26": "2",
+        "IF29": "2",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 15
+    },
+    "PM70": {
+      "name": "铝罐装鹌鹑蛋鲭鱼午餐肉",
+      "durationMs": 15427000,
+      "output": "1",
+      "price": "731282652",
+      "inputs": {
+        "IL11": "2",
+        "IF24": "2",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 6
+    },
+    "PM71": {
+      "name": "罐装石灰皮蛋草鱼粥",
+      "durationMs": 10822000,
+      "output": "1",
+      "price": "416475651",
+      "inputs": {
+        "IL11": "2",
+        "IF11": "2",
+        "IM17": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 3
+    },
+    "PM72": {
+      "name": "密封镍罐装香猪腊肉黄鳝煲",
+      "durationMs": 15411000,
+      "output": "1",
+      "price": "849771101",
+      "inputs": {
+        "IL28": "2",
+        "IF19": "2",
+        "IM26": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 21
+    },
+    "PM73": {
+      "name": "礼盒装钴蓝瓷盘和牛石斑",
+      "durationMs": 20086000,
+      "output": "1",
+      "price": "1232661081",
+      "inputs": {
+        "IL30": "2",
+        "IF28": "2",
+        "IM27": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 27
+    },
+    "PM74": {
+      "name": "盒装杉木蒸笼白瓷鹌鹑蛋鳕鱼盅",
+      "durationMs": 18500000,
+      "output": "1",
+      "price": "993336944",
+      "inputs": {
+        "IL11": "2",
+        "IF27": "2",
+        "I129": "1",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 4
+    },
+    "PM75": {
+      "name": "铝盒装松炭火鸡秋刀鱼烧烤套装",
+      "durationMs": 19969000,
+      "output": "1",
+      "price": "1177000594",
+      "inputs": {
+        "IL14": "2",
+        "IF25": "2",
+        "I131": "1",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 7
+    },
+    "PM76": {
+      "name": "樟木礼盒装白瓷乌鸡鮟鱇汤",
+      "durationMs": 20362000,
+      "output": "1",
+      "price": "1205962074",
+      "inputs": {
+        "IL26": "2",
+        "IF29": "2",
+        "I132": "1",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 13
+    },
+    "PM77": {
+      "name": "楠木礼盒装钴蓝瓷盘香猪石斑",
+      "durationMs": 21427000,
+      "output": "1",
+      "price": "1455054002",
+      "inputs": {
+        "IL28": "2",
+        "IF28": "2",
+        "I134": "1",
+        "IM27": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 19
+    },
+    "PM78": {
+      "name": "礼盒装松炭镍架和牛金枪鱼烧烤",
+      "durationMs": 20006000,
+      "output": "1",
+      "price": "1433535487",
+      "inputs": {
+        "IL30": "3",
+        "IF30": "3",
+        "I131": "2",
+        "IM26": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 28
+    },
+    "PM79": {
+      "name": "檀木礼盒装白瓷驴乳鳙鱼浓汤",
+      "durationMs": 16854000,
+      "output": "1",
+      "price": "832166250",
+      "inputs": {
+        "IL16": "2",
+        "IF12": "2",
+        "I136": "1",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 16
+    },
+    "PM80": {
+      "name": "杉木拼盒装石灰皮蛋熏青鱼",
+      "durationMs": 11231000,
+      "output": "1",
+      "price": "494354303",
+      "inputs": {
+        "IL11": "2",
+        "IF13": "2",
+        "I128": "1",
+        "IM17": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 10
+    },
+    "PM81": {
+      "name": "楠木雕盒装蜜汁火鸡鲳鱼铝罐",
+      "durationMs": 19437000,
+      "output": "1",
+      "price": "1157397761",
+      "inputs": {
+        "IL14": "2",
+        "IF21": "2",
+        "I135": "1",
+        "IM23": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 22
+    },
+    "PM82": {
+      "name": "礼盒装檀香白瓷茶席鳕鱼马奶酒",
+      "durationMs": 19758000,
+      "output": "1",
+      "price": "1214935885",
+      "inputs": {
+        "IL19": "2",
+        "IF27": "2",
+        "I137": "1",
+        "IM18": "1"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 25
+    },
+    "PM83": {
+      "name": "礼盒装庄园四方珍馐御膳",
+      "durationMs": 23134000,
+      "output": "1",
+      "price": "2476873840",
+      "inputs": {
+        "IL30": "3",
+        "IF30": "3",
+        "IL18": "2",
+        "IF29": "2",
+        "I136": "2",
+        "IM33": "2"
+      },
+      "kind": "PM",
+      "sources": [
+        "农业",
+        "畜牧",
+        "水产",
+        "矿业"
+      ],
+      "level": 31
     }
   },
   "research": {
@@ -9470,6 +13239,61 @@
         "I105"
       ]
     },
+    "C69": {
+      "coins": "2897102",
+      "costs": {
+        "C50": "1",
+        "I127": "1"
+      },
+      "requires": [
+        "C50",
+        "I127"
+      ]
+    },
+    "C70": {
+      "coins": "5981048",
+      "costs": {
+        "C69": "1",
+        "I128": "1"
+      },
+      "requires": [
+        "C69",
+        "I128"
+      ]
+    },
+    "C71": {
+      "coins": "11512782",
+      "costs": {
+        "C70": "1",
+        "I130": "1"
+      },
+      "requires": [
+        "C70",
+        "I130"
+      ]
+    },
+    "C72": {
+      "coins": "9410187",
+      "costs": {
+        "C71": "1",
+        "I132": "1"
+      },
+      "requires": [
+        "C71",
+        "I132"
+      ]
+    },
+    "C73": {
+      "coins": "12753105",
+      "costs": {
+        "C72": "1",
+        "I134": "1"
+      },
+      "requires": [
+        "C72",
+        "I134"
+      ]
+    },
     "L01": {
       "coins": "1725",
       "costs": {
@@ -9577,6 +13401,226 @@
         "L09"
       ]
     },
+    "L11": {
+      "coins": "3475860",
+      "costs": {
+        "L10": "6",
+        "IL10": "4"
+      },
+      "requires": [
+        "L10",
+        "IL10"
+      ]
+    },
+    "L12": {
+      "coins": "18934674",
+      "costs": {
+        "L11": "1",
+        "IL11": "1"
+      },
+      "requires": [
+        "L11",
+        "IL11"
+      ]
+    },
+    "L13": {
+      "coins": "20898119",
+      "costs": {
+        "L12": "1",
+        "IL12": "1"
+      },
+      "requires": [
+        "L12",
+        "IL12"
+      ]
+    },
+    "L14": {
+      "coins": "21299292",
+      "costs": {
+        "L13": "1",
+        "IL13": "1"
+      },
+      "requires": [
+        "L13",
+        "IL13"
+      ]
+    },
+    "L15": {
+      "coins": "23288237",
+      "costs": {
+        "L14": "1",
+        "IL14": "1"
+      },
+      "requires": [
+        "L14",
+        "IL14"
+      ]
+    },
+    "L16": {
+      "coins": "31768437",
+      "costs": {
+        "L15": "1",
+        "IL15": "1"
+      },
+      "requires": [
+        "L15",
+        "IL15"
+      ]
+    },
+    "L17": {
+      "coins": "26100996",
+      "costs": {
+        "L16": "1",
+        "IL16": "1"
+      },
+      "requires": [
+        "L16",
+        "IL16"
+      ]
+    },
+    "L18": {
+      "coins": "36402974",
+      "costs": {
+        "L17": "1",
+        "IL17": "1"
+      },
+      "requires": [
+        "L17",
+        "IL17"
+      ]
+    },
+    "L19": {
+      "coins": "38923025",
+      "costs": {
+        "L18": "1",
+        "IL18": "1"
+      },
+      "requires": [
+        "L18",
+        "IL18"
+      ]
+    },
+    "L20": {
+      "coins": "42233847",
+      "costs": {
+        "L19": "1",
+        "IL19": "1"
+      },
+      "requires": [
+        "L19",
+        "IL19"
+      ]
+    },
+    "L21": {
+      "coins": "45237305",
+      "costs": {
+        "L20": "1",
+        "IL20": "1"
+      },
+      "requires": [
+        "L20",
+        "IL20"
+      ]
+    },
+    "L22": {
+      "coins": "47668980",
+      "costs": {
+        "L21": "1",
+        "IL21": "1"
+      },
+      "requires": [
+        "L21",
+        "IL21"
+      ]
+    },
+    "L23": {
+      "coins": "51099090",
+      "costs": {
+        "L22": "1",
+        "IL22": "1"
+      },
+      "requires": [
+        "L22",
+        "IL22"
+      ]
+    },
+    "L24": {
+      "coins": "42046851",
+      "costs": {
+        "L23": "1",
+        "IL23": "1"
+      },
+      "requires": [
+        "L23",
+        "IL23"
+      ]
+    },
+    "L25": {
+      "coins": "58031937",
+      "costs": {
+        "L24": "1",
+        "IL24": "1"
+      },
+      "requires": [
+        "L24",
+        "IL24"
+      ]
+    },
+    "L26": {
+      "coins": "62486585",
+      "costs": {
+        "L25": "1",
+        "IL25": "1"
+      },
+      "requires": [
+        "L25",
+        "IL25"
+      ]
+    },
+    "L27": {
+      "coins": "51286488",
+      "costs": {
+        "L26": "1",
+        "IL26": "1"
+      },
+      "requires": [
+        "L26",
+        "IL26"
+      ]
+    },
+    "L28": {
+      "coins": "71503670",
+      "costs": {
+        "L27": "1",
+        "IL27": "1"
+      },
+      "requires": [
+        "L27",
+        "IL27"
+      ]
+    },
+    "L29": {
+      "coins": "58509902",
+      "costs": {
+        "L28": "1",
+        "IL28": "1"
+      },
+      "requires": [
+        "L28",
+        "IL28"
+      ]
+    },
+    "L30": {
+      "coins": "62832519",
+      "costs": {
+        "L29": "1",
+        "IL29": "1"
+      },
+      "requires": [
+        "L29",
+        "IL29"
+      ]
+    },
     "F01": {
       "coins": "2625",
       "costs": {
@@ -9682,6 +13726,226 @@
       "requires": [
         "F09",
         "I01"
+      ]
+    },
+    "F11": {
+      "coins": "4118165",
+      "costs": {
+        "F10": "4",
+        "IF10": "2"
+      },
+      "requires": [
+        "F10",
+        "IF10"
+      ]
+    },
+    "F12": {
+      "coins": "21752312",
+      "costs": {
+        "F11": "1",
+        "IF11": "1"
+      },
+      "requires": [
+        "F11",
+        "IF11"
+      ]
+    },
+    "F13": {
+      "coins": "20746494",
+      "costs": {
+        "F12": "1",
+        "IF12": "1"
+      },
+      "requires": [
+        "F12",
+        "IF12"
+      ]
+    },
+    "F14": {
+      "coins": "29634425",
+      "costs": {
+        "F13": "1",
+        "IF13": "1"
+      },
+      "requires": [
+        "F13",
+        "IF13"
+      ]
+    },
+    "F15": {
+      "coins": "31019550",
+      "costs": {
+        "F14": "1",
+        "IF14": "1"
+      },
+      "requires": [
+        "F14",
+        "IF14"
+      ]
+    },
+    "F16": {
+      "coins": "63067434",
+      "costs": {
+        "F15": "1",
+        "IF15": "1"
+      },
+      "requires": [
+        "F15",
+        "IF15"
+      ]
+    },
+    "F17": {
+      "coins": "37793766",
+      "costs": {
+        "F16": "1",
+        "IF16": "1"
+      },
+      "requires": [
+        "F16",
+        "IF16"
+      ]
+    },
+    "F18": {
+      "coins": "37914419",
+      "costs": {
+        "F17": "1",
+        "IF17": "1"
+      },
+      "requires": [
+        "F17",
+        "IF17"
+      ]
+    },
+    "F19": {
+      "coins": "40645860",
+      "costs": {
+        "F18": "1",
+        "IF18": "1"
+      },
+      "requires": [
+        "F18",
+        "IF18"
+      ]
+    },
+    "F20": {
+      "coins": "45588300",
+      "costs": {
+        "F19": "1",
+        "IF19": "1"
+      },
+      "requires": [
+        "F19",
+        "IF19"
+      ]
+    },
+    "F21": {
+      "coins": "46433090",
+      "costs": {
+        "F20": "1",
+        "IF20": "1"
+      },
+      "requires": [
+        "F20",
+        "IF20"
+      ]
+    },
+    "F22": {
+      "coins": "38146908",
+      "costs": {
+        "F21": "1",
+        "IF21": "1"
+      },
+      "requires": [
+        "F21",
+        "IF21"
+      ]
+    },
+    "F23": {
+      "coins": "52886982",
+      "costs": {
+        "F22": "1",
+        "IF22": "1"
+      },
+      "requires": [
+        "F22",
+        "IF22"
+      ]
+    },
+    "F24": {
+      "coins": "57664685",
+      "costs": {
+        "F23": "1",
+        "IF23": "1"
+      },
+      "requires": [
+        "F23",
+        "IF23"
+      ]
+    },
+    "F25": {
+      "coins": "46748820",
+      "costs": {
+        "F24": "1",
+        "IF24": "1"
+      },
+      "requires": [
+        "F24",
+        "IF24"
+      ]
+    },
+    "F26": {
+      "coins": "50039531",
+      "costs": {
+        "F25": "1",
+        "IF25": "1"
+      },
+      "requires": [
+        "F25",
+        "IF25"
+      ]
+    },
+    "F27": {
+      "coins": "70215612",
+      "costs": {
+        "F26": "1",
+        "IF26": "1"
+      },
+      "requires": [
+        "F26",
+        "IF26"
+      ]
+    },
+    "F28": {
+      "coins": "48592392",
+      "costs": {
+        "F27": "1",
+        "IF27": "1"
+      },
+      "requires": [
+        "F27",
+        "IF27"
+      ]
+    },
+    "F29": {
+      "coins": "51994089",
+      "costs": {
+        "F28": "1",
+        "IF28": "1"
+      },
+      "requires": [
+        "F28",
+        "IF28"
+      ]
+    },
+    "F30": {
+      "coins": "55873763",
+      "costs": {
+        "F29": "1",
+        "IF29": "1"
+      },
+      "requires": [
+        "F29",
+        "IF29"
       ]
     },
     "I02": {
@@ -11028,6 +15292,100 @@
         "I125"
       ]
     },
+    "I128": {
+      "coins": "5992016",
+      "costs": {
+        "C69": "1"
+      },
+      "requires": [
+        "C69"
+      ]
+    },
+    "I129": {
+      "coins": "13491020",
+      "costs": {
+        "C69": "1",
+        "I128": "1"
+      },
+      "requires": [
+        "C69",
+        "I128"
+      ]
+    },
+    "I130": {
+      "coins": "8078212",
+      "costs": {
+        "C70": "1"
+      },
+      "requires": [
+        "C70"
+      ]
+    },
+    "I131": {
+      "coins": "17964567",
+      "costs": {
+        "C70": "3"
+      },
+      "requires": [
+        "C70"
+      ]
+    },
+    "I132": {
+      "coins": "8627677",
+      "costs": {
+        "C71": "1"
+      },
+      "requires": [
+        "C71"
+      ]
+    },
+    "I133": {
+      "coins": "18677405",
+      "costs": {
+        "C71": "3"
+      },
+      "requires": [
+        "C71"
+      ]
+    },
+    "I134": {
+      "coins": "11682881",
+      "costs": {
+        "C72": "1"
+      },
+      "requires": [
+        "C72"
+      ]
+    },
+    "I135": {
+      "coins": "30677390",
+      "costs": {
+        "C72": "1",
+        "I134": "1"
+      },
+      "requires": [
+        "C72",
+        "I134"
+      ]
+    },
+    "I136": {
+      "coins": "15529896",
+      "costs": {
+        "C73": "1"
+      },
+      "requires": [
+        "C73"
+      ]
+    },
+    "I137": {
+      "coins": "30764655",
+      "costs": {
+        "C73": "3"
+      },
+      "requires": [
+        "C73"
+      ]
+    },
     "IL01": {
       "coins": "8745",
       "costs": {
@@ -11126,6 +15484,186 @@
         "L10"
       ]
     },
+    "IL11": {
+      "coins": "17331051",
+      "costs": {
+        "L11": "1"
+      },
+      "requires": [
+        "L11"
+      ]
+    },
+    "IL12": {
+      "coins": "19451806",
+      "costs": {
+        "L12": "1"
+      },
+      "requires": [
+        "L12"
+      ]
+    },
+    "IL13": {
+      "coins": "19327494",
+      "costs": {
+        "L13": "1"
+      },
+      "requires": [
+        "L13"
+      ]
+    },
+    "IL14": {
+      "coins": "21665472",
+      "costs": {
+        "L14": "1"
+      },
+      "requires": [
+        "L14"
+      ]
+    },
+    "IL15": {
+      "coins": "22102442",
+      "costs": {
+        "L15": "1"
+      },
+      "requires": [
+        "L15"
+      ]
+    },
+    "IL16": {
+      "coins": "23654321",
+      "costs": {
+        "L16": "1"
+      },
+      "requires": [
+        "L16"
+      ]
+    },
+    "IL17": {
+      "coins": "25306576",
+      "costs": {
+        "L17": "1"
+      },
+      "requires": [
+        "L17"
+      ]
+    },
+    "IL18": {
+      "coins": "27047504",
+      "costs": {
+        "L18": "1"
+      },
+      "requires": [
+        "L18"
+      ]
+    },
+    "IL19": {
+      "coins": "29387944",
+      "costs": {
+        "L19": "1"
+      },
+      "requires": [
+        "L19"
+      ]
+    },
+    "IL20": {
+      "coins": "31533451",
+      "costs": {
+        "L20": "1"
+      },
+      "requires": [
+        "L20"
+      ]
+    },
+    "IL21": {
+      "coins": "33088639",
+      "costs": {
+        "L21": "1"
+      },
+      "requires": [
+        "L21"
+      ]
+    },
+    "IL22": {
+      "coins": "35456809",
+      "costs": {
+        "L22": "1"
+      },
+      "requires": [
+        "L22"
+      ]
+    },
+    "IL23": {
+      "coins": "38004286",
+      "costs": {
+        "L23": "1"
+      },
+      "requires": [
+        "L23"
+      ]
+    },
+    "IL24": {
+      "coins": "40368401",
+      "costs": {
+        "L24": "1"
+      },
+      "requires": [
+        "L24"
+      ]
+    },
+    "IL25": {
+      "coins": "43315499",
+      "costs": {
+        "L25": "1"
+      },
+      "requires": [
+        "L25"
+      ]
+    },
+    "IL26": {
+      "coins": "46312701",
+      "costs": {
+        "L26": "1"
+      },
+      "requires": [
+        "L26"
+      ]
+    },
+    "IL27": {
+      "coins": "49536021",
+      "costs": {
+        "L27": "1"
+      },
+      "requires": [
+        "L27"
+      ]
+    },
+    "IL28": {
+      "coins": "52813846",
+      "costs": {
+        "L28": "1"
+      },
+      "requires": [
+        "L28"
+      ]
+    },
+    "IL29": {
+      "coins": "56695876",
+      "costs": {
+        "L29": "1"
+      },
+      "requires": [
+        "L29"
+      ]
+    },
+    "IL30": {
+      "coins": "60625467",
+      "costs": {
+        "L30": "1"
+      },
+      "requires": [
+        "L30"
+      ]
+    },
     "IF01": {
       "coins": "16125",
       "costs": {
@@ -11220,6 +15758,186 @@
       "requires": [
         "F10",
         "IF05"
+      ]
+    },
+    "IF11": {
+      "coins": "20257261",
+      "costs": {
+        "F11": "1"
+      },
+      "requires": [
+        "F11"
+      ]
+    },
+    "IF12": {
+      "coins": "18830421",
+      "costs": {
+        "F12": "1"
+      },
+      "requires": [
+        "F12"
+      ]
+    },
+    "IF13": {
+      "coins": "20859722",
+      "costs": {
+        "F13": "1"
+      },
+      "requires": [
+        "F13"
+      ]
+    },
+    "IF14": {
+      "coins": "21585357",
+      "costs": {
+        "F14": "1"
+      },
+      "requires": [
+        "F14"
+      ]
+    },
+    "IF15": {
+      "coins": "26020461",
+      "costs": {
+        "F15": "1"
+      },
+      "requires": [
+        "F15"
+      ]
+    },
+    "IF16": {
+      "coins": "26698076",
+      "costs": {
+        "F16": "1"
+      },
+      "requires": [
+        "F16"
+      ]
+    },
+    "IF17": {
+      "coins": "26350681",
+      "costs": {
+        "F17": "1"
+      },
+      "requires": [
+        "F17"
+      ]
+    },
+    "IF18": {
+      "coins": "28238361",
+      "costs": {
+        "F18": "1"
+      },
+      "requires": [
+        "F18"
+      ]
+    },
+    "IF19": {
+      "coins": "31760074",
+      "costs": {
+        "F19": "1"
+      },
+      "requires": [
+        "F19"
+      ]
+    },
+    "IF20": {
+      "coins": "32233751",
+      "costs": {
+        "F20": "1"
+      },
+      "requires": [
+        "F20"
+      ]
+    },
+    "IF21": {
+      "coins": "34497284",
+      "costs": {
+        "F21": "1"
+      },
+      "requires": [
+        "F21"
+      ]
+    },
+    "IF22": {
+      "coins": "36690747",
+      "costs": {
+        "F22": "1"
+      },
+      "requires": [
+        "F22"
+      ]
+    },
+    "IF23": {
+      "coins": "40126744",
+      "costs": {
+        "F23": "1"
+      },
+      "requires": [
+        "F23"
+      ]
+    },
+    "IF24": {
+      "coins": "42233701",
+      "costs": {
+        "F24": "1"
+      },
+      "requires": [
+        "F24"
+      ]
+    },
+    "IF25": {
+      "coins": "45200486",
+      "costs": {
+        "F25": "1"
+      },
+      "requires": [
+        "F25"
+      ]
+    },
+    "IF26": {
+      "coins": "48649992",
+      "costs": {
+        "F26": "1"
+      },
+      "requires": [
+        "F26"
+      ]
+    },
+    "IF27": {
+      "coins": "51694656",
+      "costs": {
+        "F27": "1"
+      },
+      "requires": [
+        "F27"
+      ]
+    },
+    "IF28": {
+      "coins": "55300524",
+      "costs": {
+        "F28": "1"
+      },
+      "requires": [
+        "F28"
+      ]
+    },
+    "IF29": {
+      "coins": "59409136",
+      "costs": {
+        "F29": "1"
+      },
+      "requires": [
+        "F29"
+      ]
+    },
+    "IF30": {
+      "coins": "63589237",
+      "costs": {
+        "F30": "1"
+      },
+      "requires": [
+        "F30"
       ]
     },
     "P01": {
@@ -13612,6 +18330,112 @@
         "I127"
       ]
     },
+    "P181": {
+      "coins": "9544709",
+      "costs": {
+        "I128": "1"
+      },
+      "requires": [
+        "I128"
+      ]
+    },
+    "P182": {
+      "coins": "30745508",
+      "costs": {
+        "I131": "1"
+      },
+      "requires": [
+        "I131"
+      ]
+    },
+    "P183": {
+      "coins": "54643144",
+      "costs": {
+        "I133": "1"
+      },
+      "requires": [
+        "I133"
+      ]
+    },
+    "P184": {
+      "coins": "45108983",
+      "costs": {
+        "I129": "1",
+        "I128": "2"
+      },
+      "requires": [
+        "I129",
+        "I128"
+      ]
+    },
+    "P185": {
+      "coins": "45437884",
+      "costs": {
+        "I130": "3"
+      },
+      "requires": [
+        "I130"
+      ]
+    },
+    "P186": {
+      "coins": "63953174",
+      "costs": {
+        "I132": "2",
+        "I133": "1"
+      },
+      "requires": [
+        "I132",
+        "I133"
+      ]
+    },
+    "P187": {
+      "coins": "118917034",
+      "costs": {
+        "I137": "1",
+        "I136": "2"
+      },
+      "requires": [
+        "I137",
+        "I136"
+      ]
+    },
+    "P188": {
+      "coins": "93597208",
+      "costs": {
+        "I135": "1",
+        "I134": "2"
+      },
+      "requires": [
+        "I135",
+        "I134"
+      ]
+    },
+    "P189": {
+      "coins": "136844053",
+      "costs": {
+        "I134": "3",
+        "I132": "4",
+        "I133": "1"
+      },
+      "requires": [
+        "I134",
+        "I132",
+        "I133"
+      ]
+    },
+    "P190": {
+      "coins": "264618317",
+      "costs": {
+        "I136": "4",
+        "I135": "2",
+        "I137": "2"
+      },
+      "requires": [
+        "I136",
+        "I135",
+        "I137"
+      ]
+    },
     "PL01": {
       "coins": "48694",
       "costs": {
@@ -13878,6 +18702,230 @@
         "IL10"
       ]
     },
+    "PL21": {
+      "coins": "80630288",
+      "costs": {
+        "IL11": "2",
+        "IL13": "2"
+      },
+      "requires": [
+        "IL11",
+        "IL13"
+      ]
+    },
+    "PL22": {
+      "coins": "137948661",
+      "costs": {
+        "IL12": "2",
+        "IL23": "1"
+      },
+      "requires": [
+        "IL12",
+        "IL23"
+      ]
+    },
+    "PL23": {
+      "coins": "94776347",
+      "costs": {
+        "IL16": "2",
+        "IL13": "2"
+      },
+      "requires": [
+        "IL16",
+        "IL13"
+      ]
+    },
+    "PL24": {
+      "coins": "91336464",
+      "costs": {
+        "IL15": "1",
+        "IL11": "2"
+      },
+      "requires": [
+        "IL15",
+        "IL11"
+      ]
+    },
+    "PL25": {
+      "coins": "89194438",
+      "costs": {
+        "IL14": "2",
+        "IL13": "2"
+      },
+      "requires": [
+        "IL14",
+        "IL13"
+      ]
+    },
+    "PL26": {
+      "coins": "64862904",
+      "costs": {
+        "IL17": "1"
+      },
+      "requires": [
+        "IL17"
+      ]
+    },
+    "PL27": {
+      "coins": "114950965",
+      "costs": {
+        "IL19": "1",
+        "IL13": "2"
+      },
+      "requires": [
+        "IL19",
+        "IL13"
+      ]
+    },
+    "PL28": {
+      "coins": "168642153",
+      "costs": {
+        "IL18": "1",
+        "IL25": "1"
+      },
+      "requires": [
+        "IL18",
+        "IL25"
+      ]
+    },
+    "PL29": {
+      "coins": "128365827",
+      "costs": {
+        "IL20": "1",
+        "IL16": "2"
+      },
+      "requires": [
+        "IL20",
+        "IL16"
+      ]
+    },
+    "PL30": {
+      "coins": "126615442",
+      "costs": {
+        "IL22": "1",
+        "IL13": "2"
+      },
+      "requires": [
+        "IL22",
+        "IL13"
+      ]
+    },
+    "PL31": {
+      "coins": "232843185",
+      "costs": {
+        "IL21": "1",
+        "IL20": "1"
+      },
+      "requires": [
+        "IL21",
+        "IL20"
+      ]
+    },
+    "PL32": {
+      "coins": "203964708",
+      "costs": {
+        "IL23": "2",
+        "IL27": "1"
+      },
+      "requires": [
+        "IL23",
+        "IL27"
+      ]
+    },
+    "PL33": {
+      "coins": "296255724",
+      "costs": {
+        "IL24": "1",
+        "IL13": "3"
+      },
+      "requires": [
+        "IL24",
+        "IL13"
+      ]
+    },
+    "PL34": {
+      "coins": "448157093",
+      "costs": {
+        "IL25": "1",
+        "IL26": "2"
+      },
+      "requires": [
+        "IL25",
+        "IL26"
+      ]
+    },
+    "PL35": {
+      "coins": "431363820",
+      "costs": {
+        "IL27": "1",
+        "IL12": "3"
+      },
+      "requires": [
+        "IL27",
+        "IL12"
+      ]
+    },
+    "PL36": {
+      "coins": "194724300",
+      "costs": {
+        "IL28": "2",
+        "IL14": "3"
+      },
+      "requires": [
+        "IL28",
+        "IL14"
+      ]
+    },
+    "PL37": {
+      "coins": "203811996",
+      "costs": {
+        "IL29": "2",
+        "IL12": "3"
+      },
+      "requires": [
+        "IL29",
+        "IL12"
+      ]
+    },
+    "PL38": {
+      "coins": "228421433",
+      "costs": {
+        "IL30": "2",
+        "IL17": "2"
+      },
+      "requires": [
+        "IL30",
+        "IL17"
+      ]
+    },
+    "PL39": {
+      "coins": "963744307",
+      "costs": {
+        "IL29": "2",
+        "IL23": "2",
+        "IL27": "1"
+      },
+      "requires": [
+        "IL29",
+        "IL23",
+        "IL27"
+      ]
+    },
+    "PL40": {
+      "coins": "1026835177",
+      "costs": {
+        "IL30": "2",
+        "IL18": "2",
+        "IL28": "2",
+        "IL13": "3"
+      },
+      "requires": [
+        "IL30",
+        "IL18",
+        "IL28",
+        "IL13"
+      ]
+    },
     "PF01": {
       "coins": "90173",
       "costs": {
@@ -14142,6 +19190,238 @@
         "IF08",
         "IF09",
         "IF10"
+      ]
+    },
+    "PF21": {
+      "coins": "95997602",
+      "costs": {
+        "IF11": "2",
+        "IF14": "1"
+      },
+      "requires": [
+        "IF11",
+        "IF14"
+      ]
+    },
+    "PF22": {
+      "coins": "85087317",
+      "costs": {
+        "IF12": "2",
+        "IF11": "2"
+      },
+      "requires": [
+        "IF12",
+        "IF11"
+      ]
+    },
+    "PF23": {
+      "coins": "154025456",
+      "costs": {
+        "IF13": "1",
+        "IF15": "1"
+      },
+      "requires": [
+        "IF13",
+        "IF15"
+      ]
+    },
+    "PF24": {
+      "coins": "127827260",
+      "costs": {
+        "IF16": "1",
+        "IF17": "1"
+      },
+      "requires": [
+        "IF16",
+        "IF17"
+      ]
+    },
+    "PF25": {
+      "coins": "146178283",
+      "costs": {
+        "IF18": "1",
+        "IF19": "1"
+      },
+      "requires": [
+        "IF18",
+        "IF19"
+      ]
+    },
+    "PF26": {
+      "coins": "143911173",
+      "costs": {
+        "IF20": "1",
+        "IF17": "1"
+      },
+      "requires": [
+        "IF20",
+        "IF17"
+      ]
+    },
+    "PF27": {
+      "coins": "165882304",
+      "costs": {
+        "IF21": "2",
+        "IF22": "1"
+      },
+      "requires": [
+        "IF21",
+        "IF22"
+      ]
+    },
+    "PF28": {
+      "coins": "101373616",
+      "costs": {
+        "IF23": "1"
+      },
+      "requires": [
+        "IF23"
+      ]
+    },
+    "PF29": {
+      "coins": "193722317",
+      "costs": {
+        "IF24": "2",
+        "IF25": "2"
+      },
+      "requires": [
+        "IF24",
+        "IF25"
+      ]
+    },
+    "PF30": {
+      "coins": "206952525",
+      "costs": {
+        "IF26": "1",
+        "IF22": "1"
+      },
+      "requires": [
+        "IF26",
+        "IF22"
+      ]
+    },
+    "PF31": {
+      "coins": "148864496",
+      "costs": {
+        "IF27": "2",
+        "IF11": "3"
+      },
+      "requires": [
+        "IF27",
+        "IF11"
+      ]
+    },
+    "PF32": {
+      "coins": "208790355",
+      "costs": {
+        "IF28": "2",
+        "IF20": "1"
+      },
+      "requires": [
+        "IF28",
+        "IF20"
+      ]
+    },
+    "PF33": {
+      "coins": "253517941",
+      "costs": {
+        "IF29": "2",
+        "IF27": "3"
+      },
+      "requires": [
+        "IF29",
+        "IF27"
+      ]
+    },
+    "PF34": {
+      "coins": "245516100",
+      "costs": {
+        "IF30": "2",
+        "IF24": "2"
+      },
+      "requires": [
+        "IF30",
+        "IF24"
+      ]
+    },
+    "PF35": {
+      "coins": "455107673",
+      "costs": {
+        "IF26": "1",
+        "IF16": "2",
+        "IF14": "2"
+      },
+      "requires": [
+        "IF26",
+        "IF16",
+        "IF14"
+      ]
+    },
+    "PF36": {
+      "coins": "528971159",
+      "costs": {
+        "IF25": "2",
+        "IF23": "1",
+        "IF18": "2"
+      },
+      "requires": [
+        "IF25",
+        "IF23",
+        "IF18"
+      ]
+    },
+    "PF37": {
+      "coins": "533196002",
+      "costs": {
+        "IF28": "2",
+        "IF27": "3",
+        "IF21": "2"
+      },
+      "requires": [
+        "IF28",
+        "IF27",
+        "IF21"
+      ]
+    },
+    "PF38": {
+      "coins": "627571011",
+      "costs": {
+        "IF30": "2",
+        "IF28": "2",
+        "IF20": "1"
+      },
+      "requires": [
+        "IF30",
+        "IF28",
+        "IF20"
+      ]
+    },
+    "PF39": {
+      "coins": "473887811",
+      "costs": {
+        "IF29": "2",
+        "IF12": "3",
+        "IF13": "2"
+      },
+      "requires": [
+        "IF29",
+        "IF12",
+        "IF13"
+      ]
+    },
+    "PF40": {
+      "coins": "1217516389",
+      "costs": {
+        "IF30": "2",
+        "IF29": "2",
+        "IF27": "3",
+        "IF26": "1"
+      },
+      "requires": [
+        "IF30",
+        "IF29",
+        "IF27",
+        "IF26"
       ]
     },
     "PD01": {
@@ -14452,6 +19732,177 @@
         "I84",
         "IF08",
         "IF10"
+      ]
+    },
+    "PD21": {
+      "coins": "88883737",
+      "costs": {
+        "IL14": "2",
+        "I131": "2"
+      },
+      "requires": [
+        "IL14",
+        "I131"
+      ]
+    },
+    "PD22": {
+      "coins": "241224911",
+      "costs": {
+        "IL20": "1",
+        "IL16": "2",
+        "I129": "3"
+      },
+      "requires": [
+        "IL20",
+        "IL16",
+        "I129"
+      ]
+    },
+    "PD23": {
+      "coins": "129396694",
+      "costs": {
+        "IL29": "1",
+        "I132": "4"
+      },
+      "requires": [
+        "IL29",
+        "I132"
+      ]
+    },
+    "PD24": {
+      "coins": "109848384",
+      "costs": {
+        "IL23": "1",
+        "I134": "3"
+      },
+      "requires": [
+        "IL23",
+        "I134"
+      ]
+    },
+    "PD25": {
+      "coins": "307784354",
+      "costs": {
+        "IL30": "2",
+        "I136": "4",
+        "I131": "3"
+      },
+      "requires": [
+        "IL30",
+        "I136",
+        "I131"
+      ]
+    },
+    "PD26": {
+      "coins": "92163874",
+      "costs": {
+        "IF24": "1",
+        "I128": "4"
+      },
+      "requires": [
+        "IF24",
+        "I128"
+      ]
+    },
+    "PD27": {
+      "coins": "154186639",
+      "costs": {
+        "IF25": "1",
+        "I131": "2"
+      },
+      "requires": [
+        "IF25",
+        "I131"
+      ]
+    },
+    "PD28": {
+      "coins": "131074945",
+      "costs": {
+        "IF27": "2",
+        "I129": "2"
+      },
+      "requires": [
+        "IF27",
+        "I129"
+      ]
+    },
+    "PD29": {
+      "coins": "151410906",
+      "costs": {
+        "IF29": "1",
+        "I134": "4"
+      },
+      "requires": [
+        "IF29",
+        "I134"
+      ]
+    },
+    "PD30": {
+      "coins": "473866246",
+      "costs": {
+        "IF30": "2",
+        "IF28": "2",
+        "I136": "4"
+      },
+      "requires": [
+        "IF30",
+        "IF28",
+        "I136"
+      ]
+    },
+    "PD31": {
+      "coins": "158235854",
+      "costs": {
+        "IL26": "1",
+        "IF11": "2"
+      },
+      "requires": [
+        "IL26",
+        "IF11"
+      ]
+    },
+    "PD32": {
+      "coins": "142000897",
+      "costs": {
+        "IF27": "2",
+        "IL11": "3"
+      },
+      "requires": [
+        "IF27",
+        "IL11"
+      ]
+    },
+    "PD33": {
+      "coins": "93583942",
+      "costs": {
+        "IF12": "2",
+        "IL16": "2"
+      },
+      "requires": [
+        "IF12",
+        "IL16"
+      ]
+    },
+    "PD34": {
+      "coins": "231485123",
+      "costs": {
+        "IL28": "1",
+        "IF19": "1"
+      },
+      "requires": [
+        "IL28",
+        "IF19"
+      ]
+    },
+    "PD35": {
+      "coins": "303329402",
+      "costs": {
+        "IL30": "2",
+        "IF30": "2"
+      },
+      "requires": [
+        "IL30",
+        "IF30"
       ]
     },
     "PT01": {
@@ -15505,6 +20956,71 @@
         "PT49"
       ]
     },
+    "PT51": {
+      "coins": "265269760",
+      "costs": {
+        "IF27": "2",
+        "IL11": "3",
+        "I129": "3"
+      },
+      "requires": [
+        "IF27",
+        "IL11",
+        "I129"
+      ]
+    },
+    "PT52": {
+      "coins": "447495446",
+      "costs": {
+        "IL30": "2",
+        "IF25": "2",
+        "I131": "3"
+      },
+      "requires": [
+        "IL30",
+        "IF25",
+        "I131"
+      ]
+    },
+    "PT53": {
+      "coins": "218716925",
+      "costs": {
+        "IL14": "3",
+        "IF21": "2",
+        "I134": "4"
+      },
+      "requires": [
+        "IL14",
+        "IF21",
+        "I134"
+      ]
+    },
+    "PT54": {
+      "coins": "351662775",
+      "costs": {
+        "IL28": "2",
+        "IF28": "2",
+        "I128": "6"
+      },
+      "requires": [
+        "IL28",
+        "IF28",
+        "I128"
+      ]
+    },
+    "PT55": {
+      "coins": "491374808",
+      "costs": {
+        "IL30": "2",
+        "IF30": "2",
+        "I136": "4"
+      },
+      "requires": [
+        "IL30",
+        "IF30",
+        "I136"
+      ]
+    },
     "M01": {
       "coins": "473559",
       "costs": {
@@ -15611,6 +21127,226 @@
       "requires": [
         "M09",
         "IM09"
+      ]
+    },
+    "M11": {
+      "coins": "73819238",
+      "costs": {
+        "M10": "1",
+        "IM10": "1"
+      },
+      "requires": [
+        "M10",
+        "IM10"
+      ]
+    },
+    "M12": {
+      "coins": "100251170",
+      "costs": {
+        "M11": "1",
+        "IM17": "1"
+      },
+      "requires": [
+        "M11",
+        "IM17"
+      ]
+    },
+    "M13": {
+      "coins": "82081142",
+      "costs": {
+        "M12": "1",
+        "IM18": "1"
+      },
+      "requires": [
+        "M12",
+        "IM18"
+      ]
+    },
+    "M14": {
+      "coins": "114267672",
+      "costs": {
+        "M13": "1",
+        "IM19": "1"
+      },
+      "requires": [
+        "M13",
+        "IM19"
+      ]
+    },
+    "M15": {
+      "coins": "122229410",
+      "costs": {
+        "M14": "1",
+        "IM20": "1"
+      },
+      "requires": [
+        "M14",
+        "IM20"
+      ]
+    },
+    "M16": {
+      "coins": "131819699",
+      "costs": {
+        "M15": "1",
+        "IM21": "1"
+      },
+      "requires": [
+        "M15",
+        "IM21"
+      ]
+    },
+    "M17": {
+      "coins": "140836110",
+      "costs": {
+        "M16": "1",
+        "IM22": "1"
+      },
+      "requires": [
+        "M16",
+        "IM22"
+      ]
+    },
+    "M18": {
+      "coins": "115411686",
+      "costs": {
+        "M17": "1",
+        "IM23": "1"
+      },
+      "requires": [
+        "M17",
+        "IM23"
+      ]
+    },
+    "M19": {
+      "coins": "161892297",
+      "costs": {
+        "M18": "1",
+        "IM24": "1"
+      },
+      "requires": [
+        "M18",
+        "IM24"
+      ]
+    },
+    "M20": {
+      "coins": "173531216",
+      "costs": {
+        "M19": "1",
+        "IM25": "1"
+      },
+      "requires": [
+        "M19",
+        "IM25"
+      ]
+    },
+    "M21": {
+      "coins": "142791078",
+      "costs": {
+        "M20": "1",
+        "IM26": "1"
+      },
+      "requires": [
+        "M20",
+        "IM26"
+      ]
+    },
+    "M22": {
+      "coins": "199523337",
+      "costs": {
+        "M21": "1",
+        "IM27": "1"
+      },
+      "requires": [
+        "M21",
+        "IM27"
+      ]
+    },
+    "M23": {
+      "coins": "213892610",
+      "costs": {
+        "M22": "1",
+        "IM28": "1"
+      },
+      "requires": [
+        "M22",
+        "IM28"
+      ]
+    },
+    "M24": {
+      "coins": "228414005",
+      "costs": {
+        "M23": "1",
+        "IM29": "1"
+      },
+      "requires": [
+        "M23",
+        "IM29"
+      ]
+    },
+    "M25": {
+      "coins": "245889246",
+      "costs": {
+        "M24": "1",
+        "IM30": "1"
+      },
+      "requires": [
+        "M24",
+        "IM30"
+      ]
+    },
+    "M26": {
+      "coins": "263635280",
+      "costs": {
+        "M25": "1",
+        "IM31": "1"
+      },
+      "requires": [
+        "M25",
+        "IM31"
+      ]
+    },
+    "M27": {
+      "coins": "282650082",
+      "costs": {
+        "M26": "1",
+        "IM32": "1"
+      },
+      "requires": [
+        "M26",
+        "IM32"
+      ]
+    },
+    "M28": {
+      "coins": "232543107",
+      "costs": {
+        "M27": "1",
+        "IM33": "1"
+      },
+      "requires": [
+        "M27",
+        "IM33"
+      ]
+    },
+    "M29": {
+      "coins": "324861867",
+      "costs": {
+        "M28": "1",
+        "IM34": "1"
+      },
+      "requires": [
+        "M28",
+        "IM34"
+      ]
+    },
+    "M30": {
+      "coins": "348387941",
+      "costs": {
+        "M29": "1",
+        "IM35": "1"
+      },
+      "requires": [
+        "M29",
+        "IM35"
       ]
     },
     "IM01": {
@@ -15767,6 +21503,186 @@
       "requires": [
         "IM02",
         "IF01"
+      ]
+    },
+    "IM17": {
+      "coins": "69360422",
+      "costs": {
+        "M11": "1"
+      },
+      "requires": [
+        "M11"
+      ]
+    },
+    "IM18": {
+      "coins": "74109901",
+      "costs": {
+        "M12": "1"
+      },
+      "requires": [
+        "M12"
+      ]
+    },
+    "IM19": {
+      "coins": "79020167",
+      "costs": {
+        "M13": "1"
+      },
+      "requires": [
+        "M13"
+      ]
+    },
+    "IM20": {
+      "coins": "84506852",
+      "costs": {
+        "M14": "1"
+      },
+      "requires": [
+        "M14"
+      ]
+    },
+    "IM21": {
+      "coins": "91204506",
+      "costs": {
+        "M15": "1"
+      },
+      "requires": [
+        "M15"
+      ]
+    },
+    "IM22": {
+      "coins": "97327536",
+      "costs": {
+        "M16": "1"
+      },
+      "requires": [
+        "M16"
+      ]
+    },
+    "IM23": {
+      "coins": "103910926",
+      "costs": {
+        "M17": "1"
+      },
+      "requires": [
+        "M17"
+      ]
+    },
+    "IM24": {
+      "coins": "111831917",
+      "costs": {
+        "M18": "1"
+      },
+      "requires": [
+        "M18"
+      ]
+    },
+    "IM25": {
+      "coins": "119847841",
+      "costs": {
+        "M19": "1"
+      },
+      "requires": [
+        "M19"
+      ]
+    },
+    "IM26": {
+      "coins": "128487254",
+      "costs": {
+        "M20": "1"
+      },
+      "requires": [
+        "M20"
+      ]
+    },
+    "IM27": {
+      "coins": "137748556",
+      "costs": {
+        "M21": "1"
+      },
+      "requires": [
+        "M21"
+      ]
+    },
+    "IM28": {
+      "coins": "147639511",
+      "costs": {
+        "M22": "1"
+      },
+      "requires": [
+        "M22"
+      ]
+    },
+    "IM29": {
+      "coins": "157684454",
+      "costs": {
+        "M23": "1"
+      },
+      "requires": [
+        "M23"
+      ]
+    },
+    "IM30": {
+      "coins": "169668786",
+      "costs": {
+        "M24": "1"
+      },
+      "requires": [
+        "M24"
+      ]
+    },
+    "IM31": {
+      "coins": "181889117",
+      "costs": {
+        "M25": "1"
+      },
+      "requires": [
+        "M25"
+      ]
+    },
+    "IM32": {
+      "coins": "194975902",
+      "costs": {
+        "M26": "1"
+      },
+      "requires": [
+        "M26"
+      ]
+    },
+    "IM33": {
+      "coins": "209004392",
+      "costs": {
+        "M27": "1"
+      },
+      "requires": [
+        "M27"
+      ]
+    },
+    "IM34": {
+      "coins": "224024512",
+      "costs": {
+        "M28": "1"
+      },
+      "requires": [
+        "M28"
+      ]
+    },
+    "IM35": {
+      "coins": "240218116",
+      "costs": {
+        "M29": "1"
+      },
+      "requires": [
+        "M29"
+      ]
+    },
+    "IM36": {
+      "coins": "257974651",
+      "costs": {
+        "M30": "1"
+      },
+      "requires": [
+        "M30"
       ]
     },
     "PM01": {
@@ -16060,6 +21976,732 @@
         "I04",
         "IL04",
         "IF04"
+      ]
+    },
+    "PM24": {
+      "coins": "175377719",
+      "costs": {
+        "IM17": "1"
+      },
+      "requires": [
+        "IM17"
+      ]
+    },
+    "PM25": {
+      "coins": "366732007",
+      "costs": {
+        "IM18": "1",
+        "IM17": "1"
+      },
+      "requires": [
+        "IM18",
+        "IM17"
+      ]
+    },
+    "PM26": {
+      "coins": "362050967",
+      "costs": {
+        "IM19": "1",
+        "IM17": "1"
+      },
+      "requires": [
+        "IM19",
+        "IM17"
+      ]
+    },
+    "PM27": {
+      "coins": "403366847",
+      "costs": {
+        "IM20": "1",
+        "IM18": "1"
+      },
+      "requires": [
+        "IM20",
+        "IM18"
+      ]
+    },
+    "PM28": {
+      "coins": "499257959",
+      "costs": {
+        "IM21": "1",
+        "IM23": "1"
+      },
+      "requires": [
+        "IM21",
+        "IM23"
+      ]
+    },
+    "PM29": {
+      "coins": "515071314",
+      "costs": {
+        "IM22": "1",
+        "IM23": "1"
+      },
+      "requires": [
+        "IM22",
+        "IM23"
+      ]
+    },
+    "PM30": {
+      "coins": "286204098",
+      "costs": {
+        "IM23": "1"
+      },
+      "requires": [
+        "IM23"
+      ]
+    },
+    "PM31": {
+      "coins": "476958409",
+      "costs": {
+        "IM24": "1",
+        "IM20": "1"
+      },
+      "requires": [
+        "IM24",
+        "IM20"
+      ]
+    },
+    "PM32": {
+      "coins": "566233121",
+      "costs": {
+        "IM25": "1",
+        "IM24": "1"
+      },
+      "requires": [
+        "IM25",
+        "IM24"
+      ]
+    },
+    "PM33": {
+      "coins": "618368362",
+      "costs": {
+        "IM26": "1",
+        "IM23": "1"
+      },
+      "requires": [
+        "IM26",
+        "IM23"
+      ]
+    },
+    "PM34": {
+      "coins": "630591762",
+      "costs": {
+        "IM27": "1",
+        "IM18": "1"
+      },
+      "requires": [
+        "IM27",
+        "IM18"
+      ]
+    },
+    "PM35": {
+      "coins": "703120448",
+      "costs": {
+        "IM28": "1",
+        "IM26": "1"
+      },
+      "requires": [
+        "IM28",
+        "IM26"
+      ]
+    },
+    "PM36": {
+      "coins": "399071156",
+      "costs": {
+        "IM29": "1"
+      },
+      "requires": [
+        "IM29"
+      ]
+    },
+    "PM37": {
+      "coins": "970280738",
+      "costs": {
+        "IM30": "1",
+        "IM33": "1"
+      },
+      "requires": [
+        "IM30",
+        "IM33"
+      ]
+    },
+    "PM38": {
+      "coins": "780820259",
+      "costs": {
+        "IM31": "1",
+        "IM26": "1"
+      },
+      "requires": [
+        "IM31",
+        "IM26"
+      ]
+    },
+    "PM39": {
+      "coins": "806151869",
+      "costs": {
+        "IM32": "1",
+        "IM27": "1"
+      },
+      "requires": [
+        "IM32",
+        "IM27"
+      ]
+    },
+    "PM40": {
+      "coins": "576086429",
+      "costs": {
+        "IM33": "1"
+      },
+      "requires": [
+        "IM33"
+      ]
+    },
+    "PM41": {
+      "coins": "1178934075",
+      "costs": {
+        "IM34": "1",
+        "IM33": "1"
+      },
+      "requires": [
+        "IM34",
+        "IM33"
+      ]
+    },
+    "PM42": {
+      "coins": "1240822271",
+      "costs": {
+        "IM35": "1",
+        "IM33": "1"
+      },
+      "requires": [
+        "IM35",
+        "IM33"
+      ]
+    },
+    "PM43": {
+      "coins": "2654823066",
+      "costs": {
+        "IM36": "1",
+        "IM33": "1"
+      },
+      "requires": [
+        "IM36",
+        "IM33"
+      ]
+    },
+    "PM44": {
+      "coins": "261479552",
+      "costs": {
+        "I133": "2",
+        "IM23": "1"
+      },
+      "requires": [
+        "I133",
+        "IM23"
+      ]
+    },
+    "PM45": {
+      "coins": "258706522",
+      "costs": {
+        "I128": "6",
+        "IM20": "1"
+      },
+      "requires": [
+        "I128",
+        "IM20"
+      ]
+    },
+    "PM46": {
+      "coins": "260706182",
+      "costs": {
+        "I137": "2",
+        "IM18": "1"
+      },
+      "requires": [
+        "I137",
+        "IM18"
+      ]
+    },
+    "PM47": {
+      "coins": "353379368",
+      "costs": {
+        "I130": "3",
+        "IM22": "1"
+      },
+      "requires": [
+        "I130",
+        "IM22"
+      ]
+    },
+    "PM48": {
+      "coins": "679562286",
+      "costs": {
+        "I135": "2",
+        "IM29": "1"
+      },
+      "requires": [
+        "I135",
+        "IM29"
+      ]
+    },
+    "PM49": {
+      "coins": "180117387",
+      "costs": {
+        "IL11": "2",
+        "IM17": "1"
+      },
+      "requires": [
+        "IL11",
+        "IM17"
+      ]
+    },
+    "PM50": {
+      "coins": "203845952",
+      "costs": {
+        "IL13": "3",
+        "IM18": "1"
+      },
+      "requires": [
+        "IL13",
+        "IM18"
+      ]
+    },
+    "PM51": {
+      "coins": "293374987",
+      "costs": {
+        "IL19": "2",
+        "IM23": "1"
+      },
+      "requires": [
+        "IL19",
+        "IM23"
+      ]
+    },
+    "PM52": {
+      "coins": "300173344",
+      "costs": {
+        "IL12": "3",
+        "IM26": "1"
+      },
+      "requires": [
+        "IL12",
+        "IM26"
+      ]
+    },
+    "PM53": {
+      "coins": "493550967",
+      "costs": {
+        "IL29": "2",
+        "IM30": "1"
+      },
+      "requires": [
+        "IL29",
+        "IM30"
+      ]
+    },
+    "PM54": {
+      "coins": "358681871",
+      "costs": {
+        "IF25": "2",
+        "IM23": "1"
+      },
+      "requires": [
+        "IF25",
+        "IM23"
+      ]
+    },
+    "PM55": {
+      "coins": "340492260",
+      "costs": {
+        "IF22": "1",
+        "IM23": "1"
+      },
+      "requires": [
+        "IF22",
+        "IM23"
+      ]
+    },
+    "PM56": {
+      "coins": "341222046",
+      "costs": {
+        "IF29": "2",
+        "IM18": "1"
+      },
+      "requires": [
+        "IF29",
+        "IM18"
+      ]
+    },
+    "PM57": {
+      "coins": "442968812",
+      "costs": {
+        "IF28": "2",
+        "IM27": "1"
+      },
+      "requires": [
+        "IF28",
+        "IM27"
+      ]
+    },
+    "PM58": {
+      "coins": "424967645",
+      "costs": {
+        "IF30": "2",
+        "IM23": "1"
+      },
+      "requires": [
+        "IF30",
+        "IM23"
+      ]
+    },
+    "PM59": {
+      "coins": "470424858",
+      "costs": {
+        "IL14": "3",
+        "I131": "3",
+        "IM23": "1"
+      },
+      "requires": [
+        "IL14",
+        "I131",
+        "IM23"
+      ]
+    },
+    "PM60": {
+      "coins": "802629433",
+      "costs": {
+        "IL29": "2",
+        "I132": "5",
+        "IM33": "1"
+      },
+      "requires": [
+        "IL29",
+        "I132",
+        "IM33"
+      ]
+    },
+    "PM61": {
+      "coins": "461489099",
+      "costs": {
+        "IL13": "3",
+        "IM18": "1",
+        "I137": "2"
+      },
+      "requires": [
+        "IL13",
+        "IM18",
+        "I137"
+      ]
+    },
+    "PM62": {
+      "coins": "625471020",
+      "costs": {
+        "IL23": "2",
+        "I134": "4",
+        "IM30": "1"
+      },
+      "requires": [
+        "IL23",
+        "I134",
+        "IM30"
+      ]
+    },
+    "PM63": {
+      "coins": "735466773",
+      "costs": {
+        "IL30": "2",
+        "I131": "3",
+        "IM26": "1"
+      },
+      "requires": [
+        "IL30",
+        "I131",
+        "IM26"
+      ]
+    },
+    "PM64": {
+      "coins": "580438956",
+      "costs": {
+        "IF24": "2",
+        "I131": "3",
+        "IM23": "1"
+      },
+      "requires": [
+        "IF24",
+        "I131",
+        "IM23"
+      ]
+    },
+    "PM65": {
+      "coins": "477289472",
+      "costs": {
+        "IF27": "3",
+        "I129": "3",
+        "IM18": "1"
+      },
+      "requires": [
+        "IF27",
+        "I129",
+        "IM18"
+      ]
+    },
+    "PM66": {
+      "coins": "542624763",
+      "costs": {
+        "IF21": "2",
+        "I134": "4",
+        "IM27": "1"
+      },
+      "requires": [
+        "IF21",
+        "I134",
+        "IM27"
+      ]
+    },
+    "PM67": {
+      "coins": "495185719",
+      "costs": {
+        "IF23": "1",
+        "I132": "5",
+        "IM23": "1"
+      },
+      "requires": [
+        "IF23",
+        "I132",
+        "IM23"
+      ]
+    },
+    "PM68": {
+      "coins": "550099787",
+      "costs": {
+        "IF30": "2",
+        "I136": "4",
+        "IM18": "1"
+      },
+      "requires": [
+        "IF30",
+        "I136",
+        "IM18"
+      ]
+    },
+    "PM69": {
+      "coins": "716717513",
+      "costs": {
+        "IL26": "2",
+        "IF29": "2",
+        "IM18": "1"
+      },
+      "requires": [
+        "IL26",
+        "IF29",
+        "IM18"
+      ]
+    },
+    "PM70": {
+      "coins": "567814628",
+      "costs": {
+        "IL11": "3",
+        "IF24": "2",
+        "IM23": "1"
+      },
+      "requires": [
+        "IL11",
+        "IF24",
+        "IM23"
+      ]
+    },
+    "PM71": {
+      "coins": "348185036",
+      "costs": {
+        "IL11": "3",
+        "IF11": "3",
+        "IM17": "1"
+      },
+      "requires": [
+        "IL11",
+        "IF11",
+        "IM17"
+      ]
+    },
+    "PM72": {
+      "coins": "787373268",
+      "costs": {
+        "IL28": "2",
+        "IF19": "1",
+        "IM26": "1"
+      },
+      "requires": [
+        "IL28",
+        "IF19",
+        "IM26"
+      ]
+    },
+    "PM73": {
+      "coins": "960874545",
+      "costs": {
+        "IL30": "2",
+        "IF28": "2",
+        "IM27": "1"
+      },
+      "requires": [
+        "IL30",
+        "IF28",
+        "IM27"
+      ]
+    },
+    "PM74": {
+      "coins": "731042161",
+      "costs": {
+        "IL11": "3",
+        "IF27": "3",
+        "I129": "3",
+        "IM18": "1"
+      },
+      "requires": [
+        "IL11",
+        "IF27",
+        "I129",
+        "IM18"
+      ]
+    },
+    "PM75": {
+      "coins": "900893898",
+      "costs": {
+        "IL14": "3",
+        "IF25": "2",
+        "I131": "3",
+        "IM23": "1"
+      },
+      "requires": [
+        "IL14",
+        "IF25",
+        "I131",
+        "IM23"
+      ]
+    },
+    "PM76": {
+      "coins": "920268461",
+      "costs": {
+        "IL26": "2",
+        "IF29": "2",
+        "I132": "5",
+        "IM18": "1"
+      },
+      "requires": [
+        "IL26",
+        "IF29",
+        "I132",
+        "IM18"
+      ]
+    },
+    "PM77": {
+      "coins": "1187304005",
+      "costs": {
+        "IL28": "2",
+        "IF28": "2",
+        "I134": "4",
+        "IM27": "1"
+      },
+      "requires": [
+        "IL28",
+        "IF28",
+        "I134",
+        "IM27"
+      ]
+    },
+    "PM78": {
+      "coins": "1374549036",
+      "costs": {
+        "IL30": "2",
+        "IF30": "2",
+        "I131": "3",
+        "IM26": "1"
+      },
+      "requires": [
+        "IL30",
+        "IF30",
+        "I131",
+        "IM26"
+      ]
+    },
+    "PM79": {
+      "coins": "615014394",
+      "costs": {
+        "IL16": "3",
+        "IF12": "3",
+        "I136": "4",
+        "IM18": "1"
+      },
+      "requires": [
+        "IL16",
+        "IF12",
+        "I136",
+        "IM18"
+      ]
+    },
+    "PM80": {
+      "coins": "468073332",
+      "costs": {
+        "IL11": "3",
+        "IF13": "2",
+        "I128": "6",
+        "IM17": "1"
+      },
+      "requires": [
+        "IL11",
+        "IF13",
+        "I128",
+        "IM17"
+      ]
+    },
+    "PM81": {
+      "coins": "919614284",
+      "costs": {
+        "IL14": "3",
+        "IF21": "2",
+        "I135": "2",
+        "IM23": "1"
+      },
+      "requires": [
+        "IL14",
+        "IF21",
+        "I135",
+        "IM23"
+      ]
+    },
+    "PM82": {
+      "coins": "980893881",
+      "costs": {
+        "IL19": "2",
+        "IF27": "3",
+        "I137": "2",
+        "IM18": "1"
+      },
+      "requires": [
+        "IL19",
+        "IF27",
+        "I137",
+        "IM18"
+      ]
+    },
+    "PM83": {
+      "coins": "3160685858",
+      "costs": {
+        "IL30": "2",
+        "IF30": "2",
+        "IL18": "2",
+        "IF29": "2",
+        "I136": "4",
+        "IM33": "1"
+      },
+      "requires": [
+        "IL30",
+        "IF30",
+        "IL18",
+        "IF29",
+        "I136",
+        "IM33"
       ]
     }
   }

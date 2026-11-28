@@ -1,0 +1,722 @@
+{
+  "F21": {
+    "version": 1,
+    "anchor": "体侧明带中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            172,
+            159
+          ],
+          [
+            416,
+            157
+          ],
+          [
+            661,
+            158
+          ],
+          [
+            903,
+            157
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 78,
+            "top": 110,
+            "width": 129,
+            "height": 97
+          },
+          {
+            "left": 323,
+            "top": 107,
+            "width": 128,
+            "height": 100
+          },
+          {
+            "left": 570,
+            "top": 112,
+            "width": 126,
+            "height": 95
+          },
+          {
+            "left": 807,
+            "top": 109,
+            "width": 130,
+            "height": 99
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            190,
+            401
+          ],
+          [
+            435,
+            401
+          ],
+          [
+            679,
+            402
+          ],
+          [
+            924,
+            401
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 49,
+            "top": 335,
+            "width": 183,
+            "height": 135
+          },
+          {
+            "left": 294,
+            "top": 330,
+            "width": 183,
+            "height": 137
+          },
+          {
+            "left": 544,
+            "top": 340,
+            "width": 177,
+            "height": 120
+          },
+          {
+            "left": 782,
+            "top": 332,
+            "width": 184,
+            "height": 138
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            204,
+            637
+          ],
+          [
+            449,
+            637
+          ],
+          [
+            692,
+            638
+          ],
+          [
+            936,
+            637
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 26,
+            "top": 548,
+            "width": 228,
+            "height": 169
+          },
+          {
+            "left": 270,
+            "top": 545,
+            "width": 229,
+            "height": 173
+          },
+          {
+            "left": 520,
+            "top": 551,
+            "width": 222,
+            "height": 165
+          },
+          {
+            "left": 758,
+            "top": 545,
+            "width": 228,
+            "height": 173
+          }
+        ]
+      }
+    }
+  },
+  "F22": {
+    "version": 3,
+    "anchor": "体轴中线与鳃盖尖角后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            167,
+            164
+          ],
+          [
+            410,
+            164
+          ],
+          [
+            647,
+            164
+          ],
+          [
+            892,
+            164
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 96,
+            "top": 153,
+            "width": 104,
+            "height": 22
+          },
+          {
+            "left": 335,
+            "top": 150,
+            "width": 108,
+            "height": 25
+          },
+          {
+            "left": 567,
+            "top": 152,
+            "width": 114,
+            "height": 23
+          },
+          {
+            "left": 820,
+            "top": 151,
+            "width": 106,
+            "height": 28
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            176,
+            396
+          ],
+          [
+            427,
+            396
+          ],
+          [
+            661,
+            396
+          ],
+          [
+            899,
+            396
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 82,
+            "top": 377,
+            "width": 136,
+            "height": 32
+          },
+          {
+            "left": 329,
+            "top": 376,
+            "width": 139,
+            "height": 33
+          },
+          {
+            "left": 562,
+            "top": 376,
+            "width": 141,
+            "height": 33
+          },
+          {
+            "left": 801,
+            "top": 376,
+            "width": 140,
+            "height": 41
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            182,
+            612
+          ],
+          [
+            439,
+            612
+          ],
+          [
+            668,
+            612
+          ],
+          [
+            903,
+            612
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 63,
+            "top": 590,
+            "width": 167,
+            "height": 39
+          },
+          {
+            "left": 320,
+            "top": 590,
+            "width": 167,
+            "height": 40
+          },
+          {
+            "left": 551,
+            "top": 591,
+            "width": 166,
+            "height": 38
+          },
+          {
+            "left": 778,
+            "top": 590,
+            "width": 174,
+            "height": 50
+          }
+        ]
+      }
+    }
+  },
+  "F23": {
+    "version": 2,
+    "anchor": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            166,
+            158
+          ],
+          [
+            408,
+            158
+          ],
+          [
+            655,
+            158
+          ],
+          [
+            897,
+            158
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 79,
+            "top": 130,
+            "width": 123,
+            "height": 52
+          },
+          {
+            "left": 317,
+            "top": 130,
+            "width": 127,
+            "height": 52
+          },
+          {
+            "left": 561,
+            "top": 130,
+            "width": 131,
+            "height": 52
+          },
+          {
+            "left": 803,
+            "top": 130,
+            "width": 130,
+            "height": 52
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            182,
+            400
+          ],
+          [
+            430,
+            400
+          ],
+          [
+            672,
+            400
+          ],
+          [
+            914,
+            400
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 54,
+            "top": 366,
+            "width": 178,
+            "height": 70
+          },
+          {
+            "left": 299,
+            "top": 367,
+            "width": 181,
+            "height": 69
+          },
+          {
+            "left": 542,
+            "top": 365,
+            "width": 180,
+            "height": 72
+          },
+          {
+            "left": 784,
+            "top": 366,
+            "width": 181,
+            "height": 70
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            200,
+            636
+          ],
+          [
+            442,
+            636
+          ],
+          [
+            684,
+            636
+          ],
+          [
+            929,
+            636
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 25,
+            "top": 589,
+            "width": 234,
+            "height": 88
+          },
+          {
+            "left": 273,
+            "top": 590,
+            "width": 228,
+            "height": 87
+          },
+          {
+            "left": 516,
+            "top": 589,
+            "width": 227,
+            "height": 88
+          },
+          {
+            "left": 754,
+            "top": 591,
+            "width": 235,
+            "height": 85
+          }
+        ]
+      }
+    }
+  },
+  "F24": {
+    "version": 2,
+    "anchor": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            181,
+            161
+          ],
+          [
+            422,
+            161
+          ],
+          [
+            662,
+            161
+          ],
+          [
+            901,
+            161
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 87,
+            "top": 140,
+            "width": 132,
+            "height": 42
+          },
+          {
+            "left": 323,
+            "top": 140,
+            "width": 137,
+            "height": 44
+          },
+          {
+            "left": 564,
+            "top": 140,
+            "width": 136,
+            "height": 42
+          },
+          {
+            "left": 801,
+            "top": 140,
+            "width": 138,
+            "height": 42
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            194,
+            396
+          ],
+          [
+            434,
+            396
+          ],
+          [
+            673,
+            396
+          ],
+          [
+            914,
+            396
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 64,
+            "top": 367,
+            "width": 179,
+            "height": 54
+          },
+          {
+            "left": 304,
+            "top": 367,
+            "width": 180,
+            "height": 54
+          },
+          {
+            "left": 540,
+            "top": 366,
+            "width": 183,
+            "height": 55
+          },
+          {
+            "left": 781,
+            "top": 366,
+            "width": 183,
+            "height": 55
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            201,
+            628
+          ],
+          [
+            441,
+            628
+          ],
+          [
+            683,
+            628
+          ],
+          [
+            927,
+            628
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 38,
+            "top": 594,
+            "width": 220,
+            "height": 65
+          },
+          {
+            "left": 277,
+            "top": 595,
+            "width": 220,
+            "height": 65
+          },
+          {
+            "left": 519,
+            "top": 594,
+            "width": 220,
+            "height": 65
+          },
+          {
+            "left": 757,
+            "top": 595,
+            "width": 226,
+            "height": 64
+          }
+        ]
+      }
+    }
+  },
+  "F25": {
+    "version": 1,
+    "anchor": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            178,
+            160
+          ],
+          [
+            417,
+            160
+          ],
+          [
+            657,
+            160
+          ],
+          [
+            896,
+            160
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 84,
+            "top": 139,
+            "width": 148,
+            "height": 45
+          },
+          {
+            "left": 319,
+            "top": 140,
+            "width": 153,
+            "height": 47
+          },
+          {
+            "left": 559,
+            "top": 139,
+            "width": 153,
+            "height": 44
+          },
+          {
+            "left": 800,
+            "top": 134,
+            "width": 151,
+            "height": 49
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            188,
+            397
+          ],
+          [
+            430,
+            397
+          ],
+          [
+            671,
+            397
+          ],
+          [
+            910,
+            397
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 58,
+            "top": 368,
+            "width": 198,
+            "height": 53
+          },
+          {
+            "left": 298,
+            "top": 368,
+            "width": 198,
+            "height": 58
+          },
+          {
+            "left": 539,
+            "top": 368,
+            "width": 198,
+            "height": 53
+          },
+          {
+            "left": 775,
+            "top": 368,
+            "width": 203,
+            "height": 53
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            193,
+            628
+          ],
+          [
+            434,
+            628
+          ],
+          [
+            674,
+            628
+          ],
+          [
+            923,
+            628
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 36,
+            "top": 591,
+            "width": 235,
+            "height": 69
+          },
+          {
+            "left": 275,
+            "top": 591,
+            "width": 236,
+            "height": 75
+          },
+          {
+            "left": 522,
+            "top": 591,
+            "width": 230,
+            "height": 70
+          },
+          {
+            "left": 756,
+            "top": 589,
+            "width": 245,
+            "height": 71
+          }
+        ]
+      }
+    }
+  }
+}

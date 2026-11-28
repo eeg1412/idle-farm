@@ -1,0 +1,47 @@
+{
+  "version": 8,
+  "presentationRevision": "v8-r1",
+  "source": "raw/compound-feed-v8.png",
+  "png": "feed-v8.png",
+  "sourceSize": [
+    1900,
+    828
+  ],
+  "sourceSha256": "9f6cd35c9e82603714eb7692ac53bbfdbbbd9e625a6270f994cddbca2fd881b5",
+  "sourceRectangle": {
+    "left": 318,
+    "top": 104,
+    "width": 1264,
+    "height": 631
+  },
+  "generatedWith": "built-in image_gen",
+  "referenceFrames": [
+    {
+      "path": "assets/livestock/animals/L01/adult-0.png",
+      "sha256": "ba96d1e83fef6bba693204da2cf34cb709c3437351795ad0c8dfc9270b9aab1f"
+    },
+    {
+      "path": "assets/livestock/animals/L02/adult-0.png",
+      "sha256": "b381b49ddc82b7ab13ac443d56a8d8a728894e1ddc9c7e2c71bbb58f7bba2373"
+    }
+  ],
+  "promptFile": "assets/livestock/feed-prompts-v8.md",
+  "conversion": "Crop the actual generated silhouette; nearest-normalize to the registered 120x56 content rectangle and composite in a 128x64 transparent canvas. Preserve the unmodified original, cool tray rim, mixed feed colors and alpha; no program particles or painted ground shadow.",
+  "texture": {
+    "path": "./art/livestock/feed-v8.webp",
+    "size": [
+      128,
+      64
+    ],
+    "bounds": {
+      "x": 4,
+      "y": 4,
+      "width": 120,
+      "height": 56
+    },
+    "anchor": [
+      64,
+      60
+    ]
+  }
+}

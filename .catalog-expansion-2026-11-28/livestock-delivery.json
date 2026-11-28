@@ -1,0 +1,717 @@
+{
+  "activationFiles": [
+    "assets/livestock/layout.json",
+    "assets/livestock/atlas.json",
+    "assets/livestock/feeding-registration-v5.json",
+    "assets/livestock/choice-registration-v7.json",
+    "assets/livestock/feed-registration-v8.json",
+    "assets/livestock/choice-prompts-v7.md",
+    "assets/livestock/feed-prompts-v8.md",
+    "assets/livestock/feeding-prompts-expansion.md",
+    "src/content/livestock-visuals.json"
+  ],
+  "items": {
+    "L11": {
+      "source": [
+        "assets/livestock/raw/l11-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L11/adult-0.png",
+        "assets/livestock/animals/L11/adult-1.png",
+        "assets/livestock/animals/L11/adult-2.png",
+        "assets/livestock/animals/L11/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l11-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L11.png",
+        "public/art/livestock/animals/L11.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l11-expansion-choice-v1.png",
+        "assets/livestock/icons/L11.png",
+        "public/ui-icons/livestock-L11.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L11.png",
+        "public/art/scene-L11.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L11",
+        "assets/livestock/reviews/choice-v7/L11"
+      ]
+    },
+    "L12": {
+      "source": [
+        "assets/livestock/raw/l12-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L12/adult-0.png",
+        "assets/livestock/animals/L12/adult-1.png",
+        "assets/livestock/animals/L12/adult-2.png",
+        "assets/livestock/animals/L12/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l12-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L12.png",
+        "public/art/livestock/animals/L12.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l12-expansion-choice-v1.png",
+        "assets/livestock/icons/L12.png",
+        "public/ui-icons/livestock-L12.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L12.png",
+        "public/art/scene-L12.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L12",
+        "assets/livestock/reviews/choice-v7/L12"
+      ]
+    },
+    "L13": {
+      "source": [
+        "assets/livestock/raw/l13-expansion-feeding-v2.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L13/adult-0.png",
+        "assets/livestock/animals/L13/adult-1.png",
+        "assets/livestock/animals/L13/adult-2.png",
+        "assets/livestock/animals/L13/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l13-expansion-v2.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L13.png",
+        "public/art/livestock/animals/L13.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l13-expansion-choice-v1.png",
+        "assets/livestock/icons/L13.png",
+        "public/ui-icons/livestock-L13.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L13.png",
+        "public/art/scene-L13.webp"
+      ],
+      "feed": [
+        "assets/livestock/raw/l13-expansion-feed-v1.png",
+        "assets/livestock/feed-L13.png",
+        "public/art/livestock/feed-L13.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L13",
+        "assets/livestock/reviews/choice-v7/L13"
+      ]
+    },
+    "L14": {
+      "source": [
+        "assets/livestock/raw/l14-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L14/young-0.png",
+        "assets/livestock/animals/L14/young-1.png",
+        "assets/livestock/animals/L14/young-2.png",
+        "assets/livestock/animals/L14/young-3.png",
+        "assets/livestock/animals/L14/growing-0.png",
+        "assets/livestock/animals/L14/growing-1.png",
+        "assets/livestock/animals/L14/growing-2.png",
+        "assets/livestock/animals/L14/growing-3.png",
+        "assets/livestock/animals/L14/mature-0.png",
+        "assets/livestock/animals/L14/mature-1.png",
+        "assets/livestock/animals/L14/mature-2.png",
+        "assets/livestock/animals/L14/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l14-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L14.png",
+        "public/art/livestock/animals/L14.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l14-expansion-choice-v1.png",
+        "assets/livestock/icons/L14.png",
+        "public/ui-icons/livestock-L14.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L14.png",
+        "public/art/scene-L14.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L14",
+        "assets/livestock/reviews/choice-v7/L14"
+      ]
+    },
+    "L15": {
+      "source": [
+        "assets/livestock/raw/l15-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L15/young-0.png",
+        "assets/livestock/animals/L15/young-1.png",
+        "assets/livestock/animals/L15/young-2.png",
+        "assets/livestock/animals/L15/young-3.png",
+        "assets/livestock/animals/L15/growing-0.png",
+        "assets/livestock/animals/L15/growing-1.png",
+        "assets/livestock/animals/L15/growing-2.png",
+        "assets/livestock/animals/L15/growing-3.png",
+        "assets/livestock/animals/L15/mature-0.png",
+        "assets/livestock/animals/L15/mature-1.png",
+        "assets/livestock/animals/L15/mature-2.png",
+        "assets/livestock/animals/L15/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l15-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L15.png",
+        "public/art/livestock/animals/L15.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l15-expansion-choice-v1.png",
+        "assets/livestock/icons/L15.png",
+        "public/ui-icons/livestock-L15.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L15.png",
+        "public/art/scene-L15.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L15",
+        "assets/livestock/reviews/choice-v7/L15"
+      ]
+    },
+    "L16": {
+      "source": [
+        "assets/livestock/raw/l16-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L16/adult-0.png",
+        "assets/livestock/animals/L16/adult-1.png",
+        "assets/livestock/animals/L16/adult-2.png",
+        "assets/livestock/animals/L16/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l16-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L16.png",
+        "public/art/livestock/animals/L16.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l16-expansion-choice-v1.png",
+        "assets/livestock/icons/L16.png",
+        "public/ui-icons/livestock-L16.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L16.png",
+        "public/art/scene-L16.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L16",
+        "assets/livestock/reviews/choice-v7/L16"
+      ]
+    },
+    "L17": {
+      "source": [
+        "assets/livestock/raw/l17-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L17/adult-0.png",
+        "assets/livestock/animals/L17/adult-1.png",
+        "assets/livestock/animals/L17/adult-2.png",
+        "assets/livestock/animals/L17/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l17-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L17.png",
+        "public/art/livestock/animals/L17.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l17-expansion-choice-v1.png",
+        "assets/livestock/icons/L17.png",
+        "public/ui-icons/livestock-L17.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L17.png",
+        "public/art/scene-L17.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L17",
+        "assets/livestock/reviews/choice-v7/L17"
+      ]
+    },
+    "L18": {
+      "source": [
+        "assets/livestock/raw/l18-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L18/young-0.png",
+        "assets/livestock/animals/L18/young-1.png",
+        "assets/livestock/animals/L18/young-2.png",
+        "assets/livestock/animals/L18/young-3.png",
+        "assets/livestock/animals/L18/growing-0.png",
+        "assets/livestock/animals/L18/growing-1.png",
+        "assets/livestock/animals/L18/growing-2.png",
+        "assets/livestock/animals/L18/growing-3.png",
+        "assets/livestock/animals/L18/mature-0.png",
+        "assets/livestock/animals/L18/mature-1.png",
+        "assets/livestock/animals/L18/mature-2.png",
+        "assets/livestock/animals/L18/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l18-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L18.png",
+        "public/art/livestock/animals/L18.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l18-expansion-choice-v1.png",
+        "assets/livestock/icons/L18.png",
+        "public/ui-icons/livestock-L18.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L18.png",
+        "public/art/scene-L18.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L18",
+        "assets/livestock/reviews/choice-v7/L18"
+      ]
+    },
+    "L19": {
+      "source": [
+        "assets/livestock/raw/l19-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L19/adult-0.png",
+        "assets/livestock/animals/L19/adult-1.png",
+        "assets/livestock/animals/L19/adult-2.png",
+        "assets/livestock/animals/L19/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l19-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L19.png",
+        "public/art/livestock/animals/L19.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l19-expansion-choice-v1.png",
+        "assets/livestock/icons/L19.png",
+        "public/ui-icons/livestock-L19.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L19.png",
+        "public/art/scene-L19.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L19",
+        "assets/livestock/reviews/choice-v7/L19"
+      ]
+    },
+    "L20": {
+      "source": [
+        "assets/livestock/raw/l20-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L20/adult-0.png",
+        "assets/livestock/animals/L20/adult-1.png",
+        "assets/livestock/animals/L20/adult-2.png",
+        "assets/livestock/animals/L20/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l20-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L20.png",
+        "public/art/livestock/animals/L20.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l20-expansion-choice-v1.png",
+        "assets/livestock/icons/L20.png",
+        "public/ui-icons/livestock-L20.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L20.png",
+        "public/art/scene-L20.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L20",
+        "assets/livestock/reviews/choice-v7/L20"
+      ]
+    },
+    "L21": {
+      "source": [
+        "assets/livestock/raw/l21-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L21/young-0.png",
+        "assets/livestock/animals/L21/young-1.png",
+        "assets/livestock/animals/L21/young-2.png",
+        "assets/livestock/animals/L21/young-3.png",
+        "assets/livestock/animals/L21/growing-0.png",
+        "assets/livestock/animals/L21/growing-1.png",
+        "assets/livestock/animals/L21/growing-2.png",
+        "assets/livestock/animals/L21/growing-3.png",
+        "assets/livestock/animals/L21/mature-0.png",
+        "assets/livestock/animals/L21/mature-1.png",
+        "assets/livestock/animals/L21/mature-2.png",
+        "assets/livestock/animals/L21/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l21-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L21.png",
+        "public/art/livestock/animals/L21.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l21-expansion-choice-v1.png",
+        "assets/livestock/icons/L21.png",
+        "public/ui-icons/livestock-L21.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L21.png",
+        "public/art/scene-L21.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L21",
+        "assets/livestock/reviews/choice-v7/L21"
+      ]
+    },
+    "L22": {
+      "source": [
+        "assets/livestock/raw/l22-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L22/adult-0.png",
+        "assets/livestock/animals/L22/adult-1.png",
+        "assets/livestock/animals/L22/adult-2.png",
+        "assets/livestock/animals/L22/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l22-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L22.png",
+        "public/art/livestock/animals/L22.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l22-expansion-choice-v1.png",
+        "assets/livestock/icons/L22.png",
+        "public/ui-icons/livestock-L22.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L22.png",
+        "public/art/scene-L22.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L22",
+        "assets/livestock/reviews/choice-v7/L22"
+      ]
+    },
+    "L23": {
+      "source": [
+        "assets/livestock/raw/l23-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L23/adult-0.png",
+        "assets/livestock/animals/L23/adult-1.png",
+        "assets/livestock/animals/L23/adult-2.png",
+        "assets/livestock/animals/L23/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l23-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L23.png",
+        "public/art/livestock/animals/L23.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l23-expansion-choice-v1.png",
+        "assets/livestock/icons/L23.png",
+        "public/ui-icons/livestock-L23.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L23.png",
+        "public/art/scene-L23.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L23",
+        "assets/livestock/reviews/choice-v7/L23"
+      ]
+    },
+    "L24": {
+      "source": [
+        "assets/livestock/raw/l24-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L24/young-0.png",
+        "assets/livestock/animals/L24/young-1.png",
+        "assets/livestock/animals/L24/young-2.png",
+        "assets/livestock/animals/L24/young-3.png",
+        "assets/livestock/animals/L24/growing-0.png",
+        "assets/livestock/animals/L24/growing-1.png",
+        "assets/livestock/animals/L24/growing-2.png",
+        "assets/livestock/animals/L24/growing-3.png",
+        "assets/livestock/animals/L24/mature-0.png",
+        "assets/livestock/animals/L24/mature-1.png",
+        "assets/livestock/animals/L24/mature-2.png",
+        "assets/livestock/animals/L24/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l24-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L24.png",
+        "public/art/livestock/animals/L24.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l24-expansion-choice-v1.png",
+        "assets/livestock/icons/L24.png",
+        "public/ui-icons/livestock-L24.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L24.png",
+        "public/art/scene-L24.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L24",
+        "assets/livestock/reviews/choice-v7/L24"
+      ]
+    },
+    "L25": {
+      "source": [
+        "assets/livestock/raw/l25-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L25/young-0.png",
+        "assets/livestock/animals/L25/young-1.png",
+        "assets/livestock/animals/L25/young-2.png",
+        "assets/livestock/animals/L25/young-3.png",
+        "assets/livestock/animals/L25/growing-0.png",
+        "assets/livestock/animals/L25/growing-1.png",
+        "assets/livestock/animals/L25/growing-2.png",
+        "assets/livestock/animals/L25/growing-3.png",
+        "assets/livestock/animals/L25/mature-0.png",
+        "assets/livestock/animals/L25/mature-1.png",
+        "assets/livestock/animals/L25/mature-2.png",
+        "assets/livestock/animals/L25/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l25-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L25.png",
+        "public/art/livestock/animals/L25.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l25-expansion-choice-v1.png",
+        "assets/livestock/icons/L25.png",
+        "public/ui-icons/livestock-L25.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L25.png",
+        "public/art/scene-L25.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L25",
+        "assets/livestock/reviews/choice-v7/L25"
+      ]
+    },
+    "L26": {
+      "source": [
+        "assets/livestock/raw/l26-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L26/young-0.png",
+        "assets/livestock/animals/L26/young-1.png",
+        "assets/livestock/animals/L26/young-2.png",
+        "assets/livestock/animals/L26/young-3.png",
+        "assets/livestock/animals/L26/growing-0.png",
+        "assets/livestock/animals/L26/growing-1.png",
+        "assets/livestock/animals/L26/growing-2.png",
+        "assets/livestock/animals/L26/growing-3.png",
+        "assets/livestock/animals/L26/mature-0.png",
+        "assets/livestock/animals/L26/mature-1.png",
+        "assets/livestock/animals/L26/mature-2.png",
+        "assets/livestock/animals/L26/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l26-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L26.png",
+        "public/art/livestock/animals/L26.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l26-expansion-choice-v1.png",
+        "assets/livestock/icons/L26.png",
+        "public/ui-icons/livestock-L26.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L26.png",
+        "public/art/scene-L26.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L26",
+        "assets/livestock/reviews/choice-v7/L26"
+      ]
+    },
+    "L27": {
+      "source": [
+        "assets/livestock/raw/l27-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L27/adult-0.png",
+        "assets/livestock/animals/L27/adult-1.png",
+        "assets/livestock/animals/L27/adult-2.png",
+        "assets/livestock/animals/L27/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l27-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L27.png",
+        "public/art/livestock/animals/L27.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l27-expansion-choice-v1.png",
+        "assets/livestock/icons/L27.png",
+        "public/ui-icons/livestock-L27.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L27.png",
+        "public/art/scene-L27.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L27",
+        "assets/livestock/reviews/choice-v7/L27"
+      ]
+    },
+    "L28": {
+      "source": [
+        "assets/livestock/raw/l28-expansion-feeding-v2.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L28/young-0.png",
+        "assets/livestock/animals/L28/young-1.png",
+        "assets/livestock/animals/L28/young-2.png",
+        "assets/livestock/animals/L28/young-3.png",
+        "assets/livestock/animals/L28/growing-0.png",
+        "assets/livestock/animals/L28/growing-1.png",
+        "assets/livestock/animals/L28/growing-2.png",
+        "assets/livestock/animals/L28/growing-3.png",
+        "assets/livestock/animals/L28/mature-0.png",
+        "assets/livestock/animals/L28/mature-1.png",
+        "assets/livestock/animals/L28/mature-2.png",
+        "assets/livestock/animals/L28/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l28-expansion-v2.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L28.png",
+        "public/art/livestock/animals/L28.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l28-expansion-choice-v1.png",
+        "assets/livestock/icons/L28.png",
+        "public/ui-icons/livestock-L28.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L28.png",
+        "public/art/scene-L28.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L28",
+        "assets/livestock/reviews/choice-v7/L28"
+      ]
+    },
+    "L29": {
+      "source": [
+        "assets/livestock/raw/l29-expansion-feeding-v2.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L29/adult-0.png",
+        "assets/livestock/animals/L29/adult-1.png",
+        "assets/livestock/animals/L29/adult-2.png",
+        "assets/livestock/animals/L29/adult-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l29-expansion-v2.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L29.png",
+        "public/art/livestock/animals/L29.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l29-expansion-choice-v1.png",
+        "assets/livestock/icons/L29.png",
+        "public/ui-icons/livestock-L29.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L29.png",
+        "public/art/scene-L29.webp"
+      ],
+      "feed": [
+        "assets/livestock/raw/l29-expansion-feed-v1.png",
+        "assets/livestock/feed-L29.png",
+        "public/art/livestock/feed-L29.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L29",
+        "assets/livestock/reviews/choice-v7/L29"
+      ]
+    },
+    "L30": {
+      "source": [
+        "assets/livestock/raw/l30-expansion-feeding-v1.png"
+      ],
+      "frames": [
+        "assets/livestock/animals/L30/young-0.png",
+        "assets/livestock/animals/L30/young-1.png",
+        "assets/livestock/animals/L30/young-2.png",
+        "assets/livestock/animals/L30/young-3.png",
+        "assets/livestock/animals/L30/growing-0.png",
+        "assets/livestock/animals/L30/growing-1.png",
+        "assets/livestock/animals/L30/growing-2.png",
+        "assets/livestock/animals/L30/growing-3.png",
+        "assets/livestock/animals/L30/mature-0.png",
+        "assets/livestock/animals/L30/mature-1.png",
+        "assets/livestock/animals/L30/mature-2.png",
+        "assets/livestock/animals/L30/mature-3.png"
+      ],
+      "grid": [
+        "assets/livestock/normalized/l30-expansion-v1.png"
+      ],
+      "atlas": [
+        "assets/livestock/atlases/L30.png",
+        "public/art/livestock/animals/L30.webp"
+      ],
+      "choice": [
+        "assets/livestock/raw/l30-expansion-choice-v1.png",
+        "assets/livestock/icons/L30.png",
+        "public/ui-icons/livestock-L30.webp"
+      ],
+      "scene": [
+        "assets/source/art/scene-L30.png",
+        "public/art/scene-L30.webp"
+      ],
+      "localEvidence": [
+        "assets/livestock/reviews/L30",
+        "assets/livestock/reviews/choice-v7/L30"
+      ]
+    }
+  }
+}

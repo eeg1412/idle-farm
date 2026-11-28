@@ -1,0 +1,870 @@
+{
+  "version": 5,
+  "sources": {
+    "accessories": "raw/pixel-v5-feeding-accessories.png",
+    "pig": "raw/pixel-v5-feeding-pig.png",
+    "rabbit": "raw/pixel-v5-feeding-rabbit.png",
+    "sheep": "raw/pixel-v5-feeding-sheep.png",
+    "muscovy": "raw/pixel-v5-feeding-muscovy.png",
+    "cattle": "raw/pixel-v5-feeding-cattle-r2.png",
+    "small-tailed-han-v1": "raw/l08-small-tailed-han-v1/feeding-r9.png"
+  },
+  "species": {
+    "L01": {
+      "key": "accessories",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              109,
+              226
+            ],
+            [
+              365,
+              226
+            ],
+            [
+              618,
+              226
+            ],
+            [
+              870,
+              226
+            ]
+          ],
+          "canvas": [
+            -109,
+            -206,
+            244,
+            212
+          ],
+          "mouth": [
+            210,
+            221
+          ]
+        }
+      ]
+    },
+    "L02": {
+      "key": "accessories",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              110,
+              475
+            ],
+            [
+              363,
+              476
+            ],
+            [
+              616,
+              476
+            ],
+            [
+              870,
+              476
+            ]
+          ],
+          "canvas": [
+            -110,
+            -205,
+            250,
+            223
+          ],
+          "mouth": [
+            220,
+            483
+          ]
+        }
+      ]
+    },
+    "L03": {
+      "key": "accessories",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              112,
+              721
+            ],
+            [
+              364,
+              721
+            ],
+            [
+              617,
+              721
+            ],
+            [
+              870,
+              721
+            ]
+          ],
+          "canvas": [
+            -111,
+            -180,
+            247,
+            193
+          ],
+          "mouth": [
+            224,
+            721
+          ]
+        }
+      ]
+    },
+    "L04": {
+      "key": "accessories",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              109,
+              973
+            ],
+            [
+              362,
+              973
+            ],
+            [
+              616,
+              973
+            ],
+            [
+              870,
+              973
+            ]
+          ],
+          "canvas": [
+            -108,
+            -192,
+            258,
+            218
+          ],
+          "mouth": [
+            224,
+            982
+          ],
+          "scale": 0.6932270916334662,
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 781,
+              "width": 260,
+              "height": 218
+            },
+            {
+              "left": 260,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 515,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 770,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            }
+          ],
+          "samplingCanvas": [
+            251,
+            218
+          ],
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing."
+        }
+      ]
+    },
+    "L05": {
+      "key": "accessories",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              102,
+              1219
+            ],
+            [
+              356,
+              1219
+            ],
+            [
+              609,
+              1219
+            ],
+            [
+              863,
+              1219
+            ]
+          ],
+          "canvas": [
+            -102,
+            -194,
+            250,
+            219
+          ],
+          "mouth": [
+            220,
+            1227
+          ]
+        }
+      ]
+    },
+    "L06": {
+      "key": "pig",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              117,
+              259
+            ],
+            [
+              381,
+              259
+            ],
+            [
+              651,
+              259
+            ],
+            [
+              914,
+              259
+            ]
+          ],
+          "canvas": [
+            -115,
+            -150,
+            235,
+            165
+          ],
+          "mouth": [
+            179,
+            262
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
+        },
+        {
+          "anchors": [
+            [
+              125,
+              519
+            ],
+            [
+              391,
+              519
+            ],
+            [
+              657,
+              519
+            ],
+            [
+              920,
+              519
+            ]
+          ],
+          "canvas": [
+            -125,
+            -156,
+            255,
+            178
+          ],
+          "mouth": [
+            197,
+            524
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
+        },
+        {
+          "anchors": [
+            [
+              123,
+              819
+            ],
+            [
+              395,
+              819
+            ],
+            [
+              660,
+              819
+            ],
+            [
+              927,
+              819
+            ]
+          ],
+          "canvas": [
+            -123,
+            -208,
+            277,
+            220
+          ],
+          "mouth": [
+            224,
+            816
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ],
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source."
+        }
+      ]
+    },
+    "L07": {
+      "key": "rabbit",
+      "kind": "greens",
+      "stages": [
+        {
+          "anchors": [
+            [
+              119,
+              234
+            ],
+            [
+              361,
+              234
+            ],
+            [
+              604,
+              234
+            ],
+            [
+              848,
+              234
+            ]
+          ],
+          "canvas": [
+            -85,
+            -125,
+            188,
+            137
+          ],
+          "mouth": [
+            179,
+            239
+          ]
+        },
+        {
+          "anchors": [
+            [
+              119,
+              503
+            ],
+            [
+              361,
+              503
+            ],
+            [
+              605,
+              503
+            ],
+            [
+              848,
+              503
+            ]
+          ],
+          "canvas": [
+            -108,
+            -157,
+            235,
+            178
+          ],
+          "mouth": [
+            201,
+            511
+          ]
+        },
+        {
+          "anchors": [
+            [
+              122,
+              779
+            ],
+            [
+              366,
+              779
+            ],
+            [
+              611,
+              779
+            ],
+            [
+              854,
+              779
+            ]
+          ],
+          "canvas": [
+            -122,
+            -190,
+            255,
+            215
+          ],
+          "mouth": [
+            217,
+            787
+          ]
+        }
+      ]
+    },
+    "L08": {
+      "key": "small-tailed-han-v1",
+      "kind": "hay",
+      "promptFile": "assets/livestock/raw/l08-small-tailed-han-v1/prompts-r9.md",
+      "stages": [
+        {
+          "anchors": [
+            [
+              155,
+              214
+            ],
+            [
+              437,
+              214
+            ],
+            [
+              720,
+              214
+            ],
+            [
+              1003,
+              214
+            ]
+          ],
+          "canvas": [
+            -120,
+            -158,
+            250,
+            176
+          ],
+          "mouth": [
+            235,
+            209
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 45,
+              "width": 294,
+              "height": 190
+            },
+            {
+              "left": 294,
+              "top": 45,
+              "width": 282,
+              "height": 190
+            },
+            {
+              "left": 576,
+              "top": 45,
+              "width": 282,
+              "height": 190
+            },
+            {
+              "left": 858,
+              "top": 45,
+              "width": 297,
+              "height": 190
+            }
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
+        },
+        {
+          "anchors": [
+            [
+              153,
+              438
+            ],
+            [
+              436,
+              438
+            ],
+            [
+              720,
+              438
+            ],
+            [
+              1001,
+              438
+            ]
+          ],
+          "canvas": [
+            -128,
+            -175,
+            268,
+            192
+          ],
+          "mouth": [
+            238,
+            433
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 250,
+              "width": 294,
+              "height": 210
+            },
+            {
+              "left": 294,
+              "top": 250,
+              "width": 282,
+              "height": 210
+            },
+            {
+              "left": 576,
+              "top": 250,
+              "width": 282,
+              "height": 210
+            },
+            {
+              "left": 858,
+              "top": 250,
+              "width": 297,
+              "height": 210
+            }
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
+        },
+        {
+          "anchors": [
+            [
+              151,
+              687
+            ],
+            [
+              433,
+              687
+            ],
+            [
+              716,
+              687
+            ],
+            [
+              998,
+              687
+            ]
+          ],
+          "canvas": [
+            -145,
+            -198,
+            294,
+            216
+          ],
+          "mouth": [
+            246,
+            670
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 480,
+              "width": 294,
+              "height": 225
+            },
+            {
+              "left": 294,
+              "top": 480,
+              "width": 282,
+              "height": 225
+            },
+            {
+              "left": 576,
+              "top": 480,
+              "width": 282,
+              "height": 225
+            },
+            {
+              "left": 858,
+              "top": 480,
+              "width": 297,
+              "height": 225
+            }
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
+        }
+      ]
+    },
+    "L09": {
+      "key": "muscovy",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              113,
+              218
+            ],
+            [
+              369,
+              218
+            ],
+            [
+              621,
+              218
+            ],
+            [
+              875,
+              218
+            ]
+          ],
+          "canvas": [
+            -73,
+            -130,
+            180,
+            150
+          ],
+          "mouth": [
+            195,
+            227
+          ]
+        },
+        {
+          "anchors": [
+            [
+              113,
+              481
+            ],
+            [
+              367,
+              481
+            ],
+            [
+              621,
+              481
+            ],
+            [
+              875,
+              481
+            ]
+          ],
+          "canvas": [
+            -99,
+            -169,
+            222,
+            184
+          ],
+          "mouth": [
+            207,
+            482
+          ],
+          "anchorMethod": "L09 growing foreground webbed foot registration r1: the lowest retained foreground webbed foot pixels in all four original poses are at y480 (source alpha >=200). The common anatomical sole boundary is y481. The relative source canvas top -169 preserves the absolute window top y312 and the common 222x184 canvas and stage scale. The drawn head and mouth are retained."
+        },
+        {
+          "anchors": [
+            [
+              113,
+              744
+            ],
+            [
+              368,
+              744
+            ],
+            [
+              623,
+              744
+            ],
+            [
+              877,
+              744
+            ]
+          ],
+          "canvas": [
+            -110,
+            -182,
+            244,
+            207
+          ],
+          "mouth": [
+            225,
+            753
+          ]
+        }
+      ]
+    },
+    "L10": {
+      "key": "cattle",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              111,
+              234
+            ],
+            [
+              367,
+              234
+            ],
+            [
+              622,
+              234
+            ],
+            [
+              879,
+              234
+            ]
+          ],
+          "canvas": [
+            -75,
+            -118,
+            174,
+            134
+          ],
+          "mouth": [
+            182,
+            246
+          ]
+        },
+        {
+          "anchors": [
+            [
+              109,
+              491
+            ],
+            [
+              365,
+              491
+            ],
+            [
+              620,
+              491
+            ],
+            [
+              875,
+              491
+            ]
+          ],
+          "canvas": [
+            -100,
+            -149,
+            222,
+            174
+          ],
+          "mouth": [
+            190,
+            506
+          ]
+        },
+        {
+          "anchors": [
+            [
+              107,
+              771
+            ],
+            [
+              364,
+              771
+            ],
+            [
+              619,
+              771
+            ],
+            [
+              875,
+              771
+            ]
+          ],
+          "canvas": [
+            -107,
+            -190,
+            248,
+            212
+          ],
+          "mouth": [
+            210,
+            779
+          ],
+          "anchorMethod": "L10 mature supporting front-hoof registration r1: the lowest retained supporting front-hoof pixels in all four original poses are at y770 (source alpha >=200). The common anatomical sole boundary is y771. The relative source canvas top -190 preserves the absolute window top y581 and the common 248x212 canvas and stage scale. The drawn head and mouth are retained."
+        }
+      ]
+    }
+  }
+}

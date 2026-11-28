@@ -1822,5 +1822,75 @@
         "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
       }
     }
+  },
+  "C69": {
+    "mode": "wholePlant",
+    "harvestedPart": "树干（原木）",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C69/growing.png",
+      "matureSource": "assets/plot/crops/C69/mature.png",
+      "decision": "原木来自成熟树干，采伐使用整株收获。四期各有独立原画，成熟阶段为站立的整树。"
+    }
+  },
+  "C70": {
+    "mode": "wholePlant",
+    "harvestedPart": "树干（原木）",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C70/growing.png",
+      "matureSource": "assets/plot/crops/C70/mature.png",
+      "decision": "原木来自成熟树干，采伐使用整株收获。四期各有独立原画，成熟阶段为站立的整树。"
+    }
+  },
+  "C71": {
+    "mode": "wholePlant",
+    "harvestedPart": "树干（原木）",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C71/growing.png",
+      "matureSource": "assets/plot/crops/C71/mature.png",
+      "decision": "原木来自成熟树干，采伐使用整株收获。四期各有独立原画，成熟阶段为站立的整树。"
+    }
+  },
+  "C72": {
+    "mode": "wholePlant",
+    "harvestedPart": "树干（原木）",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C72/growing.png",
+      "matureSource": "assets/plot/crops/C72/mature.png",
+      "decision": "原木来自成熟树干，采伐使用整株收获。四期各有独立原画，成熟阶段为站立的整树。"
+    }
+  },
+  "C73": {
+    "mode": "wholePlant",
+    "harvestedPart": "树干（原木）",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C73/growing.png",
+      "matureSource": "assets/plot/crops/C73/mature.png",
+      "decision": "原木来自成熟树干，采伐使用整株收获。四期各有独立原画，成熟阶段为站立的整树。"
+    }
   }
 }

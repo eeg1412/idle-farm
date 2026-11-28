@@ -521,7 +521,10 @@ function renderCatalogDetail(ui, id) {
       } else {
         card.text(typeLabel(item) + ' · ' + item.sources.join(' · '));
       }
-      if (item.subject && item.subject !== item.name) card.text('养殖对象 · ' + item.subject);
+      if (item.subject && item.subject !== item.name) {
+        const subjectLabel = item.kind === 'C' ? '树种' : '养殖对象';
+        card.text(subjectLabel + ' · ' + item.subject);
+      }
       card.row('基准单价', compact(item.price), { icon: 'coin', compact: true, divider: true });
       card.row('基础耗时', timeLabel(item.durationMs), { icon: 'clock', compact: true, divider: true });
       card.row('每批产出', compact(item.output) + ' 件', { icon: 'nav-warehouse', compact: true });

@@ -116,3 +116,83 @@ Edit the exact mature golden ochre beef cattle shown in the two attached CURRENT
 ## L04 ??????2026-11-15?
 
 L04 ?????? image_gen ?????????? `assets/livestock/animals/L04/adult-0.png` ? `adult-3.png` ?????????????????????????????????????????? `assets/livestock/choice-input-archive/v7/L04/`?`choice-registration-v7.json` ??? sha256/inputHash?originalInputPath ? archiveOf?????????????????????????????????????????
+
+## L11
+
+Generate one full-body adult quail living selection icon for Idle Manor L11. The two inputs are the current exact animation adult frames 0 and 3, the same bird. Preserve its brown body with distinct dark tawny stripes, granular crest-free silhouette, ultra-short lifted tail, cream eyebrow and wing stripe, speckled buff breast, tiny gold-gray clawed feet and short gray beak. A new ordinary head-up three-quarter right-facing standing pose, eyes calm, head raised so the identifiable neck and face are clearly visible. Match authentic pixel-sprite stepped edges and manually clustered discrete color shading. No floor shadow, food, background, text, border or glossy gradient. Single transparent square icon with full tail, beak and toes, horizontally centered.
+
+## L12 v1
+
+Generate one full-body domestic Merino ewe with ivory tightly curled fleece, wool cap, beige head and visible dark hooves living selection icon for Idle Manor L12. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L14 v1
+
+Generate one full-body bronze black turkey with the existing half-fanned striped tail, bright red wattle and blue facial skin, and buff toes living selection icon for Idle Manor L14. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L15 v1
+
+Generate one full-body gray meat pigeon with the same twin black wing bars, green-purple neck, gray beak and white cere, pink feet living selection icon for Idle Manor L15. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L16 v1
+
+Generate one full-body black-brown Dezhou donkey with the same cream eye rings and soft white muzzle, long upright ears, dark mane and dark hooves living selection icon for Idle Manor L16. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L17 v1
+
+Generate one full-body same shaggy dark brown female yak with long coarse clustered shag, light upward-swept horns, dark hooves and compact stout body living selection icon for Idle Manor L17. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L18 v1
+
+Generate one full-body same reddish sika doe with warm white spots, long narrow legs, creamy belly, large ears, short pale tail and black hooves living selection icon for Idle Manor L18. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L19 v1
+
+Generate one full-body Mongolian mare with dun coat, dark mane and tail and dark lower legs living selection icon for Idle Manor L19. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L20 v1
+
+Generate one full-body adult ostrich with black and white plumes, bare pink head and long strong proportionally correct neck and two-toed feet living selection icon for Idle Manor L20. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L21 v1
+
+Generate one full-body guinea fowl with subtle pearl feather dots, white and blue face, brown head helmet and red wattle living selection icon for Idle Manor L21. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L22 v1
+
+Generate one full-body warm sandy Bactrian camel with two clear humps, shaggy neck, and dark tipped split feet living selection icon for Idle Manor L22. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L23 v1
+
+Generate one full-body beige alpaca with clearly defined fleece cluster pattern, long high neck, small soft face and short upright ears living selection icon for Idle Manor L23. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L24 v1
+
+Generate one full-body domestic lion-head goose with a distinctive dark forehead knob over black bill, brown back, pale breast and webbed yellow feet living selection icon for Idle Manor L24. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L25 v1
+
+Generate one full-body graphite black Chinese goat with swept pale dark horns, small black beard and blue-gray hoof accents living selection icon for Idle Manor L25. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L26 v1
+
+Generate one full-body warm-white Taihe Silkie, crest tuft and cream silk plumes, vivid blue earlobe and black beak and feet living selection icon for Idle Manor L26. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical coat identity, face anatomy, features and overall body proportions; render a new calm ordinary head-up standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, full visible tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L13 v1
+
+Generate one full-body Eastern honeybee worker with same warmly striped abdomen, bluish wings, natural six legs and lightly raised neutral head, resting at ease and wings held the same as references living selection icon for Idle Manor L13. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical identity, face anatomy, features and overall body proportions; render an ordinary new neutral head-up resting or standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, entire animal including tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L29 v1
+
+Generate one full-body pearl-white mature silk-producing silkworm larva with same body segments, rear horn and prolegs. Adult moth is excluded. Put its forebody and small face in a natural elevated neutral resting pose living selection icon for Idle Manor L29. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical identity, face anatomy, features and overall body proportions; render an ordinary new neutral head-up resting or standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, entire animal including tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L27 v1
+
+Generate one full-body warm ivory Angora rabbit with fluffy coat and light warm pink inner ear, upright tasselled ears and tiny pink nose living selection icon for Idle Manor L27. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical identity, face anatomy, features and overall body proportions; render an ordinary new neutral head-up resting or standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, entire animal including tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L30 v1
+
+Generate one full-body sturdy Japanese Black Wagyu with dark charcoal coat, small light horns and dark large barrel torso living selection icon for Idle Manor L30. References are exact current adult/mature animation frame 0 and 3 of the same individual. Preserve identical identity, face anatomy, features and overall body proportions; render an ordinary new neutral head-up resting or standing pose, slight right-facing overhead three-quarter as in the references. Distinct stepped authentic pixel-sprite contours and manually organized discrete color clusters matching the source. Single isolated transparent square icon, entire animal including tail and feet, tight horizontal centering. No ground, shadows, food, labels, lines, glow or smooth gradients.
+
+## L28 v1
+
+Create a single full-body living selection icon for Idle Manor L28 Bama miniature pig. Inputs are the exact current v2 mature animation frames 0 and 3 and show the same animal. Preserve its black charcoal head, black rump, wide cream sash over shoulders with several broad shade planes, pink detailed snout, pink split hoof toes, dark curly tail and warmed ear interiors. New calm head-up ordinary standing posture, slight right-facing three-quarter overhead anatomy as in the two actual frames. Keep the small stocky head and compact silhouette, production authentic stepped pixel art with deliberate clear color clusters and shape detail. Center the entire visible animal on transparent square with empty alpha all around. No background, props, food, labels, lights, decline in color detail or ground shadow.

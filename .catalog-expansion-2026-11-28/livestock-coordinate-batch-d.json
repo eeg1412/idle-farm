@@ -1,0 +1,295 @@
+{
+  "L27": {
+    "stages": [
+      {
+        "name": "adult",
+        "row": 0,
+        "maxWidth": 166,
+        "maxHeight": 141,
+        "supportBandHeight": 8,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            116,
+            255
+          ],
+          [
+            363,
+            255
+          ],
+          [
+            609,
+            255
+          ],
+          [
+            855,
+            255
+          ]
+        ],
+        "canvas": [
+          -98,
+          -181,
+          239,
+          190
+        ],
+        "mouth": [
+          219,
+          252
+        ],
+        "supportXRange": [
+          105,
+          169
+        ]
+      }
+    ]
+  },
+  "L28": {
+    "revision": 2,
+    "stages": [
+      {
+        "name": "young",
+        "row": 0,
+        "maxWidth": 131,
+        "maxHeight": 108,
+        "supportBandHeight": 8,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            112,
+            260
+          ],
+          [
+            381,
+            260
+          ],
+          [
+            652,
+            260
+          ],
+          [
+            916,
+            260
+          ]
+        ],
+        "canvas": [
+          -57,
+          -131,
+          158,
+          154
+        ],
+        "mouth": [
+          178,
+          273
+        ],
+        "supportXRange": [
+          110,
+          159
+        ]
+      },
+      {
+        "name": "growing",
+        "row": 1,
+        "maxWidth": 166,
+        "maxHeight": 136,
+        "supportBandHeight": 10,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            118,
+            525
+          ],
+          [
+            386,
+            525
+          ],
+          [
+            654,
+            525
+          ],
+          [
+            919,
+            525
+          ]
+        ],
+        "canvas": [
+          -86,
+          -163,
+          207,
+          176
+        ],
+        "mouth": [
+          195,
+          533
+        ],
+        "supportXRange": [
+          93,
+          169
+        ]
+      },
+      {
+        "name": "mature",
+        "row": 2,
+        "maxWidth": 206,
+        "maxHeight": 177,
+        "supportBandHeight": 11,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            124,
+            818
+          ],
+          [
+            393,
+            818
+          ],
+          [
+            660,
+            819
+          ],
+          [
+            927,
+            819
+          ]
+        ],
+        "canvas": [
+          -114,
+          -222,
+          265,
+          240
+        ],
+        "mouth": [
+          225,
+          824
+        ],
+        "supportXRange": [
+          78,
+          178
+        ]
+      }
+    ]
+  },
+  "L30": {
+    "stages": [
+      {
+        "name": "young",
+        "row": 0,
+        "maxWidth": 128,
+        "maxHeight": 100,
+        "supportBandHeight": 8,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            108,
+            238
+          ],
+          [
+            363,
+            238
+          ],
+          [
+            618,
+            238
+          ],
+          [
+            873,
+            238
+          ]
+        ],
+        "canvas": [
+          -66,
+          -117,
+          173,
+          138
+        ],
+        "mouth": [
+          178,
+          249
+        ],
+        "supportXRange": [
+          103,
+          173
+        ]
+      },
+      {
+        "name": "growing",
+        "row": 1,
+        "maxWidth": 160,
+        "maxHeight": 124,
+        "supportBandHeight": 10,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            94,
+            496
+          ],
+          [
+            349,
+            496
+          ],
+          [
+            605,
+            496
+          ],
+          [
+            862,
+            496
+          ]
+        ],
+        "canvas": [
+          -81,
+          -145,
+          222,
+          171
+        ],
+        "mouth": [
+          182,
+          511
+        ],
+        "supportXRange": [
+          94,
+          187
+        ]
+      },
+      {
+        "name": "mature",
+        "row": 2,
+        "maxWidth": 207,
+        "maxHeight": 172,
+        "supportBandHeight": 11,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            95,
+            773
+          ],
+          [
+            350,
+            773
+          ],
+          [
+            605,
+            773
+          ],
+          [
+            860,
+            773
+          ]
+        ],
+        "canvas": [
+          -95,
+          -190,
+          251,
+          207
+        ],
+        "mouth": [
+          204,
+          782
+        ],
+        "supportXRange": [
+          78,
+          196
+        ]
+      }
+    ]
+  }
+}

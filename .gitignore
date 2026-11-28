@@ -78,6 +78,7 @@ assets/source/items/time-capsule/reviews/**/*.png
 assets/source/items/time-capsule/reviews/**/*.webp
 assets/source/items/time-capsule/reviews/**/*.jpg
 assets/source/items/time-capsule/reviews/**/*.jpeg
+assets/source/items/reviews/expansion-retail/
 
 # Build output: hashed static asset manifest (scripts/build-asset-manifest.mjs)
 src/content/asset-manifest.json

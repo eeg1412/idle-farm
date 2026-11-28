@@ -1,0 +1,90 @@
+{
+  "source": "assets/plot/crop-layout.json#fieldGeometry",
+  "rows": 9,
+  "projection": {
+    "mode": "field-homography",
+    "rowVanishingPoint": [
+      -697.049,
+      -81.083
+    ],
+    "columnVanishingPoint": [
+      866.308,
+      -148.178
+    ],
+    "origin": [
+      203.477,
+      68.01
+    ],
+    "depthPerUnit": -0.0444738,
+    "columnSpacingU": 0.8,
+    "columnInsetU": 0.3,
+    "rows": [
+      {
+        "index": 0,
+        "v": -0.5
+      },
+      {
+        "index": 1,
+        "v": 0.5
+      },
+      {
+        "index": 2,
+        "v": 1.5
+      },
+      {
+        "index": 3,
+        "v": 2.5
+      },
+      {
+        "index": 4,
+        "v": 3.5
+      },
+      {
+        "index": 5,
+        "v": 4.5
+      },
+      {
+        "index": 6,
+        "v": 5.5
+      },
+      {
+        "index": 7,
+        "v": 6.5
+      },
+      {
+        "index": 8,
+        "v": 7.5
+      }
+    ],
+    "columns": [
+      {
+        "index": 0,
+        "u": 0.3
+      },
+      {
+        "index": 1,
+        "u": 1.065
+      },
+      {
+        "index": 2,
+        "u": 1.83
+      },
+      {
+        "index": 3,
+        "u": 2.595
+      },
+      {
+        "index": 4,
+        "u": 3.36
+      },
+      {
+        "index": 5,
+        "u": 4.125
+      },
+      {
+        "index": 6,
+        "u": 4.89
+      }
+    ]
+  }
+}

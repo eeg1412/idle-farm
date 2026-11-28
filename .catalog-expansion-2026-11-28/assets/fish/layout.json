@@ -1,0 +1,6366 @@
+{
+  "sceneSize": 320,
+  "grid": {
+    "columns": 5,
+    "rows": 5
+  },
+  "fishRoot": {
+    "x": 160,
+    "y": 210
+  },
+  "sources": {
+    "pond": "assets/source/art/scene-empty-pond.png",
+    "sheets": {
+      "F01": "raw/F01-idle-v1.png",
+      "F02": "raw/F02-idle-v1.png",
+      "F03": "raw/F03-idle-v1.png",
+      "F04": "raw/F04-idle-v1.png",
+      "F05": "raw/F05-idle-v1.png",
+      "F06": "raw/F06-idle-v1.png",
+      "F07": "raw/F07-idle-v1.png",
+      "F08": "raw/F08-idle-v1.png",
+      "F09": "raw/F09-idle-v1.png",
+      "F10": "raw/F10-idle-v1.png",
+      "F11": "raw/F11-idle-v1.png",
+      "F12": "raw/F12-idle-v1.png",
+      "F13": "raw/F13-idle-v2.png",
+      "F14": "raw/F14-idle-v1.png",
+      "F15": "raw/F15-idle-v1.png",
+      "F16": "raw/F16-idle-v1.png",
+      "F17": "raw/F17-idle-v1.png",
+      "F18": "raw/F18-idle-v1.png",
+      "F19": "raw/F19-idle-v1.png",
+      "F20": "raw/F20-idle-v2.png",
+      "F21": "raw/F21-idle-v1.png",
+      "F22": "raw/F22-idle-v3.png",
+      "F23": "raw/F23-idle-v2.png",
+      "F24": "raw/F24-idle-v2.png",
+      "F25": "raw/F25-idle-v1.png",
+      "F26": "raw/F26-idle-v1.png",
+      "F27": "raw/F27-idle-v1.png",
+      "F28": "raw/F28-idle-v1.png",
+      "F29": "raw/F29-idle-v1.png",
+      "F30": "raw/F30-idle-v1.png"
+    },
+    "ponds": {
+      "river": {
+        "source": "assets/fish/raw/river-pond-v2.png",
+        "png": "assets/fish/ponds/river.png",
+        "path": "public/art/fish/river-pond.webp",
+        "water": {
+          "polygon": [
+            [
+              99,
+              105
+            ],
+            [
+              147,
+              103
+            ],
+            [
+              196,
+              106
+            ],
+            [
+              246,
+              108
+            ],
+            [
+              278,
+              115
+            ],
+            [
+              292,
+              137
+            ],
+            [
+              299,
+              164
+            ],
+            [
+              299,
+              200
+            ],
+            [
+              292,
+              236
+            ],
+            [
+              276,
+              265
+            ],
+            [
+              247,
+              284
+            ],
+            [
+              207,
+              295
+            ],
+            [
+              167,
+              300
+            ],
+            [
+              128,
+              294
+            ],
+            [
+              92,
+              287
+            ],
+            [
+              61,
+              278
+            ],
+            [
+              38,
+              264
+            ],
+            [
+              23,
+              245
+            ],
+            [
+              16,
+              216
+            ],
+            [
+              15,
+              181
+            ],
+            [
+              19,
+              150
+            ],
+            [
+              29,
+              127
+            ],
+            [
+              51,
+              116
+            ],
+            [
+              77,
+              111
+            ]
+          ],
+          "color": 1346725,
+          "alpha": 0.24
+        }
+      },
+      "sea": {
+        "source": "assets/fish/raw/sea-pond-v1.png",
+        "png": "assets/fish/ponds/sea.png",
+        "path": "public/art/fish/sea-pond.webp",
+        "water": {
+          "polygon": [
+            [
+              38,
+              105
+            ],
+            [
+              69,
+              100
+            ],
+            [
+              104,
+              100
+            ],
+            [
+              143,
+              101
+            ],
+            [
+              183,
+              101
+            ],
+            [
+              222,
+              101
+            ],
+            [
+              258,
+              103
+            ],
+            [
+              286,
+              111
+            ],
+            [
+              297,
+              129
+            ],
+            [
+              300,
+              156
+            ],
+            [
+              302,
+              190
+            ],
+            [
+              300,
+              222
+            ],
+            [
+              291,
+              253
+            ],
+            [
+              274,
+              278
+            ],
+            [
+              246,
+              290
+            ],
+            [
+              208,
+              297
+            ],
+            [
+              169,
+              300
+            ],
+            [
+              128,
+              296
+            ],
+            [
+              91,
+              289
+            ],
+            [
+              58,
+              278
+            ],
+            [
+              35,
+              258
+            ],
+            [
+              23,
+              232
+            ],
+            [
+              17,
+              204
+            ],
+            [
+              14,
+              172
+            ],
+            [
+              17,
+              145
+            ],
+            [
+              24,
+              122
+            ]
+          ],
+          "color": 1476798,
+          "alpha": 0.25
+        }
+      }
+    }
+  },
+  "species": {
+    "F01": {
+      "subject": "鲫鱼",
+      "size": "small",
+      "source": "F01",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              156,
+              155
+            ],
+            [
+              397,
+              155
+            ],
+            [
+              639,
+              155
+            ],
+            [
+              881,
+              155
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 268,
+              "height": 275
+            },
+            {
+              "left": 268,
+              "top": 0,
+              "width": 244,
+              "height": 275
+            },
+            {
+              "left": 512,
+              "top": 0,
+              "width": 244,
+              "height": 275
+            },
+            {
+              "left": 756,
+              "top": 0,
+              "width": 268,
+              "height": 275
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              161,
+              397
+            ],
+            [
+              407,
+              398
+            ],
+            [
+              648,
+              398
+            ],
+            [
+              892,
+              398
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 275,
+              "width": 268,
+              "height": 245
+            },
+            {
+              "left": 268,
+              "top": 275,
+              "width": 244,
+              "height": 245
+            },
+            {
+              "left": 512,
+              "top": 275,
+              "width": 244,
+              "height": 245
+            },
+            {
+              "left": 756,
+              "top": 275,
+              "width": 268,
+              "height": 245
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              165,
+              640
+            ],
+            [
+              412,
+              640
+            ],
+            [
+              656,
+              640
+            ],
+            [
+              898,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 520,
+              "width": 268,
+              "height": 260
+            },
+            {
+              "left": 268,
+              "top": 520,
+              "width": 244,
+              "height": 260
+            },
+            {
+              "left": 512,
+              "top": 520,
+              "width": 244,
+              "height": 260
+            },
+            {
+              "left": 756,
+              "top": 520,
+              "width": 268,
+              "height": 260
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F02": {
+      "subject": "鲤鱼",
+      "size": "medium",
+      "source": "F02",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              152,
+              150
+            ],
+            [
+              396,
+              150
+            ],
+            [
+              640,
+              150
+            ],
+            [
+              883,
+              150
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 263,
+              "height": 272
+            },
+            {
+              "left": 263,
+              "top": 0,
+              "width": 246,
+              "height": 272
+            },
+            {
+              "left": 509,
+              "top": 0,
+              "width": 245,
+              "height": 272
+            },
+            {
+              "left": 754,
+              "top": 0,
+              "width": 270,
+              "height": 272
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              390
+            ],
+            [
+              407,
+              390
+            ],
+            [
+              651,
+              390
+            ],
+            [
+              892,
+              390
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 272,
+              "width": 263,
+              "height": 247
+            },
+            {
+              "left": 263,
+              "top": 272,
+              "width": 246,
+              "height": 247
+            },
+            {
+              "left": 509,
+              "top": 272,
+              "width": 245,
+              "height": 247
+            },
+            {
+              "left": 754,
+              "top": 272,
+              "width": 270,
+              "height": 247
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              164,
+              643
+            ],
+            [
+              411,
+              643
+            ],
+            [
+              655,
+              643
+            ],
+            [
+              900,
+              643
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 519,
+              "width": 263,
+              "height": 261
+            },
+            {
+              "left": 263,
+              "top": 519,
+              "width": 246,
+              "height": 261
+            },
+            {
+              "left": 509,
+              "top": 519,
+              "width": 245,
+              "height": 261
+            },
+            {
+              "left": 754,
+              "top": 519,
+              "width": 270,
+              "height": 261
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F03": {
+      "subject": "花鲈",
+      "size": "medium",
+      "source": "F03",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              159,
+              140
+            ],
+            [
+              404,
+              140
+            ],
+            [
+              645,
+              140
+            ],
+            [
+              885,
+              140
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 266,
+              "height": 265
+            },
+            {
+              "left": 266,
+              "top": 0,
+              "width": 240,
+              "height": 265
+            },
+            {
+              "left": 506,
+              "top": 0,
+              "width": 240,
+              "height": 265
+            },
+            {
+              "left": 746,
+              "top": 0,
+              "width": 278,
+              "height": 265
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              168,
+              386
+            ],
+            [
+              410,
+              386
+            ],
+            [
+              652,
+              386
+            ],
+            [
+              892,
+              386
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 265,
+              "width": 266,
+              "height": 246
+            },
+            {
+              "left": 266,
+              "top": 265,
+              "width": 240,
+              "height": 246
+            },
+            {
+              "left": 506,
+              "top": 265,
+              "width": 240,
+              "height": 246
+            },
+            {
+              "left": 746,
+              "top": 265,
+              "width": 278,
+              "height": 246
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              174,
+              629
+            ],
+            [
+              417,
+              629
+            ],
+            [
+              660,
+              629
+            ],
+            [
+              904,
+              629
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 511,
+              "width": 266,
+              "height": 269
+            },
+            {
+              "left": 266,
+              "top": 511,
+              "width": 240,
+              "height": 269
+            },
+            {
+              "left": 506,
+              "top": 511,
+              "width": 240,
+              "height": 269
+            },
+            {
+              "left": 746,
+              "top": 511,
+              "width": 278,
+              "height": 269
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F04": {
+      "subject": "虹鳟",
+      "size": "medium",
+      "source": "F04",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              159,
+              157
+            ],
+            [
+              411,
+              157
+            ],
+            [
+              657,
+              157
+            ],
+            [
+              904,
+              157
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 278,
+              "height": 276
+            },
+            {
+              "left": 278,
+              "top": 0,
+              "width": 246,
+              "height": 276
+            },
+            {
+              "left": 524,
+              "top": 0,
+              "width": 248,
+              "height": 276
+            },
+            {
+              "left": 772,
+              "top": 0,
+              "width": 268,
+              "height": 276
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              168,
+              390
+            ],
+            [
+              418,
+              390
+            ],
+            [
+              664,
+              390
+            ],
+            [
+              912,
+              390
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 276,
+              "width": 278,
+              "height": 236
+            },
+            {
+              "left": 278,
+              "top": 276,
+              "width": 246,
+              "height": 236
+            },
+            {
+              "left": 524,
+              "top": 276,
+              "width": 248,
+              "height": 236
+            },
+            {
+              "left": 772,
+              "top": 276,
+              "width": 268,
+              "height": 236
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              181,
+              620
+            ],
+            [
+              430,
+              620
+            ],
+            [
+              679,
+              620
+            ],
+            [
+              927,
+              620
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 512,
+              "width": 278,
+              "height": 268
+            },
+            {
+              "left": 278,
+              "top": 512,
+              "width": 246,
+              "height": 268
+            },
+            {
+              "left": 524,
+              "top": 512,
+              "width": 248,
+              "height": 268
+            },
+            {
+              "left": 772,
+              "top": 512,
+              "width": 268,
+              "height": 268
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F05": {
+      "subject": "鳜鱼",
+      "size": "medium",
+      "source": "F05",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              151,
+              141
+            ],
+            [
+              397,
+              141
+            ],
+            [
+              641,
+              141
+            ],
+            [
+              885,
+              141
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 254,
+              "height": 265
+            },
+            {
+              "left": 254,
+              "top": 0,
+              "width": 248,
+              "height": 265
+            },
+            {
+              "left": 502,
+              "top": 0,
+              "width": 248,
+              "height": 265
+            },
+            {
+              "left": 750,
+              "top": 0,
+              "width": 274,
+              "height": 265
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              388
+            ],
+            [
+              406,
+              388
+            ],
+            [
+              650,
+              388
+            ],
+            [
+              894,
+              388
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 265,
+              "width": 254,
+              "height": 245
+            },
+            {
+              "left": 254,
+              "top": 265,
+              "width": 248,
+              "height": 245
+            },
+            {
+              "left": 502,
+              "top": 265,
+              "width": 248,
+              "height": 245
+            },
+            {
+              "left": 750,
+              "top": 265,
+              "width": 274,
+              "height": 245
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              167,
+              636
+            ],
+            [
+              412,
+              636
+            ],
+            [
+              655,
+              636
+            ],
+            [
+              900,
+              636
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 510,
+              "width": 254,
+              "height": 270
+            },
+            {
+              "left": 254,
+              "top": 510,
+              "width": 248,
+              "height": 270
+            },
+            {
+              "left": 502,
+              "top": 510,
+              "width": 248,
+              "height": 270
+            },
+            {
+              "left": 750,
+              "top": 510,
+              "width": 274,
+              "height": 270
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F06": {
+      "subject": "银鲑",
+      "size": "large",
+      "source": "F06",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              145
+            ],
+            [
+              402,
+              145
+            ],
+            [
+              648,
+              145
+            ],
+            [
+              894,
+              145
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 276,
+              "height": 272
+            },
+            {
+              "left": 276,
+              "top": 0,
+              "width": 247,
+              "height": 272
+            },
+            {
+              "left": 523,
+              "top": 0,
+              "width": 252,
+              "height": 272
+            },
+            {
+              "left": 775,
+              "top": 0,
+              "width": 265,
+              "height": 272
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              174,
+              400
+            ],
+            [
+              423,
+              400
+            ],
+            [
+              670,
+              400
+            ],
+            [
+              920,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 272,
+              "width": 276,
+              "height": 248
+            },
+            {
+              "left": 276,
+              "top": 272,
+              "width": 247,
+              "height": 248
+            },
+            {
+              "left": 523,
+              "top": 272,
+              "width": 252,
+              "height": 248
+            },
+            {
+              "left": 775,
+              "top": 272,
+              "width": 265,
+              "height": 248
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              185,
+              638
+            ],
+            [
+              434,
+              638
+            ],
+            [
+              681,
+              638
+            ],
+            [
+              932,
+              638
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 520,
+              "width": 276,
+              "height": 260
+            },
+            {
+              "left": 276,
+              "top": 520,
+              "width": 247,
+              "height": 260
+            },
+            {
+              "left": 523,
+              "top": 520,
+              "width": 252,
+              "height": 260
+            },
+            {
+              "left": 775,
+              "top": 520,
+              "width": 265,
+              "height": 260
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F07": {
+      "subject": "鳗鱼",
+      "size": "large",
+      "source": "F07",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              169,
+              150
+            ],
+            [
+              416,
+              150
+            ],
+            [
+              661,
+              150
+            ],
+            [
+              905,
+              150
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 266,
+              "height": 275
+            },
+            {
+              "left": 266,
+              "top": 0,
+              "width": 243,
+              "height": 275
+            },
+            {
+              "left": 509,
+              "top": 0,
+              "width": 241,
+              "height": 275
+            },
+            {
+              "left": 750,
+              "top": 0,
+              "width": 274,
+              "height": 275
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              182,
+              397
+            ],
+            [
+              431,
+              397
+            ],
+            [
+              676,
+              397
+            ],
+            [
+              920,
+              397
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 275,
+              "width": 266,
+              "height": 243
+            },
+            {
+              "left": 266,
+              "top": 275,
+              "width": 243,
+              "height": 243
+            },
+            {
+              "left": 509,
+              "top": 275,
+              "width": 241,
+              "height": 243
+            },
+            {
+              "left": 750,
+              "top": 275,
+              "width": 274,
+              "height": 243
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              201,
+              634
+            ],
+            [
+              450,
+              634
+            ],
+            [
+              693,
+              634
+            ],
+            [
+              939,
+              634
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 518,
+              "width": 266,
+              "height": 262
+            },
+            {
+              "left": 266,
+              "top": 518,
+              "width": 243,
+              "height": 262
+            },
+            {
+              "left": 509,
+              "top": 518,
+              "width": 241,
+              "height": 262
+            },
+            {
+              "left": 750,
+              "top": 518,
+              "width": 274,
+              "height": 262
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F08": {
+      "subject": "真鲷",
+      "size": "medium",
+      "source": "F08",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              151,
+              146
+            ],
+            [
+              394,
+              146
+            ],
+            [
+              638,
+              146
+            ],
+            [
+              881,
+              146
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 264,
+              "height": 258
+            },
+            {
+              "left": 264,
+              "top": 0,
+              "width": 238,
+              "height": 258
+            },
+            {
+              "left": 502,
+              "top": 0,
+              "width": 240,
+              "height": 258
+            },
+            {
+              "left": 742,
+              "top": 0,
+              "width": 282,
+              "height": 258
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              160,
+              375
+            ],
+            [
+              401,
+              375
+            ],
+            [
+              644,
+              375
+            ],
+            [
+              887,
+              375
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 258,
+              "width": 264,
+              "height": 242
+            },
+            {
+              "left": 264,
+              "top": 258,
+              "width": 238,
+              "height": 242
+            },
+            {
+              "left": 502,
+              "top": 258,
+              "width": 240,
+              "height": 242
+            },
+            {
+              "left": 742,
+              "top": 258,
+              "width": 282,
+              "height": 242
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              165,
+              617
+            ],
+            [
+              408,
+              617
+            ],
+            [
+              652,
+              617
+            ],
+            [
+              895,
+              617
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 500,
+              "width": 264,
+              "height": 280
+            },
+            {
+              "left": 264,
+              "top": 500,
+              "width": 238,
+              "height": 280
+            },
+            {
+              "left": 502,
+              "top": 500,
+              "width": 240,
+              "height": 280
+            },
+            {
+              "left": 742,
+              "top": 500,
+              "width": 282,
+              "height": 280
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F09": {
+      "subject": "大菱鲆",
+      "size": "large",
+      "source": "F09",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              150,
+              145
+            ],
+            [
+              400,
+              145
+            ],
+            [
+              648,
+              145
+            ],
+            [
+              897,
+              145
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 257,
+              "height": 274
+            },
+            {
+              "left": 257,
+              "top": 0,
+              "width": 248,
+              "height": 274
+            },
+            {
+              "left": 505,
+              "top": 0,
+              "width": 250,
+              "height": 274
+            },
+            {
+              "left": 755,
+              "top": 0,
+              "width": 269,
+              "height": 274
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              159,
+              404
+            ],
+            [
+              405,
+              404
+            ],
+            [
+              653,
+              404
+            ],
+            [
+              903,
+              404
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 274,
+              "width": 257,
+              "height": 245
+            },
+            {
+              "left": 257,
+              "top": 274,
+              "width": 248,
+              "height": 245
+            },
+            {
+              "left": 505,
+              "top": 274,
+              "width": 250,
+              "height": 245
+            },
+            {
+              "left": 755,
+              "top": 274,
+              "width": 269,
+              "height": 245
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              171,
+              640
+            ],
+            [
+              419,
+              640
+            ],
+            [
+              667,
+              640
+            ],
+            [
+              917,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 519,
+              "width": 257,
+              "height": 281
+            },
+            {
+              "left": 257,
+              "top": 519,
+              "width": 248,
+              "height": 281
+            },
+            {
+              "left": 505,
+              "top": 519,
+              "width": 250,
+              "height": 281
+            },
+            {
+              "left": 755,
+              "top": 519,
+              "width": 269,
+              "height": 281
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F10": {
+      "subject": "鲟鱼",
+      "size": "large",
+      "source": "F10",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              156,
+              148
+            ],
+            [
+              405,
+              148
+            ],
+            [
+              649,
+              148
+            ],
+            [
+              896,
+              148
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 263,
+              "height": 275
+            },
+            {
+              "left": 263,
+              "top": 0,
+              "width": 246,
+              "height": 275
+            },
+            {
+              "left": 509,
+              "top": 0,
+              "width": 246,
+              "height": 275
+            },
+            {
+              "left": 755,
+              "top": 0,
+              "width": 285,
+              "height": 275
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              171,
+              400
+            ],
+            [
+              420,
+              400
+            ],
+            [
+              666,
+              400
+            ],
+            [
+              915,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 275,
+              "width": 263,
+              "height": 247
+            },
+            {
+              "left": 263,
+              "top": 275,
+              "width": 246,
+              "height": 247
+            },
+            {
+              "left": 509,
+              "top": 275,
+              "width": 246,
+              "height": 247
+            },
+            {
+              "left": 755,
+              "top": 275,
+              "width": 285,
+              "height": 247
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "sourceAnchors": [
+            [
+              184,
+              643
+            ],
+            [
+              432,
+              643
+            ],
+            [
+              678,
+              643
+            ],
+            [
+              925,
+              643
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 522,
+              "width": 263,
+              "height": 258
+            },
+            {
+              "left": 263,
+              "top": 522,
+              "width": 246,
+              "height": 258
+            },
+            {
+              "left": 509,
+              "top": 522,
+              "width": 246,
+              "height": 258
+            },
+            {
+              "left": 755,
+              "top": 522,
+              "width": 285,
+              "height": 258
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F11": {
+      "subject": "草鱼",
+      "size": "large",
+      "source": "F11",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -180,
+            "top": -60,
+            "width": 238,
+            "height": 116
+          },
+          "anchor": {
+            "x": 180,
+            "y": 60,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              176,
+              154
+            ],
+            [
+              415,
+              154
+            ],
+            [
+              660,
+              155
+            ],
+            [
+              900,
+              155
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 269,
+              "height": 273
+            },
+            {
+              "left": 269,
+              "top": 0,
+              "width": 238,
+              "height": 273
+            },
+            {
+              "left": 507,
+              "top": 0,
+              "width": 243,
+              "height": 273
+            },
+            {
+              "left": 750,
+              "top": 0,
+              "width": 248,
+              "height": 273
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -180,
+            "top": -60,
+            "width": 238,
+            "height": 116
+          },
+          "anchor": {
+            "x": 180,
+            "y": 60,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              190,
+              397
+            ],
+            [
+              434,
+              397
+            ],
+            [
+              677,
+              398
+            ],
+            [
+              920,
+              398
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 273,
+              "width": 268,
+              "height": 239
+            },
+            {
+              "left": 268,
+              "top": 273,
+              "width": 241,
+              "height": 239
+            },
+            {
+              "left": 509,
+              "top": 273,
+              "width": 244,
+              "height": 239
+            },
+            {
+              "left": 753,
+              "top": 273,
+              "width": 269,
+              "height": 239
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -180,
+            "top": -60,
+            "width": 238,
+            "height": 116
+          },
+          "anchor": {
+            "x": 180,
+            "y": 60,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              204,
+              637
+            ],
+            [
+              448,
+              638
+            ],
+            [
+              690,
+              637
+            ],
+            [
+              932,
+              637
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 512,
+              "width": 269,
+              "height": 252
+            },
+            {
+              "left": 269,
+              "top": 512,
+              "width": 237,
+              "height": 252
+            },
+            {
+              "left": 506,
+              "top": 512,
+              "width": 246,
+              "height": 252
+            },
+            {
+              "left": 752,
+              "top": 512,
+              "width": 291,
+              "height": 252
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F12": {
+      "subject": "鳙鱼",
+      "size": "large",
+      "source": "F12",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -169,
+            "top": -87,
+            "width": 240,
+            "height": 159
+          },
+          "anchor": {
+            "x": 169,
+            "y": 87,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              175,
+              155
+            ],
+            [
+              414,
+              156
+            ],
+            [
+              656,
+              156
+            ],
+            [
+              897,
+              156
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 269,
+              "height": 268
+            },
+            {
+              "left": 269,
+              "top": 0,
+              "width": 239,
+              "height": 268
+            },
+            {
+              "left": 508,
+              "top": 0,
+              "width": 240,
+              "height": 268
+            },
+            {
+              "left": 748,
+              "top": 0,
+              "width": 248,
+              "height": 268
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -169,
+            "top": -87,
+            "width": 240,
+            "height": 159
+          },
+          "anchor": {
+            "x": 169,
+            "y": 87,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              182,
+              401
+            ],
+            [
+              425,
+              401
+            ],
+            [
+              670,
+              401
+            ],
+            [
+              912,
+              401
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 268,
+              "width": 269,
+              "height": 238
+            },
+            {
+              "left": 269,
+              "top": 268,
+              "width": 242,
+              "height": 238
+            },
+            {
+              "left": 511,
+              "top": 268,
+              "width": 243,
+              "height": 238
+            },
+            {
+              "left": 754,
+              "top": 268,
+              "width": 266,
+              "height": 238
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -169,
+            "top": -87,
+            "width": 240,
+            "height": 159
+          },
+          "anchor": {
+            "x": 169,
+            "y": 87,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              196,
+              641
+            ],
+            [
+              439,
+              641
+            ],
+            [
+              681,
+              640
+            ],
+            [
+              924,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 506,
+              "width": 271,
+              "height": 278
+            },
+            {
+              "left": 271,
+              "top": 506,
+              "width": 240,
+              "height": 278
+            },
+            {
+              "left": 511,
+              "top": 506,
+              "width": 241,
+              "height": 278
+            },
+            {
+              "left": 752,
+              "top": 506,
+              "width": 296,
+              "height": 278
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F13": {
+      "subject": "青鱼",
+      "size": "large",
+      "source": "F13",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -52,
+            "width": 239,
+            "height": 106
+          },
+          "anchor": {
+            "x": 170,
+            "y": 52,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              173,
+              155
+            ],
+            [
+              417,
+              155
+            ],
+            [
+              659,
+              155
+            ],
+            [
+              901,
+              155
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 267,
+              "height": 274
+            },
+            {
+              "left": 267,
+              "top": 0,
+              "width": 241,
+              "height": 274
+            },
+            {
+              "left": 508,
+              "top": 0,
+              "width": 243,
+              "height": 274
+            },
+            {
+              "left": 751,
+              "top": 0,
+              "width": 246,
+              "height": 274
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -52,
+            "width": 239,
+            "height": 106
+          },
+          "anchor": {
+            "x": 170,
+            "y": 52,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              188,
+              399
+            ],
+            [
+              433,
+              399
+            ],
+            [
+              678,
+              400
+            ],
+            [
+              918,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 274,
+              "width": 269,
+              "height": 240
+            },
+            {
+              "left": 269,
+              "top": 274,
+              "width": 241,
+              "height": 240
+            },
+            {
+              "left": 510,
+              "top": 274,
+              "width": 244,
+              "height": 240
+            },
+            {
+              "left": 754,
+              "top": 274,
+              "width": 267,
+              "height": 240
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -52,
+            "width": 239,
+            "height": 106
+          },
+          "anchor": {
+            "x": 170,
+            "y": 52,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              194,
+              636
+            ],
+            [
+              438,
+              636
+            ],
+            [
+              681,
+              636
+            ],
+            [
+              923,
+              637
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 514,
+              "width": 268,
+              "height": 247
+            },
+            {
+              "left": 268,
+              "top": 514,
+              "width": 239,
+              "height": 247
+            },
+            {
+              "left": 507,
+              "top": 514,
+              "width": 243,
+              "height": 247
+            },
+            {
+              "left": 750,
+              "top": 514,
+              "width": 296,
+              "height": 247
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F14": {
+      "subject": "鳊鱼",
+      "size": "medium",
+      "source": "F14",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -161,
+            "top": -93,
+            "width": 228,
+            "height": 164
+          },
+          "anchor": {
+            "x": 161,
+            "y": 93,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              173,
+              155
+            ],
+            [
+              412,
+              154
+            ],
+            [
+              654,
+              155
+            ],
+            [
+              895,
+              156
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 270,
+              "height": 264
+            },
+            {
+              "left": 270,
+              "top": 0,
+              "width": 237,
+              "height": 264
+            },
+            {
+              "left": 507,
+              "top": 0,
+              "width": 240,
+              "height": 264
+            },
+            {
+              "left": 747,
+              "top": 0,
+              "width": 241,
+              "height": 264
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -161,
+            "top": -93,
+            "width": 228,
+            "height": 164
+          },
+          "anchor": {
+            "x": 161,
+            "y": 93,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              181,
+              399
+            ],
+            [
+              424,
+              399
+            ],
+            [
+              665,
+              400
+            ],
+            [
+              906,
+              401
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 264,
+              "width": 268,
+              "height": 237
+            },
+            {
+              "left": 268,
+              "top": 264,
+              "width": 238,
+              "height": 237
+            },
+            {
+              "left": 506,
+              "top": 264,
+              "width": 245,
+              "height": 237
+            },
+            {
+              "left": 751,
+              "top": 264,
+              "width": 262,
+              "height": 237
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -161,
+            "top": -93,
+            "width": 228,
+            "height": 164
+          },
+          "anchor": {
+            "x": 161,
+            "y": 93,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              191,
+              639
+            ],
+            [
+              436,
+              639
+            ],
+            [
+              677,
+              641
+            ],
+            [
+              921,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 501,
+              "width": 269,
+              "height": 281
+            },
+            {
+              "left": 269,
+              "top": 501,
+              "width": 238,
+              "height": 281
+            },
+            {
+              "left": 507,
+              "top": 501,
+              "width": 245,
+              "height": 281
+            },
+            {
+              "left": 752,
+              "top": 501,
+              "width": 288,
+              "height": 281
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F15": {
+      "subject": "黄颡鱼",
+      "size": "small",
+      "source": "F15",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -160,
+            "top": -86,
+            "width": 234,
+            "height": 158
+          },
+          "anchor": {
+            "x": 160,
+            "y": 86,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              173,
+              156
+            ],
+            [
+              414,
+              155
+            ],
+            [
+              655,
+              156
+            ],
+            [
+              894,
+              156
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 265,
+              "height": 265
+            },
+            {
+              "left": 265,
+              "top": 0,
+              "width": 242,
+              "height": 265
+            },
+            {
+              "left": 507,
+              "top": 0,
+              "width": 240,
+              "height": 265
+            },
+            {
+              "left": 747,
+              "top": 0,
+              "width": 245,
+              "height": 265
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -160,
+            "top": -86,
+            "width": 234,
+            "height": 158
+          },
+          "anchor": {
+            "x": 160,
+            "y": 86,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              177,
+              399
+            ],
+            [
+              418,
+              400
+            ],
+            [
+              660,
+              397
+            ],
+            [
+              904,
+              399
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 265,
+              "width": 265,
+              "height": 238
+            },
+            {
+              "left": 265,
+              "top": 265,
+              "width": 244,
+              "height": 238
+            },
+            {
+              "left": 509,
+              "top": 265,
+              "width": 242,
+              "height": 238
+            },
+            {
+              "left": 751,
+              "top": 265,
+              "width": 271,
+              "height": 238
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -160,
+            "top": -86,
+            "width": 234,
+            "height": 158
+          },
+          "anchor": {
+            "x": 160,
+            "y": 86,
+            "definition": "Manually registered fixed rigid anterior torso behind gill cover at longitudinal body axis across all four idle frames."
+          },
+          "sourceAnchors": [
+            [
+              184,
+              635
+            ],
+            [
+              427,
+              636
+            ],
+            [
+              670,
+              636
+            ],
+            [
+              913,
+              636
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 503,
+              "width": 264,
+              "height": 275
+            },
+            {
+              "left": 264,
+              "top": 503,
+              "width": 242,
+              "height": 275
+            },
+            {
+              "left": 506,
+              "top": 503,
+              "width": 241,
+              "height": 275
+            },
+            {
+              "left": 747,
+              "top": 503,
+              "width": 296,
+              "height": 275
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F16": {
+      "subject": "鲶鱼",
+      "size": "large",
+      "source": "F16",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -159,
+            "top": -60,
+            "width": 249,
+            "height": 124
+          },
+          "anchor": {
+            "x": 159,
+            "y": 60,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              168,
+              159
+            ],
+            [
+              403,
+              159
+            ],
+            [
+              638,
+              159
+            ],
+            [
+              872,
+              159
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 60,
+              "top": 103,
+              "width": 180,
+              "height": 120
+            },
+            {
+              "left": 281,
+              "top": 103,
+              "width": 202,
+              "height": 120
+            },
+            {
+              "left": 521,
+              "top": 103,
+              "width": 204,
+              "height": 120
+            },
+            {
+              "left": 744,
+              "top": 103,
+              "width": 226,
+              "height": 120
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -159,
+            "top": -60,
+            "width": 249,
+            "height": 124
+          },
+          "anchor": {
+            "x": 159,
+            "y": 60,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              176,
+              400
+            ],
+            [
+              411,
+              400
+            ],
+            [
+              647,
+              400
+            ],
+            [
+              883,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 30,
+              "top": 319,
+              "width": 239,
+              "height": 158
+            },
+            {
+              "left": 275,
+              "top": 319,
+              "width": 216,
+              "height": 158
+            },
+            {
+              "left": 511,
+              "top": 319,
+              "width": 221,
+              "height": 158
+            },
+            {
+              "left": 746,
+              "top": 319,
+              "width": 232,
+              "height": 158
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -159,
+            "top": -60,
+            "width": 249,
+            "height": 124
+          },
+          "anchor": {
+            "x": 159,
+            "y": 60,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              183,
+              640
+            ],
+            [
+              419,
+              640
+            ],
+            [
+              655,
+              640
+            ],
+            [
+              891,
+              640
+            ]
+          ],
+          "note": "独审确认三处分界清晰，保留完整须丝和尾缘。原稿接缝无全零列，登记分界 x=268、504、738，其列 alpha 峰值分别为 5、9、5（8 位）；切线上仅存低透明度残留。",
+          "cellRects": [
+            {
+              "left": 15,
+              "top": 566,
+              "width": 253,
+              "height": 163
+            },
+            {
+              "left": 268,
+              "top": 566,
+              "width": 236,
+              "height": 163
+            },
+            {
+              "left": 504,
+              "top": 566,
+              "width": 234,
+              "height": 163
+            },
+            {
+              "left": 738,
+              "top": 566,
+              "width": 258,
+              "height": 163
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F17": {
+      "subject": "乌鳢",
+      "size": "large",
+      "source": "F17",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -173,
+            "top": -59,
+            "width": 245,
+            "height": 118
+          },
+          "anchor": {
+            "x": 173,
+            "y": 59,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              176,
+              155
+            ],
+            [
+              418,
+              155
+            ],
+            [
+              656,
+              155
+            ],
+            [
+              898,
+              155
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 55,
+              "top": 104,
+              "width": 185,
+              "height": 104
+            },
+            {
+              "left": 295,
+              "top": 104,
+              "width": 180,
+              "height": 104
+            },
+            {
+              "left": 535,
+              "top": 104,
+              "width": 190,
+              "height": 104
+            },
+            {
+              "left": 778,
+              "top": 104,
+              "width": 177,
+              "height": 104
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -173,
+            "top": -59,
+            "width": 245,
+            "height": 118
+          },
+          "anchor": {
+            "x": 173,
+            "y": 59,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              186,
+              400
+            ],
+            [
+              426,
+              400
+            ],
+            [
+              670,
+              400
+            ],
+            [
+              910,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 39,
+              "top": 337,
+              "width": 229,
+              "height": 126
+            },
+            {
+              "left": 277,
+              "top": 337,
+              "width": 227,
+              "height": 126
+            },
+            {
+              "left": 516,
+              "top": 337,
+              "width": 233,
+              "height": 126
+            },
+            {
+              "left": 764,
+              "top": 337,
+              "width": 218,
+              "height": 126
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -173,
+            "top": -59,
+            "width": 245,
+            "height": 118
+          },
+          "anchor": {
+            "x": 173,
+            "y": 59,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              192,
+              640
+            ],
+            [
+              436,
+              640
+            ],
+            [
+              681,
+              640
+            ],
+            [
+              920,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 8,
+              "top": 568,
+              "width": 255,
+              "height": 145
+            },
+            {
+              "left": 263,
+              "top": 568,
+              "width": 244,
+              "height": 145
+            },
+            {
+              "left": 507,
+              "top": 568,
+              "width": 243,
+              "height": 145
+            },
+            {
+              "left": 750,
+              "top": 568,
+              "width": 247,
+              "height": 145
+            }
+          ],
+          "note": "有效轮廓独立。三个分界 x=263、507、750 的列 alpha 峰值分别为 0、1、1（8 位）。"
+        }
+      ],
+      "habitat": "river"
+    },
+    "F18": {
+      "subject": "泥鳅",
+      "size": "small",
+      "source": "F18",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -179,
+            "top": -63,
+            "width": 243,
+            "height": 113
+          },
+          "anchor": {
+            "x": 179,
+            "y": 63,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              180,
+              158
+            ],
+            [
+              420,
+              158
+            ],
+            [
+              659,
+              158
+            ],
+            [
+              902,
+              158
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 65,
+              "top": 108,
+              "width": 185,
+              "height": 100
+            },
+            {
+              "left": 303,
+              "top": 108,
+              "width": 182,
+              "height": 100
+            },
+            {
+              "left": 541,
+              "top": 108,
+              "width": 184,
+              "height": 100
+            },
+            {
+              "left": 782,
+              "top": 108,
+              "width": 187,
+              "height": 100
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -179,
+            "top": -63,
+            "width": 243,
+            "height": 113
+          },
+          "anchor": {
+            "x": 179,
+            "y": 63,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              184,
+              400
+            ],
+            [
+              426,
+              400
+            ],
+            [
+              669,
+              400
+            ],
+            [
+              911,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 38,
+              "top": 336,
+              "width": 225,
+              "height": 117
+            },
+            {
+              "left": 287,
+              "top": 336,
+              "width": 208,
+              "height": 117
+            },
+            {
+              "left": 528,
+              "top": 336,
+              "width": 222,
+              "height": 117
+            },
+            {
+              "left": 772,
+              "top": 336,
+              "width": 207,
+              "height": 117
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -179,
+            "top": -63,
+            "width": 243,
+            "height": 113
+          },
+          "anchor": {
+            "x": 179,
+            "y": 63,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              203,
+              640
+            ],
+            [
+              447,
+              640
+            ],
+            [
+              686,
+              640
+            ],
+            [
+              929,
+              640
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 8,
+              "top": 568,
+              "width": 262,
+              "height": 140
+            },
+            {
+              "left": 270,
+              "top": 568,
+              "width": 239,
+              "height": 140
+            },
+            {
+              "left": 509,
+              "top": 568,
+              "width": 243,
+              "height": 140
+            },
+            {
+              "left": 752,
+              "top": 568,
+              "width": 247,
+              "height": 140
+            }
+          ],
+          "note": "有效轮廓独立。三个分界 x=270、509、752 的列 alpha 峰值均为 1（8 位）。"
+        }
+      ],
+      "habitat": "river"
+    },
+    "F19": {
+      "subject": "黄鳝",
+      "size": "medium",
+      "source": "F19",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -178,
+            "top": -48,
+            "width": 241,
+            "height": 91
+          },
+          "anchor": {
+            "x": 178,
+            "y": 48,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              184,
+              159
+            ],
+            [
+              419,
+              159
+            ],
+            [
+              655,
+              159
+            ],
+            [
+              895,
+              159
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 63,
+              "top": 119,
+              "width": 181,
+              "height": 86
+            },
+            {
+              "left": 299,
+              "top": 119,
+              "width": 179,
+              "height": 86
+            },
+            {
+              "left": 535,
+              "top": 119,
+              "width": 182,
+              "height": 86
+            },
+            {
+              "left": 772,
+              "top": 119,
+              "width": 178,
+              "height": 86
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -178,
+            "top": -48,
+            "width": 241,
+            "height": 91
+          },
+          "anchor": {
+            "x": 178,
+            "y": 48,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              191,
+              397
+            ],
+            [
+              430,
+              397
+            ],
+            [
+              668,
+              397
+            ],
+            [
+              906,
+              397
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 32,
+              "top": 348,
+              "width": 230,
+              "height": 99
+            },
+            {
+              "left": 279,
+              "top": 348,
+              "width": 223,
+              "height": 99
+            },
+            {
+              "left": 517,
+              "top": 348,
+              "width": 232,
+              "height": 99
+            },
+            {
+              "left": 752,
+              "top": 348,
+              "width": 220,
+              "height": 99
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -178,
+            "top": -48,
+            "width": 241,
+            "height": 91
+          },
+          "anchor": {
+            "x": 178,
+            "y": 48,
+            "definition": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。"
+          },
+          "sourceAnchors": [
+            [
+              204,
+              637
+            ],
+            [
+              442,
+              637
+            ],
+            [
+              683,
+              637
+            ],
+            [
+              921,
+              637
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 10,
+              "top": 573,
+              "width": 256,
+              "height": 126
+            },
+            {
+              "left": 266,
+              "top": 573,
+              "width": 240,
+              "height": 126
+            },
+            {
+              "left": 506,
+              "top": 573,
+              "width": 238,
+              "height": 126
+            },
+            {
+              "left": 744,
+              "top": 573,
+              "width": 250,
+              "height": 126
+            }
+          ],
+          "note": "有效轮廓独立。三个分界 x=266、506、744 的列 alpha 峰值分别为 0、0、1（8 位）。"
+        }
+      ],
+      "habitat": "river"
+    },
+    "F20": {
+      "subject": "河鲀",
+      "size": "small",
+      "source": "F20",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -139,
+            "top": -57,
+            "width": 199,
+            "height": 106
+          },
+          "anchor": {
+            "x": 139,
+            "y": 57,
+            "definition": "逐帧取体侧纵中线处的鳃裂后侧躯干内点，以胸鳍根部前方短鳃裂定位。"
+          },
+          "sourceAnchors": [
+            [
+              172,
+              159
+            ],
+            [
+              413,
+              159
+            ],
+            [
+              654,
+              159
+            ],
+            [
+              893,
+              159
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 75,
+              "top": 110,
+              "width": 150,
+              "height": 92
+            },
+            {
+              "left": 307,
+              "top": 110,
+              "width": 161,
+              "height": 92
+            },
+            {
+              "left": 541,
+              "top": 110,
+              "width": 172,
+              "height": 92
+            },
+            {
+              "left": 788,
+              "top": 110,
+              "width": 158,
+              "height": 92
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -139,
+            "top": -57,
+            "width": 199,
+            "height": 106
+          },
+          "anchor": {
+            "x": 139,
+            "y": 57,
+            "definition": "逐帧取体侧纵中线处的鳃裂后侧躯干内点，以胸鳍根部前方短鳃裂定位。"
+          },
+          "sourceAnchors": [
+            [
+              177,
+              402
+            ],
+            [
+              418,
+              402
+            ],
+            [
+              658,
+              402
+            ],
+            [
+              899,
+              402
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 53,
+              "top": 346,
+              "width": 191,
+              "height": 107
+            },
+            {
+              "left": 298,
+              "top": 346,
+              "width": 184,
+              "height": 107
+            },
+            {
+              "left": 533,
+              "top": 346,
+              "width": 180,
+              "height": 107
+            },
+            {
+              "left": 779,
+              "top": 346,
+              "width": 179,
+              "height": 107
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -139,
+            "top": -57,
+            "width": 199,
+            "height": 106
+          },
+          "anchor": {
+            "x": 139,
+            "y": 57,
+            "definition": "逐帧取体侧纵中线处的鳃裂后侧躯干内点，以胸鳍根部前方短鳃裂定位。"
+          },
+          "sourceAnchors": [
+            [
+              183,
+              638
+            ],
+            [
+              426,
+              638
+            ],
+            [
+              668,
+              638
+            ],
+            [
+              910,
+              638
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 35,
+              "top": 570,
+              "width": 225,
+              "height": 131
+            },
+            {
+              "left": 275,
+              "top": 570,
+              "width": 231,
+              "height": 131
+            },
+            {
+              "left": 514,
+              "top": 570,
+              "width": 233,
+              "height": 131
+            },
+            {
+              "left": 752,
+              "top": 570,
+              "width": 233,
+              "height": 131
+            }
+          ]
+        }
+      ],
+      "habitat": "river"
+    },
+    "F21": {
+      "subject": "鲳鱼",
+      "size": "medium",
+      "source": "F21",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -185,
+            "top": -98,
+            "width": 240,
+            "height": 184
+          },
+          "anchor": {
+            "x": 185,
+            "y": 98,
+            "definition": "体侧明带中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              172,
+              159
+            ],
+            [
+              416,
+              157
+            ],
+            [
+              661,
+              158
+            ],
+            [
+              903,
+              157
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 78,
+              "top": 110,
+              "width": 129,
+              "height": 97
+            },
+            {
+              "left": 323,
+              "top": 107,
+              "width": 128,
+              "height": 100
+            },
+            {
+              "left": 570,
+              "top": 112,
+              "width": 126,
+              "height": 95
+            },
+            {
+              "left": 807,
+              "top": 109,
+              "width": 130,
+              "height": 99
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -185,
+            "top": -98,
+            "width": 240,
+            "height": 184
+          },
+          "anchor": {
+            "x": 185,
+            "y": 98,
+            "definition": "体侧明带中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              190,
+              401
+            ],
+            [
+              435,
+              401
+            ],
+            [
+              679,
+              402
+            ],
+            [
+              924,
+              401
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 49,
+              "top": 335,
+              "width": 183,
+              "height": 135
+            },
+            {
+              "left": 294,
+              "top": 330,
+              "width": 183,
+              "height": 137
+            },
+            {
+              "left": 544,
+              "top": 340,
+              "width": 177,
+              "height": 120
+            },
+            {
+              "left": 782,
+              "top": 332,
+              "width": 184,
+              "height": 138
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -185,
+            "top": -98,
+            "width": 240,
+            "height": 184
+          },
+          "anchor": {
+            "x": 185,
+            "y": 98,
+            "definition": "体侧明带中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              204,
+              637
+            ],
+            [
+              449,
+              637
+            ],
+            [
+              692,
+              638
+            ],
+            [
+              936,
+              637
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 26,
+              "top": 548,
+              "width": 228,
+              "height": 169
+            },
+            {
+              "left": 270,
+              "top": 545,
+              "width": 229,
+              "height": 173
+            },
+            {
+              "left": 520,
+              "top": 551,
+              "width": 222,
+              "height": 165
+            },
+            {
+              "left": 758,
+              "top": 545,
+              "width": 228,
+              "height": 173
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F22": {
+      "subject": "带鱼",
+      "size": "large",
+      "source": "F22",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 1,
+          "sourceCanvas": {
+            "left": -131,
+            "top": -28,
+            "width": 185,
+            "height": 60
+          },
+          "anchor": {
+            "x": 131,
+            "y": 28,
+            "definition": "体轴中线与鳃盖尖角后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              167,
+              164
+            ],
+            [
+              410,
+              164
+            ],
+            [
+              647,
+              164
+            ],
+            [
+              892,
+              164
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 96,
+              "top": 153,
+              "width": 104,
+              "height": 22
+            },
+            {
+              "left": 335,
+              "top": 150,
+              "width": 108,
+              "height": 25
+            },
+            {
+              "left": 567,
+              "top": 152,
+              "width": 114,
+              "height": 23
+            },
+            {
+              "left": 820,
+              "top": 151,
+              "width": 106,
+              "height": 28
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 1,
+          "sourceCanvas": {
+            "left": -131,
+            "top": -28,
+            "width": 185,
+            "height": 60
+          },
+          "anchor": {
+            "x": 131,
+            "y": 28,
+            "definition": "体轴中线与鳃盖尖角后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              176,
+              396
+            ],
+            [
+              427,
+              396
+            ],
+            [
+              661,
+              396
+            ],
+            [
+              899,
+              396
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 82,
+              "top": 377,
+              "width": 136,
+              "height": 32
+            },
+            {
+              "left": 329,
+              "top": 376,
+              "width": 139,
+              "height": 33
+            },
+            {
+              "left": 562,
+              "top": 376,
+              "width": 141,
+              "height": 33
+            },
+            {
+              "left": 801,
+              "top": 376,
+              "width": 140,
+              "height": 41
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 1,
+          "sourceCanvas": {
+            "left": -131,
+            "top": -28,
+            "width": 185,
+            "height": 60
+          },
+          "anchor": {
+            "x": 131,
+            "y": 28,
+            "definition": "体轴中线与鳃盖尖角后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              182,
+              612
+            ],
+            [
+              439,
+              612
+            ],
+            [
+              668,
+              612
+            ],
+            [
+              903,
+              612
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 63,
+              "top": 590,
+              "width": 167,
+              "height": 39
+            },
+            {
+              "left": 320,
+              "top": 590,
+              "width": 167,
+              "height": 40
+            },
+            {
+              "left": 551,
+              "top": 591,
+              "width": 166,
+              "height": 38
+            },
+            {
+              "left": 778,
+              "top": 590,
+              "width": 174,
+              "height": 50
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F23": {
+      "subject": "大黄鱼",
+      "size": "medium",
+      "source": "F23",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -181,
+            "top": -53,
+            "width": 246,
+            "height": 99
+          },
+          "anchor": {
+            "x": 181,
+            "y": 53,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              166,
+              158
+            ],
+            [
+              408,
+              158
+            ],
+            [
+              655,
+              158
+            ],
+            [
+              897,
+              158
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 79,
+              "top": 130,
+              "width": 123,
+              "height": 52
+            },
+            {
+              "left": 317,
+              "top": 130,
+              "width": 127,
+              "height": 52
+            },
+            {
+              "left": 561,
+              "top": 130,
+              "width": 131,
+              "height": 52
+            },
+            {
+              "left": 803,
+              "top": 130,
+              "width": 130,
+              "height": 52
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -181,
+            "top": -53,
+            "width": 246,
+            "height": 99
+          },
+          "anchor": {
+            "x": 181,
+            "y": 53,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              182,
+              400
+            ],
+            [
+              430,
+              400
+            ],
+            [
+              672,
+              400
+            ],
+            [
+              914,
+              400
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 54,
+              "top": 366,
+              "width": 178,
+              "height": 70
+            },
+            {
+              "left": 299,
+              "top": 367,
+              "width": 181,
+              "height": 69
+            },
+            {
+              "left": 542,
+              "top": 365,
+              "width": 180,
+              "height": 72
+            },
+            {
+              "left": 784,
+              "top": 366,
+              "width": 181,
+              "height": 70
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -181,
+            "top": -53,
+            "width": 246,
+            "height": 99
+          },
+          "anchor": {
+            "x": 181,
+            "y": 53,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              200,
+              636
+            ],
+            [
+              442,
+              636
+            ],
+            [
+              684,
+              636
+            ],
+            [
+              929,
+              636
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 25,
+              "top": 589,
+              "width": 234,
+              "height": 88
+            },
+            {
+              "left": 273,
+              "top": 590,
+              "width": 228,
+              "height": 87
+            },
+            {
+              "left": 516,
+              "top": 589,
+              "width": 227,
+              "height": 88
+            },
+            {
+              "left": 754,
+              "top": 591,
+              "width": 235,
+              "height": 85
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F24": {
+      "subject": "鲭鱼",
+      "size": "medium",
+      "source": "F24",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -176,
+            "top": -40,
+            "width": 238,
+            "height": 77
+          },
+          "anchor": {
+            "x": 176,
+            "y": 40,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              181,
+              161
+            ],
+            [
+              422,
+              161
+            ],
+            [
+              662,
+              161
+            ],
+            [
+              901,
+              161
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 87,
+              "top": 140,
+              "width": 132,
+              "height": 42
+            },
+            {
+              "left": 323,
+              "top": 140,
+              "width": 137,
+              "height": 44
+            },
+            {
+              "left": 564,
+              "top": 140,
+              "width": 136,
+              "height": 42
+            },
+            {
+              "left": 801,
+              "top": 140,
+              "width": 138,
+              "height": 42
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -176,
+            "top": -40,
+            "width": 238,
+            "height": 77
+          },
+          "anchor": {
+            "x": 176,
+            "y": 40,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              194,
+              396
+            ],
+            [
+              434,
+              396
+            ],
+            [
+              673,
+              396
+            ],
+            [
+              914,
+              396
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 64,
+              "top": 367,
+              "width": 179,
+              "height": 54
+            },
+            {
+              "left": 304,
+              "top": 367,
+              "width": 180,
+              "height": 54
+            },
+            {
+              "left": 540,
+              "top": 366,
+              "width": 183,
+              "height": 55
+            },
+            {
+              "left": 781,
+              "top": 366,
+              "width": 183,
+              "height": 55
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -176,
+            "top": -40,
+            "width": 238,
+            "height": 77
+          },
+          "anchor": {
+            "x": 176,
+            "y": 40,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              201,
+              628
+            ],
+            [
+              441,
+              628
+            ],
+            [
+              683,
+              628
+            ],
+            [
+              927,
+              628
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 38,
+              "top": 594,
+              "width": 220,
+              "height": 65
+            },
+            {
+              "left": 277,
+              "top": 595,
+              "width": 220,
+              "height": 65
+            },
+            {
+              "left": 519,
+              "top": 594,
+              "width": 220,
+              "height": 65
+            },
+            {
+              "left": 757,
+              "top": 595,
+              "width": 226,
+              "height": 64
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F25": {
+      "subject": "秋刀鱼",
+      "size": "small",
+      "source": "F25",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -172,
+            "top": -45,
+            "width": 255,
+            "height": 87
+          },
+          "anchor": {
+            "x": 172,
+            "y": 45,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              178,
+              160
+            ],
+            [
+              417,
+              160
+            ],
+            [
+              657,
+              160
+            ],
+            [
+              896,
+              160
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 84,
+              "top": 139,
+              "width": 148,
+              "height": 45
+            },
+            {
+              "left": 319,
+              "top": 140,
+              "width": 153,
+              "height": 47
+            },
+            {
+              "left": 559,
+              "top": 139,
+              "width": 153,
+              "height": 44
+            },
+            {
+              "left": 800,
+              "top": 134,
+              "width": 151,
+              "height": 49
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -172,
+            "top": -45,
+            "width": 255,
+            "height": 87
+          },
+          "anchor": {
+            "x": 172,
+            "y": 45,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              188,
+              397
+            ],
+            [
+              430,
+              397
+            ],
+            [
+              671,
+              397
+            ],
+            [
+              910,
+              397
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 58,
+              "top": 368,
+              "width": 198,
+              "height": 53
+            },
+            {
+              "left": 298,
+              "top": 368,
+              "width": 198,
+              "height": 58
+            },
+            {
+              "left": 539,
+              "top": 368,
+              "width": 198,
+              "height": 53
+            },
+            {
+              "left": 775,
+              "top": 368,
+              "width": 203,
+              "height": 53
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -172,
+            "top": -45,
+            "width": 255,
+            "height": 87
+          },
+          "anchor": {
+            "x": 172,
+            "y": 45,
+            "definition": "体轴中线与鳃盖后缘相交处，朝尾侧移 4 像素，取鳃后躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              193,
+              628
+            ],
+            [
+              434,
+              628
+            ],
+            [
+              674,
+              628
+            ],
+            [
+              923,
+              628
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 36,
+              "top": 591,
+              "width": 235,
+              "height": 69
+            },
+            {
+              "left": 275,
+              "top": 591,
+              "width": 236,
+              "height": 75
+            },
+            {
+              "left": 522,
+              "top": 591,
+              "width": 230,
+              "height": 70
+            },
+            {
+              "left": 756,
+              "top": 589,
+              "width": 245,
+              "height": 71
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F26": {
+      "subject": "马鲛鱼",
+      "size": "large",
+      "source": "F26",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -167,
+            "top": -79,
+            "width": 240,
+            "height": 142
+          },
+          "anchor": {
+            "x": 167,
+            "y": 79,
+            "definition": "鳃盖暗弧后方、侧面斑点线高度的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              177,
+              156
+            ],
+            [
+              418,
+              156
+            ],
+            [
+              658,
+              156
+            ],
+            [
+              899,
+              156
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 77,
+              "top": 105,
+              "width": 154,
+              "height": 99
+            },
+            {
+              "left": 318,
+              "top": 105,
+              "width": 156,
+              "height": 99
+            },
+            {
+              "left": 549,
+              "top": 105,
+              "width": 166,
+              "height": 99
+            },
+            {
+              "left": 796,
+              "top": 105,
+              "width": 159,
+              "height": 99
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -167,
+            "top": -79,
+            "width": 240,
+            "height": 142
+          },
+          "anchor": {
+            "x": 167,
+            "y": 79,
+            "definition": "鳃盖暗弧后方、侧面斑点线高度的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              191,
+              394
+            ],
+            [
+              433,
+              395
+            ],
+            [
+              673,
+              395
+            ],
+            [
+              915,
+              395
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 48,
+              "top": 333,
+              "width": 208,
+              "height": 116
+            },
+            {
+              "left": 291,
+              "top": 333,
+              "width": 208,
+              "height": 116
+            },
+            {
+              "left": 531,
+              "top": 333,
+              "width": 209,
+              "height": 116
+            },
+            {
+              "left": 774,
+              "top": 333,
+              "width": 209,
+              "height": 116
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -167,
+            "top": -79,
+            "width": 240,
+            "height": 142
+          },
+          "anchor": {
+            "x": 167,
+            "y": 79,
+            "definition": "鳃盖暗弧后方、侧面斑点线高度的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              201,
+              628
+            ],
+            [
+              444,
+              628
+            ],
+            [
+              688,
+              628
+            ],
+            [
+              929,
+              628
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 30,
+              "top": 544,
+              "width": 248,
+              "height": 152
+            },
+            {
+              "left": 280,
+              "top": 544,
+              "width": 240,
+              "height": 152
+            },
+            {
+              "left": 520,
+              "top": 544,
+              "width": 241,
+              "height": 152
+            },
+            {
+              "left": 762,
+              "top": 544,
+              "width": 244,
+              "height": 152
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F27": {
+      "subject": "鳕鱼",
+      "size": "large",
+      "source": "F27",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -76,
+            "width": 237,
+            "height": 148
+          },
+          "anchor": {
+            "x": 170,
+            "y": 76,
+            "definition": "鳃盖暗弧后方与眼心等高的固定躯干点，邻近亮侧线的前端。"
+          },
+          "sourceAnchors": [
+            [
+              174,
+              155
+            ],
+            [
+              414,
+              155
+            ],
+            [
+              654,
+              155
+            ],
+            [
+              895,
+              155
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 70,
+              "top": 104,
+              "width": 156,
+              "height": 103
+            },
+            {
+              "left": 307,
+              "top": 104,
+              "width": 161,
+              "height": 103
+            },
+            {
+              "left": 548,
+              "top": 104,
+              "width": 158,
+              "height": 103
+            },
+            {
+              "left": 789,
+              "top": 104,
+              "width": 158,
+              "height": 103
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -76,
+            "width": 237,
+            "height": 148
+          },
+          "anchor": {
+            "x": 170,
+            "y": 76,
+            "definition": "鳃盖暗弧后方与眼心等高的固定躯干点，邻近亮侧线的前端。"
+          },
+          "sourceAnchors": [
+            [
+              185,
+              396
+            ],
+            [
+              429,
+              396
+            ],
+            [
+              672,
+              396
+            ],
+            [
+              912,
+              396
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 46,
+              "top": 334,
+              "width": 202,
+              "height": 128
+            },
+            {
+              "left": 291,
+              "top": 334,
+              "width": 200,
+              "height": 128
+            },
+            {
+              "left": 530,
+              "top": 334,
+              "width": 204,
+              "height": 128
+            },
+            {
+              "left": 776,
+              "top": 334,
+              "width": 198,
+              "height": 128
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -76,
+            "width": 237,
+            "height": 148
+          },
+          "anchor": {
+            "x": 170,
+            "y": 76,
+            "definition": "鳃盖暗弧后方与眼心等高的固定躯干点，邻近亮侧线的前端。"
+          },
+          "sourceAnchors": [
+            [
+              195,
+              632
+            ],
+            [
+              438,
+              632
+            ],
+            [
+              681,
+              632
+            ],
+            [
+              927,
+              632
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 21,
+              "top": 550,
+              "width": 246,
+              "height": 160
+            },
+            {
+              "left": 270,
+              "top": 550,
+              "width": 239,
+              "height": 160
+            },
+            {
+              "left": 509,
+              "top": 550,
+              "width": 243,
+              "height": 160
+            },
+            {
+              "left": 756,
+              "top": 550,
+              "width": 243,
+              "height": 160
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F28": {
+      "subject": "石斑鱼",
+      "size": "large",
+      "source": "F28",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -178,
+            "top": -77,
+            "width": 240,
+            "height": 157
+          },
+          "anchor": {
+            "x": 178,
+            "y": 77,
+            "definition": "鳃盖后缘暗弧后方、眼中心等高、鳃后斑点带内的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              181,
+              151
+            ],
+            [
+              420,
+              151
+            ],
+            [
+              662,
+              151
+            ],
+            [
+              900,
+              151
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 67,
+              "top": 101,
+              "width": 162,
+              "height": 107
+            },
+            {
+              "left": 310,
+              "top": 101,
+              "width": 158,
+              "height": 107
+            },
+            {
+              "left": 551,
+              "top": 101,
+              "width": 158,
+              "height": 107
+            },
+            {
+              "left": 788,
+              "top": 101,
+              "width": 160,
+              "height": 107
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -178,
+            "top": -77,
+            "width": 240,
+            "height": 157
+          },
+          "anchor": {
+            "x": 178,
+            "y": 77,
+            "definition": "鳃盖后缘暗弧后方、眼中心等高、鳃后斑点带内的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              188,
+              395
+            ],
+            [
+              433,
+              395
+            ],
+            [
+              675,
+              395
+            ],
+            [
+              916,
+              395
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 44,
+              "top": 332,
+              "width": 204,
+              "height": 134
+            },
+            {
+              "left": 291,
+              "top": 332,
+              "width": 200,
+              "height": 134
+            },
+            {
+              "left": 533,
+              "top": 332,
+              "width": 198,
+              "height": 134
+            },
+            {
+              "left": 775,
+              "top": 332,
+              "width": 197,
+              "height": 134
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -178,
+            "top": -77,
+            "width": 240,
+            "height": 157
+          },
+          "anchor": {
+            "x": 178,
+            "y": 77,
+            "definition": "鳃盖后缘暗弧后方、眼中心等高、鳃后斑点带内的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              205,
+              632
+            ],
+            [
+              447,
+              632
+            ],
+            [
+              687,
+              632
+            ],
+            [
+              932,
+              632
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 20,
+              "top": 549,
+              "width": 250,
+              "height": 170
+            },
+            {
+              "left": 270,
+              "top": 549,
+              "width": 244,
+              "height": 170
+            },
+            {
+              "left": 514,
+              "top": 549,
+              "width": 240,
+              "height": 170
+            },
+            {
+              "left": 754,
+              "top": 549,
+              "width": 246,
+              "height": 170
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F29": {
+      "subject": "鮟鱇",
+      "size": "large",
+      "source": "F29",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -132,
+            "top": -93,
+            "width": 248,
+            "height": 165
+          },
+          "anchor": {
+            "x": 132,
+            "y": 93,
+            "definition": "胸鳍基部上缘前端、斜向鳃区暗线尾侧的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              149,
+              165
+            ],
+            [
+              389,
+              165
+            ],
+            [
+              629,
+              165
+            ],
+            [
+              870,
+              165
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 64,
+              "top": 107,
+              "width": 161,
+              "height": 106
+            },
+            {
+              "left": 308,
+              "top": 107,
+              "width": 157,
+              "height": 106
+            },
+            {
+              "left": 546,
+              "top": 107,
+              "width": 159,
+              "height": 106
+            },
+            {
+              "left": 787,
+              "top": 107,
+              "width": 158,
+              "height": 106
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -132,
+            "top": -93,
+            "width": 248,
+            "height": 165
+          },
+          "anchor": {
+            "x": 132,
+            "y": 93,
+            "definition": "胸鳍基部上缘前端、斜向鳃区暗线尾侧的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              147,
+              410
+            ],
+            [
+              390,
+              410
+            ],
+            [
+              631,
+              410
+            ],
+            [
+              874,
+              410
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 39,
+              "top": 333,
+              "width": 207,
+              "height": 140
+            },
+            {
+              "left": 287,
+              "top": 333,
+              "width": 201,
+              "height": 140
+            },
+            {
+              "left": 527,
+              "top": 333,
+              "width": 203,
+              "height": 140
+            },
+            {
+              "left": 771,
+              "top": 333,
+              "width": 200,
+              "height": 140
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -132,
+            "top": -93,
+            "width": 248,
+            "height": 165
+          },
+          "anchor": {
+            "x": 132,
+            "y": 93,
+            "definition": "胸鳍基部上缘前端、斜向鳃区暗线尾侧的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              151,
+              649
+            ],
+            [
+              394,
+              649
+            ],
+            [
+              637,
+              649
+            ],
+            [
+              881,
+              649
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 13,
+              "top": 550,
+              "width": 255,
+              "height": 178
+            },
+            {
+              "left": 270,
+              "top": 550,
+              "width": 241,
+              "height": 178
+            },
+            {
+              "left": 511,
+              "top": 550,
+              "width": 242,
+              "height": 178
+            },
+            {
+              "left": 753,
+              "top": 550,
+              "width": 251,
+              "height": 178
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    },
+    "F30": {
+      "subject": "蓝鳍金枪鱼",
+      "size": "large",
+      "source": "F30",
+      "stages": [
+        {
+          "name": "fry",
+          "cells": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -89,
+            "width": 236,
+            "height": 154
+          },
+          "anchor": {
+            "x": 170,
+            "y": 89,
+            "definition": "鳃盖后缘与胸鳍前端之间、胸鳍基部高度的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              175,
+              158
+            ],
+            [
+              416,
+              158
+            ],
+            [
+              656,
+              158
+            ],
+            [
+              896,
+              157
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 68,
+              "top": 104,
+              "width": 155,
+              "height": 102
+            },
+            {
+              "left": 309,
+              "top": 104,
+              "width": 155,
+              "height": 102
+            },
+            {
+              "left": 549,
+              "top": 104,
+              "width": 156,
+              "height": 102
+            },
+            {
+              "left": 787,
+              "top": 104,
+              "width": 158,
+              "height": 102
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "cells": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -89,
+            "width": 236,
+            "height": 154
+          },
+          "anchor": {
+            "x": 170,
+            "y": 89,
+            "definition": "鳃盖后缘与胸鳍前端之间、胸鳍基部高度的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              183,
+              405
+            ],
+            [
+              425,
+              405
+            ],
+            [
+              669,
+              405
+            ],
+            [
+              911,
+              405
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 39,
+              "top": 328,
+              "width": 208,
+              "height": 135
+            },
+            {
+              "left": 284,
+              "top": 328,
+              "width": 206,
+              "height": 135
+            },
+            {
+              "left": 529,
+              "top": 328,
+              "width": 203,
+              "height": 135
+            },
+            {
+              "left": 768,
+              "top": 328,
+              "width": 207,
+              "height": 135
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "cells": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -170,
+            "top": -89,
+            "width": 236,
+            "height": 154
+          },
+          "anchor": {
+            "x": 170,
+            "y": 89,
+            "definition": "鳃盖后缘与胸鳍前端之间、胸鳍基部高度的固定躯干点。"
+          },
+          "sourceAnchors": [
+            [
+              196,
+              637
+            ],
+            [
+              438,
+              637
+            ],
+            [
+              681,
+              637
+            ],
+            [
+              923,
+              637
+            ]
+          ],
+          "cellRects": [
+            {
+              "left": 20,
+              "top": 542,
+              "width": 247,
+              "height": 167
+            },
+            {
+              "left": 267,
+              "top": 542,
+              "width": 241,
+              "height": 167
+            },
+            {
+              "left": 508,
+              "top": 542,
+              "width": 242,
+              "height": 167
+            },
+            {
+              "left": 750,
+              "top": 542,
+              "width": 246,
+              "height": 167
+            }
+          ]
+        }
+      ],
+      "habitat": "sea"
+    }
+  }
+}

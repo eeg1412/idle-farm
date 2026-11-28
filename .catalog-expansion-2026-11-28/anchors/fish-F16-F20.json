@@ -1,0 +1,733 @@
+{
+  "F16": {
+    "source": "assets/fish/raw/F16-idle-v1.png",
+    "anchor": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            168,
+            159
+          ],
+          [
+            403,
+            159
+          ],
+          [
+            638,
+            159
+          ],
+          [
+            872,
+            159
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 60,
+            "top": 103,
+            "width": 180,
+            "height": 120
+          },
+          {
+            "left": 281,
+            "top": 103,
+            "width": 202,
+            "height": 120
+          },
+          {
+            "left": 521,
+            "top": 103,
+            "width": 204,
+            "height": 120
+          },
+          {
+            "left": 744,
+            "top": 103,
+            "width": 226,
+            "height": 120
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            176,
+            400
+          ],
+          [
+            411,
+            400
+          ],
+          [
+            647,
+            400
+          ],
+          [
+            883,
+            400
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 30,
+            "top": 319,
+            "width": 239,
+            "height": 158
+          },
+          {
+            "left": 275,
+            "top": 319,
+            "width": 216,
+            "height": 158
+          },
+          {
+            "left": 511,
+            "top": 319,
+            "width": 221,
+            "height": 158
+          },
+          {
+            "left": 746,
+            "top": 319,
+            "width": 232,
+            "height": 158
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            183,
+            640
+          ],
+          [
+            419,
+            640
+          ],
+          [
+            655,
+            640
+          ],
+          [
+            891,
+            640
+          ]
+        ],
+        "note": "独审确认三处分界清晰，保留完整须丝和尾缘。原稿接缝无全零列，登记分界 x=268、504、738，其列 alpha 峰值分别为 5、9、5（8 位）；切线上仅存低透明度残留。",
+        "cellRects": [
+          {
+            "left": 15,
+            "top": 566,
+            "width": 253,
+            "height": 163
+          },
+          {
+            "left": 268,
+            "top": 566,
+            "width": 236,
+            "height": 163
+          },
+          {
+            "left": 504,
+            "top": 566,
+            "width": 234,
+            "height": 163
+          },
+          {
+            "left": 738,
+            "top": 566,
+            "width": 258,
+            "height": 163
+          }
+        ]
+      }
+    }
+  },
+  "F17": {
+    "source": "assets/fish/raw/F17-idle-v1.png",
+    "version": 1,
+    "anchor": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            176,
+            155
+          ],
+          [
+            418,
+            155
+          ],
+          [
+            656,
+            155
+          ],
+          [
+            898,
+            155
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 55,
+            "top": 104,
+            "width": 185,
+            "height": 104
+          },
+          {
+            "left": 295,
+            "top": 104,
+            "width": 180,
+            "height": 104
+          },
+          {
+            "left": 535,
+            "top": 104,
+            "width": 190,
+            "height": 104
+          },
+          {
+            "left": 778,
+            "top": 104,
+            "width": 177,
+            "height": 104
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            186,
+            400
+          ],
+          [
+            426,
+            400
+          ],
+          [
+            670,
+            400
+          ],
+          [
+            910,
+            400
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 39,
+            "top": 337,
+            "width": 229,
+            "height": 126
+          },
+          {
+            "left": 277,
+            "top": 337,
+            "width": 227,
+            "height": 126
+          },
+          {
+            "left": 516,
+            "top": 337,
+            "width": 233,
+            "height": 126
+          },
+          {
+            "left": 764,
+            "top": 337,
+            "width": 218,
+            "height": 126
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            192,
+            640
+          ],
+          [
+            436,
+            640
+          ],
+          [
+            681,
+            640
+          ],
+          [
+            920,
+            640
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 8,
+            "top": 568,
+            "width": 255,
+            "height": 145
+          },
+          {
+            "left": 263,
+            "top": 568,
+            "width": 244,
+            "height": 145
+          },
+          {
+            "left": 507,
+            "top": 568,
+            "width": 243,
+            "height": 145
+          },
+          {
+            "left": 750,
+            "top": 568,
+            "width": 247,
+            "height": 145
+          }
+        ],
+        "note": "有效轮廓独立。三个分界 x=263、507、750 的列 alpha 峰值分别为 0、1、1（8 位）。"
+      }
+    }
+  },
+  "F18": {
+    "source": "assets/fish/raw/F18-idle-v1.png",
+    "version": 1,
+    "anchor": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            180,
+            158
+          ],
+          [
+            420,
+            158
+          ],
+          [
+            659,
+            158
+          ],
+          [
+            902,
+            158
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 65,
+            "top": 108,
+            "width": 185,
+            "height": 100
+          },
+          {
+            "left": 303,
+            "top": 108,
+            "width": 182,
+            "height": 100
+          },
+          {
+            "left": 541,
+            "top": 108,
+            "width": 184,
+            "height": 100
+          },
+          {
+            "left": 782,
+            "top": 108,
+            "width": 187,
+            "height": 100
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            184,
+            400
+          ],
+          [
+            426,
+            400
+          ],
+          [
+            669,
+            400
+          ],
+          [
+            911,
+            400
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 38,
+            "top": 336,
+            "width": 225,
+            "height": 117
+          },
+          {
+            "left": 287,
+            "top": 336,
+            "width": 208,
+            "height": 117
+          },
+          {
+            "left": 528,
+            "top": 336,
+            "width": 222,
+            "height": 117
+          },
+          {
+            "left": 772,
+            "top": 336,
+            "width": 207,
+            "height": 117
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            203,
+            640
+          ],
+          [
+            447,
+            640
+          ],
+          [
+            686,
+            640
+          ],
+          [
+            929,
+            640
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 8,
+            "top": 568,
+            "width": 262,
+            "height": 140
+          },
+          {
+            "left": 270,
+            "top": 568,
+            "width": 239,
+            "height": 140
+          },
+          {
+            "left": 509,
+            "top": 568,
+            "width": 243,
+            "height": 140
+          },
+          {
+            "left": 752,
+            "top": 568,
+            "width": 247,
+            "height": 140
+          }
+        ],
+        "note": "有效轮廓独立。三个分界 x=270、509、752 的列 alpha 峰值均为 1（8 位）。"
+      }
+    },
+    "note": "原图鱼体外有低透明度残留。读取全图中 R≥200、G/B≤55 的非透明残留，其 alpha 峰值为 2（8 位）。"
+  },
+  "F19": {
+    "source": "assets/fish/raw/F19-idle-v1.png",
+    "version": 1,
+    "anchor": "逐帧取体侧纵中线处、鳃盖后缘之后的躯干内点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            184,
+            159
+          ],
+          [
+            419,
+            159
+          ],
+          [
+            655,
+            159
+          ],
+          [
+            895,
+            159
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 63,
+            "top": 119,
+            "width": 181,
+            "height": 86
+          },
+          {
+            "left": 299,
+            "top": 119,
+            "width": 179,
+            "height": 86
+          },
+          {
+            "left": 535,
+            "top": 119,
+            "width": 182,
+            "height": 86
+          },
+          {
+            "left": 772,
+            "top": 119,
+            "width": 178,
+            "height": 86
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            191,
+            397
+          ],
+          [
+            430,
+            397
+          ],
+          [
+            668,
+            397
+          ],
+          [
+            906,
+            397
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 32,
+            "top": 348,
+            "width": 230,
+            "height": 99
+          },
+          {
+            "left": 279,
+            "top": 348,
+            "width": 223,
+            "height": 99
+          },
+          {
+            "left": 517,
+            "top": 348,
+            "width": 232,
+            "height": 99
+          },
+          {
+            "left": 752,
+            "top": 348,
+            "width": 220,
+            "height": 99
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            204,
+            637
+          ],
+          [
+            442,
+            637
+          ],
+          [
+            683,
+            637
+          ],
+          [
+            921,
+            637
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 10,
+            "top": 573,
+            "width": 256,
+            "height": 126
+          },
+          {
+            "left": 266,
+            "top": 573,
+            "width": 240,
+            "height": 126
+          },
+          {
+            "left": 506,
+            "top": 573,
+            "width": 238,
+            "height": 126
+          },
+          {
+            "left": 744,
+            "top": 573,
+            "width": 250,
+            "height": 126
+          }
+        ],
+        "note": "有效轮廓独立。三个分界 x=266、506、744 的列 alpha 峰值分别为 0、0、1（8 位）。"
+      }
+    },
+    "note": "原图鱼体外有低透明度残留。读取全图中 R≥200、G/B≤55 的非透明残留，其 alpha 峰值为 2（8 位）。"
+  },
+  "F20": {
+    "source": "assets/fish/raw/F20-idle-v2.png",
+    "version": 2,
+    "anchor": "逐帧取体侧纵中线处的鳃裂后侧躯干内点，以胸鳍根部前方短鳃裂定位。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            172,
+            159
+          ],
+          [
+            413,
+            159
+          ],
+          [
+            654,
+            159
+          ],
+          [
+            893,
+            159
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 75,
+            "top": 110,
+            "width": 150,
+            "height": 92
+          },
+          {
+            "left": 307,
+            "top": 110,
+            "width": 161,
+            "height": 92
+          },
+          {
+            "left": 541,
+            "top": 110,
+            "width": 172,
+            "height": 92
+          },
+          {
+            "left": 788,
+            "top": 110,
+            "width": 158,
+            "height": 92
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            177,
+            402
+          ],
+          [
+            418,
+            402
+          ],
+          [
+            658,
+            402
+          ],
+          [
+            899,
+            402
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 53,
+            "top": 346,
+            "width": 191,
+            "height": 107
+          },
+          {
+            "left": 298,
+            "top": 346,
+            "width": 184,
+            "height": 107
+          },
+          {
+            "left": 533,
+            "top": 346,
+            "width": 180,
+            "height": 107
+          },
+          {
+            "left": 779,
+            "top": 346,
+            "width": 179,
+            "height": 107
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            183,
+            638
+          ],
+          [
+            426,
+            638
+          ],
+          [
+            668,
+            638
+          ],
+          [
+            910,
+            638
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 35,
+            "top": 570,
+            "width": 225,
+            "height": 131
+          },
+          {
+            "left": 275,
+            "top": 570,
+            "width": 231,
+            "height": 131
+          },
+          {
+            "left": 514,
+            "top": 570,
+            "width": 233,
+            "height": 131
+          },
+          {
+            "left": 752,
+            "top": 570,
+            "width": 233,
+            "height": 131
+          }
+        ]
+      }
+    },
+    "note": "采用体现河鲀鼓腹、窄鳃裂和短吻的 v2。原图鱼体外有低透明度残留，R≥200、G/B≤55 的非透明残留 alpha 峰值为 2（8 位）。"
+  }
+}

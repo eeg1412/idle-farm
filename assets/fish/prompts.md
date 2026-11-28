@@ -1,5 +1,7 @@
 # 鱼类三期 idle 原画提示词与来源
 
+F11–F30 的源图和修订记录见 [扩展鱼类原画](prompts-expansion-2026-11-28.md)。
+
 海／河鱼塘新增原画与实际提示词见 [habitat-prompts.md](habitat-prompts.md)。本文件保留120帧鱼类原画来源。
 
 本轮全部由内置 `image_gen` 生成，`transparent_background: true`。每种独立调用，不使用 CLI/API 或机械缩放代替新原画。保留默认输出原件并复制到本项目 `assets/fish/raw/`。画风参考为已认可 `assets/livestock/raw/pixel-v4-black-pig-style.png`，仅借像素色块与细节尺度，不把猪的解剖形态套入鱼类。

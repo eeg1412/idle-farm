@@ -1,0 +1,106 @@
+{
+  "L13": {
+    "revision": 2,
+    "stages": [
+      {
+        "name": "adult",
+        "row": 0,
+        "maxWidth": 153,
+        "maxHeight": 131,
+        "supportBandHeight": 11,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            145,
+            233
+          ],
+          [
+            382,
+            233
+          ],
+          [
+            626,
+            233
+          ],
+          [
+            870,
+            233
+          ]
+        ],
+        "canvas": [
+          -98,
+          -156,
+          210,
+          166
+        ],
+        "mouth": [
+          211,
+          221
+        ],
+        "supportXRange": [
+          95,
+          168
+        ],
+        "mouthBounds": {
+          "x": 174,
+          "y": 256,
+          "width": 26,
+          "height": 22
+        },
+        "anchorMethod": "Foreground plant-foot stance center on the original bee sheet, with a row-shared crop and scale; stable six-legged ground pose and separate motion painted in the head and proboscis."
+      }
+    ]
+  },
+  "L29": {
+    "revision": 2,
+    "stages": [
+      {
+        "name": "adult",
+        "row": 0,
+        "maxWidth": 151,
+        "maxHeight": 132,
+        "supportBandHeight": 12,
+        "supportMaterial": "opaque-feet",
+        "anchors": [
+          [
+            145,
+            190
+          ],
+          [
+            381,
+            190
+          ],
+          [
+            618,
+            190
+          ],
+          [
+            853,
+            190
+          ]
+        ],
+        "canvas": [
+          -122,
+          -114,
+          213,
+          144
+        ],
+        "mouth": [
+          217,
+          179
+        ],
+        "supportXRange": [
+          67,
+          153
+        ],
+        "mouthBounds": {
+          "x": 158,
+          "y": 258,
+          "width": 49,
+          "height": 33
+        },
+        "anchorMethod": "Same anterior abdominal proleg stance on the mature larva across four poses; the mouth and front segments lower naturally at feeding, with a shared source canvas and scale."
+      }
+    ]
+  }
+}

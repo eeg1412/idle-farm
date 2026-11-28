@@ -83,6 +83,7 @@ async function exportHabitats(manifest) {
   const visuals = {};
   const contact = [];
   const ids = Object.keys(layout.species);
+  const contactHeight = 152 * Math.ceil(ids.length / 5);
   for (const [index, id] of ids.entries()) {
     const definition = layout.species[id];
     const habitat = habitats[definition.habitat];
@@ -114,10 +115,10 @@ async function exportHabitats(manifest) {
     contact.push({ input: await sharp(fallback).resize(130, 130, { kernel: 'nearest' }).png().toBuffer(),
       left: index % 5 * 138 + 4, top: Math.floor(index / 5) * 152 + 4 });
   }
-  const labels = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="690" height="304">`
+  const labels = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="690" height="${contactHeight}">`
     + ids.map((id, index) => `<text x="${index % 5 * 138 + 69}" y="${Math.floor(index / 5) * 152 + 148}" text-anchor="middle" fill="#263b2a" font-family="sans-serif" font-size="12">${id} ${layout.species[id].habitat}</text>`).join('') + '</svg>');
   await save('assets/fish/reviews/fallback-habitats-130.png', await sharp({ create: {
-    width: 690, height: 304, channels: 4, background: '#f5edd9',
+    width: 690, height: contactHeight, channels: 4, background: '#f5edd9',
   } }).composite([...contact, { input: labels }]).png().toBuffer());
   await save('assets/fish/reviews/habitats-320.png', await transparent(size * 2, size)
     .composite([{ input: ponds.river, left: 0, top: 0 }, { input: ponds.sea, left: size, top: 0 }]).png().toBuffer());
@@ -241,12 +242,15 @@ for (const [index, id] of ids.entries()) {
 const labels = (width, height, stepX, stepY, yOffset) => Buffer.from(
   `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">`
   + ids.map((id, index) => `<text x="${index % 5 * stepX + stepX / 2}" y="${Math.floor(index / 5) * stepY + yOffset}" text-anchor="middle" fill="#263b2a" font-family="sans-serif" font-size="12">${id}</text>`).join('') + '</svg>');
+const contactRows = Math.ceil(ids.length / 5);
+const fallbackHeight = 152 * contactRows;
+const iconHeight = 58 * contactRows;
 await save('assets/fish/reviews/fallback-130.png', await sharp({ create: {
-  width: 690, height: 304, channels: 4, background: '#f5edd9',
-} }).composite([...contactFallbacks, { input: labels(690, 304, 138, 152, 148) }]).png().toBuffer());
+  width: 690, height: fallbackHeight, channels: 4, background: '#f5edd9',
+} }).composite([...contactFallbacks, { input: labels(690, fallbackHeight, 138, 152, 148) }]).png().toBuffer());
 await save('assets/fish/reviews/selection-32.png', await sharp({ create: {
-  width: 320, height: 116, channels: 4, background: '#f5edd9',
-} }).composite([...contactIcons, { input: labels(320, 116, 64, 58, 51) }]).png().toBuffer());
+  width: 320, height: iconHeight, channels: 4, background: '#f5edd9',
+} }).composite([...contactIcons, { input: labels(320, iconHeight, 64, 58, 51) }]).png().toBuffer());
 await save('assets/fish/atlas.json', Buffer.from(JSON.stringify(manifest, null, 2) + '\n'));
 await save('src/content/fish-visuals.json', Buffer.from(JSON.stringify(visuals, null, 2) + '\n'));
 await exportHabitats(manifest);

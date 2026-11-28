@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { dirname, resolve } from 'node:path';
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 
@@ -34,12 +35,44 @@ const oreSourceMetadata = {
 };
 const expansionOnly = process.argv.includes('--pm-expansion-only');
 const oreOnly = process.argv.includes('--m10-only');
+const contentExpansionFlag = process.argv.indexOf('--content-expansion');
+const contentExpansion = contentExpansionFlag !== -1;
+const registrationStageFlag = process.argv.indexOf('--stage-registration');
+const registrationStage = registrationStageFlag === -1 ? undefined : process.argv[registrationStageFlag+1];
+if (registrationStageFlag !== -1 && (!contentExpansion || !registrationStage || registrationStage.startsWith('--'))) {
+ throw new Error('Use --stage-registration <directory> with --content-expansion.');
+}
+const idsInRange = (prefix, first, last) =>
+ Array.from({length:last-first+1}, (_,index) => prefix+String(first+index).padStart(2,'0'));
+const expandedOres = idsInRange('M',11,30);
+const expandedItems = [...expandedOres, ...idsInRange('IM',17,36), ...idsInRange('PM',24,83)];
 const uiNames = ['mining-tab','facility-empty-mine','mining-buy','mining-upgrade','mining-yield','mining-research','mining-processing','mining-cycle','mining-refining'];
-const catalog = JSON.parse(await readFile(file('src/content/game-data.json'),'utf8'));
 const registryPath = file('assets/mining/registration.json');
-const registry = expansionOnly || oreOnly
- ? JSON.parse(await readFile(registryPath,'utf8'))
+const visualsPath = file('src/content/mining-visuals.json');
+const batchRegistryPath = registrationStage ? resolve(registrationStage,'assets/mining/registration.json') : registryPath;
+const batchVisualsPath = registrationStage ? resolve(registrationStage,'src/content/mining-visuals.json') : visualsPath;
+const partialExport = expansionOnly || oreOnly || contentExpansion;
+async function readPrevious(path, required) {
+ try {
+  return JSON.parse(await readFile(path,'utf8'));
+ } catch (error) {
+  if (required || error.code !== 'ENOENT') throw error;
+  return undefined;
+ }
+}
+const previousRegistry = (registrationStage && await readPrevious(batchRegistryPath,false)) ??
+ await readPrevious(registryPath,partialExport) ?? {};
+const registry = partialExport
+ ? previousRegistry
  : {version:1, generatedWith:'built-in image_gen', promptFile:'assets/mining/prompts.md', conversion:'isolated alpha crop; nearest-neighbor resize; WebP quality70 alpha100', sources:{}, items:{}, ui:{}, scene:{}};
+if (contentExpansion) {
+ if (expansionOnly || oreOnly) throw new Error('Use --content-expansion separately from historical export options.');
+ const manifestPath = process.argv[contentExpansionFlag+1];
+ if (!manifestPath || manifestPath.startsWith('--')) throw new Error('Supply the icon source manifest path after --content-expansion.');
+ await exportContentExpansion(JSON.parse(await readFile(manifestPath,'utf8')));
+ process.exit(0);
+}
+const catalog = JSON.parse(await readFile(file('src/content/game-data.json'),'utf8'));
 const expansionIds = Object.keys(catalog.items).filter(id=>idsC.includes(id));
 if (expansionIds.join() !== idsC.join()) throw new Error('PM15–PM23 must match the generated catalogue order.');
 for (const dir of ['assets/mining/png','assets/mining/source-icons','assets/source/items/overrides','public/wiki/icons','public/ui-icons','public/art/mining']) await mkdir(file(dir),{recursive:true});
@@ -64,6 +97,36 @@ async function writeMineScene(id, background, cart, foreground) {
   ...await writeImage('assets/mining/png/scene-'+id+'.png','public/art/scene-'+id+'.webp',scene),
   layers:['background','empty-cart','canonical-item-icon','cave-foreground'],icon,
  };
+}
+async function exportContentExpansion(manifest) {
+ const visuals = (registrationStage && await readPrevious(batchVisualsPath,false)) ??
+  await readPrevious(visualsPath,true);
+ const [background, cart, foreground] = await Promise.all(
+  ['background','cart','foreground'].map(layer => readFile(file(registry.scene[layer].png))),
+ );
+ const toRect = ([left,top,right,bottom]) => ({left,top,width:right-left,height:bottom-top});
+ const items = expandedItems.filter(id => Object.hasOwn(manifest.items,id));
+ for (const id of items) {
+  const item = manifest.items[id];
+  const atlas = manifest.atlases[item.atlas];
+  registry.sources[item.atlas] = atlas;
+  const content = toRect(item.contentBounds);
+  registry.items[id] = {
+   name:item.name,source:item.atlas,cell:toRect(item.cellBounds),index:atlas.ids.indexOf(id),
+   sourceBounds:toRect(item.sourceBounds),
+   contentBounds:{x:content.left,y:content.top,width:content.width,height:content.height},
+   png:item.source,path:item.webp,pngSha256:item.sourceSha256,sha256:item.webpSha256,
+  };
+  if (expandedOres.includes(id)) {
+   await writeMineScene(id, background, cart, foreground);
+   visuals.items[id] = {icon:item.webp.slice('public/'.length),scene:registry.scene[id].path.slice('public/'.length)};
+  }
+ }
+ await mkdir(dirname(batchVisualsPath),{recursive:true});
+ await mkdir(dirname(batchRegistryPath),{recursive:true});
+ await writeFile(batchVisualsPath,JSON.stringify(visuals,null,2)+'\n');
+ await writeFile(batchRegistryPath,JSON.stringify(registry,null,2)+'\n');
+ console.log(`Registered ${items.length} expanded mining icons and exported ${items.filter(id => expandedOres.includes(id)).length} selection scenes.`);
 }
 async function isolated(source,cell,target=82,canvas=96) {
  const {data,info}=await sharp(file(source)).extract(cell).ensureAlpha().raw().toBuffer({resolveWithObject:true});
@@ -177,6 +240,7 @@ registry.scene.cart = {
   ...await writeImage('assets/mining/png/cart.png', 'public/art/mining/cart.webp', cart),
   source: 'cart-v1', sourceBounds: cartSprite.sourceBounds, ...cartGeometry, cargo: cargoGeometry,
 };
+const previousVisuals = await readPrevious(visualsPath,false);
 const visuals = {
   version: 1,
   sceneSize: 320,
@@ -185,6 +249,7 @@ const visuals = {
   cart: { path: 'art/mining/cart.webp', ...cartGeometry, visibleLeftX: 5, cargo: cargoGeometry },
   // The opening's inside edges are measured at the height of the cart, below the arch.
   opening: { left: 28, right: 108 },
+  sparks: previousVisuals?.sparks,
   track: { inside: { x: 70, y: 237 }, station: { x: 249, y: 237 } },
   items: {},
 };
@@ -192,7 +257,17 @@ for(const id of idsA.slice(0,10)){
  await writeMineScene(id, background, cart, foreground);
  visuals.items[id]={icon:'wiki/icons/'+id+'.webp',scene:'art/scene-'+id+'.webp'};
 }
-await writeFile(file('src/content/mining-visuals.json'),JSON.stringify(visuals,null,2)+'\n');
+for (const id of expandedItems) {
+ const item = previousRegistry.items?.[id];
+ if (!item) continue;
+ registry.sources[item.source] = previousRegistry.sources[item.source];
+ registry.items[id] = item;
+ if (expandedOres.includes(id)) {
+  await writeMineScene(id, background, cart, foreground);
+  visuals.items[id] = {icon:item.path.slice('public/'.length),scene:registry.scene[id].path.slice('public/'.length)};
+ }
+}
+await writeFile(visualsPath,JSON.stringify(visuals,null,2)+'\n');
 await writeFile(registryPath,JSON.stringify(registry,null,2)+'\n');
 // Contact sheets are composed only from the deliverable images, for visual inspection.
 for(let start=0;start<40;start+=10){
@@ -205,4 +280,4 @@ await sharp({create:{width:330,height:330,channels:4,background:'#344343'}}).com
 const sceneInputs=[];
 for(const [i,id]of idsA.slice(0,10).entries())sceneInputs.push({input:await sharp(file('public/art/scene-'+id+'.webp')).resize(130,130,{kernel:'nearest'}).png().toBuffer(),left:(i%5)*130,top:Math.floor(i/5)*130});
 await sharp({create:{width:650,height:260,channels:4,background:'#344343'}}).composite(sceneInputs).png().toFile(file('assets/mining/png/scenes-130-review.png'));
-console.log(`Converted ${exportedIds.length} canonical item icons, 9 UI icons, layered mine art, 10 selection scenes and source registration. No checks, tests or build invoked.`);
+console.log(`Converted ${exportedIds.length} canonical item icons, 9 UI icons, layered mine art, ${Object.keys(visuals.items).length} selection scenes and source registration. No checks, tests or build invoked.`);

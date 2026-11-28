@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "sceneSize": 320,
+  "background": {
+    "path": "art/mining/background.webp",
+    "width": 320,
+    "height": 320
+  },
+  "foreground": {
+    "path": "art/mining/foreground.webp",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 320
+    }
+  },
+  "cart": {
+    "path": "art/mining/cart.webp",
+    "width": 96,
+    "height": 64,
+    "anchorX": 48,
+    "anchorY": 60,
+    "visibleLeftX": 5,
+    "cargo": {
+      "x": 48,
+      "y": 15,
+      "width": 58,
+      "height": 48,
+      "anchorX": 0.5,
+      "anchorY": 1
+    }
+  },
+  "opening": {
+    "left": 28,
+    "right": 108
+  },
+  "sparks": {
+    "mask": [
+      40,
+      151,
+      54,
+      143,
+      78,
+      143,
+      94,
+      155,
+      98,
+      228,
+      32,
+      228,
+      32,
+      163
+    ],
+    "origins": [
+      {
+        "x": 52,
+        "y": 177
+      },
+      {
+        "x": 79,
+        "y": 187
+      },
+      {
+        "x": 62,
+        "y": 202
+      }
+    ]
+  },
+  "track": {
+    "inside": {
+      "x": 70,
+      "y": 237
+    },
+    "station": {
+      "x": 249,
+      "y": 237
+    }
+  },
+  "items": {
+    "M01": {
+      "icon": "wiki/icons/M01.webp",
+      "scene": "art/scene-M01.webp"
+    },
+    "M02": {
+      "icon": "wiki/icons/M02.webp",
+      "scene": "art/scene-M02.webp"
+    },
+    "M03": {
+      "icon": "wiki/icons/M03.webp",
+      "scene": "art/scene-M03.webp"
+    },
+    "M04": {
+      "icon": "wiki/icons/M04.webp",
+      "scene": "art/scene-M04.webp"
+    },
+    "M05": {
+      "icon": "wiki/icons/M05.webp",
+      "scene": "art/scene-M05.webp"
+    },
+    "M06": {
+      "icon": "wiki/icons/M06.webp",
+      "scene": "art/scene-M06.webp"
+    },
+    "M07": {
+      "icon": "wiki/icons/M07.webp",
+      "scene": "art/scene-M07.webp"
+    },
+    "M08": {
+      "icon": "wiki/icons/M08.webp",
+      "scene": "art/scene-M08.webp"
+    },
+    "M09": {
+      "icon": "wiki/icons/M09.webp",
+      "scene": "art/scene-M09.webp"
+    },
+    "M10": {
+      "icon": "wiki/icons/M10.webp",
+      "scene": "art/scene-M10.webp"
+    },
+    "M11": {
+      "icon": "wiki/icons/M11.webp",
+      "scene": "art/scene-M11.webp"
+    },
+    "M12": {
+      "icon": "wiki/icons/M12.webp",
+      "scene": "art/scene-M12.webp"
+    },
+    "M13": {
+      "icon": "wiki/icons/M13.webp",
+      "scene": "art/scene-M13.webp"
+    },
+    "M14": {
+      "icon": "wiki/icons/M14.webp",
+      "scene": "art/scene-M14.webp"
+    },
+    "M15": {
+      "icon": "wiki/icons/M15.webp",
+      "scene": "art/scene-M15.webp"
+    },
+    "M16": {
+      "icon": "wiki/icons/M16.webp",
+      "scene": "art/scene-M16.webp"
+    },
+    "M17": {
+      "icon": "wiki/icons/M17.webp",
+      "scene": "art/scene-M17.webp"
+    },
+    "M18": {
+      "icon": "wiki/icons/M18.webp",
+      "scene": "art/scene-M18.webp"
+    },
+    "M19": {
+      "icon": "wiki/icons/M19.webp",
+      "scene": "art/scene-M19.webp"
+    },
+    "M20": {
+      "icon": "wiki/icons/M20.webp",
+      "scene": "art/scene-M20.webp"
+    },
+    "M21": {
+      "icon": "wiki/icons/M21.webp",
+      "scene": "art/scene-M21.webp"
+    },
+    "M22": {
+      "icon": "wiki/icons/M22.webp",
+      "scene": "art/scene-M22.webp"
+    },
+    "M23": {
+      "icon": "wiki/icons/M23.webp",
+      "scene": "art/scene-M23.webp"
+    },
+    "M24": {
+      "icon": "wiki/icons/M24.webp",
+      "scene": "art/scene-M24.webp"
+    },
+    "M25": {
+      "icon": "wiki/icons/M25.webp",
+      "scene": "art/scene-M25.webp"
+    },
+    "M26": {
+      "icon": "wiki/icons/M26.webp",
+      "scene": "art/scene-M26.webp"
+    },
+    "M27": {
+      "icon": "wiki/icons/M27.webp",
+      "scene": "art/scene-M27.webp"
+    },
+    "M28": {
+      "icon": "wiki/icons/M28.webp",
+      "scene": "art/scene-M28.webp"
+    },
+    "M29": {
+      "icon": "wiki/icons/M29.webp",
+      "scene": "art/scene-M29.webp"
+    },
+    "M30": {
+      "icon": "wiki/icons/M30.webp",
+      "scene": "art/scene-M30.webp"
+    }
+  }
+}

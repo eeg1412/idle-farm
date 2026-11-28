@@ -1,0 +1,2966 @@
+{
+  "sceneSize": 320,
+  "fishRoot": {
+    "x": 160,
+    "y": 210
+  },
+  "pond": {
+    "source": "assets/source/art/scene-empty-pond.png",
+    "sourceSha256": "fe0193fd4901576e5735b79f852cc6b3fbada7d576c1a89dad5fc2e2d49a931b",
+    "path": "public/art/fish/pond.webp",
+    "sha256": "5f386c80ca766bce850296a5c4539b712ca32a25db6c034dc347d58fe6db8c30",
+    "consumed": false
+  },
+  "sources": {
+    "F01": {
+      "path": "assets/fish/raw/F01-idle-v1.png",
+      "sha256": "47e82191fd5f891e795deaa9d86cf4acf19d06cc892eeeb9a7d110a0e2f656f8",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F01.png"
+    },
+    "F02": {
+      "path": "assets/fish/raw/F02-idle-v1.png",
+      "sha256": "b17d36f634f1d9f1967eea09e2792c11b9d0799362eab420c153dabc4d92f8dc",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F02.png"
+    },
+    "F03": {
+      "path": "assets/fish/raw/F03-idle-v1.png",
+      "sha256": "2e0d8c272a04178ef0f51d971f56c84888dacea438fe25e778d4059be19c148b",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F03.png"
+    },
+    "F04": {
+      "path": "assets/fish/raw/F04-idle-v1.png",
+      "sha256": "2985b7aa3ad2e4038abbdb20a495dce6dfc14b36ae80a77c43e9bbacd0995b45",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F04.png"
+    },
+    "F05": {
+      "path": "assets/fish/raw/F05-idle-v1.png",
+      "sha256": "8f5a31ae3da45c8b3c84831d9691243d08301576b879164222d12083f2632788",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F05.png"
+    },
+    "F06": {
+      "path": "assets/fish/raw/F06-idle-v1.png",
+      "sha256": "f3e8afbe9ecab111dd30dda27e56c418bf24435d5b73dbe7e1c8111df0772777",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F06.png"
+    },
+    "F07": {
+      "path": "assets/fish/raw/F07-idle-v1.png",
+      "sha256": "2779f54af563860e57ade73538385b17e0c3ba1aa1fa6ee253575b9bf875ae4f",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F07.png"
+    },
+    "F08": {
+      "path": "assets/fish/raw/F08-idle-v1.png",
+      "sha256": "31c0494a741719b53006d5cb497dce75c3251c9cb8f26e04a425612779f49d87",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F08.png"
+    },
+    "F09": {
+      "path": "assets/fish/raw/F09-idle-v1.png",
+      "sha256": "0943feafbc537ac8136330e4657a5636729d4e3e95a0761c4a1f6f933ad6fa91",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F09.png"
+    },
+    "F10": {
+      "path": "assets/fish/raw/F10-idle-v1.png",
+      "sha256": "11be37cd5fc443485f7d3e81281c206916e1967e03fe735fde37e8d77985a873",
+      "width": 1254,
+      "height": 1254,
+      "normalized": "assets/fish/normalized/F10.png"
+    }
+  },
+  "species": {
+    "F01": {
+      "subject": "鲫鱼",
+      "size": "small",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F01",
+              "cell": 0,
+              "sourceAnchor": [
+                156,
+                155
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/fry-0.png",
+              "sha256": "05af16cbbc0517a4ebb2d00cec2f9679f4e07789ebd6776de9690f2ba97097cd"
+            },
+            {
+              "source": "F01",
+              "cell": 1,
+              "sourceAnchor": [
+                397,
+                155
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/fry-1.png",
+              "sha256": "c92cd59c386465f4b93a8d19393901be5cf2c1ac0b62a629ec02f94553285cd1"
+            },
+            {
+              "source": "F01",
+              "cell": 2,
+              "sourceAnchor": [
+                639,
+                155
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/fry-2.png",
+              "sha256": "ecea7cc5d28e835ad76f35f61881091fa645dd49c57dc3efac13a8eecc17188e"
+            },
+            {
+              "source": "F01",
+              "cell": 3,
+              "sourceAnchor": [
+                881,
+                155
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/fry-3.png",
+              "sha256": "b1ac91403eb4beee4fdf34e5c9458633bf97cf86852c6d4daaf7533da50e9ae4"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F01",
+              "cell": 5,
+              "sourceAnchor": [
+                161,
+                397
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/growing-0.png",
+              "sha256": "b568075c6466b1e692230979da6a14e314486ebb077caf2c53ffa0f1c7c8be50"
+            },
+            {
+              "source": "F01",
+              "cell": 6,
+              "sourceAnchor": [
+                407,
+                398
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/growing-1.png",
+              "sha256": "76eb2dd04a45a0414ec31d1cf49cae3b5151dec3c76092760d9548097607e55d"
+            },
+            {
+              "source": "F01",
+              "cell": 7,
+              "sourceAnchor": [
+                648,
+                398
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/growing-2.png",
+              "sha256": "0a486c882a3651824e47c5a9f58170729be4c3314c4b988bd9c9df21d411c4ba"
+            },
+            {
+              "source": "F01",
+              "cell": 8,
+              "sourceAnchor": [
+                892,
+                398
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/growing-3.png",
+              "sha256": "f512921b81eb9475d6678af1b7e64b400eb2463a40795adc040b5731e03ca45b"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F01",
+              "cell": 10,
+              "sourceAnchor": [
+                165,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/mature-0.png",
+              "sha256": "f1ef5d310cdfe71d01ab9f94557135e37d5474f3da3fd2baaf8ae817f3952f35"
+            },
+            {
+              "source": "F01",
+              "cell": 11,
+              "sourceAnchor": [
+                412,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/mature-1.png",
+              "sha256": "375dfb91e9c51ce8c92c8e1e9c091125e8670a2ba11507333feb16a7ea832f8d"
+            },
+            {
+              "source": "F01",
+              "cell": 12,
+              "sourceAnchor": [
+                656,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/mature-2.png",
+              "sha256": "94a9ee7300411a5ee11b5d16db2aa406434a923a4d9771bad89304014435b0aa"
+            },
+            {
+              "source": "F01",
+              "cell": 13,
+              "sourceAnchor": [
+                898,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F01/mature-3.png",
+              "sha256": "bd301d3cfaedde80568421cf3f91e1c1bee63e3f7cb7ee10ac94807914e38aae"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F01.webp",
+        "sha256": "7df6001b0eb4a7636db97a2b8a2dfd5e199493b31e2b34e9785f08ebcb9e1741",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F01.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "501ff5e068d67abb33baedc0a3843d4ec10d5076b36c70761c260cc3317f9457"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F01.png",
+        "sourceSha256": "29bc8fcebf6997ae5e47ebf076634d14897b062a54c0b39532ca8950e17cc7ce",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F01.webp",
+        "sha256": "0759adf52fd75755bc23954d375c4340a537fc66b46434196616ec01b02d5c8a",
+        "layout": "small",
+        "habitat": "river",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "river"
+    },
+    "F02": {
+      "subject": "鲤鱼",
+      "size": "medium",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F02",
+              "cell": 0,
+              "sourceAnchor": [
+                152,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/fry-0.png",
+              "sha256": "71a65cee30b817d961503b3bb2a2c6924165dd885cbd9b050628077ac3d3913f"
+            },
+            {
+              "source": "F02",
+              "cell": 1,
+              "sourceAnchor": [
+                396,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/fry-1.png",
+              "sha256": "580a17aeb57e2b533eef46cd13031a329005fcfb18248901c066f37fddc85970"
+            },
+            {
+              "source": "F02",
+              "cell": 2,
+              "sourceAnchor": [
+                640,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/fry-2.png",
+              "sha256": "e853409fcabb84fd8b46fce8b930d11259bf60023c44785144fbb255c1ffd7ed"
+            },
+            {
+              "source": "F02",
+              "cell": 3,
+              "sourceAnchor": [
+                883,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/fry-3.png",
+              "sha256": "437a644e603bc65902aaf3ce9363898f3eafa4199fe4fd19411e92b961785c44"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F02",
+              "cell": 5,
+              "sourceAnchor": [
+                160,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/growing-0.png",
+              "sha256": "e520ac57bf0b2e8afa362b6267fc2019585287fea690ca3e475b8c7a86c98669"
+            },
+            {
+              "source": "F02",
+              "cell": 6,
+              "sourceAnchor": [
+                407,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/growing-1.png",
+              "sha256": "b06a8d8862110767a4da2a3ea2a7bd7332fdfd379cac00810f3ad5a52f476a20"
+            },
+            {
+              "source": "F02",
+              "cell": 7,
+              "sourceAnchor": [
+                651,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/growing-2.png",
+              "sha256": "5eff9314c7bc340d6cb3744144471e7097efc4e38805ab5e99efd76c3a7b6c01"
+            },
+            {
+              "source": "F02",
+              "cell": 8,
+              "sourceAnchor": [
+                892,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/growing-3.png",
+              "sha256": "89eccf04778c80bdcc17e22e3463d7be57b4d92f523b8dc01b0ba9d3d2be40f6"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F02",
+              "cell": 10,
+              "sourceAnchor": [
+                164,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/mature-0.png",
+              "sha256": "ebc4864f01337438effe8782db800d0313a8ba449c05f02b9216d193a33d5ce0"
+            },
+            {
+              "source": "F02",
+              "cell": 11,
+              "sourceAnchor": [
+                411,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/mature-1.png",
+              "sha256": "8bdf29c59b8cfbf91073079f366be88a92f9f21597fdfb81f9340f4e57f547a1"
+            },
+            {
+              "source": "F02",
+              "cell": 12,
+              "sourceAnchor": [
+                655,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/mature-2.png",
+              "sha256": "65ea1bb33d438d7a4ab52c5ce8ac690c4450d2966b7b6ceacb8596ab29a797b1"
+            },
+            {
+              "source": "F02",
+              "cell": 13,
+              "sourceAnchor": [
+                900,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F02/mature-3.png",
+              "sha256": "3cf8d5f3b13e7e5e3dfb5d5ae392468f50aadccb55062d8e23c36b45bbc055fc"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F02.webp",
+        "sha256": "78779bc11182caa45ed82746b78ab440535311982feb40fdc74e0123a5a58835",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F02.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "ee1534b7ef2f53263c27ab0c3eab4f1207dd2dcd903a6eb6cc66d0ce18b5bed0"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F02.png",
+        "sourceSha256": "36fd315792c4ba6e79b34055b3b81af925b31d2c189710468e475d836c9b9773",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F02.webp",
+        "sha256": "92f375ff5dcdd09378b8dee51cd7c0f71204479e8b87ab00b197ff67624efd93",
+        "layout": "medium",
+        "habitat": "river",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "river"
+    },
+    "F03": {
+      "subject": "花鲈",
+      "size": "medium",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F03",
+              "cell": 0,
+              "sourceAnchor": [
+                159,
+                140
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/fry-0.png",
+              "sha256": "67f7dc84dcf779ad186bd438ddd55a916a16fd1dbd298f4a7b0742cd772d18bb"
+            },
+            {
+              "source": "F03",
+              "cell": 1,
+              "sourceAnchor": [
+                404,
+                140
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/fry-1.png",
+              "sha256": "64192993e5cfe382a274eb95e87c3694b6fdc339ceeeae8db08a747ad83fd6cc"
+            },
+            {
+              "source": "F03",
+              "cell": 2,
+              "sourceAnchor": [
+                645,
+                140
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/fry-2.png",
+              "sha256": "72b02304cd2ed39bbcecd55378e1e1fa2605f6d3c7094360898937a60359d2ab"
+            },
+            {
+              "source": "F03",
+              "cell": 3,
+              "sourceAnchor": [
+                885,
+                140
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/fry-3.png",
+              "sha256": "fe2f7b40d372d810c9f70b997a9a8f5993f843288095f0d21d4a5ecb1a4d6d1d"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F03",
+              "cell": 5,
+              "sourceAnchor": [
+                168,
+                386
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/growing-0.png",
+              "sha256": "3cf8e1ae6190a368ca2d7346ba644d7bc761b56409ce2873491b31bc40f99b81"
+            },
+            {
+              "source": "F03",
+              "cell": 6,
+              "sourceAnchor": [
+                410,
+                386
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/growing-1.png",
+              "sha256": "f8c2789c3a638260824e66a55eaa3026978c5a0333fa5b10e40101e401c49748"
+            },
+            {
+              "source": "F03",
+              "cell": 7,
+              "sourceAnchor": [
+                652,
+                386
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/growing-2.png",
+              "sha256": "a85fde54b837ec74a765efa30a89f358d84238a9e8fb93ae2fe113b05fd17238"
+            },
+            {
+              "source": "F03",
+              "cell": 8,
+              "sourceAnchor": [
+                892,
+                386
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/growing-3.png",
+              "sha256": "e5e83ea0f798836b42d1d21fd7fba84bd413be8d810a139fa88dca8d65e22e24"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F03",
+              "cell": 10,
+              "sourceAnchor": [
+                174,
+                629
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/mature-0.png",
+              "sha256": "2f18bb6c3c3666b91da41909dd32be9d1ebb5dcc852b2c01c20d6ddea0d2444c"
+            },
+            {
+              "source": "F03",
+              "cell": 11,
+              "sourceAnchor": [
+                417,
+                629
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/mature-1.png",
+              "sha256": "0b039c53b9a8e048dc66105603f15b2b62428ac3f1b3a8b816326e7212c652a6"
+            },
+            {
+              "source": "F03",
+              "cell": 12,
+              "sourceAnchor": [
+                660,
+                629
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/mature-2.png",
+              "sha256": "9c3c4629b15720a6a303965273073623d5842e4dc99f62eaf1a9a0b05f5faeec"
+            },
+            {
+              "source": "F03",
+              "cell": 13,
+              "sourceAnchor": [
+                904,
+                629
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F03/mature-3.png",
+              "sha256": "6d1b45ecdba99720ddad0bc5e2b9dff70d334e604318e9660bcd516abb8703ac"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F03.webp",
+        "sha256": "1e6cbe0de301b55c9f6109425390ba7341209445d39cf34192ed2609b3fec236",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F03.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "2d9953c5ed7a2724fa27bf1d63700e2d2be6826f1a56192896e3bcadb1ecf63a"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F03.png",
+        "sourceSha256": "af4bb4e4b1ac73d282263bbddf8b2988cedd3db4113761d017519eb3b9696ca5",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F03.webp",
+        "sha256": "ec99c7e57aaf839a4cc905f8664db8b871fbae555fd77aad9dd4dc3fca547edf",
+        "layout": "medium",
+        "habitat": "sea",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "sea"
+    },
+    "F04": {
+      "subject": "虹鳟",
+      "size": "medium",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F04",
+              "cell": 0,
+              "sourceAnchor": [
+                159,
+                157
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/fry-0.png",
+              "sha256": "9987c7f6d908e880eaab3249d262b63d8138a9ac87bd5f421a98e2e78b2a02e6"
+            },
+            {
+              "source": "F04",
+              "cell": 1,
+              "sourceAnchor": [
+                411,
+                157
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/fry-1.png",
+              "sha256": "f99cf6c896429ac73ac5dcf9592c4904c2f3a018609fe5340591da8663abcfe2"
+            },
+            {
+              "source": "F04",
+              "cell": 2,
+              "sourceAnchor": [
+                657,
+                157
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/fry-2.png",
+              "sha256": "eec5a58ef1bba40f3739f1b8f955d732f5f1cf04091103fef901423c559083f9"
+            },
+            {
+              "source": "F04",
+              "cell": 3,
+              "sourceAnchor": [
+                904,
+                157
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/fry-3.png",
+              "sha256": "8bdad224ae68c69d88ccf6c8dcb3f6885b9b0ed65281a94552546f59d5c5be5b"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F04",
+              "cell": 5,
+              "sourceAnchor": [
+                168,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/growing-0.png",
+              "sha256": "163eb09a6db880b882595d3a88d2cc3c6e8bdb511f2f6d5489ccb64ce87bbbb6"
+            },
+            {
+              "source": "F04",
+              "cell": 6,
+              "sourceAnchor": [
+                418,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/growing-1.png",
+              "sha256": "6e0de2470be5681f4a4279b47a993618c0d9ac78b754c200c7b5ccf6ef041eec"
+            },
+            {
+              "source": "F04",
+              "cell": 7,
+              "sourceAnchor": [
+                664,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/growing-2.png",
+              "sha256": "e1d10e916428835e6b4af90e6390ccc9e737db3ffa50f37347503f24c276c3d3"
+            },
+            {
+              "source": "F04",
+              "cell": 8,
+              "sourceAnchor": [
+                912,
+                390
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/growing-3.png",
+              "sha256": "14ee22aec8b2d71ce70d78731fb3455c415607c2003c460f7aec69f8c529022d"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F04",
+              "cell": 10,
+              "sourceAnchor": [
+                181,
+                620
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/mature-0.png",
+              "sha256": "c129ca42e56da31ff5ed9cca609ece6a09173d305263b8f899075b2b2a4e0b8b"
+            },
+            {
+              "source": "F04",
+              "cell": 11,
+              "sourceAnchor": [
+                430,
+                620
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/mature-1.png",
+              "sha256": "9554064d9af977d06793d6b78c92bc13ca096ff41436bb9e5195104264e2ba58"
+            },
+            {
+              "source": "F04",
+              "cell": 12,
+              "sourceAnchor": [
+                679,
+                620
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/mature-2.png",
+              "sha256": "666d7024cd5fee1add34bbc0149b7ed3b99f01f1addb3234e74550cf895f2292"
+            },
+            {
+              "source": "F04",
+              "cell": 13,
+              "sourceAnchor": [
+                927,
+                620
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F04/mature-3.png",
+              "sha256": "3e2ab202c631363cae6fb33e06a1e8bf81a4d166488b0a45db348769b2932aa1"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F04.webp",
+        "sha256": "a264862717b57bbf64ccf67c3135b33b3e59c930955dbb5f57bb779ed6e624a0",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F04.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "efabd20a6a3e30ba1bf5bb3959f584851ec7cad74d93a804149061969640b90c"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F04.png",
+        "sourceSha256": "86e209ce6711fa99454abaee93420b3e69593389b30ff9fecd6638d7025fce37",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F04.webp",
+        "sha256": "1877f4e1c8bd0ad3df37810912386eea69557b489348348409c36b1ae8d10fd1",
+        "layout": "medium",
+        "habitat": "river",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "river"
+    },
+    "F05": {
+      "subject": "鳜鱼",
+      "size": "medium",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F05",
+              "cell": 0,
+              "sourceAnchor": [
+                151,
+                141
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/fry-0.png",
+              "sha256": "27e4ce85ac5f24d932b432e71e7886bd1ac7c4cc8254d8a3504513c7e3782735"
+            },
+            {
+              "source": "F05",
+              "cell": 1,
+              "sourceAnchor": [
+                397,
+                141
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/fry-1.png",
+              "sha256": "c18a8f4527ff17fdc3cbe974823947d276b6e24d403399f52aa6c75d9848d130"
+            },
+            {
+              "source": "F05",
+              "cell": 2,
+              "sourceAnchor": [
+                641,
+                141
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/fry-2.png",
+              "sha256": "cf5b374a330d6c920de26cb85823ce51f342ef0d00258e5dc81ec82cc8c43fd2"
+            },
+            {
+              "source": "F05",
+              "cell": 3,
+              "sourceAnchor": [
+                885,
+                141
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/fry-3.png",
+              "sha256": "17f4c8699c35b7829aca7ad08572234815fe56e3823c85baef240090a60b15ff"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F05",
+              "cell": 5,
+              "sourceAnchor": [
+                160,
+                388
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/growing-0.png",
+              "sha256": "f2576d2d081c7ac0c03ff0199e9a16b2abd11b3ae1051bdc39353b8e4a033559"
+            },
+            {
+              "source": "F05",
+              "cell": 6,
+              "sourceAnchor": [
+                406,
+                388
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/growing-1.png",
+              "sha256": "53e734cd2b2848a0f1bd3d28eee1d4c909e4ec6c4e95fa433534711242de3f05"
+            },
+            {
+              "source": "F05",
+              "cell": 7,
+              "sourceAnchor": [
+                650,
+                388
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/growing-2.png",
+              "sha256": "0114c48054613c9c7bab6c510cebebee82e8fc7eee83549c0c9a966695ae9840"
+            },
+            {
+              "source": "F05",
+              "cell": 8,
+              "sourceAnchor": [
+                894,
+                388
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/growing-3.png",
+              "sha256": "693e6870a96aa798066d15c0460b009f9f1005ad85b1da87b5b614e6d8255d75"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F05",
+              "cell": 10,
+              "sourceAnchor": [
+                167,
+                636
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/mature-0.png",
+              "sha256": "7e7866bc7cc42afb09c7bcbf880f81620daa240f08f7b314069426ca20a66ae3"
+            },
+            {
+              "source": "F05",
+              "cell": 11,
+              "sourceAnchor": [
+                412,
+                636
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/mature-1.png",
+              "sha256": "b0b8b7f350e61469ca16c53adc2489b525d0f3e0cc2f6dcc74e004aa83fe14e0"
+            },
+            {
+              "source": "F05",
+              "cell": 12,
+              "sourceAnchor": [
+                655,
+                636
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/mature-2.png",
+              "sha256": "38993c07eda758554db6f1c97da53ffb256556dc793ce3023d087f59ce28b2ea"
+            },
+            {
+              "source": "F05",
+              "cell": 13,
+              "sourceAnchor": [
+                900,
+                636
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F05/mature-3.png",
+              "sha256": "9724e901a22af1766276c9f879d22136e94ed21e495096b274e2cfdc0e81c3d1"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F05.webp",
+        "sha256": "87baaa074c9dcc73f3984786eaa54b10193b2624f199564d5b6939d6249c90f5",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F05.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "2a741245e166f4f7181bc1d6eab7e5369b44136af509ae47df8c41c4f03b64c1"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F05.png",
+        "sourceSha256": "57a5184b969a0e80c867523e18a28867784d1b084938e2a10f7d4dc5ae259e7b",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F05.webp",
+        "sha256": "7a055d1d18dfa74c46790e61c8ccb496fbdf03233c16258b4179bcb5c6da3f5c",
+        "layout": "medium",
+        "habitat": "river",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "river"
+    },
+    "F06": {
+      "subject": "银鲑",
+      "size": "large",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F06",
+              "cell": 0,
+              "sourceAnchor": [
+                160,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/fry-0.png",
+              "sha256": "e36ec04a96b2015c9f6bac6b8eab273afdb85636d05904dc523632b2272dc4e2"
+            },
+            {
+              "source": "F06",
+              "cell": 1,
+              "sourceAnchor": [
+                402,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/fry-1.png",
+              "sha256": "0e9dd290d7c82f03a188fc9a5ee981031fe0e1f281bf8f9066dd3646f10160ee"
+            },
+            {
+              "source": "F06",
+              "cell": 2,
+              "sourceAnchor": [
+                648,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/fry-2.png",
+              "sha256": "a14987c0b5d417c14f270f4eab263fdd5ee799f27c6abc1375f3853a25fcdda7"
+            },
+            {
+              "source": "F06",
+              "cell": 3,
+              "sourceAnchor": [
+                894,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/fry-3.png",
+              "sha256": "476fd76ca9361a720120236b90477fa766032a65520ef620ddde8c8d43a86b0b"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F06",
+              "cell": 5,
+              "sourceAnchor": [
+                174,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/growing-0.png",
+              "sha256": "10c456c8dcb9d8913cf4265ec0aaf084f359a34cfd00de46850ac521043ebc11"
+            },
+            {
+              "source": "F06",
+              "cell": 6,
+              "sourceAnchor": [
+                423,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/growing-1.png",
+              "sha256": "4524a2331ab9913f32b8a7b272d08d18f9f65cf84fb983b386fab1698173957f"
+            },
+            {
+              "source": "F06",
+              "cell": 7,
+              "sourceAnchor": [
+                670,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/growing-2.png",
+              "sha256": "a08517dfaa5ea98331152d1a196af27b11d9f68e98c06499a9f39b2ffa63f7e0"
+            },
+            {
+              "source": "F06",
+              "cell": 8,
+              "sourceAnchor": [
+                920,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/growing-3.png",
+              "sha256": "3083327a32beba7d12ab0b1d4e6c7012ec96bc45aa6d8cae3bdac30f88330fff"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F06",
+              "cell": 10,
+              "sourceAnchor": [
+                185,
+                638
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/mature-0.png",
+              "sha256": "d9a500853fb1e5f917e58da4f2c5324806b6aabb67e414b69db62d836e0962c0"
+            },
+            {
+              "source": "F06",
+              "cell": 11,
+              "sourceAnchor": [
+                434,
+                638
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/mature-1.png",
+              "sha256": "37c63ea4d00d7aad65925d7ed98b9d8fb2b0f93c6ca053ec534fcb1c4dda19ec"
+            },
+            {
+              "source": "F06",
+              "cell": 12,
+              "sourceAnchor": [
+                681,
+                638
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/mature-2.png",
+              "sha256": "273f86f74429e506156ac5ccbc0a06bae5f10b7519235944af4bcd73717f29bd"
+            },
+            {
+              "source": "F06",
+              "cell": 13,
+              "sourceAnchor": [
+                932,
+                638
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F06/mature-3.png",
+              "sha256": "bd0426b500375a9015e6b26c7e7c202aff6c5f5a0c9f24e88fef1cb2c1c45cf6"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F06.webp",
+        "sha256": "48455d4640c4afc0a0df4a29872faac917a723ce8a1ba80a0df80fa96fd53069",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F06.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "7c458d3df388ba29d09c62963f7fdb152baf9324ad522b9351edd323e6bf8d73"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F06.png",
+        "sourceSha256": "9c7c5bca75bbd7779b33d489563bd1b8ec09a4f05e14440df42393d6f61ffe38",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F06.webp",
+        "sha256": "08ccdf87356d447719d9d7f78ef55f552d360fe36b0e9a14cc0a51f25945e8b0",
+        "layout": "large",
+        "habitat": "sea",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "sea"
+    },
+    "F07": {
+      "subject": "鳗鱼",
+      "size": "large",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F07",
+              "cell": 0,
+              "sourceAnchor": [
+                169,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/fry-0.png",
+              "sha256": "6762e69ba6310d93afb83df90b7284f485e0d5e9b2dc86e921aa66cbb79a7757"
+            },
+            {
+              "source": "F07",
+              "cell": 1,
+              "sourceAnchor": [
+                416,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/fry-1.png",
+              "sha256": "c65ef6085dc48437ba73de65308a22d945e098d1dda0d92422d03ccbb4973124"
+            },
+            {
+              "source": "F07",
+              "cell": 2,
+              "sourceAnchor": [
+                661,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/fry-2.png",
+              "sha256": "92166a44196c638a1c1c372437c5c8916a8623ecf2ca1b7b20bbbffbbf938246"
+            },
+            {
+              "source": "F07",
+              "cell": 3,
+              "sourceAnchor": [
+                905,
+                150
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/fry-3.png",
+              "sha256": "bfc2f33fa51622e48014bf942200aa93c3bd6f8fdebcc6228e77c586f0f2d84e"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F07",
+              "cell": 5,
+              "sourceAnchor": [
+                182,
+                397
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/growing-0.png",
+              "sha256": "094eefa3405c92ddf55212a3dab4e0ee538ac75ff87c6db02cc5a6d83e83132d"
+            },
+            {
+              "source": "F07",
+              "cell": 6,
+              "sourceAnchor": [
+                431,
+                397
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/growing-1.png",
+              "sha256": "fd89113800d7b9b0a2b01a649d9559dde3686b307298c21932f46ff3c3b5a742"
+            },
+            {
+              "source": "F07",
+              "cell": 7,
+              "sourceAnchor": [
+                676,
+                397
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/growing-2.png",
+              "sha256": "cd409e8094fcced67db7d6d7a865a9adbee050f6b03ca795ede1fe0371fcf43e"
+            },
+            {
+              "source": "F07",
+              "cell": 8,
+              "sourceAnchor": [
+                920,
+                397
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/growing-3.png",
+              "sha256": "24d82e88ead294b5b0e850b4e6e2fb6230aafe52f5b2f724bb7b90c07e54805a"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F07",
+              "cell": 10,
+              "sourceAnchor": [
+                201,
+                634
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/mature-0.png",
+              "sha256": "1ba2ae0d0f290ad94edcad353222448bec7836655139cee4d6cfc175db5dbb9f"
+            },
+            {
+              "source": "F07",
+              "cell": 11,
+              "sourceAnchor": [
+                450,
+                634
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/mature-1.png",
+              "sha256": "c6eff79affc1d1a24a048eb9a6f032bcd2d47f152d78fa72b2725eea45b2d40b"
+            },
+            {
+              "source": "F07",
+              "cell": 12,
+              "sourceAnchor": [
+                693,
+                634
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/mature-2.png",
+              "sha256": "283bc9cdd4a1d34f085b932db99d94276c0104bba6e59cc361f4d9d128756326"
+            },
+            {
+              "source": "F07",
+              "cell": 13,
+              "sourceAnchor": [
+                939,
+                634
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F07/mature-3.png",
+              "sha256": "32e820b1ca32b8c9190923a144b6100c279a960d8ac0c964be6f725290ac8a4d"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F07.webp",
+        "sha256": "0376281a36f74d430e0be959d0e1778b161bb366e842c6593bbb459faa271901",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F07.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "a307cc06f572b6a0a7e07d23ad4f15873bc2bad3a455fd68e23e98dbd7400303"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F07.png",
+        "sourceSha256": "4cea5c30ea2546c9fe885502f82a46a3abf5e530a620ce0cb33a74322a80b918",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F07.webp",
+        "sha256": "522631eb1a227b89acd96cd55e7aff343156dfa0db8de1a274c8eb1ccef5361c",
+        "layout": "large",
+        "habitat": "river",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "river"
+    },
+    "F08": {
+      "subject": "真鲷",
+      "size": "medium",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F08",
+              "cell": 0,
+              "sourceAnchor": [
+                151,
+                146
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/fry-0.png",
+              "sha256": "f4c35d0ce1ef7e65368f2dbcd8ee819c0fb5ade0d9daa409c5a8d95c3f2df340"
+            },
+            {
+              "source": "F08",
+              "cell": 1,
+              "sourceAnchor": [
+                394,
+                146
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/fry-1.png",
+              "sha256": "09beafdc1469f35add196a5fae142f63b29a7f35c23bc184cb2061075d9cd6a1"
+            },
+            {
+              "source": "F08",
+              "cell": 2,
+              "sourceAnchor": [
+                638,
+                146
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/fry-2.png",
+              "sha256": "c30f4ac63d377726ce579a1e8fe2f7f0b365c2b69559ca15354477d49f25dbea"
+            },
+            {
+              "source": "F08",
+              "cell": 3,
+              "sourceAnchor": [
+                881,
+                146
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/fry-3.png",
+              "sha256": "128775534e00400a8327dc787517a4160187d1a7faba739b093a866950d6c819"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F08",
+              "cell": 5,
+              "sourceAnchor": [
+                160,
+                375
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/growing-0.png",
+              "sha256": "25bb3b04fdb5b17f502693d177cca477bff1eb1995f67f1f634f366e71c7141c"
+            },
+            {
+              "source": "F08",
+              "cell": 6,
+              "sourceAnchor": [
+                401,
+                375
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/growing-1.png",
+              "sha256": "d0894ec66c45f2a439416dcf7252879e197efb7e414037ebc194d95571401401"
+            },
+            {
+              "source": "F08",
+              "cell": 7,
+              "sourceAnchor": [
+                644,
+                375
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/growing-2.png",
+              "sha256": "a3bc8d23462e3009498f287682f662194c4e2ba3c48f6f2e2c86c78064521022"
+            },
+            {
+              "source": "F08",
+              "cell": 8,
+              "sourceAnchor": [
+                887,
+                375
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/growing-3.png",
+              "sha256": "188e3a62cd966406f56c0c005be539812ef59da018995ba3b0785a3fc93ac6b9"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F08",
+              "cell": 10,
+              "sourceAnchor": [
+                165,
+                617
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/mature-0.png",
+              "sha256": "f6b18f86e5763d107b1d40fd7e9e52db1a7c34bc0f92fd177a0755d170465ef9"
+            },
+            {
+              "source": "F08",
+              "cell": 11,
+              "sourceAnchor": [
+                408,
+                617
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/mature-1.png",
+              "sha256": "af039402d2c10d374dbe554ab05560112821daffeef1b267acda6b1251a97f0c"
+            },
+            {
+              "source": "F08",
+              "cell": 12,
+              "sourceAnchor": [
+                652,
+                617
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/mature-2.png",
+              "sha256": "5f1881f6e0a7b219abb3ad40a21b3db624ca9fd5033f617ecb7b30191ea8d659"
+            },
+            {
+              "source": "F08",
+              "cell": 13,
+              "sourceAnchor": [
+                895,
+                617
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F08/mature-3.png",
+              "sha256": "22f66b0a44b9d2180adca20c232f0c3881395ebf24383cef7be9faf1b2c02fcf"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F08.webp",
+        "sha256": "5846af39211dda7efeb62e90b8f30635b557c55cf4703ec396a10c9021b86da6",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F08.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "1f99f2cf576322c5da83105bb0e6e70e5b37d9627e02543a32060657ea7bb025"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F08.png",
+        "sourceSha256": "d808ec1e9788f49d3b408115a992f13019ca83061792b4330dc4b5aa397c8a16",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F08.webp",
+        "sha256": "32ed295e0278eca4a9fabb4eec38bee204f8f7ae625bd64b8481da0e85387e20",
+        "layout": "medium",
+        "habitat": "sea",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "sea"
+    },
+    "F09": {
+      "subject": "大菱鲆",
+      "size": "large",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F09",
+              "cell": 0,
+              "sourceAnchor": [
+                150,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/fry-0.png",
+              "sha256": "8eb829437d1b1696794deab3789cbb36db417565820cad1ef97846f431b1ffe6"
+            },
+            {
+              "source": "F09",
+              "cell": 1,
+              "sourceAnchor": [
+                400,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/fry-1.png",
+              "sha256": "118f2aeedde6308fc18399fc0bf801ecfd5976ff3bd863f8938429debeddf076"
+            },
+            {
+              "source": "F09",
+              "cell": 2,
+              "sourceAnchor": [
+                648,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/fry-2.png",
+              "sha256": "18d55d643fb3161eb4a409cfc355f8cb7162922eccf943617bc7f2c44177cef3"
+            },
+            {
+              "source": "F09",
+              "cell": 3,
+              "sourceAnchor": [
+                897,
+                145
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/fry-3.png",
+              "sha256": "c33cea27f5728983ce41e337490ff14718a86e0e8cb5c7cf87f6ad87bea80562"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F09",
+              "cell": 5,
+              "sourceAnchor": [
+                159,
+                404
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/growing-0.png",
+              "sha256": "9fffc1928ee318d3dccd3f9d480b1f9ef0682e293c9c7ac2c7aebd509fe7779d"
+            },
+            {
+              "source": "F09",
+              "cell": 6,
+              "sourceAnchor": [
+                405,
+                404
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/growing-1.png",
+              "sha256": "6520809147078366e43be1526049feb0fc62ce90c1a4b3483810060153e3d5ae"
+            },
+            {
+              "source": "F09",
+              "cell": 7,
+              "sourceAnchor": [
+                653,
+                404
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/growing-2.png",
+              "sha256": "1530cb421b5900e3213bf3143384c3dff009170492a76359a91f6c0ce3893292"
+            },
+            {
+              "source": "F09",
+              "cell": 8,
+              "sourceAnchor": [
+                903,
+                404
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/growing-3.png",
+              "sha256": "d42ef61d6c79b8ce8f7d8565e2aeb95aa9bc1052dc8f18cf5bc86ef728636517"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F09",
+              "cell": 10,
+              "sourceAnchor": [
+                171,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/mature-0.png",
+              "sha256": "724ac019bfbbd941fa7e946cd549f10278261087614c96efae72cc3e5f5724a4"
+            },
+            {
+              "source": "F09",
+              "cell": 11,
+              "sourceAnchor": [
+                419,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/mature-1.png",
+              "sha256": "25a82b3797354a7bf04f866827e4a3cf4732a1ed59c0c7f0386720a0886a7676"
+            },
+            {
+              "source": "F09",
+              "cell": 12,
+              "sourceAnchor": [
+                667,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/mature-2.png",
+              "sha256": "08de6f07eb9d6fd3f53fc3f46d6e2e71e54aee869c6b5eb36e4efe9ad5fe60dd"
+            },
+            {
+              "source": "F09",
+              "cell": 13,
+              "sourceAnchor": [
+                917,
+                640
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F09/mature-3.png",
+              "sha256": "e571fe23a829e96b28759872e98c2bbb23094e7388456b59d85265e8f1504de0"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F09.webp",
+        "sha256": "485ceab7a14c41501309e2ba93e4b19d7c75d3cbde209b5bd11768c5284403a6",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F09.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "e9fd13807df296b020a95d98c5627329983cc21790cf8678976b022cf0bbe216"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F09.png",
+        "sourceSha256": "4a4f6123d89e0b3ede94db839984fff819186152178b2721707784690810e036",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F09.webp",
+        "sha256": "83a547e333c2285debd416f585a2a705b247dfdce8fb8cd0e8e12e790d5dd0fe",
+        "layout": "large",
+        "habitat": "sea",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "sea"
+    },
+    "F10": {
+      "subject": "鲟鱼",
+      "size": "large",
+      "stages": [
+        {
+          "name": "fry",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F10",
+              "cell": 0,
+              "sourceAnchor": [
+                156,
+                148
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/fry-0.png",
+              "sha256": "09648f4665e235a428cb9efae3eac9a4a1abbcc839ce51f94baec10f6a1fa9dd"
+            },
+            {
+              "source": "F10",
+              "cell": 1,
+              "sourceAnchor": [
+                405,
+                148
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/fry-1.png",
+              "sha256": "6c2cf4cd997215ab0cf017ab738627317be75317abcbbf5e5b2e94467f819a3e"
+            },
+            {
+              "source": "F10",
+              "cell": 2,
+              "sourceAnchor": [
+                649,
+                148
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/fry-2.png",
+              "sha256": "c464453dec4c0cff86fd741558f2ee50d2ae811aed90993d6e1b2a2a0c8040c7"
+            },
+            {
+              "source": "F10",
+              "cell": 3,
+              "sourceAnchor": [
+                896,
+                148
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/fry-3.png",
+              "sha256": "9f7788f54c2a5e6c7ae2f52c3435e5f8d354505fbf5b1fd1de18021709ca7d52"
+            }
+          ]
+        },
+        {
+          "name": "growing",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F10",
+              "cell": 5,
+              "sourceAnchor": [
+                171,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/growing-0.png",
+              "sha256": "59d96ff5577fa60689d44d123452a6a2b142b74720b04b12539e2fb535bea1cd"
+            },
+            {
+              "source": "F10",
+              "cell": 6,
+              "sourceAnchor": [
+                420,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/growing-1.png",
+              "sha256": "9bbb4ee12fdd320d67d8b45b63de578fe563c63451d46e6956916bebeef4d665"
+            },
+            {
+              "source": "F10",
+              "cell": 7,
+              "sourceAnchor": [
+                666,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/growing-2.png",
+              "sha256": "4e38a729e755ab16052da4b7a39e4de7807c8cb94570ee7d99ef38a09e429ff4"
+            },
+            {
+              "source": "F10",
+              "cell": 8,
+              "sourceAnchor": [
+                915,
+                400
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/growing-3.png",
+              "sha256": "e6e56248c5f205fa05a29fdb2a960a105126fdc5f118a0f88fd62ba5de49fc69"
+            }
+          ]
+        },
+        {
+          "name": "mature",
+          "stageScale": 0.76,
+          "sourceCanvas": {
+            "left": -190,
+            "top": -110,
+            "width": 320,
+            "height": 220
+          },
+          "anchor": {
+            "x": 190,
+            "y": 110,
+            "definition": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center."
+          },
+          "frames": [
+            {
+              "source": "F10",
+              "cell": 10,
+              "sourceAnchor": [
+                184,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/mature-0.png",
+              "sha256": "77b37518a9195352a567afa3f3c60858ce8bfadbda2111337f802f17e48a8ee5"
+            },
+            {
+              "source": "F10",
+              "cell": 11,
+              "sourceAnchor": [
+                432,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/mature-1.png",
+              "sha256": "566b1dab6122808d70f8b435e6e177a392b9e80da8236934c8840a102adef88d"
+            },
+            {
+              "source": "F10",
+              "cell": 12,
+              "sourceAnchor": [
+                678,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/mature-2.png",
+              "sha256": "5827e549f9dafaa3304951d5a9c3e1f7a9f2d3c156e0651980934dcbae06f5b6"
+            },
+            {
+              "source": "F10",
+              "cell": 13,
+              "sourceAnchor": [
+                925,
+                643
+              ],
+              "anchorMethod": "Manual fixed point in rigid anterior torso behind gill plate; same anatomical point in each idle frame, never an alpha/bounding-box center.",
+              "fixedAnchor": [
+                160,
+                210
+              ],
+              "path": "assets/fish/animals/F10/mature-3.png",
+              "sha256": "f8a1cd31c5d53d51cafc9adcd24ac5bc63f4859cc3ec4ab1e982dd74e1b4cfbc"
+            }
+          ]
+        }
+      ],
+      "atlas": {
+        "path": "public/art/fish/animals/F10.webp",
+        "sha256": "9a1e9f42fc1b5960a95fa7fad7a149aa182ba563cf190cc55c3661dcfa9218ab",
+        "width": 1280,
+        "height": 960
+      },
+      "animalIcon": {
+        "path": "public/ui-icons/fish-F10.webp",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "sha256": "64f94cce4a4daaf1a27d1853cb3fbd1d5978365f2603723afecd57e2604e3f37"
+      },
+      "fallback": {
+        "source": "assets/source/art/scene-F10.png",
+        "sourceSha256": "5dd659f02349d99b52f609308f80ace1626b1fbf9edf3162e3047da98fa09db1",
+        "sourceStage": "mature",
+        "sourceFrame": 0,
+        "path": "public/art/scene-F10.webp",
+        "sha256": "25fc7c45689e1e24584656b7526859b242dab69dd5c5b82507b34a464bd60589",
+        "layout": "large",
+        "habitat": "river",
+        "layers": [
+          "habitat-background",
+          "mature-fish",
+          "water-tint"
+        ]
+      },
+      "habitat": "river"
+    }
+  },
+  "ponds": {
+    "river": {
+      "source": "assets/fish/raw/river-pond-v2.png",
+      "sourceSha256": "8ff137550f76a6f5311acf2d3b125383cd982eea0eb78e069ffc62fabb043761",
+      "png": "assets/fish/ponds/river.png",
+      "path": "public/art/fish/river-pond.webp",
+      "sha256": "7157f2dc119b11adff8634491f7579ea1171c3e8ddb650f7d9234bc9d8b29aa6",
+      "water": {
+        "polygon": [
+          [
+            99,
+            105
+          ],
+          [
+            147,
+            103
+          ],
+          [
+            196,
+            106
+          ],
+          [
+            246,
+            108
+          ],
+          [
+            278,
+            115
+          ],
+          [
+            292,
+            137
+          ],
+          [
+            299,
+            164
+          ],
+          [
+            299,
+            200
+          ],
+          [
+            292,
+            236
+          ],
+          [
+            276,
+            265
+          ],
+          [
+            247,
+            284
+          ],
+          [
+            207,
+            295
+          ],
+          [
+            167,
+            300
+          ],
+          [
+            128,
+            294
+          ],
+          [
+            92,
+            287
+          ],
+          [
+            61,
+            278
+          ],
+          [
+            38,
+            264
+          ],
+          [
+            23,
+            245
+          ],
+          [
+            16,
+            216
+          ],
+          [
+            15,
+            181
+          ],
+          [
+            19,
+            150
+          ],
+          [
+            29,
+            127
+          ],
+          [
+            51,
+            116
+          ],
+          [
+            77,
+            111
+          ]
+        ],
+        "color": 1346725,
+        "alpha": 0.24
+      }
+    },
+    "sea": {
+      "source": "assets/fish/raw/sea-pond-v1.png",
+      "sourceSha256": "a2abb3c14da39c56481dfd149ff0ba45bfe1a27e30a6e6a06917b7c983f9dce4",
+      "png": "assets/fish/ponds/sea.png",
+      "path": "public/art/fish/sea-pond.webp",
+      "sha256": "07035f688862cda37c82b39ea5d707aac1f682aac44e1b685c4b88352ae99f93",
+      "water": {
+        "polygon": [
+          [
+            38,
+            105
+          ],
+          [
+            69,
+            100
+          ],
+          [
+            104,
+            100
+          ],
+          [
+            143,
+            101
+          ],
+          [
+            183,
+            101
+          ],
+          [
+            222,
+            101
+          ],
+          [
+            258,
+            103
+          ],
+          [
+            286,
+            111
+          ],
+          [
+            297,
+            129
+          ],
+          [
+            300,
+            156
+          ],
+          [
+            302,
+            190
+          ],
+          [
+            300,
+            222
+          ],
+          [
+            291,
+            253
+          ],
+          [
+            274,
+            278
+          ],
+          [
+            246,
+            290
+          ],
+          [
+            208,
+            297
+          ],
+          [
+            169,
+            300
+          ],
+          [
+            128,
+            296
+          ],
+          [
+            91,
+            289
+          ],
+          [
+            58,
+            278
+          ],
+          [
+            35,
+            258
+          ],
+          [
+            23,
+            232
+          ],
+          [
+            17,
+            204
+          ],
+          [
+            14,
+            172
+          ],
+          [
+            17,
+            145
+          ],
+          [
+            24,
+            122
+          ]
+        ],
+        "color": 1476798,
+        "alpha": 0.25
+      }
+    }
+  }
+}

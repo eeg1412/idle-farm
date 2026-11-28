@@ -43,5 +43,87 @@
       64,
       60
     ]
+  },
+  "species": {
+    "L13": {
+      "kind": "nectar",
+      "sourceRectangle": {
+        "left": 199,
+        "top": 411,
+        "width": 817,
+        "height": 455
+      },
+      "texture": {
+        "path": "./art/livestock/feed-L13.webp",
+        "size": [
+          128,
+          64
+        ],
+        "bounds": {
+          "x": 12,
+          "y": 4,
+          "width": 104,
+          "height": 56
+        },
+        "anchor": [
+          65,
+          58
+        ],
+        "mouthAnchor": [
+          45,
+          41
+        ],
+        "sceneWidth": 36
+      },
+      "source": "raw/l13-expansion-feed-v1.png",
+      "png": "feed-L13.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceSha256": "56aad7cadebaafeb872f871719b780ef6d80e8ba9b681c7f126c34eadd5f9105",
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/livestock/feed-prompts-v8.md"
+    },
+    "L29": {
+      "kind": "mulberry",
+      "sourceRectangle": {
+        "left": 59,
+        "top": 323,
+        "width": 1136,
+        "height": 649
+      },
+      "texture": {
+        "path": "./art/livestock/feed-L29.webp",
+        "size": [
+          128,
+          64
+        ],
+        "bounds": {
+          "x": 14,
+          "y": 4,
+          "width": 100,
+          "height": 56
+        },
+        "anchor": [
+          65,
+          58
+        ],
+        "mouthAnchor": [
+          47,
+          29
+        ],
+        "sceneWidth": 41
+      },
+      "source": "raw/l29-expansion-feed-v1.png",
+      "png": "feed-L29.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceSha256": "a76cbd4ac1652363091178975bf1c790a1ad47f8998b9dd7f0b8f76ec1126635",
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/livestock/feed-prompts-v8.md"
+    }
   }
 }

@@ -36,11 +36,35 @@
     "right": 108
   },
   "sparks": {
-    "mask": [40, 151, 54, 143, 78, 143, 94, 155, 98, 228, 32, 228, 32, 163],
+    "mask": [
+      40,
+      151,
+      54,
+      143,
+      78,
+      143,
+      94,
+      155,
+      98,
+      228,
+      32,
+      228,
+      32,
+      163
+    ],
     "origins": [
-      { "x": 52, "y": 177 },
-      { "x": 79, "y": 187 },
-      { "x": 62, "y": 202 }
+      {
+        "x": 52,
+        "y": 177
+      },
+      {
+        "x": 79,
+        "y": 187
+      },
+      {
+        "x": 62,
+        "y": 202
+      }
     ]
   },
   "track": {
@@ -93,6 +117,86 @@
     "M10": {
       "icon": "wiki/icons/M10.webp",
       "scene": "art/scene-M10.webp"
+    },
+    "M11": {
+      "icon": "wiki/icons/M11.webp",
+      "scene": "art/scene-M11.webp"
+    },
+    "M12": {
+      "icon": "wiki/icons/M12.webp",
+      "scene": "art/scene-M12.webp"
+    },
+    "M13": {
+      "icon": "wiki/icons/M13.webp",
+      "scene": "art/scene-M13.webp"
+    },
+    "M14": {
+      "icon": "wiki/icons/M14.webp",
+      "scene": "art/scene-M14.webp"
+    },
+    "M15": {
+      "icon": "wiki/icons/M15.webp",
+      "scene": "art/scene-M15.webp"
+    },
+    "M16": {
+      "icon": "wiki/icons/M16.webp",
+      "scene": "art/scene-M16.webp"
+    },
+    "M17": {
+      "icon": "wiki/icons/M17.webp",
+      "scene": "art/scene-M17.webp"
+    },
+    "M18": {
+      "icon": "wiki/icons/M18.webp",
+      "scene": "art/scene-M18.webp"
+    },
+    "M19": {
+      "icon": "wiki/icons/M19.webp",
+      "scene": "art/scene-M19.webp"
+    },
+    "M20": {
+      "icon": "wiki/icons/M20.webp",
+      "scene": "art/scene-M20.webp"
+    },
+    "M21": {
+      "icon": "wiki/icons/M21.webp",
+      "scene": "art/scene-M21.webp"
+    },
+    "M22": {
+      "icon": "wiki/icons/M22.webp",
+      "scene": "art/scene-M22.webp"
+    },
+    "M23": {
+      "icon": "wiki/icons/M23.webp",
+      "scene": "art/scene-M23.webp"
+    },
+    "M24": {
+      "icon": "wiki/icons/M24.webp",
+      "scene": "art/scene-M24.webp"
+    },
+    "M25": {
+      "icon": "wiki/icons/M25.webp",
+      "scene": "art/scene-M25.webp"
+    },
+    "M26": {
+      "icon": "wiki/icons/M26.webp",
+      "scene": "art/scene-M26.webp"
+    },
+    "M27": {
+      "icon": "wiki/icons/M27.webp",
+      "scene": "art/scene-M27.webp"
+    },
+    "M28": {
+      "icon": "wiki/icons/M28.webp",
+      "scene": "art/scene-M28.webp"
+    },
+    "M29": {
+      "icon": "wiki/icons/M29.webp",
+      "scene": "art/scene-M29.webp"
+    },
+    "M30": {
+      "icon": "wiki/icons/M30.webp",
+      "scene": "art/scene-M30.webp"
     }
   }
 }

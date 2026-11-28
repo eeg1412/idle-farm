@@ -41977,5 +41977,2945 @@
         "matureStagePath": "art/plot/plants/C68/mature.webp"
       }
     }
+  },
+  "C69": {
+    "mode": "individual",
+    "size": "large",
+    "harvestMode": "wholePlant",
+    "planting": {
+      "source": "assets/plot/crop-layout.json#fieldGeometry",
+      "rows": 9,
+      "projection": {
+        "mode": "field-homography",
+        "rowVanishingPoint": [
+          -697.049,
+          -81.083
+        ],
+        "columnVanishingPoint": [
+          866.308,
+          -148.178
+        ],
+        "origin": [
+          203.477,
+          68.01
+        ],
+        "depthPerUnit": -0.0444738,
+        "columnSpacingU": 0.8,
+        "columnInsetU": 0.3,
+        "rows": [
+          {
+            "index": 0,
+            "v": -0.5
+          },
+          {
+            "index": 1,
+            "v": 0.5
+          },
+          {
+            "index": 2,
+            "v": 1.5
+          },
+          {
+            "index": 3,
+            "v": 2.5
+          },
+          {
+            "index": 4,
+            "v": 3.5
+          },
+          {
+            "index": 5,
+            "v": 4.5
+          },
+          {
+            "index": 6,
+            "v": 5.5
+          },
+          {
+            "index": 7,
+            "v": 6.5
+          },
+          {
+            "index": 8,
+            "v": 7.5
+          }
+        ],
+        "columns": [
+          {
+            "index": 0,
+            "u": 0.3
+          },
+          {
+            "index": 1,
+            "u": 1.065
+          },
+          {
+            "index": 2,
+            "u": 1.83
+          },
+          {
+            "index": 3,
+            "u": 2.595
+          },
+          {
+            "index": 4,
+            "u": 3.36
+          },
+          {
+            "index": 5,
+            "u": 4.125
+          },
+          {
+            "index": 6,
+            "u": 4.89
+          }
+        ]
+      }
+    },
+    "roots": [
+      {
+        "x": 262,
+        "y": 70,
+        "row": 0,
+        "column": 1,
+        "v": -0.5,
+        "scale": 0.4354545454545454,
+        "maxHeight": 49.6
+      },
+      {
+        "x": 201,
+        "y": 75,
+        "row": 1,
+        "column": 0,
+        "v": 0.5,
+        "scale": 0.4509090909090909,
+        "maxHeight": 53.6
+      },
+      {
+        "x": 297,
+        "y": 76,
+        "row": 0,
+        "column": 2,
+        "v": -0.5,
+        "scale": 0.454,
+        "maxHeight": 54.400000000000006
+      },
+      {
+        "x": 233,
+        "y": 81,
+        "row": 1,
+        "column": 1,
+        "v": 0.5,
+        "scale": 0.46945454545454546,
+        "maxHeight": 58.400000000000006
+      },
+      {
+        "x": 168,
+        "y": 86,
+        "row": 2,
+        "column": 0,
+        "v": 1.5,
+        "scale": 0.4849090909090909,
+        "maxHeight": 62.400000000000006
+      },
+      {
+        "x": 269,
+        "y": 87,
+        "row": 1,
+        "column": 2,
+        "v": 0.5,
+        "scale": 0.488,
+        "maxHeight": 63.2
+      },
+      {
+        "x": 202,
+        "y": 92,
+        "row": 2,
+        "column": 1,
+        "v": 1.5,
+        "scale": 0.5034545454545455,
+        "maxHeight": 67.2
+      },
+      {
+        "x": 307,
+        "y": 94,
+        "row": 1,
+        "column": 3,
+        "v": 0.5,
+        "scale": 0.5096363636363637,
+        "maxHeight": 68.8
+      },
+      {
+        "x": 133,
+        "y": 98,
+        "row": 3,
+        "column": 0,
+        "v": 2.5,
+        "scale": 0.522,
+        "maxHeight": 72
+      },
+      {
+        "x": 238,
+        "y": 99,
+        "row": 2,
+        "column": 2,
+        "v": 1.5,
+        "scale": 0.525090909090909,
+        "maxHeight": 72.8
+      },
+      {
+        "x": 167,
+        "y": 105,
+        "row": 3,
+        "column": 1,
+        "v": 2.5,
+        "scale": 0.5436363636363637,
+        "maxHeight": 77.60000000000001
+      },
+      {
+        "x": 276,
+        "y": 107,
+        "row": 2,
+        "column": 3,
+        "v": 1.5,
+        "scale": 0.5498181818181818,
+        "maxHeight": 79.2
+      },
+      {
+        "x": 94,
+        "y": 111,
+        "row": 4,
+        "column": 0,
+        "v": 3.5,
+        "scale": 0.5621818181818182,
+        "maxHeight": 82.4
+      },
+      {
+        "x": 203,
+        "y": 113,
+        "row": 3,
+        "column": 2,
+        "v": 2.5,
+        "scale": 0.5683636363636364,
+        "maxHeight": 84
+      },
+      {
+        "x": 319,
+        "y": 115,
+        "row": 2,
+        "column": 4,
+        "v": 1.5,
+        "scale": 0.5745454545454546,
+        "maxHeight": 85.60000000000001
+      },
+      {
+        "x": 128,
+        "y": 119,
+        "row": 4,
+        "column": 1,
+        "v": 3.5,
+        "scale": 0.5869090909090909,
+        "maxHeight": 88.80000000000001
+      },
+      {
+        "x": 243,
+        "y": 121,
+        "row": 3,
+        "column": 3,
+        "v": 2.5,
+        "scale": 0.5930909090909091,
+        "maxHeight": 90.4
+      },
+      {
+        "x": 50,
+        "y": 126,
+        "row": 5,
+        "column": 0,
+        "v": 4.5,
+        "scale": 0.6085454545454546,
+        "maxHeight": 94.4
+      },
+      {
+        "x": 164,
+        "y": 128,
+        "row": 4,
+        "column": 2,
+        "v": 3.5,
+        "scale": 0.6147272727272728,
+        "maxHeight": 96
+      },
+      {
+        "x": 286,
+        "y": 131,
+        "row": 3,
+        "column": 4,
+        "v": 2.5,
+        "scale": 0.624,
+        "maxHeight": 98.4
+      },
+      {
+        "x": 84,
+        "y": 135,
+        "row": 5,
+        "column": 1,
+        "v": 4.5,
+        "scale": 0.6363636363636364,
+        "maxHeight": 101.60000000000001
+      },
+      {
+        "x": 205,
+        "y": 138,
+        "row": 4,
+        "column": 3,
+        "v": 3.5,
+        "scale": 0.6456363636363637,
+        "maxHeight": 104
+      },
+      {
+        "x": 1,
+        "y": 142,
+        "row": 6,
+        "column": 0,
+        "v": 5.5,
+        "scale": 0.658,
+        "maxHeight": 107.2
+      },
+      {
+        "x": 121,
+        "y": 145,
+        "row": 5,
+        "column": 2,
+        "v": 4.5,
+        "scale": 0.6672727272727274,
+        "maxHeight": 109.60000000000001
+      },
+      {
+        "x": 249,
+        "y": 148,
+        "row": 4,
+        "column": 4,
+        "v": 3.5,
+        "scale": 0.6765454545454546,
+        "maxHeight": 112
+      },
+      {
+        "x": 35,
+        "y": 153,
+        "row": 6,
+        "column": 1,
+        "v": 5.5,
+        "scale": 0.6920000000000001,
+        "maxHeight": 116
+      },
+      {
+        "x": 162,
+        "y": 156,
+        "row": 5,
+        "column": 3,
+        "v": 4.5,
+        "scale": 0.7012727272727273,
+        "maxHeight": 118.4
+      },
+      {
+        "x": 297,
+        "y": 160,
+        "row": 4,
+        "column": 5,
+        "v": 3.5,
+        "scale": 0.7136363636363636,
+        "maxHeight": 121.60000000000001
+      },
+      {
+        "x": 72,
+        "y": 164,
+        "row": 6,
+        "column": 2,
+        "v": 5.5,
+        "scale": 0.7260000000000001,
+        "maxHeight": 124.80000000000001
+      },
+      {
+        "x": 206,
+        "y": 169,
+        "row": 5,
+        "column": 4,
+        "v": 4.5,
+        "scale": 0.7414545454545455,
+        "maxHeight": 128.8
+      },
+      {
+        "x": 113,
+        "y": 178,
+        "row": 6,
+        "column": 3,
+        "v": 5.5,
+        "scale": 0.7692727272727273,
+        "maxHeight": 136
+      },
+      {
+        "x": 256,
+        "y": 183,
+        "row": 5,
+        "column": 5,
+        "v": 4.5,
+        "scale": 0.7847272727272728,
+        "maxHeight": 140
+      },
+      {
+        "x": 16,
+        "y": 187,
+        "row": 7,
+        "column": 2,
+        "v": 6.5,
+        "scale": 0.7970909090909092,
+        "maxHeight": 143.20000000000002
+      },
+      {
+        "x": 158,
+        "y": 192,
+        "row": 6,
+        "column": 4,
+        "v": 5.5,
+        "scale": 0.8125454545454546,
+        "maxHeight": 147.20000000000002
+      },
+      {
+        "x": 316,
+        "y": 196,
+        "row": 5,
+        "column": 6,
+        "v": 4.41,
+        "pulledBackFrom": {
+          "x": 312,
+          "y": 198
+        },
+        "scale": 0.824909090909091,
+        "maxHeight": 150.4
+      },
+      {
+        "x": 56,
+        "y": 202,
+        "row": 7,
+        "column": 3,
+        "v": 6.5,
+        "scale": 0.8434545454545456,
+        "maxHeight": 155.20000000000002
+      },
+      {
+        "x": 209,
+        "y": 208,
+        "row": 6,
+        "column": 5,
+        "v": 5.5,
+        "scale": 0.8620000000000001,
+        "maxHeight": 160
+      },
+      {
+        "x": 102,
+        "y": 219,
+        "row": 7,
+        "column": 4,
+        "v": 6.5,
+        "scale": 0.8960000000000001,
+        "maxHeight": 168.8
+      },
+      {
+        "x": 266,
+        "y": 227,
+        "row": 6,
+        "column": 6,
+        "v": 5.5,
+        "scale": 0.9207272727272728,
+        "maxHeight": 175.20000000000002
+      },
+      {
+        "x": 153,
+        "y": 238,
+        "row": 7,
+        "column": 5,
+        "v": 6.5,
+        "scale": 0.9547272727272729,
+        "maxHeight": 184
+      },
+      {
+        "x": 53,
+        "y": 243,
+        "row": 8,
+        "column": 4,
+        "v": 7.26,
+        "pulledBackFrom": {
+          "x": 36,
+          "y": 251
+        },
+        "scale": 0.9701818181818183,
+        "maxHeight": 188
+      },
+      {
+        "x": 233,
+        "y": 247,
+        "row": 7,
+        "column": 6,
+        "v": 6.13,
+        "pulledBackFrom": {
+          "x": 212,
+          "y": 260
+        },
+        "scale": 0.9825454545454546,
+        "maxHeight": 191.20000000000002
+      },
+      {
+        "x": 102,
+        "y": 266,
+        "row": 8,
+        "column": 5,
+        "v": 7.3,
+        "pulledBackFrom": {
+          "x": 88,
+          "y": 274
+        },
+        "scale": 1.0412727272727273,
+        "maxHeight": 206.4
+      },
+      {
+        "x": 151,
+        "y": 276,
+        "row": 8,
+        "column": 6,
+        "v": 7.14,
+        "u": 4.63,
+        "pulledBackFrom": {
+          "x": 147,
+          "y": 301
+        },
+        "scale": 1.0721818181818183,
+        "maxHeight": 214.4
+      }
+    ],
+    "stages": [
+      {
+        "phase": "sown",
+        "path": "art/plot/plants/C69/sown.webp",
+        "width": 82,
+        "height": 65,
+        "anchorX": 41,
+        "anchorY": 32.5,
+        "baseScale": 0.12307692307692308,
+        "source": {
+          "path": "assets/plot/crops/C69/sown.png",
+          "bounds": {
+            "left": 90,
+            "top": 165,
+            "width": 82,
+            "height": 65
+          }
+        }
+      },
+      {
+        "phase": "seedling",
+        "path": "art/plot/plants/C69/seedling.webp",
+        "width": 85,
+        "height": 83,
+        "anchorX": 41,
+        "anchorY": 82,
+        "baseScale": 0.21176470588235294,
+        "source": {
+          "path": "assets/plot/crops/C69/seedling.png",
+          "bounds": {
+            "left": 81,
+            "top": 160,
+            "width": 85,
+            "height": 83
+          }
+        }
+      },
+      {
+        "phase": "growing",
+        "path": "art/plot/plants/C69/growing.webp",
+        "width": 117,
+        "height": 160,
+        "anchorX": 60,
+        "anchorY": 159,
+        "baseScale": 0.7733333333333333,
+        "source": {
+          "path": "assets/plot/crops/C69/growing.png",
+          "bounds": {
+            "left": 86,
+            "top": 94,
+            "width": 117,
+            "height": 160
+          }
+        }
+      },
+      {
+        "phase": "mature",
+        "path": "art/plot/plants/C69/mature.webp",
+        "width": 173,
+        "height": 231,
+        "anchorX": 87,
+        "anchorY": 230,
+        "baseScale": 0.6705202312138728,
+        "source": {
+          "path": "assets/plot/crops/C69/mature.png",
+          "bounds": {
+            "left": 68,
+            "top": 28,
+            "width": 173,
+            "height": 231
+          }
+        }
+      }
+    ]
+  },
+  "C70": {
+    "mode": "individual",
+    "size": "large",
+    "harvestMode": "wholePlant",
+    "planting": {
+      "source": "assets/plot/crop-layout.json#fieldGeometry",
+      "rows": 9,
+      "projection": {
+        "mode": "field-homography",
+        "rowVanishingPoint": [
+          -697.049,
+          -81.083
+        ],
+        "columnVanishingPoint": [
+          866.308,
+          -148.178
+        ],
+        "origin": [
+          203.477,
+          68.01
+        ],
+        "depthPerUnit": -0.0444738,
+        "columnSpacingU": 0.8,
+        "columnInsetU": 0.3,
+        "rows": [
+          {
+            "index": 0,
+            "v": -0.5
+          },
+          {
+            "index": 1,
+            "v": 0.5
+          },
+          {
+            "index": 2,
+            "v": 1.5
+          },
+          {
+            "index": 3,
+            "v": 2.5
+          },
+          {
+            "index": 4,
+            "v": 3.5
+          },
+          {
+            "index": 5,
+            "v": 4.5
+          },
+          {
+            "index": 6,
+            "v": 5.5
+          },
+          {
+            "index": 7,
+            "v": 6.5
+          },
+          {
+            "index": 8,
+            "v": 7.5
+          }
+        ],
+        "columns": [
+          {
+            "index": 0,
+            "u": 0.3
+          },
+          {
+            "index": 1,
+            "u": 1.065
+          },
+          {
+            "index": 2,
+            "u": 1.83
+          },
+          {
+            "index": 3,
+            "u": 2.595
+          },
+          {
+            "index": 4,
+            "u": 3.36
+          },
+          {
+            "index": 5,
+            "u": 4.125
+          },
+          {
+            "index": 6,
+            "u": 4.89
+          }
+        ]
+      }
+    },
+    "roots": [
+      {
+        "x": 262,
+        "y": 70,
+        "row": 0,
+        "column": 1,
+        "v": -0.5,
+        "scale": 0.4354545454545454,
+        "maxHeight": 49.6
+      },
+      {
+        "x": 201,
+        "y": 75,
+        "row": 1,
+        "column": 0,
+        "v": 0.5,
+        "scale": 0.4509090909090909,
+        "maxHeight": 53.6
+      },
+      {
+        "x": 297,
+        "y": 76,
+        "row": 0,
+        "column": 2,
+        "v": -0.5,
+        "scale": 0.454,
+        "maxHeight": 54.400000000000006
+      },
+      {
+        "x": 233,
+        "y": 81,
+        "row": 1,
+        "column": 1,
+        "v": 0.5,
+        "scale": 0.46945454545454546,
+        "maxHeight": 58.400000000000006
+      },
+      {
+        "x": 168,
+        "y": 86,
+        "row": 2,
+        "column": 0,
+        "v": 1.5,
+        "scale": 0.4849090909090909,
+        "maxHeight": 62.400000000000006
+      },
+      {
+        "x": 269,
+        "y": 87,
+        "row": 1,
+        "column": 2,
+        "v": 0.5,
+        "scale": 0.488,
+        "maxHeight": 63.2
+      },
+      {
+        "x": 202,
+        "y": 92,
+        "row": 2,
+        "column": 1,
+        "v": 1.5,
+        "scale": 0.5034545454545455,
+        "maxHeight": 67.2
+      },
+      {
+        "x": 307,
+        "y": 94,
+        "row": 1,
+        "column": 3,
+        "v": 0.5,
+        "scale": 0.5096363636363637,
+        "maxHeight": 68.8
+      },
+      {
+        "x": 133,
+        "y": 98,
+        "row": 3,
+        "column": 0,
+        "v": 2.5,
+        "scale": 0.522,
+        "maxHeight": 72
+      },
+      {
+        "x": 238,
+        "y": 99,
+        "row": 2,
+        "column": 2,
+        "v": 1.5,
+        "scale": 0.525090909090909,
+        "maxHeight": 72.8
+      },
+      {
+        "x": 167,
+        "y": 105,
+        "row": 3,
+        "column": 1,
+        "v": 2.5,
+        "scale": 0.5436363636363637,
+        "maxHeight": 77.60000000000001
+      },
+      {
+        "x": 276,
+        "y": 107,
+        "row": 2,
+        "column": 3,
+        "v": 1.5,
+        "scale": 0.5498181818181818,
+        "maxHeight": 79.2
+      },
+      {
+        "x": 94,
+        "y": 111,
+        "row": 4,
+        "column": 0,
+        "v": 3.5,
+        "scale": 0.5621818181818182,
+        "maxHeight": 82.4
+      },
+      {
+        "x": 203,
+        "y": 113,
+        "row": 3,
+        "column": 2,
+        "v": 2.5,
+        "scale": 0.5683636363636364,
+        "maxHeight": 84
+      },
+      {
+        "x": 319,
+        "y": 115,
+        "row": 2,
+        "column": 4,
+        "v": 1.5,
+        "scale": 0.5745454545454546,
+        "maxHeight": 85.60000000000001
+      },
+      {
+        "x": 128,
+        "y": 119,
+        "row": 4,
+        "column": 1,
+        "v": 3.5,
+        "scale": 0.5869090909090909,
+        "maxHeight": 88.80000000000001
+      },
+      {
+        "x": 243,
+        "y": 121,
+        "row": 3,
+        "column": 3,
+        "v": 2.5,
+        "scale": 0.5930909090909091,
+        "maxHeight": 90.4
+      },
+      {
+        "x": 50,
+        "y": 126,
+        "row": 5,
+        "column": 0,
+        "v": 4.5,
+        "scale": 0.6085454545454546,
+        "maxHeight": 94.4
+      },
+      {
+        "x": 164,
+        "y": 128,
+        "row": 4,
+        "column": 2,
+        "v": 3.5,
+        "scale": 0.6147272727272728,
+        "maxHeight": 96
+      },
+      {
+        "x": 286,
+        "y": 131,
+        "row": 3,
+        "column": 4,
+        "v": 2.5,
+        "scale": 0.624,
+        "maxHeight": 98.4
+      },
+      {
+        "x": 84,
+        "y": 135,
+        "row": 5,
+        "column": 1,
+        "v": 4.5,
+        "scale": 0.6363636363636364,
+        "maxHeight": 101.60000000000001
+      },
+      {
+        "x": 205,
+        "y": 138,
+        "row": 4,
+        "column": 3,
+        "v": 3.5,
+        "scale": 0.6456363636363637,
+        "maxHeight": 104
+      },
+      {
+        "x": 1,
+        "y": 142,
+        "row": 6,
+        "column": 0,
+        "v": 5.5,
+        "scale": 0.658,
+        "maxHeight": 107.2
+      },
+      {
+        "x": 121,
+        "y": 145,
+        "row": 5,
+        "column": 2,
+        "v": 4.5,
+        "scale": 0.6672727272727274,
+        "maxHeight": 109.60000000000001
+      },
+      {
+        "x": 249,
+        "y": 148,
+        "row": 4,
+        "column": 4,
+        "v": 3.5,
+        "scale": 0.6765454545454546,
+        "maxHeight": 112
+      },
+      {
+        "x": 35,
+        "y": 153,
+        "row": 6,
+        "column": 1,
+        "v": 5.5,
+        "scale": 0.6920000000000001,
+        "maxHeight": 116
+      },
+      {
+        "x": 162,
+        "y": 156,
+        "row": 5,
+        "column": 3,
+        "v": 4.5,
+        "scale": 0.7012727272727273,
+        "maxHeight": 118.4
+      },
+      {
+        "x": 297,
+        "y": 160,
+        "row": 4,
+        "column": 5,
+        "v": 3.5,
+        "scale": 0.7136363636363636,
+        "maxHeight": 121.60000000000001
+      },
+      {
+        "x": 72,
+        "y": 164,
+        "row": 6,
+        "column": 2,
+        "v": 5.5,
+        "scale": 0.7260000000000001,
+        "maxHeight": 124.80000000000001
+      },
+      {
+        "x": 206,
+        "y": 169,
+        "row": 5,
+        "column": 4,
+        "v": 4.5,
+        "scale": 0.7414545454545455,
+        "maxHeight": 128.8
+      },
+      {
+        "x": 113,
+        "y": 178,
+        "row": 6,
+        "column": 3,
+        "v": 5.5,
+        "scale": 0.7692727272727273,
+        "maxHeight": 136
+      },
+      {
+        "x": 256,
+        "y": 183,
+        "row": 5,
+        "column": 5,
+        "v": 4.5,
+        "scale": 0.7847272727272728,
+        "maxHeight": 140
+      },
+      {
+        "x": 16,
+        "y": 187,
+        "row": 7,
+        "column": 2,
+        "v": 6.5,
+        "scale": 0.7970909090909092,
+        "maxHeight": 143.20000000000002
+      },
+      {
+        "x": 158,
+        "y": 192,
+        "row": 6,
+        "column": 4,
+        "v": 5.5,
+        "scale": 0.8125454545454546,
+        "maxHeight": 147.20000000000002
+      },
+      {
+        "x": 316,
+        "y": 196,
+        "row": 5,
+        "column": 6,
+        "v": 4.41,
+        "pulledBackFrom": {
+          "x": 312,
+          "y": 198
+        },
+        "scale": 0.824909090909091,
+        "maxHeight": 150.4
+      },
+      {
+        "x": 56,
+        "y": 202,
+        "row": 7,
+        "column": 3,
+        "v": 6.5,
+        "scale": 0.8434545454545456,
+        "maxHeight": 155.20000000000002
+      },
+      {
+        "x": 209,
+        "y": 208,
+        "row": 6,
+        "column": 5,
+        "v": 5.5,
+        "scale": 0.8620000000000001,
+        "maxHeight": 160
+      },
+      {
+        "x": 102,
+        "y": 219,
+        "row": 7,
+        "column": 4,
+        "v": 6.5,
+        "scale": 0.8960000000000001,
+        "maxHeight": 168.8
+      },
+      {
+        "x": 266,
+        "y": 227,
+        "row": 6,
+        "column": 6,
+        "v": 5.5,
+        "scale": 0.9207272727272728,
+        "maxHeight": 175.20000000000002
+      },
+      {
+        "x": 153,
+        "y": 238,
+        "row": 7,
+        "column": 5,
+        "v": 6.5,
+        "scale": 0.9547272727272729,
+        "maxHeight": 184
+      },
+      {
+        "x": 53,
+        "y": 243,
+        "row": 8,
+        "column": 4,
+        "v": 7.26,
+        "pulledBackFrom": {
+          "x": 36,
+          "y": 251
+        },
+        "scale": 0.9701818181818183,
+        "maxHeight": 188
+      },
+      {
+        "x": 233,
+        "y": 247,
+        "row": 7,
+        "column": 6,
+        "v": 6.13,
+        "pulledBackFrom": {
+          "x": 212,
+          "y": 260
+        },
+        "scale": 0.9825454545454546,
+        "maxHeight": 191.20000000000002
+      },
+      {
+        "x": 102,
+        "y": 266,
+        "row": 8,
+        "column": 5,
+        "v": 7.3,
+        "pulledBackFrom": {
+          "x": 88,
+          "y": 274
+        },
+        "scale": 1.0412727272727273,
+        "maxHeight": 206.4
+      },
+      {
+        "x": 151,
+        "y": 276,
+        "row": 8,
+        "column": 6,
+        "v": 7.14,
+        "u": 4.63,
+        "pulledBackFrom": {
+          "x": 147,
+          "y": 301
+        },
+        "scale": 1.0721818181818183,
+        "maxHeight": 214.4
+      }
+    ],
+    "stages": [
+      {
+        "phase": "sown",
+        "path": "art/plot/plants/C70/sown.webp",
+        "width": 107,
+        "height": 99,
+        "anchorX": 53.5,
+        "anchorY": 49.5,
+        "baseScale": 0.08080808080808081,
+        "source": {
+          "path": "assets/plot/crops/C70/sown.png",
+          "bounds": {
+            "left": 85,
+            "top": 106,
+            "width": 107,
+            "height": 99
+          }
+        }
+      },
+      {
+        "phase": "seedling",
+        "path": "art/plot/plants/C70/seedling.webp",
+        "width": 101,
+        "height": 119,
+        "anchorX": 50,
+        "anchorY": 118,
+        "baseScale": 0.15126050420168066,
+        "source": {
+          "path": "assets/plot/crops/C70/seedling.png",
+          "bounds": {
+            "left": 71,
+            "top": 100,
+            "width": 101,
+            "height": 119
+          }
+        }
+      },
+      {
+        "phase": "growing",
+        "path": "art/plot/plants/C70/growing.webp",
+        "width": 188,
+        "height": 166,
+        "anchorX": 86.5,
+        "anchorY": 165,
+        "baseScale": 0.48127659574468085,
+        "source": {
+          "path": "assets/plot/crops/C70/growing.png",
+          "bounds": {
+            "left": 52,
+            "top": 55,
+            "width": 188,
+            "height": 166
+          }
+        }
+      },
+      {
+        "phase": "mature",
+        "path": "art/plot/plants/C70/mature.webp",
+        "width": 246,
+        "height": 198,
+        "anchorX": 125,
+        "anchorY": 197,
+        "baseScale": 0.4715447154471545,
+        "source": {
+          "path": "assets/plot/crops/C70/mature.png",
+          "bounds": {
+            "left": 24,
+            "top": 24,
+            "width": 246,
+            "height": 198
+          }
+        }
+      }
+    ]
+  },
+  "C71": {
+    "mode": "individual",
+    "size": "large",
+    "harvestMode": "wholePlant",
+    "planting": {
+      "source": "assets/plot/crop-layout.json#fieldGeometry",
+      "rows": 9,
+      "projection": {
+        "mode": "field-homography",
+        "rowVanishingPoint": [
+          -697.049,
+          -81.083
+        ],
+        "columnVanishingPoint": [
+          866.308,
+          -148.178
+        ],
+        "origin": [
+          203.477,
+          68.01
+        ],
+        "depthPerUnit": -0.0444738,
+        "columnSpacingU": 0.8,
+        "columnInsetU": 0.3,
+        "rows": [
+          {
+            "index": 0,
+            "v": -0.5
+          },
+          {
+            "index": 1,
+            "v": 0.5
+          },
+          {
+            "index": 2,
+            "v": 1.5
+          },
+          {
+            "index": 3,
+            "v": 2.5
+          },
+          {
+            "index": 4,
+            "v": 3.5
+          },
+          {
+            "index": 5,
+            "v": 4.5
+          },
+          {
+            "index": 6,
+            "v": 5.5
+          },
+          {
+            "index": 7,
+            "v": 6.5
+          },
+          {
+            "index": 8,
+            "v": 7.5
+          }
+        ],
+        "columns": [
+          {
+            "index": 0,
+            "u": 0.3
+          },
+          {
+            "index": 1,
+            "u": 1.065
+          },
+          {
+            "index": 2,
+            "u": 1.83
+          },
+          {
+            "index": 3,
+            "u": 2.595
+          },
+          {
+            "index": 4,
+            "u": 3.36
+          },
+          {
+            "index": 5,
+            "u": 4.125
+          },
+          {
+            "index": 6,
+            "u": 4.89
+          }
+        ]
+      }
+    },
+    "roots": [
+      {
+        "x": 262,
+        "y": 70,
+        "row": 0,
+        "column": 1,
+        "v": -0.5,
+        "scale": 0.4354545454545454,
+        "maxHeight": 49.6
+      },
+      {
+        "x": 201,
+        "y": 75,
+        "row": 1,
+        "column": 0,
+        "v": 0.5,
+        "scale": 0.4509090909090909,
+        "maxHeight": 53.6
+      },
+      {
+        "x": 297,
+        "y": 76,
+        "row": 0,
+        "column": 2,
+        "v": -0.5,
+        "scale": 0.454,
+        "maxHeight": 54.400000000000006
+      },
+      {
+        "x": 233,
+        "y": 81,
+        "row": 1,
+        "column": 1,
+        "v": 0.5,
+        "scale": 0.46945454545454546,
+        "maxHeight": 58.400000000000006
+      },
+      {
+        "x": 168,
+        "y": 86,
+        "row": 2,
+        "column": 0,
+        "v": 1.5,
+        "scale": 0.4849090909090909,
+        "maxHeight": 62.400000000000006
+      },
+      {
+        "x": 269,
+        "y": 87,
+        "row": 1,
+        "column": 2,
+        "v": 0.5,
+        "scale": 0.488,
+        "maxHeight": 63.2
+      },
+      {
+        "x": 202,
+        "y": 92,
+        "row": 2,
+        "column": 1,
+        "v": 1.5,
+        "scale": 0.5034545454545455,
+        "maxHeight": 67.2
+      },
+      {
+        "x": 307,
+        "y": 94,
+        "row": 1,
+        "column": 3,
+        "v": 0.5,
+        "scale": 0.5096363636363637,
+        "maxHeight": 68.8
+      },
+      {
+        "x": 133,
+        "y": 98,
+        "row": 3,
+        "column": 0,
+        "v": 2.5,
+        "scale": 0.522,
+        "maxHeight": 72
+      },
+      {
+        "x": 238,
+        "y": 99,
+        "row": 2,
+        "column": 2,
+        "v": 1.5,
+        "scale": 0.525090909090909,
+        "maxHeight": 72.8
+      },
+      {
+        "x": 167,
+        "y": 105,
+        "row": 3,
+        "column": 1,
+        "v": 2.5,
+        "scale": 0.5436363636363637,
+        "maxHeight": 77.60000000000001
+      },
+      {
+        "x": 276,
+        "y": 107,
+        "row": 2,
+        "column": 3,
+        "v": 1.5,
+        "scale": 0.5498181818181818,
+        "maxHeight": 79.2
+      },
+      {
+        "x": 94,
+        "y": 111,
+        "row": 4,
+        "column": 0,
+        "v": 3.5,
+        "scale": 0.5621818181818182,
+        "maxHeight": 82.4
+      },
+      {
+        "x": 203,
+        "y": 113,
+        "row": 3,
+        "column": 2,
+        "v": 2.5,
+        "scale": 0.5683636363636364,
+        "maxHeight": 84
+      },
+      {
+        "x": 319,
+        "y": 115,
+        "row": 2,
+        "column": 4,
+        "v": 1.5,
+        "scale": 0.5745454545454546,
+        "maxHeight": 85.60000000000001
+      },
+      {
+        "x": 128,
+        "y": 119,
+        "row": 4,
+        "column": 1,
+        "v": 3.5,
+        "scale": 0.5869090909090909,
+        "maxHeight": 88.80000000000001
+      },
+      {
+        "x": 243,
+        "y": 121,
+        "row": 3,
+        "column": 3,
+        "v": 2.5,
+        "scale": 0.5930909090909091,
+        "maxHeight": 90.4
+      },
+      {
+        "x": 50,
+        "y": 126,
+        "row": 5,
+        "column": 0,
+        "v": 4.5,
+        "scale": 0.6085454545454546,
+        "maxHeight": 94.4
+      },
+      {
+        "x": 164,
+        "y": 128,
+        "row": 4,
+        "column": 2,
+        "v": 3.5,
+        "scale": 0.6147272727272728,
+        "maxHeight": 96
+      },
+      {
+        "x": 286,
+        "y": 131,
+        "row": 3,
+        "column": 4,
+        "v": 2.5,
+        "scale": 0.624,
+        "maxHeight": 98.4
+      },
+      {
+        "x": 84,
+        "y": 135,
+        "row": 5,
+        "column": 1,
+        "v": 4.5,
+        "scale": 0.6363636363636364,
+        "maxHeight": 101.60000000000001
+      },
+      {
+        "x": 205,
+        "y": 138,
+        "row": 4,
+        "column": 3,
+        "v": 3.5,
+        "scale": 0.6456363636363637,
+        "maxHeight": 104
+      },
+      {
+        "x": 1,
+        "y": 142,
+        "row": 6,
+        "column": 0,
+        "v": 5.5,
+        "scale": 0.658,
+        "maxHeight": 107.2
+      },
+      {
+        "x": 121,
+        "y": 145,
+        "row": 5,
+        "column": 2,
+        "v": 4.5,
+        "scale": 0.6672727272727274,
+        "maxHeight": 109.60000000000001
+      },
+      {
+        "x": 249,
+        "y": 148,
+        "row": 4,
+        "column": 4,
+        "v": 3.5,
+        "scale": 0.6765454545454546,
+        "maxHeight": 112
+      },
+      {
+        "x": 35,
+        "y": 153,
+        "row": 6,
+        "column": 1,
+        "v": 5.5,
+        "scale": 0.6920000000000001,
+        "maxHeight": 116
+      },
+      {
+        "x": 162,
+        "y": 156,
+        "row": 5,
+        "column": 3,
+        "v": 4.5,
+        "scale": 0.7012727272727273,
+        "maxHeight": 118.4
+      },
+      {
+        "x": 297,
+        "y": 160,
+        "row": 4,
+        "column": 5,
+        "v": 3.5,
+        "scale": 0.7136363636363636,
+        "maxHeight": 121.60000000000001
+      },
+      {
+        "x": 72,
+        "y": 164,
+        "row": 6,
+        "column": 2,
+        "v": 5.5,
+        "scale": 0.7260000000000001,
+        "maxHeight": 124.80000000000001
+      },
+      {
+        "x": 206,
+        "y": 169,
+        "row": 5,
+        "column": 4,
+        "v": 4.5,
+        "scale": 0.7414545454545455,
+        "maxHeight": 128.8
+      },
+      {
+        "x": 113,
+        "y": 178,
+        "row": 6,
+        "column": 3,
+        "v": 5.5,
+        "scale": 0.7692727272727273,
+        "maxHeight": 136
+      },
+      {
+        "x": 256,
+        "y": 183,
+        "row": 5,
+        "column": 5,
+        "v": 4.5,
+        "scale": 0.7847272727272728,
+        "maxHeight": 140
+      },
+      {
+        "x": 16,
+        "y": 187,
+        "row": 7,
+        "column": 2,
+        "v": 6.5,
+        "scale": 0.7970909090909092,
+        "maxHeight": 143.20000000000002
+      },
+      {
+        "x": 158,
+        "y": 192,
+        "row": 6,
+        "column": 4,
+        "v": 5.5,
+        "scale": 0.8125454545454546,
+        "maxHeight": 147.20000000000002
+      },
+      {
+        "x": 316,
+        "y": 196,
+        "row": 5,
+        "column": 6,
+        "v": 4.41,
+        "pulledBackFrom": {
+          "x": 312,
+          "y": 198
+        },
+        "scale": 0.824909090909091,
+        "maxHeight": 150.4
+      },
+      {
+        "x": 56,
+        "y": 202,
+        "row": 7,
+        "column": 3,
+        "v": 6.5,
+        "scale": 0.8434545454545456,
+        "maxHeight": 155.20000000000002
+      },
+      {
+        "x": 209,
+        "y": 208,
+        "row": 6,
+        "column": 5,
+        "v": 5.5,
+        "scale": 0.8620000000000001,
+        "maxHeight": 160
+      },
+      {
+        "x": 102,
+        "y": 219,
+        "row": 7,
+        "column": 4,
+        "v": 6.5,
+        "scale": 0.8960000000000001,
+        "maxHeight": 168.8
+      },
+      {
+        "x": 266,
+        "y": 227,
+        "row": 6,
+        "column": 6,
+        "v": 5.5,
+        "scale": 0.9207272727272728,
+        "maxHeight": 175.20000000000002
+      },
+      {
+        "x": 153,
+        "y": 238,
+        "row": 7,
+        "column": 5,
+        "v": 6.5,
+        "scale": 0.9547272727272729,
+        "maxHeight": 184
+      },
+      {
+        "x": 53,
+        "y": 243,
+        "row": 8,
+        "column": 4,
+        "v": 7.26,
+        "pulledBackFrom": {
+          "x": 36,
+          "y": 251
+        },
+        "scale": 0.9701818181818183,
+        "maxHeight": 188
+      },
+      {
+        "x": 233,
+        "y": 247,
+        "row": 7,
+        "column": 6,
+        "v": 6.13,
+        "pulledBackFrom": {
+          "x": 212,
+          "y": 260
+        },
+        "scale": 0.9825454545454546,
+        "maxHeight": 191.20000000000002
+      },
+      {
+        "x": 102,
+        "y": 266,
+        "row": 8,
+        "column": 5,
+        "v": 7.3,
+        "pulledBackFrom": {
+          "x": 88,
+          "y": 274
+        },
+        "scale": 1.0412727272727273,
+        "maxHeight": 206.4
+      },
+      {
+        "x": 151,
+        "y": 276,
+        "row": 8,
+        "column": 6,
+        "v": 7.14,
+        "u": 4.63,
+        "pulledBackFrom": {
+          "x": 147,
+          "y": 301
+        },
+        "scale": 1.0721818181818183,
+        "maxHeight": 214.4
+      }
+    ],
+    "stages": [
+      {
+        "phase": "sown",
+        "path": "art/plot/plants/C71/sown.webp",
+        "width": 85,
+        "height": 62,
+        "anchorX": 42.5,
+        "anchorY": 31,
+        "baseScale": 0.12903225806451613,
+        "source": {
+          "path": "assets/plot/crops/C71/sown.png",
+          "bounds": {
+            "left": 86,
+            "top": 128,
+            "width": 85,
+            "height": 62
+          }
+        }
+      },
+      {
+        "phase": "seedling",
+        "path": "art/plot/plants/C71/seedling.webp",
+        "width": 95,
+        "height": 88,
+        "anchorX": 43.5,
+        "anchorY": 87,
+        "baseScale": 0.18947368421052632,
+        "source": {
+          "path": "assets/plot/crops/C71/seedling.png",
+          "bounds": {
+            "left": 75,
+            "top": 113,
+            "width": 95,
+            "height": 88
+          }
+        }
+      },
+      {
+        "phase": "growing",
+        "path": "art/plot/plants/C71/growing.webp",
+        "width": 169,
+        "height": 157,
+        "anchorX": 85.5,
+        "anchorY": 156,
+        "baseScale": 0.5353846153846155,
+        "source": {
+          "path": "assets/plot/crops/C71/growing.png",
+          "bounds": {
+            "left": 50,
+            "top": 44,
+            "width": 169,
+            "height": 157
+          }
+        }
+      },
+      {
+        "phase": "mature",
+        "path": "art/plot/plants/C71/mature.webp",
+        "width": 248,
+        "height": 194,
+        "anchorX": 119.5,
+        "anchorY": 193,
+        "baseScale": 0.46774193548387094,
+        "source": {
+          "path": "assets/plot/crops/C71/mature.png",
+          "bounds": {
+            "left": 29,
+            "top": 12,
+            "width": 248,
+            "height": 194
+          }
+        }
+      }
+    ]
+  },
+  "C72": {
+    "mode": "individual",
+    "size": "large",
+    "harvestMode": "wholePlant",
+    "planting": {
+      "source": "assets/plot/crop-layout.json#fieldGeometry",
+      "rows": 9,
+      "projection": {
+        "mode": "field-homography",
+        "rowVanishingPoint": [
+          -697.049,
+          -81.083
+        ],
+        "columnVanishingPoint": [
+          866.308,
+          -148.178
+        ],
+        "origin": [
+          203.477,
+          68.01
+        ],
+        "depthPerUnit": -0.0444738,
+        "columnSpacingU": 0.8,
+        "columnInsetU": 0.3,
+        "rows": [
+          {
+            "index": 0,
+            "v": -0.5
+          },
+          {
+            "index": 1,
+            "v": 0.5
+          },
+          {
+            "index": 2,
+            "v": 1.5
+          },
+          {
+            "index": 3,
+            "v": 2.5
+          },
+          {
+            "index": 4,
+            "v": 3.5
+          },
+          {
+            "index": 5,
+            "v": 4.5
+          },
+          {
+            "index": 6,
+            "v": 5.5
+          },
+          {
+            "index": 7,
+            "v": 6.5
+          },
+          {
+            "index": 8,
+            "v": 7.5
+          }
+        ],
+        "columns": [
+          {
+            "index": 0,
+            "u": 0.3
+          },
+          {
+            "index": 1,
+            "u": 1.065
+          },
+          {
+            "index": 2,
+            "u": 1.83
+          },
+          {
+            "index": 3,
+            "u": 2.595
+          },
+          {
+            "index": 4,
+            "u": 3.36
+          },
+          {
+            "index": 5,
+            "u": 4.125
+          },
+          {
+            "index": 6,
+            "u": 4.89
+          }
+        ]
+      }
+    },
+    "roots": [
+      {
+        "x": 262,
+        "y": 70,
+        "row": 0,
+        "column": 1,
+        "v": -0.5,
+        "scale": 0.4354545454545454,
+        "maxHeight": 49.6
+      },
+      {
+        "x": 201,
+        "y": 75,
+        "row": 1,
+        "column": 0,
+        "v": 0.5,
+        "scale": 0.4509090909090909,
+        "maxHeight": 53.6
+      },
+      {
+        "x": 297,
+        "y": 76,
+        "row": 0,
+        "column": 2,
+        "v": -0.5,
+        "scale": 0.454,
+        "maxHeight": 54.400000000000006
+      },
+      {
+        "x": 233,
+        "y": 81,
+        "row": 1,
+        "column": 1,
+        "v": 0.5,
+        "scale": 0.46945454545454546,
+        "maxHeight": 58.400000000000006
+      },
+      {
+        "x": 168,
+        "y": 86,
+        "row": 2,
+        "column": 0,
+        "v": 1.5,
+        "scale": 0.4849090909090909,
+        "maxHeight": 62.400000000000006
+      },
+      {
+        "x": 269,
+        "y": 87,
+        "row": 1,
+        "column": 2,
+        "v": 0.5,
+        "scale": 0.488,
+        "maxHeight": 63.2
+      },
+      {
+        "x": 202,
+        "y": 92,
+        "row": 2,
+        "column": 1,
+        "v": 1.5,
+        "scale": 0.5034545454545455,
+        "maxHeight": 67.2
+      },
+      {
+        "x": 307,
+        "y": 94,
+        "row": 1,
+        "column": 3,
+        "v": 0.5,
+        "scale": 0.5096363636363637,
+        "maxHeight": 68.8
+      },
+      {
+        "x": 133,
+        "y": 98,
+        "row": 3,
+        "column": 0,
+        "v": 2.5,
+        "scale": 0.522,
+        "maxHeight": 72
+      },
+      {
+        "x": 238,
+        "y": 99,
+        "row": 2,
+        "column": 2,
+        "v": 1.5,
+        "scale": 0.525090909090909,
+        "maxHeight": 72.8
+      },
+      {
+        "x": 167,
+        "y": 105,
+        "row": 3,
+        "column": 1,
+        "v": 2.5,
+        "scale": 0.5436363636363637,
+        "maxHeight": 77.60000000000001
+      },
+      {
+        "x": 276,
+        "y": 107,
+        "row": 2,
+        "column": 3,
+        "v": 1.5,
+        "scale": 0.5498181818181818,
+        "maxHeight": 79.2
+      },
+      {
+        "x": 94,
+        "y": 111,
+        "row": 4,
+        "column": 0,
+        "v": 3.5,
+        "scale": 0.5621818181818182,
+        "maxHeight": 82.4
+      },
+      {
+        "x": 203,
+        "y": 113,
+        "row": 3,
+        "column": 2,
+        "v": 2.5,
+        "scale": 0.5683636363636364,
+        "maxHeight": 84
+      },
+      {
+        "x": 319,
+        "y": 115,
+        "row": 2,
+        "column": 4,
+        "v": 1.5,
+        "scale": 0.5745454545454546,
+        "maxHeight": 85.60000000000001
+      },
+      {
+        "x": 128,
+        "y": 119,
+        "row": 4,
+        "column": 1,
+        "v": 3.5,
+        "scale": 0.5869090909090909,
+        "maxHeight": 88.80000000000001
+      },
+      {
+        "x": 243,
+        "y": 121,
+        "row": 3,
+        "column": 3,
+        "v": 2.5,
+        "scale": 0.5930909090909091,
+        "maxHeight": 90.4
+      },
+      {
+        "x": 50,
+        "y": 126,
+        "row": 5,
+        "column": 0,
+        "v": 4.5,
+        "scale": 0.6085454545454546,
+        "maxHeight": 94.4
+      },
+      {
+        "x": 164,
+        "y": 128,
+        "row": 4,
+        "column": 2,
+        "v": 3.5,
+        "scale": 0.6147272727272728,
+        "maxHeight": 96
+      },
+      {
+        "x": 286,
+        "y": 131,
+        "row": 3,
+        "column": 4,
+        "v": 2.5,
+        "scale": 0.624,
+        "maxHeight": 98.4
+      },
+      {
+        "x": 84,
+        "y": 135,
+        "row": 5,
+        "column": 1,
+        "v": 4.5,
+        "scale": 0.6363636363636364,
+        "maxHeight": 101.60000000000001
+      },
+      {
+        "x": 205,
+        "y": 138,
+        "row": 4,
+        "column": 3,
+        "v": 3.5,
+        "scale": 0.6456363636363637,
+        "maxHeight": 104
+      },
+      {
+        "x": 1,
+        "y": 142,
+        "row": 6,
+        "column": 0,
+        "v": 5.5,
+        "scale": 0.658,
+        "maxHeight": 107.2
+      },
+      {
+        "x": 121,
+        "y": 145,
+        "row": 5,
+        "column": 2,
+        "v": 4.5,
+        "scale": 0.6672727272727274,
+        "maxHeight": 109.60000000000001
+      },
+      {
+        "x": 249,
+        "y": 148,
+        "row": 4,
+        "column": 4,
+        "v": 3.5,
+        "scale": 0.6765454545454546,
+        "maxHeight": 112
+      },
+      {
+        "x": 35,
+        "y": 153,
+        "row": 6,
+        "column": 1,
+        "v": 5.5,
+        "scale": 0.6920000000000001,
+        "maxHeight": 116
+      },
+      {
+        "x": 162,
+        "y": 156,
+        "row": 5,
+        "column": 3,
+        "v": 4.5,
+        "scale": 0.7012727272727273,
+        "maxHeight": 118.4
+      },
+      {
+        "x": 297,
+        "y": 160,
+        "row": 4,
+        "column": 5,
+        "v": 3.5,
+        "scale": 0.7136363636363636,
+        "maxHeight": 121.60000000000001
+      },
+      {
+        "x": 72,
+        "y": 164,
+        "row": 6,
+        "column": 2,
+        "v": 5.5,
+        "scale": 0.7260000000000001,
+        "maxHeight": 124.80000000000001
+      },
+      {
+        "x": 206,
+        "y": 169,
+        "row": 5,
+        "column": 4,
+        "v": 4.5,
+        "scale": 0.7414545454545455,
+        "maxHeight": 128.8
+      },
+      {
+        "x": 113,
+        "y": 178,
+        "row": 6,
+        "column": 3,
+        "v": 5.5,
+        "scale": 0.7692727272727273,
+        "maxHeight": 136
+      },
+      {
+        "x": 256,
+        "y": 183,
+        "row": 5,
+        "column": 5,
+        "v": 4.5,
+        "scale": 0.7847272727272728,
+        "maxHeight": 140
+      },
+      {
+        "x": 16,
+        "y": 187,
+        "row": 7,
+        "column": 2,
+        "v": 6.5,
+        "scale": 0.7970909090909092,
+        "maxHeight": 143.20000000000002
+      },
+      {
+        "x": 158,
+        "y": 192,
+        "row": 6,
+        "column": 4,
+        "v": 5.5,
+        "scale": 0.8125454545454546,
+        "maxHeight": 147.20000000000002
+      },
+      {
+        "x": 316,
+        "y": 196,
+        "row": 5,
+        "column": 6,
+        "v": 4.41,
+        "pulledBackFrom": {
+          "x": 312,
+          "y": 198
+        },
+        "scale": 0.824909090909091,
+        "maxHeight": 150.4
+      },
+      {
+        "x": 56,
+        "y": 202,
+        "row": 7,
+        "column": 3,
+        "v": 6.5,
+        "scale": 0.8434545454545456,
+        "maxHeight": 155.20000000000002
+      },
+      {
+        "x": 209,
+        "y": 208,
+        "row": 6,
+        "column": 5,
+        "v": 5.5,
+        "scale": 0.8620000000000001,
+        "maxHeight": 160
+      },
+      {
+        "x": 102,
+        "y": 219,
+        "row": 7,
+        "column": 4,
+        "v": 6.5,
+        "scale": 0.8960000000000001,
+        "maxHeight": 168.8
+      },
+      {
+        "x": 266,
+        "y": 227,
+        "row": 6,
+        "column": 6,
+        "v": 5.5,
+        "scale": 0.9207272727272728,
+        "maxHeight": 175.20000000000002
+      },
+      {
+        "x": 153,
+        "y": 238,
+        "row": 7,
+        "column": 5,
+        "v": 6.5,
+        "scale": 0.9547272727272729,
+        "maxHeight": 184
+      },
+      {
+        "x": 53,
+        "y": 243,
+        "row": 8,
+        "column": 4,
+        "v": 7.26,
+        "pulledBackFrom": {
+          "x": 36,
+          "y": 251
+        },
+        "scale": 0.9701818181818183,
+        "maxHeight": 188
+      },
+      {
+        "x": 233,
+        "y": 247,
+        "row": 7,
+        "column": 6,
+        "v": 6.13,
+        "pulledBackFrom": {
+          "x": 212,
+          "y": 260
+        },
+        "scale": 0.9825454545454546,
+        "maxHeight": 191.20000000000002
+      },
+      {
+        "x": 102,
+        "y": 266,
+        "row": 8,
+        "column": 5,
+        "v": 7.3,
+        "pulledBackFrom": {
+          "x": 88,
+          "y": 274
+        },
+        "scale": 1.0412727272727273,
+        "maxHeight": 206.4
+      },
+      {
+        "x": 151,
+        "y": 276,
+        "row": 8,
+        "column": 6,
+        "v": 7.14,
+        "u": 4.63,
+        "pulledBackFrom": {
+          "x": 147,
+          "y": 301
+        },
+        "scale": 1.0721818181818183,
+        "maxHeight": 214.4
+      }
+    ],
+    "stages": [
+      {
+        "phase": "sown",
+        "path": "art/plot/plants/C72/sown.webp",
+        "width": 86,
+        "height": 66,
+        "anchorX": 43,
+        "anchorY": 33,
+        "baseScale": 0.12121212121212122,
+        "source": {
+          "path": "assets/plot/crops/C72/sown.png",
+          "bounds": {
+            "left": 89,
+            "top": 155,
+            "width": 86,
+            "height": 66
+          }
+        }
+      },
+      {
+        "phase": "seedling",
+        "path": "art/plot/plants/C72/seedling.webp",
+        "width": 110,
+        "height": 107,
+        "anchorX": 56.5,
+        "anchorY": 106,
+        "baseScale": 0.16363636363636364,
+        "source": {
+          "path": "assets/plot/crops/C72/seedling.png",
+          "bounds": {
+            "left": 70,
+            "top": 127,
+            "width": 110,
+            "height": 107
+          }
+        }
+      },
+      {
+        "phase": "growing",
+        "path": "art/plot/plants/C72/growing.webp",
+        "width": 154,
+        "height": 187,
+        "anchorX": 77.5,
+        "anchorY": 186,
+        "baseScale": 0.5875324675324676,
+        "source": {
+          "path": "assets/plot/crops/C72/growing.png",
+          "bounds": {
+            "left": 66,
+            "top": 52,
+            "width": 154,
+            "height": 187
+          }
+        }
+      },
+      {
+        "phase": "mature",
+        "path": "art/plot/plants/C72/mature.webp",
+        "width": 178,
+        "height": 233,
+        "anchorX": 86,
+        "anchorY": 232,
+        "baseScale": 0.651685393258427,
+        "source": {
+          "path": "assets/plot/crops/C72/mature.png",
+          "bounds": {
+            "left": 65,
+            "top": 12,
+            "width": 178,
+            "height": 233
+          }
+        }
+      }
+    ]
+  },
+  "C73": {
+    "mode": "individual",
+    "size": "large",
+    "harvestMode": "wholePlant",
+    "planting": {
+      "source": "assets/plot/crop-layout.json#fieldGeometry",
+      "rows": 9,
+      "projection": {
+        "mode": "field-homography",
+        "rowVanishingPoint": [
+          -697.049,
+          -81.083
+        ],
+        "columnVanishingPoint": [
+          866.308,
+          -148.178
+        ],
+        "origin": [
+          203.477,
+          68.01
+        ],
+        "depthPerUnit": -0.0444738,
+        "columnSpacingU": 0.8,
+        "columnInsetU": 0.3,
+        "rows": [
+          {
+            "index": 0,
+            "v": -0.5
+          },
+          {
+            "index": 1,
+            "v": 0.5
+          },
+          {
+            "index": 2,
+            "v": 1.5
+          },
+          {
+            "index": 3,
+            "v": 2.5
+          },
+          {
+            "index": 4,
+            "v": 3.5
+          },
+          {
+            "index": 5,
+            "v": 4.5
+          },
+          {
+            "index": 6,
+            "v": 5.5
+          },
+          {
+            "index": 7,
+            "v": 6.5
+          },
+          {
+            "index": 8,
+            "v": 7.5
+          }
+        ],
+        "columns": [
+          {
+            "index": 0,
+            "u": 0.3
+          },
+          {
+            "index": 1,
+            "u": 1.065
+          },
+          {
+            "index": 2,
+            "u": 1.83
+          },
+          {
+            "index": 3,
+            "u": 2.595
+          },
+          {
+            "index": 4,
+            "u": 3.36
+          },
+          {
+            "index": 5,
+            "u": 4.125
+          },
+          {
+            "index": 6,
+            "u": 4.89
+          }
+        ]
+      }
+    },
+    "roots": [
+      {
+        "x": 262,
+        "y": 70,
+        "row": 0,
+        "column": 1,
+        "v": -0.5,
+        "scale": 0.4354545454545454,
+        "maxHeight": 49.6
+      },
+      {
+        "x": 201,
+        "y": 75,
+        "row": 1,
+        "column": 0,
+        "v": 0.5,
+        "scale": 0.4509090909090909,
+        "maxHeight": 53.6
+      },
+      {
+        "x": 297,
+        "y": 76,
+        "row": 0,
+        "column": 2,
+        "v": -0.5,
+        "scale": 0.454,
+        "maxHeight": 54.400000000000006
+      },
+      {
+        "x": 233,
+        "y": 81,
+        "row": 1,
+        "column": 1,
+        "v": 0.5,
+        "scale": 0.46945454545454546,
+        "maxHeight": 58.400000000000006
+      },
+      {
+        "x": 168,
+        "y": 86,
+        "row": 2,
+        "column": 0,
+        "v": 1.5,
+        "scale": 0.4849090909090909,
+        "maxHeight": 62.400000000000006
+      },
+      {
+        "x": 269,
+        "y": 87,
+        "row": 1,
+        "column": 2,
+        "v": 0.5,
+        "scale": 0.488,
+        "maxHeight": 63.2
+      },
+      {
+        "x": 202,
+        "y": 92,
+        "row": 2,
+        "column": 1,
+        "v": 1.5,
+        "scale": 0.5034545454545455,
+        "maxHeight": 67.2
+      },
+      {
+        "x": 307,
+        "y": 94,
+        "row": 1,
+        "column": 3,
+        "v": 0.5,
+        "scale": 0.5096363636363637,
+        "maxHeight": 68.8
+      },
+      {
+        "x": 133,
+        "y": 98,
+        "row": 3,
+        "column": 0,
+        "v": 2.5,
+        "scale": 0.522,
+        "maxHeight": 72
+      },
+      {
+        "x": 238,
+        "y": 99,
+        "row": 2,
+        "column": 2,
+        "v": 1.5,
+        "scale": 0.525090909090909,
+        "maxHeight": 72.8
+      },
+      {
+        "x": 167,
+        "y": 105,
+        "row": 3,
+        "column": 1,
+        "v": 2.5,
+        "scale": 0.5436363636363637,
+        "maxHeight": 77.60000000000001
+      },
+      {
+        "x": 276,
+        "y": 107,
+        "row": 2,
+        "column": 3,
+        "v": 1.5,
+        "scale": 0.5498181818181818,
+        "maxHeight": 79.2
+      },
+      {
+        "x": 94,
+        "y": 111,
+        "row": 4,
+        "column": 0,
+        "v": 3.5,
+        "scale": 0.5621818181818182,
+        "maxHeight": 82.4
+      },
+      {
+        "x": 203,
+        "y": 113,
+        "row": 3,
+        "column": 2,
+        "v": 2.5,
+        "scale": 0.5683636363636364,
+        "maxHeight": 84
+      },
+      {
+        "x": 319,
+        "y": 115,
+        "row": 2,
+        "column": 4,
+        "v": 1.5,
+        "scale": 0.5745454545454546,
+        "maxHeight": 85.60000000000001
+      },
+      {
+        "x": 128,
+        "y": 119,
+        "row": 4,
+        "column": 1,
+        "v": 3.5,
+        "scale": 0.5869090909090909,
+        "maxHeight": 88.80000000000001
+      },
+      {
+        "x": 243,
+        "y": 121,
+        "row": 3,
+        "column": 3,
+        "v": 2.5,
+        "scale": 0.5930909090909091,
+        "maxHeight": 90.4
+      },
+      {
+        "x": 50,
+        "y": 126,
+        "row": 5,
+        "column": 0,
+        "v": 4.5,
+        "scale": 0.6085454545454546,
+        "maxHeight": 94.4
+      },
+      {
+        "x": 164,
+        "y": 128,
+        "row": 4,
+        "column": 2,
+        "v": 3.5,
+        "scale": 0.6147272727272728,
+        "maxHeight": 96
+      },
+      {
+        "x": 286,
+        "y": 131,
+        "row": 3,
+        "column": 4,
+        "v": 2.5,
+        "scale": 0.624,
+        "maxHeight": 98.4
+      },
+      {
+        "x": 84,
+        "y": 135,
+        "row": 5,
+        "column": 1,
+        "v": 4.5,
+        "scale": 0.6363636363636364,
+        "maxHeight": 101.60000000000001
+      },
+      {
+        "x": 205,
+        "y": 138,
+        "row": 4,
+        "column": 3,
+        "v": 3.5,
+        "scale": 0.6456363636363637,
+        "maxHeight": 104
+      },
+      {
+        "x": 1,
+        "y": 142,
+        "row": 6,
+        "column": 0,
+        "v": 5.5,
+        "scale": 0.658,
+        "maxHeight": 107.2
+      },
+      {
+        "x": 121,
+        "y": 145,
+        "row": 5,
+        "column": 2,
+        "v": 4.5,
+        "scale": 0.6672727272727274,
+        "maxHeight": 109.60000000000001
+      },
+      {
+        "x": 249,
+        "y": 148,
+        "row": 4,
+        "column": 4,
+        "v": 3.5,
+        "scale": 0.6765454545454546,
+        "maxHeight": 112
+      },
+      {
+        "x": 35,
+        "y": 153,
+        "row": 6,
+        "column": 1,
+        "v": 5.5,
+        "scale": 0.6920000000000001,
+        "maxHeight": 116
+      },
+      {
+        "x": 162,
+        "y": 156,
+        "row": 5,
+        "column": 3,
+        "v": 4.5,
+        "scale": 0.7012727272727273,
+        "maxHeight": 118.4
+      },
+      {
+        "x": 297,
+        "y": 160,
+        "row": 4,
+        "column": 5,
+        "v": 3.5,
+        "scale": 0.7136363636363636,
+        "maxHeight": 121.60000000000001
+      },
+      {
+        "x": 72,
+        "y": 164,
+        "row": 6,
+        "column": 2,
+        "v": 5.5,
+        "scale": 0.7260000000000001,
+        "maxHeight": 124.80000000000001
+      },
+      {
+        "x": 206,
+        "y": 169,
+        "row": 5,
+        "column": 4,
+        "v": 4.5,
+        "scale": 0.7414545454545455,
+        "maxHeight": 128.8
+      },
+      {
+        "x": 113,
+        "y": 178,
+        "row": 6,
+        "column": 3,
+        "v": 5.5,
+        "scale": 0.7692727272727273,
+        "maxHeight": 136
+      },
+      {
+        "x": 256,
+        "y": 183,
+        "row": 5,
+        "column": 5,
+        "v": 4.5,
+        "scale": 0.7847272727272728,
+        "maxHeight": 140
+      },
+      {
+        "x": 16,
+        "y": 187,
+        "row": 7,
+        "column": 2,
+        "v": 6.5,
+        "scale": 0.7970909090909092,
+        "maxHeight": 143.20000000000002
+      },
+      {
+        "x": 158,
+        "y": 192,
+        "row": 6,
+        "column": 4,
+        "v": 5.5,
+        "scale": 0.8125454545454546,
+        "maxHeight": 147.20000000000002
+      },
+      {
+        "x": 316,
+        "y": 196,
+        "row": 5,
+        "column": 6,
+        "v": 4.41,
+        "pulledBackFrom": {
+          "x": 312,
+          "y": 198
+        },
+        "scale": 0.824909090909091,
+        "maxHeight": 150.4
+      },
+      {
+        "x": 56,
+        "y": 202,
+        "row": 7,
+        "column": 3,
+        "v": 6.5,
+        "scale": 0.8434545454545456,
+        "maxHeight": 155.20000000000002
+      },
+      {
+        "x": 209,
+        "y": 208,
+        "row": 6,
+        "column": 5,
+        "v": 5.5,
+        "scale": 0.8620000000000001,
+        "maxHeight": 160
+      },
+      {
+        "x": 102,
+        "y": 219,
+        "row": 7,
+        "column": 4,
+        "v": 6.5,
+        "scale": 0.8960000000000001,
+        "maxHeight": 168.8
+      },
+      {
+        "x": 266,
+        "y": 227,
+        "row": 6,
+        "column": 6,
+        "v": 5.5,
+        "scale": 0.9207272727272728,
+        "maxHeight": 175.20000000000002
+      },
+      {
+        "x": 153,
+        "y": 238,
+        "row": 7,
+        "column": 5,
+        "v": 6.5,
+        "scale": 0.9547272727272729,
+        "maxHeight": 184
+      },
+      {
+        "x": 53,
+        "y": 243,
+        "row": 8,
+        "column": 4,
+        "v": 7.26,
+        "pulledBackFrom": {
+          "x": 36,
+          "y": 251
+        },
+        "scale": 0.9701818181818183,
+        "maxHeight": 188
+      },
+      {
+        "x": 233,
+        "y": 247,
+        "row": 7,
+        "column": 6,
+        "v": 6.13,
+        "pulledBackFrom": {
+          "x": 212,
+          "y": 260
+        },
+        "scale": 0.9825454545454546,
+        "maxHeight": 191.20000000000002
+      },
+      {
+        "x": 102,
+        "y": 266,
+        "row": 8,
+        "column": 5,
+        "v": 7.3,
+        "pulledBackFrom": {
+          "x": 88,
+          "y": 274
+        },
+        "scale": 1.0412727272727273,
+        "maxHeight": 206.4
+      },
+      {
+        "x": 151,
+        "y": 276,
+        "row": 8,
+        "column": 6,
+        "v": 7.14,
+        "u": 4.63,
+        "pulledBackFrom": {
+          "x": 147,
+          "y": 301
+        },
+        "scale": 1.0721818181818183,
+        "maxHeight": 214.4
+      }
+    ],
+    "stages": [
+      {
+        "phase": "sown",
+        "path": "art/plot/plants/C73/sown.webp",
+        "width": 91,
+        "height": 55,
+        "anchorX": 45.5,
+        "anchorY": 27.5,
+        "baseScale": 0.12087912087912088,
+        "source": {
+          "path": "assets/plot/crops/C73/sown.png",
+          "bounds": {
+            "left": 88,
+            "top": 128,
+            "width": 91,
+            "height": 55
+          }
+        }
+      },
+      {
+        "phase": "seedling",
+        "path": "art/plot/plants/C73/seedling.webp",
+        "width": 95,
+        "height": 93,
+        "anchorX": 52.5,
+        "anchorY": 92,
+        "baseScale": 0.18947368421052632,
+        "source": {
+          "path": "assets/plot/crops/C73/seedling.png",
+          "bounds": {
+            "left": 70,
+            "top": 106,
+            "width": 95,
+            "height": 93
+          }
+        }
+      },
+      {
+        "phase": "growing",
+        "path": "art/plot/plants/C73/growing.webp",
+        "width": 168,
+        "height": 161,
+        "anchorX": 83,
+        "anchorY": 160,
+        "baseScale": 0.5385714285714286,
+        "source": {
+          "path": "assets/plot/crops/C73/growing.png",
+          "bounds": {
+            "left": 56,
+            "top": 46,
+            "width": 168,
+            "height": 161
+          }
+        }
+      },
+      {
+        "phase": "mature",
+        "path": "art/plot/plants/C73/mature.webp",
+        "width": 246,
+        "height": 199,
+        "anchorX": 123,
+        "anchorY": 198,
+        "baseScale": 0.4715447154471545,
+        "source": {
+          "path": "assets/plot/crops/C73/mature.png",
+          "bounds": {
+            "left": 24,
+            "top": 13,
+            "width": 246,
+            "height": 199
+          }
+        }
+      }
+    ]
   }
 }

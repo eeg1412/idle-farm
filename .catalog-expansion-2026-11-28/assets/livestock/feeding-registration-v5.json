@@ -1,0 +1,2411 @@
+{
+  "version": 5,
+  "sources": {
+    "accessories": "raw/pixel-v5-feeding-accessories.png",
+    "pig": "raw/pixel-v5-feeding-pig.png",
+    "rabbit": "raw/pixel-v5-feeding-rabbit.png",
+    "sheep": "raw/pixel-v5-feeding-sheep.png",
+    "muscovy": "raw/pixel-v5-feeding-muscovy.png",
+    "cattle": "raw/pixel-v5-feeding-cattle-r2.png",
+    "small-tailed-han-v1": "raw/l08-small-tailed-han-v1/feeding-r9.png",
+    "l11-expansion-v1": "raw/l11-expansion-feeding-v1.png",
+    "l12-expansion-v1": "raw/l12-expansion-feeding-v1.png",
+    "l16-expansion-v1": "raw/l16-expansion-feeding-v1.png",
+    "l17-expansion-v1": "raw/l17-expansion-feeding-v1.png",
+    "l14-expansion-v1": "raw/l14-expansion-feeding-v1.png",
+    "l15-expansion-v1": "raw/l15-expansion-feeding-v1.png",
+    "l18-expansion-v1": "raw/l18-expansion-feeding-v1.png",
+    "l25-expansion-v1": "raw/l25-expansion-feeding-v1.png",
+    "l26-expansion-v1": "raw/l26-expansion-feeding-v1.png",
+    "l19-expansion-v1": "raw/l19-expansion-feeding-v1.png",
+    "l20-expansion-v1": "raw/l20-expansion-feeding-v1.png",
+    "l22-expansion-v1": "raw/l22-expansion-feeding-v1.png",
+    "l23-expansion-v1": "raw/l23-expansion-feeding-v1.png",
+    "l21-expansion-v1": "raw/l21-expansion-feeding-v1.png",
+    "l24-expansion-v1": "raw/l24-expansion-feeding-v1.png",
+    "l13-expansion-v2": "raw/l13-expansion-feeding-v2.png",
+    "l29-expansion-v2": "raw/l29-expansion-feeding-v2.png",
+    "l27-expansion-v1": "raw/l27-expansion-feeding-v1.png",
+    "l30-expansion-v1": "raw/l30-expansion-feeding-v1.png",
+    "l28-expansion-v2": "raw/l28-expansion-feeding-v2.png"
+  },
+  "species": {
+    "L01": {
+      "key": "accessories",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              109,
+              226
+            ],
+            [
+              365,
+              226
+            ],
+            [
+              618,
+              226
+            ],
+            [
+              870,
+              226
+            ]
+          ],
+          "canvas": [
+            -109,
+            -206,
+            244,
+            212
+          ],
+          "mouth": [
+            210,
+            221
+          ]
+        }
+      ]
+    },
+    "L02": {
+      "key": "accessories",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              110,
+              475
+            ],
+            [
+              363,
+              476
+            ],
+            [
+              616,
+              476
+            ],
+            [
+              870,
+              476
+            ]
+          ],
+          "canvas": [
+            -110,
+            -205,
+            250,
+            223
+          ],
+          "mouth": [
+            220,
+            483
+          ]
+        }
+      ]
+    },
+    "L03": {
+      "key": "accessories",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              112,
+              721
+            ],
+            [
+              364,
+              721
+            ],
+            [
+              617,
+              721
+            ],
+            [
+              870,
+              721
+            ]
+          ],
+          "canvas": [
+            -111,
+            -180,
+            247,
+            193
+          ],
+          "mouth": [
+            224,
+            721
+          ]
+        }
+      ]
+    },
+    "L04": {
+      "key": "accessories",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              109,
+              973
+            ],
+            [
+              362,
+              973
+            ],
+            [
+              616,
+              973
+            ],
+            [
+              870,
+              973
+            ]
+          ],
+          "canvas": [
+            -108,
+            -192,
+            258,
+            218
+          ],
+          "mouth": [
+            224,
+            982
+          ],
+          "scale": 0.6932270916334662,
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 781,
+              "width": 260,
+              "height": 218
+            },
+            {
+              "left": 260,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 515,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            },
+            {
+              "left": 770,
+              "top": 781,
+              "width": 255,
+              "height": 218
+            }
+          ],
+          "samplingCanvas": [
+            251,
+            218
+          ],
+          "cropRevision": "l04-cell-isolation-r1",
+          "cropMethod": "Source cell isolation and expanded common canvas restore the complete original ear tips and exclude neighboring goat ear pixels; original image_gen artwork, anatomical anchors and original 174/251 stage scale are retained without redrawing."
+        }
+      ]
+    },
+    "L05": {
+      "key": "accessories",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              102,
+              1219
+            ],
+            [
+              356,
+              1219
+            ],
+            [
+              609,
+              1219
+            ],
+            [
+              863,
+              1219
+            ]
+          ],
+          "canvas": [
+            -102,
+            -194,
+            250,
+            219
+          ],
+          "mouth": [
+            220,
+            1227
+          ]
+        }
+      ]
+    },
+    "L06": {
+      "key": "pig",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              117,
+              259
+            ],
+            [
+              381,
+              259
+            ],
+            [
+              651,
+              259
+            ],
+            [
+              914,
+              259
+            ]
+          ],
+          "canvas": [
+            -115,
+            -150,
+            235,
+            165
+          ],
+          "mouth": [
+            179,
+            262
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
+        },
+        {
+          "anchors": [
+            [
+              125,
+              519
+            ],
+            [
+              391,
+              519
+            ],
+            [
+              657,
+              519
+            ],
+            [
+              920,
+              519
+            ]
+          ],
+          "canvas": [
+            -125,
+            -156,
+            255,
+            178
+          ],
+          "mouth": [
+            197,
+            524
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ]
+        },
+        {
+          "anchors": [
+            [
+              123,
+              819
+            ],
+            [
+              395,
+              819
+            ],
+            [
+              660,
+              819
+            ],
+            [
+              927,
+              819
+            ]
+          ],
+          "canvas": [
+            -123,
+            -208,
+            277,
+            220
+          ],
+          "mouth": [
+            224,
+            816
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 282,
+              "height": 1254
+            },
+            {
+              "left": 282,
+              "top": 0,
+              "width": 273,
+              "height": 1254
+            },
+            {
+              "left": 555,
+              "top": 0,
+              "width": 268,
+              "height": 1254
+            },
+            {
+              "left": 823,
+              "top": 0,
+              "width": 297,
+              "height": 1254
+            }
+          ],
+          "anchorMethod": "L06 mature front-hoof registration r1: each original drawn supporting front-hoof silhouette ends at source y818 (retained source alpha >=200), so the common anatomical sole boundary is y819. All four anchors use this same boundary; sourceCanvas.top -208 preserves the original absolute source window top y611 and the original shared 277x220 canvas/scale. No source pixels are redrawn, no per-frame fitting is applied, and real head/mouth motion stays in the source."
+        }
+      ]
+    },
+    "L07": {
+      "key": "rabbit",
+      "kind": "greens",
+      "stages": [
+        {
+          "anchors": [
+            [
+              119,
+              234
+            ],
+            [
+              361,
+              234
+            ],
+            [
+              604,
+              234
+            ],
+            [
+              848,
+              234
+            ]
+          ],
+          "canvas": [
+            -85,
+            -125,
+            188,
+            137
+          ],
+          "mouth": [
+            179,
+            239
+          ]
+        },
+        {
+          "anchors": [
+            [
+              119,
+              503
+            ],
+            [
+              361,
+              503
+            ],
+            [
+              605,
+              503
+            ],
+            [
+              848,
+              503
+            ]
+          ],
+          "canvas": [
+            -108,
+            -157,
+            235,
+            178
+          ],
+          "mouth": [
+            201,
+            511
+          ]
+        },
+        {
+          "anchors": [
+            [
+              122,
+              779
+            ],
+            [
+              366,
+              779
+            ],
+            [
+              611,
+              779
+            ],
+            [
+              854,
+              779
+            ]
+          ],
+          "canvas": [
+            -122,
+            -190,
+            255,
+            215
+          ],
+          "mouth": [
+            217,
+            787
+          ]
+        }
+      ]
+    },
+    "L08": {
+      "key": "small-tailed-han-v1",
+      "kind": "hay",
+      "promptFile": "assets/livestock/raw/l08-small-tailed-han-v1/prompts-r9.md",
+      "stages": [
+        {
+          "anchors": [
+            [
+              155,
+              214
+            ],
+            [
+              437,
+              214
+            ],
+            [
+              720,
+              214
+            ],
+            [
+              1003,
+              214
+            ]
+          ],
+          "canvas": [
+            -120,
+            -158,
+            250,
+            176
+          ],
+          "mouth": [
+            235,
+            209
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 45,
+              "width": 294,
+              "height": 190
+            },
+            {
+              "left": 294,
+              "top": 45,
+              "width": 282,
+              "height": 190
+            },
+            {
+              "left": 576,
+              "top": 45,
+              "width": 282,
+              "height": 190
+            },
+            {
+              "left": 858,
+              "top": 45,
+              "width": 297,
+              "height": 190
+            }
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
+        },
+        {
+          "anchors": [
+            [
+              153,
+              438
+            ],
+            [
+              436,
+              438
+            ],
+            [
+              720,
+              438
+            ],
+            [
+              1001,
+              438
+            ]
+          ],
+          "canvas": [
+            -128,
+            -175,
+            268,
+            192
+          ],
+          "mouth": [
+            238,
+            433
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 250,
+              "width": 294,
+              "height": 210
+            },
+            {
+              "left": 294,
+              "top": 250,
+              "width": 282,
+              "height": 210
+            },
+            {
+              "left": 576,
+              "top": 250,
+              "width": 282,
+              "height": 210
+            },
+            {
+              "left": 858,
+              "top": 250,
+              "width": 297,
+              "height": 210
+            }
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
+        },
+        {
+          "anchors": [
+            [
+              151,
+              687
+            ],
+            [
+              433,
+              687
+            ],
+            [
+              716,
+              687
+            ],
+            [
+              998,
+              687
+            ]
+          ],
+          "canvas": [
+            -145,
+            -198,
+            294,
+            216
+          ],
+          "mouth": [
+            246,
+            670
+          ],
+          "cellRects": [
+            {
+              "left": 0,
+              "top": 480,
+              "width": 294,
+              "height": 225
+            },
+            {
+              "left": 294,
+              "top": 480,
+              "width": 282,
+              "height": 225
+            },
+            {
+              "left": 576,
+              "top": 480,
+              "width": 282,
+              "height": 225
+            },
+            {
+              "left": 858,
+              "top": 480,
+              "width": 297,
+              "height": 225
+            }
+          ],
+          "anchorMethod": "Small-tailed Han R9 original-reference warm palette source, actual1402x1122: manually register the foreground front planted hoof lower sole center and lower boundary from each real drawing. Sole pixels end at source y213/437/686 in all four frames per stage; boundary anchors are y214/438/687. X coordinates are the same anatomical foreground front hoof sole across cells, not bbox centers. Each stage shares one relative canvas and scale; cell isolation retains complete jaw/horn/ear/tail extremities. No per-frame fitting or whole-animal movement, and no RGB recoloring/noise removal/smoothing is performed."
+        }
+      ]
+    },
+    "L09": {
+      "key": "muscovy",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              113,
+              218
+            ],
+            [
+              369,
+              218
+            ],
+            [
+              621,
+              218
+            ],
+            [
+              875,
+              218
+            ]
+          ],
+          "canvas": [
+            -73,
+            -130,
+            180,
+            150
+          ],
+          "mouth": [
+            195,
+            227
+          ]
+        },
+        {
+          "anchors": [
+            [
+              113,
+              481
+            ],
+            [
+              367,
+              481
+            ],
+            [
+              621,
+              481
+            ],
+            [
+              875,
+              481
+            ]
+          ],
+          "canvas": [
+            -99,
+            -169,
+            222,
+            184
+          ],
+          "mouth": [
+            207,
+            482
+          ],
+          "anchorMethod": "L09 growing foreground webbed foot registration r1: the lowest retained foreground webbed foot pixels in all four original poses are at y480 (source alpha >=200). The common anatomical sole boundary is y481. The relative source canvas top -169 preserves the absolute window top y312 and the common 222x184 canvas and stage scale. The drawn head and mouth are retained."
+        },
+        {
+          "anchors": [
+            [
+              113,
+              744
+            ],
+            [
+              368,
+              744
+            ],
+            [
+              623,
+              744
+            ],
+            [
+              877,
+              744
+            ]
+          ],
+          "canvas": [
+            -110,
+            -182,
+            244,
+            207
+          ],
+          "mouth": [
+            225,
+            753
+          ]
+        }
+      ]
+    },
+    "L10": {
+      "key": "cattle",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              111,
+              234
+            ],
+            [
+              367,
+              234
+            ],
+            [
+              622,
+              234
+            ],
+            [
+              879,
+              234
+            ]
+          ],
+          "canvas": [
+            -75,
+            -118,
+            174,
+            134
+          ],
+          "mouth": [
+            182,
+            246
+          ]
+        },
+        {
+          "anchors": [
+            [
+              109,
+              491
+            ],
+            [
+              365,
+              491
+            ],
+            [
+              620,
+              491
+            ],
+            [
+              875,
+              491
+            ]
+          ],
+          "canvas": [
+            -100,
+            -149,
+            222,
+            174
+          ],
+          "mouth": [
+            190,
+            506
+          ]
+        },
+        {
+          "anchors": [
+            [
+              107,
+              771
+            ],
+            [
+              364,
+              771
+            ],
+            [
+              619,
+              771
+            ],
+            [
+              875,
+              771
+            ]
+          ],
+          "canvas": [
+            -107,
+            -190,
+            248,
+            212
+          ],
+          "mouth": [
+            210,
+            779
+          ],
+          "anchorMethod": "L10 mature supporting front-hoof registration r1: the lowest retained supporting front-hoof pixels in all four original poses are at y770 (source alpha >=200). The common anatomical sole boundary is y771. The relative source canvas top -190 preserves the absolute window top y581 and the common 248x212 canvas and stage scale. The drawn head and mouth are retained."
+        }
+      ]
+    },
+    "L11": {
+      "key": "l11-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              95,
+              235
+            ],
+            [
+              357,
+              235
+            ],
+            [
+              615,
+              235
+            ],
+            [
+              860,
+              235
+            ]
+          ],
+          "canvas": [
+            -67,
+            -187,
+            211,
+            197
+          ],
+          "mouth": [
+            217,
+            231
+          ],
+          "supportXRange": [
+            110,
+            164
+          ],
+          "anchorMethod": "Raw source: low left/foreground supporting toe on every frame. Match the planted toe location before resize with one shared canvas and scale."
+        }
+      ]
+    },
+    "L12": {
+      "key": "l12-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              119,
+              273
+            ],
+            [
+              361,
+              273
+            ],
+            [
+              606,
+              273
+            ],
+            [
+              851,
+              273
+            ]
+          ],
+          "canvas": [
+            -78,
+            -155,
+            212,
+            170
+          ],
+          "mouth": [
+            200,
+            279
+          ],
+          "supportXRange": [
+            94,
+            182
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L16": {
+      "key": "l16-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              116,
+              282
+            ],
+            [
+              365,
+              282
+            ],
+            [
+              611,
+              282
+            ],
+            [
+              861,
+              282
+            ]
+          ],
+          "canvas": [
+            -80,
+            -164,
+            210,
+            178
+          ],
+          "mouth": [
+            192,
+            285
+          ],
+          "supportXRange": [
+            86,
+            188
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L17": {
+      "key": "l17-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              122,
+              271
+            ],
+            [
+              371,
+              271
+            ],
+            [
+              620,
+              271
+            ],
+            [
+              870,
+              271
+            ]
+          ],
+          "canvas": [
+            -104,
+            -172,
+            238,
+            187
+          ],
+          "mouth": [
+            199,
+            275
+          ],
+          "supportXRange": [
+            90,
+            188
+          ],
+          "cellRects": [
+            {
+              "left": 20,
+              "top": 92,
+              "width": 243,
+              "height": 211
+            },
+            {
+              "left": 263,
+              "top": 92,
+              "width": 241,
+              "height": 211
+            },
+            {
+              "left": 504,
+              "top": 92,
+              "width": 251,
+              "height": 211
+            },
+            {
+              "left": 755,
+              "top": 92,
+              "width": 273,
+              "height": 211
+            }
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L14": {
+      "key": "l14-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              107,
+              231
+            ],
+            [
+              360,
+              231
+            ],
+            [
+              613,
+              231
+            ],
+            [
+              865,
+              231
+            ]
+          ],
+          "canvas": [
+            -59,
+            -116,
+            171,
+            129
+          ],
+          "mouth": [
+            189,
+            236
+          ],
+          "supportXRange": [
+            114,
+            167
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              103,
+              479
+            ],
+            [
+              356,
+              479
+            ],
+            [
+              608,
+              479
+            ],
+            [
+              860,
+              479
+            ]
+          ],
+          "canvas": [
+            -80,
+            -145,
+            210,
+            156
+          ],
+          "mouth": [
+            202,
+            480
+          ],
+          "supportXRange": [
+            108,
+            174
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              109,
+              745
+            ],
+            [
+              361,
+              745
+            ],
+            [
+              611,
+              745
+            ],
+            [
+              863,
+              745
+            ]
+          ],
+          "canvas": [
+            -108,
+            -216,
+            254,
+            229
+          ],
+          "mouth": [
+            229,
+            747
+          ],
+          "supportXRange": [
+            104,
+            176
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L15": {
+      "key": "l15-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              107,
+              228
+            ],
+            [
+              362,
+              227
+            ],
+            [
+              616,
+              227
+            ],
+            [
+              869,
+              225
+            ]
+          ],
+          "canvas": [
+            -65,
+            -116,
+            178,
+            127
+          ],
+          "mouth": [
+            183,
+            228
+          ],
+          "supportXRange": [
+            109,
+            166
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              102,
+              476
+            ],
+            [
+              355,
+              475
+            ],
+            [
+              605,
+              476
+            ],
+            [
+              858,
+              476
+            ]
+          ],
+          "canvas": [
+            -88,
+            -149,
+            222,
+            160
+          ],
+          "mouth": [
+            195,
+            475
+          ],
+          "supportXRange": [
+            108,
+            172
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              117,
+              745
+            ],
+            [
+              364,
+              745
+            ],
+            [
+              610,
+              745
+            ],
+            [
+              859,
+              745
+            ]
+          ],
+          "canvas": [
+            -104,
+            -182,
+            248,
+            193
+          ],
+          "mouth": [
+            221,
+            748
+          ],
+          "supportXRange": [
+            103,
+            178
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L18": {
+      "key": "l18-expansion-v1",
+      "kind": "greens",
+      "stages": [
+        {
+          "anchors": [
+            [
+              108,
+              241
+            ],
+            [
+              363,
+              241
+            ],
+            [
+              616,
+              241
+            ],
+            [
+              872,
+              240
+            ]
+          ],
+          "canvas": [
+            -60,
+            -113,
+            164,
+            145
+          ],
+          "mouth": [
+            179,
+            262
+          ],
+          "supportXRange": [
+            104,
+            169
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              107,
+              495
+            ],
+            [
+              364,
+              495
+            ],
+            [
+              619,
+              496
+            ],
+            [
+              875,
+              495
+            ]
+          ],
+          "canvas": [
+            -87,
+            -143,
+            204,
+            173
+          ],
+          "mouth": [
+            189,
+            512
+          ],
+          "supportXRange": [
+            85,
+            175
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              106,
+              772
+            ],
+            [
+              363,
+              772
+            ],
+            [
+              619,
+              772
+            ],
+            [
+              875,
+              772
+            ]
+          ],
+          "canvas": [
+            -105,
+            -186,
+            250,
+            212
+          ],
+          "mouth": [
+            205,
+            785
+          ],
+          "supportXRange": [
+            75,
+            189
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L25": {
+      "key": "l25-expansion-v1",
+      "kind": "greens",
+      "stages": [
+        {
+          "anchors": [
+            [
+              118,
+              244
+            ],
+            [
+              362,
+              244
+            ],
+            [
+              608,
+              244
+            ],
+            [
+              851,
+              244
+            ]
+          ],
+          "canvas": [
+            -57,
+            -104,
+            140,
+            124
+          ],
+          "mouth": [
+            176,
+            254
+          ],
+          "supportXRange": [
+            97,
+            163
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              116,
+              494
+            ],
+            [
+              361,
+              494
+            ],
+            [
+              605,
+              494
+            ],
+            [
+              860,
+              494
+            ]
+          ],
+          "canvas": [
+            -84,
+            -139,
+            190,
+            160
+          ],
+          "mouth": [
+            186,
+            503
+          ],
+          "supportXRange": [
+            72,
+            177
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              118,
+              758
+            ],
+            [
+              364,
+              758
+            ],
+            [
+              612,
+              758
+            ],
+            [
+              860,
+              758
+            ]
+          ],
+          "canvas": [
+            -104,
+            -179,
+            245,
+            206
+          ],
+          "mouth": [
+            214,
+            764
+          ],
+          "supportXRange": [
+            58,
+            185
+          ],
+          "mouthBounds": {
+            "x": 190,
+            "y": 262,
+            "width": 51,
+            "height": 29
+          },
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L26": {
+      "key": "l26-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              105,
+              224
+            ],
+            [
+              366,
+              224
+            ],
+            [
+              626,
+              224
+            ],
+            [
+              887,
+              224
+            ]
+          ],
+          "canvas": [
+            -44,
+            -103,
+            154,
+            113
+          ],
+          "mouth": [
+            179,
+            224
+          ],
+          "supportXRange": [
+            118,
+            167
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              103,
+              473
+            ],
+            [
+              364,
+              473
+            ],
+            [
+              627,
+              473
+            ],
+            [
+              887,
+              473
+            ]
+          ],
+          "canvas": [
+            -78,
+            -149,
+            207,
+            159
+          ],
+          "mouth": [
+            189,
+            468
+          ],
+          "supportXRange": [
+            108,
+            171
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              110,
+              719
+            ],
+            [
+              368,
+              720
+            ],
+            [
+              631,
+              720
+            ],
+            [
+              893,
+              720
+            ]
+          ],
+          "canvas": [
+            -99,
+            -187,
+            250,
+            197
+          ],
+          "mouth": [
+            201,
+            716
+          ],
+          "supportXRange": [
+            104,
+            173
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L19": {
+      "key": "l19-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              112,
+              274
+            ],
+            [
+              353,
+              274
+            ],
+            [
+              592,
+              274
+            ],
+            [
+              832,
+              274
+            ]
+          ],
+          "canvas": [
+            -88,
+            -152,
+            203,
+            165
+          ],
+          "mouth": [
+            193,
+            279
+          ],
+          "supportXRange": [
+            83,
+            194
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L20": {
+      "key": "l20-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              109,
+              271
+            ],
+            [
+              362,
+              271
+            ],
+            [
+              613,
+              271
+            ],
+            [
+              866,
+              271
+            ]
+          ],
+          "canvas": [
+            -90,
+            -228,
+            238,
+            243
+          ],
+          "mouth": [
+            231,
+            274
+          ],
+          "supportXRange": [
+            106,
+            178
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L22": {
+      "key": "l22-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              96,
+              267
+            ],
+            [
+              342,
+              267
+            ],
+            [
+              592,
+              267
+            ],
+            [
+              848,
+              267
+            ]
+          ],
+          "canvas": [
+            -81,
+            -180,
+            240,
+            198
+          ],
+          "mouth": [
+            220,
+            277
+          ],
+          "supportXRange": [
+            89,
+            189
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L23": {
+      "key": "l23-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              100,
+              258
+            ],
+            [
+              350,
+              258
+            ],
+            [
+              598,
+              258
+            ],
+            [
+              847,
+              258
+            ]
+          ],
+          "canvas": [
+            -68,
+            -160,
+            202,
+            183
+          ],
+          "mouth": [
+            198,
+            272
+          ],
+          "supportXRange": [
+            98,
+            171
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L21": {
+      "key": "l21-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              102,
+              223
+            ],
+            [
+              358,
+              223
+            ],
+            [
+              614,
+              223
+            ],
+            [
+              870,
+              223
+            ]
+          ],
+          "canvas": [
+            -54,
+            -111,
+            164,
+            124
+          ],
+          "mouth": [
+            187,
+            228
+          ],
+          "supportXRange": [
+            115,
+            166
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              99,
+              480
+            ],
+            [
+              356,
+              479
+            ],
+            [
+              612,
+              479
+            ],
+            [
+              869,
+              479
+            ]
+          ],
+          "canvas": [
+            -81,
+            -147,
+            216,
+            159
+          ],
+          "mouth": [
+            201,
+            482
+          ],
+          "supportXRange": [
+            113,
+            171
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              108,
+              743
+            ],
+            [
+              364,
+              743
+            ],
+            [
+              620,
+              743
+            ],
+            [
+              876,
+              743
+            ]
+          ],
+          "canvas": [
+            -99,
+            -184,
+            242,
+            196
+          ],
+          "mouth": [
+            215,
+            746
+          ],
+          "supportXRange": [
+            104,
+            173
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L24": {
+      "key": "l24-expansion-v1",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              111,
+              218
+            ],
+            [
+              368,
+              218
+            ],
+            [
+              624,
+              218
+            ],
+            [
+              879,
+              218
+            ]
+          ],
+          "canvas": [
+            -62,
+            -115,
+            169,
+            133
+          ],
+          "mouth": [
+            190,
+            226
+          ],
+          "supportXRange": [
+            114,
+            166
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              104,
+              475
+            ],
+            [
+              357,
+              475
+            ],
+            [
+              611,
+              475
+            ],
+            [
+              865,
+              475
+            ]
+          ],
+          "canvas": [
+            -77,
+            -146,
+            230,
+            162
+          ],
+          "mouth": [
+            213,
+            481
+          ],
+          "supportXRange": [
+            114,
+            169
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              108,
+              745
+            ],
+            [
+              360,
+              745
+            ],
+            [
+              612,
+              745
+            ],
+            [
+              864,
+              745
+            ]
+          ],
+          "canvas": [
+            -100,
+            -188,
+            282,
+            210
+          ],
+          "mouth": [
+            230,
+            757
+          ],
+          "supportXRange": [
+            107,
+            176
+          ],
+          "cellRects": [
+            {
+              "left": 10,
+              "top": 549,
+              "width": 245,
+              "height": 237
+            },
+            {
+              "left": 255,
+              "top": 549,
+              "width": 256,
+              "height": 237
+            },
+            {
+              "left": 511,
+              "top": 549,
+              "width": 257,
+              "height": 237
+            },
+            {
+              "left": 768,
+              "top": 549,
+              "width": 282,
+              "height": 237
+            }
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L13": {
+      "key": "l13-expansion-v2",
+      "kind": "nectar",
+      "stages": [
+        {
+          "anchors": [
+            [
+              145,
+              233
+            ],
+            [
+              382,
+              233
+            ],
+            [
+              626,
+              233
+            ],
+            [
+              870,
+              233
+            ]
+          ],
+          "canvas": [
+            -98,
+            -156,
+            210,
+            166
+          ],
+          "mouth": [
+            211,
+            221
+          ],
+          "supportXRange": [
+            95,
+            168
+          ],
+          "mouthBounds": {
+            "x": 174,
+            "y": 256,
+            "width": 26,
+            "height": 22
+          },
+          "anchorMethod": "Foreground plant-foot stance center on the original bee sheet, with a row-shared crop and scale; stable six-legged ground pose and separate motion painted in the head and proboscis."
+        }
+      ]
+    },
+    "L29": {
+      "key": "l29-expansion-v2",
+      "kind": "mulberry",
+      "stages": [
+        {
+          "anchors": [
+            [
+              145,
+              190
+            ],
+            [
+              381,
+              190
+            ],
+            [
+              618,
+              190
+            ],
+            [
+              853,
+              190
+            ]
+          ],
+          "canvas": [
+            -122,
+            -114,
+            213,
+            144
+          ],
+          "mouth": [
+            217,
+            179
+          ],
+          "supportXRange": [
+            67,
+            153
+          ],
+          "mouthBounds": {
+            "x": 158,
+            "y": 258,
+            "width": 49,
+            "height": 33
+          },
+          "anchorMethod": "Same anterior abdominal proleg stance on the mature larva across four poses; the mouth and front segments lower naturally at feeding, with a shared source canvas and scale."
+        }
+      ]
+    },
+    "L27": {
+      "key": "l27-expansion-v1",
+      "kind": "greens",
+      "stages": [
+        {
+          "anchors": [
+            [
+              116,
+              255
+            ],
+            [
+              363,
+              255
+            ],
+            [
+              609,
+              255
+            ],
+            [
+              855,
+              255
+            ]
+          ],
+          "canvas": [
+            -98,
+            -181,
+            239,
+            190
+          ],
+          "mouth": [
+            219,
+            252
+          ],
+          "supportXRange": [
+            105,
+            169
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L30": {
+      "key": "l30-expansion-v1",
+      "kind": "hay",
+      "stages": [
+        {
+          "anchors": [
+            [
+              108,
+              238
+            ],
+            [
+              363,
+              238
+            ],
+            [
+              618,
+              238
+            ],
+            [
+              873,
+              238
+            ]
+          ],
+          "canvas": [
+            -66,
+            -117,
+            173,
+            138
+          ],
+          "mouth": [
+            178,
+            249
+          ],
+          "supportXRange": [
+            103,
+            173
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              94,
+              496
+            ],
+            [
+              349,
+              496
+            ],
+            [
+              605,
+              496
+            ],
+            [
+              862,
+              496
+            ]
+          ],
+          "canvas": [
+            -81,
+            -145,
+            222,
+            171
+          ],
+          "mouth": [
+            182,
+            511
+          ],
+          "supportXRange": [
+            94,
+            187
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              95,
+              773
+            ],
+            [
+              350,
+              773
+            ],
+            [
+              605,
+              773
+            ],
+            [
+              860,
+              773
+            ]
+          ],
+          "canvas": [
+            -95,
+            -190,
+            251,
+            207
+          ],
+          "mouth": [
+            204,
+            782
+          ],
+          "supportXRange": [
+            78,
+            196
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    },
+    "L28": {
+      "key": "l28-expansion-v2",
+      "kind": "grain",
+      "stages": [
+        {
+          "anchors": [
+            [
+              112,
+              260
+            ],
+            [
+              381,
+              260
+            ],
+            [
+              652,
+              260
+            ],
+            [
+              916,
+              260
+            ]
+          ],
+          "canvas": [
+            -57,
+            -131,
+            158,
+            154
+          ],
+          "mouth": [
+            178,
+            273
+          ],
+          "supportXRange": [
+            110,
+            159
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              118,
+              525
+            ],
+            [
+              386,
+              525
+            ],
+            [
+              654,
+              525
+            ],
+            [
+              919,
+              525
+            ]
+          ],
+          "canvas": [
+            -86,
+            -163,
+            207,
+            176
+          ],
+          "mouth": [
+            195,
+            533
+          ],
+          "supportXRange": [
+            93,
+            169
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        },
+        {
+          "anchors": [
+            [
+              124,
+              818
+            ],
+            [
+              393,
+              818
+            ],
+            [
+              660,
+              819
+            ],
+            [
+              927,
+              819
+            ]
+          ],
+          "canvas": [
+            -114,
+            -222,
+            265,
+            240
+          ],
+          "mouth": [
+            225,
+            824
+          ],
+          "supportXRange": [
+            78,
+            178
+          ],
+          "anchorMethod": "Registered by manually locating each frame?s matching planted anatomical ground contact on the original grid. One shared relative canvas and scale throughout the stage."
+        }
+      ]
+    }
+  },
+  "expansionPromptFile": "assets/livestock/feeding-prompts-expansion.md"
+}

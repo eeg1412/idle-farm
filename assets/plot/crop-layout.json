@@ -569,7 +569,12 @@
         46,
         49,
         67,
-        68
+        68,
+        69,
+        70,
+        71,
+        72,
+        73
       ]
     },
     "vine": {
@@ -738,7 +743,12 @@
     "C65": "small",
     "C66": "small",
     "C67": "large",
-    "C68": "large"
+    "C68": "large",
+    "C69": "large",
+    "C70": "large",
+    "C71": "large",
+    "C72": "large",
+    "C73": "large"
   },
   "repeatBare": {
     "C05": {

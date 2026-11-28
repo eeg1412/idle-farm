@@ -1,0 +1,5305 @@
+{
+  "version": 1,
+  "generatedWith": "built-in image_gen",
+  "promptFile": "assets/mining/prompts.md",
+  "conversion": "isolated alpha crop; nearest-neighbor resize; WebP quality70 alpha100",
+  "sources": {
+    "items-A-v1": {
+      "path": "assets/mining/raw/items-A-v1.png",
+      "sha256": "90ed3cecdd2ce56d3b9fed36c5696496f5825bb835dbffa842b81d00adc79280",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen"
+    },
+    "items-B-v1": {
+      "path": "assets/mining/raw/items-B-v1.png",
+      "sha256": "cb928f29b8c6abb24fd7a2e469bae4c329ca816f5cab390846cd5790b922946e",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen"
+    },
+    "background-v1": {
+      "path": "assets/mining/raw/background-v1.png",
+      "sha256": "a33a3f20935dcf614d6f68e7cbe1f8a4a943954e7fa379115cd3c101a0e851c1",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen"
+    },
+    "cart-v1": {
+      "path": "assets/mining/raw/cart-v1.png",
+      "sha256": "e32478c848aa44d044ec04e677713d30dd86c546f0a7fa411a2148703e713551",
+      "width": 1492,
+      "height": 1054,
+      "generatedWith": "built-in image_gen"
+    },
+    "ui-v1": {
+      "path": "assets/mining/raw/ui-v1.png",
+      "sha256": "ab961a5e2e59f69f6220ad8db05e05e0138d1649cf013dc05b1d3f3339c8acc9",
+      "width": 1263,
+      "height": 1246,
+      "generatedWith": "built-in image_gen"
+    },
+    "items-C-v1": {
+      "path": "assets/mining/raw/items-C-v1.png",
+      "sha256": "2ccc0582bebabbeb190476b9355af6caad862c9860911b5a226809ab63e639c4",
+      "width": 2172,
+      "height": 724,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-items-C-v1.md",
+      "references": [
+        "assets/source/items/overrides/PM09.png",
+        "assets/source/items/overrides/PM10.png",
+        "assets/source/items/overrides/PM11.png",
+        "assets/source/items/overrides/PM13.png"
+      ],
+      "status": "superseded"
+    },
+    "items-C-v2-draft": {
+      "path": "assets/mining/raw/items-C-v2-draft.png",
+      "sha256": "5095647d181acae6573ce863add5bc182c03245c8d2219cd839b4f793c313f83",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-items-C-v2.md",
+      "references": [
+        "assets/source/items/overrides/PM09.png"
+      ],
+      "status": "draft"
+    },
+    "items-C-v2": {
+      "path": "assets/mining/raw/items-C-v2.png",
+      "sha256": "c7f5b60a7b58d82109fcba76a15964619689c93cf504cc8543a19867cb5816be",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-items-C-v2.md",
+      "references": [
+        "assets/mining/raw/items-C-v2-draft.png"
+      ]
+    },
+    "item-M10-v2": {
+      "path": "assets/mining/raw/item-M10-v2.png",
+      "sha256": "59c72b2dc9c878dbc3faccdb48b6763b9d5eb35a7bd64c6268d934ce2310e2b0",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-item-M10-v2.md",
+      "references": [
+        "assets/mining/raw/items-A-v1.png"
+      ]
+    },
+    "C69-C73-M11-M30": {
+      "path": "assets/source/items/raw/expansion-C69-C73-M11-M30.png",
+      "sha256": "ef1f5bc2fe70f29196a4acc7bb0b35eeed72f49e3007ab60ce8bab31269f66ae",
+      "width": 1254,
+      "height": 1254,
+      "ids": [
+        "C69",
+        "C70",
+        "C71",
+        "C72",
+        "C73",
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M15",
+        "M16",
+        "M17",
+        "M18",
+        "M19",
+        "M20",
+        "M21",
+        "M22",
+        "M23",
+        "M24",
+        "M25",
+        "M26",
+        "M27",
+        "M28",
+        "M29",
+        "M30"
+      ],
+      "prompt": "Produce a brand-new game production asset: a square alpha-transparent sprite atlas with exactly FIVE columns and FIVE rows, no lines or lettering or surrounding graphics. Three provided images are style-only references for this existing cozy farm game; use their color cluster scale, outlines and lighting. Each independent sprite uses actual stepped, pixel-sharp clusters and dark local outlines, three-quarter perspective, restrained light from top-left, no gradient or anti-aliasing. Place the following precisely centered in their own cells, never overlap. Object bounding box should occupy about 60% of the corresponding cell's width and height, exact blank transparent spacings. Row 1 left to right is five distinct pairs of raw cut logs: (1) Chinese-fir logs, reddish cinnamon fibrous straight bark and palest straw cross section, (2) masson pine logs with dark orange scaly plated bark, cream resin end and knots, (3) camphor logs with cool olive-gray deeply furrowed bark and pink-brown cross section, (4) nanmu logs with cinnamon-speckled gray-brown bark and golden fine-grained cross cut, (5) sandalwood logs with chestnut bark and strong rust orange center. Rows 2?5 each are raw mineral specimens, with individual visually distinctive naturally sourced pieces, no display platforms. Row 2: (1) chalk ivory porous limestone, (2) pale gray-white kaolin clay clods, (3) bright yellow sulfur crystal masses, (4) dark graphite vein flakes, (5) bronze mica laminated fan-like sheets. Row 3: (1) pastel mint and violet cube fluorite in matrix, (2) warm brick-orange nodular bauxite, (3) honey sphalerite zinc mineral in gray matrix, (4) heavy silver-gray right-angle galena lead cubes, (5) dark olive raw nickel ore with green patina. Row 4: (1) gray rock with light rose-pink cobalt mineral crust, (2) sharp brown-black tungsten ore blades in pale rock, (3) chipped brown-gray agate nodule exposing filmy vivid burnt orange and cream concentric bands, (4) coarse jadeite raw green surface broken out of beige rind, (5) turquoise blue raw stones with irregular black veins. Row 5: (1) rough royal blue lapis lazuli with gold and white inclusions, (2) cool charcoal host rock with small platinum silver grains, (3) rough ruby red hexagonal prism tightly grown in beige-gray matrix, (4) rough sapphire dark deep blue hexagonal prisms in warm gray matrix, (5) raw transparent pale octahedral diamond on small dark host rock. Strict 25 sprites. No repeated designs, letters, decoration, dividers, character, ground or floor, fake checkerboard or cast shadow. Canvas background and entire gutters must be actual alpha-transparent. The natural specimens should read at 96 by 96 pixels.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "assets/source/items/overrides/M01.png",
+        "assets/source/items/overrides/M05.png",
+        "assets/source/items/overrides/IM02.png"
+      ],
+      "yCuts": [
+        0,
+        250,
+        501,
+        752,
+        1003,
+        1254
+      ]
+    },
+    "PM69-PM73": {
+      "path": "assets/source/items/raw/expansion-PM69-PM73.png",
+      "sha256": "d84aa16a2cd8ab4db1c06b5c7952aae80463ab7b954960ebe739126292ba726f",
+      "width": 2172,
+      "height": 724,
+      "ids": [
+        "PM69",
+        "PM70",
+        "PM71",
+        "PM72",
+        "PM73"
+      ],
+      "prompt": "Draw exactly FIVE distinct tiny game inventory pixel sprites on one panoramic row, individually spaced in five equal horizontal slots, with genuinely transparent alpha and all silhouettes isolated. One row only, no other artwork. Existing cozy farm game references style only: dark local pixel-step outlines, top left light, chunky real discrete pixel clusters, no anti-aliasing or gradients. Show actual factory-sealed retail packaging, visible cap or seam and straightforward pictorial printed contents, no external food or dishes. Left to right: (1) white glazed porcelain soup jar shrink-wrapped tightly across lid and body with vermillion tamper strip, printed black silkie chicken and orange monkfish soup graphic; (2) closed aluminum pull-tab can of quail egg mackerel luncheon meat with cross-section egg and striped mackerel graphics; (3) sealed easy-open can of preserved quail egg grass carp congee, label shows pale creamy rice porrige with dark eggs and silvery grass carp; (4) sealed gray nickel can of fragrant cured pork and golden eel stew, sealed rubbed nickel closure, labels show striped preserved pork and golden eel; (5) closed ornate gift box with transparent lid seal and window showing wagyu and grouper divided on a cobalt-blue porcelain dish. Arrange only the five unique sealed packages at equal positions across the actual transparent canvas. Readable at 96px, no text or letters.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM12.webp",
+        "public/wiki/icons/PM20.webp",
+        "public/wiki/icons/PD17.webp"
+      ],
+      "yCuts": [
+        0,
+        724
+      ]
+    },
+    "IF16-IF30-IM17-IM26-v2": {
+      "path": "assets/source/items/raw/expansion-IF16-IF30-IM17-IM26-v2.png",
+      "sha256": "9f5cc6942204053f5d32635ed77a396794f31631177b2ab79f862a84efac8ca5",
+      "width": 1263,
+      "height": 1246,
+      "ids": [
+        "IF16",
+        "IF17",
+        "IF18",
+        "IF19",
+        "IF20",
+        "IF21",
+        "IF22",
+        "IF23",
+        "IF24",
+        "IF25",
+        "IF26",
+        "IF27",
+        "IF28",
+        "IF29",
+        "IF30",
+        "IM17",
+        "IM18",
+        "IM19",
+        "IM20",
+        "IM21",
+        "IM22",
+        "IM23",
+        "IM24",
+        "IM25",
+        "IM26"
+      ],
+      "prompt": "Draw a sprite atlas of 25 pixel-art WORKSHOP INGREDIENTS for a cozy estate game, with a blank genuinely transparent alpha background. Use 5 clean square grid columns by 5 rows, each sprite drawn only to the central 58 percent of its cell so transparent corridors are spacious. The game references are used only for style. Real chunky warm shaded pixel clusters and crisp dark stepped edges. No cast shadow, no ground, no decorative frames, no labels, no bins or bowls for the first three rows, no packaging. Rows indexed from top to bottom. First row: stack silvery catfish fillet cuts with soft pink; dark-skin patterned snakehead fillet slices; dried loaches with brown heads and curled bodies; golden eel segments cut with skin intact; thin ivory pufferfish slices. Second row: white pomfret flesh chunks with gray edge; cutlassfish stack of silver sections; split golden dried yellow croaker; skin-on mackerel striped fillets; two long dried golden brown saury. Third row: small heap of raw white fish-ball blanks; pale Pacific cod fillets with speckled skin; three speckled grouper crosscut chunks; small heap of pale orange lobe-shaped monkfish liver; a solid dark pink tuna belly block with distinctive ivory fat stripes. Fourth row: off-white quicklime lumps; one low unbaked clay block; tiny open preparation mixing cup with lemon yellow sulfur powder; mound of black graphite powder; flat separated translucent fanned bronze mica sheets. Fifth row: lavender and teal fluorite cut stone chunks; bright white angular aluminum ingot with stamped notch; blue gray zinc ingot with dark underside; heavy charcoal lead ingot bar with round worn edges; two lustrous warm nickel metal bars offset. Keep all sprites whole and separated with empty space, actual transparent alpha, absolute requirement. No text.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/IF03.webp",
+        "public/wiki/icons/IM05.webp",
+        "public/wiki/icons/IM07.webp"
+      ],
+      "yCuts": [
+        0,
+        249,
+        498,
+        747,
+        996,
+        1246
+      ]
+    },
+    "IM27-IM36-P181-P190-PL21-PL25": {
+      "path": "assets/source/items/raw/expansion-IM27-IM36-P181-P190-PL21-PL25.png",
+      "sha256": "65584b5c4a4aad255bf587004b1865cf7a8fb1060f0bf9760cdf74b15eaa1b65",
+      "width": 1254,
+      "height": 1254,
+      "ids": [
+        "IM27",
+        "IM28",
+        "IM29",
+        "IM30",
+        "IM31",
+        "IM32",
+        "IM33",
+        "IM34",
+        "IM35",
+        "IM36",
+        "P181",
+        "P182",
+        "P183",
+        "P184",
+        "P185",
+        "P186",
+        "P187",
+        "P188",
+        "P189",
+        "P190",
+        "PL21",
+        "PL22",
+        "PL23",
+        "PL24",
+        "PL25"
+      ],
+      "prompt": "New pixel-art inventory atlas, single alpha-transparent square PNG, exact five equally spaced columns and five equal row slots from canvas top to bottom, nothing in gutters. Use provided existing game item images as style references only. Actual dark locally colored stepped sharp clusters, limited color and crisp edges, no smoothing, no shadows, no gradients, gently top-left lighting. Each icon unique, readable at 96px. Maintain internal transparent blank space: each separate centered icon is 60% of its own cell; no overlap, no lettering or gridlines. Every retail package is physically closed and new, with visible seal or seam and either transparent inset window or simple pictorial label art; never use a standalone plate or bowl as packaging, never show a box flapped open, never put loose garnish or unboxed objects beside packages. Different package colors, materials, silhouettes, and contents identifiable. Follow exact slot positions left to right, top to bottom. R1 vivid cobalt-blue pigment in a rough mixing cup, looped shiny dark tungsten wire, an unfinished striped oval burnt-orange agate cabochon blank, partly shaped green jadeite blank, rough opaque turquoise cabochon blank with dark veins. R2 ultramarine lapis pigment heap in preparation bowl with gold flecks, bright white platinum ingot, unpolished ruby-red cylindrical blank, unpolished sapphire blue blank, partly faceted clear diamond-cutting blank. R3 five individually sealed products: kraft closed window box showing fir chopping board, seam-sealed kraft sack printed pine charcoal icon with black chunks through small window, closed window cardboard carton showing white anti-moth camphor balls, square closed kraft window box showing round fir steamer, tall kraft closed window box showing pine clothes hanger. R4 five individually sealed products: tall closed window carton showing camphorwood jewelry casket, slim closed paper window box showing fine sandalwood joss sticks, square closed window carton showing a floral carved nanmu pencil cup, sealed shipping carton printed with two-tier wooden organizer picture, sealed gift box with clear window for floral carved reddish sandalwood ornament. R5 sealed preserve jar with honey quail eggs visible, colorful sealed transparent-window bag of two-tone wool-alpaca yarn ball, capped glass bottle of honey donkey milk with gold bands, heat-sealed bag with braised pigeon cuts and quail eggs behind window, sealed pull-tab honey turkey leg can with drumstick label art.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/IM07.webp",
+        "public/wiki/icons/PM06.webp",
+        "public/wiki/icons/PM19.webp"
+      ],
+      "yCuts": [
+        0,
+        250,
+        493,
+        738,
+        995,
+        1254
+      ]
+    },
+    "PM74-PM83": {
+      "path": "assets/source/items/raw/expansion-PM74-PM83.png",
+      "sha256": "c5d8c52e7954dd11fd2bf9cbd17db65c817e728bf9791cd58c0e4bfbcea5767e",
+      "width": 1254,
+      "height": 1254,
+      "ids": [
+        "PM74",
+        "PM75",
+        "PM76",
+        "PM77",
+        "PM78",
+        "PM79",
+        "PM80",
+        "PM81",
+        "PM82",
+        "PM83"
+      ],
+      "prompt": "New pixel-art inventory atlas, single alpha-transparent square PNG, exact five equally spaced columns and five equal row slots from canvas top to bottom, nothing in gutters. Use provided existing game item images as style references only. Actual dark locally colored stepped sharp clusters, limited color and crisp edges, no smoothing, no shadows, no gradients, gently top-left lighting. Each icon unique, readable at 96px. Maintain internal transparent blank space: each separate centered icon is 60% of its own cell; no overlap, no lettering or gridlines. Every retail package is physically closed and new, with visible seal or seam and either transparent inset window or simple pictorial label art; never use a standalone plate or bowl as packaging, never show a box flapped open, never put loose garnish or unboxed objects beside packages. Different package colors, materials, silhouettes, and contents identifiable. Follow exact slot positions left to right, top to bottom. Exactly first TWO rows used, leave rows 3 to 5 entirely empty transparent. Row 1 ONLY: sealed window box showing fir steamer and pale porcelain vessel with golden quail egg and white cod filling; crimp-sealed aluminum ready meal box with printed imagery of smoked turkey and slender saury roast pieces; closed camphorwood gift case with window visible sealed white porcelain chicken monkfish soup jar; closed nanmu gift box with intact clear lid revealing bacon and grouper on cobalt porcelain plate; sealed window gift box showing tiny charcoal pack and metal stand next to marbled beef slices and pink tuna cuts in fitted compartments. Row 2 ONLY: closed reddish sandalwood gift box with window revealing closed porcelain milk-fish soup jar with blue bighead carp decal; closed light fir window box with dark sliced century eggs and smoked black carp; closed floral-carved nanmu box with window showing sealed aluminum tin with honey turkey and pomfret illustration; closed window gift set showing white ceramic incense tea piece, cod parcel and little capped mare-milk wine bottle; closed stately dark sandalwood gift box with platinum clasp and sealed clear segmented window showing luxurious wagyu, tuna belly, venison, orange monkfish liver. Window outlines and tamper seals distinct. All remaining grid cells MUST be empty alpha.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM12.webp",
+        "public/wiki/icons/PM20.webp",
+        "public/wiki/icons/PD17.webp"
+      ],
+      "yCuts": [
+        0,
+        280,
+        560,
+        790,
+        1020,
+        1254
+      ]
+    },
+    "PF31-PF40-PM24-PM38": {
+      "path": "assets/source/items/raw/expansion-PF31-PF40-PM24-PM38.png",
+      "sha256": "58c2235c1cf1fcb46d087790109bcea00e58753be98886e2d2965a6c843c3c83",
+      "width": 1254,
+      "height": 1254,
+      "ids": [
+        "PF31",
+        "PF32",
+        "PF33",
+        "PF34",
+        "PF35",
+        "PF36",
+        "PF37",
+        "PF38",
+        "PF39",
+        "PF40",
+        "PM24",
+        "PM25",
+        "PM26",
+        "PM27",
+        "PM28",
+        "PM29",
+        "PM30",
+        "PM31",
+        "PM32",
+        "PM33",
+        "PM34",
+        "PM35",
+        "PM36",
+        "PM37",
+        "PM38"
+      ],
+      "prompt": "New pixel-art inventory atlas, single alpha-transparent square PNG, exact five equally spaced columns and five equal row slots from canvas top to bottom, nothing in gutters. Use provided existing game item images as style references only. Actual dark locally colored stepped sharp clusters, limited color and crisp edges, no smoothing, no shadows, no gradients, gently top-left lighting. Each icon unique, readable at 96px. Maintain internal transparent blank space: each separate centered icon is 60% of its own cell; no overlap, no lettering or gridlines. Every retail package is physically closed and new, with visible seal or seam and either transparent inset window or simple pictorial label art; never use a standalone plate or bowl as packaging, never show a box flapped open, never put loose garnish or unboxed objects beside packages. Different package colors, materials, silhouettes, and contents identifiable. Follow exact slot positions left to right, top to bottom. R1 sealed window box of white cod and carp fillets, sealed window box of grouper and fugu slices, closed tin with monkfish liver and cod paste label art, closed can with pink tuna and striped mackerel picture, sealed window carton showing mixed fish balls and raw hot-pot pieces. R2 sealed transparent-window vacuum bag holding long saury, golden croaker and little loaches, sealed window gift box showing grouper cod and pomfret fish cuts, sealed window gift box showing vivid pink tuna with paler grouper and fugu sashimi, closed gift tin with printed monkfish bighead and smoked carp chowder illustration, sealed four-compartment seafood gift box with window showing tuna, monkfish liver, cod and fish balls. R3 sealed cream desiccant pouch with lime pebble pictogram, closed window box with white porcelain teacup, sealed yellow soap box with clear window around yellow sulfur bar, closed slim window box of black graphite drawing sticks, window-front sealed box holding pale amber mica lampshade in aluminum frame. R4 closed window box holding green fluorite night lamp with aluminum base, sealed box with window showing gray aluminum lunch box, sealed battery pack box with window showing two zinc carbon cells, closed window box displaying gray cast lead fishing sinkers, closed window carton exhibiting fork and spoon cutlery. R5 closed box with window displaying cobalt-blue-decorated porcelain plate, sealed box with window holding a tungsten bulb, closed window jewelry gift box showing amber agate bracelet, sealed black velvet-look box with window showing jade pendant with platinum clasp, closed dark-teal retail window box displaying turquoise drop earrings. Never expose item outside packaging.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM02.webp",
+        "public/wiki/icons/PM12.webp",
+        "public/wiki/icons/PM20.webp"
+      ],
+      "yCuts": [
+        0,
+        267,
+        501,
+        752,
+        1002,
+        1254
+      ]
+    },
+    "PM39-PM43-PD21-PD35-PM44-PM48": {
+      "path": "assets/source/items/raw/expansion-PM39-PM43-PD21-PD35-PM44-PM48.png",
+      "sha256": "33756f9c19555f83c528023724b1a93404bb2b2553f06288ec385f7f99be8c3d",
+      "width": 1254,
+      "height": 1254,
+      "ids": [
+        "PM39",
+        "PM40",
+        "PM41",
+        "PM42",
+        "PM43",
+        "PD21",
+        "PD22",
+        "PD23",
+        "PD24",
+        "PD25",
+        "PD26",
+        "PD27",
+        "PD28",
+        "PD29",
+        "PD30",
+        "PD31",
+        "PD32",
+        "PD33",
+        "PD34",
+        "PD35",
+        "PM44",
+        "PM45",
+        "PM46",
+        "PM47",
+        "PM48"
+      ],
+      "prompt": "New pixel-art inventory atlas, single alpha-transparent square PNG, exact five equally spaced columns and five equal row slots from canvas top to bottom, nothing in gutters. Use provided existing game item images as style references only. Actual dark locally colored stepped sharp clusters, limited color and crisp edges, no smoothing, no shadows, no gradients, gently top-left lighting. Each icon unique, readable at 96px. Maintain internal transparent blank space: each separate centered icon is 60% of its own cell; no overlap, no lettering or gridlines. Every retail package is physically closed and new, with visible seal or seam and either transparent inset window or simple pictorial label art; never use a standalone plate or bowl as packaging, never show a box flapped open, never put loose garnish or unboxed objects beside packages. Different package colors, materials, silhouettes, and contents identifiable. Follow exact slot positions left to right, top to bottom. R1 sealed window box with two ultra-blue mineral pigment pots, sealed jewelry window box with simple platinum band, sealed jewelry window box with ruby and platinum ring, sealed tall jewelry window box with brilliant blue sapphire platinum necklace, closed luxury window gift box displaying two platinum bands with diamonds. R2 clear heat-sealed vacuum bag with grilled smoked turkey leg, closed kraft pastry box with clear window showing pale donkey milk sponge cake inside fir steamer, closed camphorwood casket with clear display insert showing folded silk scarf, closed paper window box holding florid nanmu comb and alpaca scarf, closed sandalwood window gift case showing grilled marbled beef slices. R3 sealed vacuum bag with fir-plank roasted mackerel, sealed chip-pouch with window showing charcoal-grilled whole slender saury, closed box with sealed clear window showing pale steamed cod in fir steamer, closed nanmu window box holding orange monkfish liver slices, closed sandalwood gift box with window showing pink tuna and pale grouper. R4 sealed reel-top tin of black silkie-chicken grass carp soup with pictorial label, closed clear window box showing breaded cod cakes and quail egg, sealed tin with creamy milk and bighead fish head chowder pictorial label, sealed tin printed dish illustration of preserved pork and golden chopped eel stew, closed window gift box showing stripes of wagyu and salmon-colored tuna. R5 sealed aluminum camphor ball tin with sphere picture, closed clear window carton for fir wooden graphite pencils, closed window box with white porcelain incense burner and sandalwood incense, closed window box around pine-frame green fluorite ornament, sealed outer window carton around carved nanmu casket with orange agate inlay.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM12.webp",
+        "public/wiki/icons/PD16.webp",
+        "public/wiki/icons/PM21.webp"
+      ],
+      "yCuts": [
+        0,
+        264,
+        503,
+        756,
+        1003,
+        1254
+      ]
+    },
+    "PM49-PM58-PT51-PT55-PM59-PM68": {
+      "path": "assets/source/items/raw/expansion-PM49-PM58-PT51-PT55-PM59-PM68.png",
+      "sha256": "0549d49510dacb6d525f95e9d1087c19e44708896ac6a4d38ce084c780251097",
+      "width": 1254,
+      "height": 1254,
+      "ids": [
+        "PM49",
+        "PM50",
+        "PM51",
+        "PM52",
+        "PM53",
+        "PM54",
+        "PM55",
+        "PM56",
+        "PM57",
+        "PM58",
+        "PT51",
+        "PT52",
+        "PT53",
+        "PT54",
+        "PT55",
+        "PM59",
+        "PM60",
+        "PM61",
+        "PM62",
+        "PM63",
+        "PM64",
+        "PM65",
+        "PM66",
+        "PM67",
+        "PM68"
+      ],
+      "prompt": "New pixel-art inventory atlas, single alpha-transparent square PNG, exact five equally spaced columns and five equal row slots from canvas top to bottom, nothing in gutters. Use provided existing game item images as style references only. Actual dark locally colored stepped sharp clusters, limited color and crisp edges, no smoothing, no shadows, no gradients, gently top-left lighting. Each icon unique, readable at 96px. Maintain internal transparent blank space: each separate centered icon is 60% of its own cell; no overlap, no lettering or gridlines. Every retail package is physically closed and new, with visible seal or seam and either transparent inset window or simple pictorial label art; never use a standalone plate or bowl as packaging, never show a box flapped open, never put loose garnish or unboxed objects beside packages. Different package colors, materials, silhouettes, and contents identifiable. Follow exact slot positions left to right, top to bottom. R1 closed clear window carton showing sliced quail century eggs with dark centers; cream-white sealed glazed porcelain jar with red tamper strip and honeycomb illustration ; unopened slim aluminum mare milk wine can with horse vignette; closed window carton showing knit wool cardigan with nickel buttons; closed window carton showing lavender silk clutch with green jade clasp. R2 unopened aluminum fish tin with pull-tab and slender saury pictorial label; sealed wide rectangular aluminum foil-sealed tin with eel-like ribbonfish picture; tightly closed white porcelain retail soup jar with lid seal spanning lid and body and monkfish soup graphic; closed gift box with sealed window showing grouper meal on cobalt blue porcelain plate; closed pull-tab oil tuna can with sliced tuna and golden droplet artwork. R3 closed box of egg cod cake in fir steamer visible through sealed window; closed grill meal window-box displaying two sections for wagyu and golden saury; closed nanmu wood box with sealed window showing golden sticky turkey and pomfret; closed window carton showing fir plank loaded with dark cured pork and pale grouper; closed sandalwood gift box with sealed two-compartment window over marbled wagyu and pink tuna belly. R4 sealed crimped aluminum meal box with grilled turkey art; closed camphorwood casket with window showing rose silk scarf with platinum buckle; sealed retail gift box displaying sealed white-porcelain honey jar and tiny incense roll behind an intact transparent window; sealed nanmu box with transparent window showing alpaca shawl and jade clasp; sealed box displaying nickel stand, charcoal packets and multiple wagyu slices behind window. R5 closed aluminum sardine-style tin with mackerel stripes and charcoal smoke printed on colorful label; closed outer box showing white porcelain cod pot in closed fir steamer via shiny window; closed nanmu gift box displaying cobalt porcelain plate and pale pomfret behind closed window; closed camphor gift box with window displaying a gold aluminum croaker tin; closed sandalwood gift box displaying a white porcelain dish with pink tuna sashimi beneath clear sealed window.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM12.webp",
+        "public/wiki/icons/PM20.webp",
+        "public/wiki/icons/PD17.webp"
+      ],
+      "yCuts": [
+        0,
+        275,
+        508,
+        752,
+        1003,
+        1254
+      ]
+    },
+    "IM31-IM32-v2": {
+      "path": "assets/source/items/raw/expansion-IM31-IM32-v2.png",
+      "sha256": "39dcd125864d62d35f241dfe44397d618509c31e7725d45fb0e676f7d59a538e",
+      "width": 1774,
+      "height": 887,
+      "ids": [
+        "IM31",
+        "IM32"
+      ],
+      "prompt": "Draw precisely TWO distinct pixel-art workshop item sprites on one horizontal row, each in its own half of a genuinely alpha transparent canvas with ample blank middle space (no additional artwork). Match sharp hand-drawn pixel cluster edges, rich color and top-left lighting of the supplied estate-game style references. Left half, turquoise CABOCHON BLANK: a single coherent elongated oval pebble blank with a smooth domed top, an unfinished flat cut base seen along lower-right edge, matte opaque aqua surface, restrained one fine natural charcoal vein on the dome, no separate fragments, no fissures, no crystal facet edges or multi-rock pieces, distinguished from the supplied raw turquoise ore. Right half, natural LAZURITE PIGMENT: very fine ultramarine blue pigment with tiny scattered ochre mineral grains, in one plain open pale stone mixing bowl, absolutely undecorated exterior (no pattern, markings, flower, band, trim, emblem, ornate rims or foot). One open bowl with visible powder not a sale jar, no separate objects around it. Sharp stepped pixels and hand-picked limited tones for 96x96 game inventory icons, no smooth gradients, no shadows outside, no checkerboard, no text, no watermarks, only two sprites separated by a large transparent column.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/M25.webp",
+        "public/wiki/icons/IM27.webp",
+        "public/wiki/icons/IM29.webp"
+      ],
+      "columns": 2,
+      "yCuts": [
+        0,
+        887
+      ]
+    },
+    "PM24-PF33-PF39-v2": {
+      "path": "assets/source/items/raw/expansion-PM24-PF33-PF39-v2.png",
+      "sha256": "52f8b3c5b73cfc88ff0fc2531de9b27b9bb05bf2e22466fb05098b938e80390a",
+      "width": 2172,
+      "height": 724,
+      "ids": [
+        "PM24",
+        "PF33",
+        "PF39"
+      ],
+      "prompt": "Three separate sprites on one horizontal row of exactly THREE equal slots, gorgeous authentic stepped pixel-art retail labels for a cozy estate game. Single sheet, physically clear alpha in all blank gaps. Align items centered per slot and no crossing cells. Sharp discrete pixels, limited colors, top-left light. Existing references are style-only. At left: upright SMALL IVORY desiccant pouch, fully heat-sealed horizontal ridges at BOTH top and bottom, tiny blue-gray water droplet crossed out symbol, one clear narrow window revealing creamy OFF-WHITE irregular powdery quicklime grains / pale chalk pebbles absolutely no green or yellow. Include no other solids outside. Center: sealed carved-metal pull-tab can with vivid deep sea-blue and cream printed wrap. Show bright rust flat-headed MONKFISH with visible angler lure and prominent separate slender spotted pale greenish-gray COD with its chin barbel as two pictorial fish, with a swirled pale orange liver spread on one tiny stylized cracker graphic as part of the label. Sea-blue label strip divides contents. At right: gold metal factory-sealed luxury soup tin, intact gold rolled seam and ring tab, deep burgundy lower tin and ivory label. Clearly show printed imagery of THREE DISTINCT CONTENT FISH above a soup pictogram: (1) bright coral-orange wide flat monkfish with angled lure, (2) warm silver/tan wide-eyed massive bighead carp head, (3) darkest navy full slender black carp with blue scales and forked tail. Labels and icon components should read at 96px. No real soup or fish outside closed can. No lettering, surrounds, cast shadows or visible background.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM24.webp",
+        "public/wiki/icons/PF33.webp",
+        "public/wiki/icons/PM69.webp"
+      ],
+      "columns": 3,
+      "yCuts": [
+        0,
+        724
+      ]
+    },
+    "PM27-PM47-v2": {
+      "path": "assets/source/items/raw/expansion-PM27-PM47-v2.png",
+      "sha256": "b7544850f4483b21155c958b58f9c80f77c204d8c399d18e9f561c21b9d1f4f5",
+      "width": 1774,
+      "height": 887,
+      "ids": [
+        "PM27",
+        "PM47"
+      ],
+      "prompt": "Generate exactly TWO separate existing-style pixel art sealed retail item sprites, one wide transparent sheet with two equal slots, objects wholly separated by clear blank spaces. Original small game sprite texture, sharp stair-step chunky pixel clusters with dark warm local outlines and restrained light from upper-left. Keep both rendered fully and readable at 96px. LEFT slot: a tapered long black graphite sketch-stick retail slim cardboard box sealed with purple tamper tab and intact clear display window. Inside window align three thick solid rectangular graphite charcoal gray artist bars, all gray from end to end, absolutely no wood, no ferrule, no pencil head, no deformed long pencil. Blunt square-cut end face of each stick visibly black. RIGHT slot: one closed violet-blue thick cardboard RETAIL box with clearly visible top closure folded shut under cream seal and big clear square inset window with bright diagonal glass glint. Inside the box show a smaller distinct light pinewood four-sided rectangular frame, thick honey-yellow mitered edges and round knot, holding a bright mint-lilac raw fluorite cluster in its center, the frame is a stand-up wooden home ornament. The outer box and smaller pinewood frame must be separate obvious concentric silhouettes with different colors and sizes, packaging outer dimensions can be square. Actual transparent alpha exterior, no ground shadows, no checkerboard, no letters.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM27.webp",
+        "public/wiki/icons/PM45.webp",
+        "public/wiki/icons/PM47.webp"
+      ],
+      "columns": 2,
+      "yCuts": [
+        0,
+        887
+      ]
+    },
+    "PM59-PM74-PM75-v2": {
+      "path": "assets/source/items/raw/expansion-PM59-PM74-PM75-v2.png",
+      "sha256": "d6c7b65672096d965a8ed8d58e40ae11102327ce41b1a6a90184e4fcc54d9019",
+      "width": 2172,
+      "height": 724,
+      "ids": [
+        "PM59",
+        "PM74",
+        "PM75"
+      ],
+      "prompt": "Generate exactly the given number of individual pixel art sprites as one row of evenly spaced items on one panoramic, truly transparent alpha sheet. Match the supplied cozy estate game references, pixel clusters are visibly stepped and sharp, darkest local outlines, limited hue palette, soft top-left lighting, no smooth gradients or faux checkerboard. Each individually sealed retail package stays in its own wide slot with ample alpha gutters. No letters or random props. Exactly 3 evenly spaced slots. First slot: a gray foil retail ready-meal tray fully closed by a printed crimp-sealed metal lid, all four outer rims clearly sealed. TOP PRINTED label depicts ONLY ONE full grilled turkey drumstick with clear bone and grill marks, small charcoal and pine cone icon beside it, no whole bird. Second slot: closed gourmet gift carton color pine green and cream with an intact transparent inset window, with diagonal bright diagonal glass glints, showing a stacked fir steamer and a small lidded porcelain cup with quail egg. Label on cardboard border must show one recognizable gray-blue elongated cod with a small chin barbel and one visibly spotted quail egg pictogram. Third slot: fully closed rectangular silver aluminum retail tray that is crimp-sealed by transparent genuine film engaging all four edges, white diagonal highlight runs across center of film across product. Beneath film show distinct sliced golden turkey pieces, a long slim golden saury fish and a little black charcoal pile; preferably include small pinecone mark to distinguish the charcoal. Crimp edges present on all sides. Do not show exposed open trays or cut away packaging.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM59.webp",
+        "public/wiki/icons/PM74.webp",
+        "public/wiki/icons/PM75.webp"
+      ],
+      "columns": 3,
+      "yCuts": [
+        0,
+        724
+      ]
+    },
+    "PL21-PM76-PM78-v2": {
+      "path": "assets/source/items/raw/expansion-PL21-PM76-PM78-v2.png",
+      "sha256": "48c96b9280e3ed4f796ecd9a84dfba1017f5a9e8745e2789ecca5d945a9f114e",
+      "width": 2149,
+      "height": 732,
+      "ids": [
+        "PL21",
+        "PM76",
+        "PM78"
+      ],
+      "prompt": "Draw exactly THREE original small pixel-art shop icons for a cozy Chinese estate game, as one wide panoramic sequence of exactly three equal horizontal slots on genuinely clear alpha background. Leave transparent space around each and in between. Current item references provide palette/shading guidance only. True chunky discrete stepped pixels, restrained top-left light, small still life perspective. Left slot: one glass jar filled with honey-braised quail eggs visible through amber glass, small eggs are brown and ivory spotted; visible rigid sculpted brass twist-off metal cap with a bright folded red anti-tamper strip visibly spanning the cap-to-jar neck joint. No cloth or twine. Middle slot: reddish camphorwood closed gift carton with decorative corners and an inset transparent window with two diagonal glass shine streaks. Behind window: one white porcelain fully lidded soup jar, its printed label clearly shows a BLACK SILKIE CHICKEN at left and distinct flat-headed orange-red MONKFISH WITH DORSAL ANGLER LURE at right, visual fish icon and separate black chicken should be extremely legible at 96px. Right slot: closed dark red-and-gold gift carton with clear compartmented window and diagonal white glaze streak and small closure tab. Show visually separate items in four compartments for nickel barbeque stand, dark charcoal packet, white-marbled red wagyu strip, and fish. The fish compartment features a deep pure magenta bluefin tuna triangular fillet with one white diagonal fish muscle seam and a tiny recognizable blue whole-tuna head and tail label onto compartment; make the difference versus marbled wagyu unmistakable. No text, watermark, outer accessories, outside floor, silhouettes disconnected, leave abundant true empty transparent gutters.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM50.webp",
+        "public/wiki/icons/PM69.webp",
+        "public/wiki/icons/PM83.webp"
+      ],
+      "columns": 3,
+      "yCuts": [
+        0,
+        732
+      ]
+    },
+    "PM79-PM82-PM83-PT51-v2": {
+      "path": "assets/source/items/raw/expansion-PM79-PM82-PM83-PT51-v2.png",
+      "sha256": "1dfa7569d44bb21cb4c88b3356a2fc2e2167ad1002b195e9b1644d050830ad44",
+      "width": 2172,
+      "height": 724,
+      "ids": [
+        "PM79",
+        "PM82",
+        "PM83",
+        "PT51"
+      ],
+      "prompt": "Generate exactly the given number of individual pixel art sprites as one row of evenly spaced items on one panoramic, truly transparent alpha sheet. Match the supplied cozy estate game references, pixel clusters are visibly stepped and sharp, darkest local outlines, limited hue palette, soft top-left lighting, no smooth gradients or faux checkerboard. Each individually sealed retail package stays in its own wide slot with ample alpha gutters. No letters or random props. Exactly 4 evenly spaced slots. First from left: closed dark red sandalwood gift box with clearly diagonal specular marks on front transparent window. Visible behind clear glass one fully lidded white porcelain jar, front of jar shows a big bold blue bighead carp head beside separate short small milk drop and clearly visible gray long-eared donkey silhouette. Second: closed cream-and-blue decorative gift box with diagonal window glint and 3 fitted compartments. Show white porcelain tea incense vessel in one compartment, distinct elongated blue-gray COD with a chin barbel and white cod cutlet (make fish far larger than carton flowers) in middle, capped ivory mare-milk wine bottle with rich cobalt horse emblem on right. Third: closed deep mulberry mahogany luxury gift box with glint on transparent window, exactly four compartments 2x2. Printed highlights identifying contents boldly in each compartment: top-left bright pink strongly marbled wagyu square; top-right ruby red fillet with a clearly blue tuna fish silhouette; bottom-left dark red venison slice and brown antlered deer silhouette; bottom-right uneven tender amber monkfish cut with distinct orange angler fish with a curved glowing lure pictogram. Fourth: sealed pastel ivory-and-green carton with window and diagonal shine, round pale fir steamer containing three soft pale yellow steamed cakes. Add beyond doubt black/brown speckled quail egg graphic, plus recognizably elongated silver cod fish graphic with distinctive large head and chin whisker, both side-by-side on opaque box border. Keep these contents legible at 96px.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM79.webp",
+        "public/wiki/icons/PM82.webp",
+        "public/wiki/icons/PM83.webp"
+      ],
+      "columns": 4,
+      "yCuts": [
+        0,
+        724
+      ]
+    },
+    "PM79-PM82-v3": {
+      "path": "assets/source/items/raw/expansion-PM79-PM82-v3.png",
+      "sha256": "2ccd6c5d59ab6a2b49cdf953c9f0dcaec04ff885a128ec5156b8495c5a6c45f0",
+      "width": 2172,
+      "height": 724,
+      "ids": [
+        "PM79",
+        "PM82"
+      ],
+      "prompt": "Render only TWO sprites with a huge EMPTY transparent gutter between them, one left at x=25% and one right at x=75%, no grid, no scenery. Exterior alpha absolutely 0 throughout all blank space; NO haze, NO checkerboard printed, NO white or grey atmosphere, NO edges or shadows behind the subject silhouettes! Match the supplied original game's two item images and preserve package design, layout, colors, detailed pictograms and contents, drawing the edges as sharp genuine pixel clusters. Their low-res square canvas is only a source reference, not part of the new output. Alpha outside the contour is truly blank, not simulated. Leave margins at least one-quarter canvas height and no colored fringe. No added labels or marks. On left, dark red sandalwood square gift box closed with gold clasp and shiny transparent window. It contains a lidded white porcelain jar with clear artwork of a huge blue bighead carp head, big gray long-eared donkey and milk droplet. On right, cream and cobalt floral gift box closed by blue bow with well-lit sealed transparent window. Three compartments distinctly contain a white porcelain incense holder, bright silver-blue cod (chin barbel and cut fillet) and capped mare-milk wine bottle with printed blue horse emblem. Mirror the references' subject placements, details and packaging.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM79.webp",
+        "public/wiki/icons/PM82.webp"
+      ],
+      "columns": 2,
+      "yCuts": [
+        0,
+        724
+      ]
+    },
+    "PM83-PT51-v3": {
+      "path": "assets/source/items/raw/expansion-PM83-PT51-v3.png",
+      "sha256": "fa44c794d7d529c7fbc1a61060c2fc578f597e8275be75db83ad53468c50d596",
+      "width": 2172,
+      "height": 724,
+      "ids": [
+        "PM83",
+        "PT51"
+      ],
+      "prompt": "Render only TWO sprites with a huge EMPTY transparent gutter between them, one left at x=25% and one right at x=75%, no grid, no scenery. Exterior alpha absolutely 0 throughout all blank space; NO haze, NO checkerboard printed, NO white or grey atmosphere, NO edges or shadows behind the subject silhouettes! Match the supplied original game's two item images and preserve package design, layout, colors, detailed pictograms and contents, drawing the edges as sharp genuine pixel clusters. Their low-res square canvas is only a source reference, not part of the new output. Alpha outside the contour is truly blank, not simulated. Leave margins at least one-quarter canvas height and no colored fringe. No added labels or marks. On left, closed deep mulberry luxury gift box with transparent four-compartment window and platinum ornament. Distinct contents as input: upper left pink high-marbled wagyu; upper right ruby red tuna and small blue tuna label; bottom left deep burgundy venison and antlered deer label; bottom right pale amber monkfish liver and orange flat-headed monkfish with dorsal lure label. On right, closed buttercream gift box and green fabric bow with clear diagonal shine on sealed window, round light-fir steamer holding pastry, two unmistakable carton pictograms on opaque bottom band, spotted quail egg and silvery gray cod with chin barbel. Mirror the references' subject placements, details and packaging.",
+      "generatedWith": "built-in image_gen",
+      "references": [
+        "public/wiki/icons/PM83.webp",
+        "public/wiki/icons/PT51.webp"
+      ],
+      "columns": 2,
+      "yCuts": [
+        0,
+        724
+      ]
+    }
+  },
+  "items": {
+    "M01": {
+      "name": "岩盐",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 251,
+        "height": 251
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 34,
+        "top": 65,
+        "width": 201,
+        "height": 179
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 11,
+        "width": 82,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/M01.png",
+      "path": "public/wiki/icons/M01.webp",
+      "pngSha256": "dd27e56772795030e825e9af17bc0bc315a568b0b471130fd80a19140ae872f5",
+      "sha256": "003fee17a53d379ee847b281839ad4d428839843e81bd84370e360d3151f877a"
+    },
+    "M02": {
+      "name": "黏土",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 251,
+        "top": 0,
+        "width": 251,
+        "height": 251
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 277,
+        "top": 76,
+        "width": 212,
+        "height": 161
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 17,
+        "width": 82,
+        "height": 62
+      },
+      "png": "assets/source/items/overrides/M02.png",
+      "path": "public/wiki/icons/M02.webp",
+      "pngSha256": "940e0add171c3ef569a71854f6721fc158e102b147f6db9d4633e45888727a20",
+      "sha256": "3ed2f168bb4ac30c77cff8ac70c35989212ea438ff0e29b14d359bc67c8831fa"
+    },
+    "M03": {
+      "name": "石英砂",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 502,
+        "top": 0,
+        "width": 250,
+        "height": 251
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 518,
+        "top": 79,
+        "width": 214,
+        "height": 155
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 18,
+        "width": 82,
+        "height": 59
+      },
+      "png": "assets/source/items/overrides/M03.png",
+      "path": "public/wiki/icons/M03.webp",
+      "pngSha256": "f99e681cb85bad47380bc892fea7dcad40256b3cf8752aadc9766858ad1c9747",
+      "sha256": "af34873acf213334262807e2a06d0b95eb674adea317f266e2706d7e73ace7c4"
+    },
+    "M04": {
+      "name": "煤炭",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 752,
+        "top": 0,
+        "width": 251,
+        "height": 251
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 762,
+        "top": 65,
+        "width": 215,
+        "height": 179
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 14,
+        "width": 82,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/M04.png",
+      "path": "public/wiki/icons/M04.webp",
+      "pngSha256": "819c8f7525895a976c7c24b7b07abe4131eff9cf2a5f1f59fc1084a139ec5462",
+      "sha256": "1c98f07de98209474f5d6276b0b773e120cd2a3186c89601b4be717b5a9ee5b5"
+    },
+    "M05": {
+      "name": "铁矿石",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 1003,
+        "top": 0,
+        "width": 251,
+        "height": 251
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 1010,
+        "top": 63,
+        "width": 213,
+        "height": 176
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 14,
+        "width": 82,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/M05.png",
+      "path": "public/wiki/icons/M05.webp",
+      "pngSha256": "b07354e0c2f0f446e664aa89a5a726ba69df0da85461c7ed1482985e2a418341",
+      "sha256": "8bd7cafc0e46b34f684472de0a578fd3a4ec6c85237e59d3c1228e865411c401"
+    },
+    "M06": {
+      "name": "铜矿石",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 0,
+        "top": 251,
+        "width": 251,
+        "height": 251
+      },
+      "index": 5,
+      "sourceBounds": {
+        "left": 37,
+        "top": 303,
+        "width": 207,
+        "height": 180
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 12,
+        "width": 82,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/M06.png",
+      "path": "public/wiki/icons/M06.webp",
+      "pngSha256": "f14772b134f060100cd089cc1024b3b309edc8878a4cf15c3ff1711065637412",
+      "sha256": "a551b01f8f591b0d21f1780eadc0422bb69136293d92bc07a9fe9617771c6acb"
+    },
+    "M07": {
+      "name": "锡矿石",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 251,
+        "top": 251,
+        "width": 251,
+        "height": 251
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 280,
+        "top": 303,
+        "width": 206,
+        "height": 175
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 13,
+        "width": 82,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/M07.png",
+      "path": "public/wiki/icons/M07.webp",
+      "pngSha256": "817e587f0354643e9a0586539c8c3d37c90b8f4e96cdfe20a3ec55f892208ec5",
+      "sha256": "96f7c96002c2429994fd6cb85e71472a030e17f33cffdd4ed0aa8fde4267fe9c"
+    },
+    "M08": {
+      "name": "银矿石",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 502,
+        "top": 251,
+        "width": 250,
+        "height": 251
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 520,
+        "top": 308,
+        "width": 207,
+        "height": 173
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 13,
+        "width": 82,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/M08.png",
+      "path": "public/wiki/icons/M08.webp",
+      "pngSha256": "b43184a65c863877fa71bc0956b9581ca61fedea1d6ff875122e09bc3f19f8f6",
+      "sha256": "5d9195433f13b58decd27cdb56736596feb12735d48f5989b0372e4e26bbe609"
+    },
+    "M09": {
+      "name": "金矿石",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 752,
+        "top": 251,
+        "width": 251,
+        "height": 251
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 765,
+        "top": 303,
+        "width": 207,
+        "height": 173
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 13,
+        "width": 82,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/M09.png",
+      "path": "public/wiki/icons/M09.webp",
+      "pngSha256": "b8447f201b98454ad0e05c0c09b1c832fb12c84d952a4e3aabfa1439fe9ba8ac",
+      "sha256": "9d07a507bbdc4a661e52f1ca239584f6ee62a3c3b9cc72b0cc2dfe0f97ea80b6"
+    },
+    "M10": {
+      "name": "紫宝石原矿",
+      "source": "item-M10-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 1254,
+        "height": 1254
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 135,
+        "top": 161,
+        "width": 990,
+        "height": 927
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 9,
+        "width": 82,
+        "height": 77
+      },
+      "png": "assets/source/items/overrides/M10.png",
+      "path": "public/wiki/icons/M10.webp",
+      "pngSha256": "2398fbfe6769f8dd91f81ecd5ebb74bc0b2f9cb4ff43db31f8a9dca4b534e1d5",
+      "sha256": "288d841656ce0fb75550c54889872cf9088c7cc201215b0e91f451e461b637a2"
+    },
+    "IM01": {
+      "name": "食用精盐",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 0,
+        "top": 502,
+        "width": 251,
+        "height": 250
+      },
+      "index": 10,
+      "sourceBounds": {
+        "left": 31,
+        "top": 558,
+        "width": 218,
+        "height": 152
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 19,
+        "width": 82,
+        "height": 57
+      },
+      "png": "assets/source/items/overrides/IM01.png",
+      "path": "public/wiki/icons/IM01.webp",
+      "pngSha256": "54d9b97c76816576d136cb1c5db2c28bf85c5cf180e0b01b4024631d922e1e67",
+      "sha256": "6a24f35d4a9f9e4b9d2166ace33be40bd9fc46fe3302ba7777ef9fb6fe98eb91"
+    },
+    "IM02": {
+      "name": "陶坯",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 251,
+        "top": 502,
+        "width": 251,
+        "height": 250
+      },
+      "index": 11,
+      "sourceBounds": {
+        "left": 280,
+        "top": 542,
+        "width": 200,
+        "height": 173
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 12,
+        "width": 82,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/IM02.png",
+      "path": "public/wiki/icons/IM02.webp",
+      "pngSha256": "c1afbd25e44803cacccacc0114b311ff532baceaff789a6f2fc260c11085bc18",
+      "sha256": "1223098b95ec451b5bc7e2a4d800edba0139c274799aec75424b4c009f3a59c0"
+    },
+    "IM03": {
+      "name": "玻璃坯",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 502,
+        "top": 502,
+        "width": 250,
+        "height": 250
+      },
+      "index": 12,
+      "sourceBounds": {
+        "left": 517,
+        "top": 542,
+        "width": 216,
+        "height": 175
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 66
+      },
+      "png": "assets/source/items/overrides/IM03.png",
+      "path": "public/wiki/icons/IM03.webp",
+      "pngSha256": "3754fab41afa1ff96047b342f2438603acf4ade4ad7ff3af88ecb48b59ccbb0c",
+      "sha256": "6b55856834eb50cfa93624986ae6ed86c07faad5c799e77bb572f2dfe0dda0da"
+    },
+    "IM04": {
+      "name": "精制煤粉",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 752,
+        "top": 502,
+        "width": 251,
+        "height": 250
+      },
+      "index": 13,
+      "sourceBounds": {
+        "left": 762,
+        "top": 555,
+        "width": 217,
+        "height": 155
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 18,
+        "width": 82,
+        "height": 59
+      },
+      "png": "assets/source/items/overrides/IM04.png",
+      "path": "public/wiki/icons/IM04.webp",
+      "pngSha256": "d1c43bb874508e45ad264de92e55477cd23ce3e7c30e06f1b94a1598b7b8379a",
+      "sha256": "20c07f5ad5967dbffe67851270f19dd8eb76a058d78368c57e536a1606a4c3b9"
+    },
+    "IM05": {
+      "name": "熟铁锭",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 1003,
+        "top": 502,
+        "width": 251,
+        "height": 250
+      },
+      "index": 14,
+      "sourceBounds": {
+        "left": 1010,
+        "top": 552,
+        "width": 213,
+        "height": 159
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 17,
+        "width": 82,
+        "height": 61
+      },
+      "png": "assets/source/items/overrides/IM05.png",
+      "path": "public/wiki/icons/IM05.webp",
+      "pngSha256": "6d059e7b280117204e6925df84b93128a058530b8c5557398ce4a87e7d5242eb",
+      "sha256": "b359ccb7338613996a5f872fc842b121cc422c158022c78f9aea86797dafe525"
+    },
+    "IM06": {
+      "name": "铜锭",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 0,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 15,
+      "sourceBounds": {
+        "left": 34,
+        "top": 793,
+        "width": 207,
+        "height": 147
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 19,
+        "width": 82,
+        "height": 58
+      },
+      "png": "assets/source/items/overrides/IM06.png",
+      "path": "public/wiki/icons/IM06.webp",
+      "pngSha256": "696ca491332ed9138fde3a57ee5073701c784e6a5f5b34b311a4f1be4fac703e",
+      "sha256": "8ba7e770ae8c09609c13bff6db280c70e6cce86fdb8cccd0fbd17771c2cd7fe7"
+    },
+    "IM07": {
+      "name": "锡锭",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 251,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 16,
+      "sourceBounds": {
+        "left": 281,
+        "top": 794,
+        "width": 203,
+        "height": 146
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 18,
+        "width": 82,
+        "height": 59
+      },
+      "png": "assets/source/items/overrides/IM07.png",
+      "path": "public/wiki/icons/IM07.webp",
+      "pngSha256": "55f1d68b02fa64a463bc128ede631eaa2912b8439948ce4f4abeb697fbf04362",
+      "sha256": "acf681df5f1fcfd31379fd92aa9486aaaa0ba65f453b696c6e8150e56f02a3db"
+    },
+    "IM08": {
+      "name": "银锭",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 502,
+        "top": 752,
+        "width": 250,
+        "height": 251
+      },
+      "index": 17,
+      "sourceBounds": {
+        "left": 521,
+        "top": 789,
+        "width": 208,
+        "height": 154
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 17,
+        "width": 82,
+        "height": 61
+      },
+      "png": "assets/source/items/overrides/IM08.png",
+      "path": "public/wiki/icons/IM08.webp",
+      "pngSha256": "96ddf94b766ff9bd9bd377baf8141085560c45219d6fa8ea6096fae137c27c86",
+      "sha256": "cff89ab029f4982d76427d958a6cf48d7052229074aa874c8a1f16a7874b7eac"
+    },
+    "IM09": {
+      "name": "金锭",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 752,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 18,
+      "sourceBounds": {
+        "left": 767,
+        "top": 791,
+        "width": 210,
+        "height": 152
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 18,
+        "width": 82,
+        "height": 59
+      },
+      "png": "assets/source/items/overrides/IM09.png",
+      "path": "public/wiki/icons/IM09.webp",
+      "pngSha256": "7c5324d1f299599ee9b328a093aaabbf4f354d444bb116e91ad1e51f2f534aa3",
+      "sha256": "586e36222c1d5b5991153774d4158def9cf47796b6da647d0a70750a63b220da"
+    },
+    "IM10": {
+      "name": "紫宝石坯",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 1003,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 19,
+      "sourceBounds": {
+        "left": 1021,
+        "top": 781,
+        "width": 186,
+        "height": 159
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 13,
+        "width": 82,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/IM10.png",
+      "path": "public/wiki/icons/IM10.webp",
+      "pngSha256": "2c0b94188f040b434c8f1ca89b46be86805808161d9a33bcf3d326601ac6dbc0",
+      "sha256": "01dc2abf7b8441e0a52d673f2c2014feb0019cb42a64afca98f4b01ca197d92e"
+    },
+    "IM11": {
+      "name": "金盏花浴盐基",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 0,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 20,
+      "sourceBounds": {
+        "left": 29,
+        "top": 1016,
+        "width": 221,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 66
+      },
+      "png": "assets/source/items/overrides/IM11.png",
+      "path": "public/wiki/icons/IM11.webp",
+      "pngSha256": "71831f01a08b0fa52e6dbe53ef43ad66ac4c1ecfa77668916cf3647f1babbbf0",
+      "sha256": "68fb1309f40792526f12524a5610bb9bd969bbf958daaec6e7f28843023f0f1f"
+    },
+    "IM12": {
+      "name": "黄麻煤饼",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 251,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 21,
+      "sourceBounds": {
+        "left": 275,
+        "top": 1006,
+        "width": 213,
+        "height": 189
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 11,
+        "width": 82,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/IM12.png",
+      "path": "public/wiki/icons/IM12.webp",
+      "pngSha256": "1920fad97acdf0b5f29541956ce0b2e7f628c25fb5d2df2b8fa568fca84790f3",
+      "sha256": "015ae4243fc5f85460f0d93f41f31f00384f736d3920284b477304c2b4f088e3"
+    },
+    "IM13": {
+      "name": "盐腌鸭肉馅",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 502,
+        "top": 1003,
+        "width": 250,
+        "height": 251
+      },
+      "index": 22,
+      "sourceBounds": {
+        "left": 510,
+        "top": 1016,
+        "width": 224,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 65
+      },
+      "png": "assets/source/items/overrides/IM13.png",
+      "path": "public/wiki/icons/IM13.webp",
+      "pngSha256": "319d44d5b5593006f7b7b5c283555ec9d8f556a5bbc012c22128e9365afdac15",
+      "sha256": "7d6dd0b3292f65f1941b02f9f19b215fd220732a5d34f42dbe576ecc654aacda"
+    },
+    "IM14": {
+      "name": "陶盅羊汤坯",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 752,
+        "top": 1003,
+        "width": 238,
+        "height": 251
+      },
+      "index": 23,
+      "sourceBounds": {
+        "left": 761,
+        "top": 1003,
+        "width": 211,
+        "height": 206
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 8,
+        "width": 82,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/IM14.png",
+      "path": "public/wiki/icons/IM14.webp",
+      "pngSha256": "679e808e5f4473ff7db966ffa4aba9bc6ba7aa12635b8de9a453401a91a4ccf3",
+      "sha256": "97d452e5eced9fd41f01b1e9356b1306d1289e93a3ee2cd19a09117dc7212574"
+    },
+    "IM15": {
+      "name": "盐渍鲤鱼丁",
+      "source": "items-A-v1",
+      "cell": {
+        "left": 1003,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 24,
+      "sourceBounds": {
+        "left": 1003,
+        "top": 1018,
+        "width": 223,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 65
+      },
+      "png": "assets/source/items/overrides/IM15.png",
+      "path": "public/wiki/icons/IM15.webp",
+      "pngSha256": "2ca50559850358eb28316e83e9b17de6e79c63662b6aea33b6dafa196e737671",
+      "sha256": "4d51012eac228160905b927e3a0352a72c485ca658b796bf7461ee595c3b5a20"
+    },
+    "IM16": {
+      "name": "陶盅鲫鱼糕坯",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 251,
+        "height": 265
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 30,
+        "top": 57,
+        "width": 193,
+        "height": 186
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 8,
+        "width": 82,
+        "height": 79
+      },
+      "png": "assets/source/items/overrides/IM16.png",
+      "path": "public/wiki/icons/IM16.webp",
+      "pngSha256": "9e0cadabfb4d09a8919ae2b61070ff5ff8a1648d8fe70db375c1fcd515559af4",
+      "sha256": "3a5c0b71f435cc257ecf6f17782bdf311f04a006de0baac2db112b78bf586397"
+    },
+    "PM01": {
+      "name": "铸铁煤炉",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 251,
+        "top": 0,
+        "width": 251,
+        "height": 265
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 265,
+        "top": 33,
+        "width": 214,
+        "height": 217
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 7,
+        "width": 81,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM01.png",
+      "path": "public/wiki/icons/PM01.webp",
+      "pngSha256": "dd2b38d36716a13744ec6c60da8016c0fe2e468f472127bfd1d79f7655873054",
+      "sha256": "63dcb8bb8dae6a96178c45d04c2bfb9b195001d6b5e7d3bbb4c3a8cd255602da"
+    },
+    "PM02": {
+      "name": "锡衬铜水壶",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 502,
+        "top": 0,
+        "width": 250,
+        "height": 265
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 507,
+        "top": 13,
+        "width": 227,
+        "height": 235
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 7,
+        "width": 79,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM02.png",
+      "path": "public/wiki/icons/PM02.webp",
+      "pngSha256": "bd6e14f4b70a9d0cbaa8aeb3ab01840635f5a62367ba9851cdc66d95cfc1e6ed",
+      "sha256": "a0cc3d867ec2b6a743e642eca3d42a05a5b5877c52a9cf84411d00d4b675f6b2"
+    },
+    "PM03": {
+      "name": "银镶宝石胸针",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 752,
+        "top": 0,
+        "width": 251,
+        "height": 265
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 769,
+        "top": 18,
+        "width": 212,
+        "height": 235
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 7,
+        "width": 74,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM03.png",
+      "path": "public/wiki/icons/PM03.webp",
+      "pngSha256": "aeeb8e80b337fd3e9736e53f6baa3f27f014d3fd970146f166ea140842f5515e",
+      "sha256": "b9eb81b41f837756e995af2bcfb06e51941f1f9f5823e7177196b18d5b430caf"
+    },
+    "PM04": {
+      "name": "金饰玻璃摆件",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 1003,
+        "top": 0,
+        "width": 251,
+        "height": 265
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 1026,
+        "top": 32,
+        "width": 207,
+        "height": 211
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 7,
+        "width": 80,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM04.png",
+      "path": "public/wiki/icons/PM04.webp",
+      "pngSha256": "eeb8c8a547149583acb1fb77c388650c4f59ea2df2a9a0d0b7bda589937181a9",
+      "sha256": "a0e3727344e484d7b41a9b1303be3c527dbd41414dbb27d4c92b9ccc3e44fb33"
+    },
+    "PM05": {
+      "name": "玻璃瓶食盐",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 0,
+        "top": 265,
+        "width": 251,
+        "height": 265
+      },
+      "index": 5,
+      "sourceBounds": {
+        "left": 49,
+        "top": 274,
+        "width": 160,
+        "height": 249
+      },
+      "contentBounds": {
+        "x": 21,
+        "y": 7,
+        "width": 53,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM05.png",
+      "path": "public/wiki/icons/PM05.webp",
+      "pngSha256": "3c7b77c74c402276d38e55007393362cfa1d74d37b0fec73b438795bf40ff2f6",
+      "sha256": "495cce6d7d96c95379122f93cd8db3c0c0ae754a7be636668ce20c0b63d66e5b"
+    },
+    "PM06": {
+      "name": "薰衣草金盏花浴盐罐",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 251,
+        "top": 265,
+        "width": 251,
+        "height": 265
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 268,
+        "top": 277,
+        "width": 211,
+        "height": 246
+      },
+      "contentBounds": {
+        "x": 13,
+        "y": 7,
+        "width": 70,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM06.png",
+      "path": "public/wiki/icons/PM06.webp",
+      "pngSha256": "5ccbc26efa480d1e56443ca97028520c910054377fab9d91cf2d211aa8a6142b",
+      "sha256": "2bee2c9cb8884d2024116f2f25284fdfae31432755abe74375ba59f8c4205e5f"
+    },
+    "PM07": {
+      "name": "艾香铜炉套装",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 502,
+        "top": 265,
+        "width": 250,
+        "height": 265
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 502,
+        "top": 288,
+        "width": 243,
+        "height": 234
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 8,
+        "width": 82,
+        "height": 79
+      },
+      "png": "assets/source/items/overrides/PM07.png",
+      "path": "public/wiki/icons/PM07.webp",
+      "pngSha256": "d3a5e1eb8e12873476a784cfb593cd6709c385f4293a04afc201c07ec0bd89cd",
+      "sha256": "6ce5fc28ff97f883957180f3acb855178b3f35db2c773c4fc6366b6893b2792a"
+    },
+    "PM08": {
+      "name": "花草茶玻璃礼罐",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 752,
+        "top": 265,
+        "width": 251,
+        "height": 265
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 782,
+        "top": 278,
+        "width": 195,
+        "height": 245
+      },
+      "contentBounds": {
+        "x": 15,
+        "y": 7,
+        "width": 65,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM08.png",
+      "path": "public/wiki/icons/PM08.webp",
+      "pngSha256": "4a499dce6461bccb1596fa9c66e676ce32824add4b2281f3dc2c0b9dc1b9b796",
+      "sha256": "ad9e995a215acb91ae86ad586d5c6900b7c53721c563e794544a04bbd8829917"
+    },
+    "PM09": {
+      "name": "玻璃罐双肉午餐肉",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 1003,
+        "top": 265,
+        "width": 251,
+        "height": 265
+      },
+      "index": 9,
+      "sourceBounds": {
+        "left": 1016,
+        "top": 281,
+        "width": 223,
+        "height": 242
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 7,
+        "width": 76,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM09.png",
+      "path": "public/wiki/icons/PM09.webp",
+      "pngSha256": "f402b409bd2eeaf596ca1b3cec6c63b98f59d41c6856cddb83b74641fd7e66f4",
+      "sha256": "fa6abba7da26a2eb5359f546813102a51a948156521a9a26cafaafe72769cff4"
+    },
+    "PM10": {
+      "name": "陶盅浓香牛羊汤",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 0,
+        "top": 530,
+        "width": 251,
+        "height": 285
+      },
+      "index": 10,
+      "sourceBounds": {
+        "left": 14,
+        "top": 549,
+        "width": 230,
+        "height": 257
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 7,
+        "width": 73,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM10.png",
+      "path": "public/wiki/icons/PM10.webp",
+      "pngSha256": "38c520b18cbff517ace04d527d8a0397620f5c4b354fb45a8a65d740788fe7db",
+      "sha256": "f5c6176d3ac2b0d222f5056a14e0110f02fb6de4851447782ce7c146f322c23e"
+    },
+    "PM11": {
+      "name": "铁罐兔肉松",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 251,
+        "top": 530,
+        "width": 251,
+        "height": 285
+      },
+      "index": 11,
+      "sourceBounds": {
+        "left": 267,
+        "top": 544,
+        "width": 212,
+        "height": 260
+      },
+      "contentBounds": {
+        "x": 14,
+        "y": 7,
+        "width": 67,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM11.png",
+      "path": "public/wiki/icons/PM11.webp",
+      "pngSha256": "4ed61535a3a2038893ddce9d917ba8f32247edd617a37d5045c7a7f7915f179a",
+      "sha256": "db95ecb28cd8d15ef69220c76f87a0a49810aaca13d1a72bbdb266409557ee95"
+    },
+    "PM12": {
+      "name": "玻璃罐鳗鲤鱼酱",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 502,
+        "top": 530,
+        "width": 250,
+        "height": 285
+      },
+      "index": 12,
+      "sourceBounds": {
+        "left": 513,
+        "top": 571,
+        "width": 215,
+        "height": 233
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 7,
+        "width": 76,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM12.png",
+      "path": "public/wiki/icons/PM12.webp",
+      "pngSha256": "4da17a1138481ca50c7a47c0f54dd610e285ec706730d2180f7c73df56157b99",
+      "sha256": "50f56349721f62f307cf133d86222c79c601b7dc213781804846bdf5be73ce94"
+    },
+    "PM13": {
+      "name": "陶盅双鱼冻糕",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 752,
+        "top": 530,
+        "width": 238,
+        "height": 285
+      },
+      "index": 13,
+      "sourceBounds": {
+        "left": 755,
+        "top": 550,
+        "width": 233,
+        "height": 256
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 7,
+        "width": 75,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM13.png",
+      "path": "public/wiki/icons/PM13.webp",
+      "pngSha256": "2e8f9b7f23009160995f2f6ee8b06688adf76308d984305a5dc2d16c0851280e",
+      "sha256": "f8bc2bdb91022e9cf0e7b4eb109cd953413f5037ec4be9be99926b4a1eab5376"
+    },
+    "PM14": {
+      "name": "锡衬铜盘鲈鱼片",
+      "source": "items-B-v1",
+      "cell": {
+        "left": 1003,
+        "top": 530,
+        "width": 251,
+        "height": 285
+      },
+      "index": 14,
+      "sourceBounds": {
+        "left": 1003,
+        "top": 577,
+        "width": 242,
+        "height": 224
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 76
+      },
+      "png": "assets/source/items/overrides/PM14.png",
+      "path": "public/wiki/icons/PM14.webp",
+      "pngSha256": "0945b71349f97e6fe5fd9c4c3d7a7a6ed05fe9a4b45e7a37cec3ba5521bdb251",
+      "sha256": "5cd18fee4f244ddea17e58fc79cd658bb338cc07373109ace64e16a9360b8ecd"
+    },
+    "PM15": {
+      "name": "罐装芝麻奶酪抹酱",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 408,
+        "height": 418
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 121,
+        "top": 26,
+        "width": 190,
+        "height": 370
+      },
+      "contentBounds": {
+        "x": 27,
+        "y": 7,
+        "width": 42,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM15.png",
+      "path": "public/wiki/icons/PM15.webp",
+      "pngSha256": "b466f26d415bbc5dfc4698ef302f475e39f3297536d56171f6d1f0bed700d251",
+      "sha256": "c7ee6e82b62e6e11d40a0a01998b2bdfccf81dfbba0aebd1c8f2b6a161a84bc2"
+    },
+    "PM16": {
+      "name": "罐装番茄牛肉浓汤",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 408,
+        "top": 0,
+        "width": 410,
+        "height": 418
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 479,
+        "top": 47,
+        "width": 296,
+        "height": 346
+      },
+      "contentBounds": {
+        "x": 13,
+        "y": 7,
+        "width": 70,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM16.png",
+      "path": "public/wiki/icons/PM16.webp",
+      "pngSha256": "946d2fdde4521160d04ee24f30945fa2d9e0d2a8ddae13fb7e12d33b30321657",
+      "sha256": "e5e3c10975fe31e35532f25116a112b518cceae7f0ce1028f9b4075ffd278ad1"
+    },
+    "PM17": {
+      "name": "袋装紫苏鲤鱼饭团",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 818,
+        "top": 0,
+        "width": 436,
+        "height": 418
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 836,
+        "top": 28,
+        "width": 398,
+        "height": 365
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 75
+      },
+      "png": "assets/source/items/overrides/PM17.png",
+      "path": "public/wiki/icons/PM17.webp",
+      "pngSha256": "504f171f92e5f4d56fc81ebfe2d9152e1d5b8bb64e06bb3a9848bd85e3604a9f",
+      "sha256": "a2f195f4a765ea7feb8327690f5baeee8b0c93247cbd0ad66b6bd55f06223e50"
+    },
+    "PM18": {
+      "name": "瓶装葱香鲈鱼酱",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 0,
+        "top": 418,
+        "width": 408,
+        "height": 410
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 92,
+        "top": 456,
+        "width": 247,
+        "height": 333
+      },
+      "contentBounds": {
+        "x": 17,
+        "y": 7,
+        "width": 61,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM18.png",
+      "path": "public/wiki/icons/PM18.webp",
+      "pngSha256": "5b351f1b3aa09b9b9438e3dd1f91daf73281bf83061fdc5f7d58951b9d1ffb8f",
+      "sha256": "68719e4b1d55970e7dc80a3dd2c9125bfb4a0d5371fd3477475efa3e1539463f"
+    },
+    "PM19": {
+      "name": "盒装真鲷鹅蛋羹",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 408,
+        "top": 418,
+        "width": 410,
+        "height": 410
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 456,
+        "top": 449,
+        "width": 327,
+        "height": 336
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 7,
+        "width": 80,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM19.png",
+      "path": "public/wiki/icons/PM19.webp",
+      "pngSha256": "1840b1ac2e625d1b41a65f8507690d92449f552e6818c4bb84ca8bb7706c0ca7",
+      "sha256": "c4698dcafe13b2cd91f65f52a922f7d2fbef61a5ccef248a4fc7b9a23ab4830d"
+    },
+    "PM20": {
+      "name": "罐装鸭肉银鲑双拼",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 818,
+        "top": 418,
+        "width": 436,
+        "height": 410
+      },
+      "index": 5,
+      "sourceBounds": {
+        "left": 853,
+        "top": 499,
+        "width": 366,
+        "height": 261
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 19,
+        "width": 82,
+        "height": 58
+      },
+      "png": "assets/source/items/overrides/PM20.png",
+      "path": "public/wiki/icons/PM20.webp",
+      "pngSha256": "18229d4311a960f125c8635feaf047fe80b5a9af31eaff8a5035a28c34df4069",
+      "sha256": "efbd475e1ea71f54dd6f8ff681389340fd21fdeabfa478ca619efca2c31841d5"
+    },
+    "PM21": {
+      "name": "罐装鱼羊鲜汤",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 0,
+        "top": 828,
+        "width": 408,
+        "height": 426
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 46,
+        "top": 861,
+        "width": 316,
+        "height": 356
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 7,
+        "width": 73,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM21.png",
+      "path": "public/wiki/icons/PM21.webp",
+      "pngSha256": "2a6dfc82faf2dbdccbe5819fa3b2b1661556776db2ca0e4eb2ee1eb08d2de63a",
+      "sha256": "23cefaaf794303b867e997d1663c336df993b176ff17e39eb877ea34343eace5"
+    },
+    "PM22": {
+      "name": "盒装紫苏鳗鱼蛋黄饭",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 408,
+        "top": 828,
+        "width": 410,
+        "height": 426
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 411,
+        "top": 881,
+        "width": 394,
+        "height": 326
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 14,
+        "width": 82,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/PM22.png",
+      "path": "public/wiki/icons/PM22.webp",
+      "pngSha256": "d9a437cfa0f38a94f5164c26b5e3abfafc6c8a168ae433f2c4e14a119331eaa0",
+      "sha256": "90afe2003a0d5684c9004e2a6a38f4c643efa7b25ac7aca7fdca1d27e99e4c7e"
+    },
+    "PM23": {
+      "name": "盒装虹鳟奶酪玉米派",
+      "source": "items-C-v2",
+      "cell": {
+        "left": 818,
+        "top": 828,
+        "width": 436,
+        "height": 426
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 838,
+        "top": 865,
+        "width": 394,
+        "height": 343
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 12,
+        "width": 82,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/PM23.png",
+      "path": "public/wiki/icons/PM23.webp",
+      "pngSha256": "1fb66b66a8719e80931feb8a135f06fe5bbb5132706e74ffb8eb73ffccdc1324",
+      "sha256": "8ee880fba6b2a88151ff38312b649260883af9ffa2cb530ce2baf89f4b34a535"
+    },
+    "M11": {
+      "name": "石灰石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 0,
+        "top": 250,
+        "width": 250,
+        "height": 251
+      },
+      "index": 5,
+      "sourceBounds": {
+        "left": 45,
+        "top": 312,
+        "width": 197,
+        "height": 173
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/M11.png",
+      "path": "public/wiki/icons/M11.webp",
+      "pngSha256": "7f5f5b6d95256bb6adea5ac888750d4907d9e505d043cb6611d4ba66d537dd39",
+      "sha256": "1b4624b240599ce89a9968a5fe03e5215a31f0906b6b896abbeef41cfcdbd299"
+    },
+    "M12": {
+      "name": "高岭土",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 250,
+        "top": 250,
+        "width": 251,
+        "height": 251
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 288,
+        "top": 312,
+        "width": 191,
+        "height": 171
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/M12.png",
+      "path": "public/wiki/icons/M12.webp",
+      "pngSha256": "5ed689dc2ca490ae53bfa03f8a818e16b6486523e848d5d091ef17ec8f63d433",
+      "sha256": "6a9e22992e3512681c585f0b11526ea6ab048d2caf1bde0ead8c9cbcb32b0782"
+    },
+    "M13": {
+      "name": "硫磺",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 501,
+        "top": 250,
+        "width": 251,
+        "height": 251
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 530,
+        "top": 309,
+        "width": 195,
+        "height": 180
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 74
+      },
+      "png": "assets/source/items/overrides/M13.png",
+      "path": "public/wiki/icons/M13.webp",
+      "pngSha256": "b04f06da52eaad9ef06dc2edb79691c53412317443ae9a5da9502b29935487a9",
+      "sha256": "42d3d1c506b14dfafcef17b812c7d0d859ee7a5ffe48aaa625c5e67965244f77"
+    },
+    "M14": {
+      "name": "石墨",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 752,
+        "top": 250,
+        "width": 251,
+        "height": 251
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 771,
+        "top": 308,
+        "width": 193,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/M14.png",
+      "path": "public/wiki/icons/M14.webp",
+      "pngSha256": "92ad083cedf890aafabc22f8b45353db153b53e3627cd7acda8bf11dd7c20651",
+      "sha256": "e934167b44bdf72f7cc5331cf810733e83df6f64b66d8ed9c64bdb46f42df235"
+    },
+    "M15": {
+      "name": "云母",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 1003,
+        "top": 250,
+        "width": 251,
+        "height": 251
+      },
+      "index": 9,
+      "sourceBounds": {
+        "left": 1009,
+        "top": 312,
+        "width": 202,
+        "height": 173
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/M15.png",
+      "path": "public/wiki/icons/M15.webp",
+      "pngSha256": "3825ece42ded6f990fe53a615724f5ef10020840f2e5dba065d7969d1e73ce1e",
+      "sha256": "edc805768bca25f227624244ab9e07f82cced2dd9d9cb65186ec693b85acaecd"
+    },
+    "M16": {
+      "name": "萤石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 0,
+        "top": 501,
+        "width": 250,
+        "height": 251
+      },
+      "index": 10,
+      "sourceBounds": {
+        "left": 50,
+        "top": 541,
+        "width": 189,
+        "height": 179
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 10,
+        "width": 80,
+        "height": 76
+      },
+      "png": "assets/source/items/overrides/M16.png",
+      "path": "public/wiki/icons/M16.webp",
+      "pngSha256": "8b96d63e9f5f2d337f6ae701b33da568c4391c9ca3ccb3bbb5500db393ce5e22",
+      "sha256": "7a7a6e9d47d4d9f2feaf783689e4cab39ce1d63cdeade5f8bde0712b7b982f08"
+    },
+    "M17": {
+      "name": "铝土矿",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 250,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 11,
+      "sourceBounds": {
+        "left": 288,
+        "top": 545,
+        "width": 196,
+        "height": 170
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/M17.png",
+      "path": "public/wiki/icons/M17.webp",
+      "pngSha256": "81bbabd6d4eb878738b903f6417fc8448b0588bca48a1820fd5fb80b7027c391",
+      "sha256": "0d1821a8808fa138e7b45f59f527000f39422429e1872dc318a08b3381255346"
+    },
+    "M18": {
+      "name": "锌矿石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 501,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 12,
+      "sourceBounds": {
+        "left": 529,
+        "top": 544,
+        "width": 196,
+        "height": 175
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/M18.png",
+      "path": "public/wiki/icons/M18.webp",
+      "pngSha256": "d9864c786691ba3e9f05052a0efb60600c2c5ad3f5b08bd84927ac6988bbb5de",
+      "sha256": "ee6e56f3e6b0b40c634e96a5f6dcc182c9b039cc6381272a06327dd3bd18790b"
+    },
+    "M19": {
+      "name": "铅矿石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 752,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 13,
+      "sourceBounds": {
+        "left": 770,
+        "top": 539,
+        "width": 189,
+        "height": 176
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 74
+      },
+      "png": "assets/source/items/overrides/M19.png",
+      "path": "public/wiki/icons/M19.webp",
+      "pngSha256": "977b23bc936c68a3761c8abc5c7eb4e077b1ffbcc2c61393200138ec065e6426",
+      "sha256": "1146023d5fb599597f8c1dc26800cc0928479e04bb89338c7f70458088760484"
+    },
+    "M20": {
+      "name": "镍矿石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 1003,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 14,
+      "sourceBounds": {
+        "left": 1011,
+        "top": 545,
+        "width": 196,
+        "height": 170
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/M20.png",
+      "path": "public/wiki/icons/M20.webp",
+      "pngSha256": "3a9e623358a54be99d0440791c082963a71bd24b19d3121e3e1f9d189c7e699e",
+      "sha256": "e317d952021aea0544e71979bc17e73f1e963a8f6cb63e86f6457c5f1777195b"
+    },
+    "M21": {
+      "name": "钴矿石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 0,
+        "top": 752,
+        "width": 250,
+        "height": 251
+      },
+      "index": 15,
+      "sourceBounds": {
+        "left": 45,
+        "top": 779,
+        "width": 195,
+        "height": 178
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/M21.png",
+      "path": "public/wiki/icons/M21.webp",
+      "pngSha256": "519948f0bc4003b33a947aaeb313c95256fb2dd94549a5828a715c772f11d7b4",
+      "sha256": "cc4034360a2ecda89a4281d09d78659a1469dda9e57e3cf8a13cccc19d2d5d30"
+    },
+    "M22": {
+      "name": "钨矿石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 250,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 16,
+      "sourceBounds": {
+        "left": 287,
+        "top": 778,
+        "width": 194,
+        "height": 179
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 74
+      },
+      "png": "assets/source/items/overrides/M22.png",
+      "path": "public/wiki/icons/M22.webp",
+      "pngSha256": "701ccd321df87ca28da1f6c1d4ede2fe4e1fddd821bb3553f5f4714b41ddadbb",
+      "sha256": "f56cdbec0368c3e656858c0f7edaa487202a722e322b60bdb83074d0fbab39a5"
+    },
+    "M23": {
+      "name": "玛瑙原石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 501,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 17,
+      "sourceBounds": {
+        "left": 527,
+        "top": 779,
+        "width": 198,
+        "height": 178
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 72
+      },
+      "png": "assets/source/items/overrides/M23.png",
+      "path": "public/wiki/icons/M23.webp",
+      "pngSha256": "efdcfee4412249fc9c54ae55fc3152c54fcfd407862f881c5a98ee455dc93c22",
+      "sha256": "66f8bf31a7bda6848d3d644405d1bcd9854e18db430d4c95d5151a52047f1710"
+    },
+    "M24": {
+      "name": "翡翠原石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 752,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 18,
+      "sourceBounds": {
+        "left": 767,
+        "top": 775,
+        "width": 197,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 72
+      },
+      "png": "assets/source/items/overrides/M24.png",
+      "path": "public/wiki/icons/M24.webp",
+      "pngSha256": "010b606b5b4ebd51d7c0954add65c13e00269fe1eb87aac151d9a4b9ddf7fafe",
+      "sha256": "2e19b8dab86f365d613a4c589eddf6310dcf8dae9b2e070da5654cabab883dd0"
+    },
+    "M25": {
+      "name": "绿松石原矿",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 1003,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 19,
+      "sourceBounds": {
+        "left": 1009,
+        "top": 777,
+        "width": 198,
+        "height": 181
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/M25.png",
+      "path": "public/wiki/icons/M25.webp",
+      "pngSha256": "fa242ca1b8b7d685a3f24e7a9317f6632e8becae8ccff2703c9b3e41c6bea41e",
+      "sha256": "ca364588650150bcb2cf7ed9103c189b52ff1c60eaf3ce1e4dd87cd1e3622dfe"
+    },
+    "M26": {
+      "name": "青金石原矿",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 0,
+        "top": 1003,
+        "width": 250,
+        "height": 251
+      },
+      "index": 20,
+      "sourceBounds": {
+        "left": 44,
+        "top": 1021,
+        "width": 195,
+        "height": 167
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/M26.png",
+      "path": "public/wiki/icons/M26.webp",
+      "pngSha256": "9dcfacb1710e9a8499843efbc75b9aacd981d5a43abe9046cc4777329a8c55ae",
+      "sha256": "2af122a6c373348bc69400018870aec2e1dd194e56d6ad81ab5f28ae65c2252b"
+    },
+    "M27": {
+      "name": "铂矿石",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 250,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 21,
+      "sourceBounds": {
+        "left": 288,
+        "top": 1021,
+        "width": 194,
+        "height": 167
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/M27.png",
+      "path": "public/wiki/icons/M27.webp",
+      "pngSha256": "8b4ae377281181ef40457f0aa53bc1e9598ccbf18e3bd2e6c62d4e8c74c61493",
+      "sha256": "4db3ebacb1444aa097e6e1d1215012cb95f754d0ef3e9ae036d82f6ead7b7bc6"
+    },
+    "M28": {
+      "name": "红宝石原矿",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 501,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 22,
+      "sourceBounds": {
+        "left": 528,
+        "top": 1017,
+        "width": 194,
+        "height": 175
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 72
+      },
+      "png": "assets/source/items/overrides/M28.png",
+      "path": "public/wiki/icons/M28.webp",
+      "pngSha256": "8b67a5c2de9d0abc065db97a43161f0b0f403dc14be7315ecc30f3dd56103caa",
+      "sha256": "945c6a791dabfc90d3ccc267f9049acd79142e0966600d3408236248af64a092"
+    },
+    "M29": {
+      "name": "蓝宝石原矿",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 752,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 23,
+      "sourceBounds": {
+        "left": 769,
+        "top": 1017,
+        "width": 193,
+        "height": 175
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 72
+      },
+      "png": "assets/source/items/overrides/M29.png",
+      "path": "public/wiki/icons/M29.webp",
+      "pngSha256": "6d3cfdf12dad3992c3d74f1ce7fa448e1eaf9e143132cf3867944e793c15fc95",
+      "sha256": "3c6fe2026783616f4a569f59d00fcb681c06bd93812cf3dc7e2f7d57faa07cb4"
+    },
+    "M30": {
+      "name": "钻石原矿",
+      "source": "C69-C73-M11-M30",
+      "cell": {
+        "left": 1003,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 24,
+      "sourceBounds": {
+        "left": 1012,
+        "top": 1021,
+        "width": 192,
+        "height": 171
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/M30.png",
+      "path": "public/wiki/icons/M30.webp",
+      "pngSha256": "cc375c19ea2a97609e3fdf6999d6dae6d9f665f56f63a5c6648256dc277da55a",
+      "sha256": "ab824e91890bbab7ab744056b57f5eec50773c9b23a8343d068266e32aaf38c3"
+    },
+    "PM69": {
+      "name": "密封白瓷罐装乌鸡鮟鱇汤",
+      "source": "PM69-PM73",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 432,
+        "height": 724
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 17,
+        "top": 132,
+        "width": 385,
+        "height": 461
+      },
+      "contentBounds": {
+        "x": 14,
+        "y": 7,
+        "width": 68,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM69.png",
+      "path": "public/wiki/icons/PM69.webp",
+      "pngSha256": "5f7da874d9c20b0fe108dfadc60d3d0ee7346ce232953759fd5eead3ddde10d2",
+      "sha256": "7cb15e614dd851db3103e5e8099646c0c44b10cb0f89155dce08b060f8b0b033"
+    },
+    "PM70": {
+      "name": "铝罐装鹌鹑蛋鲭鱼午餐肉",
+      "source": "PM69-PM73",
+      "cell": {
+        "left": 432,
+        "top": 0,
+        "width": 436,
+        "height": 724
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 432,
+        "top": 235,
+        "width": 407,
+        "height": 349
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 81,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/PM70.png",
+      "path": "public/wiki/icons/PM70.webp",
+      "pngSha256": "eff2b50f2076ba343ff1dcbd8177fb800c8c9c2184d3a45a7da372ddd882c33d",
+      "sha256": "7a0482c0808001c9c9be25235afc3025eb50e68f488d908aa19f28f749965674"
+    },
+    "PM71": {
+      "name": "罐装石灰皮蛋草鱼粥",
+      "source": "PM69-PM73",
+      "cell": {
+        "left": 868,
+        "top": 0,
+        "width": 418,
+        "height": 724
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 878,
+        "top": 208,
+        "width": 348,
+        "height": 386
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 8,
+        "width": 74,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM71.png",
+      "path": "public/wiki/icons/PM71.webp",
+      "pngSha256": "b0416ddd73d745fd81a877d68da055e5b56dc7054d7bff6fad97c1c78ca522cf",
+      "sha256": "6c991fe1ac05461d9595f9b1701ed94ef1d90d1b72da0cf01e18bacf9f595efb"
+    },
+    "PM72": {
+      "name": "密封镍罐装香猪腊肉黄鳝煲",
+      "source": "PM69-PM73",
+      "cell": {
+        "left": 1286,
+        "top": 0,
+        "width": 412,
+        "height": 724
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 1286,
+        "top": 208,
+        "width": 363,
+        "height": 385
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 8,
+        "width": 76,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM72.png",
+      "path": "public/wiki/icons/PM72.webp",
+      "pngSha256": "6dfa02233b622a072a6d66ecb59d8403fef15532bc7645d31b2cc3221fa06fd5",
+      "sha256": "e5e7936acf882c92a3b714c2b8ab0d75a446512b11f836bd6958acfadca36fd0"
+    },
+    "PM73": {
+      "name": "礼盒装钴蓝瓷盘和牛石斑",
+      "source": "PM69-PM73",
+      "cell": {
+        "left": 1698,
+        "top": 0,
+        "width": 474,
+        "height": 724
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 1698,
+        "top": 160,
+        "width": 461,
+        "height": 421
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 75
+      },
+      "png": "assets/source/items/overrides/PM73.png",
+      "path": "public/wiki/icons/PM73.webp",
+      "pngSha256": "0a0385f9c855ed1e073235dfb4fc9adeb5b64af29ee4a51b3fa4601478c5efbc",
+      "sha256": "8966509a05adcf81824326fd8fc291541c15331a4daf11a4bb4a8523e9c0436e"
+    },
+    "IM17": {
+      "name": "生石灰",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 0,
+        "top": 747,
+        "width": 252,
+        "height": 249
+      },
+      "index": 15,
+      "sourceBounds": {
+        "left": 42,
+        "top": 785,
+        "width": 202,
+        "height": 170
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/IM17.png",
+      "path": "public/wiki/icons/IM17.webp",
+      "pngSha256": "aec077bbe7e02128c73e43701ed23202b851921e983a8d9a740a19bec2249fe0",
+      "sha256": "9a8665d74604e1579abdc7c0fbf6aee1318629f858be8b0ac333beba4b8d0314"
+    },
+    "IM18": {
+      "name": "瓷土坯",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 252,
+        "top": 747,
+        "width": 253,
+        "height": 249
+      },
+      "index": 16,
+      "sourceBounds": {
+        "left": 292,
+        "top": 790,
+        "width": 198,
+        "height": 166
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/IM18.png",
+      "path": "public/wiki/icons/IM18.webp",
+      "pngSha256": "db9172c787d08d95f2a8609ce38a50b8accf485982c51d4780561adab2135e6b",
+      "sha256": "ab90ad8db49df25628e9302938d06fbedeb8670d8a2177e2e2582d112761e486"
+    },
+    "IM19": {
+      "name": "硫磺粉",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 505,
+        "top": 747,
+        "width": 252,
+        "height": 249
+      },
+      "index": 17,
+      "sourceBounds": {
+        "left": 534,
+        "top": 781,
+        "width": 187,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 10,
+        "width": 80,
+        "height": 76
+      },
+      "png": "assets/source/items/overrides/IM19.png",
+      "path": "public/wiki/icons/IM19.webp",
+      "pngSha256": "e638bfa793ef5062f7b43267172b3c5505ac9c11a4e9209193ce72a5f4a70a32",
+      "sha256": "a4897a51e0df3ae797d5cac2173d87c559788fbd8841433042ff52395b2554ca"
+    },
+    "IM20": {
+      "name": "石墨粉",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 757,
+        "top": 747,
+        "width": 253,
+        "height": 249
+      },
+      "index": 18,
+      "sourceBounds": {
+        "left": 770,
+        "top": 801,
+        "width": 206,
+        "height": 143
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 20,
+        "width": 80,
+        "height": 55
+      },
+      "png": "assets/source/items/overrides/IM20.png",
+      "path": "public/wiki/icons/IM20.webp",
+      "pngSha256": "5091702a5cc9f9c08a901ca57ae2fba817695b3d7184fd15d0fbe39bedf576d4",
+      "sha256": "0cf9ade094abeebe89b0705e6ba5a93592b1e65de525f49e552b4bbe9bf92260"
+    },
+    "IM21": {
+      "name": "云母片",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 1010,
+        "top": 747,
+        "width": 253,
+        "height": 249
+      },
+      "index": 19,
+      "sourceBounds": {
+        "left": 1012,
+        "top": 782,
+        "width": 211,
+        "height": 177
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/IM21.png",
+      "path": "public/wiki/icons/IM21.webp",
+      "pngSha256": "153ec3fe3fc15f92cbd958fa449c5dea3cf77599cd2a6c72dedb69557c668f04",
+      "sha256": "c8115a3526138a93114a2769f53e0a02637e942e64abe3b34e263051acc4d806"
+    },
+    "IM22": {
+      "name": "萤石晶块",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 0,
+        "top": 996,
+        "width": 252,
+        "height": 250
+      },
+      "index": 20,
+      "sourceBounds": {
+        "left": 41,
+        "top": 1025,
+        "width": 204,
+        "height": 164
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 16,
+        "width": 80,
+        "height": 64
+      },
+      "png": "assets/source/items/overrides/IM22.png",
+      "path": "public/wiki/icons/IM22.webp",
+      "pngSha256": "2741fd27dc4dc497aba1cb57c325c1a4fad8c9353ebdfac27655fd1ff4e5cce2",
+      "sha256": "4a60c22ba54c13b253e2fb510a03a9a7ecd7aff1c6d01367902199e73e6ac024"
+    },
+    "IM23": {
+      "name": "铝锭",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 252,
+        "top": 996,
+        "width": 253,
+        "height": 250
+      },
+      "index": 21,
+      "sourceBounds": {
+        "left": 289,
+        "top": 1028,
+        "width": 204,
+        "height": 156
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 17,
+        "width": 80,
+        "height": 61
+      },
+      "png": "assets/source/items/overrides/IM23.png",
+      "path": "public/wiki/icons/IM23.webp",
+      "pngSha256": "c8886ae8b5386e925ef60315bc646ad58b74a22840fea3a06053e1b392a6a15c",
+      "sha256": "f63199dd4457b959fc0a43c91f3cbb4a46c2fc3c4b84389d8fd367ec91cbb3d9"
+    },
+    "IM24": {
+      "name": "锌锭",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 505,
+        "top": 996,
+        "width": 252,
+        "height": 250
+      },
+      "index": 22,
+      "sourceBounds": {
+        "left": 528,
+        "top": 1029,
+        "width": 204,
+        "height": 152
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 18,
+        "width": 80,
+        "height": 59
+      },
+      "png": "assets/source/items/overrides/IM24.png",
+      "path": "public/wiki/icons/IM24.webp",
+      "pngSha256": "5e5a1aeb8ae7034895999564c1775451f91741fbe717b410dcad2af40be28aaf",
+      "sha256": "223eaf3e4229ac7e0c8665f63c50a8156f6cf10e0283c024d84bbe05c7e90051"
+    },
+    "IM25": {
+      "name": "铅锭",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 757,
+        "top": 996,
+        "width": 253,
+        "height": 250
+      },
+      "index": 23,
+      "sourceBounds": {
+        "left": 769,
+        "top": 1022,
+        "width": 205,
+        "height": 162
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 16,
+        "width": 80,
+        "height": 63
+      },
+      "png": "assets/source/items/overrides/IM25.png",
+      "path": "public/wiki/icons/IM25.webp",
+      "pngSha256": "9aefd8ec8cd8aa202037911732959903073db31de0431e875cbddb28d649b106",
+      "sha256": "dffd9e1d68a91b5bd2ca1db98dc89c374c6f8275f869093badc08803339ef706"
+    },
+    "IM26": {
+      "name": "镍锭",
+      "source": "IF16-IF30-IM17-IM26-v2",
+      "cell": {
+        "left": 1010,
+        "top": 996,
+        "width": 253,
+        "height": 250
+      },
+      "index": 24,
+      "sourceBounds": {
+        "left": 1012,
+        "top": 1023,
+        "width": 212,
+        "height": 169
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 16,
+        "width": 80,
+        "height": 63
+      },
+      "png": "assets/source/items/overrides/IM26.png",
+      "path": "public/wiki/icons/IM26.webp",
+      "pngSha256": "132ea644cf56840ec2d337395d989720e82167e18de145ca75d4107c0c829ec7",
+      "sha256": "1a873d515bfe412a828990075e31600157f517ec650dd80c0d2f173f08a221b1"
+    },
+    "IM27": {
+      "name": "钴蓝颜料",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 250,
+        "height": 250
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 39,
+        "top": 50,
+        "width": 208,
+        "height": 194
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 74
+      },
+      "png": "assets/source/items/overrides/IM27.png",
+      "path": "public/wiki/icons/IM27.webp",
+      "pngSha256": "c871dd25cbc9ebef6dd3a965d27491b4bc0745f3a29519806d422607afb96a37",
+      "sha256": "7bc299422df81c4e5e33b0bfd709470e37c24d69b916894e0aeb971516244ef4"
+    },
+    "IM28": {
+      "name": "钨丝",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 250,
+        "top": 0,
+        "width": 251,
+        "height": 250
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 284,
+        "top": 69,
+        "width": 211,
+        "height": 154
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 19,
+        "width": 80,
+        "height": 58
+      },
+      "png": "assets/source/items/overrides/IM28.png",
+      "path": "public/wiki/icons/IM28.webp",
+      "pngSha256": "3d5b0ad867505e9c2768190fddee451a8f440475f0f6f5c4eea7c5f7de08f4a4",
+      "sha256": "dc1fd34393fc8755d5c6c1f6c4b3ba1b68d88e943301747bbd6e9fec46b7a135"
+    },
+    "IM29": {
+      "name": "玛瑙坯",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 501,
+        "top": 0,
+        "width": 251,
+        "height": 250
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 528,
+        "top": 65,
+        "width": 195,
+        "height": 165
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/IM29.png",
+      "path": "public/wiki/icons/IM29.webp",
+      "pngSha256": "9dda7aaa4a9871451a9bb9faedcb5ac2821e3a6749ea026926ae4324e9f75644",
+      "sha256": "1a1bcfce7f932b1a6dfd5c00be2ec4c7cecc3f1db061f3557cccf4b80b6da5c4"
+    },
+    "IM30": {
+      "name": "翡翠坯",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 752,
+        "top": 0,
+        "width": 251,
+        "height": 250
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 760,
+        "top": 56,
+        "width": 210,
+        "height": 180
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/IM30.png",
+      "path": "public/wiki/icons/IM30.webp",
+      "pngSha256": "96ae02612ce2f2d7c953bf5264028e53236d8023b049c53e2fb60552052345a1",
+      "sha256": "b10eab57bb5ecc2e635f876fc72afcf725ee18e0e6a5095948a543d6445ac783"
+    },
+    "IM31": {
+      "name": "绿松石坯",
+      "source": "IM31-IM32-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 887,
+        "height": 887
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 184,
+        "top": 268,
+        "width": 484,
+        "height": 405
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 13,
+        "width": 82,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/IM31.png",
+      "path": "public/wiki/icons/IM31.webp",
+      "pngSha256": "fc5fad63a5c6f2c93962311ddee9d214aa52d6b6db4a5b805b9c031427c83093",
+      "sha256": "7907f4dbfd220390dcd341ca5b8e0420db147a4a95cdcfa3fbdcb2dc1864af16"
+    },
+    "IM32": {
+      "name": "青金石颜料",
+      "source": "IM31-IM32-v2",
+      "cell": {
+        "left": 887,
+        "top": 0,
+        "width": 887,
+        "height": 887
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 1036,
+        "top": 221,
+        "width": 585,
+        "height": 479
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 66
+      },
+      "png": "assets/source/items/overrides/IM32.png",
+      "path": "public/wiki/icons/IM32.webp",
+      "pngSha256": "c419aba22bf847698bd1bdfc48fa6f99300256625534b7c96675c69350658c3a",
+      "sha256": "63224743edce3c0534e248faba8325b071db2b3c5bb5b638339e2b825c1d205b"
+    },
+    "IM33": {
+      "name": "铂锭",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 251,
+        "top": 250,
+        "width": 250,
+        "height": 243
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 284,
+        "top": 293,
+        "width": 209,
+        "height": 161
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 17,
+        "width": 80,
+        "height": 61
+      },
+      "png": "assets/source/items/overrides/IM33.png",
+      "path": "public/wiki/icons/IM33.webp",
+      "pngSha256": "9fd39b3d41a7cf9b0100a821efa517fff675aa8921f423806d35ae364b55c3d5",
+      "sha256": "dac0d071e88eec8198b6a3a346d21d720da74f307f5052ec644b79348cd63ca4"
+    },
+    "IM34": {
+      "name": "红宝石坯",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 501,
+        "top": 250,
+        "width": 251,
+        "height": 243
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 525,
+        "top": 289,
+        "width": 203,
+        "height": 162
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 16,
+        "width": 80,
+        "height": 63
+      },
+      "png": "assets/source/items/overrides/IM34.png",
+      "path": "public/wiki/icons/IM34.webp",
+      "pngSha256": "cad4808c677e576a21bf36eab236a200f89425c16fb3ee1904755ffdf953eca6",
+      "sha256": "12dd906d0e752a683767fb7b13fb550781bb985a4fb16bed6e8171b148ab3a3f"
+    },
+    "IM35": {
+      "name": "蓝宝石坯",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 752,
+        "top": 250,
+        "width": 251,
+        "height": 243
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 765,
+        "top": 289,
+        "width": 199,
+        "height": 161
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 16,
+        "width": 80,
+        "height": 64
+      },
+      "png": "assets/source/items/overrides/IM35.png",
+      "path": "public/wiki/icons/IM35.webp",
+      "pngSha256": "50f928353c792c5ca027eb7a5d48d994cc1cca6d5c4684407a8169f10d3d9a53",
+      "sha256": "bb53e34aed6b60bf02f5800216ac3e2754bf28b7fc8ba5abe73722375e0e1ec2"
+    },
+    "IM36": {
+      "name": "钻石坯",
+      "source": "IM27-IM36-P181-P190-PL21-PL25",
+      "cell": {
+        "left": 1003,
+        "top": 250,
+        "width": 251,
+        "height": 243
+      },
+      "index": 9,
+      "sourceBounds": {
+        "left": 1007,
+        "top": 289,
+        "width": 205,
+        "height": 159
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 17,
+        "width": 80,
+        "height": 62
+      },
+      "png": "assets/source/items/overrides/IM36.png",
+      "path": "public/wiki/icons/IM36.webp",
+      "pngSha256": "80aaa7dd7db9fe49b576014fd59b6bdfb196c210ebeda8fba16c5c5d83a47230",
+      "sha256": "a7c2fadbddfa1cdcc9f6dc3f07db25d99c29e1d3ce419a25b0af0209f6916ced"
+    },
+    "PM74": {
+      "name": "盒装杉木蒸笼白瓷鹌鹑蛋鳕鱼盅",
+      "source": "PM59-PM74-PM75-v2",
+      "cell": {
+        "left": 724,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 786,
+        "top": 54,
+        "width": 597,
+        "height": 563
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 76
+      },
+      "png": "assets/source/items/overrides/PM74.png",
+      "path": "public/wiki/icons/PM74.webp",
+      "pngSha256": "710f872a1553c44a349e4c5adf8beba7943576f3018820325e8439e428576a25",
+      "sha256": "9a7eadd21b5e86f1ff3eedb188a590148d7e239a6ef748e21d402c0ad543c330"
+    },
+    "PM75": {
+      "name": "铝盒装松炭火鸡秋刀鱼烧烤套装",
+      "source": "PM59-PM74-PM75-v2",
+      "cell": {
+        "left": 1448,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 1511,
+        "top": 136,
+        "width": 596,
+        "height": 471
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 15,
+        "width": 81,
+        "height": 65
+      },
+      "png": "assets/source/items/overrides/PM75.png",
+      "path": "public/wiki/icons/PM75.webp",
+      "pngSha256": "2f818fd065b7ca9438ff3dc56214fabbc5943d3fe0359a7b4fe4c2479db0094a",
+      "sha256": "e09460b690070501c06d60570b2b00b33895b41f40fd9d30440cadc1bfbd7016"
+    },
+    "PM76": {
+      "name": "樟木礼盒装白瓷乌鸡鮟鱇汤",
+      "source": "PL21-PM76-PM78-v2",
+      "cell": {
+        "left": 716,
+        "top": 0,
+        "width": 716,
+        "height": 732
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 809,
+        "top": 67,
+        "width": 530,
+        "height": 581
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 8,
+        "width": 74,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM76.png",
+      "path": "public/wiki/icons/PM76.webp",
+      "pngSha256": "ec680ae539b9b631b0aaff19580c8064221ef5e63318f1a95c2ed1e9c57e46ca",
+      "sha256": "3bcfd8c73f72e8b6a2f12a789314ab453435a141d47ac889dd08b0a20c295257"
+    },
+    "PM77": {
+      "name": "楠木礼盒装钴蓝瓷盘香猪石斑",
+      "source": "PM74-PM83",
+      "cell": {
+        "left": 747,
+        "top": 0,
+        "width": 256,
+        "height": 280
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 747,
+        "top": 56,
+        "width": 244,
+        "height": 206
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/PM77.png",
+      "path": "public/wiki/icons/PM77.webp",
+      "pngSha256": "dac7d0fb6fb57f1e3100533d39fdc5d38392d268a3a77b49b4226a4eec9bf463",
+      "sha256": "d17d200b24948dfca9a9207938ed87b881f2f7fbebe2e127eaca1e55240d16b2"
+    },
+    "PM78": {
+      "name": "礼盒装松炭镍架和牛金枪鱼烧烤",
+      "source": "PL21-PM76-PM78-v2",
+      "cell": {
+        "left": 1432,
+        "top": 0,
+        "width": 717,
+        "height": 732
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 1503,
+        "top": 85,
+        "width": 570,
+        "height": 563
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 8,
+        "width": 82,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM78.png",
+      "path": "public/wiki/icons/PM78.webp",
+      "pngSha256": "fb144b4279a352db3043faa657ed7fb2463b2a2bf4a939eeb82d1921d2c7c987",
+      "sha256": "06ea5814922ce94dd956460d38b2dd04b76e7a5fba123f5d3f9b2dee0b2eb14b"
+    },
+    "PM79": {
+      "name": "檀木礼盒装白瓷驴乳鳙鱼浓汤",
+      "source": "PM79-PM82-v3",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 1086,
+        "height": 724
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 299,
+        "top": 122,
+        "width": 400,
+        "height": 440
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 7,
+        "width": 75,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM79.png",
+      "path": "public/wiki/icons/PM79.webp",
+      "pngSha256": "e60ce01035a211c54354a320860b7a89648d089e23c208cd892a1c675789c980",
+      "sha256": "b7998fcae9f1cfd0809e566998e5893fdaa629e561acf803ec056e22167d3211"
+    },
+    "PM80": {
+      "name": "杉木拼盒装石灰皮蛋熏青鱼",
+      "source": "PM74-PM83",
+      "cell": {
+        "left": 251,
+        "top": 280,
+        "width": 250,
+        "height": 280
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 266,
+        "top": 309,
+        "width": 235,
+        "height": 231
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 80,
+        "height": 79
+      },
+      "png": "assets/source/items/overrides/PM80.png",
+      "path": "public/wiki/icons/PM80.webp",
+      "pngSha256": "c9f9d89c123ea3feeaa7105e10d16b6fcfbeb7af9aa184ed6771d18a3f0604df",
+      "sha256": "431cc16a287e5afa5138c83b99a4ea80a892c031ad67b58ee8b52f9b3ad31e68"
+    },
+    "PM81": {
+      "name": "楠木雕盒装蜜汁火鸡鲳鱼铝罐",
+      "source": "PM74-PM83",
+      "cell": {
+        "left": 501,
+        "top": 280,
+        "width": 251,
+        "height": 280
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 511,
+        "top": 300,
+        "width": 231,
+        "height": 244
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 8,
+        "width": 76,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM81.png",
+      "path": "public/wiki/icons/PM81.webp",
+      "pngSha256": "d7b30f034c7e35504f37a13293e633a0d7a760f1ab6e904a73585f311d14b712",
+      "sha256": "1afb4d716a41557fe9dc2a23aea2c200096b6289656feab7e876f81b48ba5475"
+    },
+    "PM82": {
+      "name": "礼盒装檀香白瓷茶席鳕鱼马奶酒",
+      "source": "PM79-PM82-v3",
+      "cell": {
+        "left": 1086,
+        "top": 0,
+        "width": 1086,
+        "height": 724
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 1466,
+        "top": 129,
+        "width": 412,
+        "height": 433
+      },
+      "contentBounds": {
+        "x": 9,
+        "y": 7,
+        "width": 78,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM82.png",
+      "path": "public/wiki/icons/PM82.webp",
+      "pngSha256": "2ba49bcd18a755cb53db4a023caff2932720ee814c1b5b17a90ce6aa2779b6ae",
+      "sha256": "9619c8d65597f63024d0d6017dc244acee8973004c70ed6c92c68e61e0815e6f"
+    },
+    "PM83": {
+      "name": "礼盒装庄园四方珍馐御膳",
+      "source": "PM83-PT51-v3",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 1086,
+        "height": 724
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 364,
+        "top": 153,
+        "width": 360,
+        "height": 374
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 7,
+        "width": 79,
+        "height": 82
+      },
+      "png": "assets/source/items/overrides/PM83.png",
+      "path": "public/wiki/icons/PM83.webp",
+      "pngSha256": "c7b9fcd9cbb7ad1c08376ac1589439792a6e2468189561fa9bc01cd1d4e6a4ec",
+      "sha256": "e561b086fc5de80dff9a4e12d5c6bf5bafdf646cb1a113b526a256747d24027c"
+    },
+    "PM24": {
+      "name": "袋装生石灰干燥剂",
+      "source": "PM24-PF33-PF39-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 659,
+        "height": 724
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 89,
+        "top": 110,
+        "width": 460,
+        "height": 544
+      },
+      "contentBounds": {
+        "x": 14,
+        "y": 8,
+        "width": 68,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM24.png",
+      "path": "public/wiki/icons/PM24.webp",
+      "pngSha256": "efae756ded75247c6cf01b4fea17199e5d0b07e0cabb0782e0013b8c7ff29998",
+      "sha256": "c35f8be1c9bfe79af043ae57815f361f80d70be5ad6e0504a2ed6c1823aad65c"
+    },
+    "PM25": {
+      "name": "盒装白瓷茶杯",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 250,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 11,
+      "sourceBounds": {
+        "left": 276,
+        "top": 531,
+        "width": 219,
+        "height": 207
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 10,
+        "width": 80,
+        "height": 76
+      },
+      "png": "assets/source/items/overrides/PM25.png",
+      "path": "public/wiki/icons/PM25.webp",
+      "pngSha256": "53c484597a49226911635db82f1fdb37569dc77e6a9bb1c3c815ba78b5f1259a",
+      "sha256": "73195e3e464d3e68edee787057c043553c65e565153cacca643763d37406271d"
+    },
+    "PM26": {
+      "name": "盒装硫磺皂",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 501,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 12,
+      "sourceBounds": {
+        "left": 515,
+        "top": 544,
+        "width": 219,
+        "height": 183
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/PM26.png",
+      "path": "public/wiki/icons/PM26.webp",
+      "pngSha256": "1590ee89e5b5c0613c158fc31c4eaa3ea5f2ea200c2aa1d605692e2c7f13c7db",
+      "sha256": "2433925e13038be84bb215824f95bb063ee849cd07d665b3909d56c703f5ffde"
+    },
+    "PM27": {
+      "name": "盒装石墨素描棒",
+      "source": "PM27-PM47-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 887,
+        "height": 887
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 333,
+        "top": 41,
+        "width": 348,
+        "height": 763
+      },
+      "contentBounds": {
+        "x": 29,
+        "y": 8,
+        "width": 37,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM27.png",
+      "path": "public/wiki/icons/PM27.webp",
+      "pngSha256": "b50022063a083105628d7cc99f7edf6ddca4094aa4e4f78f85798d22186271ae",
+      "sha256": "76d153600c8d64ce164182b910ea5c56e164c85e85863e5a4ba113876a381ea2"
+    },
+    "PM28": {
+      "name": "盒装铝框云母灯罩",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 1003,
+        "top": 501,
+        "width": 251,
+        "height": 251
+      },
+      "index": 14,
+      "sourceBounds": {
+        "left": 1003,
+        "top": 528,
+        "width": 216,
+        "height": 210
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 9,
+        "width": 81,
+        "height": 78
+      },
+      "png": "assets/source/items/overrides/PM28.png",
+      "path": "public/wiki/icons/PM28.webp",
+      "pngSha256": "1f844a7ac3e49b063e688265245838ca6e92593b09ced33762317ea425e44ad1",
+      "sha256": "9ca8d07af3289c802bb201bdfcc517b72e6464c9266f96b77ee62438fd884f5a"
+    },
+    "PM29": {
+      "name": "盒装萤石铝座夜灯",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 0,
+        "top": 752,
+        "width": 250,
+        "height": 250
+      },
+      "index": 15,
+      "sourceBounds": {
+        "left": 36,
+        "top": 763,
+        "width": 212,
+        "height": 216
+      },
+      "contentBounds": {
+        "x": 9,
+        "y": 8,
+        "width": 78,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM29.png",
+      "path": "public/wiki/icons/PM29.webp",
+      "pngSha256": "7f0058d0b6905390de79889aeeebb76537f97a858be7d73a9a90e3e210c9c31e",
+      "sha256": "b27958e981f918be22be382dd9727c3ed909dcea97f26f9e8693c05921020654"
+    },
+    "PM30": {
+      "name": "盒装铝制饭盒",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 250,
+        "top": 752,
+        "width": 251,
+        "height": 250
+      },
+      "index": 16,
+      "sourceBounds": {
+        "left": 274,
+        "top": 766,
+        "width": 224,
+        "height": 209
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 10,
+        "width": 80,
+        "height": 75
+      },
+      "png": "assets/source/items/overrides/PM30.png",
+      "path": "public/wiki/icons/PM30.webp",
+      "pngSha256": "003eabe407a55c0f179a57fd49b11ac802a23901ef9a34b6f2dbf434578eb718",
+      "sha256": "338c853fb0220b803252a92be3aa19933ed41ec9e70083216ed22b1799cc16c6"
+    },
+    "PM31": {
+      "name": "盒装锌碳电池",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 501,
+        "top": 752,
+        "width": 251,
+        "height": 250
+      },
+      "index": 17,
+      "sourceBounds": {
+        "left": 522,
+        "top": 764,
+        "width": 204,
+        "height": 211
+      },
+      "contentBounds": {
+        "x": 9,
+        "y": 8,
+        "width": 77,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM31.png",
+      "path": "public/wiki/icons/PM31.webp",
+      "pngSha256": "5e88e02ebbc7e09c3b11cf5d54f911f7dfb26bf68c75384994fdcca52c41812b",
+      "sha256": "e6f77cd5b3983dc491e213fcc736586f7adc1873b49327ceb1c41156381de849"
+    },
+    "PM32": {
+      "name": "盒装铅制钓坠",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 752,
+        "top": 752,
+        "width": 251,
+        "height": 250
+      },
+      "index": 18,
+      "sourceBounds": {
+        "left": 754,
+        "top": 767,
+        "width": 225,
+        "height": 208
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 74
+      },
+      "png": "assets/source/items/overrides/PM32.png",
+      "path": "public/wiki/icons/PM32.webp",
+      "pngSha256": "2f8813789fc77ee6115b96ea4cb310a8ef6cbc0822fccb7aa31144d731ab6d7a",
+      "sha256": "b52bdde54065a7781c4209a8b9f873d6911d8a7d41816c06e1b623d1b36f8c52"
+    },
+    "PM33": {
+      "name": "盒装镍铝餐具组",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 1003,
+        "top": 752,
+        "width": 251,
+        "height": 250
+      },
+      "index": 19,
+      "sourceBounds": {
+        "left": 1007,
+        "top": 766,
+        "width": 207,
+        "height": 213
+      },
+      "contentBounds": {
+        "x": 9,
+        "y": 8,
+        "width": 78,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM33.png",
+      "path": "public/wiki/icons/PM33.webp",
+      "pngSha256": "754874c9d3b18652dd425b3743fc4dcdba8b99fd6bb1a8250fe4dc99df286f16",
+      "sha256": "6290d71af9a8496f286fc8a15fa161c01b0f2ed84abafa7b4021ada2f1972033"
+    },
+    "PM34": {
+      "name": "盒装钴蓝白瓷盘",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 0,
+        "top": 1002,
+        "width": 255,
+        "height": 252
+      },
+      "index": 20,
+      "sourceBounds": {
+        "left": 33,
+        "top": 1004,
+        "width": 222,
+        "height": 220
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 81,
+        "height": 79
+      },
+      "png": "assets/source/items/overrides/PM34.png",
+      "path": "public/wiki/icons/PM34.webp",
+      "pngSha256": "b384110797169a0f76e9b46fa0920d3ad9a5218b317139f070edf716bcdf8b34",
+      "sha256": "705eb51e9016d558ff43d6fb1141a831ba42a0063dbed27c34da06a6df54a89f"
+    },
+    "PM35": {
+      "name": "盒装钨丝灯泡",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 255,
+        "top": 1002,
+        "width": 246,
+        "height": 252
+      },
+      "index": 21,
+      "sourceBounds": {
+        "left": 283,
+        "top": 1002,
+        "width": 204,
+        "height": 222
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 8,
+        "width": 73,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM35.png",
+      "path": "public/wiki/icons/PM35.webp",
+      "pngSha256": "52f3d72d33bb42b9bdb9fbccd8bb10a75c914fd988c06b554065b3f614e2fe2f",
+      "sha256": "5d6d85c3ec8eed3c5b1a8644d3ee75768f592bd9e424d0d0438a97ca1b99c212"
+    },
+    "PM36": {
+      "name": "盒装玛瑙手串",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 501,
+        "top": 1002,
+        "width": 251,
+        "height": 252
+      },
+      "index": 22,
+      "sourceBounds": {
+        "left": 515,
+        "top": 1008,
+        "width": 221,
+        "height": 213
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 9,
+        "width": 80,
+        "height": 77
+      },
+      "png": "assets/source/items/overrides/PM36.png",
+      "path": "public/wiki/icons/PM36.webp",
+      "pngSha256": "f98ed25621fe079c9c8ee63053086fb159277fce94f976b2d98748dffe66775a",
+      "sha256": "3edc7816749b24f0ed998370267083273f491ac05f9c9a0c89c82d1591aad438"
+    },
+    "PM37": {
+      "name": "盒装铂扣翡翠吊坠",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 752,
+        "top": 1002,
+        "width": 249,
+        "height": 252
+      },
+      "index": 23,
+      "sourceBounds": {
+        "left": 758,
+        "top": 1005,
+        "width": 217,
+        "height": 218
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 80,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM37.png",
+      "path": "public/wiki/icons/PM37.webp",
+      "pngSha256": "be970025ba523fb9519f80f12d7530f36c293d80d23f059724d67190ff6b725a",
+      "sha256": "a53c8aecaf4d55b1778c551f58757fa7aa2edf408e4fa296d98ca86b4079ec3a"
+    },
+    "PM38": {
+      "name": "盒装绿松石耳坠",
+      "source": "PF31-PF40-PM24-PM38",
+      "cell": {
+        "left": 1001,
+        "top": 1002,
+        "width": 253,
+        "height": 252
+      },
+      "index": 24,
+      "sourceBounds": {
+        "left": 1001,
+        "top": 1003,
+        "width": 218,
+        "height": 220
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 79,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM38.png",
+      "path": "public/wiki/icons/PM38.webp",
+      "pngSha256": "25e914b8f2c5d0f3fb945a2bb7bd2d80a91db25d3fede24e2a4db33bf78de4fb",
+      "sha256": "82a04310fa5ddee01929e3a99940f7c4a1c3cb57ee1e130524424b0ee73dc130"
+    },
+    "PM39": {
+      "name": "盒装青金钴蓝矿物颜料",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 250,
+        "height": 264
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 28,
+        "top": 41,
+        "width": 219,
+        "height": 222
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 79,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM39.png",
+      "path": "public/wiki/icons/PM39.webp",
+      "pngSha256": "ff6316085f74b4811af3527c24260e510c5174dd3b234020424f66076733aaf3",
+      "sha256": "e8f227376aa8545af9e8a287996942c3f34826fe86d5a35a1f0543d5b4ec65db"
+    },
+    "PM40": {
+      "name": "盒装铂金素戒",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 250,
+        "top": 0,
+        "width": 251,
+        "height": 264
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 283,
+        "top": 46,
+        "width": 211,
+        "height": 214
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 79,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM40.png",
+      "path": "public/wiki/icons/PM40.webp",
+      "pngSha256": "d68f1722fbb0b719ce3693a40a29e0ba4fb1c51fb80360d5502e523cae1b5a1a",
+      "sha256": "8c9f2e9cc5adb20397caa2aab136f251aa5dd6f58339ed61c46e58eb9d35fe51"
+    },
+    "PM41": {
+      "name": "盒装红宝石铂金戒指",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 501,
+        "top": 0,
+        "width": 251,
+        "height": 264
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 523,
+        "top": 46,
+        "width": 215,
+        "height": 215
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 80,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM41.png",
+      "path": "public/wiki/icons/PM41.webp",
+      "pngSha256": "421613ce00eb4a552ad55e8f21924564064432eb3013dfc281a218f74307025f",
+      "sha256": "d7ad45373b3c30d1e918e96c8717f71a0c220e0aaac3d3aea4018baa03cb01c0"
+    },
+    "PM42": {
+      "name": "盒装蓝宝石铂金项链",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 752,
+        "top": 0,
+        "width": 251,
+        "height": 264
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 793,
+        "top": 23,
+        "width": 171,
+        "height": 241
+      },
+      "contentBounds": {
+        "x": 20,
+        "y": 8,
+        "width": 56,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM42.png",
+      "path": "public/wiki/icons/PM42.webp",
+      "pngSha256": "cef80d096b50231ec9ef4779f4978d162d1d01e97b2b03ad3a418d25fb96fe8b",
+      "sha256": "d16bd978719d326c9c5e01a92c01c6e3a35af5894ac46e5a4755e0b3e9470fea"
+    },
+    "PM43": {
+      "name": "礼盒装钻石铂金对戒",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 1003,
+        "top": 0,
+        "width": 251,
+        "height": 264
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 1009,
+        "top": 30,
+        "width": 230,
+        "height": 233
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 79,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM43.png",
+      "path": "public/wiki/icons/PM43.webp",
+      "pngSha256": "e62b75b0fe42150c4fc84a507e26291d4cb87246493526783c3c18597a542a55",
+      "sha256": "05ebc78091def0e5d610345ce8876f70114a8ea0ce5c1e9f3324523f657c0ed1"
+    },
+    "PM44": {
+      "name": "铝罐装樟脑丸",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 0,
+        "top": 1003,
+        "width": 250,
+        "height": 251
+      },
+      "index": 20,
+      "sourceBounds": {
+        "left": 19,
+        "top": 1029,
+        "width": 222,
+        "height": 205
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 74
+      },
+      "png": "assets/source/items/overrides/PM44.png",
+      "path": "public/wiki/icons/PM44.webp",
+      "pngSha256": "d640538575be9c52b1a9111ae838cc85bb33afa82d001933bf0272c6b10b993f",
+      "sha256": "916dd31107a852958e64933dabf7e4eca6748883eb5a3ae4c05432347ee80d94"
+    },
+    "PM45": {
+      "name": "盒装杉木杆石墨铅笔",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 250,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 21,
+      "sourceBounds": {
+        "left": 266,
+        "top": 1019,
+        "width": 217,
+        "height": 212
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 9,
+        "width": 80,
+        "height": 78
+      },
+      "png": "assets/source/items/overrides/PM45.png",
+      "path": "public/wiki/icons/PM45.webp",
+      "pngSha256": "f83abe6580bb43fd2fa3a40f3c3a79e56b1ea2783e8b0e8cec5cf6865593f877",
+      "sha256": "7fac743163a6dfbd558a900bf43b46e4af04daa8b262a9e035f82f04272e9bb2"
+    },
+    "PM46": {
+      "name": "盒装檀香白瓷香炉套装",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 501,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 22,
+      "sourceBounds": {
+        "left": 507,
+        "top": 1017,
+        "width": 240,
+        "height": 212
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/PM46.png",
+      "path": "public/wiki/icons/PM46.webp",
+      "pngSha256": "01c3b7b91914bfdeadc3f41cdcdb0d7ffe16788c89dd5d0cdc56b2acaf802794",
+      "sha256": "2b2befa446e4524f074d2d8a843eb47290faf666fb434887eb8d320b5889fdff"
+    },
+    "PM47": {
+      "name": "盒装松木框萤石摆件",
+      "source": "PM27-PM47-v2",
+      "cell": {
+        "left": 887,
+        "top": 0,
+        "width": 887,
+        "height": 887
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 909,
+        "top": 64,
+        "width": 694,
+        "height": 718
+      },
+      "contentBounds": {
+        "x": 9,
+        "y": 8,
+        "width": 78,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM47.png",
+      "path": "public/wiki/icons/PM47.webp",
+      "pngSha256": "2160aaf83979534e96a1309230d763357032d171a7fdae76cb032930f35a41f8",
+      "sha256": "a92102cb86ab1d65cc49f6bc13ac390cb7eb29f6559a5bca925c5d3e6358cb34"
+    },
+    "PM48": {
+      "name": "盒装楠木镶玛瑙首饰盒",
+      "source": "PM39-PM43-PD21-PD35-PM44-PM48",
+      "cell": {
+        "left": 1003,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 24,
+      "sourceBounds": {
+        "left": 1005,
+        "top": 1017,
+        "width": 237,
+        "height": 211
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/PM48.png",
+      "path": "public/wiki/icons/PM48.webp",
+      "pngSha256": "2ec6694d9aeaeac17b9f8bba572f386fc2a0115de07a27d825ba7b663c331bbb",
+      "sha256": "eda55591b5b4c5ef832dd500e048383123d59a7a176b1e43cf40527170ba132a"
+    },
+    "PM49": {
+      "name": "盒装石灰腌鹌鹑皮蛋",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 250,
+        "height": 275
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 53,
+        "top": 62,
+        "width": 197,
+        "height": 205
+      },
+      "contentBounds": {
+        "x": 9,
+        "y": 8,
+        "width": 78,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM49.png",
+      "path": "public/wiki/icons/PM49.webp",
+      "pngSha256": "df7805a9720e326065804b7dfff1c1baebdc3e1f62e467586b52e6ff76ba6109",
+      "sha256": "79a696e7a929de4bf1c98692c82e41f8ff7e7954a6b43385025e1578c12b6bb9"
+    },
+    "PM50": {
+      "name": "白瓷罐装精滤蜂蜜",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 250,
+        "top": 0,
+        "width": 251,
+        "height": 275
+      },
+      "index": 1,
+      "sourceBounds": {
+        "left": 305,
+        "top": 60,
+        "width": 181,
+        "height": 215
+      },
+      "contentBounds": {
+        "x": 14,
+        "y": 8,
+        "width": 67,
+        "height": 80
+      },
+      "png": "assets/source/items/overrides/PM50.png",
+      "path": "public/wiki/icons/PM50.webp",
+      "pngSha256": "eb89b82a7c562676348a8ccd7cfdeb54fce33292d77bc80e8e0a77376ecc8051",
+      "sha256": "ef4990ee25a73d5094a70edcc610587e3a6f026a31568c3705cdfc7331ad1a4c"
+    },
+    "PM51": {
+      "name": "铝罐装马奶酒",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 501,
+        "top": 0,
+        "width": 251,
+        "height": 275
+      },
+      "index": 2,
+      "sourceBounds": {
+        "left": 575,
+        "top": 46,
+        "width": 106,
+        "height": 229
+      },
+      "contentBounds": {
+        "x": 30,
+        "y": 8,
+        "width": 36,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM51.png",
+      "path": "public/wiki/icons/PM51.webp",
+      "pngSha256": "9d4a4f4761be003b597a4577bf2ea22637d8b6f8a4ef628a196c69edf4bcc249",
+      "sha256": "b2d41d51f514e8a53787927e188849f2897bc880965735810d0cab2fb07bb455"
+    },
+    "PM52": {
+      "name": "盒装镍扣羊毛开衫",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 752,
+        "top": 0,
+        "width": 246,
+        "height": 275
+      },
+      "index": 3,
+      "sourceBounds": {
+        "left": 752,
+        "top": 69,
+        "width": 210,
+        "height": 196
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 10,
+        "width": 80,
+        "height": 75
+      },
+      "png": "assets/source/items/overrides/PM52.png",
+      "path": "public/wiki/icons/PM52.webp",
+      "pngSha256": "408ed0ddc0960cb2026b8e9e675ef9d87e07ce5e20aa633572a9748095500c47",
+      "sha256": "76c6c699f8f78cc0ef611a58491e0853e4e663e40d43df41e57d8f47d6e0fdff"
+    },
+    "PM53": {
+      "name": "盒装翡翠扣真丝手包",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 998,
+        "top": 0,
+        "width": 256,
+        "height": 275
+      },
+      "index": 4,
+      "sourceBounds": {
+        "left": 998,
+        "top": 70,
+        "width": 223,
+        "height": 196
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/PM53.png",
+      "path": "public/wiki/icons/PM53.webp",
+      "pngSha256": "00f1610905ade366c272dd25cbfb0a352ff2d72b01d5b058cbf21eda4b9ce6d9",
+      "sha256": "13838fab41a2b6b1271f155037ed2499d0534a94c0b3dde0ec47af5062b70b35"
+    },
+    "PM54": {
+      "name": "铝罐装秋刀鱼",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 0,
+        "top": 275,
+        "width": 256,
+        "height": 233
+      },
+      "index": 5,
+      "sourceBounds": {
+        "left": 42,
+        "top": 335,
+        "width": 214,
+        "height": 155
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 19,
+        "width": 81,
+        "height": 57
+      },
+      "png": "assets/source/items/overrides/PM54.png",
+      "path": "public/wiki/icons/PM54.webp",
+      "pngSha256": "32117b8652995e4b5437b9e2660531d419a99c29efa3a34d987763fa8f6a1cb1",
+      "sha256": "3297232a5e8e4177f989d139c26c48db09e95cb67521581bf07c51adab9ed1e6"
+    },
+    "PM55": {
+      "name": "铝盒装带鱼段",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 256,
+        "top": 275,
+        "width": 248,
+        "height": 233
+      },
+      "index": 6,
+      "sourceBounds": {
+        "left": 280,
+        "top": 329,
+        "width": 224,
+        "height": 160
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 19,
+        "width": 81,
+        "height": 57
+      },
+      "png": "assets/source/items/overrides/PM55.png",
+      "path": "public/wiki/icons/PM55.webp",
+      "pngSha256": "6918795554d64b2efebfb2f24812856c69322a683630fb1d123c161c59089a10",
+      "sha256": "62cdc9c11ad088b828a09f92f206845edc9c7fd20146ea649f2310e7a73f08fc"
+    },
+    "PM56": {
+      "name": "密封白瓷罐装鮟鱇鱼汤",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 504,
+        "top": 275,
+        "width": 247,
+        "height": 233
+      },
+      "index": 7,
+      "sourceBounds": {
+        "left": 529,
+        "top": 300,
+        "width": 198,
+        "height": 208
+      },
+      "contentBounds": {
+        "x": 10,
+        "y": 8,
+        "width": 76,
+        "height": 81
+      },
+      "png": "assets/source/items/overrides/PM56.png",
+      "path": "public/wiki/icons/PM56.webp",
+      "pngSha256": "de6a0772e9da68b6747cd4b85aa4c1289a817478a2de01ae88027dc1d63d56ad",
+      "sha256": "f9ee78dc72e197d422554953afb24ad31bb73c2cd8547349c2285b64192921e4"
+    },
+    "PM57": {
+      "name": "礼盒装钴蓝瓷盘石斑鱼",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 751,
+        "top": 275,
+        "width": 252,
+        "height": 233
+      },
+      "index": 8,
+      "sourceBounds": {
+        "left": 751,
+        "top": 304,
+        "width": 231,
+        "height": 198
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 14,
+        "width": 80,
+        "height": 68
+      },
+      "png": "assets/source/items/overrides/PM57.png",
+      "path": "public/wiki/icons/PM57.webp",
+      "pngSha256": "19e80d78eb294d462659fbbab317ca709a02f858d03a01857ac32ac5ffe88307",
+      "sha256": "5e2500410ed79d1e548e6918160f0dca2275a5bede613d25a5a0b3bc8a4a4a53"
+    },
+    "PM58": {
+      "name": "铝罐装油浸金枪鱼",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 1003,
+        "top": 275,
+        "width": 251,
+        "height": 233
+      },
+      "index": 9,
+      "sourceBounds": {
+        "left": 1009,
+        "top": 330,
+        "width": 201,
+        "height": 162
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 16,
+        "width": 80,
+        "height": 64
+      },
+      "png": "assets/source/items/overrides/PM58.png",
+      "path": "public/wiki/icons/PM58.webp",
+      "pngSha256": "69130cfeff40ff3b10a7d93d495e47660d60c2b4a037857c83639c9b1272955f",
+      "sha256": "80fff953c760b7fccc909e4150a686f5c73737494326c0228e4f7d1ef93fbb3c"
+    },
+    "PM59": {
+      "name": "铝盒装松炭烤火鸡腿",
+      "source": "PM59-PM74-PM75-v2",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      },
+      "index": 0,
+      "sourceBounds": {
+        "left": 75,
+        "top": 135,
+        "width": 573,
+        "height": 472
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 67
+      },
+      "png": "assets/source/items/overrides/PM59.png",
+      "path": "public/wiki/icons/PM59.webp",
+      "pngSha256": "2c6f63c58836ee16e24e9f026586687a95873e9847eb684e4d1759980f9c95ac",
+      "sha256": "70c202ee4384d14e013ce18bac0d78a298ccc04e21713c09dc1bf3b0f824c36c"
+    },
+    "PM60": {
+      "name": "樟木匣装铂扣真丝围巾",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 255,
+        "top": 752,
+        "width": 246,
+        "height": 251
+      },
+      "index": 16,
+      "sourceBounds": {
+        "left": 279,
+        "top": 770,
+        "width": 221,
+        "height": 200
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 72
+      },
+      "png": "assets/source/items/overrides/PM60.png",
+      "path": "public/wiki/icons/PM60.webp",
+      "pngSha256": "ca6fe60f6a1549415f62d7ae2a298db9f4603912b37f9fe622a0193580838af7",
+      "sha256": "dfb0da80ae19615586d62af886413207b42503347868a824e973a303fc2a0774"
+    },
+    "PM61": {
+      "name": "礼盒装白瓷蜂蜜檀香",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 501,
+        "top": 752,
+        "width": 251,
+        "height": 251
+      },
+      "index": 17,
+      "sourceBounds": {
+        "left": 519,
+        "top": 769,
+        "width": 218,
+        "height": 200
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/PM61.png",
+      "path": "public/wiki/icons/PM61.webp",
+      "pngSha256": "4bc0d545a5132f86ad3717f48cc051a05eb5504854be26a75a84f34cc594c116",
+      "sha256": "289f904e421044bae12c9ca0570decfa84f723135e87cd3ba22de6d64b7a6f7b"
+    },
+    "PM62": {
+      "name": "楠木盒装翡翠扣羊驼毛披肩",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 752,
+        "top": 752,
+        "width": 245,
+        "height": 251
+      },
+      "index": 18,
+      "sourceBounds": {
+        "left": 755,
+        "top": 769,
+        "width": 222,
+        "height": 201
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 72
+      },
+      "png": "assets/source/items/overrides/PM62.png",
+      "path": "public/wiki/icons/PM62.webp",
+      "pngSha256": "88b9d56f9a34fa7640db005c4786d44f3f92e84909ed1443ba7f1933676c7f28",
+      "sha256": "fbfc5fa93fd7891f2cf8a6fe676249c765735b145415d3d6f27fc2ccb5e1bb8d"
+    },
+    "PM63": {
+      "name": "盒装镍架松炭和牛烧烤套装",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 997,
+        "top": 752,
+        "width": 257,
+        "height": 251
+      },
+      "index": 19,
+      "sourceBounds": {
+        "left": 997,
+        "top": 771,
+        "width": 223,
+        "height": 197
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/PM63.png",
+      "path": "public/wiki/icons/PM63.webp",
+      "pngSha256": "8eee6c609c620281d4e2fbc1380ce088add58a855669d0568413dc919ea9117b",
+      "sha256": "c6db41e2ccecbb1783af51aa78ebdb391b309cb283b4d082d335adf681a7aad2"
+    },
+    "PM64": {
+      "name": "铝罐装松炭熏鲭鱼",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 0,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 20,
+      "sourceBounds": {
+        "left": 39,
+        "top": 1043,
+        "width": 212,
+        "height": 166
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 17,
+        "width": 81,
+        "height": 62
+      },
+      "png": "assets/source/items/overrides/PM64.png",
+      "path": "public/wiki/icons/PM64.webp",
+      "pngSha256": "ed13b24a64124a83c7399ccb6eda37a094ba8c9484582b0fc52f729bb2512841",
+      "sha256": "be2536ffb49c4c505157111e0c0286c6a117e84c636661c875194e7f5c5eb574"
+    },
+    "PM65": {
+      "name": "盒装杉木蒸笼白瓷鳕鱼盅",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 251,
+        "top": 1003,
+        "width": 250,
+        "height": 251
+      },
+      "index": 21,
+      "sourceBounds": {
+        "left": 280,
+        "top": 1009,
+        "width": 220,
+        "height": 201
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 11,
+        "width": 80,
+        "height": 73
+      },
+      "png": "assets/source/items/overrides/PM65.png",
+      "path": "public/wiki/icons/PM65.webp",
+      "pngSha256": "47dbc1563b125e79149da7ea558a9db295ca32c5bafc4261ca7a4777cdf64ed2",
+      "sha256": "0ec6611e47065f883d7054ea30fe87de4a16e54f1b377dff628ae9253c42e1c0"
+    },
+    "PM66": {
+      "name": "楠木礼盒装钴蓝瓷盘鲳鱼",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 501,
+        "top": 1003,
+        "width": 251,
+        "height": 251
+      },
+      "index": 22,
+      "sourceBounds": {
+        "left": 518,
+        "top": 1017,
+        "width": 219,
+        "height": 195
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 12,
+        "width": 80,
+        "height": 71
+      },
+      "png": "assets/source/items/overrides/PM66.png",
+      "path": "public/wiki/icons/PM66.webp",
+      "pngSha256": "9869fce755fbc27643252dc5774110cb87b92ac252b3c6d3f68b949f6f0cebd3",
+      "sha256": "282da1e175b28fc2047a5709cc57ddf169860e627bd9ef27d19adfdf6e707bc1"
+    },
+    "PM67": {
+      "name": "樟木礼盒装铝罐黄鱼鲞",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 752,
+        "top": 1003,
+        "width": 246,
+        "height": 251
+      },
+      "index": 23,
+      "sourceBounds": {
+        "left": 755,
+        "top": 1018,
+        "width": 224,
+        "height": 194
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 69
+      },
+      "png": "assets/source/items/overrides/PM67.png",
+      "path": "public/wiki/icons/PM67.webp",
+      "pngSha256": "200fed2bbb93e73a83c4ce3f2b34064076ac5c0214d1cd62948b93907b3f94d4",
+      "sha256": "99a14c16bd7d34abf630985c392998ba30a73d18e96d0e3e9898bfe67280d8f4"
+    },
+    "PM68": {
+      "name": "檀木礼盒装白瓷金枪鱼刺身",
+      "source": "PM49-PM58-PT51-PT55-PM59-PM68",
+      "cell": {
+        "left": 998,
+        "top": 1003,
+        "width": 256,
+        "height": 251
+      },
+      "index": 24,
+      "sourceBounds": {
+        "left": 998,
+        "top": 1014,
+        "width": 224,
+        "height": 198
+      },
+      "contentBounds": {
+        "x": 8,
+        "y": 13,
+        "width": 80,
+        "height": 70
+      },
+      "png": "assets/source/items/overrides/PM68.png",
+      "path": "public/wiki/icons/PM68.webp",
+      "pngSha256": "4f6671e2b61c32296b8fa6651bb83447546dc2f441341382a8ea48a5e3361655",
+      "sha256": "93ee25d3051ffd1de895d4297f5a3f070add877fb23630a56aef92a49e97cbdf"
+    }
+  },
+  "ui": {
+    "mining-tab": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 421,
+        "height": 415
+      },
+      "sourceBounds": {
+        "left": 64,
+        "top": 105,
+        "width": 310,
+        "height": 290
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 9,
+        "width": 82,
+        "height": 77
+      },
+      "png": "assets/mining/source-icons/mining-tab.png",
+      "path": "public/ui-icons/mining-tab.webp",
+      "pngSha256": "12911f4f772d91cb83543a0b0b4a18cd8f598ba7eaeebcbb26d84f0037cbc6d2",
+      "sha256": "99ec729d3e346a3298cefe3ecefa7b24b76b6c92e4dce8392dda0df48ffbe058"
+    },
+    "facility-empty-mine": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 421,
+        "top": 0,
+        "width": 421,
+        "height": 415
+      },
+      "sourceBounds": {
+        "left": 441,
+        "top": 73,
+        "width": 358,
+        "height": 332
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 76
+      },
+      "png": "assets/mining/source-icons/facility-empty-mine.png",
+      "path": "public/ui-icons/facility-empty-mine.webp",
+      "pngSha256": "9c8a224fd012527daed4bc2ab302bd98d62626125b391cd5fd416e4c9be6ef0b",
+      "sha256": "d58eeefb4da506ce89f68c9246078566e88b63f8f2f560b24e0585bab28f9545"
+    },
+    "mining-buy": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 842,
+        "top": 0,
+        "width": 421,
+        "height": 415
+      },
+      "sourceBounds": {
+        "left": 871,
+        "top": 103,
+        "width": 328,
+        "height": 287
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 12,
+        "width": 82,
+        "height": 72
+      },
+      "png": "assets/mining/source-icons/mining-buy.png",
+      "path": "public/ui-icons/mining-buy.webp",
+      "pngSha256": "36dfe83b6c5eaea9d5ea8b65b3ca52701214cad212ff56dcc3034decbdbf2788",
+      "sha256": "b60cb91961be774fb3ccedf491712ce16f46dd923686bbe14c3c576ed5661c74"
+    },
+    "mining-upgrade": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 0,
+        "top": 415,
+        "width": 421,
+        "height": 416
+      },
+      "sourceBounds": {
+        "left": 61,
+        "top": 494,
+        "width": 312,
+        "height": 286
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 75
+      },
+      "png": "assets/mining/source-icons/mining-upgrade.png",
+      "path": "public/ui-icons/mining-upgrade.webp",
+      "pngSha256": "3220f67728a64f6c4acca24f0d4cff61aefa7863bd6c322d50033131cc67b0ef",
+      "sha256": "5f3204c0a38ee09004d7df3362f334bb80c83f3c158c7002c80440a13d72583e"
+    },
+    "mining-yield": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 421,
+        "top": 415,
+        "width": 421,
+        "height": 416
+      },
+      "sourceBounds": {
+        "left": 448,
+        "top": 476,
+        "width": 331,
+        "height": 318
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 8,
+        "width": 82,
+        "height": 79
+      },
+      "png": "assets/mining/source-icons/mining-yield.png",
+      "path": "public/ui-icons/mining-yield.webp",
+      "pngSha256": "c7c30c46258546224b10e19e3fc1e186e3213fcc0e47a0f0c3777bb1d10700ea",
+      "sha256": "0d49be68ec110b91f862c55156e7ce109ffb974447178823f04bbd383399ef1c"
+    },
+    "mining-research": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 842,
+        "top": 415,
+        "width": 421,
+        "height": 416
+      },
+      "sourceBounds": {
+        "left": 846,
+        "top": 500,
+        "width": 352,
+        "height": 282
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 15,
+        "width": 82,
+        "height": 66
+      },
+      "png": "assets/mining/source-icons/mining-research.png",
+      "path": "public/ui-icons/mining-research.webp",
+      "pngSha256": "84c12973d9a31da8ab93a2939a623c487efe318069dd0de2c0ca6f221f022231",
+      "sha256": "5addd1092b7d365bcdcf388acb306f8e9a0acd7a162f7fe9a406f37f5c9b6406"
+    },
+    "mining-processing": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 0,
+        "top": 831,
+        "width": 421,
+        "height": 415
+      },
+      "sourceBounds": {
+        "left": 60,
+        "top": 887,
+        "width": 305,
+        "height": 298
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 8,
+        "width": 82,
+        "height": 80
+      },
+      "png": "assets/mining/source-icons/mining-processing.png",
+      "path": "public/ui-icons/mining-processing.webp",
+      "pngSha256": "feb358f9c9f7bc212099eca3e1f3813534b7710a435d6444fe2119aca3e3a548",
+      "sha256": "efcef7f35149983f5d014f3f76e77eac402d73f2841c6c570d85c3faaf828bba"
+    },
+    "mining-cycle": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 421,
+        "top": 831,
+        "width": 421,
+        "height": 415
+      },
+      "sourceBounds": {
+        "left": 441,
+        "top": 880,
+        "width": 332,
+        "height": 296
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 11,
+        "width": 82,
+        "height": 73
+      },
+      "png": "assets/mining/source-icons/mining-cycle.png",
+      "path": "public/ui-icons/mining-cycle.webp",
+      "pngSha256": "755e5edd96398763f7c00fea0db56c1048961158fb7d0d03313adf6737288adc",
+      "sha256": "bcd6ec3b607e2fc0cfc6cb6cd4d4d91a7e85405245da15665750b03f403e00b4"
+    },
+    "mining-refining": {
+      "source": "ui-v1",
+      "cell": {
+        "left": 842,
+        "top": 831,
+        "width": 421,
+        "height": 415
+      },
+      "sourceBounds": {
+        "left": 866,
+        "top": 886,
+        "width": 329,
+        "height": 304
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 10,
+        "width": 82,
+        "height": 76
+      },
+      "png": "assets/mining/source-icons/mining-refining.png",
+      "path": "public/ui-icons/mining-refining.webp",
+      "pngSha256": "e29e941519ae06eb1c3ff62441615dc95d39c6e8cd5e851303fc9bb98e05ed16",
+      "sha256": "40223907c8301738621cd2cd83745e023affb638167e0132c02b059a2b9dc324"
+    }
+  },
+  "scene": {
+    "background": {
+      "png": "assets/mining/png/background.png",
+      "path": "public/art/mining/background.webp",
+      "pngSha256": "ae9c51846cd0e9533835ef48d59dd4c0a9adf02891614c7bce1122c388f82edb",
+      "sha256": "cf9983c916a5d187b6473f0ce4f5a8d3577fa57aa07811f7306eefa64fa61aaf"
+    },
+    "foreground": {
+      "png": "assets/mining/png/foreground.png",
+      "path": "public/art/mining/foreground.webp",
+      "pngSha256": "1c8f65700f1418a5b819f0020cc437ca96706f4ee751117d7c43b18d1421802c",
+      "sha256": "e4a7c8e6151b41e9eb6d40529b50d6aa9b2a78b93354e8a1b86221af43d9582b",
+      "source": "background-v1",
+      "sourceSelection": "left cave/near post silhouette; alpha boundary only",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "cart": {
+      "png": "assets/mining/png/cart.png",
+      "path": "public/art/mining/cart.webp",
+      "pngSha256": "56cb1a859ecc3f94833e5e56dbc654182a3ca0d7530d7de1b178c0e890862e8b",
+      "sha256": "7226c715a327c9f76a1f2351cb47c1ecb4bd56ee49fbd2271659f8f28e8f0895",
+      "source": "cart-v1",
+      "sourceBounds": {
+        "left": 113,
+        "top": 183,
+        "width": 1252,
+        "height": 764
+      },
+      "width": 96,
+      "height": 64,
+      "anchorX": 48,
+      "anchorY": 60,
+      "cargo": {
+        "x": 48,
+        "y": 15,
+        "width": 58,
+        "height": 48,
+        "anchorX": 0.5,
+        "anchorY": 1
+      }
+    },
+    "M01": {
+      "png": "assets/mining/png/scene-M01.png",
+      "path": "public/art/scene-M01.webp",
+      "pngSha256": "67f53a6e653ebbbcc2c0b932018cf18a3389a6f8ddf3fbe94e34bcd2d54b7cf1",
+      "sha256": "7ec7ab9ab2d3e37f2903bb84288f514e12915357081588ef039d1343b99efd0f",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M01.webp"
+    },
+    "M02": {
+      "png": "assets/mining/png/scene-M02.png",
+      "path": "public/art/scene-M02.webp",
+      "pngSha256": "ff02451e184437086f4d162d8801a7b7adad4ea8a1dedccee332e9cf2de1b928",
+      "sha256": "fa42cb92b44dc4da0286c1644b188e69598adcf9aca05af3d708923106eaf8f2",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M02.webp"
+    },
+    "M03": {
+      "png": "assets/mining/png/scene-M03.png",
+      "path": "public/art/scene-M03.webp",
+      "pngSha256": "3ef36413963e04137b0b777adc6f9a6a6d30bbd18a9ab4639d9c1a530e2fa7af",
+      "sha256": "bd006bec8352de39e275b39fd8865c6a14703a4022df021c6012bcb752216255",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M03.webp"
+    },
+    "M04": {
+      "png": "assets/mining/png/scene-M04.png",
+      "path": "public/art/scene-M04.webp",
+      "pngSha256": "b204aace3389931113af66e8a30f11b924291100d1a0123967cbfd09f3ff5153",
+      "sha256": "7ebf328119d986c2036f04630edad35d2ffac743b93ba971825324f37b747994",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M04.webp"
+    },
+    "M05": {
+      "png": "assets/mining/png/scene-M05.png",
+      "path": "public/art/scene-M05.webp",
+      "pngSha256": "742661c4f593222c06540ce088a24c26f3cc8d7b800c4a594403369bd46bb7a1",
+      "sha256": "7370241d0b9b597f461c2f19b7651be9adab63660f429906901f82c50a5b265f",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M05.webp"
+    },
+    "M06": {
+      "png": "assets/mining/png/scene-M06.png",
+      "path": "public/art/scene-M06.webp",
+      "pngSha256": "28e44a7691ab168e3503c86ea81a2a520e6d23ea3c293ba199779a9ff8cefe33",
+      "sha256": "faa42e548d7b3b31f96630676d05e4940ef432f36e300193bd0b0f2d026d27c0",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M06.webp"
+    },
+    "M07": {
+      "png": "assets/mining/png/scene-M07.png",
+      "path": "public/art/scene-M07.webp",
+      "pngSha256": "6e6e738362ce16cffae4fccf40bc903ff2fe1fa29f7b6e82cf236d48ec8caa7b",
+      "sha256": "7d042f1b1a77d67b81f14e273a4cb7c23a5e6d7512c114a727e5f4d190572b55",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M07.webp"
+    },
+    "M08": {
+      "png": "assets/mining/png/scene-M08.png",
+      "path": "public/art/scene-M08.webp",
+      "pngSha256": "7f164098afe7de98d82faa87f2ae10118ce84e52f65aa90d339d2759e6f4b242",
+      "sha256": "d9999eef10be8268a78f971fc5d8494492748927c18b81d642d0be99c42b445f",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M08.webp"
+    },
+    "M09": {
+      "png": "assets/mining/png/scene-M09.png",
+      "path": "public/art/scene-M09.webp",
+      "pngSha256": "efa7a9ab220fdb57a664c332942d1c6f6fa5191c737542505319301760232079",
+      "sha256": "ad7ad9345eb2151cf4167075558acddf06bee3441b92d1ae9bf6271104ed4ea7",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M09.webp"
+    },
+    "M10": {
+      "png": "assets/mining/png/scene-M10.png",
+      "path": "public/art/scene-M10.webp",
+      "pngSha256": "0bfe53aab057b8a9a340e6ef2ef2e7ee77759fef5866816384977a1b82ad59cf",
+      "sha256": "680d27f740175482a68a8246b6446381f0c5ca1d8b298a7f846d704f8b08b0d2",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M10.webp"
+    },
+    "M11": {
+      "png": "assets/mining/png/scene-M11.png",
+      "path": "public/art/scene-M11.webp",
+      "pngSha256": "5095bad7baf38a53b0808aee093cd7f050985e37d834e5777953ead19423ac2e",
+      "sha256": "46f7b1958b54caad08475608910940ba30cd856fb7d3e5780a70d4742b6c587e",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M11.webp"
+    },
+    "M12": {
+      "png": "assets/mining/png/scene-M12.png",
+      "path": "public/art/scene-M12.webp",
+      "pngSha256": "85aeb48546c375f54e43e547e285727966179c228d78eb66991b7e403fe94973",
+      "sha256": "5e4dc2563a21fb5fe6d7f8cd4142fafa9a007e1000cad258e7a5e14da1f39ee1",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M12.webp"
+    },
+    "M13": {
+      "png": "assets/mining/png/scene-M13.png",
+      "path": "public/art/scene-M13.webp",
+      "pngSha256": "3a6a29d8f37d9d21268f016f2e5dd2a830da2545f501fd8c58c6b578d52e9d7d",
+      "sha256": "a8828af540419741d14831580ff05996f87f4a2f2725104592ae6f25f0d16b40",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M13.webp"
+    },
+    "M14": {
+      "png": "assets/mining/png/scene-M14.png",
+      "path": "public/art/scene-M14.webp",
+      "pngSha256": "6d596ac5443c5c8936926b3a260eca891f5aad19a76df4cc8823f7196a292cfe",
+      "sha256": "a59d284d087e8dcb3e8cdec0ac3b1f68989fb084628b406c91b9caff2cd99fa6",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M14.webp"
+    },
+    "M15": {
+      "png": "assets/mining/png/scene-M15.png",
+      "path": "public/art/scene-M15.webp",
+      "pngSha256": "ee1afbdedd2e2137181a570b2ac319d101c803e6a84b843f6cf30f24ab18d819",
+      "sha256": "134e5d41167b38de9b1e44084a184a39486ff100baafbd0a25a2d8cef9c91544",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M15.webp"
+    },
+    "M16": {
+      "png": "assets/mining/png/scene-M16.png",
+      "path": "public/art/scene-M16.webp",
+      "pngSha256": "4b0dd0557148563803c0dbfe0a36bf4e596059ac255eb66fc1436117b39bb606",
+      "sha256": "8cc0451727d8b3ed92f2ab2be6930608f3c5f5ad6f7724ad9fda54c96e8f87c5",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M16.webp"
+    },
+    "M17": {
+      "png": "assets/mining/png/scene-M17.png",
+      "path": "public/art/scene-M17.webp",
+      "pngSha256": "725dcd6e9d9bec0028bb66d77c596d68ff4a8e08c356e1883c4d8098a4d957af",
+      "sha256": "ee026bc6368fd1e5978ba4666bb5918c3f4b198619dad851d8bf6012d3c0773d",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M17.webp"
+    },
+    "M18": {
+      "png": "assets/mining/png/scene-M18.png",
+      "path": "public/art/scene-M18.webp",
+      "pngSha256": "6e3798df6aa9d7dec8791effd6f04e1fdc895a01372d365c8d4f13eb4a732904",
+      "sha256": "48815929c49c41b559790b40ea335029923b8efcd756f9e89ccc1bfb165d712f",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M18.webp"
+    },
+    "M19": {
+      "png": "assets/mining/png/scene-M19.png",
+      "path": "public/art/scene-M19.webp",
+      "pngSha256": "c93600f08a6da1817e9f6ea6f1d41d5e16f78e0f4683ff7efc74c13fd44863c0",
+      "sha256": "b05e126ade5a5388a1c5d0995552c71d88780d1f4cc5efa84f9e9f48e4e6cef1",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M19.webp"
+    },
+    "M20": {
+      "png": "assets/mining/png/scene-M20.png",
+      "path": "public/art/scene-M20.webp",
+      "pngSha256": "2475ec9c24899d1d4d776972c48e6343de1826809bf8008c661f5ca924a3897e",
+      "sha256": "805ec316360f5615c60f2f6a84fefb0dc10664546d75b02cc9f683a41576e4ee",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M20.webp"
+    },
+    "M21": {
+      "png": "assets/mining/png/scene-M21.png",
+      "path": "public/art/scene-M21.webp",
+      "pngSha256": "7c6e9ecb011cb2ff2edb76549d5e4832aeef0d9ac2f14530f6436de467cb1505",
+      "sha256": "c1718a6eb00106d6e7560c4e51220fba042cd6d5077b54f2614f9bfb28f31e00",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M21.webp"
+    },
+    "M22": {
+      "png": "assets/mining/png/scene-M22.png",
+      "path": "public/art/scene-M22.webp",
+      "pngSha256": "6f5d01144a5d9f1c10f50309bd226599adb16602dc230a9d7d765223cf07b6b5",
+      "sha256": "3c1ce66e6f97fff0aa3affa0b9cb99cf6313fbad81a246a3dad0d26e6b10c9a9",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M22.webp"
+    },
+    "M23": {
+      "png": "assets/mining/png/scene-M23.png",
+      "path": "public/art/scene-M23.webp",
+      "pngSha256": "e39bada981f45a17cf267028cd45bf19f61e12161387bd173a5e1eabbe5f0a69",
+      "sha256": "dec2879cd630802041800c50920eee3b45a2f80b5cefde7db0097ec5f1110d9f",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M23.webp"
+    },
+    "M24": {
+      "png": "assets/mining/png/scene-M24.png",
+      "path": "public/art/scene-M24.webp",
+      "pngSha256": "031794f42ec2e9d86d6d20d40a3f5bb64c357f4218c2ead87fa25b48cb9c4ec4",
+      "sha256": "739b2c981b19abeb154eeb055de023b2d93d2b70905efd8cf352a61ad9c33a84",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M24.webp"
+    },
+    "M25": {
+      "png": "assets/mining/png/scene-M25.png",
+      "path": "public/art/scene-M25.webp",
+      "pngSha256": "795566a6629393402e6bbcd98d8e5a80ca83eee469bb430a8bf909c50af6b79e",
+      "sha256": "4c8ca94a9175ec2f854541cec81df2f03be35c42656315fdb1c7a00808570b44",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M25.webp"
+    },
+    "M26": {
+      "png": "assets/mining/png/scene-M26.png",
+      "path": "public/art/scene-M26.webp",
+      "pngSha256": "ab911a890c8b41a7d600b85e541309d5fff3b37b540fb5c60570b5469b16788a",
+      "sha256": "e69c9b85596ebf459b198f812bb93d382d4d4fd522e54a6f6ca33bdda5f25e82",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M26.webp"
+    },
+    "M27": {
+      "png": "assets/mining/png/scene-M27.png",
+      "path": "public/art/scene-M27.webp",
+      "pngSha256": "cf8ae50cf34e803ce50ae6773c57f5468041792308f1b21f0f15b7d177e4f8dc",
+      "sha256": "bffc8ce73dc0141cb470d93939a3b2cbaffbe1ba8a4200ce002e9475656811e8",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M27.webp"
+    },
+    "M28": {
+      "png": "assets/mining/png/scene-M28.png",
+      "path": "public/art/scene-M28.webp",
+      "pngSha256": "b4f74efc3a0ac0b5bd28f3eb09f4b3b1f19f7665891243e70c96797641088a44",
+      "sha256": "cd8d9e90c0d7ce175b0ba3b44bf8698b718042b85db9048b5c45b13220fbbcfc",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M28.webp"
+    },
+    "M29": {
+      "png": "assets/mining/png/scene-M29.png",
+      "path": "public/art/scene-M29.webp",
+      "pngSha256": "7c6fc5ac07d10f57f2f8fab14fd8f773ed4ace1d70881a1dd1737eb523d87ed6",
+      "sha256": "61cea3dfc5602a799b268802d6ed2406c0f6b8451645c56937055810f9197ce1",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M29.webp"
+    },
+    "M30": {
+      "png": "assets/mining/png/scene-M30.png",
+      "path": "public/art/scene-M30.webp",
+      "pngSha256": "13dad54fbdbae7908f9a9d6217fe2ffda17d724f78588b10788199f4848672e3",
+      "sha256": "f3b9b9831add1c27bb7cec10a0d820efd511578e5ed7cc636e91d1237206e53f",
+      "layers": [
+        "background",
+        "empty-cart",
+        "canonical-item-icon",
+        "cave-foreground"
+      ],
+      "icon": "public/wiki/icons/M30.webp"
+    }
+  }
+}

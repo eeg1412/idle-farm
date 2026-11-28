@@ -1,0 +1,37 @@
+{
+  "name": "idle-farm",
+  "description": "放置庄园 (Idle Manor)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eeg1412/idle-farm.git"
+  },
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "node scripts/build-asset-manifest.mjs && vite build && node scripts/build-offline.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --test",
+    "check": "npm run content:check && npm run art:check && npm test",
+    "art:check": "node scripts/check-facility-art.mjs",
+    "art:livestock": "node scripts/export-livestock-animation.mjs",
+    "art:fish": "node scripts/export-fish-animation.mjs",
+    "content:generate": "node scripts/generate-game-data.mjs",
+    "content:check": "node scripts/compile-content.mjs --check && node scripts/generate-game-data.mjs --check",
+    "balance:check": "node scripts/check-time-cost-balance.mjs",
+    "balance:tech-time": "node scripts/check-time-cost-balance.mjs --tech-time",
+    "publish:cloudflare": "npx wrangler pages deploy ./dist --project-name idle-farm"
+  },
+  "dependencies": {
+    "pixi.js": "8.23.0"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.8",
+    "sharp": "0.34.5",
+    "vite": "7.3.1"
+  }
+}

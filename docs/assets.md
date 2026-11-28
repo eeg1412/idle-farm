@@ -10,9 +10,9 @@
 | 裁切用图标表 | `assets/source/items/<起始ID>-<结束ID>.png` | 透明方形 PNG，固定 5 行 × 5 列，每格一件 |
 | 发布图 | `public/wiki/icons/<物品ID>.webp` | 每品项一张，96×96，WebP 有损编码质量 70，Alpha 质量 100。发布站点与页面仅使用 WebP |
 
-当前共 574 项；原 525 项保留 21 张历史图标表。矿业使用透明网格原稿与逐品项覆盖图。原有 12 张保留原顺序，畜牧水产 6 张按扩展式样书中新增品项的表格顺序从左到右、从上到下排列。先定稿品项和配方并通过内容校验，再根据稳定 ID 绘制。原图保存于 `assets/source/items/raw/`。仅在原图能完整隔离出 25 个主体时，把图标重新居中到规则网格。出现粘连、缺图、越过画布边缘或类别误画时，先返工并重新检查。
+目录共 839 项。原 525 项保留 21 张历史图标表。矿业与第二次扩展新增品项采用透明网格原稿，逐项覆盖图通过 `assets/source/items/overrides.json` 登记。 第二次扩展逐格的原画、提示词、裁切坐标与图标哈希见[物品图来源登记](../assets/source/items/expansion-2026-11-28.json)。原有 12 张保留原顺序，畜牧水产 6 张按扩展式样书中对应品项的表格顺序从左到右、从上到下排列。先定稿品项和配方并通过内容校验，再根据稳定 ID 绘制。原图保存于 `assets/source/items/raw/`。仅在原图能完整隔离出 25 个主体时，把图标重新居中到规则网格。出现粘连、缺图、越过画布边缘或类别误画时，先返工并重新检查。
 
-- 作物和养殖产出展示收获原态。牲畜条目画可交易的蛋、奶或肉，水产条目画对应渔获。
+- 作物和养殖产出展示收获原态。牲畜条目画可交易的养殖产出，水产条目画对应渔获。木材原料条目画收获的原木。
 - 中间产物展示粉、浆、切料、冻坯、面团及无装饰的开口备料容器。
 - 所有商品必须是逐件包装的零售成品。名称写明袋装、瓶装、罐装、盒装、礼盒等实际包装。图标在 96×96 下仍要清楚呈现外包装和封口，内容可由透明瓶身、封闭观察窗或包装上的图样辨识。盘、碗、餐用陶盅等器皿只能作为包装内的内容或配件。裸露料理和单纯摆盘不通过审图。
 - 校正后的每个图案最多占单格宽高的 64%，相邻主体之间至少保留约三分之一格的透明带。规则网格通过检查后裁成 96×96，使用最近邻缩放，保留透明背景。每个 WebP 必须对应唯一品项 ID。
@@ -23,11 +23,11 @@ python3 scripts/export-item-icons.py
 python3 scripts/export-item-icons.py --check
 ```
 
-导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。现行 574 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
+导出使用 Python 3 与 Pillow（启用 WebP 支持）。既有 300 个图标沿用 `src/content/catalog.json` 的顺序。现行 839 项依据[扩展配方总表](expansion/05-catalog.md)。修改扩展后运行 `python3 scripts/validate-expansion-spec.py`。
 
 发布图目录 `public/wiki/icons/` 是游戏运行时的物品图标来源，仓库、产物栏、畜牧与鱼塘动画、导出脚本和素材检查均引用该路径。路径中的 `wiki` 为历史名称：早期独立配方 Wiki 已删除，该目录与其中图标保留不动。
 
-新增图标表依次为 `L01-IL05`、`IL06-PL10`、`PL11-PF15`、`PF16-PD20`、`PT01-PT25`、`PT26-PT50`、`C51-P160`、`C57-I122`、`I123-P180`。各表各 25 格，具体顺序见同目录提示词和配方总表。
+历史扩展图标表依次为 `L01-IL05`、`IL06-PL10`、`PL11-PF15`、`PF16-PD20`、`PT01-PT25`、`PT26-PT50`、`C51-P160`、`C57-I122`、`I123-P180`。各表各 25 格，具体顺序见同目录提示词和配方总表。
 
 ## 界面图标
 
@@ -35,13 +35,13 @@ python3 scripts/export-item-icons.py --check
 
 ### 设施场景
 
-68 种作物、10 种牲畜、10 种鱼均有独立满幅场景，用于非动画设施详情及历史素材交付；牲畜与鱼种选择使用独立透明活体图。`scene-C01` 到 `scene-C68`、`scene-L01` 到 `scene-L10`、`scene-F01` 到 `scene-F10` 是独立资源。庄园、料坊与工房的已安排动画区域禁止回退图标、静态场景和程序占位，加载中／失败／资料缺失／卸载均保留区域；素材存在不构成运行回退授权。空设施初始选择图保留。收成明细中的物品图标表示实际产物。
+独立设施场景按 73 种作物、30 种牲畜、30 种鱼及 30 种矿石交付，用于非动画设施详情及素材交付。路径为 `public/art/scene-<ID>.webp`。牲畜与鱼种选择使用独立透明活体图。庄园、料坊与工房的已安排动画区域禁止回退图标、静态场景和程序占位，加载中／失败／资料缺失／卸载均保留区域；素材存在不构成运行回退授权。空设施初始选择图保留。收成明细中的物品图标表示实际产物。
 
 场景原图保存在 `assets/source/art/`，小幅场景表及其提示词保存在 `assets/source/art/facility-sheets/`。按从左到右、从上到下的 ID 顺序绘制和检查，裁去分隔线后导出单张 320×320 WebP，质量 70。运行 `python3 scripts/export-facility-scenes.py` 可重新裁切。首页横幅、空设施和三个首个品种保留整幅绘制的 PNG 原图。游戏只加载当前页面相关的场景。最终构建执行 `npm run art:check`，以原料目录检查设施场景是否齐全；单独执行检查按用户验证授权。
 
 #### 作物生长动画
 
-场景画布320×320，固定天空、田地与洒水器在 `public/art/plot/`。C02–C68按 `public/art/plot/plants/<ID>/{sown,seedling,growing,mature}.webp` 交付四张独立透明单株；每张只有一株，运行按 `crop-visuals.json` 根位分别创建Sprite，纹理可复用，位置／透视／遮挡逐株计算。旧C02+整田图集不再活跃加载，已从发布目录 `public/art/plot/crops/` 移除，源图仍在 assets/。只有C01保留已认可640×640四期整幅前景例外，不能因统一新格式改掉原麦。
+场景画布320×320，固定天空、田地与洒水器在 `public/art/plot/`。C02–C73 按 `public/art/plot/plants/<ID>/{sown,seedling,growing,mature}.webp` 交付四张独立透明单株；每张只有一株，运行按 `crop-visuals.json` 根位分别创建Sprite，纹理可复用，位置／透视／遮挡逐株计算。旧C02+整田图集不再活跃加载，已从发布目录 `public/art/plot/crops/` 移除，源图仍在 assets/。只有C01保留已认可640×640四期整幅前景例外，不能因统一新格式改掉原麦。
 
 透明5×5原画、提示词和裁切登记在 `assets/plot/crop-atlases/`，早期原稿在 `early-atlases/`，真实四期单株在 `assets/plot/crops/<ID>/`，派生透明PNG在 `assets/plot/plants/<ID>/`。`node scripts/export-crop-animation.mjs` 是唯一生产转换逻辑；旧Python入口仅标准库转发Node。导出元数据保留源路径／裁切bounds、每期根点与尺寸，运行不按bbox重测。C01沿用wheat-0..3.png及既有原画来源，不要求普通单株目录。完整清单见 [farm-crops](../.agents/skills/farm-crops/SKILL.md)。
 
@@ -61,7 +61,7 @@ python3 scripts/export-item-icons.py --check
 
 ### 畜牧动画与透明牲畜选择图
 
-交付范围覆盖目录全部 10 种牲畜，新增 ID 同步扩展。固定棚舍与动物、产品是分离图层；附属产品类是成年 4 帧，肉类是幼年、成长、成熟各 4 帧。分类由 `assets/livestock/layout.json` 显式 `slaughter` 定义，并生成运行登记 `src/content/livestock-visuals.json`，不按 ID 序号推断。完整交付清单见 [farm-livestock](../.agents/skills/farm-livestock/SKILL.md)。
+交付范围覆盖目录全部 30 种牲畜，新增 ID 同步扩展。固定棚舍与动物、产品是分离图层；附属产品类是成年 4 帧，肉类是幼年、成长、成熟各 4 帧。分类由 `assets/livestock/layout.json` 显式 `slaughter` 定义，并生成运行登记 `src/content/livestock-visuals.json`，不按 ID 序号推断。完整交付清单见 [farm-livestock](../.agents/skills/farm-livestock/SKILL.md)。
 
 牲畜使用兼顾像素边缘和形体细节的像素精灵：源图有实际像素色块、阶梯轮廓与离散明暗，同时保留清楚的五官、羽毛分组／毛团和身体结构；避免细碎写实毛发、柔光或拟真体积，也不能简化成缺少特征的粗块图。重绘须用内置 `image_gen` 生成版本化新原画，不能把旧拟真图降采样或加像素化滤镜称作重绘。全部透明选择图、idle 帧及同 ID 静态回退中的动物须保持同一风格；保留共享固定棚舍、脚位、动画时序与产出规则，其他资源是否重绘依任务卡范围执行。各次被拒绝稿、新来源与真实技术参数由素材负责人写入对应提示词文件和来源登记；不得把试稿参数写成用户要求，或在实际产物前补写完成数值。最新画风反馈、指定样稿与后续阶段门见[牲畜画风反馈记录](feedback-checklist.md#2026-11-15牲畜像素画风重新打开与全部重绘)，由 PM 按用户后续确认维护。
 
@@ -69,7 +69,7 @@ python3 scripts/export-item-icons.py --check
 
 动物原画、透明选择图和回退中的动物层都不烘焙椭圆阴影，复用物品图也不烘焙程序影。每阶段四帧使用同一尺度和固定解剖脚点，不逐帧按 bbox 重居中或按加权脚底像素中心挪动。`atlas.json` 每帧保留 `fixedGround: [138,270]`，并记录阶段共享的正数 `stageScale`、人工解剖脚点 `sourceAnchor: [x,y]` 与实际 `anchorMethod`；`sourceAnchor` 使用原始整张源图的绝对像素坐标，`sourceCanvas.left/top` 是相对此 anchor 的偏移，画布尺寸同阶段固定。导出从 `sourceAnchor + sourceCanvas.left/top` 提取画布，同阶段共用 `stageScale` 与 `scenePlacement`。
 
-运行登记每ID使用 `{stages,slaughter,grounding,feeding,feedTexture,product}`。`grounding` 每期登记真实首帧支撑脚区 `{x,y,radiusX,radiusY}`，同阶段固定，不逐帧测量或挪动物。`feeding` 每期 `{x,y,radiusX,radiusY,kind}` 保留真实嘴点来源；当前全部动物共用复合饲料图片，不再按kind程序画细粒料。`feedTexture` 为 `{path:'./art/livestock/feed-v8.webp',size:[128,64],bounds:{x:4,y:4,width:120,height:56},anchor:[64,60]}`，loader共享一张Texture，每只动物独立Sprite和程序轻影。`livestockFeedLayout`由runtime和静态导出共用，V8重设计冷暗低沿托盘与浅／褐／绿混合料，基础场景可见宽采用至少52后再乘depth，使130px卡片仍可辨；参数是实现选择，真实嘴/脚登记不动。`product`仍用96px canonical内容bounds，动画与仓库同URL，肉品跨收获保持成熟落点，附属产物在饲料相反侧接地。
+运行登记每ID使用 `{stages,slaughter,grounding,feeding,feedTexture,product}`。`grounding` 每期登记真实首帧支撑脚区 `{x,y,radiusX,radiusY}`，同阶段固定，不逐帧测量或挪动物。`feeding` 每期 `{x,y,radiusX,radiusY,kind}` 保留真实嘴点来源；`feedTexture` 按 ID 登记 `{path,size,bounds,anchor}`。L13 中华蜜蜂与 L29 家蚕分别使用花蜜、桑叶专用素材，其余动物使用 `./art/livestock/feed-v8.webp`（128×64，`bounds:{x:4,y:4,width:120,height:56}`，`anchor:[64,60]`）。加载器按路径复用纹理，每只动物有独立 Sprite 和程序轻影。`livestockFeedLayout`由runtime和静态导出共用，V8重设计冷暗低沿托盘与浅／褐／绿混合料，基础场景可见宽采用至少52后再乘depth，使130px卡片仍可辨；参数是实现选择，真实嘴/脚登记不动。`product`仍用96px canonical内容bounds，动画与仓库同URL，肉品跨收获保持成熟落点，附属产物在饲料相反侧接地。
 
 复合饲料当前新原画为 `assets/livestock/raw/compound-feed-v8.png`，成品PNG为 `assets/livestock/feed-v8.png`、发布 `public/art/livestock/feed-v8.webp`；登记 `feed-registration-v8.json`，实际提示词 `feed-prompts-v8.md`。内置image_gen以当前L01／L02帧作画风参考重新绘制，producer支持`--feed-only`，保留原稿并只转换饲料与相应登记／回退。V8-r1的20阶段四帧与10张静态回退130px已作[静态审阅](art-reviews/2026-11-15-livestock-feed-redesign.md)，真实Pixi图层和用户认可仍另验；旧v6-r3虽曾内部通过，用户再次反馈不可辨后已撤回作为当前交付依据，仅保留历史。
 
@@ -101,7 +101,7 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 ### 鱼塘动画与透明活鱼选择图
 
-按目录全部鱼种交付，完整规范见 [farm-fish](../.agents/skills/farm-fish/SKILL.md)。按habitat使用河／海两套320×320固定背景：`public/art/fish/river-pond.webp`、`sea-pond.webp`，本轮原稿为river-pond-v2／sea-pond-v1，旧单一pond保留历史。每鱼三期各四张独立原画，发布1280×960透明图集、质量70；来源、提示词、布局、逐帧PNG和图集均保留 `assets/fish/`。
+按目录全部 30 种鱼交付，完整规范见 [farm-fish](../.agents/skills/farm-fish/SKILL.md)。按habitat使用河／海两套320×320固定背景：`public/art/fish/river-pond.webp`、`sea-pond.webp`，本轮原稿为river-pond-v2／sea-pond-v1，旧单一pond保留历史。每鱼三期各四张独立原画，发布1280×960透明图集、质量70；来源、提示词、布局、逐帧PNG和图集均保留 `assets/fish/`。
 
 `public/ui-icons/fish-<ID>.webp` 为 96×96 透明活鱼，从成熟原画取得；`public/wiki/icons/<ID>.webp` 仍为 canonical 仓库渔获图，不重画替换。`assets/source/art/scene-<ID>.png` 和 `public/art/scene-<ID>.webp` 由共享鱼塘和本次成熟活鱼合成，按 `fish-layout.js` 共用展示只数、站位和深度；常规设施导出复用登记持久来源，避免重新导出时恢复旧鱼场景。
 
@@ -137,9 +137,9 @@ V5实际来源和人工嘴／脚登记见 `assets/livestock/feeding-prompts-v5.m
 
 ### 矿业
 
-矿业 49 个物品使用新绘像素原画，逐格传入 ID 与准确名称。M01–M10、IM01–IM16、PM01–PM23 的 96×96 透明图标位于`public/wiki/icons/`，持久源图通过`assets/source/items/overrides.json`登记；原25格图集保留历史顺序，不插入重排。矿业原稿、提示词、裁切/尺寸/哈希登记及PNG位于`assets/mining/`，转换入口为`scripts/export-mining-art.mjs`。
+矿业系列共 149 项（M01–M30、IM01–IM36、PM01–PM83）。各 ID 按准确名称交付新绘像素原画和 `public/wiki/icons/<ID>.webp` 的 96×96 透明图标，逐项覆盖源通过 `assets/source/items/overrides.json` 登记。原 25 格图标表保留历史顺序。首轮矿业原稿、提示词、裁切、尺寸、哈希登记及 PNG 位于 `assets/mining/`，转换入口为 `scripts/export-mining-art.mjs`。
 
-矿洞背景整幅生成，包含洞口和轨道。矿车透明单独生成，货载复用各M物品图标。`src/content/mining-visuals.json` 登记洞口原画层、内缘坐标、矿车轮脚锚点及车体可见左缘。运行时将洞口置于车体和货载下方，按洞口内缘做进出洞淡变。10张`scene-M<ID>`仅用于非动画详情/素材交付，不作为运行加载回退。矿洞导航、空设施与7项经营科技图标也单独真实绘制并发布透明WebP。页面WebP质量70，Alpha质量100，PNG原图不进dist。
+矿洞背景整幅生成，包含洞口和轨道。矿车透明单独生成，货载复用各M物品图标。`src/content/mining-visuals.json` 登记洞口原画层、内缘坐标、矿车轮脚锚点及车体可见左缘。运行时将洞口置于车体和货载下方，按洞口内缘做进出洞淡变。M01–M30 的 `scene-<ID>` 用于非动画详情及素材交付。矿洞导航、空设施与7项经营科技图标也单独真实绘制并发布透明WebP。页面WebP质量70，Alpha质量100，PNG原图不进dist。
 
 矿洞真实批次进行中，洞内间歇显示白黄像素火花、金橙余火和局部微光。敲击节奏模拟真实挖矿：同一位置随机连敲3–10下（间隔0.62–0.90秒随机，每下落点在该位置±2像素内、火花随机偏左或偏右），停0.5–2.7秒（随机）后随机换到另一起点；时间线随时钟推进实时随机生成，不循环，时钟回退时重新开始，长时间跳跃不补播错过的敲击。火花采用固定程序图形，独立内部多边形mask限制在暗洞内，图层位于洞口原画上方、矿车和货载下方；不改变木梁、外部场景、矿车时序或声音。`mining-visuals.json`的sparks几何配置与矿车opening内缘坐标分开；短批次矿车保持静态到站帧，洞内火花独立更新。火花停止与销毁沿既有批次和动画生命周期，不新增纹理文件。
 

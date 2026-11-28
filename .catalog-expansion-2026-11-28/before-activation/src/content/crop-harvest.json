@@ -1,0 +1,1826 @@
+{
+  "C01": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷穗",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/wheat/wheat-2.png",
+      "matureSource": "assets/plot/wheat/wheat-3.png",
+      "decision": "按小麦的谷穗采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C02": {
+    "mode": "wholePlant",
+    "harvestedPart": "甘蔗茎秆",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C02/growing.png",
+      "matureSource": "assets/plot/crops/C02/mature.png",
+      "decision": "按甘蔗的甘蔗茎秆采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C03": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C03/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C03/growing.png",
+      "matureSource": "assets/plot/crops/C03/mature.png",
+      "decision": "已有 growing 是完整多叶草莓冠丛，非两叶幼苗；无果，可作成株待结果基底，须沿成年根位和固定尺度使用。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C03/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C03/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C03/growing.png",
+        "pngPath": "assets/plot/plants/C03/bare.png",
+        "webpPath": "public/art/plot/plants/C03/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C03-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page1.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C03-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "完整成年多叶草莓冠丛，无果，非两叶苗；复用独立growing叶序与成熟不同。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C04": {
+    "mode": "wholePlant",
+    "harvestedPart": "玉米穗及当季植株",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C04/growing.png",
+      "matureSource": "assets/plot/crops/C04/mature.png",
+      "decision": "按玉米的玉米穗及当季植株采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C05": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C05/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C05/growing.png",
+      "matureSource": "assets/plot/crops/C05/mature.png",
+      "decision": "growing 的稀疏树冠和细分枝与成年苹果树不同，需要保留 mature 树干树冠去果，不能放大稀疏小树。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v2-C05",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v2-C05.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v2-C05.json",
+        "sourceCrop": "assets/plot/crops/C05/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C05-bare-generated-v2-C05.png",
+        "pngPath": "assets/plot/plants/C05/bare.png",
+        "webpPath": "public/art/plot/plants/C05/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C05-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C05-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/revision-v2-actual-size.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "v2从原成熟苹果单株精准去果，外冠恢复原不规则范围与下沿，不再采用v1扩冠；主干和根脚保持。 已逐项看精确源图/提示词与最终PNG/WebP、正常Alpha合成及2倍最近邻、固定成熟源尺度/根脚、130×138静态场景；未验证游戏运行与真实循环。",
+        "sourcePairEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-source-pairs.png",
+        "nearestNeighborEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts-zoom2.png",
+        "registrationEvidence": "assets/plot/repeat-harvest/draft-visuals.json",
+        "resolvedRejections": [
+          {
+            "id": "C-REPEAT-01",
+            "version": "bare-generated-v1-01",
+            "evidence": "assets/plot/reviews/repeat-harvest/C05-artifacts-v1-zoom2.png",
+            "resolution": "v2精确原稿、最终PNG/WebP、固定尺度根脚及130×138静态复查通过；旧稿保留。"
+          }
+        ]
+      }
+    }
+  },
+  "C06": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C06/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C06/growing.png",
+      "matureSource": "assets/plot/crops/C06/mature.png",
+      "decision": "已有 growing 具木质化多分枝及完整蓝莓叶冠，无果；同根保留枝干作为成年灌木基底，不使用 seedling。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C06/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C06/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C06/growing.png",
+        "pngPath": "assets/plot/plants/C06/bare.png",
+        "webpPath": "public/art/plot/plants/C06/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C06-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page1.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C06-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "木质多枝蓝莓成丛，无果；独立growing叶冠较稀，沿成熟源像素尺度与根脚。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C07": {
+    "mode": "retainedPlant",
+    "harvestedPart": "嫩叶",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C07/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C07/growing.png",
+      "matureSource": "assets/plot/crops/C07/mature.png",
+      "decision": "已有 growing 具木质分枝和可辨完整茶丛，叶密度低于 mature，可表示采叶后的成株；不放大小苗。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C07/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C07/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C07/growing.png",
+        "pngPath": "assets/plot/plants/C07/bare.png",
+        "webpPath": "public/art/plot/plants/C07/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C07-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page1.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C07-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "木质茶丛保留，嫩叶已采态比成熟稀；不缩放小苗。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C08": {
+    "mode": "retainedPlant",
+    "harvestedPart": "花朵",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C08/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C08/growing.png",
+      "matureSource": "assets/plot/crops/C08/mature.png",
+      "decision": "已有 growing 具完整桂花木质分枝和成株叶冠，无花，可保留基干进入开花状态。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C08/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C08/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C08/growing.png",
+        "pngPath": "assets/plot/plants/C08/bare.png",
+        "webpPath": "public/art/plot/plants/C08/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C08-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page1.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C08-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年桂花枝冠无开放花；独立growing叶序与成熟有差别。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C09": {
+    "mode": "retainedPlant",
+    "harvestedPart": "可可果荚",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C09/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C09/growing.png",
+      "matureSource": "assets/plot/crops/C09/mature.png",
+      "decision": "直接开图确认 growing 为完整木质可可树及垂叶冠，非小苗，未挂果；可用作成年无荚基底。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C09/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C09/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C09/growing.png",
+        "pngPath": "assets/plot/plants/C09/bare.png",
+        "webpPath": "public/art/plot/plants/C09/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C09-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page1.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C09-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "完整木质可可树与垂叶冠，无荚；成年根脚保持。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C10": {
+    "mode": "retainedPlant",
+    "harvestedPart": "香草荚",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C10/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C10/growing.png",
+      "matureSource": "assets/plot/crops/C10/mature.png",
+      "decision": "growing 是较小细藤，缺成熟藤蔓和叶量；需成年无荚完整香草藤。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C10/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C10-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C10/bare.png",
+        "webpPath": "public/art/plot/plants/C10/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C10-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page2.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C10-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C11": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C11/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C11/growing.png",
+      "matureSource": "assets/plot/crops/C11/mature.png",
+      "decision": "growing 树冠明显更疏、枝干较细；需以成熟樱桃树树体去果补画。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C11/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C11-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C11/bare.png",
+        "webpPath": "public/art/plot/plants/C11/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C11-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page2.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C11-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C12": {
+    "mode": "retainedPlant",
+    "harvestedPart": "栗球坚果",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C12/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C12/growing.png",
+      "matureSource": "assets/plot/crops/C12/mature.png",
+      "decision": "已有 growing 具完整木质栗树分叉及成形叶冠，无栗球；可作成树无果阶段。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C12/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C12/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C12/growing.png",
+        "pngPath": "assets/plot/plants/C12/bare.png",
+        "webpPath": "public/art/plot/plants/C12/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C12-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page2.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C12-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年栗树无栗球，基干根脚保持；独立growing叶冠较疏，不宣称逐像素同树冠。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C13": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷穗",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C13/growing.png",
+      "matureSource": "assets/plot/crops/C13/mature.png",
+      "decision": "按糯稻的谷穗采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C14": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷穗",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C14/growing.png",
+      "matureSource": "assets/plot/crops/C14/mature.png",
+      "decision": "按粳稻的谷穗采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C15": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷穗",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C15/growing.png",
+      "matureSource": "assets/plot/crops/C15/mature.png",
+      "decision": "按大麦的谷穗采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C16": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷物籽粒",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C16/growing.png",
+      "matureSource": "assets/plot/crops/C16/mature.png",
+      "decision": "按荞麦的谷物籽粒采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C17": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷穗",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C17/growing.png",
+      "matureSource": "assets/plot/crops/C17/mature.png",
+      "decision": "按小米的谷穗采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C18": {
+    "mode": "wholePlant",
+    "harvestedPart": "豆荚籽粒及当季植株",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C18/growing.png",
+      "matureSource": "assets/plot/crops/C18/mature.png",
+      "decision": "按黄豆的豆荚籽粒及当季植株采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C19": {
+    "mode": "wholePlant",
+    "harvestedPart": "豆荚籽粒及当季植株",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C19/growing.png",
+      "matureSource": "assets/plot/crops/C19/mature.png",
+      "decision": "按红小豆的豆荚籽粒及当季植株采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C20": {
+    "mode": "wholePlant",
+    "harvestedPart": "块根",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C20/growing.png",
+      "matureSource": "assets/plot/crops/C20/mature.png",
+      "decision": "按红薯的块根采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C21": {
+    "mode": "wholePlant",
+    "harvestedPart": "球茎",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C21/growing.png",
+      "matureSource": "assets/plot/crops/C21/mature.png",
+      "decision": "按芋头的球茎采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C22": {
+    "mode": "wholePlant",
+    "harvestedPart": "根茎",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C22/growing.png",
+      "matureSource": "assets/plot/crops/C22/mature.png",
+      "decision": "按莲藕的根茎采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C23": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C23/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C23/growing.png",
+      "matureSource": "assets/plot/crops/C23/mature.png",
+      "decision": "growing 冠层与成熟树体仍不完全对应，且绿色圆形部位难确认为纯叶；不能作为已摘净成年梨树，需补无果图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-02",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-02.json",
+        "sourceCrop": "assets/plot/crops/C23/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C23-bare-generated-v1-02.png",
+        "pngPath": "assets/plot/plants/C23/bare.png",
+        "webpPath": "public/art/plot/plants/C23/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C23-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page2.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C23-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C24": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C24/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C24/growing.png",
+      "matureSource": "assets/plot/crops/C24/mature.png",
+      "decision": "growing 是稀疏细干幼树，缺成年白桃树分枝冠幅；需保留成熟树体去果。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C24/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C24-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C24/bare.png",
+        "webpPath": "public/art/plot/plants/C24/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C24-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page2.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C24-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C25": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C25/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C25/growing.png",
+      "matureSource": "assets/plot/crops/C25/mature.png",
+      "decision": "growing 是稀疏细枝，缺成年蜜柑树冠；不能放大为成树。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C25/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C25-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C25/bare.png",
+        "webpPath": "public/art/plot/plants/C25/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C25-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page2.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C25-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C26": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C26/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C26/growing.png",
+      "matureSource": "assets/plot/crops/C26/mature.png",
+      "decision": "growing 细长分叉与成熟柿树厚干叶冠不同；需成年无果图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C26/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C26-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C26/bare.png",
+        "webpPath": "public/art/plot/plants/C26/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C26-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page3.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C26-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C27": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C27/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C27/growing.png",
+      "matureSource": "assets/plot/crops/C27/mature.png",
+      "decision": "growing 稀疏细枝与成熟青梅树冠不同；需成年无果图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C27/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C27-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C27/bare.png",
+        "webpPath": "public/art/plot/plants/C27/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C27-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page3.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C27-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C28": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C28/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C28/growing.png",
+      "matureSource": "assets/plot/crops/C28/mature.png",
+      "decision": "已有 growing 具完整木质树干、多枝及金柑叶形，无可见果；可作保留枝干的成株。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C28/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C28/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C28/growing.png",
+        "pngPath": "assets/plot/plants/C28/bare.png",
+        "webpPath": "public/art/plot/plants/C28/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C28-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page3.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C28-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "完整木质金柑基干、叶冠，无果；独立growing叶冠较疏。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C29": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C29/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C29/growing.png",
+      "matureSource": "assets/plot/crops/C29/mature.png",
+      "decision": "growing 是绿色细茎，成熟已有木质枝干和更大叶冠；需成年无果无花果树体。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C29/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C29-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C29/bare.png",
+        "webpPath": "public/art/plot/plants/C29/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C29-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page3.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C29-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C30": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C30/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C30/growing.png",
+      "matureSource": "assets/plot/crops/C30/mature.png",
+      "decision": "已有 growing 具完整木质分叉和大叶冠，无果；可作成年香柚待结果基底。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C30/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C30/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C30/growing.png",
+        "pngPath": "assets/plot/plants/C30/bare.png",
+        "webpPath": "public/art/plot/plants/C30/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C30-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page3.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C30-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年木质香柚基干与大叶冠，无果；独立growing叶序与成熟不同。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C31": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C31/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C31/growing.png",
+      "matureSource": "assets/plot/crops/C31/mature.png",
+      "decision": "已有 growing 的木质树干和多簇枇杷长叶构成完整成株，无果；保留成年根位使用。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C31/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C31/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C31/growing.png",
+        "pngPath": "assets/plot/plants/C31/bare.png",
+        "webpPath": "public/art/plot/plants/C31/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C31-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page3.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C31-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年枇杷木质基干及多簇长叶，无果；独立growing叶冠较疏。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C32": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C32/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C32/growing.png",
+      "matureSource": "assets/plot/crops/C32/mature.png",
+      "decision": "growing 叶量及枝干形态弱于成熟花梨树；需成熟同树体无果图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C32/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C32-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C32/bare.png",
+        "webpPath": "public/art/plot/plants/C32/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C32-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page4.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C32-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C33": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C33/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C33/growing.png",
+      "matureSource": "assets/plot/crops/C33/mature.png",
+      "decision": "直接开图确认 growing 已开紫花并有完整分枝大叶，是可结茄的成株而非小苗；允许无果时保留花。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C33/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C33/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C33/growing.png",
+        "pngPath": "assets/plot/plants/C33/bare.png",
+        "webpPath": "public/art/plot/plants/C33/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C33-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page4.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C33-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年茄株无果，允许保留紫花；未把seedling放大。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C34": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C34/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C34/growing.png",
+      "matureSource": "assets/plot/crops/C34/mature.png",
+      "decision": "直接开图确认 growing 已有花序和完整番茄枝叶，是成株无果状态；不以 seedling 替代。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C34/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C34/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C34/growing.png",
+        "pngPath": "assets/plot/plants/C34/bare.png",
+        "webpPath": "public/art/plot/plants/C34/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C34-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page4.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C34-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年番茄枝叶无果，允许保留花序；未把seedling放大。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C35": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C35/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C35/growing.png",
+      "matureSource": "assets/plot/crops/C35/mature.png",
+      "decision": "直接开图确认 growing 为少叶小苗，不能替代成熟青椒枝叶，需成年去椒图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-02",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-02.json",
+        "sourceCrop": "assets/plot/crops/C35/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C35-bare-generated-v1-02.png",
+        "pngPath": "assets/plot/plants/C35/bare.png",
+        "webpPath": "public/art/plot/plants/C35/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C35-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page4.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C35-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C36": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C36/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C36/growing.png",
+      "matureSource": "assets/plot/crops/C36/mature.png",
+      "decision": "直接开图确认 growing 只有两叶小藤，不能作成年南瓜藤，需保留成熟藤叶去瓜图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v2-C36",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v2-C36.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v2-C36.json",
+        "sourceCrop": "assets/plot/crops/C36/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C36-bare-generated-v2-C36.png",
+        "pngPath": "assets/plot/plants/C36/bare.png",
+        "webpPath": "public/art/plot/plants/C36/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C36-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C36-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/revision-v2-actual-size.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "v2保留原成熟藤的外叶、卷须与高叶团，只去中央瓜并补内侧细藤，原v1外扩与叶序重排已修。 已逐项看精确源图/提示词与最终PNG/WebP、正常Alpha合成及2倍最近邻、固定成熟源尺度/根脚、130×138静态场景；未验证游戏运行与真实循环。",
+        "sourcePairEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-source-pairs.png",
+        "nearestNeighborEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts-zoom2.png",
+        "registrationEvidence": "assets/plot/repeat-harvest/draft-visuals.json",
+        "resolvedRejections": [
+          {
+            "id": "C-REPEAT-02",
+            "version": "bare-generated-v1-02",
+            "evidence": "assets/plot/reviews/repeat-harvest/C36-artifacts-v1-zoom2.png",
+            "resolution": "v2精确原稿、最终PNG/WebP、固定尺度根脚及130×138静态复查通过；旧稿保留。"
+          }
+        ]
+      }
+    }
+  },
+  "C37": {
+    "mode": "wholePlant",
+    "harvestedPart": "叶球",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C37/growing.png",
+      "matureSource": "assets/plot/crops/C37/mature.png",
+      "decision": "按卷心菜的叶球采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C38": {
+    "mode": "wholePlant",
+    "harvestedPart": "整株葱",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C38/growing.png",
+      "matureSource": "assets/plot/crops/C38/mature.png",
+      "decision": "按大葱的整株葱采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C39": {
+    "mode": "retainedPlant",
+    "harvestedPart": "叶片",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C39/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C39/growing.png",
+      "matureSource": "assets/plot/crops/C39/mature.png",
+      "decision": "growing 只有少量紫苏叶，缺成年多分枝；需采叶后仍保持成年根茎分枝的资源。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C39/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C39-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C39/bare.png",
+        "webpPath": "public/art/plot/plants/C39/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C39-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page4.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C39-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "采上部紫苏叶尖，保留成年多分枝、下部紫叶和根脚。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C40": {
+    "mode": "retainedPlant",
+    "harvestedPart": "山椒果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C40/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C40/growing.png",
+      "matureSource": "assets/plot/crops/C40/mature.png",
+      "decision": "growing 是少枝小株，缺成年山椒多分枝叶冠；需成年去果图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C40/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C40-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C40/bare.png",
+        "webpPath": "public/art/plot/plants/C40/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C40-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page5.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C40-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C41": {
+    "mode": "wholePlant",
+    "harvestedPart": "芝麻种子及当季植株",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C41/growing.png",
+      "matureSource": "assets/plot/crops/C41/mature.png",
+      "decision": "按雪香白芝麻的芝麻种子及当季植株采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C42": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C42/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C42/growing.png",
+      "matureSource": "assets/plot/crops/C42/mature.png",
+      "decision": "growing 是较小菠萝叶丛，成熟叶丛及果梗更大；需成年去果叶盘，不能放大小叶丛。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C42/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C42-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C42/bare.png",
+        "webpPath": "public/art/plot/plants/C42/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C42-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page5.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C42-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "去中央菠萝及果冠，保留成年基生剑叶盘与根脚。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C43": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C43/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C43/growing.png",
+      "matureSource": "assets/plot/crops/C43/mature.png",
+      "decision": "growing 是少叶细干香蕉苗，不能作成年香蕉主干；需成熟同主干去蕉串。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C43/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C43-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C43/bare.png",
+        "webpPath": "public/art/plot/plants/C43/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C43-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page5.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C43-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C44": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C44/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C44/growing.png",
+      "matureSource": "assets/plot/crops/C44/mature.png",
+      "decision": "growing 是少叶青柠苗，缺成年树冠；需成熟同树体去果。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C44/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C44-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C44/bare.png",
+        "webpPath": "public/art/plot/plants/C44/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C44-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page5.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C44-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C45": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C45/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C45/growing.png",
+      "matureSource": "assets/plot/crops/C45/mature.png",
+      "decision": "growing 是幼小椰苗，不能作成年厚干椰树；需成熟同树体去椰果。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C45/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C45-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C45/bare.png",
+        "webpPath": "public/art/plot/plants/C45/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C45-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page5.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C45-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C46": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C46/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C46/growing.png",
+      "matureSource": "assets/plot/crops/C46/mature.png",
+      "decision": "直接开图确认 growing 有完整木质芒果分叉和浓密长叶冠，无果，足作成年基底；不得独立 fit 放大到比成熟树更大。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C46/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C46/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C46/growing.png",
+        "pngPath": "assets/plot/plants/C46/bare.png",
+        "webpPath": "public/art/plot/plants/C46/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C46-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page5.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C46-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年木质芒果树无果；复用原growing像素尺度，未独立放大。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C47": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C47/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C47/growing.png",
+      "matureSource": "assets/plot/crops/C47/mature.png",
+      "decision": "growing 虽开花但藤体和枝叶显著小于成熟百香果藤；需成年无果藤体，不用细藤放大。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-02",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-02.json",
+        "sourceCrop": "assets/plot/crops/C47/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C47-bare-generated-v1-02.png",
+        "pngPath": "assets/plot/plants/C47/bare.png",
+        "webpPath": "public/art/plot/plants/C47/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C47-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page6.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C47-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C48": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C48/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C48/growing.png",
+      "matureSource": "assets/plot/crops/C48/mature.png",
+      "decision": "growing 为较少枝带花苞株，成熟枝冠及茎干更大；需成年火龙果去果株。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C48/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C48-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C48/bare.png",
+        "webpPath": "public/art/plot/plants/C48/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C48-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page6.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C48-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C49": {
+    "mode": "retainedPlant",
+    "harvestedPart": "坚果",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C49/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C49/growing.png",
+      "matureSource": "assets/plot/crops/C49/mature.png",
+      "decision": "直接开图确认 growing 有完整木质主干、分枝和成形坚果树冠，无坚果，可作成年基底。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C49/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C49/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C49/growing.png",
+        "pngPath": "assets/plot/plants/C49/bare.png",
+        "webpPath": "public/art/plot/plants/C49/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C49-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page6.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C49-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年木质坚果树无果；复用原growing像素尺度，未独立放大。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C50": {
+    "mode": "retainedPlant",
+    "harvestedPart": "叶片",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C50/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C50/growing.png",
+      "matureSource": "assets/plot/crops/C50/mature.png",
+      "decision": "growing 是单一小叶丛，成熟为分蘖大丛；需采叶后成年根冠资源。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C50/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C50-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C50/bare.png",
+        "webpPath": "public/art/plot/plants/C50/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C50-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page6.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C50-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "采部分外层长叶，保留成年成丛基部与中央新叶。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C51": {
+    "mode": "retainedPlant",
+    "harvestedPart": "棉絮棉铃",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C51/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C51/growing.png",
+      "matureSource": "assets/plot/crops/C51/mature.png",
+      "decision": "growing 带未成熟绿色棉蕾且枝冠较小；需成年棉株摘棉后枝叶，不能用带幼蕾小株顶替。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C51/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C51-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C51/bare.png",
+        "webpPath": "public/art/plot/plants/C51/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C51-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page6.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C51-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C52": {
+    "mode": "wholePlant",
+    "harvestedPart": "纤维茎秆",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C52/growing.png",
+      "matureSource": "assets/plot/crops/C52/mature.png",
+      "decision": "按苎麻的纤维茎秆采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C53": {
+    "mode": "retainedPlant",
+    "harvestedPart": "开放花朵",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C53/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C53/growing.png",
+      "matureSource": "assets/plot/crops/C53/mature.png",
+      "decision": "直接开图确认 growing 有完整基生叶丛及花蕾，非小苗；可作采开放花后的待开花成株，花蕾不等同已采收开放花。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C53/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C53/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C53/growing.png",
+        "pngPath": "assets/plot/plants/C53/bare.png",
+        "webpPath": "public/art/plot/plants/C53/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C53-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page6.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C53-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "完整成年基生叶丛，去开放花后保留未开放花蕾；花蕾不算已采收开放花。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C54": {
+    "mode": "wholePlant",
+    "harvestedPart": "地上茎叶",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C54/growing.png",
+      "matureSource": "assets/plot/crops/C54/mature.png",
+      "decision": "按艾草的地上茎叶采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C55": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C55/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C55/growing.png",
+      "matureSource": "assets/plot/crops/C55/mature.png",
+      "decision": "growing 是较细绿色藤，成熟具木质主干和大叶冠；需成年葡萄藤去果。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C55/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C55-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C55/bare.png",
+        "webpPath": "public/art/plot/plants/C55/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C55-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page7.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C55-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C56": {
+    "mode": "retainedPlant",
+    "harvestedPart": "花球",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C56/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C56/growing.png",
+      "matureSource": "assets/plot/crops/C56/mature.png",
+      "decision": "growing 少叶细藤与成熟多枝浓叶不同；需成年酒花藤去花球。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v2-C56",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v2-C56.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v2-C56.json",
+        "sourceCrop": "assets/plot/crops/C56/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C56-bare-generated-v2-C56.png",
+        "pngPath": "assets/plot/plants/C56/bare.png",
+        "webpPath": "public/art/plot/plants/C56/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C56-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C56-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/revision-v2-actual-size.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "v2原三枚花球及上右可疑鳞片挂物全部去净，保留原成年叶片与弯曲藤体。 已逐项看精确源图/提示词与最终PNG/WebP、正常Alpha合成及2倍最近邻、固定成熟源尺度/根脚、130×138静态场景；未验证游戏运行与真实循环。",
+        "sourcePairEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-source-pairs.png",
+        "nearestNeighborEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts-zoom2.png",
+        "registrationEvidence": "assets/plot/repeat-harvest/draft-visuals.json",
+        "resolvedRejections": [
+          {
+            "id": "C-REPEAT-03",
+            "version": "bare-generated-v1-01",
+            "evidence": "assets/plot/reviews/repeat-harvest/C56-artifacts-v1-zoom2.png",
+            "resolution": "v2精确原稿、最终PNG/WebP、固定尺度根脚及130×138静态复查通过；旧稿保留。"
+          }
+        ]
+      }
+    }
+  },
+  "C57": {
+    "mode": "wholePlant",
+    "harvestedPart": "纤维茎秆",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C57/growing.png",
+      "matureSource": "assets/plot/crops/C57/mature.png",
+      "decision": "按亚麻的纤维茎秆采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C58": {
+    "mode": "wholePlant",
+    "harvestedPart": "纤维茎秆",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C58/growing.png",
+      "matureSource": "assets/plot/crops/C58/mature.png",
+      "decision": "按黄麻的纤维茎秆采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C59": {
+    "mode": "retainedPlant",
+    "harvestedPart": "外层纤维叶",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C59/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C59/growing.png",
+      "matureSource": "assets/plot/crops/C59/mature.png",
+      "decision": "growing 是明显幼小剑麻叶盘；需成年采外叶后保留中部叶盘，不能放大小株。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C59/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C59-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C59/bare.png",
+        "webpPath": "public/art/plot/plants/C59/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C59-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page7.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C59-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "采最外层成熟纤维叶，保留成年中央剑叶盘与切叶基部。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C60": {
+    "mode": "wholePlant",
+    "harvestedPart": "染料根",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C60/growing.png",
+      "matureSource": "assets/plot/crops/C60/mature.png",
+      "decision": "按茜草的染料根采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C61": {
+    "mode": "retainedPlant",
+    "harvestedPart": "叶片",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C61/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C61/growing.png",
+      "matureSource": "assets/plot/crops/C61/mature.png",
+      "decision": "growing 少分枝，成熟已有更多高枝；需采叶后保留成年枝架，不回幼株。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v2-C61",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v2-C61.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v2-C61.json",
+        "sourceCrop": "assets/plot/crops/C61/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C61-bare-generated-v2-C61.png",
+        "pngPath": "assets/plot/plants/C61/bare.png",
+        "webpPath": "public/art/plot/plants/C61/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C61-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C61-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/revision-v2-actual-size.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "v2去花及少量嫩梢叶，完整保留高中央茎、右斜茎与下部成年多茎架，原v1矮宽化已修。 已逐项看精确源图/提示词与最终PNG/WebP、正常Alpha合成及2倍最近邻、固定成熟源尺度/根脚、130×138静态场景；未验证游戏运行与真实循环。",
+        "sourcePairEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-source-pairs.png",
+        "nearestNeighborEvidence": "assets/plot/reviews/repeat-harvest/revision-v2-artifacts-zoom2.png",
+        "registrationEvidence": "assets/plot/repeat-harvest/draft-visuals.json",
+        "resolvedRejections": [
+          {
+            "id": "C-REPEAT-04",
+            "version": "bare-generated-v1-01",
+            "evidence": "assets/plot/reviews/repeat-harvest/C61-artifacts-v1-zoom2.png",
+            "resolution": "v2精确原稿、最终PNG/WebP、固定尺度根脚及130×138静态复查通过；旧稿保留。"
+          }
+        ]
+      }
+    }
+  },
+  "C62": {
+    "mode": "retainedPlant",
+    "harvestedPart": "花朵",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C62/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C62/growing.png",
+      "matureSource": "assets/plot/crops/C62/mature.png",
+      "decision": "直接开图确认 growing 是完整分枝羽状叶植株，无开放花，可保留成株进入开花。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C62/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C62/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C62/growing.png",
+        "pngPath": "assets/plot/plants/C62/bare.png",
+        "webpPath": "public/art/plot/plants/C62/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C62-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page7.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C62-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年分枝羽状叶成株无开放花；与成熟花枝细节不同。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C63": {
+    "mode": "retainedPlant",
+    "harvestedPart": "叶片",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C63/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C63/growing.png",
+      "matureSource": "assets/plot/crops/C63/mature.png",
+      "decision": "growing 为单干少叶薄荷苗，成熟多茎茂密；需成年采叶后保留枝茎。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C63/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C63-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C63/bare.png",
+        "webpPath": "public/art/plot/plants/C63/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C63-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page7.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C63-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "采上部嫩叶尖，保留成年多茎、下部叶与根冠。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C64": {
+    "mode": "retainedPlant",
+    "harvestedPart": "花朵",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C64/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C64/growing.png",
+      "matureSource": "assets/plot/crops/C64/mature.png",
+      "decision": "growing 是少叶幼基丛，成熟基丛与花梗结构更丰富；需成熟同叶丛去花图。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-02",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-02.json",
+        "sourceCrop": "assets/plot/crops/C64/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C64-bare-generated-v1-02.png",
+        "pngPath": "assets/plot/plants/C64/bare.png",
+        "webpPath": "public/art/plot/plants/C64/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C64-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page8.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C64-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "去开放花与种锥，保留成年基丛和三支高花梗，非缩回幼苗。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C65": {
+    "mode": "retainedPlant",
+    "harvestedPart": "花穗",
+    "repeatBare": {
+      "status": "reuseGrowing",
+      "sourcePath": "assets/plot/crops/C65/growing.png",
+      "reusePhase": "growing"
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C65/growing.png",
+      "matureSource": "assets/plot/crops/C65/mature.png",
+      "decision": "直接开图确认 growing 是成年薰衣草基生叶丛和木质基部，成熟新增的是花穗；采花后回到基丛合理。",
+      "retainedStaticReview": {
+        "status": "approvedReuse",
+        "sourceVersion": "existing-growing",
+        "sourceSheet": "assets/plot/crops/C65/growing.png",
+        "layoutPath": "assets/plot/repeat-harvest/draft-visuals.json",
+        "sourceCrop": "assets/plot/crops/C65/growing.png",
+        "reviewedSourceCrop": "assets/plot/crops/C65/growing.png",
+        "pngPath": "assets/plot/plants/C65/bare.png",
+        "webpPath": "public/art/plot/plants/C65/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C65-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page8.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C65-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年基生叶丛及木质基部保留，无成熟花穗；不复用seedling。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C66": {
+    "mode": "wholePlant",
+    "harvestedPart": "谷穗",
+    "repeatBare": {
+      "status": "notApplicable",
+      "sourcePath": null,
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C66/growing.png",
+      "matureSource": "assets/plot/crops/C66/mature.png",
+      "decision": "按黑麦的谷穗采收整季地上主体或根部，本轮保留原四期重种表现；不把 mature 的花色当作摘花分类依据。"
+    }
+  },
+  "C67": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C67/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C67/growing.png",
+      "matureSource": "assets/plot/crops/C67/mature.png",
+      "decision": "growing 是细干稀疏梨苗，不能作成熟酿酒梨无果树；需同成年树体。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C67/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C67-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C67/bare.png",
+        "webpPath": "public/art/plot/plants/C67/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C67-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page8.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C67-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  },
+  "C68": {
+    "mode": "retainedPlant",
+    "harvestedPart": "果实",
+    "repeatBare": {
+      "status": "approvedArtwork",
+      "sourcePath": "assets/plot/crops/C68/bare.png",
+      "reusePhase": null
+    },
+    "review": {
+      "growingSource": "assets/plot/crops/C68/growing.png",
+      "matureSource": "assets/plot/crops/C68/mature.png",
+      "decision": "growing 是少枝桑苗，不能作成年桑树叶冠；需成熟同树体去果。",
+      "retainedStaticReview": {
+        "status": "approved",
+        "sourceVersion": "bare-generated-v1-01",
+        "sourceSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+        "layoutPath": "assets/plot/repeat-harvest/mature-source-v1-01.json",
+        "sourceCrop": "assets/plot/crops/C68/bare.png",
+        "reviewedSourceCrop": "assets/plot/repeat-harvest/C68-bare-generated-v1-01.png",
+        "pngPath": "assets/plot/plants/C68/bare.png",
+        "webpPath": "public/art/plot/plants/C68/bare.webp",
+        "pairEvidence": "assets/plot/reviews/repeat-v1/C68-adult-registration.png",
+        "artifactEvidence": "assets/plot/reviews/repeat-harvest/final-artifacts-v1-page8.png",
+        "actualSizeEvidence": "assets/plot/reviews/repeat-v1/C68-repeat-states-130x138.png",
+        "actualSizeContact": "assets/plot/reviews/repeat-harvest/final-actual-size-v1-all.png",
+        "scope": "source-and-final-png-webp-static-only",
+        "runtimeReview": "notAuthorized",
+        "rejection": null,
+        "notes": "成年主干、主要分枝与冠幅保留，本项果实、荚、花或棉已去除。 已看PNG/WebP同尺度同根配对及130×138静态合成，正常Alpha合成无实际底色、明显杂边或有效轮廓裁切；未验证游戏运行与真实循环。"
+      }
+    }
+  }
+}

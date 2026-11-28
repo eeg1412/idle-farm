@@ -1,0 +1,611 @@
+{
+  "F26": {
+    "version": 1,
+    "anchor": "鳃盖暗弧后方、侧面斑点线高度的固定躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [[177, 156], [418, 156], [658, 156], [899, 156]],
+        "cellRects": [
+          {"left": 77, "top": 105, "width": 154, "height": 99},
+          {"left": 318, "top": 105, "width": 156, "height": 99},
+          {"left": 549, "top": 105, "width": 166, "height": 99},
+          {"left": 796, "top": 105, "width": 159, "height": 99}
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [[191, 394], [433, 395], [673, 395], [915, 395]],
+        "cellRects": [
+          {"left": 48, "top": 333, "width": 208, "height": 116},
+          {"left": 291, "top": 333, "width": 208, "height": 116},
+          {"left": 531, "top": 333, "width": 209, "height": 116},
+          {"left": 774, "top": 333, "width": 209, "height": 116}
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [[201, 628], [444, 628], [688, 628], [929, 628]],
+        "cellRects": [
+          {"left": 30, "top": 544, "width": 248, "height": 152},
+          {"left": 280, "top": 544, "width": 240, "height": 152},
+          {"left": 520, "top": 544, "width": 241, "height": 152},
+          {"left": 762, "top": 544, "width": 244, "height": 152}
+        ]
+      }
+    }
+  },
+  "F27": {
+    "version": 1,
+    "anchor": "鳃盖暗弧后方与眼心等高的固定躯干点，邻近亮侧线的前端。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            174,
+            155
+          ],
+          [
+            414,
+            155
+          ],
+          [
+            654,
+            155
+          ],
+          [
+            895,
+            155
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 70,
+            "top": 104,
+            "width": 156,
+            "height": 103
+          },
+          {
+            "left": 307,
+            "top": 104,
+            "width": 161,
+            "height": 103
+          },
+          {
+            "left": 548,
+            "top": 104,
+            "width": 158,
+            "height": 103
+          },
+          {
+            "left": 789,
+            "top": 104,
+            "width": 158,
+            "height": 103
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            185,
+            396
+          ],
+          [
+            429,
+            396
+          ],
+          [
+            672,
+            396
+          ],
+          [
+            912,
+            396
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 46,
+            "top": 334,
+            "width": 202,
+            "height": 128
+          },
+          {
+            "left": 291,
+            "top": 334,
+            "width": 200,
+            "height": 128
+          },
+          {
+            "left": 530,
+            "top": 334,
+            "width": 204,
+            "height": 128
+          },
+          {
+            "left": 776,
+            "top": 334,
+            "width": 198,
+            "height": 128
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            195,
+            632
+          ],
+          [
+            438,
+            632
+          ],
+          [
+            681,
+            632
+          ],
+          [
+            927,
+            632
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 21,
+            "top": 550,
+            "width": 246,
+            "height": 160
+          },
+          {
+            "left": 270,
+            "top": 550,
+            "width": 239,
+            "height": 160
+          },
+          {
+            "left": 509,
+            "top": 550,
+            "width": 243,
+            "height": 160
+          },
+          {
+            "left": 756,
+            "top": 550,
+            "width": 243,
+            "height": 160
+          }
+        ]
+      }
+    }
+  },
+  "F28": {
+    "version": 1,
+    "anchor": "鳃盖后缘暗弧后方、眼中心等高、鳃后斑点带内的固定躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            181,
+            151
+          ],
+          [
+            420,
+            151
+          ],
+          [
+            662,
+            151
+          ],
+          [
+            900,
+            151
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 67,
+            "top": 101,
+            "width": 162,
+            "height": 107
+          },
+          {
+            "left": 310,
+            "top": 101,
+            "width": 158,
+            "height": 107
+          },
+          {
+            "left": 551,
+            "top": 101,
+            "width": 158,
+            "height": 107
+          },
+          {
+            "left": 788,
+            "top": 101,
+            "width": 160,
+            "height": 107
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            188,
+            395
+          ],
+          [
+            433,
+            395
+          ],
+          [
+            675,
+            395
+          ],
+          [
+            916,
+            395
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 44,
+            "top": 332,
+            "width": 204,
+            "height": 134
+          },
+          {
+            "left": 291,
+            "top": 332,
+            "width": 200,
+            "height": 134
+          },
+          {
+            "left": 533,
+            "top": 332,
+            "width": 198,
+            "height": 134
+          },
+          {
+            "left": 775,
+            "top": 332,
+            "width": 197,
+            "height": 134
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            205,
+            632
+          ],
+          [
+            447,
+            632
+          ],
+          [
+            687,
+            632
+          ],
+          [
+            932,
+            632
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 20,
+            "top": 549,
+            "width": 250,
+            "height": 170
+          },
+          {
+            "left": 270,
+            "top": 549,
+            "width": 244,
+            "height": 170
+          },
+          {
+            "left": 514,
+            "top": 549,
+            "width": 240,
+            "height": 170
+          },
+          {
+            "left": 754,
+            "top": 549,
+            "width": 246,
+            "height": 170
+          }
+        ]
+      }
+    }
+  },
+  "F29": {
+    "version": 1,
+    "anchor": "胸鳍基部上缘前端、斜向鳃区暗线尾侧的固定躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            149,
+            165
+          ],
+          [
+            389,
+            165
+          ],
+          [
+            629,
+            165
+          ],
+          [
+            870,
+            165
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 64,
+            "top": 107,
+            "width": 161,
+            "height": 106
+          },
+          {
+            "left": 308,
+            "top": 107,
+            "width": 157,
+            "height": 106
+          },
+          {
+            "left": 546,
+            "top": 107,
+            "width": 159,
+            "height": 106
+          },
+          {
+            "left": 787,
+            "top": 107,
+            "width": 158,
+            "height": 106
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            147,
+            410
+          ],
+          [
+            390,
+            410
+          ],
+          [
+            631,
+            410
+          ],
+          [
+            874,
+            410
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 39,
+            "top": 333,
+            "width": 207,
+            "height": 140
+          },
+          {
+            "left": 287,
+            "top": 333,
+            "width": 201,
+            "height": 140
+          },
+          {
+            "left": 527,
+            "top": 333,
+            "width": 203,
+            "height": 140
+          },
+          {
+            "left": 771,
+            "top": 333,
+            "width": 200,
+            "height": 140
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            151,
+            649
+          ],
+          [
+            394,
+            649
+          ],
+          [
+            637,
+            649
+          ],
+          [
+            881,
+            649
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 13,
+            "top": 550,
+            "width": 255,
+            "height": 178
+          },
+          {
+            "left": 270,
+            "top": 550,
+            "width": 241,
+            "height": 178
+          },
+          {
+            "left": 511,
+            "top": 550,
+            "width": 242,
+            "height": 178
+          },
+          {
+            "left": 753,
+            "top": 550,
+            "width": 251,
+            "height": 178
+          }
+        ]
+      }
+    }
+  },
+  "F30": {
+    "version": 1,
+    "anchor": "鳃盖后缘与胸鳍前端之间、胸鳍基部高度的固定躯干点。",
+    "stages": {
+      "fry": {
+        "sourceAnchors": [
+          [
+            175,
+            158
+          ],
+          [
+            416,
+            158
+          ],
+          [
+            656,
+            158
+          ],
+          [
+            896,
+            157
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 68,
+            "top": 104,
+            "width": 155,
+            "height": 102
+          },
+          {
+            "left": 309,
+            "top": 104,
+            "width": 155,
+            "height": 102
+          },
+          {
+            "left": 549,
+            "top": 104,
+            "width": 156,
+            "height": 102
+          },
+          {
+            "left": 787,
+            "top": 104,
+            "width": 158,
+            "height": 102
+          }
+        ]
+      },
+      "growing": {
+        "sourceAnchors": [
+          [
+            183,
+            405
+          ],
+          [
+            425,
+            405
+          ],
+          [
+            669,
+            405
+          ],
+          [
+            911,
+            405
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 39,
+            "top": 328,
+            "width": 208,
+            "height": 135
+          },
+          {
+            "left": 284,
+            "top": 328,
+            "width": 206,
+            "height": 135
+          },
+          {
+            "left": 529,
+            "top": 328,
+            "width": 203,
+            "height": 135
+          },
+          {
+            "left": 768,
+            "top": 328,
+            "width": 207,
+            "height": 135
+          }
+        ]
+      },
+      "mature": {
+        "sourceAnchors": [
+          [
+            196,
+            637
+          ],
+          [
+            438,
+            637
+          ],
+          [
+            681,
+            637
+          ],
+          [
+            923,
+            637
+          ]
+        ],
+        "cellRects": [
+          {
+            "left": 20,
+            "top": 542,
+            "width": 247,
+            "height": 167
+          },
+          {
+            "left": 267,
+            "top": 542,
+            "width": 241,
+            "height": 167
+          },
+          {
+            "left": 508,
+            "top": 542,
+            "width": 242,
+            "height": 167
+          },
+          {
+            "left": 750,
+            "top": 542,
+            "width": 246,
+            "height": 167
+          }
+        ]
+      }
+    }
+  }
+}

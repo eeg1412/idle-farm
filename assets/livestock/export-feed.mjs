@@ -53,6 +53,7 @@ export async function exportLivestockFeed() {
   const panels = [], labels = [], maturePanels = [], matureLabels = [];
   let row = 0, matureRow = 0;
   for (const [id, species] of Object.entries(layout.species)) {
+    if (registration.species?.[id]) continue;
     const atlas = await readFile('public/art/livestock/animals/' + id + '.webp');
     for (const [stageIndex, stage] of species.stages.entries()) {
       for (let frame = 0; frame < layout.idleFrames; frame++) {

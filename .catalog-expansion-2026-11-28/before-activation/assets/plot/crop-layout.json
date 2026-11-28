@@ -1,0 +1,1585 @@
+{
+  "foregroundRootY": 191,
+  "fieldGeometry": {
+    "source": "public/art/plot/ground.webp",
+    "space": "320x320 scene pixels, same as roots",
+    "measuredOn": "2026-11-22",
+    "method": [
+      "Soil mask: flood fill from (160,170) over opaque ground pixels with r>g+18, r>b+25, g<170; grass, fence and sky stay outside.",
+      "Troughs: per 4px column, luminance (0.3R+0.59G+0.11B) averaged over x+-3 inside the mask and smoothed over y+-2; local minima darker than 72 within +-7px are trough samples, linked across columns from seeds x=14..302, then least-squares lines y=a+bx (n>=12 samples, rms<2px, duplicates within 5px at x=160 merged).",
+      "Row vanishing point: weighted least-squares intersection of the eight trough lines (weight = sample count).",
+      "Left field side: least-squares line through the soil mask top boundary for x=4..222 (upper-left grass/soil edge). Far edge: same for x=236..318.",
+      "Column vanishing point: the trough lines intersect the left side at x_k; x_k=(A+Bk)/(1+Ck) fitted by linear least squares (max residual 0.95px); its limit B/C on the left side is the column vanishing point, so trough spacing and column convergence come from one projective map.",
+      "Homography p(u,v) ~ depthPerUnit*u*rowVP + depthPerUnit*v*columnVP + origin (homogeneous, origin = trough 0 on the left side). v=k is trough k, v=k+0.5 is the ridge crest between troughs; u is measured along the ridges from the left side (u=0).",
+      "Field bounds in (u,v): medians of the soil-mask boundary mapped through the inverse homography: left side top boundary x=4..222, far edge x=236..318, near edge bottom boundary x=0..150, right side = rightmost soil pixel for y=205..292 (lower-right grass edge).",
+      "Soil outline: the soil mask with enclosed stone/shadow holes filled; top = first soil pixel per x, bottom = first pair of non-soil pixels below it (y>=150), sampled every 8px after a +-4px conservative max/min filter. Roots must stay marginPx inside top/bottom; the x=0 and x=320 frame sides are not field edges."
+    ],
+    "measurements": {
+      "troughLines": [
+        {
+          "a": 34.415,
+          "b": 0.1644,
+          "samples": 27,
+          "rmsPx": 0.31,
+          "xRange": [
+            210,
+            314
+          ]
+        },
+        {
+          "a": 48.582,
+          "b": 0.1736,
+          "samples": 39,
+          "rmsPx": 1.35,
+          "xRange": [
+            158,
+            314
+          ]
+        },
+        {
+          "a": 60.463,
+          "b": 0.2042,
+          "samples": 46,
+          "rmsPx": 1.29,
+          "xRange": [
+            122,
+            314
+          ]
+        },
+        {
+          "a": 76.934,
+          "b": 0.2357,
+          "samples": 55,
+          "rmsPx": 0.74,
+          "xRange": [
+            98,
+            314
+          ]
+        },
+        {
+          "a": 99.553,
+          "b": 0.2602,
+          "samples": 64,
+          "rmsPx": 0.94,
+          "xRange": [
+            58,
+            314
+          ]
+        },
+        {
+          "a": 126.03,
+          "b": 0.3031,
+          "samples": 57,
+          "rmsPx": 1.2,
+          "xRange": [
+            14,
+            242
+          ]
+        },
+        {
+          "a": 159.253,
+          "b": 0.3454,
+          "samples": 39,
+          "rmsPx": 1.2,
+          "xRange": [
+            6,
+            174
+          ]
+        },
+        {
+          "a": 201.343,
+          "b": 0.3692,
+          "samples": 13,
+          "rmsPx": 1.22,
+          "xRange": [
+            6,
+            62
+          ]
+        }
+      ],
+      "leftSide": {
+        "a": 134.3765,
+        "b": -0.32616,
+        "rmsPx": 1.61,
+        "xRange": [
+          4,
+          222
+        ]
+      },
+      "farEdge": {
+        "a": 31.73,
+        "b": 0.13324,
+        "rmsPx": 0.51,
+        "xRange": [
+          236,
+          318
+        ]
+      },
+      "troughsOnLeftSide": {
+        "x": [
+          203.8,
+          171.7,
+          139.4,
+          102.2,
+          59.4,
+          13.3,
+          -37,
+          -96.3
+        ],
+        "A": 203.477,
+        "B": -38.528,
+        "C": -0.0444738,
+        "maxResidualPx": 0.95
+      },
+      "boundaryMedians": {
+        "leftSideU": -0.02,
+        "farEdgeV": -0.79,
+        "nearEdgeV": 7.62,
+        "rightSideU": 5.19
+      }
+    },
+    "rowVanishingPoint": [
+      -697.049,
+      -81.083
+    ],
+    "columnVanishingPoint": [
+      866.308,
+      -148.178
+    ],
+    "origin": [
+      203.477,
+      68.01
+    ],
+    "depthPerUnit": -0.0444738,
+    "field": {
+      "u": [
+        0,
+        5.19
+      ],
+      "v": [
+        -0.79,
+        7.62
+      ]
+    },
+    "ridgeOffset": 0.5,
+    "inset": {
+      "u": 0.3,
+      "v": 0.12
+    },
+    "soilOutline": {
+      "marginPx": 3,
+      "top": [
+        [
+          0,
+          136
+        ],
+        [
+          8,
+          134
+        ],
+        [
+          16,
+          134
+        ],
+        [
+          24,
+          130
+        ],
+        [
+          32,
+          125
+        ],
+        [
+          40,
+          123
+        ],
+        [
+          48,
+          120
+        ],
+        [
+          56,
+          119
+        ],
+        [
+          64,
+          115
+        ],
+        [
+          72,
+          111
+        ],
+        [
+          80,
+          108
+        ],
+        [
+          88,
+          107
+        ],
+        [
+          96,
+          104
+        ],
+        [
+          104,
+          101
+        ],
+        [
+          112,
+          97
+        ],
+        [
+          120,
+          95
+        ],
+        [
+          128,
+          92
+        ],
+        [
+          136,
+          91
+        ],
+        [
+          144,
+          87
+        ],
+        [
+          152,
+          84
+        ],
+        [
+          160,
+          83
+        ],
+        [
+          168,
+          80
+        ],
+        [
+          176,
+          78
+        ],
+        [
+          184,
+          76
+        ],
+        [
+          192,
+          73
+        ],
+        [
+          200,
+          72
+        ],
+        [
+          208,
+          71
+        ],
+        [
+          216,
+          67
+        ],
+        [
+          224,
+          65
+        ],
+        [
+          232,
+          64
+        ],
+        [
+          240,
+          65
+        ],
+        [
+          248,
+          66
+        ],
+        [
+          256,
+          66
+        ],
+        [
+          264,
+          67
+        ],
+        [
+          272,
+          68
+        ],
+        [
+          280,
+          69
+        ],
+        [
+          288,
+          71
+        ],
+        [
+          296,
+          72
+        ],
+        [
+          304,
+          73
+        ],
+        [
+          312,
+          74
+        ],
+        [
+          319,
+          74
+        ]
+      ],
+      "bottom": [
+        [
+          0,
+          242
+        ],
+        [
+          8,
+          243
+        ],
+        [
+          16,
+          245
+        ],
+        [
+          24,
+          246
+        ],
+        [
+          32,
+          255
+        ],
+        [
+          40,
+          262
+        ],
+        [
+          48,
+          260
+        ],
+        [
+          56,
+          261
+        ],
+        [
+          64,
+          261
+        ],
+        [
+          72,
+          276
+        ],
+        [
+          80,
+          277
+        ],
+        [
+          88,
+          277
+        ],
+        [
+          96,
+          275
+        ],
+        [
+          104,
+          288
+        ],
+        [
+          112,
+          289
+        ],
+        [
+          120,
+          292
+        ],
+        [
+          128,
+          288
+        ],
+        [
+          136,
+          289
+        ],
+        [
+          144,
+          293
+        ],
+        [
+          152,
+          294
+        ],
+        [
+          160,
+          293
+        ],
+        [
+          168,
+          288
+        ],
+        [
+          176,
+          282
+        ],
+        [
+          184,
+          279
+        ],
+        [
+          192,
+          271
+        ],
+        [
+          200,
+          272
+        ],
+        [
+          208,
+          270
+        ],
+        [
+          216,
+          270
+        ],
+        [
+          224,
+          266
+        ],
+        [
+          232,
+          262
+        ],
+        [
+          240,
+          263
+        ],
+        [
+          248,
+          256
+        ],
+        [
+          256,
+          243
+        ],
+        [
+          264,
+          243
+        ],
+        [
+          272,
+          246
+        ],
+        [
+          280,
+          238
+        ],
+        [
+          288,
+          233
+        ],
+        [
+          296,
+          231
+        ],
+        [
+          304,
+          213
+        ],
+        [
+          312,
+          206
+        ],
+        [
+          319,
+          209
+        ]
+      ]
+    },
+    "nearEdge": {
+      "clearanceRowFraction": 0.25,
+      "minClearancePx": 8,
+      "minRowGapV": 0.5,
+      "searchStepV": 0.01,
+      "reason": "CG-3 (user: front-row roots sat on the soil/grass seam and one apple was dropped). Measured on ground.webp: near rows (v=6.5..7.5) have a 50-75px row pitch along a column and the old 3px bottom margin left trunks 2-6px above the first grass pixel, i.e. on the seam. A quarter of the local row pitch (about 16-18px on the near rows, whose pitch is 63-73px; never under 8px) puts the foot on the visible lit face of the last ridge instead. Nodes that miss it are pulled back along their own column in 0.01v steps; at least half a row (0.5v) from the previous root of that column keeps trunks from stacking. Per-size right insets (large 0.6u, medium 0.5u) keep the rightmost column off the lower-right grass side so the near corner can be pulled back instead of dropped."
+    },
+    "sideEdge": {
+      "maxShiftColumnFraction": 0.35,
+      "frameOverhangPx": 0,
+      "minNeighborFraction": 0.55,
+      "reason": "CG-3 r4 (review CG-2-02): widening the right column inset to clear the lower-right grass left a column-wide bare strip, so both sizes keep their original insets (large 0.3u, medium 0.2u). Only nodes that still miss the near-edge clearance after the column pull-back (they lie in the lower-right corner where the outermost column runs along the grass side) get the smallest combined move: pull back along the column (>= nearEdge.minRowGapV behind the previous root) plus a shift along their ridge toward the field of at most 0.35 column pitch, so the column still reads straight. A moved root keeps at least 0.55 of the local column pitch (px) from every other root. Letting roots sit outside the 320 frame was evaluated and gave identical roots, so frameOverhangPx stays 0. Nodes with no such position are dropped and reported by the exporter."
+    }
+  },
+  "families": {
+    "blade": {
+      "height": 65,
+      "width": 37,
+      "seedColor": [
+        160,
+        105,
+        43
+      ],
+      "numbers": [
+        2,
+        4,
+        13,
+        14,
+        15,
+        17,
+        38,
+        50,
+        59,
+        66
+      ]
+    },
+    "orchard": {
+      "height": 59,
+      "width": 43,
+      "seedColor": [
+        118,
+        71,
+        44
+      ],
+      "numbers": [
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        40,
+        43,
+        44,
+        45,
+        46,
+        49,
+        67,
+        68
+      ]
+    },
+    "vine": {
+      "height": 48,
+      "width": 43,
+      "seedColor": [
+        137,
+        91,
+        54
+      ],
+      "numbers": [
+        3,
+        10,
+        18,
+        19,
+        20,
+        34,
+        36,
+        47,
+        48,
+        55,
+        56
+      ]
+    },
+    "broad": {
+      "height": 44,
+      "width": 43,
+      "seedColor": [
+        138,
+        92,
+        58
+      ],
+      "numbers": [
+        21,
+        22,
+        33,
+        35,
+        37,
+        42
+      ]
+    },
+    "herb": {
+      "height": 52,
+      "width": 39,
+      "seedColor": [
+        143,
+        87,
+        47
+      ],
+      "numbers": [
+        7,
+        16,
+        39,
+        41,
+        51,
+        52,
+        53,
+        54,
+        57,
+        58,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65
+      ]
+    }
+  },
+  "sizes": {
+    "small": {
+      "height": null,
+      "width": null,
+      "spacingX": 0,
+      "spacingY": 0,
+      "minRootY": 0,
+      "edgeInset": 0
+    },
+    "medium": {
+      "height": 112,
+      "width": 74,
+      "columnSpacingU": 0.55,
+      "columnInsetU": 0.2,
+      "columnSpacingNote": "Target only. Actual pitch = usable width / round(width / target) so the first and last columns land exactly on the left/right insets: large (5.19-0.3-0.3)/6 = 0.765u (7 columns), medium (5.19-0.2-0.2)/9 = 0.532u (10 columns). projection.columns records the actual u values."
+    },
+    "large": {
+      "height": 180,
+      "width": 116,
+      "columnSpacingU": 0.8,
+      "perspective": {
+        "farY": 65,
+        "nearY": 285,
+        "farScale": 0.42,
+        "nearScale": 1.1,
+        "availableHeightFraction": 0.8
+      },
+      "columnInsetU": 0.3,
+      "columnSpacingNote": "Target only. Actual pitch = usable width / round(width / target) so the first and last columns land exactly on the left/right insets: large (5.19-0.3-0.3)/6 = 0.765u (7 columns), medium (5.19-0.2-0.2)/9 = 0.532u (10 columns). projection.columns records the actual u values."
+    }
+  },
+  "crops": {
+    "C01": "small",
+    "C02": "medium",
+    "C03": "small",
+    "C04": "medium",
+    "C05": "large",
+    "C06": "medium",
+    "C07": "medium",
+    "C08": "large",
+    "C09": "large",
+    "C10": "medium",
+    "C11": "large",
+    "C12": "large",
+    "C13": "small",
+    "C14": "small",
+    "C15": "small",
+    "C16": "small",
+    "C17": "small",
+    "C18": "small",
+    "C19": "small",
+    "C20": "small",
+    "C21": "medium",
+    "C22": "medium",
+    "C23": "large",
+    "C24": "large",
+    "C25": "large",
+    "C26": "large",
+    "C27": "large",
+    "C28": "large",
+    "C29": "large",
+    "C30": "large",
+    "C31": "large",
+    "C32": "large",
+    "C33": "medium",
+    "C34": "medium",
+    "C35": "medium",
+    "C36": "medium",
+    "C37": "small",
+    "C38": "small",
+    "C39": "small",
+    "C40": "medium",
+    "C41": "medium",
+    "C42": "medium",
+    "C43": "large",
+    "C44": "large",
+    "C45": "large",
+    "C46": "large",
+    "C47": "medium",
+    "C48": "medium",
+    "C49": "large",
+    "C50": "medium",
+    "C51": "medium",
+    "C52": "medium",
+    "C53": "small",
+    "C54": "small",
+    "C55": "medium",
+    "C56": "medium",
+    "C57": "small",
+    "C58": "medium",
+    "C59": "medium",
+    "C60": "small",
+    "C61": "small",
+    "C62": "small",
+    "C63": "small",
+    "C64": "small",
+    "C65": "small",
+    "C66": "small",
+    "C67": "large",
+    "C68": "large"
+  },
+  "repeatBare": {
+    "C05": {
+      "sourcePath": "assets/plot/crops/C05/bare.png",
+      "anchorX": 160.5,
+      "anchorY": 295,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C05.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C05.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C05-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 320,
+        "height": 320
+      },
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C10": {
+      "sourcePath": "assets/plot/crops/C10/bare.png",
+      "anchorX": 159.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 320,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C11": {
+      "sourcePath": "assets/plot/crops/C11/bare.png",
+      "anchorX": 159.5,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 640,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C24": {
+      "sourcePath": "assets/plot/crops/C24/bare.png",
+      "anchorX": 159.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 960,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C25": {
+      "sourcePath": "assets/plot/crops/C25/bare.png",
+      "anchorX": 158.5,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 1280,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C26": {
+      "sourcePath": "assets/plot/crops/C26/bare.png",
+      "anchorX": 160,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 0,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C27": {
+      "sourcePath": "assets/plot/crops/C27/bare.png",
+      "anchorX": 161,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 320,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C29": {
+      "sourcePath": "assets/plot/crops/C29/bare.png",
+      "anchorX": 161,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 640,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C32": {
+      "sourcePath": "assets/plot/crops/C32/bare.png",
+      "anchorX": 161,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 960,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C39": {
+      "sourcePath": "assets/plot/crops/C39/bare.png",
+      "anchorX": 176.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 1280,
+        "top": 320,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C40": {
+      "sourcePath": "assets/plot/crops/C40/bare.png",
+      "anchorX": 162,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 0,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C42": {
+      "sourcePath": "assets/plot/crops/C42/bare.png",
+      "anchorX": 166.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 320,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C43": {
+      "sourcePath": "assets/plot/crops/C43/bare.png",
+      "anchorX": 167,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 640,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C44": {
+      "sourcePath": "assets/plot/crops/C44/bare.png",
+      "anchorX": 159.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 960,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C45": {
+      "sourcePath": "assets/plot/crops/C45/bare.png",
+      "anchorX": 148.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 1280,
+        "top": 640,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C48": {
+      "sourcePath": "assets/plot/crops/C48/bare.png",
+      "anchorX": 163.5,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 0,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C50": {
+      "sourcePath": "assets/plot/crops/C50/bare.png",
+      "anchorX": 160,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 320,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C51": {
+      "sourcePath": "assets/plot/crops/C51/bare.png",
+      "anchorX": 160,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 640,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C55": {
+      "sourcePath": "assets/plot/crops/C55/bare.png",
+      "anchorX": 159,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 960,
+        "top": 960,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C56": {
+      "sourcePath": "assets/plot/crops/C56/bare.png",
+      "anchorX": 161.5,
+      "anchorY": 280,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C56.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C56.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C56-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 320,
+        "height": 320
+      },
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C59": {
+      "sourcePath": "assets/plot/crops/C59/bare.png",
+      "anchorX": 161.5,
+      "anchorY": 294,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 0,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C61": {
+      "sourcePath": "assets/plot/crops/C61/bare.png",
+      "anchorX": 160,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C61.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C61.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C61-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 320,
+        "height": 320
+      },
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C63": {
+      "sourcePath": "assets/plot/crops/C63/bare.png",
+      "anchorX": 159.5,
+      "anchorY": 294,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 640,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C67": {
+      "sourcePath": "assets/plot/crops/C67/bare.png",
+      "anchorX": 161,
+      "anchorY": 294,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 960,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C68": {
+      "sourcePath": "assets/plot/crops/C68/bare.png",
+      "anchorX": 159,
+      "anchorY": 294,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-01.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-01-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 1280,
+        "top": 1280,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C23": {
+      "sourcePath": "assets/plot/crops/C23/bare.png",
+      "anchorX": 161.5,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C35": {
+      "sourcePath": "assets/plot/crops/C35/bare.png",
+      "anchorX": 161,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 320,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C36": {
+      "sourcePath": "assets/plot/crops/C36/bare.png",
+      "anchorX": 160,
+      "anchorY": 296,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1.1029411764705883,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v2-C36.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C36.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v2-C36-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 320,
+        "height": 320
+      },
+      "cell": {
+        "left": 0,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C47": {
+      "sourcePath": "assets/plot/crops/C47/bare.png",
+      "anchorX": 142,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 960,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    },
+    "C64": {
+      "sourcePath": "assets/plot/crops/C64/bare.png",
+      "anchorX": 138,
+      "anchorY": 297,
+      "expectedRoot": {
+        "x": 160,
+        "y": 296
+      },
+      "anchorMethod": "One-time opaque anatomical base registration in the edited independent source, never a runtime bbox measurement",
+      "scaleToMature": 1,
+      "method": "shared-mature-source-placement",
+      "sourceSheet": "assets/plot/repeat-harvest/mature-source-v1-02.png",
+      "editedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02.png",
+      "normalizedSheet": "assets/plot/repeat-harvest/bare-generated-v1-02-normalized.png",
+      "cellSpace": "normalizedSheet",
+      "normalization": {
+        "sourceWidth": 1254,
+        "sourceHeight": 1254,
+        "width": 1600,
+        "height": 1600
+      },
+      "cell": {
+        "left": 1280,
+        "top": 0,
+        "width": 320,
+        "height": 320
+      }
+    }
+  }
+}

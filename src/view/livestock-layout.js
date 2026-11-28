@@ -10,6 +10,26 @@ export const livestockSizeById = {
   L08: 'large', // 小尾寒羊
   L09: 'medium', // 番鸭
   L10: 'large', // 肉用黄牛
+  L11: 'small', // 鹌鹑
+  L12: 'large', // 美利奴绵羊
+  L13: 'small', // 中华蜜蜂
+  L14: 'medium', // 火鸡
+  L15: 'small', // 肉鸽
+  L16: 'large', // 德州驴
+  L17: 'large', // 牦牛
+  L18: 'large', // 梅花鹿
+  L19: 'large', // 蒙古马
+  L20: 'large', // 鸵鸟
+  L21: 'small', // 珍珠鸡
+  L22: 'large', // 双峰驼
+  L23: 'large', // 羊驼
+  L24: 'medium', // 狮头鹅
+  L25: 'large', // 黑山羊
+  L26: 'small', // 泰和乌鸡
+  L27: 'small', // 安哥拉兔
+  L28: 'large', // 巴马香猪
+  L29: 'small', // 家蚕
+  L30: 'large', // 黑毛和牛
 };
 
 // All placements use the atlas' fixed anatomical registration (138, 270).
@@ -48,14 +68,20 @@ export function livestockLayout(id) {
 export function livestockFeedLayout(feeding, texture, baseAnimalScale) {
   // Keep the redesigned cool-rim tray readable before depth perspective.
   // Animal size still controls mouth position; it must not shrink this floor.
-  const visibleWidth = Math.max(feeding.radiusX * 2, 52 / baseAnimalScale);
+  const visibleWidth = texture.mouthAnchor
+    ? texture.sceneWidth / baseAnimalScale
+    : Math.max(feeding.radiusX * 2, 52 / baseAnimalScale);
   const scale = visibleWidth / texture.bounds.width;
   const visibleHeight = texture.bounds.height * scale;
   const mouthDirection = Math.sign(feeding.x - 138) || 1;
   // The mouth meets the loaded rear of the tray; the front rim stays exposed.
   // Keep the registered mouth and animal feet fixed, and move feed + shadow.
-  const groundX = feeding.x + mouthDirection * visibleWidth * 0.2;
-  const groundY = feeding.y + visibleHeight * 0.55;
+  const groundX = texture.mouthAnchor
+    ? feeding.x + (texture.anchor[0] - texture.mouthAnchor[0]) * scale
+    : feeding.x + mouthDirection * visibleWidth * 0.2;
+  const groundY = texture.mouthAnchor
+    ? feeding.y - 3 + (texture.anchor[1] - texture.mouthAnchor[1]) * scale
+    : feeding.y + visibleHeight * 0.55;
   return {
     x: groundX - texture.anchor[0] * scale,
     y: groundY - texture.anchor[1] * scale,
