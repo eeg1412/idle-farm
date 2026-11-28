@@ -96,10 +96,10 @@ function missingResearch(id, unlocked) {
   })(id);
   return [...missing];
 }
-const maxChallengeGap = 2;
+const maxChallengeGap = 3;
 
 // Base: the longest candidate (positive recorded peak), ties to the smallest ID. Pool: catalog products
-// that are not candidates this run (sorted by ID) within two research steps (gap ≤ 2); when none are,
+// that are not candidates this run (sorted by ID) within three research steps (gap ≤ 3); when none are,
 // those with the smallest gap.
 function challengePlan(world) {
   const eligible = eligibleCandidates(world.orders).sort();
@@ -217,7 +217,7 @@ function baseHourlyOutput(id) {
 
 // The target is priced at quality 1. Count = max(1, min(ceil(V / 2U), ceil(C0 × H / 100))) with H drawn
 // from 8–24 whole hours; reward = count × floor((U × rate + 5) / 10). The pioneer reward in basic research
-// points is fixed at generation: 200 while the target still has missing research, otherwise 100.
+// points is fixed at generation: 100 + 100 × the number of research steps still missing.
 function makeChallenge(world, target, sequence) {
   const price = BigInt(catalog.items[target].price);
   const byValue = ceilDiv(world.productionValue, 2n * price);
@@ -225,7 +225,7 @@ function makeChallenge(world, target, sequence) {
   const byCapacity = ceilDiv(hourly * orderHours(world, sequence), 100n);
   const count = orderCount(byValue, byCapacity);
   const missing = missingResearch(target, new Set(world.unlocked));
-  const pioneer = missing.length > 0 ? 200n : 100n;
+  const pioneer = 100n + 100n * BigInt(missing.length);
   const capsules = (world.challengeCapsuleItems ?? []).includes(target) ? 0n : challengeCapsules;
   // +1× per research step still missing, fixed at generation.
   const rate = 80n + premiumLevel(world) + 10n * BigInt(missing.length);

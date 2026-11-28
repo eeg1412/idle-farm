@@ -31,6 +31,7 @@ PM 拥有本文件，负责读 diff 与最终编译。本次未授权测试、�
 - BR-5 订单收益显示：已完成。
 - BR-6 文档：已完成。
 - BR-7 报酬标题与小卡、BR-8 报酬并排：已完成，文档已同步到[订单中心](../ui/pages/orders.md)与反馈清单。
+- BR-9 缺口与分档、BR-10 文档：已完成。
 - 未验证：未运行测试，画面未实看；开拓奖励改为研发点后的收益对比未复算。
 
 ## 追加需求：报酬标题与小卡（用户确认）
@@ -50,3 +51,13 @@ PM 拥有本文件，负责读 diff 与最终编译。本次未授权测试、�
 | 任务 | 所有者 | 可编辑文件 |
 |---|---|---|
 | BR-8 报酬并排 | 子代理 order-rewards-view（复用：BR-5 同一成果物） | `src/view/order-page.js`、`src/view/canvas-ui.js`（仅 `rewards`/`rewardFlow`）；待 CB-1 交还 canvas-ui.js 后开始 |
+
+## 追加需求：挑战研发缺口与开拓奖励分档（用户确认）
+
+- 挑战订单目标的研发缺口上限由 2 改为 3（`maxChallengeGap = 3`）；没有缺口 ≤3 的商品时仍取最小缺口。
+- 开拓奖励按出单时的研发缺口分档：`pioneer = 100 + 100 × 缺口`（0→100、1→200、2→300、3→400 普通研发点；最小缺口兜底超过 3 时按同一公式）。交付时与交付点数 200 相加后同乘普通研发点倍率。已出的挑战单保留出单时写入的值。
+
+| 任务 | 所有者 | 可编辑文件 |
+|---|---|---|
+| BR-9 缺口与分档 | 子代理 order-research-logic（复用：BR-4 同一函数） | `src/game/orders.js`（`maxChallengeGap`、`makeChallenge` 的 `pioneer` 与注释） |
+| BR-10 文档 | 子代理 order-research-docs（复用：BR-6 同一文档） | `AGENTS.md`（订单条目）、`docs/tasks/2026-11-24-order-types.md`、`docs/tasks/2026-11-25-order-balance.md`、`docs/game-design.md`、`docs/economy-guidelines.md`、`docs/ui/pages/orders.md`、`docs/feedback-checklist.md` |
