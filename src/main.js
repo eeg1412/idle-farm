@@ -8,7 +8,8 @@ import {
 import { research, researchHourMs, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
-import { acceptOrder, deliverOrder, abandonOrder, replaceOrder, rushOrder } from './game/orders.js';
+import { acceptOrder, deliverOrder, deliverOfferedOrder, abandonOrder, replaceOrder, rushOrder } from './game/orders.js';
+import { applyOrderLines } from './game/order-plan.js';
 import {
   claimAllManagerGifts, claimManagerGift, giftAllManagers, giftManager, switchManagerAppearance,
 } from './game/managers.js';
@@ -82,7 +83,7 @@ function updateSettings(draft, partial) {
 }
 
 const productionBatchActions = { assignProductionBatch, clearProductionBatch, upgradeProductionBatch };
-const orderActions = { acceptOrder, deliverOrder, abandonOrder, replaceOrder };
+const orderActions = { acceptOrder, deliverOrder, deliverOfferedOrder, abandonOrder, replaceOrder };
 const actions = {
   buyFacility, upgradeFacility, assignFacility, clearFacility, buyStation, upgradeStation, arrangeStation, clearStation,
   ...productionBatchActions,
@@ -90,7 +91,7 @@ const actions = {
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
   ...orderActions,
   giftManager, giftAllManagers, claimManagerGift, claimAllManagerGifts, switchManagerAppearance,
-  useCapsules, claimTaskCapsules, rushOrder, completeIntro,
+  useCapsules, claimTaskCapsules, rushOrder, applyOrderLines, completeIntro,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 
@@ -479,7 +480,7 @@ function feedback(name, args, revenueBefore, after, actionResult) {
   if (name === 'sell' || name === 'sellBatch') {
     return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
   }
-  if (name === 'deliverOrder') {
+  if (name === 'deliverOrder' || name === 'deliverOfferedOrder') {
     return { float: '已交付 +' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
   }
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' })[args[0]], sound: 'success' };
@@ -488,6 +489,7 @@ function feedback(name, args, revenueBefore, after, actionResult) {
     return { float: '已升级', sound: 'success' };
   }
   if (name === 'assignProductionBatch') return { float: '已安排' };
+  if (name === 'applyOrderLines') return { float: '已排产', sound: 'success' };
   if (name === 'clearProductionBatch') return { float: '已清空' };
   if (name === 'reserve') return { float: '已保存保留量' };
   return {};
@@ -532,6 +534,7 @@ function dispatch(name, ...args) {
         if (name === 'giftManager') return { ok: false, toast, staleManagerGift: true };
         if (name === 'claimManagerGift') return { ok: false, toast };
         if (name === 'completeIntro') return { ok: false, toast };
+        if (name === 'applyOrderLines') return { ok: false, toast };
         if (name === 'claimAllManagerGifts') return { ok: false, message: joinToast('回礼已变化，请重新领取', toast) };
         const message = ['sell', 'sellBatch', 'sellFarm', 'drawQuality', 'upgradeProductionBatch'].includes(name)
           ? '报价已更新，请重新确认' : '条件有变化，请重新确认';

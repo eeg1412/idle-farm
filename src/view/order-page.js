@@ -3,7 +3,8 @@ import { compact } from './numbers.js';
 import { showItemDetail } from './item-chain.js';
 import { researchPathNodes, showResearch } from './research-page.js';
 import { hourlyRateLabel, hoursLabel } from './management-pages.js';
-import { canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderRushCost } from '../game/orders.js';
+import { planOrderLines } from '../game/order-plan.js';
+import { canDeliverOffered, canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderRushCost } from '../game/orders.js';
 
 // Orders saved before order types existed are high-value orders.
 const orderType = (order) => order.type ?? 'high';
@@ -56,7 +57,16 @@ function expectedCompletion(ui, order) {
   else if (eta.status === 'scheduled') {
     ui.row('预计完成时间', remainingTime(eta.atMs - ui.w.clockMs),
       { compact: true, noWrap: true, valueAtClock: (clock) => remainingTime(eta.atMs - clock) });
-  } else ui.row('预计完成时间', '无法计算', { compact: true, noWrap: true, tone: 'danger' });
+  } else if (hasOrderLine(ui.w, order.item)) ui.row('预计完成时间', '计算中', { compact: true, noWrap: true, tone: 'muted' });
+  else ui.row('预计完成时间', '无法计算', { compact: true, noWrap: true, tone: 'danger' });
+}
+
+// Researched and set as the recipe of some facility or station, running or not.
+function hasOrderLine(world, item) {
+  if (!world.unlocked.includes(item)) return false;
+  const lists = [...['C', 'L', 'F', 'M'].map((kind) => world.facilities[kind]),
+    ...['I', 'P'].map((kind) => world.stations[kind])];
+  return lists.some((list) => list?.some((slot) => slot?.recipe === item));
 }
 
 // Unaccepted orders: time for the current production to make the count.
@@ -114,6 +124,142 @@ function confirmAbandon(ui, order, inDetail) {
   }, { center: true, maxHeight: 240 });
 }
 
+const placeNames = { C: '田地', L: '养殖场', F: '鱼塘', M: '矿洞', I: '加工位', P: '精制位' };
+
+// One plan per displayed world and order: worlds are replaced on each display refresh, not mutated per frame.
+// Buttons only need availability (no completion, no world copy); the preview takes its own snapshot.
+const planCache = new WeakMap();
+function orderPlan(world, orderId) {
+  let plans = planCache.get(world);
+  if (!plans) planCache.set(world, plans = new Map());
+  if (!plans.has(orderId)) plans.set(orderId, planOrderLines(world, orderId, { completion: false }));
+  return plans.get(orderId);
+}
+
+function blockedReason(plan) {
+  if (plan.reason === 'stockReady') return '库存已够交付';
+  const place = placeNames[plan.kind];
+  if (plan.reason === 'missingFacility' && place) return '缺少' + place;
+  if (plan.reason === 'noSlot' && place) return '没有可用的' + place;
+  if (plan.reason === 'locked' && catalog.items[plan.item]) return '缺少「' + catalog.items[plan.item].name + '」的配方';
+  if (plan.reason === 'covered') return '产线已排好';
+  if (plan.reason === 'notAccepted') return '订单已结束';
+  return '暂时无法排产';
+}
+
+// Tab by the line producing the new recipe; raw materials are grouped by industry inside their tab.
+const planTabs = [
+  { label: '原料', kinds: ['C', 'L', 'F', 'M'] },
+  { label: '中间产物', kinds: ['I'] },
+  { label: '商品', kinds: ['P'] },
+];
+const industryNames = { C: '农业', L: '畜牧', F: '水产', M: '矿业' };
+
+// The whole plan and its completion text are fixed when taken; later world updates do not redraw them.
+// rootLines undefined asks for the recommended count of new lines for the order's product.
+function planSnapshot(world, orderId, rootLines) {
+  const plan = planOrderLines(world, orderId, rootLines === undefined ? undefined : { rootLines });
+  if (plan.status !== 'ok') return { plan };
+  const eta = plan.completion;
+  const completion = eta?.status === 'ready' ? { value: '订单完成', tone: 'green' }
+    : eta?.status === 'scheduled' ? { value: remainingTime(eta.atMs - world.clockMs) }
+      : { value: '无法计算', tone: 'danger' };
+  return { plan, completion };
+}
+
+// Place at the top left, then the centered swap block; every card reserves a full swap's height.
+function planChangeCard(cell, change) {
+  cell.card((card) => {
+    card.text(placeNames[change.kind] + (change.index + 1), { fontSize: 12, muted: true });
+    card.recipeChange(change.from, change.to);
+    // gap is the space below the card: 8 matches scrollList's 8px column gap.
+  }, { padding: 6, gap: 8, showArrow: false });
+}
+
+// 'auto' gives equal-height cards, two per row on regular widths.
+function planChangeGrid(panel, changes) {
+  panel.scrollList(changes, planChangeCard, { columns: 'auto' });
+}
+
+// Preview fixed at opening; only a new slider value or a failed confirm retakes the snapshot (on the next draw,
+// from the world it receives). Confirming sends that snapshot's changes and line count for applyOrderLines to match.
+function showPlan(ui, order) {
+  ui.dialog('排产', (panel) => {
+    const local = panel.local;
+    const current = isCurrentOrder(panel.w, order);
+    if (!current) {
+      panel.text('订单已结束', { muted: true });
+      panel.footer((footer) => footer.buttons([{ label: '取消', onClick: panel.close }]));
+      return;
+    }
+    const { plan, completion } = local.planSnapshot ??= planSnapshot(panel.w, current.id, local.planRootLines);
+    if (plan.status === 'ok') {
+      local.planRootLines = plan.rootLines;
+      local.planRange = plan.rootRange;
+    }
+    // The range from the last workable plan keeps the slider usable even if one count turns out blocked.
+    const range = local.planRange;
+    if (plan.status === 'ok') {
+      panel.row('预计完成时间', completion.value, { compact: true, noWrap: true, tone: completion.tone });
+    }
+    if (range && range.max > range.min) {
+      const lines = local.planRootLines ?? range.recommended;
+      panel.row('产线', String(lines), { compact: true, noWrap: true });
+      panel.slider(lines, (next) => {
+        if (next === local.planRootLines) return;
+        local.planRootLines = next;
+        local.planSnapshot = undefined;
+        panel.refresh();
+      }, { min: range.min, max: range.max });
+    }
+    if (plan.status !== 'ok') {
+      panel.text(blockedReason(plan), { muted: true });
+      panel.footer((footer) => footer.buttons([{ label: '取消', onClick: panel.close }]));
+      return;
+    }
+    const tabs = planTabs.map((tab) => ({ ...tab,
+      changes: plan.changes.filter((change) => tab.kinds.includes(change.kind)) }))
+      .filter((tab) => tab.changes.length);
+    const selected = tabs.find((tab) => tab.label === panel.local.planTab) ?? tabs[0];
+    if (tabs.length > 1) {
+      panel.tabs(tabs.map((tab) => tab.label), selected?.label, (value) => {
+        panel.local.planTab = value;
+        panel.refresh();
+      }, { style: 'filter', compact: true });
+    }
+    if (selected?.label === '原料') {
+      for (const kind of selected.kinds) {
+        const group = selected.changes.filter((change) => change.kind === kind);
+        if (!group.length) continue;
+        panel.heading(industryNames[kind], { size: 16 });
+        planChangeGrid(panel, group);
+      }
+    } else if (selected) planChangeGrid(panel, selected.changes);
+    panel.footer((footer) => footer.buttons([
+      { label: '取消', onClick: panel.close },
+      { label: '确认排产', tone: 'gold', disabled: !plan.changes.length, reason: '无需改动', onClick: async () => {
+        if (!panel.isActive()) return;
+        if (!await panel.action('applyOrderLines', current.id, plan.changes, plan.rootLines)) {
+          if (!panel.isActive()) return;
+          panel.float('情况有变，请重新排产', { tone: 'danger' });
+          // Retaken on the next draw with the current world and the current line count.
+          local.planSnapshot = undefined;
+          panel.refresh();
+          return;
+        }
+        if (panel.isActive()) await panel.close();
+      } },
+    ]));
+  });
+}
+
+function planButton(ui, order, inDetail) {
+  const plan = orderPlan(ui.w, order.id);
+  const blocked = plan.status !== 'ok';
+  return { label: '排产', tone: 'gold', disabled: blocked, reason: blocked ? blockedReason(plan) : undefined,
+    blockCardTap: !inDetail, onClick: () => showPlan(ui, order) };
+}
+
 function orderActions(ui, order, inDetail = false) {
   const submit = async (action) => {
     if (!ui.isActive() || !await ui.action(action, order)) return;
@@ -123,9 +269,13 @@ function orderActions(ui, order, inDetail = false) {
   if (order.status === 'locked') return [
     { label: '交付', tone: 'green', disabled: !canDeliverOrder(ui.w, order.id), reason: '存货还不够交这一单', blockCardTap: !inDetail,
       onClick: () => submit('deliverOrder') },
+    planButton(ui, order, inDetail),
     { label: '放弃', onClick: () => confirmAbandon(ui, order, inDetail) },
   ];
-  const buttons = [{ label: '接受', tone: 'gold', onClick: () => submit('acceptOrder') }];
+  // Enough free stock turns 接受 into a one-step accept-and-deliver in the same slot.
+  const buttons = [canDeliverOffered(ui.w, order.id)
+    ? { label: '立即交付', tone: 'green', onClick: () => submit('deliverOfferedOrder') }
+    : { label: '接受', tone: 'gold', onClick: () => submit('acceptOrder') }];
   // Replace stays visible; when unavailable it is grey and a tap shows the reason in red.
   const usedUp = ui.w.orders.replaced >= orderReplacementLimit(ui.w);
   buttons.push({ label: '替换', disabled: !canReplaceOrder(ui.w, order.id),
@@ -208,7 +358,8 @@ function showOrder(ui, order) {
         onSelect: (id) => showItemDetail(dlg, id, { needs, isCurrent: (world) => Boolean(isCurrentOrder(world, order)) }),
       });
     }
-    dlg.footer((footer) => footer.buttons(orderActions(dlg, current, true)));
+    dlg.footer((footer) => footer.buttons(orderActions(dlg, current, true),
+      { uniformLabel: current.status === 'locked' }));
   });
 }
 
@@ -299,7 +450,7 @@ export function renderOrders(ui) {
       if (small) card.text(compact(order.count) + ' 件 · ' + compact(order.reward) + ' 金币');
       else {
         quantities(card, order, rates);
-        card.buttons(orderActions(ui, order));
+        card.buttons(orderActions(ui, order), { uniformLabel: order.status === 'locked' });
       }
     }, { style: 'production', showArrow: false, onClick: () => showOrder(ui, order) });
   }, { columns: small ? 'auto' : 1 });

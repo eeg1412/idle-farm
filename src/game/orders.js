@@ -472,6 +472,20 @@ export function deliverOrder(world, id) {
   return true;
 }
 
+// An offered order whose free stock (minus the merchant hold) covers its count can be accepted and
+// delivered in one action with the same settlement as accepting and then delivering it.
+export function canDeliverOffered(world, id) {
+  const order = lookup(world, id);
+  return order?.status === 'offered' &&
+    (world.inventory[order.item] ?? 0n) - activeMerchantHoldQuantity(world, order.item) >= order.count;
+}
+
+export function deliverOfferedOrder(world, id) {
+  if (!canDeliverOffered(world, id)) return false;
+  acceptOrder(world, id);
+  return deliverOrder(world, id);
+}
+
 // Offered challenges draw from untried products, excluding every current challenge product, within
 // base–2×base duration; an empty range falls back to R over the remaining untried products.
 function challengeReplacements(world) {

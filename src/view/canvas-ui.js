@@ -1,10 +1,11 @@
-import { Container, Graphics, ImageSource, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
+import { Container, FillGradient, Graphics, ImageSource, Rectangle, Sprite, Text, TextStyle, CanvasTextMetrics, Texture, Assets, UPDATE_PRIORITY } from 'pixi.js';
 import data from '../content/game-data.json' with { type: 'json' };
 import { researchHourMs } from '../game/advancement.js';
 import { activeGuideTask } from '../game/objectives.js';
 import { managerIds, managerStatus } from '../game/managers.js';
 import { merchantStatus } from '../game/merchant.js';
 import { hasDeliverableOrder } from '../game/orders.js';
+import { capsulesPerMinute } from '../game/capsules.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import workshopVisuals from '../content/workshop-visuals.json' with { type: 'json' };
 import managerPortraits from '../content/manager-portraits.json' with { type: 'json' };
@@ -241,6 +242,12 @@ const iconCacheLimit = 200;
 const sceneCacheLimit = 40;
 // Upper bound on how long an unchanged frame may stay on screen without a render.
 const idleRenderMs = 1000;
+// Space kept around the middle float's text area; a press inside it moves the float above the press.
+const floatMargin = 40;
+// Production yield floats: lifetime, rise and the icon size beside 「+数量」.
+const yieldFloatMs = 900;
+const yieldFloatRise = 28;
+const yieldIconSize = 22;
 // Plain-data equality for projected worlds; shared references short-circuit.
 function sameState(a, b, skip) {
   if (a === b) return true;
@@ -462,6 +469,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let navigationMenu;
   let modal;
   let pendingModal;
+  // The opaque sheet of the drawn dialog in frame coordinates; page plots wholly under it unload.
+  let modalCover;
   let nextDialogSampleAt = 0;
   let updateDialogSampleProgress;
   let notices;
@@ -523,6 +532,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let listRow;
   const progressBars = new Set();
   const countdowns = new Set();
+  // Production yield floats. `yieldWatch` holds the slots whose countdown the last build drew
+  // (key -> { type, kind, index }); `yieldFloats` the running floats by slot key ({ id, amount,
+  // started }), which outlive rebuilds; `yieldNodes` the per-frame updates of drawn floats.
+  const yieldWatch = new Map();
+  const yieldFloats = new Map();
+  const yieldNodes = new Set();
+  // The drawn world counts as a comparison base only when it was shown live (visible, not busy).
+  let yieldBase = false;
+  let yieldEpoch;
+  let yieldCheckedAt = -Infinity;
   const activePlots = new Set();
   const visiblePlotIds = new Set();
   const cropPlots = new Map();
@@ -605,6 +624,98 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     };
     update(progressClock(performance.now()));
     countdowns.add(update);
+  }
+
+  const yieldKey = (source) => source.type + ':' + source.kind + ':' + source.index;
+  const slotBatch = (state, source) =>
+    (source.type === 'station' ? state?.stations : state?.facilities)?.[source.kind]?.[source.index]?.batch;
+
+  // Compares the watched slots of two consecutive live worlds and starts or extends a float per
+  // slot that finished batches. Runs once per world update over the slots the last build drew.
+  // A changed batch counts as finished when its end lies within the advanced time; a capsule use
+  // (capsules spent between the worlds) also advances its own category by the skipped minutes.
+  // Batches that finished between the two worlds and the batch now running repeat the same
+  // recipe back to back; the credit per item never exceeds the item's real produced increase.
+  function detectYields(previous, next) {
+    const now = performance.now();
+    for (const [key, entry] of yieldFloats) if (now - entry.started >= yieldFloatMs) yieldFloats.delete(key);
+    if (!yieldWatch.size) return;
+    const spent = (previous.capsules ?? 0n) - (next.capsules ?? 0n);
+    const skipped = spent > 0n ? Number(spent / capsulesPerMinute) * 60_000 : 0;
+    const changed = [];
+    const advancedKinds = new Set();
+    for (const [key, source] of yieldWatch) {
+      const before = slotBatch(previous, source);
+      if (!before) continue;
+      const after = slotBatch(next, source);
+      if (after && after.id === before.id && after.start === before.start && after.end === before.end) continue;
+      changed.push({ key, source, before, after });
+      // Only a capsule moves a running batch while its end is still ahead of the clock.
+      if (skipped && before.end > next.clockMs) advancedKinds.add(source.type + ':' + source.kind);
+    }
+    const groups = new Map();
+    for (const { key, source, before, after } of changed) {
+      const skip = advancedKinds.has(source.type + ':' + source.kind) ? skipped : 0;
+      if (before.end > next.clockMs + skip) continue;
+      let amount = BigInt(before.amount);
+      const length = after ? after.end - after.start : 0;
+      if (after?.id === before.id && length > 0) {
+        const repeats = Math.max(0, Math.floor((after.start + skip - before.end) / length));
+        amount += BigInt(repeats) * BigInt(after.amount);
+      }
+      if (!groups.has(before.id)) groups.set(before.id, []);
+      groups.get(before.id).push({ key, amount });
+    }
+    for (const [id, entries] of groups) {
+      let left = BigInt(next.stats?.produced?.[id] ?? 0n) - BigInt(previous.stats?.produced?.[id] ?? 0n);
+      for (const { key, amount } of entries) {
+        if (left <= 0n) break;
+        const credit = amount < left ? amount : left;
+        left -= credit;
+        const entry = yieldFloats.get(key);
+        // Batches finishing while the slot's float still runs join its total.
+        if (entry?.id === id) entry.amount += credit;
+        else yieldFloats.set(key, { id, amount: credit, started: now });
+      }
+    }
+  }
+
+  // Draws the running float of `source` with its bottom right corner at (right, bottom). Page
+  // anchors are skipped while a dialog covers the page; the dialog draws its own anchor.
+  function yieldAnchor(parent, local, source, right, bottom) {
+    if (modal && local !== modal) return;
+    const entry = yieldFloats.get(yieldKey(source));
+    if (!entry || performance.now() - entry.started >= yieldFloatMs) return;
+    const layer = new Container();
+    layer.eventMode = 'none';
+    layer.label = 'production-yield-float';
+    parent.addChild(layer);
+    const caption = textNode(layer, '+' + compact(entry.amount), yieldIconSize + 4, 0, 160,
+      { size: 17, weight: '800', wrap: false, color: palette.green });
+    caption.style.stroke = { color: palette.cream, width: 4, join: 'round' };
+    const height = Math.max(yieldIconSize, caption.height);
+    caption.y = (height - caption.height) / 2;
+    drawImage(layer, entry.id, 0, (height - yieldIconSize) / 2, yieldIconSize, yieldIconSize, false, false);
+    let shown = entry.amount;
+    const row = listRow?.layer;
+    const update = (now) => {
+      if (layer.destroyed) return false;
+      const elapsed = (now - entry.started) / yieldFloatMs;
+      if (elapsed >= 1) {
+        layer.visible = false;
+        markDirty();
+        return false;
+      }
+      if (entry.amount !== shown) {
+        shown = entry.amount;
+        caption.text = '+' + compact(shown);
+      }
+      layer.position.set(right - (yieldIconSize + 4 + caption.width), bottom - height - 2 - elapsed * yieldFloatRise);
+      layer.alpha = 1 - elapsed;
+      if (!row || row.visible) markDirty();
+      return true;
+    };
+    if (update(performance.now())) yieldNodes.add(update);
   }
 
   function updateBatchDisplays(now) {
@@ -1284,6 +1395,24 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     else show();
   }
 
+  // Label font size buttonAt picks for a text button: shrinks with the label length to fit the width.
+  function buttonLabelSize(width, height, label, options = {}) {
+    const faceHeight = Math.max(1, height - (options.segment ? 4 : 3));
+    const contentHeight = Math.max(1, faceHeight - (options.compactLabel ? 2 : 4));
+    const iconSize = Math.min(18, contentHeight);
+    const icon = options.icon && hasIcon(options.icon) && width >= 63 ? iconSize + 3 : 0;
+    const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? iconSize + 4 : 0;
+    const baseSize = options.emphasis ? 23 : 18;
+    const midSize = Math.min(options.midIconSize ?? iconSize, contentHeight);
+    const mid = options.midIcon && hasIcon(options.midIcon) ? midSize + 4 : 0;
+    const captionWidth = Math.max(1, width - 8 - icon - trailing - mid);
+    // Half-width characters (digits, Latin letters, spaces) take about 0.6 of a full-width glyph.
+    const labelUnits = Array.from(String(label) + (mid ? String(options.midText ?? '') : ''))
+      .reduce((units, char) => units + (char.charCodeAt(0) < 0x2e80 ? 0.6 : 1), 0);
+    return options.compactLabel ? 15 * scale() : Math.min(baseSize * scale(),
+      (captionWidth - 2) / Math.max(2, labelUnits));
+  }
+
   function buttonAt(parent, x, y, width, height, label, fn, options = {}) {
     // A quiet action blocks input through `waiting` but keeps buttons looking as they were.
     const disabled = !fn || options.disabled || (waiting && !quietWaiting);
@@ -1317,16 +1446,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const iconSize = Math.min(18, contentHeight);
       const icon = options.icon && hasIcon(options.icon) && width >= 63 ? iconSize + 3 : 0;
       const trailing = options.trailingIcon && hasIcon(options.trailingIcon) ? iconSize + 4 : 0;
-      const baseSize = options.emphasis ? 23 : 18;
       // midIcon + midText continue the label after it: label, icon, then midText on one line.
       const midSize = Math.min(options.midIconSize ?? iconSize, contentHeight);
       const mid = options.midIcon && hasIcon(options.midIcon) ? midSize + 4 : 0;
       const captionWidth = Math.max(1, width - 8 - icon - trailing - mid);
-      // Half-width characters (digits, Latin letters, spaces) take about 0.6 of a full-width glyph.
-      const labelUnits = Array.from(String(label) + (mid ? String(options.midText ?? '') : ''))
-        .reduce((units, char) => units + (char.charCodeAt(0) < 0x2e80 ? 0.6 : 1), 0);
-      const size = options.compactLabel ? 15 * scale() : Math.min(baseSize * scale(),
-        (captionWidth - 2) / Math.max(2, labelUnits));
+      // labelSize: a row-wide size chosen by buttons({ uniformLabel }).
+      const size = options.labelSize ?? buttonLabelSize(width, height, label, options);
       const caption = textNode(parent, label, 0, 0, captionWidth,
         { size: Math.max(8, size), align: 'center', color: disabled ? palette.muted : green ? palette.cream : palette.ink,
           weight: '750', wrap: !options.compactLabel });
@@ -1931,9 +2056,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     drawFeedback();
   }
 
+  // A float shows in the middle of the canvas. When the press that caused it lies within the
+  // middle text area (plus a margin above and below), it moves above the press instead, where the
+  // finger or cursor does not cover it. The choice is made once, when the label is first measured.
   function float(message, { tone } = {}) {
-    const at = point ?? { x: frame.width / 2, y: frame.height * 0.72 };
-    floating = { message, tone, at: { x: at.x, y: at.y }, started: performance.now(), touch: lastPressTouch };
+    floating = { message, tone, at: point ? { x: point.x, y: point.y } : undefined, started: performance.now(),
+      touch: lastPressTouch };
     drawFeedback();
   }
 
@@ -2487,7 +2615,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const icon = options.icon && (hasIcon(options.icon) || sceneKeys.has(options.icon)) ? (compactRow ? 29 : 28) : 0;
         if (icon && !options.valueIcon) drawImage(parent, options.icon, x, cursor + 1, icon - 3, icon - 3);
         const size = (compactRow ? 16 : 15) * scale();
-        const valueColor = options.tone === 'danger' ? palette.red : options.tone === 'green' ? palette.green : palette.ink;
+        const valueColor = options.tone === 'danger' ? palette.red : options.tone === 'green' ? palette.green :
+          options.tone === 'muted' ? palette.muted : palette.ink;
         if (options.valueAtClock) value = options.valueAtClock(progressClock(performance.now()));
         const transition = value && typeof value === 'object' && value.from != null && value.to != null ? value :
           options.from != null && options.to != null ? { from: options.from, to: options.to } : undefined;
@@ -2603,7 +2732,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         buttonAt(parent, left, cursor, height, height, label, fn, { ...options, iconOnly: icon });
         cursor += height + rowGap;
       },
-      buttons(list, { style, size, compact = false } = {}) {
+      // uniformLabel: the whole list stays on one line and every label uses the smallest fitted size.
+      buttons(list, { style, size, compact = false, uniformLabel = false } = {}) {
         if (dialogContent) list = list.filter((item) => item.label !== '关闭' &&
           !(list.length === 1 && item.label === '返回'));
         if (!list.length) return;
@@ -2614,7 +2744,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           width >= 240 && scale() <= 1.6 ? 4 :
           ((width >= 180 && segmented) || (width >= 225 && style === 'production')) && scale() <= 1.6 ? 3 : 2;
         const rowCount = Math.ceil(list.length / count);
-        const perLine = compact ? Math.ceil(list.length / rowCount) : Math.min(count, list.length);
+        const perLine = uniformLabel ? list.length
+          : compact ? Math.ceil(list.length / rowCount) : Math.min(count, list.length);
         const height = Math.max(size === 'large' ? 53 : filter ? (compact ? 44 : 43) : 48, Math.ceil(26 * scale()));
         for (let i = 0; i < list.length; i += perLine) {
           const part = list.slice(i, i + perLine);
@@ -2623,10 +2754,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             panel(parent, x, cursor + 1, width, height, 0xe9d7b9, null, height / 2);
             panel(parent, x, cursor, width, height, palette.pale, palette.border, height / 2);
           }
+          const optionsOf = (item) => ({
+            emphasis: segmented || style === 'production', segment: segmented, compactLabel: compact, ...item,
+          });
+          const labelSize = uniformLabel && !compact
+            ? Math.min(...part.map((item) => buttonLabelSize(buttonWidth, height, item.label, optionsOf(item))))
+            : undefined;
           part.forEach((item, pos) => buttonAt(parent, x + pos * (buttonWidth + gap), cursor,
-            buttonWidth, height, item.label, item.onClick, {
-              emphasis: segmented || style === 'production', segment: segmented, compactLabel: compact, ...item,
-            }));
+            buttonWidth, height, item.label, item.onClick, labelSize === undefined ? optionsOf(item)
+              : { ...optionsOf(item), labelSize }));
           cursor += height + rowGap;
         }
       },
@@ -2843,6 +2979,38 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
             label, onClick, { iconOnly: icon, touchSize: tight ? actionWidth : 48 });
         });
         cursor += height + rowGap;
+      },
+      // Recipe swap: old (muted) ▼ new, each row icon + name centered as a group. `reserve` keeps the
+      // height of a full swap even when `from` is empty, so cards of one grid row stay equal and centered.
+      recipeChange(from, to, { reserve = true } = {}) {
+        const top = cursor;
+        const iconSize = 28;
+        const iconGap = 8;
+        const arrowHeight = 7;
+        const arrowGap = 4;
+        const arrowBlock = arrowHeight + arrowGap * 2;
+        const full = iconSize * 2 + arrowBlock;
+        const actual = from ? full : iconSize;
+        let rowTop = top + ((reserve ? full : actual) - actual) / 2;
+        const drawRow = (id, options) => {
+          const room = Math.max(1, width - iconSize - iconGap);
+          const name = textNode(parent, data.items[id]?.name ?? '', 0, 0, room, { ...options, wrap: false });
+          name.scale.set(Math.min(1, room / Math.max(1, name.width)));
+          const left = x + (width - iconSize - iconGap - name.width) / 2;
+          drawImage(parent, id, left, rowTop, iconSize, iconSize);
+          name.position.set(left + iconSize + iconGap, rowTop + (iconSize - name.height) / 2);
+          rowTop += iconSize;
+        };
+        if (from) {
+          drawRow(from, { size: 12 * scale(), weight: '750', color: palette.muted });
+          const cx = x + width / 2;
+          const arrowTop = rowTop + arrowGap;
+          parent.addChild(inkGraphics().poly([cx - 5, arrowTop, cx + 5, arrowTop, cx, arrowTop + arrowHeight])
+            .fill(palette.muted));
+          rowTop += arrowBlock;
+        }
+        drawRow(to, { size: 14 * scale(), weight: '800', color: palette.ink });
+        cursor = top + (reserve ? full : actual) + rowGap;
       },
       itemQuantity(id, label, value) {
         const top = cursor;
@@ -3141,8 +3309,14 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           { size: 17 * scale(), weight: '750' });
         cursor += t.height + rowGap;
       },
-      countdown(label, source, { format, inactiveText = '暂停', inactiveTone = 'plain', ...options } = {}) {
+      // `yieldFloat: false` keeps the slot's yield float off this countdown (a dialog anchors it
+      // at the stock row instead through `yieldAnchor`); the slot is watched either way.
+      countdown(label, source, { format, inactiveText = '暂停', inactiveTone = 'plain', yieldFloat = true, ...options } = {}) {
         const target = { ...source };
+        if (target.type && target.kind && target.index !== undefined) {
+          yieldWatch.set(yieldKey(target), { type: target.type, kind: target.kind, index: target.index });
+          if (yieldFloat) yieldAnchor(parent, local, target, x + width, cursor);
+        }
         const readValue = (clock) => {
           const batch = currentBatch(target);
           if (!batch) return inactiveText;
@@ -3153,6 +3327,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           ...options, noWrap: true, valueAtClock: readValue,
           toneAtClock: () => currentBatch(target) ? options.tone ?? 'plain' : inactiveTone,
         });
+      },
+      // Places the yield float of a production slot just above the next row's right end.
+      yieldAnchor(source) {
+        yieldAnchor(parent, local, source, x + width, cursor);
       },
       researchProgress() {
         ui.row('距下次发放', undefined, {
@@ -3747,13 +3925,15 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     }
     return (scroll = state.scroll) => {
       visiblePlotIds.clear();
-      if (!world || status?.busy || (modal || pendingModal) && !openingScreen.blocking || document.hidden ||
-          state !== locals[current] || state.tab !== tab) {
+      if (!world || status?.busy || document.hidden || state !== locals[current] || state.tab !== tab) {
         for (const plot of activePlots) unmountPlot(plot);
         return;
       }
       // Once pinned, the tabs stay at the top of the scroll mask.
       const pinnedTop = pinned && Math.max(scroll, pinned.top);
+      // An open dialog keeps the plots it does not wholly hide playing behind its shade. The
+      // opening screen keeps its previous behaviour of mounting regardless of a dialog.
+      const cover = !openingScreen.blocking && modalCover;
       let animationFrame;
       for (const plot of plots) {
         const left = Math.max(plot.bounds.left, maskLeft);
@@ -3761,7 +3941,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         const top = Math.max(plot.bounds.top, scroll + maskTop);
         const bottom = Math.min(plot.bounds.bottom, scroll + maskBottom);
         const covered = pinned && left >= pinned.left && right <= pinned.right &&
-          top >= pinnedTop && bottom <= pinnedTop + pinned.height;
+          top >= pinnedTop && bottom <= pinnedTop + pinned.height ||
+          cover && left >= cover.left && right <= cover.right &&
+          top - scroll + y >= cover.top && bottom - scroll + y <= cover.bottom;
         if (left >= right || top >= bottom || covered) {
           unmountPlot(plot);
           continue;
@@ -4462,7 +4644,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     // Each message is built once per feedback layer; later frames only move and fade it.
     const live = (node, source) => node && node.source === source && !node.layer.destroyed &&
       node.layer.parent === feedbackLayer;
-    const drop = (node) => { if (node && !node.layer.destroyed) node.layer.destroy({ children: true }); };
+    const drop = (node) => {
+      if (node && !node.layer.destroyed) node.layer.destroy({ children: true });
+      node?.gradient?.destroy();
+    };
     const now = performance.now();
     if (notices && notices.expires > now) {
       if (!live(noticeNode, notices)) {
@@ -4520,28 +4705,79 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       drop(noticeNode);
       noticeNode = undefined;
     }
-    // A finger covers the pressed spot, so touch floats start well above it and stay a bit longer;
-    // mouse floats start just above the cursor instead of on top of it.
-    const elapsed = floating ? (now - floating.started) / (floating.touch ? 900 : 650) : 1;
-    if (elapsed >= 1) {
+    // Centered floats hold fully opaque for 1000 ms, then fade over 500 ms. Floats above the press
+    // fade while rising; touch ones stay a bit longer than mouse ones. Placement is fixed on the
+    // first frame, before which the float has not ended.
+    const floatHold = 1000;
+    const floatFade = 500;
+    const floatDuration = (source) => source.placement === 'middle' ? floatHold + floatFade :
+      source.touch ? 900 : 650;
+    const age = floating ? now - floating.started : 0;
+    if (!floating || (floating.placement !== undefined && age >= floatDuration(floating))) {
       floating = undefined;
       drop(floatNode);
       floatNode = undefined;
       return;
     }
     const w = Math.min(210, frame.width - 24);
-    const lift = floating.touch ? 70 : 36;
-    const y = clamp(floating.at.y - lift - elapsed * 25, 24, frame.height - 40);
-    const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
+    const rise = 25;
     if (!live(floatNode, floating)) {
       drop(floatNode);
-      const label = textNode(feedbackLayer, floating.message, x, y, w, { size: 17, align: 'center', color: palette.cream, weight: '800' });
+      const label = textNode(feedbackLayer, floating.message, 0, 0, w, { size: 17, align: 'center', color: palette.cream, weight: '800' });
       label.style.fill = floating.tone === 'danger' ? palette.red : palette.ink;
       label.style.stroke = { color: palette.cream, width: 4, join: 'round' };
-      floatNode = { source: floating, layer: label, shift: label.x - x };
+      floatNode = { source: floating, layer: label, shift: label.x, textHeight: label.height };
+      if (floating.placement === undefined) {
+        // Middle text area: the label's box over its whole rise, widened by `floatMargin` on every side.
+        const top = (frame.height - label.height) / 2;
+        const at = floating.at;
+        const covered = at && Math.abs(at.x - frame.width / 2) <= w / 2 + floatMargin &&
+          at.y >= top - rise - floatMargin && at.y <= top + label.height + floatMargin;
+        floating.placement = covered ? 'press' : 'middle';
+      }
+      if (floating.placement === 'middle') {
+        // Centered floats sit on a dark band that fades out toward both canvas edges; band and text
+        // share one container, built once here, so later frames only fade it.
+        label.style.fill = floating.tone === 'danger' ? 0xff8a78 : palette.cream;
+        label.style.stroke = { color: 0x111111, width: 4, join: 'round' };
+        const padY = 10;
+        const layer = new Container();
+        layer.eventMode = 'none';
+        feedbackLayer.addChild(layer);
+        // Solid black under the text (its measured width plus 16 px on each side); only the rest
+        // fades to clear at the canvas edges, with at least 4% of the width left to fade per side.
+        const solidHalf = label.width / 2 + 16;
+        const fadeEnd = clamp(0.5 - solidHalf / frame.width, 0.04, 0.5);
+        const gradient = new FillGradient({
+          type: 'linear', start: { x: 0, y: 0 }, end: { x: 1, y: 0 }, textureSpace: 'local',
+          colorStops: [
+            { offset: 0, color: 'rgba(0,0,0,0)' },
+            { offset: fadeEnd, color: 'rgba(0,0,0,0.62)' },
+            { offset: 1 - fadeEnd, color: 'rgba(0,0,0,0.62)' },
+            { offset: 1, color: 'rgba(0,0,0,0)' },
+          ],
+        });
+        const band = layer.addChild(new Graphics().rect(0, 0, frame.width, floatNode.textHeight + padY * 2).fill(gradient));
+        band.eventMode = 'none';
+        label.position.set((frame.width - w) / 2 + floatNode.shift, padY);
+        layer.addChild(label);
+        floatNode = { source: floating, layer, gradient, textHeight: floatNode.textHeight, padY };
+      }
     }
-    floatNode.layer.position.set(x + floatNode.shift, y);
-    floatNode.layer.alpha = 1 - elapsed;
+    if (floating.placement === 'press') {
+      // A finger covers the pressed spot, so touch floats start well above it; mouse floats start
+      // just above the cursor instead of on top of it.
+      const elapsed = Math.min(1, age / floatDuration(floating));
+      floatNode.layer.alpha = 1 - elapsed;
+      const lift = floating.touch ? 70 : 36;
+      const y = clamp(floating.at.y - lift - elapsed * rise, 24, frame.height - 40);
+      const x = clamp(floating.at.x - w / 2, 10, frame.width - w - 10);
+      floatNode.layer.position.set(x + floatNode.shift, y);
+    } else {
+      // Centered floats stay in place, hold, then only fade out.
+      floatNode.layer.position.set(0, (frame.height - floatNode.textHeight) / 2 - floatNode.padY);
+      floatNode.layer.alpha = 1 - clamp((age - floatHold) / floatFade, 0, 1);
+    }
   }
 
   function redraw() {
@@ -4619,6 +4855,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     clip.clear().rect(x, y, width, height).fill(0xffffff);
     progressBars.clear();
     countdowns.clear();
+    yieldWatch.clear();
+    yieldNodes.clear();
     updateDialogSampleProgress = undefined;
     managerSpeechMount = undefined;
     managerCardSpeech?.pause();
@@ -4630,6 +4868,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     managerPortraitMounts = new Map();
     for (const plot of [...activePlots]) parkPlot(plot);
     syncPlotVisibility = undefined;
+    modalCover = undefined;
     visiblePlotIds.clear();
     imagesInUse = new Set();
     parkedEstateAtmosphere = estateMap?.parkAtmosphere();
@@ -4729,6 +4968,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const boxLeft = fullSheet ? inset.left + 2 : left;
       const boxWidth = fullSheet ? frame.width - boxLeft - inset.right - 2 : w;
       panel(root, boxLeft, boxY, boxWidth, boxHeight, palette.card, palette.border, 12);
+      modalCover = { left: boxLeft, top: boxY, right: boxLeft + boxWidth, bottom: boxY + boxHeight };
       if (fullSheet) panel(root, boxLeft + 4, boxY + 4, boxWidth - 8, boxHeight - 8, palette.card, palette.line, 9);
       const headerHeight = Math.max(56, Math.ceil(26 * Math.min(scale(), 1.45) * 1.36) + 14);
       panel(root, boxLeft + 1, boxY + 1, boxWidth - 2, headerHeight, palette.green, null, 11);
@@ -5010,6 +5250,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       else if (extraUpdate) mount.reveal();
     }
     const clock = world && !status?.busy && !document.hidden ? updateBatchDisplays(now) : undefined;
+    if (yieldNodes.size && !document.hidden) {
+      for (const update of yieldNodes) if (!update(now)) yieldNodes.delete(update);
+    }
     if (sampleDialog(now)) requestRender();
     if (clock !== undefined) updateDialogSampleProgress?.(now);
     if (coast) {
@@ -5023,8 +5266,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (next <= 0 || next >= scrollTarget.max || Math.abs(coast.velocity) < 0.03) coast = null;
       }
     }
-    if (activePlots.size && world &&
-        !document.hidden && !modal && !pendingModal && !status?.busy) {
+    // Plots left mounted behind an open dialog keep playing; observePlots unloads the ones its sheet covers.
+    if (activePlots.size && world && !document.hidden && !status?.busy) {
       const animationFrame = { clock: clock ?? progressClock(now), now };
       let animated = false;
       for (const plot of activePlots) if (plot.animation.update(animationFrame) !== false) animated = true;
@@ -5107,6 +5350,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     managerTapTimes.clear();
     progressBars.clear();
     countdowns.clear();
+    yieldWatch.clear();
+    yieldFloats.clear();
+    yieldNodes.clear();
+    yieldBase = false;
     coast = null;
     drag = null;
     sliderDrag = null;
@@ -5145,6 +5392,8 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     merchantBatchChanged, hasMerchantRefreshNotice,
     get loading() { return openingScreen.blocking; },
     pauseProgress() {
+      // Visibility changes: whatever finishes while hidden or catching up is not replayed.
+      yieldBase = false;
       if (world && progressTiming) progressClock(performance.now());
       progressTiming = undefined;
       pauseManagerSpeech();
@@ -5183,6 +5432,16 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         structural = false;
         drawn.world = nextWorld;
       }
+      // Yield floats compare two consecutive live worlds of the same session; the first live world
+      // after a hidden, busy or offline stretch is only taken as the new base.
+      const yieldNow = performance.now();
+      const yieldLive = Boolean(nextWorld && nextProgressTiming && !nextStatus?.busy && !document.hidden);
+      if (yieldLive && yieldBase && world && nextWorld !== world && nextProgressTiming.epoch === yieldEpoch &&
+          nextWorld.completedRuns === world.completedRuns && nextWorld.clockMs >= world.clockMs &&
+          yieldNow - yieldCheckedAt < 3000) detectYields(world, nextWorld);
+      yieldBase = yieldLive;
+      yieldEpoch = nextProgressTiming?.epoch;
+      yieldCheckedAt = yieldNow;
       world = nextWorld;
       status = nextStatus;
       progressTiming = nextProgressTiming;

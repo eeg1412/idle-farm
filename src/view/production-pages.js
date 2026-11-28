@@ -33,6 +33,20 @@ const capsuleShortcuts = [
 // Footer state per displayed world and kind. capsuleUseOffer simulates the category, so it runs at
 // most once per world object, never per frame.
 const capsuleFooterStates = new WeakMap();
+// Items of accepted orders plus every upstream material, per displayed world.
+const orderLineItems = new WeakMap();
+const orderTag = { label: '订单', tone: 'gold' };
+
+function orderLine(world, id) {
+  if (!id) return false;
+  let items = orderLineItems.get(world);
+  if (!items) {
+    const { products, materials } = orderItemTags(world);
+    items = new Set([...products, ...materials]);
+    orderLineItems.set(world, items);
+  }
+  return items.has(id);
+}
 
 function itemName(id) {
   return catalog.items[id]?.name ?? '';
@@ -381,6 +395,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
     if (status?.tone === 'blocked') {
       body.text(level + ' · ', { ...textOptions, suffix: { value: status.label, tone: 'danger' } });
     } else body.text(status ? level + ' · ' + status.label : level, textOptions);
+    if (orderLine(ui.w, id)) body.badges([orderTag], { style: 'production' });
     const output = id ? batchOutput(ui.w, kind, index, slot, id, upgradeQuote) : null;
     if (output) body.text(output.label + ' ' + output.amount + ' · 总价 ' + compact(output.total), { fontSize: 13 });
     if (slot.batch) body.countdown(workshop ? '剩余' : '距收获', {
@@ -490,10 +505,12 @@ function facilityDetails(ui, kind, index, compactMode = false) {
     if (id) {
       const todayRate = marketRate(dlg.w, id);
       dlg.row('产出品项', itemName(id), todayRate && assignedName(id) !== itemName(id) ? { valueMarketRate: todayRate } : undefined);
+      // The dialog's yield float rises from the stock amount instead of the countdown.
+      dlg.yieldAnchor({ type: 'facility', kind, index });
       dlg.row('仓库库存', compact(quantity(dlg.w, id)) + ' 份');
       if (facility.batch) {
         dlg.row('本批产出', compact(facility.batch.amount) + ' 份');
-        dlg.countdown('距收获', { type: 'facility', kind, index }, { format: remainingTime });
+        dlg.countdown('距收获', { type: 'facility', kind, index }, { format: remainingTime, yieldFloat: false });
       }
       if (facility.recipe && facility.recipe !== facility.batch?.id) {
         const nextName = assignedName(facility.recipe);
@@ -550,7 +567,8 @@ function facilityCard(ui, kind, index, facility) {
       const todayRate = marketRate(ui.w, id);
       const name = assignedName(id);
       copy.heading(name, { style: 'production', aside: crop && !todayRate ? level : undefined, marketRate: name === item.name ? todayRate : 0 });
-      if (!crop || todayRate) copy.badges([{ label: level }], { style: 'production' });
+      const badges = [...(!crop || todayRate ? [{ label: level }] : []), ...(orderLine(ui.w, id) ? [orderTag] : [])];
+      if (badges.length) copy.badges(badges, { style: 'production' });
       const amount = active?.amount ?? upgradeQuote?.currentOutput;
       if (amount != null) {
         copy.row(crop ? '每批收成' : '每批产出 ' + item.name, compact(amount) + ' 份', {
@@ -867,9 +885,9 @@ function stationBadge(world, station) {
   return { label, tone: station.batch ? 'green' : 'blocked', minCharacters: 5 };
 }
 
-function stationProgress(ui, batch, kind, index) {
+function stationProgress(ui, batch, kind, index, { yieldFloat = true } = {}) {
   const reference = { type: 'station', kind, index };
-  ui.countdown('剩余', reference, { format: remainingTime, inactiveText: '暂停', inactiveTone: 'danger' });
+  ui.countdown('剩余', reference, { format: remainingTime, inactiveText: '暂停', inactiveTone: 'danger', yieldFloat });
   ui.batchProgress(batch, reference);
 }
 
@@ -898,10 +916,12 @@ function stationDetails(ui, kind, index, compactMode = false) {
     dlg.row('等级', compact(station.level) + ' 级');
     if (item) {
       dlg.item(id, item.name, item.sources.join(' · '), { marketRate: marketRate(dlg.w, id) });
-      dlg.row('当前库存', compact(quantity(dlg.w, id)));
+      // The dialog's yield float rises from the stock amount instead of the countdown.
+      dlg.yieldAnchor({ type: 'station', kind, index });
+      dlg.row('当前库存', compact(quantity(dlg.w, id)) + ' 件');
       dlg.row(active ? '本批产出' : '每批产出', compact(active?.amount ?? output) + ' 件');
       if (active && output != null && output !== active.amount) dlg.row('下批产出', compact(output) + ' 件');
-      stationProgress(dlg, active, kind, index);
+      stationProgress(dlg, active, kind, index, { yieldFloat: false });
       const next = catalog.items[station.recipe];
       if (next) {
         dlg.row('下批配方', next.name, { valueMarketRate: marketRate(dlg.w, station.recipe) });
@@ -922,7 +942,7 @@ function stationDetails(ui, kind, index, compactMode = false) {
         }
         reserveButtons(dlg, requirements);
       }
-    } else stationProgress(dlg, active, kind, index);
+    } else stationProgress(dlg, active, kind, index, { yieldFloat: false });
     dlg.row('用料优先级', station.priority ? '优先' : '普通');
     dlg.buttons([
       {
@@ -980,6 +1000,7 @@ function stationCard(ui, kind, index, station, source) {
         { label: complexity },
         level,
         badge,
+        ...(orderLine(ui.w, id) ? [orderTag] : []),
       ], { style: 'production' });
       copy.stats([
         { label: '当前库存', value: compact(quantity(ui.w, id)) },
