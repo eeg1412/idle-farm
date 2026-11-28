@@ -18,38 +18,19 @@ const seed = '0123456789abcdef0123456789abcdef';
 const day = '2026-11-17';
 const wall = new Date(2026, 10, 17, 12).getTime();
 
-test('ordinary points combine projected, online and clipped offline time with weighted carry', () => {
+test('online and offline time grant no basic research points and farm sales keep the balance', () => {
   const world = newWorld(wall, seed);
-  const projected = structuredClone(world);
-  advanceWorld(projected, hour);
-  assert.equal(projected.basicResearchPoints, 100n);
+  advanceWorld(world, hour);
   assert.equal(world.basicResearchPoints, 0n);
-  advanceWorld(world, hour / 2);
-  world.wallAnchorMs += hour / 2;
-  assert.equal(world.basicResearchPoints, 0n);
+  world.basicResearchPoints = 7n;
   world.researchPoints = techOffer(world, 'basicResearchRate').cost;
   assert.ok(upgradeTech(world, 'basicResearchRate'));
-  assert.equal(updateWorldWallTime(world, wall + hour / 2), 0);
-  assert.equal(updateWorldWallTime(world, wall + hour), hour / 2);
-  assert.equal(world.basicResearchPoints, 102n);
-  assert.equal(world.basicResearchElapsedMs, 0);
-  advanceWorld(world, hour + 1);
-  assert.equal(world.basicResearchWeightedMs, 104n);
-  world.tech.basicResearchRate = 0;
-  advanceWorld(world, 2 * hour);
-  assert.equal(world.basicResearchPoints, 202n);
-  assert.equal(world.basicResearchWeightedMs, 4n);
-  advanceWorld(world, 2 * hour + 123);
-  const carried = (value) => [value.basicResearchElapsedMs, value.basicResearchWeightedMs];
-  assert.deepEqual(carried(world), [123, 12_304n]);
+  advanceWorld(world, 3 * hour);
+  assert.equal(world.basicResearchPoints, 7n);
   assert.ok(sellFarm(world, farmSaleOffer(world)));
-  assert.deepEqual(carried(world), [123, 12_304n]);
-  const nextWall = wall + 50 * hour;
-  assert.equal(updateWorldWallTime(world, nextWall), 6 * hour);
-  assert.equal(world.basicResearchPoints, 802n);
-  assert.equal(updateWorldWallTime(world, nextWall), 0);
-  assert.equal(updateWorldWallTime(world, wall), 0);
-  assert.deepEqual(carried(world), [123, 12_304n]);
+  assert.equal(world.basicResearchPoints, 7n);
+  updateWorldWallTime(world, wall + 50 * hour);
+  assert.equal(world.basicResearchPoints, 7n);
 });
 
 test('old records keep previous receipts and qualities while market and ordinary progress migrate from defaults', () => {
@@ -60,14 +41,14 @@ test('old records keep previous receipts and qualities while market and ordinary
   const completed = [...Object.keys(qualityDrawTaskTargets), 'techLevel1200'];
   world.taskRewards = completed;
   const old = encodeWorldRecord(world);
-  for (const key of ['accountSeed', 'market', 'basicResearchPoints', 'basicResearchElapsedMs', 'basicResearchWeightedMs', 'qualityDraws']) {
+  for (const key of ['accountSeed', 'market', 'basicResearchPoints', 'qualityDraws']) {
     delete old[key];
   }
 
   const imported = decodeWorldRecord(old);
   assert.deepEqual([imported.quality, imported.researchPoints, imported.tech], [world.quality, world.researchPoints, world.tech]);
-  assert.deepEqual([imported.basicResearchPoints, imported.basicResearchElapsedMs, imported.basicResearchWeightedMs, imported.qualityDraws,
-    imported.accountSeed, imported.market], [0n, 0, 0n, 0n, null, null]);
+  assert.deepEqual([imported.basicResearchPoints, imported.qualityDraws, imported.accountSeed, imported.market],
+    [0n, 0n, null, null]);
   imported.wallAnchorMs = wall + 2 * hour;
   assert.equal(updateWorldWallTime(imported, wall + 2 * hour), 0);
   assert.equal(imported.basicResearchPoints, 0n);
@@ -80,7 +61,7 @@ test('old records keep previous receipts and qualities while market and ordinary
   assert.equal(initializeAccountSeed(imported), assigned);
   assert.equal(decodeWorldRecord(encodeWorldRecord(imported)).accountSeed, assigned);
   for (const change of [
-    { basicResearchElapsedMs: hour }, { basicResearchWeightedMs: '-1' }, { qualityDraws: 2 },
+    { qualityDraws: 2 },
     { accountSeed: 'invalid' }, { tech: { marketManipulation: 4 } }, { tech: { marketForecast: 2 } },
     { market: { day: '2026-11-31', sequence: 0, used: 0, rates: null } },
   ]) assert.throws(() => decodeWorldRecord({ ...old, ...change }), { code: 'corrupt-transfer' });

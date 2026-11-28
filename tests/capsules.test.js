@@ -72,8 +72,8 @@ test('facility fast-forward matches a real advance of the same span without movi
     // Saves accept negative starts, so the shifted planting start keeps its true offset.
     assert.equal(facility.planting.start, reference.planting.start - (expected.clockMs - world.clockMs));
   });
-  // Calendar-driven systems stay where they were.
-  assert.equal(world.basicResearchElapsedMs, structuredClone(farmWorld()).basicResearchElapsedMs);
+  // Fast-forwarding grants no basic research points.
+  assert.equal(world.basicResearchPoints, structuredClone(farmWorld()).basicResearchPoints);
 });
 
 test('station fast-forward feeds same-category stations and stops at the stall', () => {

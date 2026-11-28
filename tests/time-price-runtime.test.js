@@ -249,7 +249,8 @@ test('6, 12, 24, 48 and 72-hour offline caps match repeated live ticks with whea
     assert.equal(updateWorldWallTime(offline, late), 0);
     assert.equal(offline.merchant.day, localCalendarDay(late));
     assert.deepEqual({ ...offline, market: null }, { ...online, market: null });
-    assert.equal(offline.basicResearchPoints, BigInt(hours) * 100n);
+    // Offline time grants no basic research points.
+    assert.equal(offline.basicResearchPoints, 0n);
     const produced = offline.stats.produced;
     const wheat = 4n * BigInt(Math.floor(offline.clockMs / 12_000));
     const flourBatches = BigInt(Math.floor((offline.clockMs - 12_000) / 14_000));
@@ -281,6 +282,9 @@ test('activity credits settle once at farm sale, keep their remainder and carry 
   assert.equal(world.prestigeCredit, remainder);
   assert.equal(world.lifetimeProductionValue, productionValue);
 
+  // Basic research points come only from order deliveries; fund two draws directly.
+  assert.equal(world.basicResearchPoints, 0n);
+  world.basicResearchPoints = 200n;
   assert.ok(drawQuality(world));
   const quality = { ...world.quality };
   assert.equal(world.basicResearchPoints, 100n);

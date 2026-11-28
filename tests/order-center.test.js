@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import catalog from '../src/content/game-data.json' with { type: 'json' };
-import { unitPrice } from '../src/game/advancement.js';
+import { basicResearchRatePercent, unitPrice } from '../src/game/advancement.js';
 import { managerGiftRemaining } from '../src/game/managers.js';
 import { objectives, settleTaskRewards } from '../src/game/objectives.js';
 import {
@@ -99,7 +99,9 @@ test('midnight resets quotas before simultaneous completions price the first sta
   updateWorldWallTime(world, start + 64_000 + halfHour);
   updateWorldWallTime(offline, start + 64_000 + halfHour);
   assert.deepEqual(offline.orders, world.orders);
-  assert.deepEqual(world.orders.active.map(({ item }) => item), ['P01', 'P02']);
+  // The timed checkpoint adds the second high order, then a challenge once any candidate exists.
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['high', 'high', 'challenge']);
+  assert.deepEqual(world.orders.active.filter(({ type }) => type === 'high').map(({ item }) => item), ['P01', 'P02']);
 });
 
 test('an offline half-hour offer cannot see a later pending completion in the same catch-up', () => {
@@ -117,7 +119,7 @@ test('an offline half-hour offer cannot see a later pending completion in the sa
   assert.ok(done > due);
   const offline = structuredClone(world);
   updateWorldWallTime(world, afternoon + due);
-  // Challenges may join the timed checkpoint once three candidates exist; only high orders are checked here.
+  // A challenge also joins the timed checkpoint; only high orders are checked here.
   const highOrders = (target) => target.orders.active.filter(({ type }) => type === 'high');
   assert.deepEqual(highOrders(world).map(({ item, count }) => [item, count]), [['P02', 1n], ['P01', 2n]]);
   updateWorldWallTime(world, afternoon + done);
@@ -191,6 +193,8 @@ test('order size is the smaller of half the run value and 8-24 hours of the peak
   assert.equal(orderStandardTime(world, { item: 'P02', count: 3n }), standardMs(3n, refiningHourly(world, 'P02')));
   assert.equal(refiningHourly(world, 'P01'), baseHourly('P01'));
   advanceWorld(world, world.stations.P[0].batch.end);
+  // The first product's order is only a high order, even though one candidate allows challenges later.
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['high']);
   const [offer] = world.orders.active;
   assert.equal(offer.item, 'P01');
   assert.ok(offer.count >= (peak * 8n + 99n) / 100n && offer.count <= (peak * 24n + 99n) / 100n);
@@ -213,28 +217,11 @@ function missingResearch(world, id) {
   return [...missing];
 }
 
-// Research coins plus research materials at catalog base price.
-function researchCost(id) {
-  const research = catalog.research[id];
-  if (!research) return 0n;
-  let cost = BigInt(research.coins);
-  for (const [material, amount] of Object.entries(research.costs ?? {})) {
-    cost += BigInt(amount) * BigInt(catalog.items[material].price);
-  }
-  return cost;
-}
-
-// 10 × every missing recipe's research cost; 10 × floor(half the target's own cost) once it is researched.
-function pioneerBonus(world, id) {
-  const missing = missingResearch(world, id);
-  return 10n * (missing.length ? missing.reduce((sum, key) => sum + researchCost(key), 0n) : researchCost(id) / 2n);
-}
-
-// Challenge targets stay within two research steps whenever such untried products exist.
+// Challenge targets stay within three research steps whenever such untried products exist.
 function assertChallengeTargets(world, targets, candidates) {
   const gaps = Object.keys(catalog.items).filter((id) => catalog.items[id].kind.startsWith('P') &&
     !candidates.includes(id)).map((id) => missingResearch(world, id).length);
-  const limit = Math.max(2, Math.min(...gaps));
+  const limit = Math.max(3, Math.min(...gaps));
   for (const item of targets) {
     assert.ok(!candidates.includes(item));
     assert.ok(missingResearch(world, item).length <= limit);
@@ -254,22 +241,26 @@ test("after today's high orders a checkpoint adds one challenge and a small norm
   assert.deepEqual(world.orders.candidates, ['P01']);
   const due = world.orders.nextAttemptMs;
   advanceWorld(world, due);
-  // Fewer than three candidates: no challenge, only a normal order.
-  assert.deepEqual(world.orders.active.map(({ type }) => type), ['normal']);
+  // A single candidate is enough: the checkpoint adds a challenge, then a normal order.
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['challenge', 'normal']);
+  const challenges = world.orders.active.filter(({ type }) => type === 'challenge');
+  const targets = challenges.map(({ item }) => item);
+  // The target is chosen against the candidates at generation time.
+  assertChallengeTargets(world, targets, ['P01']);
   raiseOrderCapacity(world, [{ id: 'P02', produced: 10_000n }, { id: 'P03', produced: 10_000n }]);
   const candidates = ['P01', 'P02', 'P03'];
   advanceWorld(world, due + halfHour);
-  const challenges = world.orders.active.filter(({ type }) => type === 'challenge');
-  assert.deepEqual(world.orders.active.map(({ type }) => type), ['normal', 'challenge', 'normal']);
-  const [normal] = world.orders.active;
-  const targets = challenges.map(({ item }) => item);
-  assertChallengeTargets(world, targets, candidates);
+  // With a challenge already on offer, the next checkpoint only adds a normal order.
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['challenge', 'normal', 'normal']);
+  const normal = world.orders.active.find(({ type }) => type === 'normal');
   for (const challenge of challenges) {
-    // Eight times plus one per missing research step, plus the pioneer bonus for every missing recipe.
+    // Eight times plus one per missing research step, without a coin bonus; the pioneer reward is
+    // 100 + 100 × gap basic research points.
     const gap = BigInt(missingResearch(world, challenge.item).length);
     const price = BigInt(catalog.items[challenge.item].price);
-    assert.equal(challenge.bonus, pioneerBonus(world, challenge.item));
-    assert.equal(challenge.reward, challenge.count * ((price * (80n + 10n * gap) + 5n) / 10n) + challenge.bonus);
+    assert.equal(challenge.bonus, 0n);
+    assert.equal(challenge.pioneer, 100n + 100n * gap);
+    assert.equal(challenge.reward, challenge.count * ((price * (80n + 10n * gap) + 5n) / 10n));
     assert.equal(challenge.capsules, 1000n);
     assert.equal(challenge.rewardRate, Number((80n + 10n * gap) * 10n));
     assert.ok(!Object.hasOwn(challenge, 'standardMs'));
@@ -293,15 +284,18 @@ test("after today's high orders a checkpoint adds one challenge and a small norm
   assert.ok(!targets.includes(replacement.item));
   assertChallengeTargets(replaced, [replacement.item], candidates);
   assert.equal(replaced.orders.replaced, 1);
-  // Delivering a challenge pays its fixed reward, grants capsules once per product and boosts high orders.
+  // Delivering a challenge pays its fixed coin reward, grants 200 plus the pioneer reward in basic research
+  // points scaled by the basic research rate, grants capsules once per product and boosts high orders.
   const delivered = decodeWorldRecord(encodeWorldRecord(world));
   const [first] = challenges;
   assert.ok(acceptOrder(delivered, first.id));
-  assert.deepEqual(delivered.orders.active.map(({ type }) => type), ['normal', 'challenge', 'normal']);
+  assert.deepEqual(delivered.orders.active.map(({ type }) => type), ['challenge', 'normal', 'normal']);
   delivered.inventory[first.item] = first.count;
-  const before = { coins: delivered.coins, capsules: delivered.capsules };
+  const before = { coins: delivered.coins, capsules: delivered.capsules, points: delivered.basicResearchPoints };
   assert.ok(deliverOrder(delivered, first.id));
   assert.deepEqual([delivered.coins - before.coins, delivered.capsules - before.capsules], [first.reward, 1000n]);
+  assert.equal(delivered.basicResearchPoints - before.points,
+    (200n + first.pioneer) * BigInt(basicResearchRatePercent(delivered)) / 100n);
   assert.deepEqual(delivered.challengeCapsuleItems, [first.item]);
   assert.deepEqual([delivered.orders.boost, delivered.orders.delivered], [{ [first.item]: 3 }, {}]);
   const reloaded = decodeWorldRecord(encodeWorldRecord(delivered));
@@ -382,8 +376,11 @@ test('time capsules bring the next order checkpoint forward', () => {
   assert.ok(rushOrder(world));
   assert.deepEqual([world.capsules, world.clockMs, world.orders.generated, world.orders.nextAttemptMs],
     [2_000n, rushedAt, 2, rushedAt + halfHour]);
-  assert.deepEqual(world.orders.active.map(({ type, item }) => [type, item]), [['high', 'P01'], ['high', 'P02']]);
-  // With every candidate already asked for, the next checkpoint cannot generate and cannot be rushed.
+  // The rushed checkpoint adds the second high order and, with candidates present, a challenge.
+  assert.deepEqual(world.orders.active.map(({ type }) => type), ['high', 'high', 'challenge']);
+  assert.deepEqual(world.orders.active.filter(({ type }) => type === 'high').map(({ item }) => item), ['P01', 'P02']);
+  // With every candidate already asked for and a challenge on offer, the next checkpoint cannot generate
+  // and cannot be rushed.
   assert.equal(orderRushCost(world), null);
   assert.equal(rushOrder(world), false);
   const restored = decodeWorldRecord(encodeWorldRecord(world));

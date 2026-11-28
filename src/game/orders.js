@@ -135,8 +135,8 @@ function challengeTarget(world) {
 }
 
 const challengeHeld = (orders, atMs) => orders.challengeHoldUntilMs !== null && atMs < orders.challengeHoldUntilMs;
-// Challenges need at least three candidates this run, no challenge order and no running cooldown.
-const canGenerateChallenge = (world, atMs) => eligibleCandidates(world.orders).length >= 3 &&
+// Challenges need at least one candidate this run, no challenge order and no running cooldown.
+const canGenerateChallenge = (world, atMs) => eligibleCandidates(world.orders).length >= 1 &&
   !challengeHeld(world.orders, atMs) && ofType(world.orders, 'challenge').length === 0 &&
   challengeTarget(world) !== null;
 const canGenerateNormal = (orders) => ofType(orders, 'normal').length < normalOrderLimit &&
