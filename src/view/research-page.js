@@ -5,6 +5,10 @@ import { qualityDrawCost, qualityDrawOffer } from '../game/quality.js';
 import { hoursLabel } from './management-pages.js';
 import { compact } from './numbers.js';
 
+// Names the coin shortfall; falls back to the plain message when cost or coins are unusable.
+const coinShortfall = (cost, coins) =>
+  typeof cost === 'bigint' && typeof coins === 'bigint' && cost > coins ? '金币还差 ' + compact(cost - coins) : '金币还不够';
+
 const recipeTab = '品种配方';
 const qualityTab = '品质';
 const techTab = '经营改良';
@@ -257,7 +261,7 @@ function researchDetails(ui, id) {
   ui.buttons([
     {
       label: '研发', tone: 'gold', disabled: !offer.eligible || !offer.affordable,
-      reason: !offer.eligible ? '先把前一项研发出来' : ui.w.coins < offer.coins ? '金币还不够' : '材料还不够',
+      reason: !offer.eligible ? '先把前一项研发出来' : ui.w.coins < offer.coins ? coinShortfall(offer.coins, ui.w.coins) : '材料还不够',
       onClick: async () => {
         if (await ui.action('research', id)) ui.close();
       },

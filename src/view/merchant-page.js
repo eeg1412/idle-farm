@@ -8,6 +8,9 @@ const note = { fontSize: 13, muted: true };
 const pieces = (count) => compact(count) + ' 件';
 const coins = (value) => compact(value) + ' 金币';
 const atPercent = (count, percent) => count * BigInt(percent) / 100n;
+// Names the coin shortfall; keeps the given fallback when cost or balance are unusable.
+const coinShortfall = (cost, balance, fallback) =>
+  typeof cost === 'bigint' && typeof balance === 'bigint' && cost > balance ? '金币还差 ' + compact(cost - balance) : fallback;
 
 export function renderMerchantEntry(ui) {
   ui.button('行脚商', () => ui.go('行脚商'), { indicator: Boolean(managerStatus(ui.w, 'merchant')?.claim) });
@@ -124,7 +127,7 @@ function shelf(ui, batch) {
       card.item(id, catalog.items[id].name, detail);
       if (editor) quantityControls(card, ui, editor, maximum);
       else if (stock === 0n) card.text('已售罄', note);
-      else if (maximum === 0n) card.text('金币不足', note);
+      else if (maximum === 0n) card.text(coinShortfall(unitPrice, ui.w.coins, '金币不足'), note);
     }, { padding: 8, style: editor ? undefined : 'subtle',
       onClick: !editor && maximum > 0n ? () => openQuantity(ui, 'buy', id) : undefined });
   }, { focusIndex });
@@ -179,7 +182,7 @@ function blockedReason(offer, balance) {
   if (offer.count === 0n) return '先选个数量吧';
   if (offer.side === 'buy') {
     if (offer.count > offer.stock) return '货架上没这么多了';
-    if (offer.total > balance) return '金币还不够';
+    if (offer.total > balance) return coinShortfall(offer.total, balance, '金币还不够');
   } else {
     if (offer.count > offer.remaining) return '行脚商收不了这么多';
     if (offer.count > offer.inventory) return '你的存货不够';

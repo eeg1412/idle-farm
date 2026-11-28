@@ -123,12 +123,15 @@ function dialogButtons(ui, label, action, disabled = false, style, reason) {
   ], { style });
 }
 
-// Purchases are blocked either by the slot limit or by coins; the coin case names the shortfall.
-function purchaseReason(quote, coins) {
-  if (quote?.atLimit) return '已经建满了';
-  const cost = quote?.cost;
+// Names the coin shortfall; falls back to the plain message when cost or coins are unusable.
+function coinShortfall(cost, coins) {
   if (typeof cost !== 'bigint' || typeof coins !== 'bigint' || cost <= coins) return '金币还不够';
   return '金币还差 ' + compact(cost - coins);
+}
+
+// Purchases are blocked either by the slot limit or by coins.
+function purchaseReason(quote, coins) {
+  return quote?.atLimit ? '已经建满了' : coinShortfall(quote?.cost, coins);
 }
 
 function replacementChoices(dialog, kind, choices, isSelected, onSelect) {
@@ -307,7 +310,7 @@ function batchUpgrade(ui, kind, targets) {
         pending = false;
         if (dlg.isActive()) dlg.refresh();
       }
-    }, pending || !quote?.affordable, undefined, pending ? undefined : '金币还不够');
+    }, pending || !quote?.affordable, undefined, pending ? undefined : coinShortfall(quote?.cost, dlg.w.coins));
   });
 }
 
@@ -353,7 +356,7 @@ function manageProduction(ui, kind, scope, source) {
     dlg.buttons([
       { label: replaceLabel, disabled: !targets.length, reason: '先勾选要处理的' + place, onClick: () => batchReplace(dlg, kind, targets, source, replaceLabel) },
       { label: '清空', disabled: !canClear, reason: targets.length ? '选中的' + place + '都空着' : '先勾选要处理的' + place, onClick: () => batchClear(dlg, kind, targets) },
-      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable, reason: targets.length ? '金币还不够' : '先勾选要处理的' + place,
+      { label: '升级', tone: 'gold', disabled: !upgradeQuote?.affordable, reason: targets.length ? coinShortfall(upgradeQuote?.cost, dlg.w.coins) : '先勾选要处理的' + place,
         onClick: () => batchUpgrade(dlg, kind, targets) },
     ], { style: 'production' });
   });
@@ -402,7 +405,7 @@ function compactProductionCard(ui, kind, index, slot, source) {
     padding: 7, style: 'production',
     footer: (actions) => actions.buttons([
       { label: assignmentLabel(kind, Boolean(id)), tone: id ? 'plain' : 'green', onClick: choose },
-      { label: '升级', tone: 'gold', onClick: improve, disabled: !upgradeQuote?.affordable, reason: '金币还不够' },
+      { label: '升级', tone: 'gold', onClick: improve, disabled: !upgradeQuote?.affordable, reason: coinShortfall(upgradeQuote?.cost, ui.w.coins) },
     ]),
   });
 }
@@ -487,7 +490,7 @@ function improveFacility(ui, kind, index) {
       '升至 ' + compact(quote.target) + ' 级', {
         keepOpen: true, state,
         isCurrent: () => currentUpgradeQuote(dlg, facilityOffer, kind, index, selected.steps, quote),
-      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : '金币还不够');
+      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : coinShortfall(quote.cost, dlg.w.coins));
   }, { variant: 'facility-upgrade' });
 }
 
@@ -524,7 +527,7 @@ function facilityDetails(ui, kind, index, compactMode = false) {
     } else if (!id) {
       const quote = facilityOffer(dlg.w, kind, index, 1n);
       dlg.button('升级', () => improveFacility(dlg, kind, index), {
-        ...confirm, disabled: !quote?.affordable, reason: '金币还不够',
+        ...confirm, disabled: !quote?.affordable, reason: coinShortfall(quote?.cost, dlg.w.coins),
       });
     }
   });
@@ -555,7 +558,7 @@ function facilityCard(ui, kind, index, facility) {
       { label: assignmentLabel(kind, true), onClick: () => chooseFacility(ui, kind, index) },
       {
         label: '升级', tone: 'gold', onClick: () => improveFacility(ui, kind, index),
-        disabled: !upgradeQuote?.affordable, reason: '金币还不够',
+        disabled: !upgradeQuote?.affordable, reason: coinShortfall(upgradeQuote?.cost, ui.w.coins),
       },
     ];
     body.feature(facilityImage(kind, id), (copy) => {
@@ -839,7 +842,7 @@ function improveStation(ui, kind, index) {
       '升至 ' + compact(quote.target) + ' 级', {
         keepOpen: true, state,
         isCurrent: () => currentUpgradeQuote(dlg, stationUpgradeOffer, kind, index, selected.steps, quote),
-      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : '金币还不够');
+      }), state.pending || !quote.affordable, 'production', state.pending ? undefined : coinShortfall(quote.cost, dlg.w.coins));
   }, { variant: 'facility-upgrade' });
 }
 
@@ -948,7 +951,7 @@ function stationDetails(ui, kind, index, compactMode = false) {
       },
       {
         label: '升级', tone: 'gold', onClick: () => improveStation(dlg, kind, index),
-        disabled: !quote?.affordable, reason: '金币还不够',
+        disabled: !quote?.affordable, reason: coinShortfall(quote?.cost, dlg.w.coins),
       },
     ], { style: 'production' });
     if (compactMode && id) {
@@ -968,7 +971,7 @@ function stationCard(ui, kind, index, station, source) {
   const upgradeQuote = stationUpgradeOffer(ui.w, kind, index, 1n);
   const upgrade = {
     label: '升级', tone: 'gold', onClick: () => improveStation(ui, kind, index),
-    disabled: !upgradeQuote?.affordable, reason: '金币还不够',
+    disabled: !upgradeQuote?.affordable, reason: coinShortfall(upgradeQuote?.cost, ui.w.coins),
   };
   ui.card((body) => {
     if (!item) {
