@@ -8,7 +8,7 @@ import {
 import { research, upgradeTech } from './game/advancement.js';
 import { localCalendarDay, resetMarket } from './game/market.js';
 import { buyMerchant, reserveMerchantSale, restockMerchant, sellMerchant, visitMerchant } from './game/merchant.js';
-import { acceptOrder, deliverOrder, deliverOfferedOrder, abandonOrder, replaceOrder, rushOrder } from './game/orders.js';
+import { acceptOrder, deliverOrder, deliverOfferedOrder, abandonOrder, replaceOrder, rushOrder, rushChallengeCooldown } from './game/orders.js';
 import { applyOrderLines } from './game/order-plan.js';
 import {
   claimAllManagerGifts, claimManagerGift, giftAllManagers, giftManager, switchManagerAppearance,
@@ -91,7 +91,7 @@ const actions = {
   buyMerchant, sellMerchant, restockMerchant, visitMerchant,
   ...orderActions,
   giftManager, giftAllManagers, claimManagerGift, claimAllManagerGifts, switchManagerAppearance,
-  useCapsules, claimTaskCapsules, rushOrder, applyOrderLines, completeIntro,
+  useCapsules, claimTaskCapsules, rushOrder, rushChallengeCooldown, applyOrderLines, completeIntro,
 };
 const merchantActions = new Set(['buyMerchant', 'sellMerchant', 'restockMerchant', 'visitMerchant', 'reserveMerchantSale']);
 
@@ -160,9 +160,12 @@ function paint() {
       }
     }
   }
-  // Reproject at the actual production boundary, even between regular snapshots.
+  // Reproject at the actual production boundary, even between regular snapshots, and when the
+  // challenge cooldown ends so the order page drops its cooldown card at that moment.
+  const holdUntil = display.orders.challengeHoldUntilMs;
+  const holdEnd = holdUntil !== null && holdUntil > display.clockMs ? holdUntil : Infinity;
   nextDisplayAt = anchor + Math.min(displayRefreshMs, nextEnd - display.clockMs,
-    (display.orders.nextAttemptMs ?? Infinity) - display.clockMs);
+    (display.orders.nextAttemptMs ?? Infinity) - display.clockMs, holdEnd - display.clockMs);
 }
 function resize() {
   viewportResizePending = false;

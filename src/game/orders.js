@@ -305,12 +305,16 @@ function rushDueMs(world, dayEndMs) {
   return ready ? due : null;
 }
 
+// Capsule price to reach dueMs from clockMs now: 100 per started minute left, at least one minute.
+export const capsuleRushCostAt = (dueMs, clockMs) =>
+  BigInt(Math.max(1, Math.ceil((dueMs - clockMs) / rushMinuteMs))) * capsulesPerRushMinute;
+
 // Capsules to bring the next checkpoint forward: 100 per started minute left. Returned even when the
 // holding is short (rushOrder refuses then); null when the checkpoint cannot be rushed.
 export function orderRushCost(world, dayEndMs) {
   const due = rushDueMs(world, rushDayEnd(dayEndMs));
   if (due === null) return null;
-  return BigInt(Math.ceil((due - world.clockMs) / rushMinuteMs)) * capsulesPerRushMinute;
+  return capsuleRushCostAt(due, world.clockMs);
 }
 
 // Spend capsules to run the next checkpoint now; later checkpoints follow 30 minutes after the clock.
@@ -325,6 +329,28 @@ export function rushOrder(world, dayEndMs) {
   world.orders = before.orders;
   world.capsules = before.capsules;
   return false;
+}
+
+// Capsules to end the challenge cooldown now: 100 per started minute left; null while there is no
+// running cooldown or a challenge order exists.
+export function challengeCooldownRushCost(world) {
+  const orders = world.orders;
+  if (!challengeHeld(orders, world.clockMs) || ofType(orders, 'challenge').length > 0) return null;
+  return capsuleRushCostAt(orders.challengeHoldUntilMs, world.clockMs);
+}
+
+// Spend capsules to end the challenge cooldown; when a challenge is allowed right now, one is added as at a
+// checkpoint. The next checkpoint, world clock, production and day changes do not move. expectedCost is the
+// price the player confirmed; any other price, or a refusal, changes nothing.
+export function rushChallengeCooldown(world, expectedCost) {
+  const cost = challengeCooldownRushCost(world);
+  if (cost === null || cost !== expectedCost || (world.capsules ?? 0n) < cost) return false;
+  world.capsules = (world.capsules ?? 0n) - cost;
+  world.orders = { ...world.orders, challengeHoldUntilMs: null };
+  if (canGenerateChallenge(world, world.clockMs)) {
+    addOrder(world, makeChallenge(world, challengeTarget(world), world.orders.sequence + 1n));
+  }
+  return true;
 }
 
 // The running product batch that ends first, with its slot location ({ type, kind, index }).

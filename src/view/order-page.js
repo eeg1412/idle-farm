@@ -4,7 +4,7 @@ import { showItemDetail } from './item-chain.js';
 import { researchPathNodes, showResearch } from './research-page.js';
 import { hourlyRateLabel, hoursLabel } from './management-pages.js';
 import { planOrderLines } from '../game/order-plan.js';
-import { canDeliverOffered, canDeliverOrder, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderResearchReward, orderRushCost } from '../game/orders.js';
+import { canDeliverOffered, canDeliverOrder, capsuleRushCostAt, challengeCooldownRushCost, canReplaceOrder, orderLimit, orderPlaceholders, orderReplacementLimit, orderResearchReward, orderRushCost } from '../game/orders.js';
 
 // Orders saved before order types existed are high-value orders.
 const orderType = (order) => order.type ?? 'high';
@@ -402,26 +402,74 @@ function placeholderCard(cell, placeholder, rush = null) {
   else if (kind === 'slotsFull') cell.empty('订单接满了', { icon, hint: '交付或放弃一张后，新订单才会来' });
   else if (kind === 'tomorrow') cell.empty('今天赶不上了', { icon, hint: '明天还会有新订单' });
   else cell.empty('下一张订单在路上', { icon, valueAtClock: countdownTo(dueMs),
-    action: rush && { label: '加速 (', midIcon: 'time-capsule', midIconSize: 26, midText: compact(rush.cost) + ')', tone: 'plain',
-      disabled: rush.disabled,
-      reason: '时空胶囊不够', onClick: rush.onClick } });
+    action: rush && rushAction(rush) });
 }
 
-function confirmRush(ui, cost) {
-  ui.dialog('加速订单', (panel) => {
-    panel.text('消耗 ' + compact(cost) + ' 个时空胶囊，立即生成订单？');
+// costOf(world) gives the price shown when the dialog draws; null means the rush no longer applies.
+// submit(panel, cost) dispatches the rush action.
+function confirmCapsuleRush(ui, title, question, ended, costOf, submit) {
+  ui.dialog(title, (panel) => {
+    const cost = costOf(panel.w);
+    if (cost === null) {
+      panel.text(ended, { muted: true });
+      panel.buttons([{ label: '关闭', onClick: panel.close }]);
+      return;
+    }
+    panel.text('消耗 ' + compact(cost) + ' 个时空胶囊，' + question);
     panel.buttons([
       { label: '再想想', onClick: panel.close },
       { label: '确认', tone: 'gold', onClick: async () => {
-        if (!panel.isActive() || !await panel.action('rushOrder', { dayEndMs: nextMidnightClock(panel.w) }) || !panel.isActive()) return;
+        if (!panel.isActive() || !await submit(panel, cost) || !panel.isActive()) return;
         await panel.close();
       } },
     ]);
   }, { center: true, maxHeight: 240 });
 }
 
-// Capsule rush for the earliest scheduled checkpoint; cost is null when it cannot be rushed.
-const rushOption = (ui, cost) => ({ cost, disabled: (ui.w.capsules ?? 0n) < cost, onClick: () => confirmRush(ui, cost) });
+const checkpointRushCost = (world) => orderRushCost(world, nextMidnightClock(world));
+
+// Both rush dialogs recalculate the price from the world when they draw.
+function confirmRush(ui) {
+  confirmCapsuleRush(ui, '加速订单', '立即生成订单？', '现在不能加速', checkpointRushCost,
+    (panel) => panel.action('rushOrder', { dayEndMs: nextMidnightClock(panel.w) }));
+}
+
+// The cooldown price is also sent along as the confirmed price.
+function confirmChallengeRush(ui) {
+  confirmCapsuleRush(ui, '加速挑战订单', '立即结束挑战暂停？', '挑战暂停已结束', challengeCooldownRushCost,
+    (panel, cost) => panel.action('rushChallengeCooldown', cost));
+}
+
+// Whether each rush button (checkpoint, challenge cooldown) is affordable at the world's clock. The price
+// falls as the clock moves; the view rebuilds once when this key changes so a disabled button turns usable.
+export function orderRushAffordability(world) {
+  if (!world?.orders) return '';
+  const capsules = world.capsules ?? 0n;
+  const affordable = (cost) => cost !== null && capsules >= cost ? '1' : '0';
+  return affordable(checkpointRushCost(world)) + affordable(challengeCooldownRushCost(world));
+}
+
+// rush: { cost, dueMs, disabled, onClick }. The button's capsule count follows the clock frame by frame;
+// it is sized for the longest count it can show (the price only falls, but a compact count such as
+// "12K" is shorter than "9,900").
+function rushAction(rush) {
+  const longest = [rush.cost, rush.cost < 9900n ? rush.cost : 9900n].map((cost) => compact(cost))
+    .reduce((a, b) => b.length > a.length ? b : a);
+  return { label: '加速 (', midIcon: 'time-capsule', midIconSize: 26, midText: longest + ')',
+    midTextAtClock: (clock) => compact(capsuleRushCostAt(rush.dueMs, clock)) + ')',
+    tone: 'plain', disabled: rush.disabled, reason: '时空胶囊不够', onClick: rush.onClick };
+}
+
+// Capsule rush for the earliest scheduled checkpoint (nextAttemptMs); cost is null when it cannot be rushed.
+const rushOption = (ui, cost) => ({ cost, dueMs: ui.w.orders.nextAttemptMs, disabled: (ui.w.capsules ?? 0n) < cost,
+  onClick: () => confirmRush(ui) });
+
+// Shown while an abandoned challenge's cooldown runs and no challenge order exists.
+function challengeCooldownCard(cell, ui, cost) {
+  const dueMs = ui.w.orders.challengeHoldUntilMs;
+  cell.empty('挑战订单暂停中', { icon: 'menu-orders', valueAtClock: countdownTo(dueMs),
+    action: rushAction({ cost, dueMs, disabled: (ui.w.capsules ?? 0n) < cost, onClick: () => confirmChallengeRush(ui) }) });
+}
 
 export function renderOrders(ui) {
   const { active, generated, replaced } = ui.w.orders;
@@ -445,7 +493,13 @@ export function renderOrders(ui) {
   const firstScheduled = placeholders.find(({ placeholder }) => placeholder.kind === 'scheduled');
   const rushCost = firstScheduled ? orderRushCost(ui.w, nextMidnightClock(ui.w)) : null;
   const rates = small ? null : hourlyRates(ui.w);
-  ui.scrollList([...active, ...placeholders], (cell, order) => {
+  const cooldownCost = challengeCooldownRushCost(ui.w);
+  const cooldown = cooldownCost === null ? [] : [{ cooldown: true }];
+  // Cards with a rush button come first after the orders: the rushable checkpoint, then the cooldown card.
+  const rushable = firstScheduled && rushCost != null ? [firstScheduled] : [];
+  const others = placeholders.filter((entry) => !rushable.includes(entry));
+  ui.scrollList([...active, ...rushable, ...cooldown, ...others], (cell, order) => {
+    if (order.cooldown) return challengeCooldownCard(cell, ui, cooldownCost);
     if (order.placeholder) {
       return placeholderCard(cell, order.placeholder,
         order === firstScheduled && rushCost != null ? rushOption(ui, rushCost) : null);

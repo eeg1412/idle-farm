@@ -997,10 +997,11 @@ export function tradeOffer(world, id, percent) {
   return { id, percent, inventory, count, remaining, price, gain, reserveAffected, affordable: count > 0n };
 }
 
+// Inventory may change between confirmation and settlement; the sale settles the confirmed percent of current stock
+// as long as the unit price is unchanged and no more reserved stock is touched than was confirmed.
 function quoteMatches(actual, expected) {
-  return actual.id === expected?.id && actual.percent === expected.percent && actual.inventory === expected.inventory &&
-    actual.count === expected.count && actual.remaining === expected.remaining && actual.price === expected.price &&
-    actual.gain === expected.gain && actual.reserveAffected === expected.reserveAffected;
+  return actual.id === expected?.id && actual.percent === expected.percent && actual.price === expected.price &&
+    actual.reserveAffected <= expected.reserveAffected;
 }
 
 export function sellBatch(world, selections) {

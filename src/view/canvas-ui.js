@@ -33,7 +33,7 @@ import { mountMiningAnimation } from './mining-animation.js';
 import { renderResearch, researchReadyTabs } from './research-page.js';
 import { mountResearchTree } from './research-tree.js';
 import { renderMerchant } from './merchant-page.js';
-import { renderOrders } from './order-page.js';
+import { orderRushAffordability, renderOrders } from './order-page.js';
 import { managerPages, renderManager, renderManagerDirectory } from './manager-page.js';
 import { renderStatistics, renderFarmSaleHistory } from './management-records.js';
 import { createManagerSpeechQueue, fitManagerSpeech } from './manager-speech.js';
@@ -253,6 +253,12 @@ function restoreViewState(target, saved) {
 // Fields no page draws statically: the projected clock moves them every frame, and the save
 // revision changes on every commit (including the 5-second autosave) without any visible effect.
 const clockOnlyFields = new Set(['clockMs', 'wallAnchorMs', 'revision']);
+// The order page shows a cooldown card only while the challenge cooldown runs; its end at a clock time
+// (no data change) flips this once and rebuilds then.
+const challengeCooldownActive = (world) => {
+  const until = world?.orders?.challengeHoldUntilMs ?? null;
+  return until !== null && world.clockMs < until;
+};
 // Texture LRU limits for page icons and facility scenes. Animation textures are never evicted.
 const iconCacheLimit = 200;
 const sceneCacheLimit = 40;
@@ -1550,7 +1556,36 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         parent.addChild(mark);
       }
       if (icon) drawImage(parent, options.icon, contentLeft + check, iconY, iconSize, iconSize);
-      if (mid) {
+      if (mid && options.midTextAtClock) {
+        // midTextAtClock(clock) keeps midText live on the per-frame countdown path; midText only sizes the
+        // label. The label and the icon + midText group re-centre when the text changes (no check, leading
+        // or trailing icon is supported with it).
+        const group = parent.addChild(new Container());
+        group.eventMode = 'none';
+        drawImage(group, options.midIcon, 0, faceY + (faceHeight - midSize) / 2, midSize, midSize);
+        group.addChild(midCaption);
+        const place = () => {
+          caption.x = x + (width - caption.width - mid - midCaption.width) / 2;
+          group.x = caption.x + caption.width + 2;
+          midCaption.position.set(mid - 2, faceY + (faceHeight - midCaption.height) / 2);
+        };
+        const epoch = navigationEpoch;
+        const row = listRow?.layer;
+        const update = (clock) => {
+          if (midCaption.destroyed || epoch !== navigationEpoch) return false;
+          if (row && !row.visible) return true;
+          const next = String(options.midTextAtClock(clock));
+          if (midCaption.text !== next) {
+            midCaption.text = next;
+            place();
+            markDirty();
+          }
+          return true;
+        };
+        midCaption.text = String(options.midTextAtClock(progressClock(performance.now())));
+        place();
+        countdowns.add(update);
+      } else if (mid) {
         const midLeft = caption.x + caption.width + 2;
         drawImage(parent, options.midIcon, midLeft, faceY + (faceHeight - midSize) / 2, midSize, midSize);
         midCaption.position.set(midLeft + mid - 2, faceY + (faceHeight - midCaption.height) / 2);
@@ -5718,7 +5753,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // the clock fields and save revision, needs no rebuild either (S1).
       let structural = !drawn || nextLayout !== layout || drawn.layout !== nextLayout ||
         nextStatus !== drawn.status ||
-        nextProgressTiming?.epoch !== drawn.epoch || !sameState(nextWorld, drawn.world, clockOnlyFields);
+        nextProgressTiming?.epoch !== drawn.epoch || !sameState(nextWorld, drawn.world, clockOnlyFields) ||
+        challengeCooldownActive(nextWorld) !== challengeCooldownActive(drawn.world) ||
+        // On the order page a falling rush price may make a disabled rush button affordable: rebuild once then.
+        (current === '订单中心' && orderRushAffordability(nextWorld) !== orderRushAffordability(drawn.world));
       // The bare estate map draws only `homeViewKey`; dialogs and the menu read more of `world`.
       if (structural && drawn?.homeKey && current === homePage && nextWorld && !nextStatus?.busy &&
           !modal && !pendingModal && !navigationMenu && nextLayout === layout && drawn.layout === nextLayout &&

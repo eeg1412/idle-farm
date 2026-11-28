@@ -124,7 +124,7 @@ function salePanel(ui, id) {
       panel.text('本次将动用保留库存 ' + compact(chosen.reserveAffected) + ' 件。');
       panel.row('出售后库存', compact(chosen.remaining));
     }
-    if (state.revised) panel.text('库存或售价已变化，请重新确认。');
+    if (state.revised) panel.text('售价或保留库存有变化，请核对后重新确认。');
     panel.buttons([
       { label: '取消', onClick: () => panel.close(), disabled: state.pending },
       {
@@ -221,7 +221,7 @@ function confirmBatchSale(ui, ids) {
       panel.refresh();
     };
     panel.row('已选品项', ids.length, { compact: true, noWrap: true });
-    if (state.revised) panel.text('库存或报价可能已变化，请核对后重新确认。');
+    if (state.revised) panel.text('售价或保留库存有变化，请核对后重新确认。');
     panel.slider(state.percent, setPercent, { bubble: true });
     panel.buttons([25, 50, 75, 100].map((percent) => ({
       label: percent + '%', tone: state.percent === percent ? 'green' : 'plain', disabled: state.pending,
