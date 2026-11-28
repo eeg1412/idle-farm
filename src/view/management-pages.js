@@ -467,12 +467,20 @@ export function renderWarehouse(ui) {
     return;
   }
   const tags = orderItemTags(ui.w);
-  ui.scrollList(filtered, (cell, [id, item]) => {
-    const orderBadges = orderTagLabels(tags, id).map((label) => ({ label, tone: 'green' }));
-    const amount = quantity(ui.w, id);
-    const quality = compact(ui.w.quality[id] ?? 1n) + ' 级';
-    const price = compact(marketUnitPrice(ui.w, id)) + ' 金币';
-    const rate = marketRate(ui.w, id);
+  // Everything a card shows; the virtual list keys each row's measured shape by these values.
+  const cards = filtered.map(([id, item]) => ({
+    id, item,
+    orderBadges: orderTagLabels(tags, id).map((label) => ({ label, tone: 'green' })),
+    amount: quantity(ui.w, id),
+    quality: compact(ui.w.quality[id] ?? 1n) + ' 级',
+    price: compact(marketUnitPrice(ui.w, id)) + ' 金币',
+    rate: marketRate(ui.w, id),
+  }));
+  const cardKey = ({ id, item, orderBadges, amount, quality, price, rate }) => [
+    compactView ? 'compact' : 'large', id, item.name, orderBadges.map(({ label }) => label).join('\u0003'),
+    String(amount), quality, price, String(rate),
+  ].join('\u0004');
+  ui.scrollList(cards, (cell, { id, item, orderBadges, amount, quality, price, rate }) => {
     const open = () => warehouseDetail(ui, id);
     const drawActions = (row) => row.buttons([
       { label: '详情', onClick: open },
@@ -498,7 +506,7 @@ export function renderWarehouse(ui) {
       }, { ratio: 0.28, onClick: open });
       drawActions(row);
     }, { padding: 8, gap: 6 });
-  }, { columns: compactView ? 'auto' : 1 });
+  }, { columns: compactView ? 'auto' : 1, virtual: { key: cardKey } });
 }
 
 function catalogViewSnapshot(local) {

@@ -546,6 +546,11 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   let plotSharedLoad;
   let scrollImages;
   let listRow;
+  // While set, touchImage also records each [url, category] here (a virtual list row's shape).
+  let imageTouchLog;
+  // Virtual scrollList row shapes by content key, oldest first: { height, controls, touches }.
+  const virtualRowShapes = new Map();
+  const virtualRowShapeLimit = 4096;
   const progressBars = new Set();
   const countdowns = new Set();
   // Production yield floats. `yieldWatch` holds the slots whose countdown the last build drew
@@ -860,6 +865,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   }
 
   function touchImage(url, category) {
+    imageTouchLog?.push([url, category]);
     imagesInUse.add(url);
     if (!category) return;
     imageUse.delete(url);
@@ -2362,6 +2368,197 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       else paint(local.scroll ?? 0);
       cursor += listHeight + rowGap;
     }
+    // scrollList with the same rows, positions and controls, but only rows within one viewport
+    // height of the visible area exist as display objects. A row's height, keyboard controls and
+    // drawn images come from drawing that row once off-stage, cached by the caller's content key
+    // together with the list geometry and waiting state. Rows that are not built keep placeholder
+    // controls at their indices, so control order, Tab scrolling and focus match the full list.
+    function virtualScrollList(items, draw, { count, gap, cellWidth, equalHeight, focusAt, keyOf }) {
+      const owner = parent;
+      const outerRow = listRow;
+      const { viewport } = options;
+      const pageControls = controls;
+      const list = new Container();
+      owner.addChild(list);
+      const drawCells = (layer, entries, index, top, observeScroll) => {
+        const rowSurfaces = equalHeight ? [] : undefined;
+        let next = top;
+        entries.forEach((entry, column) => {
+          const cell = layoutUI(layer, x + column * (cellWidth + gap), top, cellWidth, local, availableHeight,
+            0, undefined, { rowSurfaces, observeScroll, viewport });
+          draw(cell, entry, index + column);
+          next = Math.max(next, cell.bottom);
+        });
+        if (rowSurfaces?.length) {
+          const height = Math.max(...rowSurfaces.map((entry) => entry.height));
+          for (const entry of rowSurfaces) entry.surface(height);
+        }
+        return next;
+      };
+      // Draws a row at top 0 into a detached container and keeps only its measurements.
+      const measure = (entries, index) => {
+        const scratch = new Container();
+        const saved = { controls, scrollImages, listRow, imageTouchLog };
+        const registered = [];
+        const touches = [];
+        controls = registered;
+        scrollImages = [];
+        listRow = { layer: scratch, top: 0, observeIndicators: true };
+        imageTouchLog = touches;
+        try {
+          const height = drawCells(scratch, entries, index, 0, () => {});
+          return {
+            height, touches,
+            controls: registered.map((control) => {
+              const at = scratch.toLocal({ x: control.x, y: control.y }, control.parent);
+              return { x: at.x, dy: at.y, width: control.width, height: control.height };
+            }),
+          };
+        } finally {
+          controls = saved.controls;
+          scrollImages = saved.scrollImages;
+          listRow = saved.listRow;
+          imageTouchLog = saved.imageTouchLog;
+          scratch.destroy({ children: true });
+        }
+      };
+      const rendered = new Map();
+      let shownScroll = local.scroll ?? 0;
+      const setSlots = (row, next) => {
+        const shift = next.length - row.count;
+        pageControls.splice(row.slot, row.count, ...next);
+        row.count = next.length;
+        if (!shift) return;
+        // The content key missed something that changes the controls: measure again next build.
+        virtualRowShapes.delete(row.key);
+        for (let later = row.position + 1; later < rows.length; later += 1) rows[later].slot += shift;
+      };
+      const createRow = (row) => {
+        const layer = new Container();
+        let at = 0;
+        for (const position of rendered.keys()) if (position < row.position) at += 1;
+        list.addChildAt(layer, at);
+        const record = { layer, top: row.top, bottom: row.bottom, outerRow, observeIndicators: true, observers: [], images: [] };
+        const saved = { controls, scrollImages, listRow };
+        // Pre-sized so each control drawn gets its full-list index (focus outlines compare it).
+        const registered = new Array(row.slot);
+        controls = registered;
+        scrollImages = record.images;
+        listRow = record;
+        try {
+          drawCells(layer, row.entries, row.index, row.top, (observe) => record.observers.push(observe));
+        } finally {
+          controls = saved.controls;
+          scrollImages = saved.scrollImages;
+          listRow = saved.listRow;
+        }
+        setSlots(row, registered.slice(row.slot));
+        record.images = record.images.filter((image) => !image.layer.destroyed);
+        for (const image of record.images) {
+          const { left, top, right, bottom } = image.bounds;
+          image.start = owner.toLocal({ x: left, y: top }, image.layer);
+          image.end = owner.toLocal({ x: right, y: bottom }, image.layer);
+        }
+        rendered.set(row.position, record);
+        return record;
+      };
+      const destroyRow = (row, record) => {
+        setSlots(row, row.placeholders);
+        record.layer.destroy({ children: true });
+        rendered.delete(row.position);
+      };
+      const updateRow = (record, scroll) => {
+        for (const observe of record.observers) observe(scroll);
+        const { layer, top, bottom, indicators } = record;
+        layer.visible = withinScrollViewport(top, bottom, scroll, viewport, x, x + width);
+        if (layer.visible && indicators) {
+          record.indicators = undefined;
+          for (const show of indicators) show();
+        }
+        for (const image of record.images) {
+          const { layer: holder, start, end, mount } = image;
+          holder.visible = withinScrollViewport(start.y, end.y, scroll, viewport, start.x, end.x);
+          if (holder.visible && mount) {
+            image.mount = undefined;
+            mount();
+          }
+        }
+      };
+      // A placeholder control builds its row (even off screen) before passing the input on.
+      const materialize = (row, at) => {
+        if (!rendered.has(row.position)) {
+          updateRow(createRow(row), shownScroll);
+          markDirty();
+        }
+        return pageControls[row.slot + at];
+      };
+      const scope = [x, cellWidth, count, availableHeight, waiting ? 1 : 0, quietWaiting ? 1 : 0].join('\u0002');
+      const rows = [];
+      for (let index = 0; index < items.length; index += count) {
+        const entries = items.slice(index, index + count);
+        const key = scope + '\u0002' + entries.map((entry, column) => keyOf(entry, index + column)).join('\u0001');
+        let shape = virtualRowShapes.get(key);
+        if (shape) virtualRowShapes.delete(key);
+        else shape = measure(entries, index);
+        virtualRowShapes.set(key, shape);
+        if (virtualRowShapes.size > virtualRowShapeLimit) virtualRowShapes.delete(virtualRowShapes.keys().next().value);
+        // A full list draws every row's images during the build; keep them in use the same way.
+        for (const [url, category] of shape.touches) touchImage(url, category);
+        const top = cursor;
+        const row = { position: rows.length, index, entries, key, top, bottom: top + shape.height,
+          slot: pageControls.length, count: shape.controls.length, placeholders: [] };
+        shape.controls.forEach((control, at) => {
+          const placeholder = {
+            parent: owner, x: control.x, y: top + control.dy, width: control.width, height: control.height,
+            run(event) {
+              const real = materialize(row, at);
+              if (real && real !== placeholder) real.run(event);
+            },
+            key(name) {
+              const real = materialize(row, at);
+              return real && real !== placeholder && real.key ? real.key(name) : false;
+            },
+          };
+          row.placeholders.push(placeholder);
+          pageControls.push(placeholder);
+        });
+        rows.push(row);
+        if (focusAt >= index && focusAt < index + count) {
+          local.scroll = Math.max(0, top - (viewport.pinned?.height ?? 0));
+        }
+        cursor = row.bottom;
+      }
+      const firstRowEndingAfter = (y) => {
+        let first = 0;
+        let end = rows.length;
+        while (first < end) {
+          const middle = (first + end) >>> 1;
+          if (rows[middle].bottom <= y) first = middle + 1;
+          else end = middle;
+        }
+        return first;
+      };
+      options.observeScroll((scroll) => {
+        shownScroll = scroll;
+        const reach = viewport.height;
+        const first = firstRowEndingAfter(scroll - reach);
+        let end = first;
+        while (end < rows.length && rows[end].top < scroll + viewport.height + reach) end += 1;
+        let changed = false;
+        for (const [position, record] of rendered) {
+          if (position >= first && position < end) continue;
+          destroyRow(rows[position], record);
+          changed = true;
+        }
+        for (let position = first; position < end; position += 1) {
+          if (rendered.has(position)) continue;
+          createRow(rows[position]);
+          changed = true;
+        }
+        for (const record of rendered.values()) updateRow(record, scroll);
+        if (changed) markDirty();
+      });
+    }
     function choiceTitle(layer, item, left, top, span, height, size, align = 'left') {
       const title = marketLabel(layer, item.label, left, top, span, item.marketRate,
         { size, align, weight: '800', trackViewport: false });
@@ -3696,11 +3893,17 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         caption.y = top + (height - caption.height) / 2;
         cursor += height + rowGap;
       },
-      scrollList(items, draw, { columns = 1, focusIndex = -1 } = {}) {
+      // virtual: { key(entry, index) } builds only the rows near the viewport (virtualScrollList);
+      // it applies inside a scroll area and is off by default.
+      scrollList(items, draw, { columns = 1, focusIndex = -1, virtual } = {}) {
         const equalHeight = columns === 'auto';
         const count = equalHeight ? (width < 280 || scale() > 1.45 ? 1 : 2) : columns;
         const gap = 8;
         const cellWidth = (width - (count - 1) * gap) / count;
+        if (virtual && options.observeScroll && options.viewport) {
+          virtualScrollList(items, draw, { count, gap, cellWidth, equalHeight, focusAt: focusIndex, keyOf: virtual.key });
+          return;
+        }
         const rows = [];
         const outerRow = listRow;
         for (let index = 0; index < items.length; index += count) {

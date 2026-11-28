@@ -36,6 +36,7 @@
 1. **纹理缓存要有上限。** 只对图标（约 200 个）和场景（约 40 张）做 LRU；动画纹理和本次构建中绘制过的纹理永不淘汰。淘汰用 `Assets.unload(url)`，不能只调用 `texture.destroy()`，否则 `Assets.load` 会返回已销毁的纹理。新的纹理加载入口必须声明自己属于哪一类。
 2. **大 JSON 不进首包。** 运行时只导入 `src/content/crop-visuals.runtime.json`。这个文件由 `scripts/compile-crop-visuals.mjs` 按白名单从 `crop-visuals.json` 生成，不能手改。运行时开始读取新的字段时，先把字段加进白名单再重新生成，否则读到的是 undefined。导出用的元数据只保留在完整文件里。
 3. **离屏剔除和虚拟化保持不变。** 动画、图片的离屏卸载，列表和研究树的虚拟化，页面切换时 `destroy({children:true})`，隐藏标签页时停止动画、保存和倒计时，这些都不能为了“简化”而删掉。
+4. **仓库列表使用 `scrollList` 的虚拟模式。** `virtual: { key }` 只建立视口上下各一屏内的行；行高、控件位置和图片按内容键离屏测量一次后缓存，未建行在 `controls` 中保留占位，控件序号与完整列表一致。仓库卡片新增或改变显示内容时，必须同步加入 `renderWarehouse` 的 `cardKey`，否则缓存的行高会过期。虚拟行不支持动画卡（不传 `registerPlot`）。
 
 ## 6. 构建与发布（`scripts/build-offline.mjs`）
 
