@@ -4705,11 +4705,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         let bubble;
         let contentHeight;
         if (source.message && typeof source.message === 'object') {
-          // Task reward toasts: leading text, then the 「任务奖励」 label and icon + amount items.
-          const { text, reward } = source.message;
+          // Reward toasts: leading text, then each group's label (「订单奖励」「任务奖励」) and icon + amount items.
+          const { text, rewards } = source.message;
           bubble = layer.addChild(new Container());
           bubble.eventMode = 'none';
-          const entries = [...(text ? [{ text: text + ' ·' }] : []), { text: reward.label }, ...reward.items];
+          const entries = [...(text ? [{ text: text + ' ·' }] : []), ...rewards.flatMap((group, index) =>
+            [{ text: (index ? '· ' : '') + group.label }, ...group.items])];
           contentHeight = rewardFlow(bubble, entries, 23, 0, width - 66,
             { size, color: palette.cream, align: 'center', trackViewport: false });
         } else {

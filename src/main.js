@@ -281,23 +281,27 @@ function completedGuide(before, after) {
   return guideActive(before) && !guideActive(after);
 }
 
-// Task rewards travel as icon + amount items; the view draws them after the 「任务奖励」 label.
-function taskRewardItems(rewards) {
-  return [['coin', rewards?.coins], ['research-point', rewards?.researchPoints], ['time-capsule', rewards?.capsules]]
-    .filter(([, value]) => value > 0n).map(([icon, value]) => ({ icon, value }));
+// Rewards travel as icon + amount items; the view draws each group's items after its label.
+function rewardItems(entries) {
+  return entries.filter(([, value]) => value > 0n).map(([icon, value]) => ({ icon, value }));
 }
 
-// Joins toast parts with 「 · 」; a part carrying task rewards keeps them after the joined text.
+function taskRewardItems(rewards) {
+  return rewardItems([['coin', rewards?.coins], ['research-point', rewards?.researchPoints],
+    ['time-capsule', rewards?.capsules]]);
+}
+
+// Joins toast parts with 「 · 」; every reward group from every part follows the joined text in order.
 function joinToast(...parts) {
-  const structured = parts.find((part) => part && typeof part === 'object');
+  const structured = parts.filter((part) => part && typeof part === 'object');
   const text = parts.map((part) => part && typeof part === 'object' ? part.text : part).filter(Boolean).join(' · ');
-  return structured ? { text, reward: structured.reward } : text;
+  return structured.length ? { text, rewards: structured.flatMap((part) => part.rewards) } : text;
 }
 
 function progressToast(before, after, rewards) {
   const text = completedGuide(before, after) ? longGoalsToast : '';
   const items = taskRewardItems(rewards);
-  return items.length ? { text, reward: { label: '任务奖励', items } } : text;
+  return items.length ? { text, rewards: [{ label: '任务奖励', items }] } : text;
 }
 
 function showOffline() {
@@ -450,7 +454,7 @@ async function initialize(recovery) {
   }
 }
 
-function feedback(name, args, revenueBefore, after, actionResult, researchBefore) {
+function feedback(name, args, revenueBefore, after, actionResult, researchBefore, capsulesBefore) {
   if (__DEV_TEST_MODE__ && name === 'grantDevelopmentTools') {
     return { toast: '开发测试模式：已解锁全部科技，并追加 1T 金币', sound: 'success' };
   }
@@ -480,8 +484,11 @@ function feedback(name, args, revenueBefore, after, actionResult, researchBefore
     return { float: '+' + compact(after.stats.revenue - revenueBefore) + ' 金币', sound: 'sell' };
   }
   if (name === 'deliverOrder' || name === 'deliverOfferedOrder') {
-    return { float: '已交付 +' + compact(after.stats.revenue - revenueBefore) + ' 金币 +' +
-      compact(after.basicResearchPoints - researchBefore) + ' 研发点', sound: 'sell' };
+    const items = rewardItems([['coin', after.stats.revenue - revenueBefore],
+      ['research-point-basic', after.basicResearchPoints - researchBefore],
+      ['time-capsule', (after.capsules ?? 0n) - capsulesBefore]]);
+    return { toast: items.length ? { text: '已交付', rewards: [{ label: '订单奖励', items }] } : '已交付',
+      sound: 'sell' };
   }
   if (name === 'buyFacility') return { toast: '已' + ({ C: '购地', L: '购买养殖场', F: '购买鱼塘', M: '购买矿洞' })[args[0]], sound: 'success' };
   if (name === 'buyStation') return { toast: '已增设' + (args[0] === 'I' ? '料坊位' : '工房位'), sound: 'success' };
@@ -522,9 +529,10 @@ function dispatch(name, ...args) {
       if (!Object.hasOwn(actions, name)) return { ok: false };
       const draft = structuredClone(world);
       const anchor = foreground(draft, true, anchorAt, wallAt);
-      // Feedback reads only the revenue and basic research points before the action; a BigInt needs no copy.
+      // Feedback reads only the revenue, basic research points and capsules before the action; a BigInt needs no copy.
       const revenueBefore = draft.stats.revenue;
       const researchBefore = draft.basicResearchPoints;
+      const capsulesBefore = draft.capsules ?? 0n;
       const actionResult = applyAction(name, draft, args, wallAt);
       if (actionResult === false) {
         settleProduction(draft);
@@ -552,7 +560,7 @@ function dispatch(name, ...args) {
         view.resetSession();
       }
       paint();
-      const result = feedback(name, args, revenueBefore, draft, actionResult, researchBefore);
+      const result = feedback(name, args, revenueBefore, draft, actionResult, researchBefore, capsulesBefore);
       result.toast = joinToast(result.toast, toast);
       if (result.sound) audio.play(result.sound);
       return { ok: true, ...result };

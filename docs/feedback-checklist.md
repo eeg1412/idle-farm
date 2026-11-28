@@ -1231,3 +1231,16 @@ PWA更新与图标已完成源审/静态审图并冻结：确认真实保存成�
 | 文档 | CR-1：[田地](ui/pages/fields.md) 选择网格与行情段、[料坊与工房](ui/pages/workshop.md) 行情段、[任务卡](tasks/2026-11-28-choice-rate-badge.md) 状态 | 已同步 |
 
 状态：待 PM 读 diff 与最终构建；未运行测试，画面未实看。
+
+# 2026-11-28：订单奖励 Toast
+
+需求：订单的奖励和任务的奖励提示保持一致，采用 Toast 形式，奖励以图标显示。交付与立即交付成功时显示「已交付 · 订单奖励 [金币]X [普通研发点]Y [时空胶囊]Z」，同次任务奖励并入同一条 Toast。见[任务卡](tasks/2026-11-28-order-reward-toast.md)。
+
+| 要求 | 改法 | 状态 |
+| --- | --- | --- |
+| 订单奖励 Toast | RT-1：`src/main.js` 的 `feedback` 对 `deliverOrder`／`deliverOfferedOrder` 返回 `toast`（text「已交付」、奖励组 label「订单奖励」，items 依次 coin、research-point-basic、time-capsule，取交付前后差值，值为 0 不放），删除交付飘字，音效 `sell` 保留；`dispatch` 在动作前记录 `capsulesBefore` 并传入 `feedback` | 已实施 |
+| 多组奖励合并 | RT-1：Toast 消息结构由 `reward` 改为 `rewards` 数组；`joinToast` 合并所有结构化部分的奖励组；`progressToast` 输出单组「任务奖励」；新增 `rewardItems` 供任务与订单共用 | 已实施 |
+| Toast 渲染 | RT-1：`src/view/canvas-ui.js` Toast 奖励分支依次画「text · 组1label items · 组2label items」；任务奖励单独出现时显示不变；文本 Toast、位置、关闭按钮与时长不变 | 已实施 |
+| 文档 | RT-1：[反馈](ui/feedback.md) 提示分配、[订单中心](ui/pages/orders.md) 交付反馈、[任务卡](tasks/2026-11-28-order-reward-toast.md) 状态 | 已同步 |
+
+状态：待 PM 读 diff 与最终构建；未运行测试，画面未实看。
