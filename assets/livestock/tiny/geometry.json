@@ -1,0 +1,24 @@
+{
+  "sceneSize": 320,
+  "beeFlight": {
+    "frameSize": 64,
+    "pivot": [32, 32],
+    "direction": "right",
+    "sourcePivots": [[365, 326], [953, 326], [365, 901], [953, 901]],
+    "sourceCropSize": 480
+  },
+  "L13": {
+    "entrance": { "x": 81, "y": 191, "width": 44, "height": 11 }
+  },
+  "L29": {
+    "upperTray": [[59, 136], [181, 136], [193, 158], [45, 158]],
+    "lowerTray": [[59, 195], [181, 195], [193, 220], [45, 220]],
+    "leafBed": {
+      "source": "silkworm-rack-mulberry-imagegen.png",
+      "polygons": [
+        [[57, 132], [182, 132], [195, 158], [44, 158]],
+        [[57, 190], [182, 190], [195, 220], [44, 220]]
+      ]
+    }
+  }
+}

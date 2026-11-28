@@ -1,0 +1,43 @@
+{
+  "createdWith": "built-in image_gen",
+  "recreation": "node assets/livestock/tiny/export.mjs",
+  "source": {
+    "assets/livestock/tiny/hive-imagegen.png": "3d10d924f48f555d88d89d96bf9c057eab5b3e0cb52a66d1cd0e2f81f7f12f35",
+    "assets/livestock/tiny/silkworm-rack-imagegen.png": "0f1acc2bd3a12a3e14529f0e5fee48bfa8189e4d6fa493b85ac1aff0da788b53",
+    "assets/livestock/tiny/bee-flight-imagegen.png": "c45d5fc1b2e7c62c5fb5bdb7b2e6a35a62da90f0db55dd01cab30b5de330d2c7",
+    "assets/livestock/tiny/silkworm-rack-mulberry-imagegen.png": "43c877c0faccd66ca780c7d7153ce6d4dfb23df64ac38927e4fa48dc67054f29"
+  },
+  "png": {
+    "assets/livestock/tiny/hive.png": "7a456aeebac2475cf0cf8956d73cdb87600121b31f669d38a0134746d4a7be40",
+    "assets/livestock/tiny/silkworm-rack.png": "f281c38a00f164417b1e628df591012777fbed350b7ad3983b948dc690a795d2",
+    "assets/livestock/tiny/bee-flight.png": "5d533cd111f58c1dca066c56683b6f14b1f3d2e365bc6a797cf4c279ed7d3730",
+    "assets/livestock/tiny/scene-L13.png": "6c308042cd77415f3b14d9993e4ca35f4fe4b6ea30203440301cd6b3e92e73a1",
+    "assets/livestock/tiny/scene-L29.png": "2ec05c9fe4fbfe894720b0ac9e6c394366fc2a82a41d4945e97feb6dd76af62c"
+  },
+  "webp": {
+    "public/art/livestock/tiny/hive.webp": "67e9d0a98a2f3da6e0ace120158f6652a8ba0e9ed5f467bd74f2db01e8c7bede",
+    "public/art/livestock/tiny/silkworm-rack.webp": "9d2de88a568b2b12f85469212f14ada7f3a866c273bec85f02bd02fbbac53f99",
+    "public/art/livestock/tiny/bee-flight.webp": "ae2587b6ade969e7fbf705003e38feb3b62c96e887467a792cc9618f44957786",
+    "public/art/livestock/tiny/scene-L13.webp": "7811c15e90f8bba8c4a4a035c88027a10a16bc8aa0526c1d1cc7cf1180f8ec81",
+    "public/art/livestock/tiny/scene-L29.webp": "2d5f22d00406288cd9a6c90b698aa9268753fed0df7af9d3fa6f79fd194645fc"
+  },
+  "references": {
+    "assets/livestock/barn.png": "c00e55906fa33885ae00c74e850a6b3da34de562c0534a16ea189abad187ffc7",
+    "public/ui-icons/livestock-L13.webp": "75ee0b7e5b4567ee2261991173b91553b785b65e3b1d5c2e33f9c222c9a5c0a1",
+    "public/ui-icons/livestock-L29.webp": "d9a3d9bd097a9217d41d403d7433838861bed7f39afdb4ee251d99ec57197724",
+    "assets/livestock/animals/L29/adult-0.png": "3b12700913a0623d5d748b84fa12a80670b45af9440987b58613efd6f20da229",
+    "assets/livestock/animals/L29/adult-1.png": "f7ef4b19fb0f6be88781f301d883ba3fea10602c1e920d17bf5fd476224427d7",
+    "assets/livestock/animals/L29/adult-2.png": "9393eb2dba7a71bb53528922e5c4e666619bf2530d93c2ee08d383dd86a7a520",
+    "assets/livestock/animals/L29/adult-3.png": "5bf06e50c43a60bca6e886b394c78d2da78f2789b5c0f7898ca85ca1d63584e7",
+    "public/art/livestock/feed-L29.webp": "225e7c965dc73261b9308cf89fd1ff082418f937572e13086d4d7181ca58b4d6",
+    "public/wiki/icons/L13.webp": "7ecac85b93cdd56663a4d24988703ec585ba774175ddda65ae9844963f1c90e7",
+    "public/wiki/icons/L29.webp": "e0931918274210731947b72203444737c81c5fcdcdb8d5fe2c98d0dc4636f10e"
+  },
+  "evidenceLocalOnly": {
+    "assets/livestock/reviews/tiny/backgrounds.png": "fe3fd11f91c995d2165af3c46cfdcb8103dc203d002fd0600f7e723f53c9421a",
+    "assets/livestock/reviews/tiny/scenes-320.png": "bbb342723d54b721645abf9e76a5aa8bd2b3be3769808fc99ca751c592d05e93",
+    "assets/livestock/reviews/tiny/scenes-130.png": "b030c0023b89e869d889db5f30fa8e5c34872e8e518eae8a769d8110c18046f5",
+    "assets/livestock/reviews/tiny/bee-frames.png": "3cc3bf7e9186cbc24559efd2ac2e50ca3eed75b497eda9c06fd9061b2c65f449"
+  },
+  "runtimeVerification": "未验证"
+}

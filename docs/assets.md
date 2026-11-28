@@ -61,15 +61,17 @@ python3 scripts/export-item-icons.py --check
 
 ### 畜牧动画与透明牲畜选择图
 
-交付范围覆盖目录全部 30 种牲畜，新增 ID 同步扩展。固定棚舍与动物、产品是分离图层；附属产品类是成年 4 帧，肉类是幼年、成长、成熟各 4 帧。分类由 `assets/livestock/layout.json` 显式 `slaughter` 定义，并生成运行登记 `src/content/livestock-visuals.json`，不按 ID 序号推断。完整交付清单见 [farm-livestock](../.agents/skills/farm-livestock/SKILL.md)。
+每种极小牲畜在专用设施中显示六只。L13 使用蜂箱和独立透明飞蜂图集，L29 使用铺满桑叶的双层蚕架，每层三只家蚕。家蚕复用真实进食帧和口部桑叶层。两种 320×320 背景、同 ID 详情图与飞蜂图集发布在 `public/art/livestock/tiny/`，原稿和复算方法在 `assets/livestock/tiny/`。同 ID 仓库图在批次完工时显示于设施旁。
 
-牲畜使用兼顾像素边缘和形体细节的像素精灵：源图有实际像素色块、阶梯轮廓与离散明暗，同时保留清楚的五官、羽毛分组／毛团和身体结构；避免细碎写实毛发、柔光或拟真体积，也不能简化成缺少特征的粗块图。重绘须用内置 `image_gen` 生成版本化新原画，不能把旧拟真图降采样或加像素化滤镜称作重绘。全部透明选择图、idle 帧及同 ID 静态回退中的动物须保持同一风格；保留共享固定棚舍、脚位、动画时序与产出规则，其他资源是否重绘依任务卡范围执行。各次被拒绝稿、新来源与真实技术参数由素材负责人写入对应提示词文件和来源登记；不得把试稿参数写成用户要求，或在实际产物前补写完成数值。最新画风反馈、指定样稿与后续阶段门见[牲畜画风反馈记录](feedback-checklist.md#2026-11-15牲畜像素画风重新打开与全部重绘)，由 PM 按用户后续确认维护。
+交付范围覆盖目录全部 30 种牲畜，新增 ID 同步扩展。棚舍类的背景、动物和产品为分离图层。附属产品类为成年 4 帧，肉类为幼年、成长、成熟各 4 帧。分类由 `assets/livestock/layout.json` 显式 `slaughter` 定义，并生成运行登记 `src/content/livestock-visuals.json`，不按 ID 序号推断。完整交付清单见 [farm-livestock](../.agents/skills/farm-livestock/SKILL.md)。
+
+牲畜使用兼顾像素边缘和形体细节的像素精灵：源图有实际像素色块、阶梯轮廓与离散明暗，同时保留清楚的五官、羽毛分组／毛团和身体结构；避免细碎写实毛发、柔光或拟真体积，也不能简化成缺少特征的粗块图。重绘须用内置 `image_gen` 生成版本化新原画，不能把旧拟真图降采样或加像素化滤镜称作重绘。全部透明选择图、idle 帧及同 ID 静态回退中的动物须保持同一风格；棚舍类沿用共享棚舍、脚位和产物展示规则，极小牲畜使用按设施登记的专用布局。各次被拒绝稿、新来源与真实技术参数由素材负责人写入对应提示词文件和来源登记；不得把试稿参数写成用户要求，或在实际产物前补写完成数值。最新画风反馈、指定样稿与后续阶段门见[牲畜画风反馈记录](feedback-checklist.md#2026-11-15牲畜像素画风重新打开与全部重绘)，由 PM 按用户后续确认维护。
 
 透明 5×5 原画及棚舍全幅原图在 `assets/livestock/raw/`，绘图提示词见 [首批提示词](../assets/livestock/prompts.md)与[扩展提示词](../assets/livestock/expansion-prompts.md)。`layout.json` 以 `sources.sheets` 维护多来源、实际隔离区域和固定注册点；每源规范网格在 `normalized/<来源键>.png`，首批的 `hen-pig-idle-grid.png` 仍保留。`animals/<ID>/` 保存逐帧 PNG，`atlases/<ID>.png` 保留整张 PNG 图集，`icons/<ID>.png` 保存透明活牲畜选择图。旧原稿产品部分、`products/<ID>.png` 和旧独立产品 WebP 可以保留溯源，不再作为活跃交付要求或动画来源。`atlas.json` 记录实际裁切区域、原图标识／哈希和每帧位置。动物源图注册点 `(138,270)` 及 `fixedGround` 不变，与真实站立脚印分开；棚舍始终不动。`all-species.png` 和 `selection-icons.png` 仅为素材总览，不能替代游戏画布验收。
 
 动物原画、透明选择图和回退中的动物层都不烘焙椭圆阴影，复用物品图也不烘焙程序影。每阶段四帧使用同一尺度和固定解剖脚点，不逐帧按 bbox 重居中或按加权脚底像素中心挪动。`atlas.json` 每帧保留 `fixedGround: [138,270]`，并记录阶段共享的正数 `stageScale`、人工解剖脚点 `sourceAnchor: [x,y]` 与实际 `anchorMethod`；`sourceAnchor` 使用原始整张源图的绝对像素坐标，`sourceCanvas.left/top` 是相对此 anchor 的偏移，画布尺寸同阶段固定。导出从 `sourceAnchor + sourceCanvas.left/top` 提取画布，同阶段共用 `stageScale` 与 `scenePlacement`。
 
-运行登记每ID使用 `{stages,slaughter,grounding,feeding,feedTexture,product}`。`grounding` 每期登记真实首帧支撑脚区 `{x,y,radiusX,radiusY}`，同阶段固定，不逐帧测量或挪动物。`feeding` 每期 `{x,y,radiusX,radiusY,kind}` 保留真实嘴点来源；`feedTexture` 按 ID 登记 `{path,size,bounds,anchor}`。L13 中华蜜蜂与 L29 家蚕分别使用花蜜、桑叶专用素材，其余动物使用 `./art/livestock/feed-v8.webp`（128×64，`bounds:{x:4,y:4,width:120,height:56}`，`anchor:[64,60]`）。加载器按路径复用纹理，每只动物有独立 Sprite 和程序轻影。`livestockFeedLayout`由runtime和静态导出共用，V8重设计冷暗低沿托盘与浅／褐／绿混合料，基础场景可见宽采用至少52后再乘depth，使130px卡片仍可辨；参数是实现选择，真实嘴/脚登记不动。`product`仍用96px canonical内容bounds，动画与仓库同URL，肉品跨收获保持成熟落点，附属产物在饲料相反侧接地。
+运行登记每ID使用 `{stages,slaughter,grounding,feeding,feedTexture,product}`。`grounding` 每期登记真实首帧支撑脚区 `{x,y,radiusX,radiusY}`，同阶段固定，不逐帧测量或挪动物。`feeding` 每期 `{x,y,radiusX,radiusY,kind}` 保留真实嘴点来源；`feedTexture` 按 ID 登记 `{path,size,bounds,anchor}`。棚舍牲畜使用 `./art/livestock/feed-v8.webp`（128×64，`bounds:{x:4,y:4,width:120,height:56}`，`anchor:[64,60]`）。加载器按路径复用纹理，每只动物有独立 Sprite 和程序轻影。`livestockFeedLayout`由runtime和静态导出共用，V8重设计冷暗低沿托盘与浅／褐／绿混合料，基础场景可见宽采用至少52后再乘depth，使130px卡片仍可辨；参数是实现选择，真实嘴/脚登记不动。`product`仍用96px canonical内容bounds，动画与仓库同URL，肉品跨收获保持成熟落点，附属产物在饲料相反侧接地。
 
 复合饲料当前新原画为 `assets/livestock/raw/compound-feed-v8.png`，成品PNG为 `assets/livestock/feed-v8.png`、发布 `public/art/livestock/feed-v8.webp`；登记 `feed-registration-v8.json`，实际提示词 `feed-prompts-v8.md`。内置image_gen以当前L01／L02帧作画风参考重新绘制，producer支持`--feed-only`，保留原稿并只转换饲料与相应登记／回退。V8-r1的20阶段四帧与10张静态回退130px已作[静态审阅](art-reviews/2026-11-15-livestock-feed-redesign.md)，真实Pixi图层和用户认可仍另验；旧v6-r3虽曾内部通过，用户再次反馈不可辨后已撤回作为当前交付依据，仅保留历史。
 

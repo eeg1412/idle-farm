@@ -7,6 +7,7 @@ import { hasDeliverableOrder } from '../game/orders.js';
 import { capsulesPerMinute } from '../game/capsules.js';
 import cropVisuals from '../content/crop-visuals.runtime.json' with { type: 'json' };
 import workshopVisuals from '../content/workshop-visuals.json' with { type: 'json' };
+import tinyLivestock from '../content/tiny-livestock.json' with { type: 'json' };
 import managerPortraits from '../content/manager-portraits.json' with { type: 'json' };
 import { compact } from './numbers.js';
 import { gameHistory, pageForRoute, routeForPage } from './navigation.js';
@@ -22,6 +23,7 @@ import { mountPlotAnimation, plotFrameSize, plotSharedTextureKeys } from './plot
 import {
   livestockFrameSize, livestockIdleFrames, livestockSpecies, mountLivestockAnimation,
 } from './livestock-animation.js';
+import { mountTinyLivestockAnimation } from './tiny-livestock-animation.js';
 import {
   fishFrameSize, fishIdleFrames, fishSpecies, fishHabitats, mountFishAnimation,
 } from './fish-animation.js';
@@ -122,6 +124,18 @@ const plotSharedPath = (key) => `art/plot/${key}.webp`;
 const cropAtlasPath = (id, layer = '') => `art/plot/crops/${id}${layer}.webp`;
 const livestockBarnPath = 'art/livestock/barn.webp';
 const livestockAtlasPath = (id) => `art/livestock/animals/${id}.webp`;
+function livestockTextureSources(id) {
+  const species = livestockSpecies[id];
+  const tiny = tinyLivestock[id];
+  const flight = tiny?.mode === 'flight';
+  return {
+    background: tiny ? tiny.background : livestockBarnPath,
+    atlas: flight ? tiny.atlas : { path: livestockAtlasPath(id), frameSize: livestockFrameSize, frames: livestockIdleFrames },
+    rows: flight ? 1 : species.stages,
+    feed: flight ? undefined : species.feedTexture,
+    product: species.product?.icon,
+  };
+}
 const fishAtlasPath = (id) => `art/fish/animals/${id}.webp`;
 const itemIconPath = (id) => `wiki/icons/${id}.webp`;
 const managerPortraitPath = (role, gender, expression) => `art/managers/portraits/${role}/${gender}-${expression}.webp`;
@@ -135,6 +149,8 @@ function imageAssetPath(id) {
   const scene = sceneKeys.has(id);
   if (!hero && !scene && !hasIcon(id)) return undefined;
   if (manager) return 'art/managers/' + manager + '.webp';
+  const tinyPreview = scene && tinyLivestock[id.slice(6)]?.preview;
+  if (tinyPreview) return tinyPreview;
   const source = id === 'mining' ? miningVisuals.background?.path : undefined;
   if (source) return source;
   const directory = hero || scene ? 'art/' : uiIconKeys.has(id) ? 'ui-icons/' : 'wiki/icons/';
@@ -176,11 +192,12 @@ export function runtimeAssetPaths() {
       add(cropAtlasPath(id, '-front'));
     }
   }
-  for (const [id, species] of Object.entries(livestockSpecies)) {
-    add(livestockBarnPath);
-    add(livestockAtlasPath(id));
-    if (species?.product?.icon) add(itemIconPath(species.product.icon));
-    add(species?.feedTexture?.path);
+  for (const id of Object.keys(livestockSpecies)) {
+    const { background, atlas, product, feed } = livestockTextureSources(id);
+    add(background);
+    add(atlas?.path);
+    if (product) add(itemIconPath(product));
+    add(feed?.path);
   }
   for (const [id, species] of Object.entries(fishSpecies)) {
     add(fishHabitats[species?.habitat]?.pond);
@@ -546,6 +563,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
   const cropPlots = new Map();
   const livestockTextures = new Map();
   const livestockBatches = new Map();
+  const tinyHarvests = new Map();
   const fishTextures = new Map();
   const fishBatches = new Map();
   const miningTextures = new Map();
@@ -931,34 +949,39 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
 
   function loadLivestockTextures(id) {
     if (!Object.hasOwn(livestockSpecies, id)) return unavailableTextures('livestock:' + id);
-    const species = livestockSpecies[id];
-    const feedTexture = species?.feedTexture;
-    if (!feedTexture?.path || feedTexture.size?.length !== 2 || !species.product?.icon || !species.stages) return unavailableTextures('livestock:' + id);
+    const sources = livestockTextureSources(id);
+    const { atlas: { frameSize, frames } = {}, rows, feed: feedTexture } = sources;
+    if ((tinyLivestock[id]?.mode !== 'flight' && (!feedTexture?.path || feedTexture.size?.length !== 2)) ||
+        !sources.background || !sources.atlas?.path || !frameSize || !frames || !sources.product || !rows) {
+      return unavailableTextures('livestock:' + id);
+    }
     const existing = livestockTextures.get(id);
     if (existing) return existing.textures;
     const entry = { loadingKey: 'textures:livestock:' + id };
     livestockTextures.set(id, entry);
     prepareTextures('livestock:' + id, () => Promise.all([
-      loadAnimationImage(assetUrl(livestockBarnPath)),
-      loadAnimationImage(assetUrl(livestockAtlasPath(id))),
-      loadAnimationImage(assetUrl(itemIconPath(species.product.icon))),
-      loadAnimationImage(assetUrl(feedTexture.path)),
+      loadAnimationImage(assetUrl(sources.background)),
+      loadAnimationImage(assetUrl(sources.atlas.path)),
+      loadAnimationImage(assetUrl(itemIconPath(sources.product))),
+      feedTexture && loadAnimationImage(assetUrl(feedTexture.path)),
     ]).then(([barn, atlas, product, feed]) => {
-      const size = livestockFrameSize;
-      const rows = species.stages;
-      if (!barn || !atlas || !product || !feed || barn.width !== size || barn.height !== size ||
-          atlas.width !== size * livestockIdleFrames || atlas.height !== size * rows ||
+      if (!barn || !atlas || !product || barn.width !== livestockFrameSize || barn.height !== livestockFrameSize ||
+          atlas.width !== frameSize * frames || atlas.height !== frameSize * rows ||
           product.width !== 96 || product.height !== 96 ||
-          feed.width !== feedTexture.size[0] || feed.height !== feedTexture.size[1]) throw new Error('畜牧纹理无效');
-      const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: livestockIdleFrames }, (_, frame) =>
-        new Texture({ source: atlas.source, frame: new Rectangle(frame * size, stage * size, size, size) })));
+          (feedTexture && (!feed || feed.width !== feedTexture.size[0] || feed.height !== feedTexture.size[1]))) {
+        throw new Error('畜牧纹理无效');
+      }
+      const stages = Array.from({ length: rows }, (_, stage) => Array.from({ length: frames }, (_, frame) =>
+        new Texture({ source: atlas.source, frame: new Rectangle(frame * frameSize, stage * frameSize, frameSize, frameSize) })));
       entry.textures = { barn, stages, product, feed };
       if (visiblePlotIds.has(id)) requestRender();
     }));
   }
 
-  function syncLivestockBatches(nextWorld) {
+  function syncLivestockBatches(nextWorld, harvestNow) {
     const present = new Set();
+    const spent = harvestNow === undefined ? 0n : (world.capsules ?? 0n) - (nextWorld.capsules ?? 0n);
+    const skipped = spent > 0n ? Number(spent / capsulesPerMinute) * 60_000 : 0;
     for (const [index, facility] of (nextWorld?.facilities.L ?? []).entries()) {
       const batch = facility.batch;
       if (!batch || !Object.hasOwn(livestockSpecies, batch.id)) continue;
@@ -967,12 +990,29 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       const previous = livestockBatches.get(key);
       if (previous?.id === batch.id && previous.start === batch.start && previous.end === batch.end) continue;
       const sameAnimal = previous?.id === batch.id;
+      if (tinyLivestock[batch.id]) {
+        if (!sameAnimal) tinyHarvests.delete(key);
+        else if (harvestNow !== undefined) {
+          // An unchanged or merely shifted batch cannot prove that this slot produced anything.
+          // A capsule shifts the real restart time back by its skipped duration, too.
+          const natural = previous.end <= batch.start;
+          const shiftedRestart = skipped > 0 && batch.start < previous.end && previous.end <= batch.start + skipped;
+          if ((natural || shiftedRestart) && batch.start <= nextWorld.clockMs &&
+              (nextWorld.stats.produced?.[batch.id] ?? 0n) > (world.stats.produced?.[batch.id] ?? 0n)) {
+            const age = natural ? nextWorld.clockMs - batch.start : 0;
+            tinyHarvests.set(key, { at: harvestNow - age, duration: previous.end - previous.start });
+          }
+        }
+      } else tinyHarvests.delete(key);
       livestockBatches.set(key, {
         id: batch.id, start: batch.start, end: batch.end,
         previousHarvestAt: sameAnimal && previous.end === batch.start ? batch.start : undefined,
       });
     }
-    for (const key of livestockBatches.keys()) if (!present.has(key)) livestockBatches.delete(key);
+    for (const key of livestockBatches.keys()) if (!present.has(key)) {
+      livestockBatches.delete(key);
+      tinyHarvests.delete(key);
+    }
   }
 
   function loadFishTextures(id) {
@@ -4058,7 +4098,9 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
           animationFrame = { clock: progressClock(now), now };
         }
         // Each animation follows its own real batch from `batch.start`; there is no display floor.
-        const previousAnimal = livestock ? livestockBatches.get('L:' + index) : undefined;
+        const tiny = livestock ? tinyLivestock[batch.id] : undefined;
+        const livestockKey = 'L:' + index;
+        const previousAnimal = livestock && !tiny ? livestockBatches.get(livestockKey) : undefined;
         const previousHarvestAt = livestock ? previousAnimal?.previousHarvestAt : undefined;
         const planting = !livestock && !fish ? world.facilities.C[index]?.planting : undefined;
         // Every mount input is part of the retention check; a parked animation is reused only
@@ -4079,7 +4121,10 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         if (fish) {
           plot.animation = mountFishAnimation(holder, plotTextures, plot.box, batch);
         } else if (livestock) {
-          plot.animation = mountLivestockAnimation(holder, plotTextures, plot.box, batch, previousHarvestAt);
+          plot.animation = tiny
+            ? mountTinyLivestockAnimation(holder, plotTextures, plot.box, batch.id, tiny,
+              () => world?.facilities.L[index]?.batch?.id === batch.id ? tinyHarvests.get(livestockKey) : undefined)
+            : mountLivestockAnimation(holder, plotTextures, plot.box, batch, previousHarvestAt);
         } else plot.animation = mountPlotAnimation(holder, plotTextures, plot.box, batch, planting);
         plot.retained = retained;
         plot.animation.update(animationFrame);
@@ -5368,6 +5413,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     lastResearchReady = undefined;
     for (const page of Object.keys(pages)) locals[page] = { scroll: 0 };
     livestockBatches.clear();
+    tinyHarvests.clear();
     fishBatches.clear();
     workshopMotionStates.clear();
     for (const plot of activePlots) unmountPlot(plot);
@@ -5434,6 +5480,7 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
     pauseProgress() {
       // Visibility changes: whatever finishes while hidden or catching up is not replayed.
       yieldBase = false;
+      tinyHarvests.clear();
       if (world && progressTiming) progressClock(performance.now());
       progressTiming = undefined;
       pauseManagerSpeech();
@@ -5450,7 +5497,6 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
         fishBatches.clear();
         workshopMotionStates.clear();
       }
-      syncLivestockBatches(nextWorld);
       syncFishBatches(nextWorld);
       for (const [key, phase] of workshopMotionStates) {
         const station = nextWorld?.stations[phase.kind]?.[phase.index];
@@ -5476,9 +5522,12 @@ export function createGameView(app, dispatch, restore, replace, onNavigate, brow
       // after a hidden, busy or offline stretch is only taken as the new base.
       const yieldNow = performance.now();
       const yieldLive = Boolean(nextWorld && nextProgressTiming && !nextStatus?.busy && !document.hidden);
-      if (yieldLive && yieldBase && world && nextWorld !== world && nextProgressTiming.epoch === yieldEpoch &&
-          nextWorld.completedRuns === world.completedRuns && nextWorld.clockMs >= world.clockMs &&
-          yieldNow - yieldCheckedAt < 3000) detectYields(world, nextWorld);
+      const continuous = yieldLive && yieldBase && world && nextProgressTiming.epoch === yieldEpoch &&
+        nextWorld.completedRuns === world.completedRuns && nextWorld.clockMs >= world.clockMs &&
+        yieldNow - yieldCheckedAt < 3000;
+      if (!continuous) tinyHarvests.clear();
+      syncLivestockBatches(nextWorld, continuous ? yieldNow : undefined);
+      if (continuous && nextWorld !== world) detectYields(world, nextWorld);
       yieldBase = yieldLive;
       yieldEpoch = nextProgressTiming?.epoch;
       yieldCheckedAt = yieldNow;

@@ -1,0 +1,35 @@
+{
+  "L13": {
+    "mode": "flight",
+    "background": "art/livestock/tiny/hive.webp",
+    "preview": "art/livestock/tiny/scene-L13.webp",
+    "atlas": {
+      "path": "art/livestock/tiny/bee-flight.webp",
+      "frameSize": 64,
+      "frames": 4
+    },
+    "flights": [
+      { "x": 143, "y": 187, "radiusX": 22, "radiusY": 14, "periodMs": 2550, "size": 29 },
+      { "x": 174, "y": 139, "radiusX": 22, "radiusY": 13, "periodMs": 2910, "size": 29 },
+      { "x": 174, "y": 220, "radiusX": 17, "radiusY": 11, "periodMs": 3180, "size": 30 },
+      { "x": 220, "y": 109, "radiusX": 22, "radiusY": 13, "periodMs": 2740, "size": 28 },
+      { "x": 256, "y": 149, "radiusX": 33, "radiusY": 15, "periodMs": 3010, "size": 33 },
+      { "x": 255, "y": 193, "radiusX": 28, "radiusY": 15, "periodMs": 3280, "size": 34 }
+    ],
+    "product": { "x": 230, "y": 269, "size": 46 }
+  },
+  "L29": {
+    "mode": "rack",
+    "background": "art/livestock/tiny/silkworm-rack.webp",
+    "preview": "art/livestock/tiny/scene-L29.webp",
+    "placements": [
+      { "x": 74, "y": 151, "scale": 0.17 },
+      { "x": 116, "y": 147, "scale": 0.16 },
+      { "x": 157, "y": 150, "scale": 0.18 },
+      { "x": 117, "y": 208, "scale": 0.19 },
+      { "x": 73, "y": 211, "scale": 0.20 },
+      { "x": 156, "y": 213, "scale": 0.21 }
+    ],
+    "product": { "x": 251, "y": 257, "size": 46 }
+  }
+}

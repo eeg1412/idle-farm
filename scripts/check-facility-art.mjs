@@ -10,6 +10,8 @@ import fishHabitats from '../src/content/fish-habitats.json' with { type: 'json'
 import miningVisuals from '../src/content/mining-visuals.json' with { type: 'json' };
 import { fishRegistration, fishSizeLayouts } from '../src/view/fish-layout.js';
 
+import tinyLivestock from '../src/content/tiny-livestock.json' with { type: 'json' };
+
 const locate = (file) => new URL('../' + file, import.meta.url);
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 async function imageFile(file, width, height, alpha = false) {
@@ -807,6 +809,55 @@ for (const id of livestock) {
   }
 }
 console.log(`已覆盖 ${livestock.length} 种牲畜、${livestockFrameCount} 张独立 idle 帧、首帧脚印 grounding/显式支撑脚横向范围、进食口部来源与每阶段饲料登记、共享尺度/固定脚点、脚线下疑似投影、透明牲畜选择图、同ID仓库产物来源/内容bounds、回退及原画来源；真实进食动作、画风与动画稳定性仍需实际审阅。`);
+
+const tinyLivestockDisplayCount = 6;
+const pointInTinyScene = ({ x, y }) =>
+  Number.isFinite(x) && x >= 0 && x <= 320 && Number.isFinite(y) && y >= 0 && y <= 320;
+const tinyAssetSource = (published) => 'assets/livestock/tiny/' + published.slice('art/livestock/tiny/'.length).replace(/\.webp$/, '.png');
+const tinyAssetPath = (path) => /^art\/livestock\/tiny\/[A-Za-z0-9-]+\.webp$/.test(path);
+
+for (const [id, definition] of Object.entries(tinyLivestock)) {
+  const { mode, background, preview, product } = definition;
+  if (catalog.items[id]?.kind !== 'L' || livestockVisuals[id]?.product?.icon !== id ||
+      !tinyAssetPath(background) || !tinyAssetPath(preview) ||
+      !product || !pointInTinyScene(product) || !Number.isFinite(product.size) || product.size <= 0) {
+    throw new Error(`极小牲畜设施或产物登记无效：${id}`);
+  }
+  for (const path of [background, preview]) {
+    await imageFile(tinyAssetSource(path), 320, 320);
+    await imageFile('public/' + path, 320, 320);
+  }
+  if (mode === 'flight') {
+    const { atlas, flights } = definition;
+    if (!atlas || !tinyAssetPath(atlas.path) || atlas.frameSize !== 64 || atlas.frames !== 4 ||
+        !Array.isArray(flights) || flights.length !== tinyLivestockDisplayCount || flights.some((flight) =>
+          !pointInTinyScene(flight) || ['radiusX', 'radiusY', 'periodMs', 'size'].some((key) =>
+            !Number.isFinite(flight[key]) || flight[key] <= 0))) {
+      throw new Error(`极小牲畜飞行动画登记无效：${id}`);
+    }
+    const frameHashes = new Set();
+    await imageFile(tinyAssetSource(atlas.path), 256, 64, true);
+    const published = await imageFile('public/' + atlas.path, 256, 64, true);
+    for (let frame = 0; frame < 4; frame += 1) {
+      const pixels = await sharp(published)
+        .extract({ left: frame * 64, top: 0, width: 64, height: 64 })
+        .ensureAlpha().raw().toBuffer();
+      const bounds = opaqueBounds(pixels, 64, 64);
+      if (bounds.left < 1 || bounds.top < 1 || bounds.right > 62 || bounds.bottom > 62 || bounds.right < 0) {
+        throw new Error(`飞蜂独立帧为空或触及单元边界：${id}/${frame}`);
+      }
+      frameHashes.add(digest(pixels));
+    }
+    if (frameHashes.size !== 4) throw new Error(`飞蜂图集需要四张独立翅动帧：${id}`);
+  } else if (mode !== 'rack' || !Array.isArray(definition.placements) ||
+      definition.placements.length !== tinyLivestockDisplayCount ||
+      !livestockVisuals[id].feedTexture ||
+      definition.placements.some((position) => !pointInTinyScene(position) ||
+        !Number.isFinite(position.scale) || position.scale <= 0)) {
+    throw new Error(`极小牲畜蚕架站位或桑叶登记无效：${id}`);
+  }
+}
+console.log(`已覆盖 ${Object.keys(tinyLivestock).length} 种极小牲畜的设施、详情、飞蜂图集和蚕架站位。`);
 
 const fish = ids.filter((id) => catalog.items[id].kind === 'F');
 const fishLayout = JSON.parse(await readFile(locate('assets/fish/layout.json'), 'utf8'));
