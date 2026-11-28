@@ -76,6 +76,17 @@
       "references": [
         "assets/mining/raw/items-C-v2-draft.png"
       ]
+    },
+    "item-M10-v2": {
+      "path": "assets/mining/raw/item-M10-v2.png",
+      "sha256": "59c72b2dc9c878dbc3faccdb48b6763b9d5eb35a7bd64c6268d934ce2310e2b0",
+      "width": 1254,
+      "height": 1254,
+      "generatedWith": "built-in image_gen",
+      "promptFile": "assets/mining/prompts-item-M10-v2.md",
+      "references": [
+        "assets/mining/raw/items-A-v1.png"
+      ]
     }
   },
   "items": {
@@ -323,31 +334,31 @@
       "sha256": "9d07a507bbdc4a661e52f1ca239584f6ee62a3c3b9cc72b0cc2dfe0f97ea80b6"
     },
     "M10": {
-      "name": "宝石原矿",
-      "source": "items-A-v1",
+      "name": "紫宝石原矿",
+      "source": "item-M10-v2",
       "cell": {
-        "left": 1003,
-        "top": 251,
-        "width": 251,
-        "height": 251
+        "left": 0,
+        "top": 0,
+        "width": 1254,
+        "height": 1254
       },
-      "index": 9,
+      "index": 0,
       "sourceBounds": {
-        "left": 1011,
-        "top": 295,
-        "width": 210,
-        "height": 188
+        "left": 135,
+        "top": 161,
+        "width": 990,
+        "height": 927
       },
       "contentBounds": {
         "x": 7,
-        "y": 11,
+        "y": 9,
         "width": 82,
-        "height": 73
+        "height": 77
       },
       "png": "assets/source/items/overrides/M10.png",
       "path": "public/wiki/icons/M10.webp",
-      "pngSha256": "449b752b49631ba20e0f2f2c6362e5ebd51983a8d4758a8f88bc51409d0752ac",
-      "sha256": "d587f6e6af259fdab3ef54a7cf44e0f68dabbd2dfaf0b7afa8ddeb299396683f"
+      "pngSha256": "2398fbfe6769f8dd91f81ecd5ebb74bc0b2f9cb4ff43db31f8a9dca4b534e1d5",
+      "sha256": "288d841656ce0fb75550c54889872cf9088c7cc201215b0e91f451e461b637a2"
     },
     "IM01": {
       "name": "食用精盐",
@@ -593,7 +604,7 @@
       "sha256": "586e36222c1d5b5991153774d4158def9cf47796b6da647d0a70750a63b220da"
     },
     "IM10": {
-      "name": "宝石坯",
+      "name": "紫宝石坯",
       "source": "items-A-v1",
       "cell": {
         "left": 1003,
@@ -1796,8 +1807,8 @@
     "M10": {
       "png": "assets/mining/png/scene-M10.png",
       "path": "public/art/scene-M10.webp",
-      "pngSha256": "ae4de0a9d5c19bfbeeff4a54cd8adf06a494567d29e956580676d4261ffa6d8c",
-      "sha256": "81a15fbdd7a1fcff5723f9471a2a03827168eadde36af751694dd6e39b7c79d5",
+      "pngSha256": "0bfe53aab057b8a9a340e6ef2ef2e7ee77759fef5866816384977a1b82ad59cf",
+      "sha256": "680d27f740175482a68a8246b6446381f0c5ca1d8b298a7f846d704f8b08b0d2",
       "layers": [
         "background",
         "empty-cart",

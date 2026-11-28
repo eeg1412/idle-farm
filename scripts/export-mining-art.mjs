@@ -27,27 +27,43 @@ const expansionSources = {
   references:['assets/mining/raw/items-C-v2-draft.png'],
  },
 };
+const oreSource = 'item-M10-v2';
+const oreSourceMetadata = {
+ promptFile:'assets/mining/prompts-item-M10-v2.md',
+ references:['assets/mining/raw/items-A-v1.png'],
+};
 const expansionOnly = process.argv.includes('--pm-expansion-only');
+const oreOnly = process.argv.includes('--m10-only');
 const uiNames = ['mining-tab','facility-empty-mine','mining-buy','mining-upgrade','mining-yield','mining-research','mining-processing','mining-cycle','mining-refining'];
 const catalog = JSON.parse(await readFile(file('src/content/game-data.json'),'utf8'));
 const registryPath = file('assets/mining/registration.json');
-const registry = expansionOnly
+const registry = expansionOnly || oreOnly
  ? JSON.parse(await readFile(registryPath,'utf8'))
  : {version:1, generatedWith:'built-in image_gen', promptFile:'assets/mining/prompts.md', conversion:'isolated alpha crop; nearest-neighbor resize; WebP quality70 alpha100', sources:{}, items:{}, ui:{}, scene:{}};
 const expansionIds = Object.keys(catalog.items).filter(id=>idsC.includes(id));
 if (expansionIds.join() !== idsC.join()) throw new Error('PM15–PM23 must match the generated catalogue order.');
 for (const dir of ['assets/mining/png','assets/mining/source-icons','assets/source/items/overrides','public/wiki/icons','public/ui-icons','public/art/mining']) await mkdir(file(dir),{recursive:true});
-const sources = expansionOnly ? Object.keys(expansionSources) : [
- 'items-A-v1','items-B-v1','background-v1','cart-v1','ui-v1',...Object.keys(expansionSources),
+const sources = oreOnly ? [oreSource] : expansionOnly ? Object.keys(expansionSources) : [
+ 'items-A-v1','items-B-v1','background-v1','cart-v1','ui-v1',...Object.keys(expansionSources),oreSource,
 ];
 for (const key of sources) {
  const path='assets/mining/raw/'+key+'.png'; const bytes=await readFile(file(path)); const m=await sharp(bytes).metadata();
- registry.sources[key]={path,sha256:hash(bytes),width:m.width,height:m.height,generatedWith:'built-in image_gen',...expansionSources[key]};
+ const metadata = key === oreSource ? oreSourceMetadata : expansionSources[key];
+ registry.sources[key]={path,sha256:hash(bytes),width:m.width,height:m.height,generatedWith:'built-in image_gen',...metadata};
 }
 async function writeImage(pngPath,webpPath,png) {
  await writeFile(file(pngPath),png);
  const published=await sharp(png).webp(quality).toBuffer(); await writeFile(file(webpPath),published);
  return {png:pngPath,path:webpPath,pngSha256:hash(png),sha256:hash(published)};
+}
+async function writeMineScene(id, background, cart, foreground) {
+ const icon = registry.items[id].path;
+ const cargo = await sharp(file(icon)).resize(58,48,{fit:'contain',background:'#00000000',kernel:'nearest'}).png().toBuffer();
+ const scene = await sharp(background).composite([{input:cart,left:201,top:177},{input:cargo,left:220,top:144},{input:foreground,left:0,top:0}]).png().toBuffer();
+ registry.scene[id] = {
+  ...await writeImage('assets/mining/png/scene-'+id+'.png','public/art/scene-'+id+'.webp',scene),
+  layers:['background','empty-cart','canonical-item-icon','cave-foreground'],icon,
+ };
 }
 async function isolated(source,cell,target=82,canvas=96) {
  const {data,info}=await sharp(file(source)).extract(cell).ensureAlpha().raw().toBuffer({resolveWithObject:true});
@@ -75,27 +91,32 @@ async function isolated(source,cell,target=82,canvas=96) {
 }
 const legacyXCuts = [0,251,502,752,1003,1254];
 const expansionSheet = [expansionSource,expansionIds,[0,408,818,1254],[0,418,828,1254]];
-const itemSheets = expansionOnly ? [expansionSheet] : [
+const itemSheets = oreOnly ? [[oreSource,['M10'],[0,registry.sources[oreSource].width],[0,registry.sources[oreSource].height]]] : expansionOnly ? [expansionSheet] : [
  ['items-A-v1',idsA,legacyXCuts,[0,251,502,752,1003,1254]],
  ['items-B-v1',idsB,legacyXCuts,[0,265,530,815]],
  expansionSheet,
 ];
-for(const [key,ids,xCuts,yCuts] of itemSheets) {
+for(const [sheet,ids,xCuts,yCuts] of itemSheets) {
  const columns=xCuts.length-1;
  for(const [index,id] of ids.entries()){
   if(!catalog.items[id])throw new Error('Wait for formal catalogue '+id);
   const row=Math.floor(index/columns),col=index%columns;
-  const right = (key === 'items-B-v1' && row === 2 && col === 3) || (key === 'items-A-v1' && row === 4 && col === 3) ? 990 : xCuts[col+1];
-  const cell={left:xCuts[col],top:yCuts[row],width:right-xCuts[col],height:yCuts[row+1]-yCuts[row]};
+  const right = (sheet === 'items-B-v1' && row === 2 && col === 3) || (sheet === 'items-A-v1' && row === 4 && col === 3) ? 990 : xCuts[col+1];
+  const key = id === 'M10' ? oreSource : sheet;
+  const cell = id === 'M10'
+   ? {left:0,top:0,width:registry.sources[oreSource].width,height:registry.sources[oreSource].height}
+   : {left:xCuts[col],top:yCuts[row],width:right-xCuts[col],height:yCuts[row+1]-yCuts[row]};
   const sprite=await isolated(registry.sources[key].path,cell);
   const output=await writeImage('assets/source/items/overrides/'+id+'.png','public/wiki/icons/'+id+'.webp',sprite.png);
-  registry.items[id]={name:catalog.items[id].name,source:key,cell,index,sourceBounds:sprite.sourceBounds,contentBounds:sprite.contentBounds,...output};
+  registry.items[id]={name:catalog.items[id].name,source:key,cell,index:id === 'M10' ? 0 : index,sourceBounds:sprite.sourceBounds,contentBounds:sprite.contentBounds,...output};
  }
 }
 const exportedIds = itemSheets.flatMap(([,ids])=>ids);
-const overrides=JSON.parse(await readFile(file('assets/source/items/overrides.json'),'utf8'));
-for(const id of exportedIds)overrides[id]='overrides/'+id+'.png';
-await writeFile(file('assets/source/items/overrides.json'),JSON.stringify(overrides,null,2)+'\n');
+if (!oreOnly) {
+ const overrides=JSON.parse(await readFile(file('assets/source/items/overrides.json'),'utf8'));
+ for(const id of exportedIds)overrides[id]='overrides/'+id+'.png';
+ await writeFile(file('assets/source/items/overrides.json'),JSON.stringify(overrides,null,2)+'\n');
+}
 // Recompute grounding only for the item IDs exported by this invocation.
 const bottomsPath='src/content/workshop-item-bottoms.json';
 const bottoms=JSON.parse(await readFile(file(bottomsPath),'utf8'));
@@ -106,6 +127,16 @@ for(const id of exportedIds) {
  bottoms[id]=bottom;
 }
 await writeFile(file(bottomsPath),JSON.stringify(bottoms,null,2)+'\n');
+if (oreOnly) {
+ registry.items.IM10.name = catalog.items.IM10.name;
+ const [background, cart, foreground] = await Promise.all(
+  ['background','cart','foreground'].map(layer => readFile(file(registry.scene[layer].png))),
+ );
+ await writeMineScene('M10', background, cart, foreground);
+ await writeFile(registryPath,JSON.stringify(registry,null,2)+'\n');
+ console.log('Converted the M10 item icon and mine scene.');
+ process.exit(0);
+}
 const expansionReview = expansionIds.map((id,index)=>({
  input:file(registry.items[id].path),
  left:(index%3)*110+7,
@@ -158,9 +189,7 @@ const visuals = {
   items: {},
 };
 for(const id of idsA.slice(0,10)){
- const icon=registry.items[id],cargo=await sharp(file(icon.path)).resize(58,48,{fit:'contain',background:'#00000000',kernel:'nearest'}).png().toBuffer();
- const scene=await sharp(background).composite([{input:cart,left:201,top:177},{input:cargo,left:220,top:144},{input:foreground,left:0,top:0}]).png().toBuffer();
- registry.scene[id]={...await writeImage('assets/mining/png/scene-'+id+'.png','public/art/scene-'+id+'.webp',scene),layers:['background','empty-cart','canonical-item-icon','cave-foreground'],icon:icon.path};
+ await writeMineScene(id, background, cart, foreground);
  visuals.items[id]={icon:'wiki/icons/'+id+'.webp',scene:'art/scene-'+id+'.webp'};
 }
 await writeFile(file('src/content/mining-visuals.json'),JSON.stringify(visuals,null,2)+'\n');

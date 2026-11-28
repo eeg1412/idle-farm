@@ -1,0 +1,215 @@
+﻿{
+  "date": "2026-11-28",
+  "itemId": "M10",
+  "itemName": "紫宝石原矿",
+  "verdict": "静态通过",
+  "runtime": "未验证",
+  "note": "证据图仅本地保存",
+  "evidenceDirectory": "assets/mining/reviews/purple-gem-ore-2026-11-28",
+  "baseline": {
+    "commit": "48558127530c2174ab0cf82178fea97897b3fee7",
+    "sources": {
+      "assets/mining/reviews/purple-gem-ore-2026-11-28/before-icon.png": "assets/source/items/overrides/M10.png",
+      "assets/mining/reviews/purple-gem-ore-2026-11-28/before-scene.png": "assets/mining/png/scene-M10.png"
+    }
+  },
+  "sourceAndExports": [
+    {
+      "path": "assets/mining/raw/item-M10-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "59c72b2dc9c878dbc3faccdb48b6763b9d5eb35a7bd64c6268d934ce2310e2b0"
+    },
+    {
+      "path": "assets/source/items/overrides/M10.png",
+      "width": 96,
+      "height": 96,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "2398fbfe6769f8dd91f81ecd5ebb74bc0b2f9cb4ff43db31f8a9dca4b534e1d5"
+    },
+    {
+      "path": "public/wiki/icons/M10.webp",
+      "width": 96,
+      "height": 96,
+      "format": "webp",
+      "hasAlpha": true,
+      "sha256": "288d841656ce0fb75550c54889872cf9088c7cc201215b0e91f451e461b637a2"
+    },
+    {
+      "path": "assets/mining/png/scene-M10.png",
+      "width": 320,
+      "height": 320,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "0bfe53aab057b8a9a340e6ef2ef2e7ee77759fef5866816384977a1b82ad59cf"
+    },
+    {
+      "path": "public/art/scene-M10.webp",
+      "width": 320,
+      "height": 320,
+      "format": "webp",
+      "hasAlpha": false,
+      "sha256": "680d27f740175482a68a8246b6446381f0c5ca1d8b298a7f846d704f8b08b0d2"
+    }
+  ],
+  "localEvidence": [
+    {
+      "path": "assets/mining/reviews/purple-gem-ore-2026-11-28/before-icon.png",
+      "width": 96,
+      "height": 96,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "449b752b49631ba20e0f2f2c6362e5ebd51983a8d4758a8f88bc51409d0752ac"
+    },
+    {
+      "path": "assets/mining/reviews/purple-gem-ore-2026-11-28/before-scene.png",
+      "width": 320,
+      "height": 320,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "ae4de0a9d5c19bfbeeff4a54cd8adf06a494567d29e956580676d4261ffa6d8c"
+    },
+    {
+      "path": "assets/mining/reviews/purple-gem-ore-2026-11-28/icons-light.png",
+      "width": 624,
+      "height": 312,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "f0728be382e6416bc4511e5bae616e5593cb0d354d91c651c772b7566669a866"
+    },
+    {
+      "path": "assets/mining/reviews/purple-gem-ore-2026-11-28/icons-dark.png",
+      "width": 624,
+      "height": 312,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "02a729173c40f46497c97ae0d4c0c522317af563ff17919697a5ba14f7acd7a1"
+    },
+    {
+      "path": "assets/mining/reviews/purple-gem-ore-2026-11-28/scenes-320-130.png",
+      "width": 960,
+      "height": 466,
+      "format": "png",
+      "hasAlpha": true,
+      "sha256": "b5bce620d712ade038316073604bb802ad7114ae68319f1828051cf836611a6c"
+    }
+  ],
+  "pixelDiff": {
+    "icon": {
+      "minX": 7,
+      "minY": 10,
+      "maxX": 88,
+      "maxY": 85,
+      "changedPixels": 4331,
+      "changedAlphaPixels": 3798
+    },
+    "scene": {
+      "minX": 228,
+      "minY": 149,
+      "maxX": 269,
+      "maxY": 186,
+      "changedPixels": 1126,
+      "changedAlphaPixels": 0
+    }
+  },
+  "alpha128BoundsAndEdgeMaximum": {
+    "older": {
+      "minX": 8,
+      "minY": 12,
+      "maxX": 87,
+      "maxY": 82,
+      "alphaMaxOnEdge": 0
+    },
+    "png": {
+      "minX": 7,
+      "minY": 10,
+      "maxX": 88,
+      "maxY": 85,
+      "alphaMaxOnEdge": 0
+    },
+    "webp": {
+      "minX": 7,
+      "minY": 10,
+      "maxX": 88,
+      "maxY": 85,
+      "alphaMaxOnEdge": 0
+    }
+  },
+  "compositions": [
+    {
+      "name": "icons-light.png",
+      "width": 624,
+      "height": 312,
+      "background": "#d8d0b7",
+      "columnWidth": 208,
+      "columns": [
+        "assets/mining/reviews/purple-gem-ore-2026-11-28/before-icon.png",
+        "assets/source/items/overrides/M10.png",
+        "public/wiki/icons/M10.webp"
+      ],
+      "rows": [
+        {
+          "size": 96,
+          "offsetX": 56,
+          "top": 8
+        },
+        {
+          "size": 192,
+          "offsetX": 8,
+          "top": 112
+        }
+      ]
+    },
+    {
+      "name": "icons-dark.png",
+      "width": 624,
+      "height": 312,
+      "background": "#344343",
+      "columnWidth": 208,
+      "columns": [
+        "assets/mining/reviews/purple-gem-ore-2026-11-28/before-icon.png",
+        "assets/source/items/overrides/M10.png",
+        "public/wiki/icons/M10.webp"
+      ],
+      "rows": [
+        {
+          "size": 96,
+          "offsetX": 56,
+          "top": 8
+        },
+        {
+          "size": 192,
+          "offsetX": 8,
+          "top": 112
+        }
+      ]
+    },
+    {
+      "name": "scenes-320-130.png",
+      "width": 960,
+      "height": 466,
+      "background": "#344343",
+      "columnWidth": 320,
+      "columns": [
+        "assets/mining/reviews/purple-gem-ore-2026-11-28/before-scene.png",
+        "assets/mining/png/scene-M10.png",
+        "public/art/scene-M10.webp"
+      ],
+      "rows": [
+        {
+          "size": 320,
+          "offsetX": 0,
+          "top": 0
+        },
+        {
+          "size": 130,
+          "offsetX": 95,
+          "top": 328
+        }
+      ]
+    }
+  ]
+}

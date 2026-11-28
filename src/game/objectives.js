@@ -289,7 +289,7 @@ const longTerm = [
   ['runs100', '百次交接', runCondition, farmSale, runs, 100n],
   ['livestockTop', '牛肉庄园', '解锁肉用黄牛品种', research, (world) => learned(world, 'L10')],
   ['fishTop', '鲟鱼鱼塘', '解锁鲟鱼品种', research, (world) => learned(world, 'F10')],
-  ['miningTop', '宝石矿洞', '解锁宝石原矿', research, (world) => learned(world, 'M10')],
+  ['miningTop', '宝石矿洞', '解锁紫宝石原矿', research, (world) => learned(world, 'M10')],
   ['miningProduct', '锡衬铜盘鲈鱼片', '制作并入库至少 {目标} 份该商品', refining, (world) => produced(world, 'PM14')],
 ];
 
